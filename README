@@ -1,4 +1,4 @@
-LWC is a mod for hMod that facilitates chest protection and management of said chests.
+LWC is a Minecraft plugin for hMod that facilitates chest protection and management of said chests.
 
 It is simple yet advanced. It supports public chests, private chests, and even passworded chests. It has protections against Explosions (TNT, Creepers). 
 Group and user chest creation limits can be created.
