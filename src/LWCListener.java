@@ -23,11 +23,6 @@ public class LWCListener extends PluginListener {
 	 */
 	public boolean debugMode = false;
 
-	/**
-	 * If the server is actively using Magic Carpet, to detour around it
-	 */
-	private boolean magicCarpet = false;
-
 	public LWCListener(LWC parent) {
 		this.parent = parent;
 	}
@@ -531,13 +526,6 @@ public class LWCListener extends PluginListener {
 			}
 		}
 
-		if (command.equalsIgnoreCase("mc")
-				|| command.equalsIgnoreCase("magiccarpet")) {
-			player.sendMessage(Colors.Gold + "magic carpet detected");
-			magicCarpet = true;
-			return false;
-		}
-
 		/**
 		 * ALIASES
 		 */
@@ -950,33 +938,6 @@ public class LWCListener extends PluginListener {
 		}
 
 		return false;
-	}
-
-	@Override
-	public void onPlayerMove(Player player, Location from, Location to) {
-		if (!magicCarpet) {
-			return;
-		}
-
-		etc.getServer().setBlock(
-				etc.getServer().getBlockAt((int) from.x, (int) from.y,
-						(int) from.z));
-		etc.getServer().setBlock(
-				etc.getServer().getBlockAt((int) to.x, (int) to.y, (int) to.z));
-
-		/*
-		 * List<com.griefcraft.model.Chest> chests = new
-		 * ArrayList<com.griefcraft.model.Chest>();
-		 * 
-		 * for(com.griefcraft.model.Chest chest_ : chests) { ComplexBlock chest
-		 * = etc.getServer().getComplexBlock(chest_.getX(), chest_.getY(),
-		 * chest_.getZ());
-		 * 
-		 * if(chest == null) { continue; }
-		 * 
-		 * chest.update(); }
-		 */
-
 	}
 
 	// true = show chest as empty

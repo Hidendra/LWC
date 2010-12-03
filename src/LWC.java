@@ -261,7 +261,6 @@ public class LWC extends Plugin {
 
 		registerHook(PluginLoader.Hook.DISCONNECT);
 		registerHook(PluginLoader.Hook.COMMAND);
-		registerHook(PluginLoader.Hook.PLAYER_MOVE); 
 		registerHook(PluginLoader.Hook.BLOCK_RIGHTCLICKED);
 		registerHook(PluginLoader.Hook.BLOCK_BROKEN);
 		registerHook(PluginLoader.Hook.BLOCK_DESTROYED);
