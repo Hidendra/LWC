@@ -17,6 +17,10 @@ public abstract class Database {
 	 * @return if the connection was succesful
 	 */
 	public boolean connect() {
+		if(connection != null) {
+			return true;
+		}
+		
 		try {
 			Class.forName("org.sqlite.JDBC");
 

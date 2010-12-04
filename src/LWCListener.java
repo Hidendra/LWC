@@ -434,11 +434,11 @@ public class LWCListener extends PluginListener {
 									+ (chestType == RightTypes.PLAYER ? "Player"
 											: "Group") + "]");
 						}
+					}
 
-						if (parent.isInPersistentMode(player.getName())) {
-							MemoryDatabase.getInstance().unregisterAllActions(
-									player.getName());
-						}
+					if (parent.isInPersistentMode(player.getName())) {
+						MemoryDatabase.getInstance().unregisterAllActions(
+								player.getName());
 					}
 
 					return false;
@@ -871,6 +871,23 @@ public class LWCListener extends PluginListener {
 					return true;
 				}
 
+			} else if (action.equals("convert") && parent.isAdmin(player)) {
+				if(split.length < 3) {
+					player.sendMessage("");
+					player.sendMessage(Colors.Green + "LWC Conversion Help");
+					player.sendMessage("");
+					player.sendMessage(Colors.Green + "This command converts chests of other plugins to LWC.");
+					player.sendMessage("");
+					player.sendMessage(Colors.LightGreen + "/lwc convert <OtherPlugin>");
+					player.sendMessage("");
+					player.sendMessage("Currently supported: " + Colors.Gold + "chestprotect");
+				}
+				
+				String subAction = split[2];
+				
+				if(subAction.equalsIgnoreCase("chestprotect")) {
+					new CPConverter(player);
+				}
 			}
 
 			return true;

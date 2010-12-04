@@ -16,6 +16,11 @@ public class PhysicalDatabase extends Database {
 	 * Static instance
 	 */
 	private static PhysicalDatabase instance;
+	
+	/**
+	 * If the database was already loaded
+	 */
+	private boolean loaded = false;
 
 	/**
 	 * @return an instance of Database
@@ -283,6 +288,10 @@ public class PhysicalDatabase extends Database {
 	 */
 	@Override
 	public void load() {
+		if(loaded) {
+			return;
+		}
+		
 		try {
 			final Statement statement = connection.createStatement();
 
@@ -322,6 +331,8 @@ public class PhysicalDatabase extends Database {
 
 		doUpdate100();
 		doUpdate103();
+		
+		loaded = true;
 	}
 	
 	/**
