@@ -11,7 +11,7 @@ public class LWC extends Plugin {
 	/**
 	 * The version
 	 */
-	public static final double VERSION = 1.34;
+	public static final double VERSION = 1.35;
 
 	/**
 	 * The PluginListener
