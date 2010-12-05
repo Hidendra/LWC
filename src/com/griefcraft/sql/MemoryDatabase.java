@@ -29,8 +29,7 @@ public class MemoryDatabase extends Database {
 
 	public Action getAction(String action, String player) {
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("SELECT * FROM `actions` WHERE `player` = ? AND `action` = ?");
+			final PreparedStatement statement = connection.prepareStatement("SELECT * FROM `actions` WHERE `player` = ? AND `action` = ?");
 			statement.setString(1, player);
 			statement.setString(2, action);
 
@@ -72,8 +71,7 @@ public class MemoryDatabase extends Database {
 		try {
 			int chestID = -1;
 
-			final PreparedStatement statement = connection
-					.prepareStatement("SELECT `chest` FROM `actions` WHERE `action` = ? AND `player` = ?");
+			final PreparedStatement statement = connection.prepareStatement("SELECT `chest` FROM `actions` WHERE `action` = ? AND `player` = ?");
 			statement.setString(1, action);
 			statement.setString(2, player);
 
@@ -104,8 +102,7 @@ public class MemoryDatabase extends Database {
 		final List<String> actions = new ArrayList<String>();
 
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("SELECT `action` FROM `actions` WHERE `player` = ?");
+			final PreparedStatement statement = connection.prepareStatement("SELECT `action` FROM `actions` WHERE `player` = ?");
 			statement.setString(1, player);
 
 			final ResultSet set = statement.executeQuery();
@@ -142,8 +139,7 @@ public class MemoryDatabase extends Database {
 		try {
 			String password = "";
 
-			final PreparedStatement statement = connection
-					.prepareStatement("SELECT `password` FROM `locks` WHERE `player` = ?");
+			final PreparedStatement statement = connection.prepareStatement("SELECT `password` FROM `locks` WHERE `player` = ?");
 			statement.setString(1, player);
 
 			final ResultSet set = statement.executeQuery();
@@ -173,8 +169,7 @@ public class MemoryDatabase extends Database {
 		final List<String> modes = new ArrayList<String>();
 
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("SELECT * from `modes` WHERE `player` = ?");
+			final PreparedStatement statement = connection.prepareStatement("SELECT * from `modes` WHERE `player` = ?");
 			statement.setString(1, player);
 
 			final ResultSet set = statement.executeQuery();
@@ -204,8 +199,7 @@ public class MemoryDatabase extends Database {
 		final List<String> sessionUsers = new ArrayList<String>();
 
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("SELECT `player` FROM `sessions` WHERE `chest` = ?");
+			final PreparedStatement statement = connection.prepareStatement("SELECT `player` FROM `sessions` WHERE `chest` = ?");
 			statement.setInt(1, chestID);
 
 			final ResultSet set = statement.executeQuery();
@@ -262,8 +256,7 @@ public class MemoryDatabase extends Database {
 	 */
 	public boolean hasAccess(String player, int chestID) {
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("SELECT `player` FROM `sessions` WHERE `chest` = ?");
+			final PreparedStatement statement = connection.prepareStatement("SELECT `player` FROM `sessions` WHERE `chest` = ?");
 			statement.setInt(1, chestID);
 
 			final ResultSet set = statement.executeQuery();
@@ -321,8 +314,7 @@ public class MemoryDatabase extends Database {
 	 */
 	public boolean hasPendingChest(String player) {
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("SELECT `id` FROM `locks` WHERE `player` = ?");
+			final PreparedStatement statement = connection.prepareStatement("SELECT `id` FROM `locks` WHERE `player` = ?");
 			statement.setString(1, player);
 
 			final ResultSet set = statement.executeQuery();
@@ -352,8 +344,7 @@ public class MemoryDatabase extends Database {
 	}
 
 	/**
-	 * create the in-memory table which hold sessions, users that have activated
-	 * a chest. Not needed past a restart, so no need for extra disk i/o
+	 * create the in-memory table which hold sessions, users that have activated a chest. Not needed past a restart, so no need for extra disk i/o
 	 */
 	@Override
 	public void load() {
@@ -368,8 +359,7 @@ public class MemoryDatabase extends Database {
 					+ "chest INTEGER" + ");"); //
 
 			log("Creating memory table 'locks'");
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'locks' ("
-					+ "id INTEGER PRIMARY KEY," //
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'locks' (" + "id INTEGER PRIMARY KEY," //
 					+ "player TEXT," //
 					+ "password TEXT" + ");"); //
 
@@ -383,8 +373,7 @@ public class MemoryDatabase extends Database {
 					+ ");"); //
 
 			log("Creating memory table 'modes'");
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'modes' ("
-					+ "id INTEGER PRIMARY KEY," //
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'modes' (" + "id INTEGER PRIMARY KEY," //
 					+ "player TEXT," //
 					+ "mode TEXT" //
 					+ ");");
@@ -421,8 +410,7 @@ public class MemoryDatabase extends Database {
 
 		try {
 			final Statement statement = connection.createStatement();
-			final ResultSet set = statement
-					.executeQuery("SELECT `id` FROM `locks`");
+			final ResultSet set = statement.executeQuery("SELECT `id` FROM `locks`");
 
 			while (set.next()) {
 				count++;
@@ -451,8 +439,7 @@ public class MemoryDatabase extends Database {
 			 */
 			unregisterAction(action, player);
 
-			final PreparedStatement statement = connection
-					.prepareStatement("INSERT INTO `actions` (action, player, chest) VALUES (?, ?, ?)");
+			final PreparedStatement statement = connection.prepareStatement("INSERT INTO `actions` (action, player, chest) VALUES (?, ?, ?)");
 			statement.setString(1, action);
 			statement.setString(2, player);
 			statement.setInt(3, chestID);
@@ -479,8 +466,7 @@ public class MemoryDatabase extends Database {
 			 */
 			unregisterAction(action, player);
 
-			final PreparedStatement statement = connection
-					.prepareStatement("INSERT INTO `actions` (action, player, data) VALUES (?, ?, ?)");
+			final PreparedStatement statement = connection.prepareStatement("INSERT INTO `actions` (action, player, data) VALUES (?, ?, ?)");
 			statement.setString(1, action);
 			statement.setString(2, player);
 			statement.setString(3, data);
@@ -502,8 +488,7 @@ public class MemoryDatabase extends Database {
 	 */
 	public void registerChest(String player, String password) {
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("INSERT INTO `locks` (player, password) VALUES (?, ?)");
+			final PreparedStatement statement = connection.prepareStatement("INSERT INTO `locks` (player, password) VALUES (?, ?)");
 			statement.setString(1, player);
 			statement.setString(2, password);
 
@@ -524,8 +509,7 @@ public class MemoryDatabase extends Database {
 	 */
 	public void registerMode(String player, String mode) {
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("INSERT INTO `modes` (player, mode) VALUES (?, ?)");
+			final PreparedStatement statement = connection.prepareStatement("INSERT INTO `modes` (player, mode) VALUES (?, ?)");
 			statement.setString(1, player);
 			statement.setString(2, mode);
 
@@ -546,8 +530,7 @@ public class MemoryDatabase extends Database {
 	 */
 	public void registerPlayer(String player, int chestID) {
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("INSERT INTO `sessions` (player, chest) VALUES(?, ?)");
+			final PreparedStatement statement = connection.prepareStatement("INSERT INTO `sessions` (player, chest) VALUES(?, ?)");
 			statement.setString(1, player);
 			statement.setInt(2, chestID);
 
@@ -578,8 +561,7 @@ public class MemoryDatabase extends Database {
 
 		try {
 			final Statement statement = connection.createStatement();
-			final ResultSet set = statement
-					.executeQuery("SELECT `id` FROM `sessions`");
+			final ResultSet set = statement.executeQuery("SELECT `id` FROM `sessions`");
 
 			while (set.next()) {
 				count++;
@@ -601,8 +583,7 @@ public class MemoryDatabase extends Database {
 	 */
 	public void unregisterAction(String action, String player) {
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("DELETE FROM `actions` WHERE `action` = ? AND `player` = ?");
+			final PreparedStatement statement = connection.prepareStatement("DELETE FROM `actions` WHERE `action` = ? AND `player` = ?");
 			statement.setString(1, action);
 			statement.setString(2, player);
 
@@ -621,8 +602,7 @@ public class MemoryDatabase extends Database {
 	 */
 	public void unregisterAllActions(String player) {
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("DELETE FROM `actions` WHERE `player` = ?");
+			final PreparedStatement statement = connection.prepareStatement("DELETE FROM `actions` WHERE `player` = ?");
 			statement.setString(1, player);
 
 			statement.executeUpdate();
@@ -653,8 +633,7 @@ public class MemoryDatabase extends Database {
 	 */
 	public void unregisterAllModes(String player) {
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("DELETE FROM `modes` WHERE `player` = ?");
+			final PreparedStatement statement = connection.prepareStatement("DELETE FROM `modes` WHERE `player` = ?");
 			statement.setString(1, player);
 
 			statement.executeUpdate();
@@ -672,8 +651,7 @@ public class MemoryDatabase extends Database {
 	 */
 	public void unregisterChest(String player) {
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("DELETE FROM `locks` WHERE `player` = ?");
+			final PreparedStatement statement = connection.prepareStatement("DELETE FROM `locks` WHERE `player` = ?");
 			statement.setString(1, player);
 
 			statement.executeUpdate();
@@ -693,8 +671,7 @@ public class MemoryDatabase extends Database {
 	 */
 	public void unregisterMode(String player, String mode) {
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("DELETE FROM `modes` WHERE `player` = ? AND `mode` = ?");
+			final PreparedStatement statement = connection.prepareStatement("DELETE FROM `modes` WHERE `player` = ? AND `mode` = ?");
 			statement.setString(1, player);
 			statement.setString(2, mode);
 
@@ -713,8 +690,7 @@ public class MemoryDatabase extends Database {
 	 */
 	public void unregisterPlayer(String player) {
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("DELETE FROM `sessions` WHERE `player` = ?");
+			final PreparedStatement statement = connection.prepareStatement("DELETE FROM `sessions` WHERE `player` = ?");
 			statement.setString(1, player);
 
 			statement.executeUpdate();

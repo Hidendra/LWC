@@ -16,7 +16,7 @@ public class PhysicalDatabase extends Database {
 	 * Static instance
 	 */
 	private static PhysicalDatabase instance;
-	
+
 	/**
 	 * If the database was already loaded
 	 */
@@ -41,8 +41,7 @@ public class PhysicalDatabase extends Database {
 
 		try {
 			final Statement statement = connection.createStatement();
-			final ResultSet set = statement
-					.executeQuery("SELECT `id` FROM `chests`");
+			final ResultSet set = statement.executeQuery("SELECT `id` FROM `chests`");
 
 			while (set.next()) {
 				count++;
@@ -99,8 +98,7 @@ public class PhysicalDatabase extends Database {
 
 		try {
 			Statement statement = connection.createStatement();
-			ResultSet set = statement
-					.executeQuery("PRAGMA INDEX_LIST('chests')");
+			ResultSet set = statement.executeQuery("PRAGMA INDEX_LIST('chests')");
 
 			while (set.next()) {
 				needsUpdate = false;
@@ -148,8 +146,7 @@ public class PhysicalDatabase extends Database {
 		int amount = 0;
 
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("SELECT `id` FROM `chests` WHERE `owner` = ?");
+			final PreparedStatement statement = connection.prepareStatement("SELECT `id` FROM `chests` WHERE `owner` = ?");
 			statement.setString(1, user);
 
 			final ResultSet set = statement.executeQuery();
@@ -190,8 +187,7 @@ public class PhysicalDatabase extends Database {
 		int limit = -1;
 
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("SELECT `amount` FROM `limits` WHERE `type` = ? AND `entity` = ?");
+			final PreparedStatement statement = connection.prepareStatement("SELECT `amount` FROM `limits` WHERE `type` = ? AND `entity` = ?");
 			statement.setInt(1, type);
 			statement.setString(2, entity.toLowerCase());
 
@@ -210,8 +206,7 @@ public class PhysicalDatabase extends Database {
 	}
 
 	/**
-	 * Get the access level of a player to a chest -1 = no access 0 = normal
-	 * access 1 = chest admin
+	 * Get the access level of a player to a chest -1 = no access 0 = normal access 1 = chest admin
 	 * 
 	 * @param player
 	 *            the player to check
@@ -223,8 +218,7 @@ public class PhysicalDatabase extends Database {
 		int access = -1;
 
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("SELECT `entity`, `rights` FROM `rights` WHERE `type` = ? AND `chest` = ?");
+			final PreparedStatement statement = connection.prepareStatement("SELECT `entity`, `rights` FROM `rights` WHERE `type` = ? AND `chest` = ?");
 			statement.setInt(1, type);
 			statement.setInt(2, chestID);
 
@@ -268,8 +262,7 @@ public class PhysicalDatabase extends Database {
 
 		try {
 			final Statement statement = connection.createStatement();
-			final ResultSet set = statement
-					.executeQuery("SELECT `id` FROM `limits`");
+			final ResultSet set = statement.executeQuery("SELECT `id` FROM `limits`");
 
 			while (set.next()) {
 				count++;
@@ -288,10 +281,10 @@ public class PhysicalDatabase extends Database {
 	 */
 	@Override
 	public void load() {
-		if(loaded) {
+		if (loaded) {
 			return;
 		}
-		
+
 		try {
 			final Statement statement = connection.createStatement();
 
@@ -316,8 +309,7 @@ public class PhysicalDatabase extends Database {
 					+ ");");
 
 			log("Creating physical table 'rights' (If it's not there!)");
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'rights' ("
-					+ "id INTEGER PRIMARY KEY," //
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'rights' (" + "id INTEGER PRIMARY KEY," //
 					+ "chest INTEGER," //
 					+ "entity TEXT," //
 					+ "rights INTEGER," //
@@ -331,22 +323,26 @@ public class PhysicalDatabase extends Database {
 
 		doUpdate100();
 		doUpdate103();
-		
+
 		loaded = true;
 	}
-	
+
 	/**
 	 * Load the first chest within a block's radius
 	 * 
-	 * @param x the block's x coordinate
-	 * @param y the block's y coordinate
-	 * @param z the block's z coordinate
-	 * @param radius the radius to search
+	 * @param x
+	 *            the block's x coordinate
+	 * @param y
+	 *            the block's y coordinate
+	 * @param z
+	 *            the block's z coordinate
+	 * @param radius
+	 *            the radius to search
 	 * @return the Chest found , null otherwise
 	 */
 	public List<Chest> loadChests(int _x, int _y, int _z, int radius) {
 		List<Chest> chests = new ArrayList<Chest>();
-		
+
 		try {
 			PreparedStatement statement = connection.prepareStatement("SELECT * FROM `chests` WHERE x >= ? AND x <= ? AND y >= ? AND y <= ? AND z >= ? AND z <= ?");
 			statement.setInt(1, _x - radius);
@@ -355,7 +351,7 @@ public class PhysicalDatabase extends Database {
 			statement.setInt(4, _y + radius);
 			statement.setInt(5, _z - radius);
 			statement.setInt(6, _z + radius);
-			
+
 			final ResultSet set = statement.executeQuery();
 
 			while (set.next()) {
@@ -382,10 +378,10 @@ public class PhysicalDatabase extends Database {
 			}
 
 			statement.close();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return chests;
 	}
 
@@ -398,8 +394,7 @@ public class PhysicalDatabase extends Database {
 	 */
 	public Chest loadChest(int chestID) {
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("SELECT * FROM `chests` WHERE `id` = ?");
+			final PreparedStatement statement = connection.prepareStatement("SELECT * FROM `chests` WHERE `id` = ?");
 
 			statement.setInt(1, chestID);
 
@@ -449,8 +444,7 @@ public class PhysicalDatabase extends Database {
 	 */
 	public Chest loadChest(int x, int y, int z) {
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("SELECT `id`, `type`, `owner`, `password`, `date` FROM `chests` WHERE `x` = ? AND `y` = ? AND `z` = ?");
+			final PreparedStatement statement = connection.prepareStatement("SELECT `id`, `type`, `owner`, `password`, `date` FROM `chests` WHERE `x` = ? AND `y` = ? AND `z` = ?");
 
 			statement.setInt(1, x);
 			statement.setInt(2, y);
@@ -512,19 +506,16 @@ public class PhysicalDatabase extends Database {
 	 * @param z
 	 *            the z coordinate of the chest
 	 */
-	public void registerChest(int type, String player, String password, int x,
-			int y, int z) {
+	public void registerChest(int type, String player, String password, int x, int y, int z) {
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("INSERT INTO `chests` (type, owner, password, x, y, z, date) VALUES(?, ?, ?, ?, ?, ?, ?)");
+			final PreparedStatement statement = connection.prepareStatement("INSERT INTO `chests` (type, owner, password, x, y, z, date) VALUES(?, ?, ?, ?, ?, ?, ?)");
 			statement.setInt(1, type);
 			statement.setString(2, player);
 			statement.setString(3, password);
 			statement.setInt(4, x);
 			statement.setInt(5, y);
 			statement.setInt(6, z);
-			statement.setString(7,
-					new Timestamp(new Date().getTime()).toString());
+			statement.setString(7, new Timestamp(new Date().getTime()).toString());
 
 			statement.executeUpdate();
 			statement.close();
@@ -545,8 +536,7 @@ public class PhysicalDatabase extends Database {
 		try {
 			unregisterLimit(type, entity.toLowerCase());
 
-			final PreparedStatement statement = connection
-					.prepareStatement("INSERT INTO `limits` (type, amount, entity) VALUES(?, ?, ?)");
+			final PreparedStatement statement = connection.prepareStatement("INSERT INTO `limits` (type, amount, entity) VALUES(?, ?, ?)");
 			statement.setInt(1, type);
 			statement.setInt(2, amount);
 			statement.setString(3, entity.toLowerCase());
@@ -572,8 +562,7 @@ public class PhysicalDatabase extends Database {
 	 */
 	public void registerRights(int chestID, String entity, int rights, int type) {
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("INSERT INTO `rights` (chest, entity, rights, type) VALUES (?, ?, ?, ?)");
+			final PreparedStatement statement = connection.prepareStatement("INSERT INTO `rights` (chest, entity, rights, type) VALUES (?, ?, ?, ?)");
 			statement.setInt(1, chestID);
 			statement.setString(2, entity.toLowerCase());
 			statement.setInt(3, rights);
@@ -620,8 +609,7 @@ public class PhysicalDatabase extends Database {
 	 */
 	public void unregisterAllRights(int chestID) {
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("DELETE FROM `rights` WHERE `chest` = ?");
+			final PreparedStatement statement = connection.prepareStatement("DELETE FROM `rights` WHERE `chest` = ?");
 			statement.setInt(1, chestID);
 
 			statement.executeUpdate();
@@ -639,8 +627,7 @@ public class PhysicalDatabase extends Database {
 	 */
 	public void unregisterChest(int chestID) {
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("DELETE FROM `chests` WHERE `id` = ?");
+			final PreparedStatement statement = connection.prepareStatement("DELETE FROM `chests` WHERE `id` = ?");
 			statement.setInt(1, chestID);
 
 			statement.executeUpdate();
@@ -662,8 +649,7 @@ public class PhysicalDatabase extends Database {
 	 */
 	public void unregisterLimit(int type, String entity) {
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("DELETE FROM `limits` WHERE `type` = ? AND `entity` = ?");
+			final PreparedStatement statement = connection.prepareStatement("DELETE FROM `limits` WHERE `type` = ? AND `entity` = ?");
 			statement.setInt(1, type);
 			statement.setString(2, entity.toLowerCase());
 
@@ -682,8 +668,7 @@ public class PhysicalDatabase extends Database {
 	 */
 	public void unregisterRights(int chestID, String entity) {
 		try {
-			final PreparedStatement statement = connection
-					.prepareStatement("DELETE FROM `rights` WHERE `chest` = ? AND `entity` = ?");
+			final PreparedStatement statement = connection.prepareStatement("DELETE FROM `rights` WHERE `chest` = ? AND `entity` = ?");
 			statement.setInt(1, chestID);
 			statement.setString(2, entity.toLowerCase());
 

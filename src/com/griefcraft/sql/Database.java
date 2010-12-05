@@ -17,15 +17,14 @@ public abstract class Database {
 	 * @return if the connection was succesful
 	 */
 	public boolean connect() {
-		if(connection != null) {
+		if (connection != null) {
 			return true;
 		}
-		
+
 		try {
 			Class.forName("org.sqlite.JDBC");
 
-			connection = DriverManager.getConnection("jdbc:sqlite:"
-					+ getDatabasePath());
+			connection = DriverManager.getConnection("jdbc:sqlite:" + getDatabasePath());
 		} catch (final Exception e) {
 			e.printStackTrace();
 			return false;
@@ -39,8 +38,7 @@ public abstract class Database {
 	 */
 	public String getDatabasePath() {
 		try {
-			String path = Database.class.getProtectionDomain().getCodeSource()
-					.getLocation().toURI().getPath();
+			String path = Database.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
 
 			if (path.endsWith(".jar") || path.endsWith("/")) {
 				path = path.substring(0, path.lastIndexOf("/"));

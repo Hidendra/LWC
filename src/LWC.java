@@ -27,8 +27,7 @@ public class LWC extends Plugin {
 	 *            the chest to check
 	 * @return if the player can access the chest
 	 */
-	public boolean canAccessChest(Player player,
-			com.griefcraft.model.Chest chest) {
+	public boolean canAccessChest(Player player, com.griefcraft.model.Chest chest) {
 		if (chest == null) {
 			return true;
 		}
@@ -43,8 +42,8 @@ public class LWC extends Plugin {
 			if (chestOwner == null) {
 				return true;
 			}
-			
-			if(!isAdmin(chestOwner)) {
+
+			if (!isAdmin(chestOwner)) {
 				return true;
 			}
 		}
@@ -54,16 +53,11 @@ public class LWC extends Plugin {
 			return true;
 
 		case ChestTypes.PASSWORD:
-			return MemoryDatabase.getInstance().hasAccess(player.getName(),
-					chest);
+			return MemoryDatabase.getInstance().hasAccess(player.getName(), chest);
 
 		case ChestTypes.PRIVATE:
 			final PhysicalDatabase instance = PhysicalDatabase.getInstance();
-			return player.getName().equalsIgnoreCase(chest.getOwner())
-					|| instance.getPrivateAccess(RightTypes.PLAYER,
-							chest.getID(), player.getName()) != -1
-					|| instance.getPrivateAccess(RightTypes.GROUP,
-							chest.getID(), player.getGroups()) != -1;
+			return player.getName().equalsIgnoreCase(chest.getOwner()) || instance.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) != -1 || instance.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) != -1;
 
 		default:
 			return false;
@@ -84,8 +78,7 @@ public class LWC extends Plugin {
 	 * @return if the player can access the chest
 	 */
 	public boolean canAccessChest(Player player, int x, int y, int z) {
-		return canAccessChest(player,
-				PhysicalDatabase.getInstance().loadChest(x, y, z));
+		return canAccessChest(player, PhysicalDatabase.getInstance().loadChest(x, y, z));
 	}
 
 	/**
@@ -115,11 +108,7 @@ public class LWC extends Plugin {
 
 		case ChestTypes.PRIVATE:
 			final PhysicalDatabase instance = PhysicalDatabase.getInstance();
-			return player.getName().equalsIgnoreCase(chest.getOwner())
-					|| instance.getPrivateAccess(RightTypes.PLAYER,
-							chest.getID(), player.getName()) == 1
-					|| instance.getPrivateAccess(RightTypes.GROUP,
-							chest.getID(), player.getGroups()) == 1;
+			return player.getName().equalsIgnoreCase(chest.getOwner()) || instance.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) == 1 || instance.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) == 1;
 
 		default:
 			return false;
@@ -133,13 +122,11 @@ public class LWC extends Plugin {
 
 	@Override
 	public void enable() {
-		log("Physical db location: "
-				+ PhysicalDatabase.getInstance().getDatabasePath());
+		log("Physical db location: " + PhysicalDatabase.getInstance().getDatabasePath());
 
 		log("Opening sqlite databases (1 Physical & 1 Memory)");
 
-		final boolean connected = PhysicalDatabase.getInstance().connect()
-				&& MemoryDatabase.getInstance().connect();
+		final boolean connected = PhysicalDatabase.getInstance().connect() && MemoryDatabase.getInstance().connect();
 
 		if (!connected) {
 			log("Failed to open sqlite databases");
@@ -168,43 +155,33 @@ public class LWC extends Plugin {
 	}
 
 	/**
-	 * Check for chest limits on a given player and return true if they are
-	 * limited
+	 * Check for chest limits on a given player and return true if they are limited
 	 * 
 	 * @param player
 	 *            the player to check
 	 * @return true if they are limited
 	 */
 	public boolean enforceChestLimits(Player player) {
-		final int userLimit = PhysicalDatabase.getInstance().getUserLimit(
-				player.getName());
+		final int userLimit = PhysicalDatabase.getInstance().getUserLimit(player.getName());
 
 		/*
 		 * Sort of redundant, but use the least amount of queries we can!
 		 */
 		if (userLimit != -1) {
-			final int chests = PhysicalDatabase.getInstance().getChestCount(
-					player.getName());
+			final int chests = PhysicalDatabase.getInstance().getChestCount(player.getName());
 
 			if (chests >= userLimit) {
-				player.sendMessage(Colors.Red
-						+ "You have exceeded the amount of chests you can lock!");
+				player.sendMessage(Colors.Red + "You have exceeded the amount of chests you can lock!");
 				return true;
 			}
 		} else {
-			final int groupLimit = PhysicalDatabase
-					.getInstance()
-					.getGroupLimit(
-							player.getGroups().length > 0 ? player.getGroups()[0]
-									: "default");
+			final int groupLimit = PhysicalDatabase.getInstance().getGroupLimit(player.getGroups().length > 0 ? player.getGroups()[0] : "default");
 
 			if (groupLimit != -1) {
-				final int chests = PhysicalDatabase.getInstance()
-						.getChestCount(player.getName());
+				final int chests = PhysicalDatabase.getInstance().getChestCount(player.getName());
 
 				if (chests >= groupLimit) {
-					player.sendMessage(Colors.Red
-							+ "You have exceeded the amount of chests you can lock!");
+					player.sendMessage(Colors.Red + "You have exceeded the amount of chests you can lock!");
 					return true;
 				}
 			}
@@ -230,8 +207,7 @@ public class LWC extends Plugin {
 
 		_main: for (int xD = -1; xD <= 1; xD++) {
 			for (int zD = -1; zD <= 1; zD++) {
-				final ComplexBlock block = etc.getServer().getComplexBlock(
-						x + xD, y, z + zD);
+				final ComplexBlock block = etc.getServer().getComplexBlock(x + xD, y, z + zD);
 
 				if (block == null || !(block instanceof Chest)) {
 					continue;
@@ -319,49 +295,37 @@ public class LWC extends Plugin {
 
 		player.sendMessage(Colors.Green + " Commands:");
 
-		player.sendMessage(Colors.LightGreen
-				+ "/lwc create - View detailed info on chest types");
-		player.sendMessage(Colors.LightGreen
-				+ "/lwc create public - Create a public chest");
-		player.sendMessage(Colors.LightGreen
-				+ "/lwc create password - Create a password protected chest");
-		player.sendMessage(Colors.LightGreen
-				+ "/lwc create private - Create a private chest");
+		player.sendMessage(Colors.LightGreen + "/lwc create - View detailed info on chest types");
+		player.sendMessage(Colors.LightGreen + "/lwc create public - Create a public chest");
+		player.sendMessage(Colors.LightGreen + "/lwc create password - Create a password protected chest");
+		player.sendMessage(Colors.LightGreen + "/lwc create private - Create a private chest");
 
 		player.sendMessage("");
 
-		player.sendMessage(Colors.LightGreen
-				+ "/lwc modify - Modify a protected chest");
+		player.sendMessage(Colors.LightGreen + "/lwc modify - Modify a protected chest");
 
 		player.sendMessage("");
 
-		player.sendMessage(Colors.LightGreen
-				+ "/lwc free chest - Remove a protected chest");
-		player.sendMessage(Colors.LightGreen
-				+ "/lwc free modes - Remove temporary modes on you");
+		player.sendMessage(Colors.LightGreen + "/lwc free chest - Remove a protected chest");
+		player.sendMessage(Colors.LightGreen + "/lwc free modes - Remove temporary modes on you");
 
 		player.sendMessage("");
 
-		player.sendMessage(Colors.LightGreen
-				+ "/lwc persist - Allow use of 1 command multiple times");
+		player.sendMessage(Colors.LightGreen + "/lwc persist - Allow use of 1 command multiple times");
 
-		player.sendMessage(Colors.LightGreen
-				+ "/lwc unlock - Unlock a password protected chest");
+		player.sendMessage(Colors.LightGreen + "/lwc unlock - Unlock a password protected chest");
 
 		player.sendMessage("");
 
-		player.sendMessage(Colors.LightGreen
-				+ "/lwc info - View information on a protected chest");
+		player.sendMessage(Colors.LightGreen + "/lwc info - View information on a protected chest");
 
 		player.sendMessage("");
 
-		player.sendMessage(Colors.Red
-				+ "/lwc admin - (LWC ADMIN) Admin functions");
+		player.sendMessage(Colors.Red + "/lwc admin - (LWC ADMIN) Admin functions");
 	}
 
 	public void sendPendingRequest(Player player) {
-		player.sendMessage(Colors.Red
-				+ "You already have a pending chest request.");
+		player.sendMessage(Colors.Red + "You already have a pending chest request.");
 		player.sendMessage(Colors.Red + "To remove it, type /lwc free pending");
 	}
 
@@ -416,8 +380,7 @@ public class LWC extends Plugin {
 	 *            the hook to register
 	 * @priority the priority to use
 	 */
-	private void registerHook(PluginLoader.Hook hook,
-			PluginListener.Priority priority) {
+	private void registerHook(PluginLoader.Hook hook, PluginListener.Priority priority) {
 		log("LWCListener -> " + hook.toString());
 
 		etc.getLoader().addListener(hook, listener, this, priority);
