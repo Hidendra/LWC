@@ -35,7 +35,7 @@ public class LWCListener extends PluginListener {
 
 		List<Chest> chestSet = parent.getChestSet(block.getX(), block.getY(), block.getZ());
 		boolean hasAccess = true;
-		boolean canAdmin = false;
+		boolean canAdmin = true;
 		com.griefcraft.model.Chest chest_ = null;
 
 		for (final Chest chest : chestSet) {
