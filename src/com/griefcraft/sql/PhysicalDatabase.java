@@ -640,6 +640,26 @@ public class PhysicalDatabase extends Database {
 	}
 
 	/**
+	 * Free a chest from protection
+	 * 
+	 * @param chestID
+	 *            the chest ID
+	 */
+	public void unregisterChest(int x, int y, int z ) {
+		try {
+			final PreparedStatement statement = connection.prepareStatement("DELETE FROM `chests` WHERE `x` = ? AND `y` = ? AND `z` = ?");
+			statement.setInt(1, x);
+			statement.setInt(2, y);
+			statement.setInt(3, z);
+
+			statement.executeUpdate();
+			statement.close();
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * Unregister a limit
 	 * 
 	 * @param type

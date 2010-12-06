@@ -1,5 +1,7 @@
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.Formatter;
+import java.util.List;
 
 import com.griefcraft.model.ChestTypes;
 import com.griefcraft.model.RightTypes;
@@ -11,7 +13,7 @@ public class LWC extends Plugin {
 	/**
 	 * The version
 	 */
-	public static final double VERSION = 1.35;
+	public static final double VERSION = 1.36;
 
 	/**
 	 * The PluginListener
@@ -201,11 +203,10 @@ public class LWC extends Plugin {
 	 *            the z coordinate
 	 * @return the Chest[] array of chests
 	 */
-	public Chest[] getChestSet(int x, int y, int z) {
-		final Chest[] chests = new Chest[2];
-		int index = 0;
+	public List<Chest> getChestSet(int x, int y, int z) {
+		List<Chest> chests = new ArrayList<Chest>(2);
 
-		_main: for (int xD = -1; xD <= 1; xD++) {
+		for (int xD = -1; xD <= 1; xD++) {
 			for (int zD = -1; zD <= 1; zD++) {
 				final ComplexBlock block = etc.getServer().getComplexBlock(x + xD, y, z + zD);
 
@@ -216,12 +217,7 @@ public class LWC extends Plugin {
 				final Chest chest = (Chest) block;
 
 				if (chest != null) {
-					chests[index] = chest;
-					index++;
-				}
-
-				if (index > 1) {
-					break _main;
+					chests.add(chest);
 				}
 			}
 		}

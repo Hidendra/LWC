@@ -33,7 +33,7 @@ public class LWCListener extends PluginListener {
 			return false;
 		}
 
-		final Chest[] chestSet = parent.getChestSet(block.getX(), block.getY(), block.getZ());
+		List<Chest> chestSet = parent.getChestSet(block.getX(), block.getY(), block.getZ());
 		boolean hasAccess = true;
 		com.griefcraft.model.Chest chest_ = null;
 
@@ -53,7 +53,7 @@ public class LWCListener extends PluginListener {
 
 		if (hasAccess && chest_ != null) {
 			if (parent.canAdminChest(player, chest_)) {
-				PhysicalDatabase.getInstance().unregisterChest(chest_.getID());
+				PhysicalDatabase.getInstance().unregisterChest(chest_.getX(), chest_.getY(), chest_.getZ());
 				PhysicalDatabase.getInstance().unregisterAllRights(chest_.getID());
 				player.sendMessage(Colors.Red + "Chest unregistered.");
 			}
@@ -69,9 +69,10 @@ public class LWCListener extends PluginListener {
 			return false;
 		}
 
-		final Chest[] chestSet = parent.getChestSet(block.getX(), block.getY(), block.getZ());
+		List<Chest> chestSet = parent.getChestSet(block.getX(), block.getY(), block.getZ());
 		boolean hasAccess = true;
 		com.griefcraft.model.Chest chest_ = null;
+		boolean hasNoOwner = true;
 
 		for (final Chest chest : chestSet) {
 			if (chest == null) {
@@ -85,6 +86,8 @@ public class LWCListener extends PluginListener {
 			}
 
 			hasAccess = parent.canAccessChest(player, chest_);
+			hasNoOwner = false;
+			break;
 		}
 
 		if (block.getStatus() != 0) {
@@ -98,262 +101,250 @@ public class LWCListener extends PluginListener {
 		final boolean createChest = actions.contains("create");
 		final boolean modifyChest = actions.contains("modify");
 
-		boolean hasNoOwner = true;
-		chest_ = null;
+		if (chest_ != null) {
+			hasNoOwner = false;
 
-		for (final Chest chest : chestSet) {
-			if (chest == null) {
-				continue;
-			}
+			if (requestInfo) {
+				String players = "";
 
-			chest_ = PhysicalDatabase.getInstance().loadChest(chest.getX(), chest.getY(), chest.getZ());
+				List<String> sessionUsers;
 
-			if (chest_ != null) {
-				hasNoOwner = false;
+				if (chest_.getType() == ChestTypes.PASSWORD) {
+					sessionUsers = MemoryDatabase.getInstance().getSessionUsers(chest_.getID());
 
-				if (requestInfo) {
-					String players = "";
+					/*
+					 * Players authed to the chest are still in the game-- let's colour them their prefix!:D
+					 */
+					for (final String plr : sessionUsers) {
+						final Player player_ = etc.getServer().getPlayer(plr);
 
-					List<String> sessionUsers;
-
-					if (chest_.getType() == ChestTypes.PASSWORD) {
-						sessionUsers = MemoryDatabase.getInstance().getSessionUsers(chest_.getID());
-
-						/*
-						 * Players authed to the chest are still in the game-- let's colour them their prefix!:D
-						 */
-						for (final String plr : sessionUsers) {
-							final Player player_ = etc.getServer().getPlayer(plr);
-
-							if (player_ == null) {
-								continue;
-							}
-
-							players += player_.getColor() + plr + Colors.White + ", ";
+						if (player_ == null) {
+							continue;
 						}
 
-						if (sessionUsers.size() > 0) {
-							players = players.substring(0, players.length() - 4);
-						}
+						players += player_.getColor() + plr + Colors.White + ", ";
 					}
 
-					String type = " ";
-
-					switch (chest_.getType()) {
-					case ChestTypes.PUBLIC:
-						type = "Public";
-						break;
-					case ChestTypes.PASSWORD:
-						type = "Password";
-						break;
-					case ChestTypes.PRIVATE:
-						type = "Private";
-						break;
+					if (sessionUsers.size() > 0) {
+						players = players.substring(0, players.length() - 4);
 					}
-
-					boolean canAdmin = parent.canAdminChest(player, chest_);
-					// boolean canAccess = parent.canAccessChest(player,
-					// chest_);
-
-					if (canAdmin) {
-						player.sendMessage(Colors.Green + "ID: " + Colors.Gold + chest_.getID());
-					}
-
-					player.sendMessage(Colors.Green + "Type: " + Colors.Gold + type);
-					player.sendMessage(Colors.Green + "Owner: " + Colors.Gold + chest_.getOwner());
-
-					if (chest_.getType() == ChestTypes.PASSWORD && canAdmin) {
-						player.sendMessage(Colors.Green + "Authed players: " + players);
-					}
-
-					if (canAdmin) {
-						player.sendMessage(Colors.Green + "Location: " + Colors.Gold + "{" + chest_.getX() + ", " + chest_.getY() + ", " + chest_.getZ() + "}");
-						player.sendMessage(Colors.Green + "Date created: " + Colors.Gold + chest_.getDate());
-					}
-
-					if (parent.isInPersistentMode(player.getName())) {
-						MemoryDatabase.getInstance().unregisterAllActions(player.getName());
-					}
-					return false;
-				} else if (hasFreeRequest) {
-					if (parent.isAdmin(player) || chest_.getOwner().equals(player.getName())) {
-						player.sendMessage(Colors.LightGreen + "Removed lock on the chest succesfully!");
-						PhysicalDatabase.getInstance().unregisterChest(chest_.getID());
-						PhysicalDatabase.getInstance().unregisterAllRights(chest_.getID());
-						if (parent.isInPersistentMode(player.getName())) {
-							MemoryDatabase.getInstance().unregisterAllActions(player.getName());
-						}
-						return false;
-					} else {
-						player.sendMessage(Colors.Red + "You do not own that chest!");
-						if (parent.isInPersistentMode(player.getName())) {
-							MemoryDatabase.getInstance().unregisterAllActions(player.getName());
-						}
-						return true;
-					}
-				} else if (modifyChest) {
-					if (parent.canAdminChest(player, chest_)) {
-						final Action action = MemoryDatabase.getInstance().getAction("modify", player.getName());
-
-						final String defaultEntities = action.getData();
-						String[] entities = new String[0];
-
-						if (defaultEntities.length() > 0) {
-							entities = defaultEntities.split(" ");
-						}
-
-						if (parent.isInPersistentMode(player.getName())) {
-							MemoryDatabase.getInstance().unregisterAllActions(player.getName());
-						}
-
-						for (String entity : entities) {
-							boolean remove = false;
-							boolean isAdmin = false;
-							int chestType = RightTypes.PLAYER;
-
-							if (entity.startsWith("-")) {
-								remove = true;
-								entity = entity.substring(1);
-							}
-
-							if (entity.startsWith("@")) {
-								isAdmin = true;
-								entity = entity.substring(1);
-							}
-
-							if (entity.toLowerCase().startsWith("g:")) {
-								chestType = RightTypes.GROUP;
-								entity = entity.substring(2);
-							}
-
-							final int chestID = PhysicalDatabase.getInstance().loadChest(block.getX(), block.getY(), block.getZ()).getID();
-
-							if (!remove) {
-								PhysicalDatabase.getInstance().unregisterRights(chestID, entity);
-								PhysicalDatabase.getInstance().registerRights(chestID, entity, isAdmin ? 1 : 0, chestType);
-								player.sendMessage(Colors.LightGreen + "Registered rights for " + Colors.Gold + entity + Colors.Green + " " + (isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "") + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
-							} else {
-								PhysicalDatabase.getInstance().unregisterRights(chestID, entity);
-								player.sendMessage(Colors.LightGreen + "Removed rights for " + Colors.Gold + entity + Colors.Green + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
-							}
-						}
-
-						return false;
-					} else {
-						player.sendMessage(Colors.Red + "You do not own that chest!");
-						if (parent.isInPersistentMode(player.getName())) {
-							MemoryDatabase.getInstance().unregisterAllActions(player.getName());
-						}
-						return true;
-					}
-
 				}
 
-			}
+				String type = " ";
 
-			if (requestInfo || hasFreeRequest) {
-				player.sendMessage(Colors.Red + "Chest is unregistered");
+				switch (chest_.getType()) {
+				case ChestTypes.PUBLIC:
+					type = "Public";
+					break;
+				case ChestTypes.PASSWORD:
+					type = "Password";
+					break;
+				case ChestTypes.PRIVATE:
+					type = "Private";
+					break;
+				}
+
+				boolean canAdmin = parent.canAdminChest(player, chest_);
+				// boolean canAccess = parent.canAccessChest(player,
+				// chest_);
+
+				if (canAdmin) {
+					player.sendMessage(Colors.Green + "ID: " + Colors.Gold + chest_.getID());
+				}
+
+				player.sendMessage(Colors.Green + "Type: " + Colors.Gold + type);
+				player.sendMessage(Colors.Green + "Owner: " + Colors.Gold + chest_.getOwner());
+
+				if (chest_.getType() == ChestTypes.PASSWORD && canAdmin) {
+					player.sendMessage(Colors.Green + "Authed players: " + players);
+				}
+
+				if (canAdmin) {
+					player.sendMessage(Colors.Green + "Location: " + Colors.Gold + "{" + chest_.getX() + ", " + chest_.getY() + ", " + chest_.getZ() + "}");
+					player.sendMessage(Colors.Green + "Date created: " + Colors.Gold + chest_.getDate());
+				}
+
 				if (parent.isInPersistentMode(player.getName())) {
 					MemoryDatabase.getInstance().unregisterAllActions(player.getName());
 				}
 				return false;
-			}
-
-			if ((createChest || modifyChest) && !hasNoOwner) {
-				if (!parent.canAdminChest(player, chest_)) {
-					player.sendMessage(Colors.Red + "You do not own that chest!");
+			} else if (hasFreeRequest) {
+				if (parent.isAdmin(player) || chest_.getOwner().equals(player.getName())) {
+					player.sendMessage(Colors.LightGreen + "Removed lock on the chest succesfully!");
+					PhysicalDatabase.getInstance().unregisterChest(chest_.getX(), chest_.getY(), chest_.getZ());
+					PhysicalDatabase.getInstance().unregisterAllRights(chest_.getID());
+					if (parent.isInPersistentMode(player.getName())) {
+						MemoryDatabase.getInstance().unregisterAllActions(player.getName());
+					}
+					return false;
 				} else {
-					player.sendMessage(Colors.Red + "You have already registered that chest!");
-				}
-				if (parent.isInPersistentMode(player.getName())) {
-					MemoryDatabase.getInstance().unregisterAllActions(player.getName());
-				}
-				return true;
-			}
-
-			if (hasNoOwner) {
-				if (createChest) {
-
-					final Action action = MemoryDatabase.getInstance().getAction("create", player.getName());
-
-					final String data = action.getData();
-					final String[] chop = data.split(" ");
-					final String type = chop[0].toLowerCase();
-					String subset = "";
-
-					if (chop.length > 1) {
-						for (int i = 1; i < chop.length; i++) {
-							subset += chop[i] + " ";
-						}
+					player.sendMessage(Colors.Red + "You do not own that chest!");
+					if (parent.isInPersistentMode(player.getName())) {
+						MemoryDatabase.getInstance().unregisterAllActions(player.getName());
 					}
+					return true;
+				}
+			} else if (modifyChest) {
+				if (parent.canAdminChest(player, chest_)) {
+					final Action action = MemoryDatabase.getInstance().getAction("modify", player.getName());
 
-					if (parent.enforceChestLimits(player)) {
-						if (parent.isInPersistentMode(player.getName())) {
-							MemoryDatabase.getInstance().unregisterAllActions(player.getName());
-						}
-						return false;
-					}
+					final String defaultEntities = action.getData();
+					String[] entities = new String[0];
 
-					if (type.equals("public")) {
-						PhysicalDatabase.getInstance().registerChest(ChestTypes.PUBLIC, player.getName(), "", block.getX(), block.getY(), block.getZ());
-						player.sendMessage(Colors.Green + "Registered chest lock.");
-					} else if (type.equals("password")) {
-						String password = action.getData().substring("password ".length());
-						password = parent.encrypt(password);
-
-						PhysicalDatabase.getInstance().registerChest(ChestTypes.PASSWORD, player.getName(), password, block.getX(), block.getY(), block.getZ());
-						MemoryDatabase.getInstance().registerPlayer(player.getName(), PhysicalDatabase.getInstance().loadChest(block.getX(), block.getY(), block.getZ()).getID());
-						player.sendMessage(Colors.Green + "Registered chest lock.");
-
-						for (final Chest c : chestSet) {
-							if (c != null) {
-								c.update();
-							}
-						}
-
-					} else if (type.equals("private")) {
-						String defaultEntities = action.getData();
-						String[] entities = new String[0];
-
-						if (defaultEntities.length() > "private ".length()) {
-							defaultEntities = defaultEntities.substring("private ".length());
-							entities = defaultEntities.split(" ");
-						}
-
-						PhysicalDatabase.getInstance().registerChest(ChestTypes.PRIVATE, player.getName(), "", block.getX(), block.getY(), block.getZ());
-
-						player.sendMessage(Colors.Green + "Registered chest lock.");
-
-						for (String entity : entities) {
-							boolean isAdmin = false;
-							int chestType = RightTypes.PLAYER;
-
-							if (entity.startsWith("@")) {
-								isAdmin = true;
-								entity = entity.substring(1);
-							}
-
-							if (entity.toLowerCase().startsWith("g:")) {
-								chestType = RightTypes.GROUP;
-								entity = entity.substring(2);
-							}
-
-							PhysicalDatabase.getInstance().registerRights(PhysicalDatabase.getInstance().loadChest(block.getX(), block.getY(), block.getZ()).getID(), entity, isAdmin ? 1 : 0, chestType);
-							player.sendMessage(Colors.LightGreen + "Registered rights for " + Colors.Gold + entity + ": " + (isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "") + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
-						}
+					if (defaultEntities.length() > 0) {
+						entities = defaultEntities.split(" ");
 					}
 
 					if (parent.isInPersistentMode(player.getName())) {
 						MemoryDatabase.getInstance().unregisterAllActions(player.getName());
 					}
 
+					for (String entity : entities) {
+						boolean remove = false;
+						boolean isAdmin = false;
+						int chestType = RightTypes.PLAYER;
+
+						if (entity.startsWith("-")) {
+							remove = true;
+							entity = entity.substring(1);
+						}
+
+						if (entity.startsWith("@")) {
+							isAdmin = true;
+							entity = entity.substring(1);
+						}
+
+						if (entity.toLowerCase().startsWith("g:")) {
+							chestType = RightTypes.GROUP;
+							entity = entity.substring(2);
+						}
+
+						final int chestID = PhysicalDatabase.getInstance().loadChest(block.getX(), block.getY(), block.getZ()).getID();
+
+						if (!remove) {
+							PhysicalDatabase.getInstance().unregisterRights(chestID, entity);
+							PhysicalDatabase.getInstance().registerRights(chestID, entity, isAdmin ? 1 : 0, chestType);
+							player.sendMessage(Colors.LightGreen + "Registered rights for " + Colors.Gold + entity + Colors.Green + " " + (isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "") + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
+						} else {
+							PhysicalDatabase.getInstance().unregisterRights(chestID, entity);
+							player.sendMessage(Colors.LightGreen + "Removed rights for " + Colors.Gold + entity + Colors.Green + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
+						}
+					}
+
 					return false;
+				} else {
+					player.sendMessage(Colors.Red + "You do not own that chest!");
+					if (parent.isInPersistentMode(player.getName())) {
+						MemoryDatabase.getInstance().unregisterAllActions(player.getName());
+					}
+					return true;
 				}
 			}
 		}
 
+
+		if (requestInfo || hasFreeRequest) {
+			player.sendMessage(Colors.Red + "Chest is unregistered");
+			if (parent.isInPersistentMode(player.getName())) {
+				MemoryDatabase.getInstance().unregisterAllActions(player.getName());
+			}
+			return false;
+		}
+
+		if ((createChest || modifyChest) && !hasNoOwner) {
+			if (!parent.canAdminChest(player, chest_)) {
+				player.sendMessage(Colors.Red + "You do not own that chest!");
+			} else {
+				player.sendMessage(Colors.Red + "You have already registered that chest!");
+			}
+			if (parent.isInPersistentMode(player.getName())) {
+				MemoryDatabase.getInstance().unregisterAllActions(player.getName());
+			}
+			return true;
+		}
+
+		if (hasNoOwner) {
+			if (createChest) {
+
+				final Action action = MemoryDatabase.getInstance().getAction("create", player.getName());
+
+				final String data = action.getData();
+				final String[] chop = data.split(" ");
+				final String type = chop[0].toLowerCase();
+				String subset = "";
+
+				if (chop.length > 1) {
+					for (int i = 1; i < chop.length; i++) {
+						subset += chop[i] + " ";
+					}
+				}
+
+				if (parent.enforceChestLimits(player)) {
+					if (parent.isInPersistentMode(player.getName())) {
+						MemoryDatabase.getInstance().unregisterAllActions(player.getName());
+					}
+					return false;
+				}
+
+				if (type.equals("public")) {
+					PhysicalDatabase.getInstance().registerChest(ChestTypes.PUBLIC, player.getName(), "", block.getX(), block.getY(), block.getZ());
+					player.sendMessage(Colors.Green + "Registered chest lock.");
+				} else if (type.equals("password")) {
+					String password = action.getData().substring("password ".length());
+					password = parent.encrypt(password);
+
+					PhysicalDatabase.getInstance().registerChest(ChestTypes.PASSWORD, player.getName(), password, block.getX(), block.getY(), block.getZ());
+					MemoryDatabase.getInstance().registerPlayer(player.getName(), PhysicalDatabase.getInstance().loadChest(block.getX(), block.getY(), block.getZ()).getID());
+					player.sendMessage(Colors.Green + "Registered chest lock.");
+
+					for (final Chest c : chestSet) {
+						if (c != null) {
+							c.update();
+						}
+					}
+
+				} else if (type.equals("private")) {
+					String defaultEntities = action.getData();
+					String[] entities = new String[0];
+
+					if (defaultEntities.length() > "private ".length()) {
+						defaultEntities = defaultEntities.substring("private ".length());
+						entities = defaultEntities.split(" ");
+					}
+
+					PhysicalDatabase.getInstance().registerChest(ChestTypes.PRIVATE, player.getName(), "", block.getX(), block.getY(), block.getZ());
+
+					player.sendMessage(Colors.Green + "Registered chest lock.");
+
+					for (String entity : entities) {
+						boolean isAdmin = false;
+						int chestType = RightTypes.PLAYER;
+
+						if (entity.startsWith("@")) {
+							isAdmin = true;
+							entity = entity.substring(1);
+						}
+
+						if (entity.toLowerCase().startsWith("g:")) {
+							chestType = RightTypes.GROUP;
+							entity = entity.substring(2);
+						}
+
+						PhysicalDatabase.getInstance().registerRights(PhysicalDatabase.getInstance().loadChest(block.getX(), block.getY(), block.getZ()).getID(), entity, isAdmin ? 1 : 0, chestType);
+						player.sendMessage(Colors.LightGreen + "Registered rights for " + Colors.Gold + entity + ": " + (isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "") + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
+					}
+				}
+
+				if (parent.isInPersistentMode(player.getName())) {
+					MemoryDatabase.getInstance().unregisterAllActions(player.getName());
+				}
+
+				return false;
+			}
+		}
 		return !hasAccess;
 	}
+
 
 	// true = revert
 	@Override
@@ -366,7 +357,7 @@ public class LWCListener extends PluginListener {
 			return;
 		}
 
-		final Chest[] chestSet = parent.getChestSet(blockClicked.getX(), blockClicked.getY(), blockClicked.getZ());
+		List<Chest> chestSet = parent.getChestSet(blockClicked.getX(), blockClicked.getY(), blockClicked.getZ());
 		boolean hasAccess = true;
 
 		for (final Chest chest : chestSet) {
@@ -712,7 +703,7 @@ public class LWCListener extends PluginListener {
 			return false;
 		}
 
-		final Chest[] chestSet = parent.getChestSet(block.getX(), block.getY(), block.getZ());
+		List<Chest> chestSet = parent.getChestSet(block.getX(), block.getY(), block.getZ());
 		boolean hasAccess = true;
 
 		for (final Chest chest : chestSet) {
