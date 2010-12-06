@@ -13,7 +13,7 @@ public class LWC extends Plugin {
 	/**
 	 * The version
 	 */
-	public static final double VERSION = 1.36;
+	public static final double VERSION = 1.37;
 
 	/**
 	 * The PluginListener
@@ -106,7 +106,7 @@ public class LWC extends Plugin {
 			return player.getName().equalsIgnoreCase(chest.getOwner());
 
 		case ChestTypes.PASSWORD:
-			return player.getName().equalsIgnoreCase(chest.getOwner());
+			return player.getName().equalsIgnoreCase(chest.getOwner()) && MemoryDatabase.getInstance().hasAccess(player.getName(), chest);
 
 		case ChestTypes.PRIVATE:
 			final PhysicalDatabase instance = PhysicalDatabase.getInstance();

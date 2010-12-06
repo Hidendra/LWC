@@ -645,7 +645,7 @@ public class PhysicalDatabase extends Database {
 	 * @param chestID
 	 *            the chest ID
 	 */
-	public void unregisterChest(int x, int y, int z ) {
+	public void unregisterChest(int x, int y, int z) {
 		try {
 			final PreparedStatement statement = connection.prepareStatement("DELETE FROM `chests` WHERE `x` = ? AND `y` = ? AND `z` = ?");
 			statement.setInt(1, x);

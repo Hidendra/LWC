@@ -35,6 +35,7 @@ public class LWCListener extends PluginListener {
 
 		List<Chest> chestSet = parent.getChestSet(block.getX(), block.getY(), block.getZ());
 		boolean hasAccess = true;
+		boolean canAdmin = false;
 		com.griefcraft.model.Chest chest_ = null;
 
 		for (final Chest chest : chestSet) {
@@ -49,17 +50,18 @@ public class LWCListener extends PluginListener {
 			}
 
 			hasAccess = parent.canAccessChest(player, chest_);
+			canAdmin = parent.canAdminChest(player, chest_);
 		}
 
 		if (hasAccess && chest_ != null) {
-			if (parent.canAdminChest(player, chest_)) {
+			if (canAdmin) {
 				PhysicalDatabase.getInstance().unregisterChest(chest_.getX(), chest_.getY(), chest_.getZ());
 				PhysicalDatabase.getInstance().unregisterAllRights(chest_.getID());
 				player.sendMessage(Colors.Red + "Chest unregistered.");
 			}
 		}
 
-		return false;
+		return !canAdmin;
 	}
 
 	// true = revert
@@ -242,7 +244,6 @@ public class LWCListener extends PluginListener {
 			}
 		}
 
-
 		if (requestInfo || hasFreeRequest) {
 			player.sendMessage(Colors.Red + "Chest is unregistered");
 			if (parent.isInPersistentMode(player.getName())) {
@@ -339,12 +340,11 @@ public class LWCListener extends PluginListener {
 					MemoryDatabase.getInstance().unregisterAllActions(player.getName());
 				}
 
-				return false;
+				return !hasAccess;
 			}
 		}
 		return !hasAccess;
 	}
-
 
 	// true = revert
 	@Override
