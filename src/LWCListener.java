@@ -888,7 +888,7 @@ public class LWCListener extends PluginListener {
 					chest.setSlot(item.itemType, toStack.getAmount() + amtDelta, toStack.getSlot());
 					remainingAmt -= amtDelta;
 				} else {
-					chest.addItem(item);
+					chest.addItem(new Item(item.itemType.getId(), remainingAmt));
 					remainingAmt = 0;
 				}
 
