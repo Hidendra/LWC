@@ -239,6 +239,7 @@ public class LWC extends Plugin {
 		registerHook(PluginLoader.Hook.COMPLEX_BLOCK_CHANGE);
 		registerHook(PluginLoader.Hook.COMPLEX_BLOCK_SEND);
 		registerHook(PluginLoader.Hook.EXPLODE);
+		registerHook(PluginLoader.Hook.ITEM_DROP);
 	}
 
 	/**
@@ -257,9 +258,9 @@ public class LWC extends Plugin {
 	 * 
 	 * @param player
 	 *            the player to check
-	 * @return true if the player is in presistent mode
+	 * @return true if the player is NOT in persistent mode
 	 */
-	public boolean isInPersistentMode(String player) {
+	public boolean notInPersistentMode(String player) {
 		return !MemoryDatabase.getInstance().hasMode(player, "persist");
 	}
 

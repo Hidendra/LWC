@@ -102,6 +102,7 @@ public class LWCListener extends PluginListener {
 		final boolean requestInfo = actions.contains("info");
 		final boolean createChest = actions.contains("create");
 		final boolean modifyChest = actions.contains("modify");
+		final boolean dropTransferReg = actions.contains("dropTransferSelect");
 
 		if (chest_ != null) {
 			hasNoOwner = false;
@@ -166,22 +167,35 @@ public class LWCListener extends PluginListener {
 					player.sendMessage(Colors.Green + "Date created: " + Colors.Gold + chest_.getDate());
 				}
 
-				if (parent.isInPersistentMode(player.getName())) {
+				if (parent.notInPersistentMode(player.getName())) {
 					MemoryDatabase.getInstance().unregisterAllActions(player.getName());
 				}
+				return false;
+			} else if (dropTransferReg) {
+				final boolean canAccess = parent.canAccessChest(player, chest_);
+				if(!canAccess)
+				{
+					player.sendMessage(Colors.Red + "You cannot use a chest that you cannot access as a drop transfer target.");
+					player.sendMessage(Colors.Red + "If this is a passworded chest, please unlock it before retrying.");
+					player.sendMessage(Colors.Red + "Use \"/lwc droptransfer select\" to try again.");
+				} else {
+					MemoryDatabase.getInstance().registerDropTransfer(player.getName(), chest_.getID());
+					player.sendMessage(Colors.Green + "Successfully registered chest as drop transfer target.");
+				}
+				MemoryDatabase.getInstance().unregisterAllActions(player.getName()); // ignore persist
 				return false;
 			} else if (hasFreeRequest) {
 				if (parent.isAdmin(player) || chest_.getOwner().equals(player.getName())) {
 					player.sendMessage(Colors.LightGreen + "Removed lock on the chest succesfully!");
 					PhysicalDatabase.getInstance().unregisterChest(chest_.getX(), chest_.getY(), chest_.getZ());
 					PhysicalDatabase.getInstance().unregisterAllRights(chest_.getID());
-					if (parent.isInPersistentMode(player.getName())) {
+					if (parent.notInPersistentMode(player.getName())) {
 						MemoryDatabase.getInstance().unregisterAllActions(player.getName());
 					}
 					return false;
 				} else {
 					player.sendMessage(Colors.Red + "You do not own that chest!");
-					if (parent.isInPersistentMode(player.getName())) {
+					if (parent.notInPersistentMode(player.getName())) {
 						MemoryDatabase.getInstance().unregisterAllActions(player.getName());
 					}
 					return true;
@@ -197,7 +211,7 @@ public class LWCListener extends PluginListener {
 						entities = defaultEntities.split(" ");
 					}
 
-					if (parent.isInPersistentMode(player.getName())) {
+					if (parent.notInPersistentMode(player.getName())) {
 						MemoryDatabase.getInstance().unregisterAllActions(player.getName());
 					}
 
@@ -236,7 +250,7 @@ public class LWCListener extends PluginListener {
 					return false;
 				} else {
 					player.sendMessage(Colors.Red + "You do not own that chest!");
-					if (parent.isInPersistentMode(player.getName())) {
+					if (parent.notInPersistentMode(player.getName())) {
 						MemoryDatabase.getInstance().unregisterAllActions(player.getName());
 					}
 					return true;
@@ -244,9 +258,18 @@ public class LWCListener extends PluginListener {
 			}
 		}
 
+		if(dropTransferReg)
+		{
+			player.sendMessage(Colors.Red + "Cannot select unregistered chest as drop transfer target.");
+			player.sendMessage(Colors.Red + "Use \"/lwc droptransfer select\" to try again.");
+			MemoryDatabase.getInstance().unregisterAllActions(player.getName()); //ignore persist
+
+			return false;
+		}
+
 		if (requestInfo || hasFreeRequest) {
 			player.sendMessage(Colors.Red + "Chest is unregistered");
-			if (parent.isInPersistentMode(player.getName())) {
+			if (parent.notInPersistentMode(player.getName())) {
 				MemoryDatabase.getInstance().unregisterAllActions(player.getName());
 			}
 			return false;
@@ -258,7 +281,7 @@ public class LWCListener extends PluginListener {
 			} else {
 				player.sendMessage(Colors.Red + "You have already registered that chest!");
 			}
-			if (parent.isInPersistentMode(player.getName())) {
+			if (parent.notInPersistentMode(player.getName())) {
 				MemoryDatabase.getInstance().unregisterAllActions(player.getName());
 			}
 			return true;
@@ -281,7 +304,7 @@ public class LWCListener extends PluginListener {
 				}
 
 				if (parent.enforceChestLimits(player)) {
-					if (parent.isInPersistentMode(player.getName())) {
+					if (parent.notInPersistentMode(player.getName())) {
 						MemoryDatabase.getInstance().unregisterAllActions(player.getName());
 					}
 					return false;
@@ -336,7 +359,7 @@ public class LWCListener extends PluginListener {
 					}
 				}
 
-				if (parent.isInPersistentMode(player.getName())) {
+				if (parent.notInPersistentMode(player.getName())) {
 					MemoryDatabase.getInstance().unregisterAllActions(player.getName());
 				}
 
@@ -604,6 +627,67 @@ public class LWCListener extends PluginListener {
 				MemoryDatabase.getInstance().registerMode(player.getName(), "persist");
 				player.sendMessage(Colors.Green + "Mode activated.");
 				player.sendMessage(Colors.Green + "Type " + Colors.Gold + "/lwc free modes" + Colors.Green + " to undo (or logout)");
+			} else if (action.equals("droptransfer")) {
+				if (split.length < 3) {
+					player.sendMessage(Colors.Green + "LWC Drop Transfer");
+					player.sendMessage("");
+					player.sendMessage(Colors.LightGreen + "/lwc droptransfer select - Select a chest to drop transfer to");
+					player.sendMessage(Colors.LightGreen + "/lwc droptransfer on - Turn on drop transferring");
+					player.sendMessage(Colors.LightGreen + "/lwc droptransfer off - Turn off drop transferring");
+					player.sendMessage(Colors.LightGreen + "/lwc droptransfer status - Turn off drop transferring");
+					return true;
+				}
+
+				final String subAction = split[2].toLowerCase();
+				final String playerName = player.getName();
+				final MemoryDatabase md = MemoryDatabase.getInstance();
+
+				if(subAction.equals("select"))
+				{
+					if(md.isPlayerDropTransferActive(playerName))
+					{
+						player.sendMessage(Colors.Red + "Please turn off drop transfer before reselecting a chest.");
+						return true;
+					}
+
+					md.unregisterDropTransfer(playerName);
+					md.registerAction("dropTransferSelect", playerName, "");
+					player.sendMessage(Colors.Green + "Please left-click a registered chest to set as your transfer target.");
+				} else if(subAction.equals("on"))
+				{
+					if(md.getPlayerDropTransferTarget(playerName) == -1)
+					{
+						player.sendMessage(Colors.Red + "Please register a chest before turning drop transfer on.");
+						return true;
+					}
+
+					md.setPlayerDropTransferActive(playerName, true);
+					player.sendMessage(Colors.Green + "Drop transfer is now on.");
+					player.sendMessage(Colors.Green + "Any items dropped will be transferred to your chest.");
+				} else if(subAction.equals("off"))
+				{
+					if(md.getPlayerDropTransferTarget(playerName) == -1)
+					{
+						player.sendMessage(Colors.Red + "Please register a chest before turning drop transfer off.");
+						return true;
+					}
+
+					md.setPlayerDropTransferActive(playerName, false);
+					player.sendMessage(Colors.Green + "Drop transfer is now off.");
+				} else if(subAction.equals("status"))
+				{
+					if(md.getPlayerDropTransferTarget(playerName) == -1)
+					{
+						player.sendMessage(Colors.Green + "You have not registered a drop transfer target.");
+						return true;
+					} else {
+						if(md.isPlayerDropTransferActive(playerName))
+						{
+							player.sendMessage(Colors.Green + "Drop transfer is currently active.");
+						} else player.sendMessage(Colors.Green + "Drop transfer is currently inactive.");
+					}
+				}
+				return true;
 			} else if (action.equals("admin") && parent.isAdmin(player)) {
 
 				if (split.length < 3) {
@@ -729,6 +813,7 @@ public class LWCListener extends PluginListener {
 		MemoryDatabase.getInstance().unregisterUnlock(player.getName());
 		MemoryDatabase.getInstance().unregisterChest(player.getName());
 		MemoryDatabase.getInstance().unregisterAllActions(player.getName());
+		MemoryDatabase.getInstance().unregisterDropTransfer(player.getName());
 	}
 
 	// block.getStatus() , 1 = tnt, 2 = creeper
@@ -751,6 +836,71 @@ public class LWCListener extends PluginListener {
 	@Override
 	public boolean onSendComplexBlock(Player player, ComplexBlock block) {
 		return onComplexBlockChange(player, block);
+	}
+
+	@Override
+	public boolean onItemDrop(Player player, Item item) {
+		final MemoryDatabase md = MemoryDatabase.getInstance();
+		final String pn = player.getName();
+		final int targetId = md.getPlayerDropTransferTarget(pn);
+		if(targetId == -1 || !md.isPlayerDropTransferActive(pn))
+		{
+			return false;
+		}
+
+		if(!PhysicalDatabase.getInstance().doesChestExist(targetId))
+		{
+			player.sendMessage(Colors.Red + "Your drop transfer target was unregistered and/or destroyed.");
+			player.sendMessage(Colors.Red + "Please reregister a target. Drop transfer will be deactivated.");
+
+			md.unregisterDropTransfer(pn);
+			return false;
+		}
+		com.griefcraft.model.Chest chest_ = PhysicalDatabase.getInstance().loadChest(targetId);
+		if(chest_ == null)
+		{
+			player.sendMessage(Colors.Red + "An unknown error occured. Drop transfer will be deactivated.");
+			md.setPlayerDropTransferActive(pn, false);
+			return false;
+		}
+		if(!parent.canAccessChest(player, chest_))
+		{
+			player.sendMessage(Colors.Red + "You are unable to access your target chest anymore.");
+			player.sendMessage(Colors.Red + "Please reregister a target. Drop transfer will be deactivated.");
+
+			md.unregisterDropTransfer(pn);
+			return false;
+		}
+		List<Chest> chests = parent.getChestSet(chest_.getX(), chest_.getY(), chest_.getZ());
+		int remainingAmt = item.getAmount();
+
+		for(Chest chest : chests)
+		{
+			Item toStack = chest.getItemFromId(item.itemType, 63);
+			while((toStack != null || chest.getEmptySlot() != -1) && remainingAmt > 0)
+			{
+				if(toStack != null)
+				{
+					int amtDelta = Math.min(64 - toStack.getAmount(), item.getAmount());
+					chest.setSlot(item.itemType, toStack.getAmount() + amtDelta, toStack.getSlot());
+					remainingAmt -= amtDelta;
+				} else {
+					chest.addItem(item);
+					remainingAmt = 0;
+				}
+			}
+
+			if(remainingAmt == 0) break;
+		}
+
+		if(remainingAmt > 0)
+		{
+			player.sendMessage(Colors.Red + "Your chest is full. Drop transfer will be deactivated.");
+			player.sendMessage(Colors.Red + "Any remaining quantity that could not be stored will be returned.");
+			md.setPlayerDropTransferActive(pn, false);
+			player.getInventory().giveItem(item.itemType.getId(), remainingAmt);
+		}
+		return true;
 	}
 
 }

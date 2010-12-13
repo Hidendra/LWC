@@ -255,6 +255,34 @@ public class PhysicalDatabase extends Database {
 	}
 
 	/**
+	 * Get the amount of chests a player has
+	 *
+	 * @param user
+	 *            the player to check
+	 * @return the amount of chests they have locked
+	 */
+	public boolean doesChestExist(int chestID) {
+		boolean retur = false;
+
+		try {
+			final PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) AS count FROM `chests` WHERE `id` = ?");
+			statement.setInt(1, chestID);
+
+			final ResultSet set = statement.executeQuery();
+
+			retur = set.getInt("count") > 0;
+
+			statement.close();
+
+
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+
+		return retur;
+	}
+
+	/**
 	 * @return the number of limits
 	 */
 	public int limitCount() {
