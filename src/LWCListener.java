@@ -452,6 +452,9 @@ public class LWCListener extends PluginListener {
 			String password = subCommand;
 
 			return onCommand(player, ("/lwc create password " + password).split(" "));
+		} else if (command.equalsIgnoreCase("dropxfer"))
+		{
+			return onCommand(player, ("/lwc droptransfer " + subCommand).split(" "));
 		}
 
 		if (!player.canUseCommand(split[0])) {
@@ -876,8 +879,8 @@ public class LWCListener extends PluginListener {
 
 		for(Chest chest : chests)
 		{
-			Item toStack = chest.getItemFromId(item.itemType, 63);
-			while((toStack != null || chest.getEmptySlot() != -1) && remainingAmt > 0)
+			Item toStack;
+			while(((toStack = chest.getItemFromId(item.itemType.getId(), 63)) != null || chest.getEmptySlot() != -1) && remainingAmt > 0)
 			{
 				if(toStack != null)
 				{
@@ -888,7 +891,10 @@ public class LWCListener extends PluginListener {
 					chest.addItem(item);
 					remainingAmt = 0;
 				}
+
 			}
+
+			chest.update();
 
 			if(remainingAmt == 0) break;
 		}
@@ -899,6 +905,7 @@ public class LWCListener extends PluginListener {
 			player.sendMessage(Colors.Red + "Any remaining quantity that could not be stored will be returned.");
 			md.setPlayerDropTransferActive(pn, false);
 			player.getInventory().giveItem(item.itemType.getId(), remainingAmt);
+			player.getInventory().updateInventory();
 		}
 		return true;
 	}

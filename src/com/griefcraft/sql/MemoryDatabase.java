@@ -237,7 +237,7 @@ public class MemoryDatabase extends Database {
 
 			final ResultSet set = statement.executeQuery();
 
-			while (set.next()) {
+			while (!set.isClosed() && set.next()) {
 				final String player = set.getString("user");
 				dropTransferringUsers.add(player);
 			}
@@ -261,7 +261,7 @@ public class MemoryDatabase extends Database {
 			statement.setString(1, user);
 
 			final ResultSet set = statement.executeQuery();
-			return set.getInt("chestid");
+			return set.isClosed() ? -1 : set.getInt("chestid");
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -397,7 +397,7 @@ public class MemoryDatabase extends Database {
 			statement.setString(1, player);
 
 			final ResultSet set = statement.executeQuery();
-			return set.getBoolean("active");
+			return set.isClosed() ? false : set.getBoolean("active");
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}

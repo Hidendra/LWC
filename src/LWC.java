@@ -318,6 +318,10 @@ public class LWC extends Plugin {
 
 		player.sendMessage("");
 
+		player.sendMessage(Colors.LightGreen + "/lwc droptransfer - View Drop Transfer help");
+
+		player.sendMessage("");
+
 		player.sendMessage(Colors.Red + "/lwc admin - (LWC ADMIN) Admin functions");
 	}
 
