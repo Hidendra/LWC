@@ -264,6 +264,23 @@ public class LWC extends Plugin {
 		return !MemoryDatabase.getInstance().hasMode(player, "persist");
 	}
 
+	public int getPlayerDropTransferTarget(String player) {
+		if (playerIsDropTransferring(player)) {
+			String rawTarget = MemoryDatabase.getInstance().getModeData(player, "dropTransfer");
+			try {
+				int ret = Integer.parseInt(rawTarget.substring(1));
+				return ret;
+			} catch (final Throwable t) {
+			}
+		}
+		return -1;
+	}
+
+	public boolean playerIsDropTransferring(String player)
+	{
+		return MemoryDatabase.getInstance().hasMode(player, "dropTransfer") && MemoryDatabase.getInstance().getModeData(player, "dropTransfer").startsWith("t");
+	}
+
 	/**
 	 * Check if a player can do mod functions on LWC
 	 * 

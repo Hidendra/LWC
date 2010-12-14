@@ -188,6 +188,25 @@ public class MemoryDatabase extends Database {
 		return modes;
 	}
 
+	public String getModeData(String player, String mode)
+	{
+		String ret = null;
+		try {
+			final PreparedStatement statement = connection.prepareStatement("SELECT `data` from `modes` WHERE `player` = ? AND `mode` = ?");
+			statement.setString(1, player);
+			statement.setString(2, mode);
+
+			final ResultSet set = statement.executeQuery();
+			if(set.next()) {
+				ret = set.getString("data");
+			}
+			statement.close();
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+		return ret;
+	}
+
 	/**
 	 * Get all of the users "logged in" to a chest
 	 * 
@@ -375,7 +394,8 @@ public class MemoryDatabase extends Database {
 			log("Creating memory table 'modes'");
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'modes' (" + "id INTEGER PRIMARY KEY," //
 					+ "player TEXT," //
-					+ "mode TEXT" //
+					+ "mode TEXT," //
+					+ "data TEXT" //
 					+ ");");
 
 			/**
@@ -512,6 +532,29 @@ public class MemoryDatabase extends Database {
 			final PreparedStatement statement = connection.prepareStatement("INSERT INTO `modes` (player, mode) VALUES (?, ?)");
 			statement.setString(1, player);
 			statement.setString(2, mode);
+
+			statement.executeUpdate();
+			statement.close();
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * Register a mode with data to a player (temporary)
+	 *
+	 * @param player
+	 *            the player to register the mode to
+	 * @param mode
+	 *            the mode to register
+	 * @param data
+	 *			  additional data
+	 */
+	public void registerMode(String player, String mode, String data) {
+		try {
+			final PreparedStatement statement = connection.prepareStatement("INSERT INTO `modes` (player, mode, data) VALUES (?, ?, ?)");
+			statement.setString(1, player);
+			statement.setString(2, mode);
+			statement.setString(3, data);
 
 			statement.executeUpdate();
 			statement.close();
