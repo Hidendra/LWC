@@ -666,7 +666,7 @@ public class LWCListener extends PluginListener {
 					}
 
 					md.unregisterMode(playerName, "dropTransfer");
-					md.registerMode(playerName, action, "t" + target);
+					md.registerMode(playerName, "dropTransfer", "t" + target);
 					player.sendMessage(Colors.Green + "Drop transfer is now on.");
 					player.sendMessage(Colors.Green + "Any items dropped will be transferred to your chest.");
 				} else if(subAction.equals("off"))
@@ -679,7 +679,7 @@ public class LWCListener extends PluginListener {
 					}
 
 					md.unregisterMode(playerName, "dropTransfer");
-					md.registerMode(playerName, action, "f" + target);
+					md.registerMode(playerName, "dropTransfer", "f" + target);
 					player.sendMessage(Colors.Green + "Drop transfer is now off.");
 				} else if(subAction.equals("status"))
 				{
