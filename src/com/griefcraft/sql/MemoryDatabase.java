@@ -228,46 +228,6 @@ public class MemoryDatabase extends Database {
 		return getActionID("unlock", player);
 	}
 
-	public List<String> getAllPlayersDropTransferring(int chestID)
-	{
-		final List<String> dropTransferringUsers = new ArrayList<String>();
-		try {
-			final PreparedStatement statement = connection.prepareStatement("SELECT `user` FROM `dropTransfer` WHERE `chestid` = ?");
-			statement.setInt(1, chestID);
-
-			final ResultSet set = statement.executeQuery();
-
-			while (!set.isClosed() && set.next()) {
-				final String player = set.getString("user");
-				dropTransferringUsers.add(player);
-			}
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		return dropTransferringUsers;
-	}
-
-	/**
-	 * Get the drop transfer target of a user
-	 *
-	 * @param user
-	 *			the player whose drop transfer target to look up
-	 * @return the chest ID of the drop transfer target, or -1 if none is registered
-	 */
-	public int getPlayerDropTransferTarget(String user)
-	{
-		try {
-			final PreparedStatement statement = connection.prepareStatement("SELECT `chestid` FROM `dropTransfer` WHERE `user` = ?");
-			statement.setString(1, user);
-
-			final ResultSet set = statement.executeQuery();
-			return set.isClosed() ? -1 : set.getInt("chestid");
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		return -1;
-	}
-
 	/**
 	 * Check if a player has an active chest session
 	 * 
@@ -384,28 +344,6 @@ public class MemoryDatabase extends Database {
 	}
 
 	/**
-	 * Check if a player has activated drop transfer
-	 *
-	 * @param player
-	 *			the player to check
-	 * @return true if the player has activated drop transfer
-	 */
-	public boolean isPlayerDropTransferActive(String player)
-	{
-		try {
-			final PreparedStatement statement = connection.prepareStatement("SELECT `active` FROM `dropTransfer` WHERE `user` = ?");
-			statement.setString(1, player);
-
-			final ResultSet set = statement.executeQuery();
-			return set.isClosed() ? false : set.getBoolean("active");
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-
-		return false;
-	}
-
-	/**
 	 * create the in-memory table which hold sessions, users that have activated a chest. Not needed past a restart, so no need for extra disk i/o
 	 */
 	@Override
@@ -438,14 +376,6 @@ public class MemoryDatabase extends Database {
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'modes' (" + "id INTEGER PRIMARY KEY," //
 					+ "player TEXT," //
 					+ "mode TEXT" //
-					+ ");");
-
-
-			log("Creating physical table 'dropTransfer'");
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'dropTransfer' ("
-					+ "user TEXT PRIMARY KEY NOT NULL," //
-					+ "chestid INTEGER NOT NULL," //
-					+ "active INTEGER NOT NULL DEFAULT 0" //
 					+ ");");
 
 			/**
@@ -591,27 +521,6 @@ public class MemoryDatabase extends Database {
 	}
 
 	/**
-	 * Register a drop transfer chest
-	 *
-	 * @param player
-	 *            the player that is registering the drop transfer target
-	 * @param chestID
-	 *            the ID of the drop transfer target chest
-	 */
-	public void registerDropTransfer(String player, int chestID) {
-		try {
-			final PreparedStatement statement = connection.prepareStatement("INSERT INTO `dropTransfer` (user, chestid) VALUES (?, ?)");
-			statement.setString(1, player);
-			statement.setInt(2, chestID);
-
-			statement.executeUpdate();
-			statement.close();
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
 	 * Add a player to be allowed to access a chest
 	 * 
 	 * @param player
@@ -642,28 +551,6 @@ public class MemoryDatabase extends Database {
 	 */
 	public void registerUnlock(String player, int chestID) {
 		registerAction("unlock", player, chestID);
-	}
-
-	/**
-	 * Set whether a player has drop transfer active or not
-	 *
-	 * @param player
-	 *			the player to set drop transfer
-	 * @param active
-	 *			true if drop transfer is active
-	 */
-	public void setPlayerDropTransferActive(String player, boolean active)
-	{
-		try {
-			final PreparedStatement statement = connection.prepareStatement("UPDATE `dropTransfer` SET `active` = ? WHERE `user` = ?");
-			statement.setBoolean(1, active);
-			statement.setString(2, player);
-
-			statement.executeUpdate();
-			statement.close();
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -823,41 +710,4 @@ public class MemoryDatabase extends Database {
 		unregisterAction("unlock", player);
 	}
 
-	/**
-	 * Unregisters all drop transfers with the specified chest ID
-	 *
-	 * @param chestID
-	 *			the chest ID whose drop transfers to unregister
-	 */
-	public void unregisterAllDropTransfer(int chestID)
-	{
-		try {
-			final PreparedStatement statement = connection.prepareStatement("DELETE FROM `dropTransfer` WHERE `chestid` = ?");
-			statement.setInt(1, chestID);
-
-			statement.executeUpdate();
-			statement.close();
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Unregisters the player's drop transfer target
-	 *
-	 * @param player
-	 *			the player whose drop transfer target to unregister
-	 */
-	public void unregisterDropTransfer(String player)
-	{
-		try {
-			final PreparedStatement statement = connection.prepareStatement("DELETE FROM `dropTransfer` WHERE `user` = ?");
-			statement.setString(1, player);
-
-			statement.executeUpdate();
-			statement.close();
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-	}
 }
