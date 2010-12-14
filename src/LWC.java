@@ -265,14 +265,13 @@ public class LWC extends Plugin {
 	}
 
 	public int getPlayerDropTransferTarget(String player) {
-		if (playerIsDropTransferring(player)) {
-			String rawTarget = MemoryDatabase.getInstance().getModeData(player, "dropTransfer");
-			try {
-				int ret = Integer.parseInt(rawTarget.substring(1));
-				return ret;
-			} catch (final Throwable t) {
-			}
+		String rawTarget = MemoryDatabase.getInstance().getModeData(player, "dropTransfer");
+		try {
+			int ret = Integer.parseInt(rawTarget.substring(1));
+			return ret;
+		} catch (final Throwable t) {
 		}
+
 		return -1;
 	}
 
