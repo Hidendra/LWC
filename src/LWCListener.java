@@ -884,15 +884,15 @@ public class LWCListener extends PluginListener {
 		for(Chest chest : chests)
 		{
 			Item toStack;
-			while(((toStack = chest.getItemFromId(item.itemType.getId(), 63)) != null || chest.getEmptySlot() != -1) && remainingAmt > 0)
+			while(((toStack = chest.getItemFromId(item.getItemId(), 63)) != null || chest.getEmptySlot() != -1) && remainingAmt > 0)
 			{
 				if(toStack != null)
 				{
 					int amtDelta = Math.min(64 - toStack.getAmount(), item.getAmount());
-					chest.setSlot(item.itemType, toStack.getAmount() + amtDelta, toStack.getSlot());
+					chest.setSlot(item.getItemId(), toStack.getAmount() + amtDelta, toStack.getSlot());
 					remainingAmt -= amtDelta;
 				} else {
-					chest.addItem(new Item(item.itemType.getId(), remainingAmt));
+					chest.addItem(new Item(item.getItemId(), remainingAmt));
 					remainingAmt = 0;
 				}
 
@@ -909,7 +909,7 @@ public class LWCListener extends PluginListener {
 			player.sendMessage(Colors.Red + "Any remaining quantity that could not be stored will be returned.");
 			md.unregisterMode(pn, "dropTransfer");
 			md.registerMode(pn, "dropTransfer", "f" + targetId);
-			player.getInventory().giveItem(item.itemType.getId(), remainingAmt);
+			player.getInventory().giveItem(item.getItemId(), remainingAmt);
 			player.getInventory().updateInventory();
 		}
 		return true;

@@ -188,6 +188,13 @@ public class MemoryDatabase extends Database {
 		return modes;
 	}
 
+	/**
+	 * Get the mode data for a player's mode
+	 * 
+	 * @param player
+	 * @param mode
+	 * @return
+	 */
 	public String getModeData(String player, String mode)
 	{
 		String ret = null;
