@@ -1,3 +1,20 @@
+/*******************************************************************************
+ * This file is part of LWC, https://github.com/Hidendra/LWC
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+
 package com.griefcraft.sql;
 
 import java.sql.PreparedStatement;
@@ -159,6 +176,31 @@ public class MemoryDatabase extends Database {
 	}
 
 	/**
+	 * Get the mode data for a player's mode
+	 * 
+	 * @param player
+	 * @param mode
+	 * @return
+	 */
+	public String getModeData(String player, String mode) {
+		String ret = null;
+		try {
+			final PreparedStatement statement = connection.prepareStatement("SELECT `data` from `modes` WHERE `player` = ? AND `mode` = ?");
+			statement.setString(1, player);
+			statement.setString(2, mode);
+
+			final ResultSet set = statement.executeQuery();
+			if (set.next()) {
+				ret = set.getString("data");
+			}
+			statement.close();
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+		return ret;
+	}
+
+	/**
 	 * Get the modes a player has activated
 	 * 
 	 * @param player
@@ -186,32 +228,6 @@ public class MemoryDatabase extends Database {
 		}
 
 		return modes;
-	}
-
-	/**
-	 * Get the mode data for a player's mode
-	 * 
-	 * @param player
-	 * @param mode
-	 * @return
-	 */
-	public String getModeData(String player, String mode)
-	{
-		String ret = null;
-		try {
-			final PreparedStatement statement = connection.prepareStatement("SELECT `data` from `modes` WHERE `player` = ? AND `mode` = ?");
-			statement.setString(1, player);
-			statement.setString(2, mode);
-
-			final ResultSet set = statement.executeQuery();
-			if(set.next()) {
-				ret = set.getString("data");
-			}
-			statement.close();
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		return ret;
 	}
 
 	/**
@@ -370,7 +386,8 @@ public class MemoryDatabase extends Database {
 	}
 
 	/**
-	 * create the in-memory table which hold sessions, users that have activated a chest. Not needed past a restart, so no need for extra disk i/o
+	 * create the in-memory table which hold sessions, users that have activated
+	 * a chest. Not needed past a restart, so no need for extra disk i/o
 	 */
 	@Override
 	public void load() {
@@ -385,7 +402,8 @@ public class MemoryDatabase extends Database {
 					+ "chest INTEGER" + ");"); //
 
 			log("Creating memory table 'locks'");
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'locks' (" + "id INTEGER PRIMARY KEY," //
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'locks' ("
+					+ "id INTEGER PRIMARY KEY," //
 					+ "player TEXT," //
 					+ "password TEXT" + ");"); //
 
@@ -399,7 +417,8 @@ public class MemoryDatabase extends Database {
 					+ ");"); //
 
 			log("Creating memory table 'modes'");
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'modes' (" + "id INTEGER PRIMARY KEY," //
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'modes' ("
+					+ "id INTEGER PRIMARY KEY," //
 					+ "player TEXT," //
 					+ "mode TEXT," //
 					+ "data TEXT" //
@@ -546,15 +565,16 @@ public class MemoryDatabase extends Database {
 			e.printStackTrace();
 		}
 	}
+
 	/**
 	 * Register a mode with data to a player (temporary)
-	 *
+	 * 
 	 * @param player
 	 *            the player to register the mode to
 	 * @param mode
 	 *            the mode to register
 	 * @param data
-	 *			  additional data
+	 *            additional data
 	 */
 	public void registerMode(String player, String mode, String data) {
 		try {

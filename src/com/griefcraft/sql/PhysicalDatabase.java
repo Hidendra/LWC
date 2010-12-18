@@ -1,3 +1,20 @@
+/*******************************************************************************
+ * This file is part of LWC, https://github.com/Hidendra/LWC
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+
 package com.griefcraft.sql;
 
 import java.sql.PreparedStatement;
@@ -18,11 +35,6 @@ public class PhysicalDatabase extends Database {
 	private static PhysicalDatabase instance;
 
 	/**
-	 * If the database was already loaded
-	 */
-	private boolean loaded = false;
-
-	/**
 	 * @return an instance of Database
 	 */
 	public static PhysicalDatabase getInstance() {
@@ -32,6 +44,11 @@ public class PhysicalDatabase extends Database {
 
 		return instance;
 	}
+
+	/**
+	 * If the database was already loaded
+	 */
+	private boolean loaded = false;
 
 	/**
 	 * @return the number of protected chests
@@ -53,6 +70,33 @@ public class PhysicalDatabase extends Database {
 		}
 
 		return count;
+	}
+
+	/**
+	 * Get the amount of chests a player has
+	 * 
+	 * @param user
+	 *            the player to check
+	 * @return the amount of chests they have locked
+	 */
+	public boolean doesChestExist(int chestID) {
+		boolean retur = false;
+
+		try {
+			final PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) AS count FROM `chests` WHERE `id` = ?");
+			statement.setInt(1, chestID);
+
+			final ResultSet set = statement.executeQuery();
+
+			retur = set.getInt("count") > 0;
+
+			statement.close();
+
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+
+		return retur;
 	}
 
 	/**
@@ -206,7 +250,8 @@ public class PhysicalDatabase extends Database {
 	}
 
 	/**
-	 * Get the access level of a player to a chest -1 = no access 0 = normal access 1 = chest admin
+	 * Get the access level of a player to a chest -1 = no access 0 = normal
+	 * access 1 = chest admin
 	 * 
 	 * @param player
 	 *            the player to check
@@ -252,34 +297,6 @@ public class PhysicalDatabase extends Database {
 	 */
 	public int getUserLimit(String user) {
 		return getLimit(1, user);
-	}
-
-	/**
-	 * Get the amount of chests a player has
-	 *
-	 * @param user
-	 *            the player to check
-	 * @return the amount of chests they have locked
-	 */
-	public boolean doesChestExist(int chestID) {
-		boolean retur = false;
-
-		try {
-			final PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) AS count FROM `chests` WHERE `id` = ?");
-			statement.setInt(1, chestID);
-
-			final ResultSet set = statement.executeQuery();
-
-			retur = set.getInt("count") > 0;
-
-			statement.close();
-
-
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-
-		return retur;
 	}
 
 	/**
@@ -337,7 +354,8 @@ public class PhysicalDatabase extends Database {
 					+ ");");
 
 			log("Creating physical table 'rights' (If it's not there!)");
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'rights' (" + "id INTEGER PRIMARY KEY," //
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'rights' ("
+					+ "id INTEGER PRIMARY KEY," //
 					+ "chest INTEGER," //
 					+ "entity TEXT," //
 					+ "rights INTEGER," //
@@ -353,64 +371,6 @@ public class PhysicalDatabase extends Database {
 		doUpdate103();
 
 		loaded = true;
-	}
-
-	/**
-	 * Load the first chest within a block's radius
-	 * 
-	 * @param x
-	 *            the block's x coordinate
-	 * @param y
-	 *            the block's y coordinate
-	 * @param z
-	 *            the block's z coordinate
-	 * @param radius
-	 *            the radius to search
-	 * @return the Chest found , null otherwise
-	 */
-	public List<Chest> loadChests(int _x, int _y, int _z, int radius) {
-		List<Chest> chests = new ArrayList<Chest>();
-
-		try {
-			PreparedStatement statement = connection.prepareStatement("SELECT * FROM `chests` WHERE x >= ? AND x <= ? AND y >= ? AND y <= ? AND z >= ? AND z <= ?");
-			statement.setInt(1, _x - radius);
-			statement.setInt(2, _x + radius);
-			statement.setInt(3, _y - radius);
-			statement.setInt(4, _y + radius);
-			statement.setInt(5, _z - radius);
-			statement.setInt(6, _z + radius);
-
-			final ResultSet set = statement.executeQuery();
-
-			while (set.next()) {
-				final int id = set.getInt("id");
-				final int type = set.getInt("type");
-				final String owner = set.getString("owner");
-				final String password = set.getString("password");
-				int x = set.getInt("x");
-				int y = set.getInt("y");
-				int z = set.getInt("z");
-				final String date = set.getString("date");
-
-				final Chest chest = new Chest();
-				chest.setID(id);
-				chest.setType(type);
-				chest.setOwner(owner);
-				chest.setPassword(password);
-				chest.setX(x);
-				chest.setY(y);
-				chest.setZ(z);
-				chest.setDate(date);
-
-				chests.add(chest);
-			}
-
-			statement.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return chests;
 	}
 
 	/**
@@ -507,6 +467,64 @@ public class PhysicalDatabase extends Database {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Load the first chest within a block's radius
+	 * 
+	 * @param x
+	 *            the block's x coordinate
+	 * @param y
+	 *            the block's y coordinate
+	 * @param z
+	 *            the block's z coordinate
+	 * @param radius
+	 *            the radius to search
+	 * @return the Chest found , null otherwise
+	 */
+	public List<Chest> loadChests(int _x, int _y, int _z, int radius) {
+		List<Chest> chests = new ArrayList<Chest>();
+
+		try {
+			PreparedStatement statement = connection.prepareStatement("SELECT * FROM `chests` WHERE x >= ? AND x <= ? AND y >= ? AND y <= ? AND z >= ? AND z <= ?");
+			statement.setInt(1, _x - radius);
+			statement.setInt(2, _x + radius);
+			statement.setInt(3, _y - radius);
+			statement.setInt(4, _y + radius);
+			statement.setInt(5, _z - radius);
+			statement.setInt(6, _z + radius);
+
+			final ResultSet set = statement.executeQuery();
+
+			while (set.next()) {
+				final int id = set.getInt("id");
+				final int type = set.getInt("type");
+				final String owner = set.getString("owner");
+				final String password = set.getString("password");
+				int x = set.getInt("x");
+				int y = set.getInt("y");
+				int z = set.getInt("z");
+				final String date = set.getString("date");
+
+				final Chest chest = new Chest();
+				chest.setID(id);
+				chest.setType(type);
+				chest.setOwner(owner);
+				chest.setPassword(password);
+				chest.setX(x);
+				chest.setY(y);
+				chest.setZ(z);
+				chest.setDate(date);
+
+				chests.add(chest);
+			}
+
+			statement.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return chests;
 	}
 
 	/**
