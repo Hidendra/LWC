@@ -21,6 +21,21 @@ public class LWC extends Plugin {
 	private LWCListener listener;
 
 	/**
+	 * Convert a byte array to hex
+	 * 
+	 * @param hash
+	 *            the hash to convert
+	 * @return the converted hash
+	 */
+	private String byteArray2Hex(byte[] hash) {
+		final Formatter formatter = new Formatter();
+		for (final byte b : hash) {
+			formatter.format("%02x", b);
+		}
+		return formatter.toString();
+	}
+
+	/**
 	 * Check if a player can access a chest
 	 * 
 	 * @param player
@@ -59,7 +74,9 @@ public class LWC extends Plugin {
 
 		case ChestTypes.PRIVATE:
 			final PhysicalDatabase instance = PhysicalDatabase.getInstance();
-			return player.getName().equalsIgnoreCase(chest.getOwner()) || instance.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) != -1 || instance.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) != -1;
+			return player.getName().equalsIgnoreCase(chest.getOwner())
+					|| instance.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) != -1
+					|| instance.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) != -1;
 
 		default:
 			return false;
@@ -106,11 +123,14 @@ public class LWC extends Plugin {
 			return player.getName().equalsIgnoreCase(chest.getOwner());
 
 		case ChestTypes.PASSWORD:
-			return player.getName().equalsIgnoreCase(chest.getOwner()) && MemoryDatabase.getInstance().hasAccess(player.getName(), chest);
+			return player.getName().equalsIgnoreCase(chest.getOwner())
+					&& MemoryDatabase.getInstance().hasAccess(player.getName(), chest);
 
 		case ChestTypes.PRIVATE:
 			final PhysicalDatabase instance = PhysicalDatabase.getInstance();
-			return player.getName().equalsIgnoreCase(chest.getOwner()) || instance.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) == 1 || instance.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) == 1;
+			return player.getName().equalsIgnoreCase(chest.getOwner())
+					|| instance.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) == 1
+					|| instance.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) == 1;
 
 		default:
 			return false;
@@ -124,11 +144,13 @@ public class LWC extends Plugin {
 
 	@Override
 	public void enable() {
-		log("Physical db location: " + PhysicalDatabase.getInstance().getDatabasePath());
+		log("Physical db location: "
+				+ PhysicalDatabase.getInstance().getDatabasePath());
 
 		log("Opening sqlite databases (1 Physical & 1 Memory)");
 
-		final boolean connected = PhysicalDatabase.getInstance().connect() && MemoryDatabase.getInstance().connect();
+		final boolean connected = PhysicalDatabase.getInstance().connect()
+				&& MemoryDatabase.getInstance().connect();
 
 		if (!connected) {
 			log("Failed to open sqlite databases");
@@ -157,7 +179,8 @@ public class LWC extends Plugin {
 	}
 
 	/**
-	 * Check for chest limits on a given player and return true if they are limited
+	 * Check for chest limits on a given player and return true if they are
+	 * limited
 	 * 
 	 * @param player
 	 *            the player to check
@@ -173,17 +196,20 @@ public class LWC extends Plugin {
 			final int chests = PhysicalDatabase.getInstance().getChestCount(player.getName());
 
 			if (chests >= userLimit) {
-				player.sendMessage(Colors.Red + "You have exceeded the amount of chests you can lock!");
+				player.sendMessage(Colors.Red
+						+ "You have exceeded the amount of chests you can lock!");
 				return true;
 			}
 		} else {
-			final int groupLimit = PhysicalDatabase.getInstance().getGroupLimit(player.getGroups().length > 0 ? player.getGroups()[0] : "default");
+			final int groupLimit = PhysicalDatabase.getInstance().getGroupLimit(player.getGroups().length > 0 ? player.getGroups()[0]
+					: "default");
 
 			if (groupLimit != -1) {
 				final int chests = PhysicalDatabase.getInstance().getChestCount(player.getName());
 
 				if (chests >= groupLimit) {
-					player.sendMessage(Colors.Red + "You have exceeded the amount of chests you can lock!");
+					player.sendMessage(Colors.Red
+							+ "You have exceeded the amount of chests you can lock!");
 					return true;
 				}
 			}
@@ -208,7 +234,8 @@ public class LWC extends Plugin {
 
 		for (int xD = -1; xD <= 1; xD++) {
 			for (int zD = -1; zD <= 1; zD++) {
-				final ComplexBlock block = etc.getServer().getComplexBlock(x + xD, y, z + zD);
+				final ComplexBlock block = etc.getServer().getComplexBlock(x
+						+ xD, y, z + zD);
 
 				if (block == null || !(block instanceof Chest)) {
 					continue;
@@ -223,6 +250,17 @@ public class LWC extends Plugin {
 		}
 
 		return chests;
+	}
+
+	public int getPlayerDropTransferTarget(String player) {
+		String rawTarget = MemoryDatabase.getInstance().getModeData(player, "dropTransfer");
+		try {
+			int ret = Integer.parseInt(rawTarget.substring(1));
+			return ret;
+		} catch (final Throwable t) {
+		}
+
+		return -1;
 	}
 
 	@Override
@@ -254,33 +292,6 @@ public class LWC extends Plugin {
 	}
 
 	/**
-	 * Return if the player is in persistent mode
-	 * 
-	 * @param player
-	 *            the player to check
-	 * @return true if the player is NOT in persistent mode
-	 */
-	public boolean notInPersistentMode(String player) {
-		return !MemoryDatabase.getInstance().hasMode(player, "persist");
-	}
-
-	public int getPlayerDropTransferTarget(String player) {
-		String rawTarget = MemoryDatabase.getInstance().getModeData(player, "dropTransfer");
-		try {
-			int ret = Integer.parseInt(rawTarget.substring(1));
-			return ret;
-		} catch (final Throwable t) {
-		}
-
-		return -1;
-	}
-
-	public boolean playerIsDropTransferring(String player)
-	{
-		return MemoryDatabase.getInstance().hasMode(player, "dropTransfer") && MemoryDatabase.getInstance().getModeData(player, "dropTransfer").startsWith("t");
-	}
-
-	/**
 	 * Check if a player can do mod functions on LWC
 	 * 
 	 * @param player
@@ -296,88 +307,19 @@ public class LWC extends Plugin {
 	}
 
 	/**
-	 * Send the full help to a player
+	 * Return if the player is in persistent mode
 	 * 
 	 * @param player
-	 *            the player to send to
+	 *            the player to check
+	 * @return true if the player is NOT in persistent mode
 	 */
-	public void sendFullHelp(Player player) {
-		player.sendMessage("");
-		player.sendMessage(Colors.Green + "Welcome to LWC, a Protection mod");
-		player.sendMessage("");
-
-		player.sendMessage(Colors.Green + " Commands:");
-
-		player.sendMessage(Colors.LightGreen + "/lwc create - View detailed info on chest types");
-		player.sendMessage(Colors.LightGreen + "/lwc create public - Create a public chest");
-		player.sendMessage(Colors.LightGreen + "/lwc create password - Create a password protected chest");
-		player.sendMessage(Colors.LightGreen + "/lwc create private - Create a private chest");
-
-		player.sendMessage("");
-
-		player.sendMessage(Colors.LightGreen + "/lwc modify - Modify a protected chest");
-
-		player.sendMessage("");
-
-		player.sendMessage(Colors.LightGreen + "/lwc free chest - Remove a protected chest");
-		player.sendMessage(Colors.LightGreen + "/lwc free modes - Remove temporary modes on you");
-
-		player.sendMessage("");
-
-		player.sendMessage(Colors.LightGreen + "/lwc persist - Allow use of 1 command multiple times");
-
-		player.sendMessage(Colors.LightGreen + "/lwc unlock - Unlock a password protected chest");
-
-		player.sendMessage("");
-
-		player.sendMessage(Colors.LightGreen + "/lwc info - View information on a protected chest");
-
-		player.sendMessage("");
-
-		player.sendMessage(Colors.LightGreen + "/lwc droptransfer - View Drop Transfer help");
-
-		player.sendMessage("");
-
-		player.sendMessage(Colors.Red + "/lwc admin - (LWC ADMIN) Admin functions");
+	public boolean notInPersistentMode(String player) {
+		return !MemoryDatabase.getInstance().hasMode(player, "persist");
 	}
 
-	public void sendPendingRequest(Player player) {
-		player.sendMessage(Colors.Red + "You already have a pending chest request.");
-		player.sendMessage(Colors.Red + "To remove it, type /lwc free pending");
-	}
-
-	/**
-	 * Transform a string into one char
-	 * 
-	 * @param str
-	 *            The string to transform
-	 * @param chr
-	 *            The char to transform all chars to (ie '*')
-	 * @return the transformed string
-	 */
-	public String transform(String str, char chr) {
-		final char[] charArray = str.toCharArray();
-
-		for (int i = 0; i < charArray.length; i++) {
-			charArray[i] = chr;
-		}
-
-		return new String(charArray);
-	}
-
-	/**
-	 * Convert a byte array to hex
-	 * 
-	 * @param hash
-	 *            the hash to convert
-	 * @return the converted hash
-	 */
-	private String byteArray2Hex(byte[] hash) {
-		final Formatter formatter = new Formatter();
-		for (final byte b : hash) {
-			formatter.format("%02x", b);
-		}
-		return formatter.toString();
+	public boolean playerIsDropTransferring(String player) {
+		return MemoryDatabase.getInstance().hasMode(player, "dropTransfer")
+				&& MemoryDatabase.getInstance().getModeData(player, "dropTransfer").startsWith("t");
 	}
 
 	/**
@@ -401,6 +343,89 @@ public class LWC extends Plugin {
 		log("LWCListener -> " + hook.toString());
 
 		etc.getLoader().addListener(hook, listener, this, priority);
+	}
+
+	/**
+	 * Send the full help to a player
+	 * 
+	 * @param player
+	 *            the player to send to
+	 */
+	public void sendFullHelp(Player player) {
+		player.sendMessage("");
+		player.sendMessage(Colors.Green + "Welcome to LWC, a Protection mod");
+		player.sendMessage("");
+
+		player.sendMessage(Colors.Green + " Commands:");
+
+		player.sendMessage(Colors.LightGreen
+				+ "/lwc create - View detailed info on chest types");
+		player.sendMessage(Colors.LightGreen
+				+ "/lwc create public - Create a public chest");
+		player.sendMessage(Colors.LightGreen
+				+ "/lwc create password - Create a password protected chest");
+		player.sendMessage(Colors.LightGreen
+				+ "/lwc create private - Create a private chest");
+
+		player.sendMessage("");
+
+		player.sendMessage(Colors.LightGreen
+				+ "/lwc modify - Modify a protected chest");
+
+		player.sendMessage("");
+
+		player.sendMessage(Colors.LightGreen
+				+ "/lwc free chest - Remove a protected chest");
+		player.sendMessage(Colors.LightGreen
+				+ "/lwc free modes - Remove temporary modes on you");
+
+		player.sendMessage("");
+
+		player.sendMessage(Colors.LightGreen
+				+ "/lwc persist - Allow use of 1 command multiple times");
+
+		player.sendMessage(Colors.LightGreen
+				+ "/lwc unlock - Unlock a password protected chest");
+
+		player.sendMessage("");
+
+		player.sendMessage(Colors.LightGreen
+				+ "/lwc info - View information on a protected chest");
+
+		player.sendMessage("");
+
+		player.sendMessage(Colors.LightGreen
+				+ "/lwc droptransfer - View Drop Transfer help");
+
+		player.sendMessage("");
+
+		player.sendMessage(Colors.Red
+				+ "/lwc admin - (LWC ADMIN) Admin functions");
+	}
+
+	public void sendPendingRequest(Player player) {
+		player.sendMessage(Colors.Red
+				+ "You already have a pending chest request.");
+		player.sendMessage(Colors.Red + "To remove it, type /lwc free pending");
+	}
+
+	/**
+	 * Transform a string into one char
+	 * 
+	 * @param str
+	 *            The string to transform
+	 * @param chr
+	 *            The char to transform all chars to (ie '*')
+	 * @return the transformed string
+	 */
+	public String transform(String str, char chr) {
+		final char[] charArray = str.toCharArray();
+
+		for (int i = 0; i < charArray.length; i++) {
+			charArray[i] = chr;
+		}
+
+		return new String(charArray);
 	}
 
 }
