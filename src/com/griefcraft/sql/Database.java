@@ -24,7 +24,8 @@ public abstract class Database {
 		try {
 			Class.forName("org.sqlite.JDBC");
 
-			connection = DriverManager.getConnection("jdbc:sqlite:" + getDatabasePath());
+			connection = DriverManager.getConnection("jdbc:sqlite:"
+					+ getDatabasePath());
 		} catch (final Exception e) {
 			e.printStackTrace();
 			return false;
