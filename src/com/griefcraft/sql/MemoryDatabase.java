@@ -1,3 +1,20 @@
+/**
+ * This file is part of LWC (https://github.com/Hidendra/LWC)
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.griefcraft.sql;
 
 import java.sql.PreparedStatement;
@@ -369,8 +386,7 @@ public class MemoryDatabase extends Database {
 	}
 
 	/**
-	 * create the in-memory table which hold sessions, users that have activated
-	 * a chest. Not needed past a restart, so no need for extra disk i/o
+	 * create the in-memory table which hold sessions, users that have activated a chest. Not needed past a restart, so no need for extra disk i/o
 	 */
 	@Override
 	public void load() {
@@ -385,8 +401,7 @@ public class MemoryDatabase extends Database {
 					+ "chest INTEGER" + ");"); //
 
 			log("Creating memory table 'locks'");
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'locks' ("
-					+ "id INTEGER PRIMARY KEY," //
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'locks' (" + "id INTEGER PRIMARY KEY," //
 					+ "player TEXT," //
 					+ "password TEXT" + ");"); //
 
@@ -400,8 +415,7 @@ public class MemoryDatabase extends Database {
 					+ ");"); //
 
 			log("Creating memory table 'modes'");
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'modes' ("
-					+ "id INTEGER PRIMARY KEY," //
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'modes' (" + "id INTEGER PRIMARY KEY," //
 					+ "player TEXT," //
 					+ "mode TEXT," //
 					+ "data TEXT" //
