@@ -1,3 +1,4 @@
+
 /**
  * This file is part of LWC (https://github.com/Hidendra/LWC)
  * 
@@ -14,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 import java.util.List;
 
 import com.griefcraft.model.Action;
@@ -29,12 +29,10 @@ public class LWCListener extends PluginListener {
 	 * Parent class
 	 */
 	private final LWC parent;
-
 	/**
 	 * Tnt blast radius
 	 */
 	private static final int BLAST_RADIUS = 4;
-
 	/**
 	 * Debug mode
 	 */
@@ -46,9 +44,8 @@ public class LWCListener extends PluginListener {
 
 	@Override
 	public boolean onBlockBreak(Player player, Block block) {
-		if (block.getType() != 54) {
+		if (block.getType() != 54)
 			return false;
-		}
 
 		List<Chest> chestSet = parent.getChestSet(block.getX(), block.getY(), block.getZ());
 		boolean hasAccess = true;
@@ -56,27 +53,24 @@ public class LWCListener extends PluginListener {
 		com.griefcraft.model.Chest chest_ = null;
 
 		for (final Chest chest : chestSet) {
-			if (chest == null) {
+			if (chest == null)
 				continue;
-			}
 
 			chest_ = PhysicalDatabase.getInstance().loadChest(chest.getX(), chest.getY(), chest.getZ());
 
-			if (chest_ == null) {
+			if (chest_ == null)
 				continue;
-			}
 
 			hasAccess = parent.canAccessChest(player, chest_);
 			canAdmin = parent.canAdminChest(player, chest_);
 		}
 
-		if (hasAccess && chest_ != null) {
+		if (hasAccess && chest_ != null)
 			if (canAdmin) {
 				PhysicalDatabase.getInstance().unregisterChest(chest_.getX(), chest_.getY(), chest_.getZ());
 				PhysicalDatabase.getInstance().unregisterAllRights(chest_.getID());
 				player.sendMessage(Colors.Red + "Chest unregistered.");
 			}
-		}
 
 		return !canAdmin;
 	}
@@ -84,9 +78,8 @@ public class LWCListener extends PluginListener {
 	// true = revert
 	@Override
 	public boolean onBlockDestroy(Player player, Block block) {
-		if (block.getType() != 54) {
+		if (block.getType() != 54)
 			return false;
-		}
 
 		List<Chest> chestSet = parent.getChestSet(block.getX(), block.getY(), block.getZ());
 		boolean hasAccess = true;
@@ -94,24 +87,21 @@ public class LWCListener extends PluginListener {
 		boolean hasNoOwner = true;
 
 		for (final Chest chest : chestSet) {
-			if (chest == null) {
+			if (chest == null)
 				continue;
-			}
 
 			chest_ = PhysicalDatabase.getInstance().loadChest(chest.getX(), chest.getY(), chest.getZ());
 
-			if (chest_ == null) {
+			if (chest_ == null)
 				continue;
-			}
 
 			hasAccess = parent.canAccessChest(player, chest_);
 			hasNoOwner = false;
 			break;
 		}
 
-		if (block.getStatus() != 0) {
+		if (block.getStatus() != 0)
 			return !hasAccess;
-		}
 
 		final List<String> actions = MemoryDatabase.getInstance().getActions(player.getName());
 
@@ -138,55 +128,50 @@ public class LWCListener extends PluginListener {
 					for (final String plr : sessionUsers) {
 						final Player player_ = etc.getServer().getPlayer(plr);
 
-						if (player_ == null) {
+						if (player_ == null)
 							continue;
-						}
 
 						players += player_.getColor() + plr + Colors.White + ", ";
 					}
 
-					if (sessionUsers.size() > 0) {
+					if (sessionUsers.size() > 0)
 						players = players.substring(0, players.length() - 4);
-					}
 				}
 
 				String type = " ";
 
 				switch (chest_.getType()) {
-				case ChestTypes.PUBLIC:
-					type = "Public";
-					break;
-				case ChestTypes.PASSWORD:
-					type = "Password";
-					break;
-				case ChestTypes.PRIVATE:
-					type = "Private";
-					break;
+					case ChestTypes.PUBLIC:
+						type = "Public";
+						break;
+					case ChestTypes.PASSWORD:
+						type = "Password";
+						break;
+					case ChestTypes.PRIVATE:
+						type = "Private";
+						break;
 				}
 
 				boolean canAdmin = parent.canAdminChest(player, chest_);
 				// boolean canAccess = parent.canAccessChest(player,
 				// chest_);
 
-				if (canAdmin) {
+				if (canAdmin)
 					player.sendMessage(Colors.Green + "ID: " + Colors.Gold + chest_.getID());
-				}
 
 				player.sendMessage(Colors.Green + "Type: " + Colors.Gold + type);
 				player.sendMessage(Colors.Green + "Owner: " + Colors.Gold + chest_.getOwner());
 
-				if (chest_.getType() == ChestTypes.PASSWORD && canAdmin) {
+				if (chest_.getType() == ChestTypes.PASSWORD && canAdmin)
 					player.sendMessage(Colors.Green + "Authed players: " + players);
-				}
 
 				if (canAdmin) {
 					player.sendMessage(Colors.Green + "Location: " + Colors.Gold + "{" + chest_.getX() + ", " + chest_.getY() + ", " + chest_.getZ() + "}");
 					player.sendMessage(Colors.Green + "Date created: " + Colors.Gold + chest_.getDate());
 				}
 
-				if (parent.notInPersistentMode(player.getName())) {
+				if (parent.notInPersistentMode(player.getName()))
 					MemoryDatabase.getInstance().unregisterAllActions(player.getName());
-				}
 				return false;
 			} else if (dropTransferReg) {
 				final boolean canAccess = parent.canAccessChest(player, chest_);
@@ -201,36 +186,32 @@ public class LWCListener extends PluginListener {
 				MemoryDatabase.getInstance().unregisterAllActions(player.getName()); // ignore
 				// persist
 				return false;
-			} else if (hasFreeRequest) {
+			} else if (hasFreeRequest)
 				if (parent.isAdmin(player) || chest_.getOwner().equals(player.getName())) {
 					player.sendMessage(Colors.LightGreen + "Removed lock on the chest succesfully!");
 					PhysicalDatabase.getInstance().unregisterChest(chest_.getX(), chest_.getY(), chest_.getZ());
 					PhysicalDatabase.getInstance().unregisterAllRights(chest_.getID());
-					if (parent.notInPersistentMode(player.getName())) {
+					if (parent.notInPersistentMode(player.getName()))
 						MemoryDatabase.getInstance().unregisterAllActions(player.getName());
-					}
 					return false;
 				} else {
 					player.sendMessage(Colors.Red + "You do not own that chest!");
-					if (parent.notInPersistentMode(player.getName())) {
+					if (parent.notInPersistentMode(player.getName()))
 						MemoryDatabase.getInstance().unregisterAllActions(player.getName());
-					}
 					return true;
 				}
-			} else if (modifyChest) {
+			else if (modifyChest)
 				if (parent.canAdminChest(player, chest_)) {
 					final Action action = MemoryDatabase.getInstance().getAction("modify", player.getName());
 
 					final String defaultEntities = action.getData();
 					String[] entities = new String[0];
 
-					if (defaultEntities.length() > 0) {
+					if (defaultEntities.length() > 0)
 						entities = defaultEntities.split(" ");
-					}
 
-					if (parent.notInPersistentMode(player.getName())) {
+					if (parent.notInPersistentMode(player.getName()))
 						MemoryDatabase.getInstance().unregisterAllActions(player.getName());
-					}
 
 					for (String entity : entities) {
 						boolean remove = false;
@@ -267,12 +248,10 @@ public class LWCListener extends PluginListener {
 					return false;
 				} else {
 					player.sendMessage(Colors.Red + "You do not own that chest!");
-					if (parent.notInPersistentMode(player.getName())) {
+					if (parent.notInPersistentMode(player.getName()))
 						MemoryDatabase.getInstance().unregisterAllActions(player.getName());
-					}
 					return true;
 				}
-			}
 		}
 
 		if (dropTransferReg) {
@@ -286,25 +265,22 @@ public class LWCListener extends PluginListener {
 
 		if (requestInfo || hasFreeRequest) {
 			player.sendMessage(Colors.Red + "Chest is unregistered");
-			if (parent.notInPersistentMode(player.getName())) {
+			if (parent.notInPersistentMode(player.getName()))
 				MemoryDatabase.getInstance().unregisterAllActions(player.getName());
-			}
 			return false;
 		}
 
 		if ((createChest || modifyChest) && !hasNoOwner) {
-			if (!parent.canAdminChest(player, chest_)) {
+			if (!parent.canAdminChest(player, chest_))
 				player.sendMessage(Colors.Red + "You do not own that chest!");
-			} else {
+			else
 				player.sendMessage(Colors.Red + "You have already registered that chest!");
-			}
-			if (parent.notInPersistentMode(player.getName())) {
+			if (parent.notInPersistentMode(player.getName()))
 				MemoryDatabase.getInstance().unregisterAllActions(player.getName());
-			}
 			return true;
 		}
 
-		if (hasNoOwner) {
+		if (hasNoOwner)
 			if (createChest) {
 
 				final Action action = MemoryDatabase.getInstance().getAction("create", player.getName());
@@ -314,16 +290,14 @@ public class LWCListener extends PluginListener {
 				final String type = chop[0].toLowerCase();
 				String subset = "";
 
-				if (chop.length > 1) {
+				if (chop.length > 1)
 					for (int i = 1; i < chop.length; i++) {
 						subset += chop[i] + " ";
 					}
-				}
 
 				if (parent.enforceChestLimits(player)) {
-					if (parent.notInPersistentMode(player.getName())) {
+					if (parent.notInPersistentMode(player.getName()))
 						MemoryDatabase.getInstance().unregisterAllActions(player.getName());
-					}
 					return false;
 				}
 
@@ -339,9 +313,8 @@ public class LWCListener extends PluginListener {
 					player.sendMessage(Colors.Green + "Registered chest lock.");
 
 					for (final Chest c : chestSet) {
-						if (c != null) {
+						if (c != null)
 							c.update();
-						}
 					}
 
 				} else if (type.equals("private")) {
@@ -376,70 +349,62 @@ public class LWCListener extends PluginListener {
 					}
 				}
 
-				if (parent.notInPersistentMode(player.getName())) {
+				if (parent.notInPersistentMode(player.getName()))
 					MemoryDatabase.getInstance().unregisterAllActions(player.getName());
-				}
 
 				return !hasAccess;
 			}
-		}
 		return !hasAccess;
 	}
 
 	// true = revert
 	@Override
 	public void onBlockRightClicked(Player player, Block blockClicked, Item item) {
-		if (blockClicked.getType() != 54) {
+		if (blockClicked.getType() != 54)
 			return;
-		}
 
-		if (parent.isAdmin(player) && !debugMode) {
+		if (parent.isAdmin(player) && !debugMode)
 			return;
-		}
 
 		List<Chest> chestSet = parent.getChestSet(blockClicked.getX(), blockClicked.getY(), blockClicked.getZ());
 		boolean hasAccess = true;
 
 		for (final Chest chest : chestSet) {
-			if (chest == null) {
+			if (chest == null)
 				continue;
-			}
 
 			final com.griefcraft.model.Chest chest_ = PhysicalDatabase.getInstance().loadChest(chest.getX(), chest.getY(), chest.getZ());
 
-			if (chest_ == null) {
+			if (chest_ == null)
 				continue;
-			}
 
 			hasAccess = parent.canAccessChest(player, chest_);
 
 			switch (chest_.getType()) {
-			case ChestTypes.PUBLIC:
-				hasAccess = true;
-				break;
+				case ChestTypes.PUBLIC:
+					hasAccess = true;
+					break;
 
-			case ChestTypes.PASSWORD:
-				if (!hasAccess) {
-					MemoryDatabase.getInstance().registerUnlock(player.getName(), chest_.getID());
-					player.sendMessage(Colors.Red + "This chest is locked.");
-					player.sendMessage(Colors.Red + "Type " + Colors.Gold + "/lwc unlock <password>" + Colors.Red + " to unlock it");
-				}
+				case ChestTypes.PASSWORD:
+					if (!hasAccess) {
+						MemoryDatabase.getInstance().registerUnlock(player.getName(), chest_.getID());
+						player.sendMessage(Colors.Red + "This chest is locked.");
+						player.sendMessage(Colors.Red + "Type " + Colors.Gold + "/lwc unlock <password>" + Colors.Red + " to unlock it");
+					}
 
-				break;
+					break;
 
-			case ChestTypes.PRIVATE:
-				if (!hasAccess) {
-					player.sendMessage(Colors.Red + "This chest is locked with a magical spell.");
-				}
+				case ChestTypes.PRIVATE:
+					if (!hasAccess)
+						player.sendMessage(Colors.Red + "This chest is locked with a magical spell.");
 
-				break;
+					break;
 			}
 		}
 
 		for (final Chest chest : chestSet) {
-			if (chest != null) {
+			if (chest != null)
 				chest.update();
-			}
 		}
 
 		return;
@@ -450,32 +415,29 @@ public class LWCListener extends PluginListener {
 		final String command = split[0].substring(1);
 		String subCommand = "";
 
-		if (split.length > 1) {
+		if (split.length > 1)
 			for (int i = 1; i < split.length; i++) {
 				subCommand += split[i] + " ";
 			}
-		}
 
 		/**
 		 * ALIASES
 		 */
-		if (command.equalsIgnoreCase("cpublic")) {
+		if (command.equalsIgnoreCase("cpublic"))
 			return onCommand(player, "/lwc create public".split(" "));
-		} else if (command.equalsIgnoreCase("cprivate")) {
+		else if (command.equalsIgnoreCase("cprivate"))
 			return onCommand(player, "/lwc create private".split(" "));
-		} else if (command.equalsIgnoreCase("cinfo")) {
+		else if (command.equalsIgnoreCase("cinfo"))
 			return onCommand(player, "/lwc info".split(" "));
-		} else if (command.equalsIgnoreCase("cpassword")) {
+		else if (command.equalsIgnoreCase("cpassword")) {
 			String password = subCommand;
 
 			return onCommand(player, ("/lwc create password " + password).split(" "));
-		} else if (command.equalsIgnoreCase("dropxfer")) {
+		} else if (command.equalsIgnoreCase("dropxfer"))
 			return onCommand(player, ("/lwc droptransfer " + subCommand).split(" "));
-		}
 
-		if (!player.canUseCommand(split[0])) {
+		if (!player.canUseCommand(split[0]))
 			return false;
-		}
 
 		subCommand = subCommand.trim();
 
@@ -488,11 +450,10 @@ public class LWCListener extends PluginListener {
 			final String action = split[1].toLowerCase();
 			String subActions = "";
 
-			if (split.length > 2) {
+			if (split.length > 2)
 				for (int i = 2; i < split.length; i++) {
 					subActions += split[i] + " ";
 				}
-			}
 
 			subActions = subActions.trim();
 
@@ -522,9 +483,8 @@ public class LWCListener extends PluginListener {
 
 				final String subAction = split[2];
 
-				if (parent.enforceChestLimits(player)) {
+				if (parent.enforceChestLimits(player))
 					return true;
-				}
 
 				if (subAction.equals("public")) {
 					MemoryDatabase.getInstance().unregisterAllActions(player.getName());
@@ -630,13 +590,11 @@ public class LWCListener extends PluginListener {
 						MemoryDatabase.getInstance().registerPlayer(player.getName(), chestID);
 
 						for (final Chest chest_ : parent.getChestSet(chest.getX(), chest.getY(), chest.getZ())) {
-							if (chest_ != null) {
+							if (chest_ != null)
 								chest_.update();
-							}
 						}
-					} else {
+					} else
 						player.sendMessage(Colors.Red + "Invalid password.");
-					}
 
 				}
 			} else if (action.equals("info")) {
@@ -692,18 +650,15 @@ public class LWCListener extends PluginListener {
 					md.unregisterMode(playerName, "dropTransfer");
 					md.registerMode(playerName, "dropTransfer", "f" + target);
 					player.sendMessage(Colors.Green + "Drop transfer is now off.");
-				} else if (subAction.equals("status")) {
+				} else if (subAction.equals("status"))
 					if (parent.getPlayerDropTransferTarget(playerName) == -1) {
 						player.sendMessage(Colors.Green + "You have not registered a drop transfer target.");
 						return true;
-					} else {
-						if (parent.playerIsDropTransferring(playerName)) {
+					} else
+						if (parent.playerIsDropTransferring(playerName))
 							player.sendMessage(Colors.Green + "Drop transfer is currently active.");
-						} else {
+						else
 							player.sendMessage(Colors.Green + "Drop transfer is currently inactive.");
-						}
-					}
-				}
 				return true;
 			} else if (action.equals("admin") && parent.isAdmin(player)) {
 
@@ -752,9 +707,8 @@ public class LWCListener extends PluginListener {
 						String entity = split[i];
 						final boolean isGroup = entity.startsWith("g:");
 
-						if (isGroup) {
+						if (isGroup)
 							entity = entity.substring(2);
-						}
 
 						if (limit != -2) {
 							PhysicalDatabase.getInstance().registerLimit(isGroup ? 0 : 1, limit, entity);
@@ -782,9 +736,8 @@ public class LWCListener extends PluginListener {
 
 				String subAction = split[2];
 
-				if (subAction.equalsIgnoreCase("chestprotect")) {
+				if (subAction.equalsIgnoreCase("chestprotect"))
 					new CPConverter(player);
-				}
 			}
 
 			return true;
@@ -793,36 +746,58 @@ public class LWCListener extends PluginListener {
 		return false;
 	}
 
-	// true = revert changes
 	@Override
-	public boolean onComplexBlockChange(Player player, ComplexBlock block) {
-		if (!(block instanceof Chest)) {
-			return false;
-		}
+	public boolean onOpenInventory(Player player, Inventory inventory) {
+		if ((inventory instanceof Chest) || (inventory instanceof DoubleChest)) {
+			if (parent.isAdmin(player) && !debugMode)
+				return false;
+			ComplexBlock cb = (ComplexBlock)inventory;
+			List<Chest> chestSet = parent.getChestSet(cb.getX(), cb.getY(), cb.getZ());
+			boolean hasAccess = true;
 
-		if (parent.isAdmin(player) && !debugMode) {
-			return false;
+			for (final Chest chest : chestSet) {
+				if (chest == null)
+					continue;
+
+				final com.griefcraft.model.Chest chest_ = PhysicalDatabase.getInstance().loadChest(chest.getX(), chest.getY(), chest.getZ());
+
+				if (chest_ == null)
+					continue;
+
+				hasAccess = parent.canAccessChest(player, chest_);
+			}
+
+			return !hasAccess;
 		}
+		return false;
+	}
+
+/*	// true = revert changes
+	@Override
+	public boolean onOpenInventory(Player player, ComplexBlock block) {
+		if (!(block instanceof Chest))
+			return false;
+
+		if (parent.isAdmin(player) && !debugMode)
+			return false;
 
 		List<Chest> chestSet = parent.getChestSet(block.getX(), block.getY(), block.getZ());
 		boolean hasAccess = true;
 
 		for (final Chest chest : chestSet) {
-			if (chest == null) {
+			if (chest == null)
 				continue;
-			}
 
 			final com.griefcraft.model.Chest chest_ = PhysicalDatabase.getInstance().loadChest(chest.getX(), chest.getY(), chest.getZ());
 
-			if (chest_ == null) {
+			if (chest_ == null)
 				continue;
-			}
 
 			hasAccess = parent.canAccessChest(player, chest_);
 		}
 
 		return !hasAccess;
-	}
+	}*/
 
 	@Override
 	public void onDisconnect(Player player) {
@@ -838,12 +813,11 @@ public class LWCListener extends PluginListener {
 	public boolean onExplode(Block block) {
 		boolean chestInRange = PhysicalDatabase.getInstance().loadChests(block.getX(), block.getY(), block.getZ(), BLAST_RADIUS).size() > 0;
 
-		if (chestInRange) {
+		if (chestInRange)
 			/*
 			 * !
 			 */
 			return true;
-		}
 
 		return false;
 	}
@@ -853,9 +827,8 @@ public class LWCListener extends PluginListener {
 		final MemoryDatabase md = MemoryDatabase.getInstance();
 		final String pn = player.getName();
 		final int targetId = parent.getPlayerDropTransferTarget(pn);
-		if (targetId == -1 || !parent.playerIsDropTransferring(pn)) {
+		if (targetId == -1 || !parent.playerIsDropTransferring(pn))
 			return false;
-		}
 
 		if (!PhysicalDatabase.getInstance().doesChestExist(targetId)) {
 			player.sendMessage(Colors.Red + "Your drop transfer target was unregistered and/or destroyed.");
@@ -897,9 +870,8 @@ public class LWCListener extends PluginListener {
 
 			chest.update();
 
-			if (remainingAmt == 0) {
+			if (remainingAmt == 0)
 				break;
-			}
 		}
 
 		if (remainingAmt > 0) {
@@ -907,16 +879,15 @@ public class LWCListener extends PluginListener {
 			player.sendMessage(Colors.Red + "Any remaining quantity that could not be stored will be returned.");
 			md.unregisterMode(pn, "dropTransfer");
 			md.registerMode(pn, "dropTransfer", "f" + targetId);
-			player.getInventory().giveItem(item.getItemId(), remainingAmt);
-			player.getInventory().updateInventory();
+			((PlayerInventory) player.getInventory()).giveItem(item.getItemId(), remainingAmt);
+			player.getInventory().update();
 		}
 		return true;
 	}
 
-	// true = show chest as empty
+	/*	// true = show chest as empty
 	@Override
 	public boolean onSendComplexBlock(Player player, ComplexBlock block) {
-		return onComplexBlockChange(player, block);
-	}
-
+	return onComplexBlockChange(player, block);
+	}*/
 }

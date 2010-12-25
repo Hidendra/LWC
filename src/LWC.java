@@ -264,8 +264,8 @@ public class LWC extends Plugin {
 		registerHook(PluginLoader.Hook.BLOCK_RIGHTCLICKED);
 		registerHook(PluginLoader.Hook.BLOCK_BROKEN);
 		registerHook(PluginLoader.Hook.BLOCK_DESTROYED);
-		registerHook(PluginLoader.Hook.COMPLEX_BLOCK_CHANGE);
-		registerHook(PluginLoader.Hook.COMPLEX_BLOCK_SEND);
+		registerHook(PluginLoader.Hook.OPEN_INVENTORY);
+		//registerHook(PluginLoader.Hook.COMPLEX_BLOCK_SEND);
 		registerHook(PluginLoader.Hook.EXPLODE);
 		registerHook(PluginLoader.Hook.ITEM_DROP);
 	}
