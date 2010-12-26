@@ -220,22 +220,34 @@ public class LWC extends Plugin {
 	 *            the z coordinate
 	 * @return the Chest[] array of chests
 	 */
-	public List<Chest> getChestSet(int x, int y, int z) {
-		List<Chest> chests = new ArrayList<Chest>(2);
+	public List<ComplexBlock> getChestSet(int x, int y, int z) {
+		List<ComplexBlock> chests = new ArrayList<ComplexBlock>(2);
 
-		for (int xD = -1; xD <= 1; xD++) {
-			for (int zD = -1; zD <= 1; zD++) {
-				final ComplexBlock block = etc.getServer().getComplexBlock(x + xD, y, z + zD);
+		/*
+		 * TODO: Redo this, so it's neater :)
+		 */
 
-				if (block == null || !(block instanceof Chest)) {
-					continue;
-				}
+		for (int dev = -1; dev <= 1; dev++) {
+			final ComplexBlock block = etc.getServer().getComplexBlock(x + dev, y, z);
 
-				final Chest chest = (Chest) block;
+			if (block == null) {
+				continue;
+			}
 
-				if (chest != null) {
-					chests.add(chest);
-				}
+			if ((block instanceof Chest) || (block instanceof DoubleChest)) {
+				chests.add(block);
+			}
+		}
+
+		for (int dev = -1; dev <= 1; dev++) {
+			final ComplexBlock block = etc.getServer().getComplexBlock(x, y, z + dev);
+
+			if (block == null) {
+				continue;
+			}
+
+			if ((block instanceof Chest) || (block instanceof DoubleChest)) {
+				chests.add(block);
 			}
 		}
 
@@ -264,8 +276,7 @@ public class LWC extends Plugin {
 		registerHook(PluginLoader.Hook.BLOCK_RIGHTCLICKED);
 		registerHook(PluginLoader.Hook.BLOCK_BROKEN);
 		registerHook(PluginLoader.Hook.BLOCK_DESTROYED);
-		registerHook(PluginLoader.Hook.COMPLEX_BLOCK_CHANGE);
-		registerHook(PluginLoader.Hook.COMPLEX_BLOCK_SEND);
+		registerHook(PluginLoader.Hook.OPEN_INVENTORY);
 		registerHook(PluginLoader.Hook.EXPLODE);
 		registerHook(PluginLoader.Hook.ITEM_DROP);
 	}

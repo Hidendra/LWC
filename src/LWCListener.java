@@ -50,12 +50,12 @@ public class LWCListener extends PluginListener {
 			return false;
 		}
 
-		List<Chest> chestSet = parent.getChestSet(block.getX(), block.getY(), block.getZ());
+		List<ComplexBlock> chestSet = parent.getChestSet(block.getX(), block.getY(), block.getZ());
 		boolean hasAccess = true;
 		boolean canAdmin = true;
 		com.griefcraft.model.Chest chest_ = null;
 
-		for (final Chest chest : chestSet) {
+		for (final ComplexBlock chest : chestSet) {
 			if (chest == null) {
 				continue;
 			}
@@ -88,12 +88,12 @@ public class LWCListener extends PluginListener {
 			return false;
 		}
 
-		List<Chest> chestSet = parent.getChestSet(block.getX(), block.getY(), block.getZ());
+		List<ComplexBlock> chestSet = parent.getChestSet(block.getX(), block.getY(), block.getZ());
 		boolean hasAccess = true;
 		com.griefcraft.model.Chest chest_ = null;
 		boolean hasNoOwner = true;
 
-		for (final Chest chest : chestSet) {
+		for (final ComplexBlock chest : chestSet) {
 			if (chest == null) {
 				continue;
 			}
@@ -338,7 +338,7 @@ public class LWCListener extends PluginListener {
 					MemoryDatabase.getInstance().registerPlayer(player.getName(), PhysicalDatabase.getInstance().loadChest(block.getX(), block.getY(), block.getZ()).getID());
 					player.sendMessage(Colors.Green + "Registered chest lock.");
 
-					for (final Chest c : chestSet) {
+					for (final ComplexBlock c : chestSet) {
 						if (c != null) {
 							c.update();
 						}
@@ -397,10 +397,10 @@ public class LWCListener extends PluginListener {
 			return;
 		}
 
-		List<Chest> chestSet = parent.getChestSet(blockClicked.getX(), blockClicked.getY(), blockClicked.getZ());
+		List<ComplexBlock> chestSet = parent.getChestSet(blockClicked.getX(), blockClicked.getY(), blockClicked.getZ());
 		boolean hasAccess = true;
 
-		for (final Chest chest : chestSet) {
+		for (final ComplexBlock chest : chestSet) {
 			if (chest == null) {
 				continue;
 			}
@@ -436,7 +436,7 @@ public class LWCListener extends PluginListener {
 			}
 		}
 
-		for (final Chest chest : chestSet) {
+		for (final ComplexBlock chest : chestSet) {
 			if (chest != null) {
 				chest.update();
 			}
@@ -629,7 +629,7 @@ public class LWCListener extends PluginListener {
 						MemoryDatabase.getInstance().unregisterUnlock(player.getName());
 						MemoryDatabase.getInstance().registerPlayer(player.getName(), chestID);
 
-						for (final Chest chest_ : parent.getChestSet(chest.getX(), chest.getY(), chest.getZ())) {
+						for (final ComplexBlock chest_ : parent.getChestSet(chest.getX(), chest.getY(), chest.getZ())) {
 							if (chest_ != null) {
 								chest_.update();
 							}
@@ -793,10 +793,9 @@ public class LWCListener extends PluginListener {
 		return false;
 	}
 
-	// true = revert changes
 	@Override
-	public boolean onComplexBlockChange(Player player, ComplexBlock block) {
-		if (!(block instanceof Chest)) {
+	public boolean onOpenInventory(Player player, Inventory inventory) {
+		if (inventory instanceof Chest || inventory instanceof DoubleChest) {
 			return false;
 		}
 
@@ -804,10 +803,12 @@ public class LWCListener extends PluginListener {
 			return false;
 		}
 
-		List<Chest> chestSet = parent.getChestSet(block.getX(), block.getY(), block.getZ());
+		ComplexBlock block = (ComplexBlock) inventory;
+
+		List<ComplexBlock> chestSet = parent.getChestSet(block.getX(), block.getY(), block.getZ());
 		boolean hasAccess = true;
 
-		for (final Chest chest : chestSet) {
+		for (final ComplexBlock chest : chestSet) {
 			if (chest == null) {
 				continue;
 			}
@@ -878,18 +879,19 @@ public class LWCListener extends PluginListener {
 			md.unregisterMode(pn, "dropTransfer");
 			return false;
 		}
-		List<Chest> chests = parent.getChestSet(chest_.getX(), chest_.getY(), chest_.getZ());
+		List<ComplexBlock> chests = parent.getChestSet(chest_.getX(), chest_.getY(), chest_.getZ());
 		int remainingAmt = item.getAmount();
 
-		for (Chest chest : chests) {
+		for (ComplexBlock chest : chests) {
+			Inventory inventory = (Inventory) chest;
 			Item toStack;
-			while (((toStack = chest.getItemFromId(item.getItemId(), 63)) != null || chest.getEmptySlot() != -1) && remainingAmt > 0) {
+			while (((toStack = inventory.getItemFromId(item.getItemId(), 63)) != null || inventory.getEmptySlot() != -1) && remainingAmt > 0) {
 				if (toStack != null) {
 					int amtDelta = Math.min(64 - toStack.getAmount(), item.getAmount());
-					chest.setSlot(item.getItemId(), toStack.getAmount() + amtDelta, toStack.getSlot());
+					inventory.setSlot(item.getItemId(), toStack.getAmount() + amtDelta, toStack.getSlot());
 					remainingAmt -= amtDelta;
 				} else {
-					chest.addItem(new Item(item.getItemId(), remainingAmt));
+					inventory.addItem(new Item(item.getItemId(), remainingAmt));
 					remainingAmt = 0;
 				}
 
@@ -907,16 +909,10 @@ public class LWCListener extends PluginListener {
 			player.sendMessage(Colors.Red + "Any remaining quantity that could not be stored will be returned.");
 			md.unregisterMode(pn, "dropTransfer");
 			md.registerMode(pn, "dropTransfer", "f" + targetId);
-			player.getInventory().giveItem(item.getItemId(), remainingAmt);
-			player.getInventory().updateInventory();
+			player.getInventory().addItem(item);
+			player.getInventory().update();
 		}
 		return true;
-	}
-
-	// true = show chest as empty
-	@Override
-	public boolean onSendComplexBlock(Player player, ComplexBlock block) {
-		return onComplexBlockChange(player, block);
 	}
 
 }
