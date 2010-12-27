@@ -319,9 +319,6 @@ public class PhysDB extends Database {
 
 			log("Creating physical tables if needed");
 
-			/**
-			 * TODO: rename `chests` to `protections`
-			 */
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'protections' (" //
 					+ "id INTEGER PRIMARY KEY," //
 					+ "type INTEGER," //
