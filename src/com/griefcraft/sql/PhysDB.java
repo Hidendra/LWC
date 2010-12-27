@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.griefcraft.model.Entity;
+import com.griefcraft.util.Performance;
 
 public class PhysDB extends Database {
 
@@ -53,6 +54,7 @@ public class PhysDB extends Database {
 			retur = set.getInt("count") > 0;
 
 			statement.close();
+			Performance.addPhysDBQuery();
 
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -69,6 +71,7 @@ public class PhysDB extends Database {
 			final Statement statement = connection.createStatement();
 			statement.executeQuery("SELECT `type` FROM `protections`");
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (final Exception e) {
 			/*
 			 * This means we need to commit the update!
@@ -84,6 +87,7 @@ public class PhysDB extends Database {
 				statement.addBatch("UPDATE `protections` SET `type`='1'");
 				statement.executeBatch();
 				statement.close();
+				Performance.addPhysDBQuery();
 			} catch (final Exception e_) {
 				log("Oops! Something went wrong: ");
 				e.printStackTrace();
@@ -106,6 +110,7 @@ public class PhysDB extends Database {
 			}
 
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (Exception e) {
 
 		}
@@ -128,6 +133,7 @@ public class PhysDB extends Database {
 			statement.addBatch("END TRANSACTION");
 			statement.executeBatch();
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (Exception e) {
 			log("Oops! Something went wrong: ");
 			e.printStackTrace();
@@ -151,6 +157,7 @@ public class PhysDB extends Database {
 			}
 
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -179,6 +186,7 @@ public class PhysDB extends Database {
 			}
 
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -221,6 +229,7 @@ public class PhysDB extends Database {
 			}
 
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -259,6 +268,7 @@ public class PhysDB extends Database {
 			}
 
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -292,6 +302,7 @@ public class PhysDB extends Database {
 			}
 
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -348,6 +359,7 @@ public class PhysDB extends Database {
 			connection.setAutoCommit(true);
 
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -409,6 +421,7 @@ public class PhysDB extends Database {
 			}
 
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -452,10 +465,12 @@ public class PhysDB extends Database {
 				chest.setDate(date);
 
 				statement.close();
+				Performance.addPhysDBQuery();
 				return chest;
 			}
 
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -501,10 +516,12 @@ public class PhysDB extends Database {
 				chest.setDate(date);
 
 				statement.close();
+				Performance.addPhysDBQuery();
 				return chest;
 			}
 
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -539,6 +556,7 @@ public class PhysDB extends Database {
 
 			statement.executeUpdate();
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -563,6 +581,7 @@ public class PhysDB extends Database {
 
 			statement.executeUpdate();
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -590,6 +609,7 @@ public class PhysDB extends Database {
 
 			statement.executeUpdate();
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -608,6 +628,7 @@ public class PhysDB extends Database {
 
 			statement.executeUpdate();
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -630,6 +651,7 @@ public class PhysDB extends Database {
 
 			statement.executeUpdate();
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -643,6 +665,7 @@ public class PhysDB extends Database {
 			final Statement statement = connection.createStatement();
 			statement.executeUpdate("DELETE FROM `protections`");
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -664,6 +687,7 @@ public class PhysDB extends Database {
 
 			statement.executeUpdate();
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -677,6 +701,7 @@ public class PhysDB extends Database {
 			final Statement statement = connection.createStatement();
 			statement.executeUpdate("DELETE FROM `limits`");
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -695,6 +720,7 @@ public class PhysDB extends Database {
 
 			statement.executeUpdate();
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -714,6 +740,7 @@ public class PhysDB extends Database {
 
 			statement.executeUpdate();
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -727,6 +754,7 @@ public class PhysDB extends Database {
 			Statement statement = connection.createStatement();
 			statement.executeQuery("SELECT `id` FROM `protections`");
 			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (Exception e) {
 			log("Outdated database!");
 			log("UPGRADING FROM 1.30 TO 1.40");
@@ -738,6 +766,7 @@ public class PhysDB extends Database {
 				Statement statement = connection.createStatement();
 				statement.executeUpdate("ALTER TABLE `chests` RENAME TO `protections`");
 				statement.close();
+				Performance.addPhysDBQuery();
 			} catch (Exception e_) {
 				e_.printStackTrace();
 			}
