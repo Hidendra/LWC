@@ -20,7 +20,8 @@ package com.griefcraft.sql;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.logging.Logger;
+
+import com.griefcraft.logging.Logger;
 
 public abstract class Database {
 

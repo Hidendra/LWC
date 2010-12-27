@@ -25,7 +25,7 @@ public class LWCInfo {
 	/**
 	 * The version
 	 */
-	public static final double VERSION = 1.40;
+	public static final double VERSION = 1.41;
 
 	/**
 	 * Location of the properties file relative to the root Minecraft directory
