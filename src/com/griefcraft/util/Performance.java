@@ -31,6 +31,11 @@ public class Performance {
 	private static int playersOnline = 0;
 	
 	/**
+	 * Chest count
+	 */
+	private static int chestCount = 0;
+	
+	/**
 	 * Generated report to send to the player
 	 */
 	private static List<String> generatedReport = new ArrayList<String>();
@@ -49,6 +54,15 @@ public class Performance {
 	 */
 	public static void setPlayersOnline(int playersOnline) {
 		Performance.playersOnline = playersOnline;
+	}
+	
+	/**
+	 * Set the chest count
+	 * 
+	 * @param chestCount
+	 */
+	public static void setChestCount(int chestCount) {
+		Performance.chestCount = chestCount;
 	}
 	
 	/**
@@ -86,6 +100,7 @@ public class Performance {
 		add(" + Date:\t" + new Date());
 		add(" + Time:\t" + getTimeRunningSeconds() + " seconds");
 		add(" + Players:\t" + playersOnline);
+		add(" + Protections:\t" + chestCount );
 		add(" ");
 		add(" - Physical database");
 		add("  + Queries:\t" + physDBQueries);
