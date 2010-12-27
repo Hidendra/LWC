@@ -501,7 +501,7 @@ public class LWC extends Plugin {
 			if (entities.size() == 1) {
 				ComplexBlock other = entities.get(0);
 
-				if (!(other instanceof Chest) || !(other instanceof DoubleChest)) {
+				if (!(other instanceof Chest) && !(other instanceof DoubleChest)) {
 					return entities;
 				}
 			}
