@@ -31,6 +31,7 @@ import com.griefcraft.sql.MemDB;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Config;
 import com.griefcraft.util.ConfigValues;
+import com.griefcraft.util.Performance;
 import com.griefcraft.util.Updater;
 
 public class LWC extends Plugin {
@@ -161,6 +162,8 @@ public class LWC extends Plugin {
 	public void enable() {
 		try {
 			log("Initializing LWC");
+			
+			Performance.init();
 
 			physicalDatabase = new PhysDB();
 			memoryDatabase = new MemDB();
@@ -264,19 +267,26 @@ public class LWC extends Plugin {
 		 * First check the block they actually clicked
 		 */
 		ComplexBlock baseBlock = etc.getServer().getComplexBlock(x, y, z);
+		int dev = -1;
+		boolean isXDir = true;
 
 		entities = _validateChest(entities, baseBlock);
-
-		for (int dev = -1; dev <= 1; dev++) {
-			final ComplexBlock block = etc.getServer().getComplexBlock(x + dev, y, z);
-
+		
+		while(true) {
+			ComplexBlock block = etc.getServer().getComplexBlock(x + (isXDir ? dev : 0), y, z + (isXDir ? 0 : dev));
 			entities = _validateChest(entities, block);
-		}
-
-		for (int dev = -1; dev <= 1; dev++) {
-			final ComplexBlock block = etc.getServer().getComplexBlock(x, y, z + dev);
-
-			entities = _validateChest(entities, block);
+			
+			if(dev == 1) {
+				if(isXDir) {
+					isXDir = false;
+					dev = -1;
+					continue;
+				} else {
+					break;
+				}
+			}
+			
+			dev = 1;
 		}
 
 		return entities;
@@ -325,7 +335,8 @@ public class LWC extends Plugin {
 		registerHook(PluginLoader.Hook.BLOCK_DESTROYED);
 		registerHook(PluginLoader.Hook.OPEN_INVENTORY);
 		registerHook(PluginLoader.Hook.EXPLODE);
-		registerHook(PluginLoader.Hook.ITEM_DROP);
+		
+		// registerHook(PluginLoader.Hook.ITEM_DROP); // can't modify inventories correctly at the moment ?
 	}
 
 	/**
@@ -492,9 +503,7 @@ public class LWC extends Plugin {
 			}
 
 			return entities;
-		}
-
-		if (block instanceof Chest || block instanceof DoubleChest) {
+		} else {
 			if (entities.size() == 1) {
 				ComplexBlock other = entities.get(0);
 
@@ -506,9 +515,8 @@ public class LWC extends Plugin {
 			if (!entities.contains(block)) {
 				entities.add(block);
 			}
-
 		}
-
+		
 		return entities;
 	}
 

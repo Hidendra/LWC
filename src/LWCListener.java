@@ -25,6 +25,7 @@ import com.griefcraft.model.EntityTypes;
 import com.griefcraft.model.RightTypes;
 import com.griefcraft.sql.MemDB;
 import com.griefcraft.sql.PhysDB;
+import com.griefcraft.util.Performance;
 
 public class LWCListener extends PluginListener {
 
@@ -766,7 +767,13 @@ public class LWCListener extends PluginListener {
 
 				final String subAction = split[2];
 
-				if (subAction.equalsIgnoreCase("clear")) {
+				if (subAction.equalsIgnoreCase("report")) {
+					for(String line : Performance.getGeneratedReport()) {
+						player.sendMessage(Colors.Green + line);
+					}
+					
+					Performance.clear();
+				} else if (subAction.equalsIgnoreCase("clear")) {
 					if (split.length < 3) {
 						player.sendMessage(Colors.Red + "Usage: " + Colors.Gold + "/lwc admin clear <chests|limits|modes>");
 						return true;
@@ -942,11 +949,7 @@ public class LWCListener extends PluginListener {
 
 	@Override
 	public boolean onOpenInventory(Player player, Inventory inventory) {
-		if (!(inventory instanceof ComplexBlock)) {
-			return false;
-		}
-
-		if (!ALLOW_FURNACE_PROTECTION.getBool() && inventory instanceof Furnace) {
+		if (!isProtectable(((ComplexBlock) inventory).getBlock())) {
 			return false;
 		}
 
