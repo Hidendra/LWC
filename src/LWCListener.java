@@ -768,6 +768,8 @@ public class LWCListener extends PluginListener {
 				final String subAction = split[2];
 
 				if (subAction.equalsIgnoreCase("report")) {
+					Performance.setPlayersOnline(etc.getServer().getPlayerList().size());
+					
 					for(String line : Performance.getGeneratedReport()) {
 						player.sendMessage(Colors.Green + line);
 					}
