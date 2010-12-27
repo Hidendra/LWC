@@ -22,6 +22,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 import com.griefcraft.logging.Logger;
+import com.griefcraft.util.ConfigValues;
 
 public abstract class Database {
 
@@ -68,7 +69,7 @@ public abstract class Database {
 	 * @return the path where the database file should be saved
 	 */
 	public String getDatabasePath() {
-		try {
+		/* try {
 			String path = Database.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
 
 			if (path.endsWith(".jar") || path.endsWith("/")) {
@@ -79,9 +80,9 @@ public abstract class Database {
 			return path + File.separator + "lwc.db";
 		} catch (final Exception e) {
 			e.printStackTrace();
-		}
+		} */
 
-		return "";
+		return ConfigValues.DB_PATH.getString();
 	}
 
 	public abstract void load();
