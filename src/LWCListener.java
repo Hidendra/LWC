@@ -768,6 +768,7 @@ public class LWCListener extends PluginListener {
 				final String subAction = split[2];
 
 				if (subAction.equalsIgnoreCase("report")) {
+					Performance.setChestCount(parent.getPhysicalDatabase().entityCount());
 					Performance.setPlayersOnline(etc.getServer().getPlayerList().size());
 					
 					for(String line : Performance.getGeneratedReport()) {
