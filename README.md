@@ -18,9 +18,8 @@ Converting
 
 Are you using ChestProtect? LWC can seamlessly convert every chest from Chest Protect 100% to LWC. If you use a different chest plugin, open a GitHub issue, and it could possibly be created.
 To convert a chest, do one of the following:
-
-* <b>In-game:</b> `/lwc convert chestprotect`
-* <b>Console:</b> `java -cp plugins/LWC.jar CPConverter`
+<b>In-game:</b> `/lwc convert chestprotect`
+<b>Console:</b> `java -cp plugins/LWC.jar CPConverter`
 
 Commands
 ----------------------
