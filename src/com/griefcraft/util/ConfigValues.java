@@ -44,7 +44,7 @@ public enum ConfigValues {
 
 	// TODO: furnace protection
 
-	BLACKLISTED_MODES("blacklisted-modes", ""), ALLOW_FURNACE_PROTECTION("furnace-locks", "true");
+	BLACKLISTED_MODES("blacklisted-modes", ""), ALLOW_FURNACE_PROTECTION("furnace-locks", "true"), DB_PATH("db-path", "lwc.db");
 
 	/**
 	 * The name of the config value used in the conf file
