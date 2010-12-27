@@ -24,25 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.griefcraft.model.Action;
-import com.griefcraft.model.Chest;
+import com.griefcraft.model.Entity;
 
-public class MemoryDatabase extends Database {
-
-	/**
-	 * Static instance
-	 */
-	private static MemoryDatabase instance;
-
-	/**
-	 * @return an instance of Database
-	 */
-	public static MemoryDatabase getInstance() {
-		if (instance == null) {
-			instance = new MemoryDatabase();
-		}
-
-		return instance;
-	}
+public class MemDB extends Database {
 
 	public Action getAction(String action, String player) {
 		try {
@@ -279,7 +263,7 @@ public class MemoryDatabase extends Database {
 	 *            the chest to check
 	 * @return true if the player has access
 	 */
-	public boolean hasAccess(String player, Chest chest) {
+	public boolean hasAccess(String player, Entity chest) {
 		if (chest == null) {
 			return true;
 		}
@@ -393,19 +377,17 @@ public class MemoryDatabase extends Database {
 		try {
 			final Statement statement = connection.createStatement();
 
-			log("Creating memory table 'sessions'");
+			log("Creating memory tables");
 
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'sessions' (" //
 					+ "id INTEGER PRIMARY KEY," //
 					+ "player TEXT," //
 					+ "chest INTEGER" + ");"); //
 
-			log("Creating memory table 'locks'");
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'locks' (" + "id INTEGER PRIMARY KEY," //
 					+ "player TEXT," //
 					+ "password TEXT" + ");"); //
 
-			log("Creating memory table 'actions'");
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'actions' (" //
 					+ "id INTEGER PRIMARY KEY," //
 					+ "action TEXT," //
@@ -414,35 +396,16 @@ public class MemoryDatabase extends Database {
 					+ "data TEXT" //
 					+ ");"); //
 
-			log("Creating memory table 'modes'");
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'modes' (" + "id INTEGER PRIMARY KEY," //
 					+ "player TEXT," //
 					+ "mode TEXT," //
 					+ "data TEXT" //
 					+ ");");
 
-			/**
-			 * unlocks -> actions add 'action'
-			 * 
-			 * unlock = unlock remove chest = unregister
-			 * 
-			 */
-
 			statement.close();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * Log a string to stdout
-	 * 
-	 * @param str
-	 *            The string to log
-	 */
-	@Override
-	public void log(String str) {
-		System.out.println("[LWC->sqlite->memory] " + str);
 	}
 
 	/**
