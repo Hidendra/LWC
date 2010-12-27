@@ -480,10 +480,8 @@ public class LWC extends Plugin {
 	 * 
 	 * @param block
 	 * @param size
-	 * @deprecated Removal: when getEntitySet( ) is made better (or keep this, it's not too bad!)
 	 * @return
 	 */
-	@Deprecated
 	private List<ComplexBlock> _validateChest(List<ComplexBlock> entities, ComplexBlock block) {
 		if (block == null) {
 			return entities;
