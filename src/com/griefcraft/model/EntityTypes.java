@@ -17,7 +17,7 @@
 
 package com.griefcraft.model;
 
-public class ChestTypes {
+public class EntityTypes {
 
 	public static final int PUBLIC = 0;
 	public static final int PASSWORD = 1;

@@ -19,18 +19,27 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
+import java.util.logging.Logger;
 
-import com.griefcraft.model.ChestTypes;
+import com.griefcraft.LWCInfo;
+import com.griefcraft.logging.Bootstrap;
+import com.griefcraft.model.Entity;
+import com.griefcraft.model.EntityTypes;
 import com.griefcraft.model.RightTypes;
-import com.griefcraft.sql.MemoryDatabase;
-import com.griefcraft.sql.PhysicalDatabase;
+
+import com.griefcraft.sql.Database;
+import com.griefcraft.sql.MemDB;
+import com.griefcraft.sql.PhysDB;
+import com.griefcraft.util.Config;
+import com.griefcraft.util.ConfigValues;
+import com.griefcraft.util.Updater;
 
 public class LWC extends Plugin {
 
 	/**
-	 * The version
+	 * The logging object
 	 */
-	public static final double VERSION = 1.37;
+	private Logger logger = Logger.getLogger(getClass().getSimpleName());
 
 	/**
 	 * The PluginListener
@@ -38,15 +47,25 @@ public class LWC extends Plugin {
 	private LWCListener listener;
 
 	/**
+	 * Physical database instance
+	 */
+	private PhysDB physicalDatabase;
+
+	/**
+	 * Memory database instance
+	 */
+	private MemDB memoryDatabase;
+
+	/**
 	 * Check if a player can access a chest
 	 * 
 	 * @param player
 	 *            the player to check
-	 * @param Chest
+	 * @param Entity
 	 *            the chest to check
 	 * @return if the player can access the chest
 	 */
-	public boolean canAccessChest(Player player, com.griefcraft.model.Chest chest) {
+	public boolean canAccessChest(Player player, Entity chest) {
 		if (chest == null) {
 			return true;
 		}
@@ -68,14 +87,14 @@ public class LWC extends Plugin {
 		}
 
 		switch (chest.getType()) {
-		case ChestTypes.PUBLIC:
+		case EntityTypes.PUBLIC:
 			return true;
 
-		case ChestTypes.PASSWORD:
-			return MemoryDatabase.getInstance().hasAccess(player.getName(), chest);
+		case EntityTypes.PASSWORD:
+			return memoryDatabase.hasAccess(player.getName(), chest);
 
-		case ChestTypes.PRIVATE:
-			final PhysicalDatabase instance = PhysicalDatabase.getInstance();
+		case EntityTypes.PRIVATE:
+			final PhysDB instance = physicalDatabase;
 			return player.getName().equalsIgnoreCase(chest.getOwner()) || instance.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) != -1 || instance.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) != -1;
 
 		default:
@@ -97,7 +116,7 @@ public class LWC extends Plugin {
 	 * @return if the player can access the chest
 	 */
 	public boolean canAccessChest(Player player, int x, int y, int z) {
-		return canAccessChest(player, PhysicalDatabase.getInstance().loadChest(x, y, z));
+		return canAccessChest(player, physicalDatabase.loadProtectedEntity(x, y, z));
 	}
 
 	/**
@@ -105,11 +124,11 @@ public class LWC extends Plugin {
 	 * 
 	 * @param player
 	 *            the player to check
-	 * @param Chest
+	 * @param Entity
 	 *            the chest to check
 	 * @return if the player can administrate the chest
 	 */
-	public boolean canAdminChest(Player player, com.griefcraft.model.Chest chest) {
+	public boolean canAdminChest(Player player, Entity chest) {
 		if (chest == null) {
 			return true;
 		}
@@ -119,14 +138,14 @@ public class LWC extends Plugin {
 		}
 
 		switch (chest.getType()) {
-		case ChestTypes.PUBLIC:
+		case EntityTypes.PUBLIC:
 			return player.getName().equalsIgnoreCase(chest.getOwner());
 
-		case ChestTypes.PASSWORD:
-			return player.getName().equalsIgnoreCase(chest.getOwner()) && MemoryDatabase.getInstance().hasAccess(player.getName(), chest);
+		case EntityTypes.PASSWORD:
+			return player.getName().equalsIgnoreCase(chest.getOwner()) && memoryDatabase.hasAccess(player.getName(), chest);
 
-		case ChestTypes.PRIVATE:
-			final PhysicalDatabase instance = PhysicalDatabase.getInstance();
+		case EntityTypes.PRIVATE:
+			final PhysDB instance = physicalDatabase;
 			return player.getName().equalsIgnoreCase(chest.getOwner()) || instance.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) == 1 || instance.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) == 1;
 
 		default:
@@ -136,35 +155,56 @@ public class LWC extends Plugin {
 
 	@Override
 	public void disable() {
-
+		Config.getInstance().save();
 	}
 
 	@Override
 	public void enable() {
-		log("Physical db location: " + PhysicalDatabase.getInstance().getDatabasePath());
+		try {
+			Bootstrap.bootstrap();
 
-		log("Opening sqlite databases (1 Physical & 1 Memory)");
+			log("Initializing LWC");
 
-		final boolean connected = PhysicalDatabase.getInstance().connect() && MemoryDatabase.getInstance().connect();
+			physicalDatabase = new PhysDB();
+			memoryDatabase = new MemDB();
 
-		if (!connected) {
-			log("Failed to open sqlite databases");
+			Config.init();
+
+			Updater updater = new Updater();
+			updater.check();
+			updater.update();
+
+			log("LWC config:      " + LWCInfo.CONF_FILE);
+			log("SQLite jar:      lib/sqlite.jar");
+			log("SQLite library:  lib/" + updater.getOSSpecificFileName());
+			log("DB location:     " + physicalDatabase.getDatabasePath());
+
+			log("Opening sqlite databases");
+
+			physicalDatabase.connect();
+			memoryDatabase.connect();
+
+			physicalDatabase.load();
+			memoryDatabase.load();
+
+			log("Entity count: " + physicalDatabase.entityCount());
+			log("Limit count: " + physicalDatabase.limitCount());
+		} catch (Exception e) {
+			log("Error occured while initializing LWC : " + e.getMessage());
+			e.printStackTrace();
+			log("LWC will now be disabled");
+			etc.getLoader().disablePlugin("LWC");
 		}
-
-		PhysicalDatabase.getInstance().load();
-		MemoryDatabase.getInstance().load();
-
-		log("Chest count: " + PhysicalDatabase.getInstance().chestCount());
-		log("Limit count: " + PhysicalDatabase.getInstance().limitCount());
 	}
 
 	public String encrypt(String plaintext) {
 		MessageDigest md = null;
+
 		try {
 			md = MessageDigest.getInstance("SHA");
 			md.update(plaintext.getBytes("UTF-8"));
 
-			final byte[] raw = md.digest(); // step 4
+			final byte[] raw = md.digest();
 			return byteArray2Hex(raw);
 		} catch (final Exception e) {
 
@@ -181,23 +221,23 @@ public class LWC extends Plugin {
 	 * @return true if they are limited
 	 */
 	public boolean enforceChestLimits(Player player) {
-		final int userLimit = PhysicalDatabase.getInstance().getUserLimit(player.getName());
+		final int userLimit = physicalDatabase.getUserLimit(player.getName());
 
 		/*
 		 * Sort of redundant, but use the least amount of queries we can!
 		 */
 		if (userLimit != -1) {
-			final int chests = PhysicalDatabase.getInstance().getChestCount(player.getName());
+			final int chests = physicalDatabase.getChestCount(player.getName());
 
 			if (chests >= userLimit) {
 				player.sendMessage(Colors.Red + "You have exceeded the amount of chests you can lock!");
 				return true;
 			}
 		} else {
-			final int groupLimit = PhysicalDatabase.getInstance().getGroupLimit(player.getGroups().length > 0 ? player.getGroups()[0] : "default");
+			final int groupLimit = physicalDatabase.getGroupLimit(player.getGroups().length > 0 ? player.getGroups()[0] : "default");
 
 			if (groupLimit != -1) {
-				final int chests = PhysicalDatabase.getInstance().getChestCount(player.getName());
+				final int chests = physicalDatabase.getChestCount(player.getName());
 
 				if (chests >= groupLimit) {
 					player.sendMessage(Colors.Red + "You have exceeded the amount of chests you can lock!");
@@ -210,7 +250,7 @@ public class LWC extends Plugin {
 	}
 
 	/**
-	 * Useful for getting double chests
+	 * Useful for getting double chests TODO: rewrite
 	 * 
 	 * @param x
 	 *            the x coordinate
@@ -220,42 +260,48 @@ public class LWC extends Plugin {
 	 *            the z coordinate
 	 * @return the Chest[] array of chests
 	 */
-	public List<ComplexBlock> getChestSet(int x, int y, int z) {
-		List<ComplexBlock> chests = new ArrayList<ComplexBlock>(2);
+	public List<ComplexBlock> getEntitySet(int x, int y, int z) {
+		List<ComplexBlock> entities = new ArrayList<ComplexBlock>(2);
 
 		/*
-		 * TODO: Redo this, so it's neater :)
+		 * First check the block they actually clicked
 		 */
+		ComplexBlock baseBlock = etc.getServer().getComplexBlock(x, y, z);
+
+		entities = _validateChest(entities, baseBlock);
 
 		for (int dev = -1; dev <= 1; dev++) {
 			final ComplexBlock block = etc.getServer().getComplexBlock(x + dev, y, z);
 
-			if (block == null) {
-				continue;
-			}
-
-			if ((block instanceof Chest) || (block instanceof DoubleChest)) {
-				chests.add(block);
-			}
+			entities = _validateChest(entities, block);
 		}
 
 		for (int dev = -1; dev <= 1; dev++) {
 			final ComplexBlock block = etc.getServer().getComplexBlock(x, y, z + dev);
 
-			if (block == null) {
-				continue;
-			}
-
-			if ((block instanceof Chest) || (block instanceof DoubleChest)) {
-				chests.add(block);
-			}
+			entities = _validateChest(entities, block);
 		}
 
-		return chests;
+		return entities;
+	}
+
+	/**
+	 * @return memory database object
+	 */
+	public MemDB getMemoryDatabase() {
+		return memoryDatabase;
+	}
+
+	/**
+	 * @return physical database object
+	 */
+	public PhysDB getPhysicalDatabase() {
+		return physicalDatabase;
 	}
 
 	public int getPlayerDropTransferTarget(String player) {
-		String rawTarget = MemoryDatabase.getInstance().getModeData(player, "dropTransfer");
+		String rawTarget = memoryDatabase.getModeData(player, "dropTransfer");
+
 		try {
 			int ret = Integer.parseInt(rawTarget.substring(1));
 			return ret;
@@ -267,6 +313,10 @@ public class LWC extends Plugin {
 
 	@Override
 	public void initialize() {
+		if (!Database.isConnected()) {
+			return;
+		}
+
 		log("Registering hooks");
 
 		listener = new LWCListener(this);
@@ -303,8 +353,32 @@ public class LWC extends Plugin {
 		return player.canUseCommand("/lwcmod");
 	}
 
+	/**
+	 * Check if a mode is disabled
+	 * 
+	 * @param mode
+	 * @return
+	 */
+	public boolean isModeBlacklisted(String mode) {
+		String blacklistedModes = ConfigValues.BLACKLISTED_MODES.getString();
+
+		if (blacklistedModes.isEmpty()) {
+			return false;
+		}
+
+		String[] modes = blacklistedModes.split(",");
+
+		for (String _mode : modes) {
+			if (mode.equalsIgnoreCase(_mode)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public void log(String str) {
-		System.out.println("[LWC] [v" + VERSION + "] " + str);
+		logger.info(str);
 	}
 
 	/**
@@ -315,11 +389,17 @@ public class LWC extends Plugin {
 	 * @return true if the player is NOT in persistent mode
 	 */
 	public boolean notInPersistentMode(String player) {
-		return !MemoryDatabase.getInstance().hasMode(player, "persist");
+		return !memoryDatabase.hasMode(player, "persist");
 	}
 
+	/**
+	 * Check if the player is currently drop transferring
+	 * 
+	 * @param player
+	 * @return
+	 */
 	public boolean playerIsDropTransferring(String player) {
-		return MemoryDatabase.getInstance().hasMode(player, "dropTransfer") && MemoryDatabase.getInstance().getModeData(player, "dropTransfer").startsWith("t");
+		return memoryDatabase.hasMode(player, "dropTransfer") && memoryDatabase.getModeData(player, "dropTransfer").startsWith("t");
 	}
 
 	/**
@@ -329,42 +409,37 @@ public class LWC extends Plugin {
 	 *            the player to send to
 	 */
 	public void sendFullHelp(Player player) {
-		player.sendMessage("");
 		player.sendMessage(Colors.Green + "Welcome to LWC, a Protection mod");
 		player.sendMessage("");
 
 		player.sendMessage(Colors.Green + " Commands:");
 
-		player.sendMessage(Colors.LightGreen + "/lwc create - View detailed info on chest types");
-		player.sendMessage(Colors.LightGreen + "/lwc create public - Create a public chest");
-		player.sendMessage(Colors.LightGreen + "/lwc create password - Create a password protected chest");
-		player.sendMessage(Colors.LightGreen + "/lwc create private - Create a private chest");
-
+		player.sendMessage(Colors.LightGreen + "/lwc create - View detailed info on protection types");
+		player.sendMessage(Colors.LightGreen + "/lwc create public - Create a public protection");
+		player.sendMessage(Colors.LightGreen + "/lwc create password - Create a password protected entity");
+		player.sendMessage(Colors.LightGreen + "/lwc create private - Create a private protection");
 		player.sendMessage("");
 
-		player.sendMessage(Colors.LightGreen + "/lwc modify - Modify a protected chest");
-
+		player.sendMessage(Colors.LightGreen + "/lwc modify - Modify a protected entity");
 		player.sendMessage("");
 
-		player.sendMessage(Colors.LightGreen + "/lwc free chest - Remove a protected chest");
+		player.sendMessage(Colors.LightGreen + "/lwc free entity - Remove a protected entity");
 		player.sendMessage(Colors.LightGreen + "/lwc free modes - Remove temporary modes on you");
-
 		player.sendMessage("");
 
-		player.sendMessage(Colors.LightGreen + "/lwc persist - Allow use of 1 command multiple times");
-
-		player.sendMessage(Colors.LightGreen + "/lwc unlock - Unlock a password protected chest");
-
+		player.sendMessage(Colors.LightGreen + "/lwc unlock - Unlock a password protected entity");
+		player.sendMessage(Colors.LightGreen + "/lwc info - View information on a protected entity");
 		player.sendMessage("");
 
-		player.sendMessage(Colors.LightGreen + "/lwc info - View information on a protected chest");
+		if (!isModeBlacklisted("persist")) {
+			player.sendMessage(Colors.LightGreen + "/lwc persist - Allow use of 1 command multiple times");
+		}
+
+		if (!isModeBlacklisted("dropTransfer")) {
+			player.sendMessage(Colors.LightGreen + "/lwc droptransfer - View Drop Transfer help");
+		}
 
 		player.sendMessage("");
-
-		player.sendMessage(Colors.LightGreen + "/lwc droptransfer - View Drop Transfer help");
-
-		player.sendMessage("");
-
 		player.sendMessage(Colors.Red + "/lwc admin - (LWC ADMIN) Admin functions");
 	}
 
@@ -390,6 +465,54 @@ public class LWC extends Plugin {
 		}
 
 		return new String(charArray);
+	}
+
+	/**
+	 * Temporary ..
+	 * 
+	 * @param block
+	 * @param size
+	 * @deprecated Removal: when getEntitySet( ) is made better (or keep this, it's not too bad!)
+	 * @return
+	 */
+	@Deprecated
+	private List<ComplexBlock> _validateChest(List<ComplexBlock> entities, ComplexBlock block) {
+		if (block == null) {
+			return entities;
+		}
+
+		if (entities.size() > 2) {
+			return entities;
+		}
+
+		if (block instanceof Furnace) {
+			if (entities.size() == 0) {
+
+				if (!entities.contains(block)) {
+					entities.add(block);
+				}
+
+			}
+
+			return entities;
+		}
+
+		if (block instanceof Chest || block instanceof DoubleChest) {
+			if (entities.size() == 1) {
+				ComplexBlock other = entities.get(0);
+
+				if (!(other instanceof Chest) || !(other instanceof DoubleChest)) {
+					return entities;
+				}
+			}
+
+			if (!entities.contains(block)) {
+				entities.add(block);
+			}
+
+		}
+
+		return entities;
 	}
 
 	/**

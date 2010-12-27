@@ -22,9 +22,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.ConnectException;
 
-import com.griefcraft.model.ChestTypes;
+import com.griefcraft.model.EntityTypes;
 import com.griefcraft.model.RightTypes;
-import com.griefcraft.sql.PhysicalDatabase;
+import com.griefcraft.sql.PhysDB;
 
 /**
  * Convert Chest Protect chests to LWC
@@ -50,8 +50,14 @@ public class CPConverter implements Runnable {
 	 */
 	private Player player;
 
+	/**
+	 * Physical database object
+	 */
+	private PhysDB physicalDatabase;
+
 	public CPConverter() {
 		new Thread(this).start();
+		physicalDatabase = new PhysDB();
 	}
 
 	public CPConverter(Player player) {
@@ -106,7 +112,7 @@ public class CPConverter implements Runnable {
 			String users = "";
 
 			if (type == 1) {
-				type = ChestTypes.PUBLIC;
+				type = EntityTypes.PUBLIC;
 			} else if (type > 1) {
 				if (type == 3) {
 					rightsType = RightTypes.GROUP;
@@ -114,7 +120,7 @@ public class CPConverter implements Runnable {
 					rightsType = RightTypes.PLAYER;
 				}
 
-				type = ChestTypes.PRIVATE;
+				type = EntityTypes.PRIVATE;
 			}
 
 			if (split.length > 5) {
@@ -126,7 +132,7 @@ public class CPConverter implements Runnable {
 			/*
 			 * Register the chest
 			 */
-			PhysicalDatabase.getInstance().registerChest(type, owner, "", x, y, z);
+			physicalDatabase.registerProtectedEntity(type, owner, "", x, y, z);
 
 			converted++;
 
@@ -140,7 +146,7 @@ public class CPConverter implements Runnable {
 			/**
 			 * The id of the chest we just registered
 			 */
-			int chestID = PhysicalDatabase.getInstance().loadChest(x, y, z).getID();
+			int chestID = physicalDatabase.loadProtectedEntity(x, y, z).getID();
 
 			/**
 			 * Now register the extra users
@@ -148,7 +154,7 @@ public class CPConverter implements Runnable {
 			String[] extra = users.split(";");
 
 			for (String entity : extra) {
-				PhysicalDatabase.getInstance().registerRights(chestID, entity, 0, rightsType);
+				physicalDatabase.registerProtectionRights(chestID, entity, 0, rightsType);
 				log(String.format("  -> Registering rights to %s on chest %d", entity, chestID));
 			}
 		}
@@ -169,13 +175,13 @@ public class CPConverter implements Runnable {
 			log("");
 			log("Initializing sqlite");
 
-			boolean connected = PhysicalDatabase.getInstance().connect();
+			boolean connected = physicalDatabase.connect();
 
 			if (!connected) {
 				throw new ConnectException("Failed to connect to the sqlite database");
 			}
 
-			PhysicalDatabase.getInstance().load();
+			physicalDatabase.load();
 
 			log("Done.");
 			log("Starting conversion of Chest Protect chests");
@@ -186,7 +192,7 @@ public class CPConverter implements Runnable {
 			log("Done.");
 			log("");
 			log("Converted >" + converted + "< Chest Protect chests to LWC");
-			log("LWC database now holds " + PhysicalDatabase.getInstance().chestCount() + " protected chests!");
+			log("LWC database now holds " + physicalDatabase.entityCount() + " protected chests!");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

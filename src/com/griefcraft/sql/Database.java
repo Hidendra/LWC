@@ -20,8 +20,21 @@ package com.griefcraft.sql;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.logging.Logger;
 
 public abstract class Database {
+
+	/**
+	 * @return true if connected to sqlite
+	 */
+	public static boolean isConnected() {
+		return connected;
+	}
+
+	/**
+	 * Logging object
+	 */
+	private Logger logger = Logger.getLogger(getClass().getSimpleName());
 
 	/**
 	 * The connection to the database
@@ -29,23 +42,23 @@ public abstract class Database {
 	public Connection connection = null;
 
 	/**
+	 * If we are connected to sqlite
+	 */
+	private static boolean connected = false;
+
+	/**
 	 * Connect to MySQL
 	 * 
 	 * @return if the connection was succesful
 	 */
-	public boolean connect() {
+	public boolean connect() throws Exception {
 		if (connection != null) {
 			return true;
 		}
 
-		try {
-			Class.forName("org.sqlite.JDBC");
-
-			connection = DriverManager.getConnection("jdbc:sqlite:" + getDatabasePath());
-		} catch (final Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+		Class.forName("org.sqlite.JDBC");
+		connection = DriverManager.getConnection("jdbc:sqlite:" + getDatabasePath());
+		connected = true;
 
 		return true;
 	}
@@ -79,7 +92,7 @@ public abstract class Database {
 	 *            The string to log
 	 */
 	public void log(String str) {
-		System.out.println("[LWC->sqlite] " + str);
+		logger.info(str);
 	}
 
 }
