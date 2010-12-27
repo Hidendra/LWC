@@ -25,7 +25,8 @@ import java.net.URL;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+
+import com.griefcraft.logging.Logger;
 
 public class Updater {
 

@@ -19,10 +19,9 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
-import java.util.logging.Logger;
 
 import com.griefcraft.LWCInfo;
-import com.griefcraft.logging.Bootstrap;
+import com.griefcraft.logging.Logger;
 import com.griefcraft.model.Entity;
 import com.griefcraft.model.EntityTypes;
 import com.griefcraft.model.RightTypes;
@@ -161,8 +160,6 @@ public class LWC extends Plugin {
 	@Override
 	public void enable() {
 		try {
-			Bootstrap.bootstrap();
-
 			log("Initializing LWC");
 
 			physicalDatabase = new PhysDB();
@@ -378,7 +375,7 @@ public class LWC extends Plugin {
 	}
 
 	public void log(String str) {
-		logger.info(str);
+		logger.log(str);
 	}
 
 	/**
