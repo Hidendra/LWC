@@ -104,7 +104,7 @@ public class Updater {
 		}
 
 		/*
-		 * Enable SSL (Github is 100% SSL)
+		 * Enable SSL (github is 100% SSL)
 		 */
 		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 		System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
