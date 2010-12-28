@@ -952,15 +952,15 @@ public class LWCListener extends PluginListener {
 
 	@Override
 	public boolean onOpenInventory(Player player, Inventory inventory) {
-		if (!isProtectable(((ComplexBlock) inventory).getBlock())) {
-			return false;
-		}
-
 		if (parent.isAdmin(player) && !debugMode) {
 			return false;
 		}
 
 		ComplexBlock block = (ComplexBlock) inventory;
+		
+		if(!isProtectable(block.getBlock())) {
+			return false;
+		}
 
 		List<ComplexBlock> entitySet = parent.getEntitySet(block.getX(), block.getY(), block.getZ());
 		boolean hasAccess = true;
