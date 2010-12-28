@@ -221,6 +221,10 @@ public class LWC extends Plugin {
 	 * @return true if they are limited
 	 */
 	public boolean enforceChestLimits(Player player) {
+		if(isAdmin(player)) {
+			return false;
+		}
+		
 		final int userLimit = physicalDatabase.getUserLimit(player.getName());
 
 		/*
