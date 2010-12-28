@@ -283,10 +283,10 @@ public class LWCListener extends PluginListener {
 						if (!remove) {
 							physicalDatabase.unregisterProtectionRights(chestID, userEntity);
 							physicalDatabase.registerProtectionRights(chestID, userEntity, isAdmin ? 1 : 0, chestType);
-							player.sendMessage(Colors.LightGreen + "Registered rights for " + Colors.Gold + entity + Colors.Green + " " + (isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "") + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
+							player.sendMessage(Colors.LightGreen + "Registered rights for " + Colors.Gold + userEntity + Colors.Green + " " + (isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "") + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
 						} else {
 							physicalDatabase.unregisterProtectionRights(chestID, userEntity);
-							player.sendMessage(Colors.LightGreen + "Removed rights for " + Colors.Gold + entity + Colors.Green + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
+							player.sendMessage(Colors.LightGreen + "Removed rights for " + Colors.Gold + userEntity + Colors.Green + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
 						}
 					}
 
@@ -396,7 +396,7 @@ public class LWCListener extends PluginListener {
 					}
 
 					physicalDatabase.registerProtectionRights(physicalDatabase.loadProtectedEntity(block.getX(), block.getY(), block.getZ()).getID(), userEntity, isAdmin ? 1 : 0, chestType);
-					player.sendMessage(Colors.LightGreen + "Registered rights for " + Colors.Gold + entity + ": " + (isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "") + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
+					player.sendMessage(Colors.LightGreen + "Registered rights for " + Colors.Gold + userEntity + ": " + (isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "") + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
 				}
 			}
 
@@ -770,11 +770,11 @@ public class LWCListener extends PluginListener {
 				if (subAction.equalsIgnoreCase("report")) {
 					Performance.setChestCount(parent.getPhysicalDatabase().entityCount());
 					Performance.setPlayersOnline(etc.getServer().getPlayerList().size());
-					
+
 					for(String line : Performance.getGeneratedReport()) {
 						player.sendMessage(Colors.Green + line);
 					}
-					
+
 					Performance.clear();
 				} else if (subAction.equalsIgnoreCase("clear")) {
 					if (split.length < 3) {
@@ -955,13 +955,13 @@ public class LWCListener extends PluginListener {
 		if (parent.isAdmin(player) && !debugMode) {
 			return false;
 		}
-		
+
 		if(inventory instanceof Workbench) {
 			return false;
 		}
 
 		ComplexBlock block = (ComplexBlock) inventory;
-		
+
 		if(!isProtectable(block.getBlock())) {
 			return false;
 		}

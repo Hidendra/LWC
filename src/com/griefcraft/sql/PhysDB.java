@@ -41,31 +41,18 @@ public class PhysDB extends Database {
 	 */
 	private PreparedStatement _select_protectedEntity_ID;
 	private PreparedStatement _select_chestExist_ID;
-
 	private PreparedStatement _select_chestCount_user;
-
 	private PreparedStatement _select_limit_type_entity;
-
 	private PreparedStatement _select_privateAccess_type_ID_entities;
-
 	private PreparedStatement _select_protectedEntity_x_y_z_radius;
-
 	private PreparedStatement _select_protectedEntity_x_y_z;
-
 	private PreparedStatement _insert_protectedEntity_type_player_password_x_y_z;
-
 	private PreparedStatement _insert_protectedLimit_type_amount_entity;
-
 	private PreparedStatement _insert_rights_ID_entity_rights_type;
-
 	private PreparedStatement _delete_protectedEntity_ID;
-
 	private PreparedStatement _delete_protectedEntity_x_y_z;
-
 	private PreparedStatement _delete_limit_type_entity;
-
 	private PreparedStatement _delete_rights_ID;
-
 	private PreparedStatement _delete_rights_ID_entity;
 
 	/**
