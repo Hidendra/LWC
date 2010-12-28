@@ -234,14 +234,50 @@ public class LWC extends Plugin {
 				return true;
 			}
 		} else {
-			final int groupLimit = physicalDatabase.getGroupLimit(player.getGroups().length > 0 ? player.getGroups()[0] : "default");
-
-			if (groupLimit != -1) {
-				final int chests = physicalDatabase.getChestCount(player.getName());
-
-				if (chests >= groupLimit) {
-					player.sendMessage(Colors.Red + "You have exceeded the amount of chests you can lock!");
-					return true;
+			List<String> inheritedGroups = new ArrayList<String>();
+			String groupName = player.getGroups().length > 0 ? player.getGroups()[0] : etc.getInstance().getDefaultGroup().Name;
+			
+			inheritedGroups.add(groupName);
+			
+			/**
+			 * Recurse down the user's group tree
+			 */
+			while(true) {
+				Group group = etc.getDataSource().getGroup(groupName);
+				
+				if(group == null) {
+					break;
+				}
+				
+				String[] inherited = group.InheritedGroups;
+				
+				if(inherited == null || inherited.length == 0) {
+					break;
+				}
+				
+				groupName = inherited[0];
+				
+				for(String _groupName : inherited) {
+					_groupName = _groupName.trim();
+					
+					if(_groupName.isEmpty()) {
+						continue;
+					}
+					
+					inheritedGroups.add(_groupName);
+				}
+			}
+			
+			for(String group : inheritedGroups) {
+				final int groupLimit = physicalDatabase.getGroupLimit(group);
+	
+				if (groupLimit != -1) {
+					final int chests = physicalDatabase.getChestCount(player.getName());
+	
+					if (chests >= groupLimit) {
+						player.sendMessage(Colors.Red + "You have exceeded the amount of chests you can lock!");
+						return true;
+					}
 				}
 			}
 		}
@@ -447,8 +483,10 @@ public class LWC extends Plugin {
 			player.sendMessage(Colors.LightGreen + "/lwc droptransfer - View Drop Transfer help");
 		}
 
-		player.sendMessage("");
-		player.sendMessage(Colors.Red + "/lwc admin - (LWC ADMIN) Admin functions");
+		if(isAdmin(player)) {
+			player.sendMessage("");
+			player.sendMessage(Colors.Red + "/lwc admin - Admin functions");
+		}
 	}
 
 	public void sendPendingRequest(Player player) {
