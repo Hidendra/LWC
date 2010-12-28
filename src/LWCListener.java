@@ -32,7 +32,7 @@ public class LWCListener extends PluginListener {
 	/**
 	 * Parent class
 	 */
-	private final LWC parent;
+	private final LWC lwc;
 
 	/**
 	 * Tnt blast radius
@@ -54,10 +54,10 @@ public class LWCListener extends PluginListener {
 	 */
 	private MemDB memoryDatabase;
 
-	public LWCListener(LWC parent) {
-		this.parent = parent;
-		physicalDatabase = parent.getPhysicalDatabase();
-		memoryDatabase = parent.getMemoryDatabase();
+	public LWCListener(LWC lwc) {
+		this.lwc = lwc;
+		physicalDatabase = lwc.getPhysicalDatabase();
+		memoryDatabase = lwc.getMemoryDatabase();
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class LWCListener extends PluginListener {
 			return false;
 		}
 
-		List<ComplexBlock> entitySet = parent.getEntitySet(block.getX(), block.getY(), block.getZ());
+		List<ComplexBlock> entitySet = lwc.getEntitySet(block.getX(), block.getY(), block.getZ());
 		boolean hasAccess = true;
 		boolean canAdmin = true;
 		Entity entity = null;
@@ -82,8 +82,8 @@ public class LWCListener extends PluginListener {
 				continue;
 			}
 
-			hasAccess = parent.canAccessChest(player, entity);
-			canAdmin = parent.canAdminChest(player, entity);
+			hasAccess = lwc.canAccessChest(player, entity);
+			canAdmin = lwc.canAdminChest(player, entity);
 		}
 
 		if (hasAccess && entity != null) {
@@ -106,7 +106,7 @@ public class LWCListener extends PluginListener {
 			return false;
 		}
 
-		List<ComplexBlock> entitySet = parent.getEntitySet(block.getX(), block.getY(), block.getZ());
+		List<ComplexBlock> entitySet = lwc.getEntitySet(block.getX(), block.getY(), block.getZ());
 		boolean hasAccess = true;
 		Entity entity = null;
 		boolean hasNoOwner = true;
@@ -122,7 +122,7 @@ public class LWCListener extends PluginListener {
 				continue;
 			}
 
-			hasAccess = parent.canAccessChest(player, entity);
+			hasAccess = lwc.canAccessChest(player, entity);
 			hasNoOwner = false;
 			break;
 		}
@@ -182,7 +182,7 @@ public class LWCListener extends PluginListener {
 					break;
 				}
 
-				boolean canAdmin = parent.canAdminChest(player, entity);
+				boolean canAdmin = lwc.canAdminChest(player, entity);
 				// boolean canAccess = parent.canAccessChest(player,
 				// entity);
 
@@ -202,12 +202,12 @@ public class LWCListener extends PluginListener {
 					player.sendMessage(Colors.Green + "Date created: " + Colors.Gold + entity.getDate());
 				}
 
-				if (parent.notInPersistentMode(player.getName())) {
+				if (lwc.notInPersistentMode(player.getName())) {
 					memoryDatabase.unregisterAllActions(player.getName());
 				}
 				return false;
 			} else if (dropTransferReg) {
-				final boolean canAccess = parent.canAccessChest(player, entity);
+				final boolean canAccess = lwc.canAccessChest(player, entity);
 				if (!canAccess) {
 					player.sendMessage(Colors.Red + "You cannot use a chest that you cannot access as a drop transfer target.");
 					player.sendMessage(Colors.Red + "If this is a passworded chest, please unlock it before retrying.");
@@ -228,23 +228,23 @@ public class LWCListener extends PluginListener {
 				// persist
 				return false;
 			} else if (hasFreeRequest) {
-				if (parent.isAdmin(player) || entity.getOwner().equals(player.getName())) {
+				if (lwc.isAdmin(player) || entity.getOwner().equals(player.getName())) {
 					player.sendMessage(Colors.LightGreen + "Removed lock on the chest succesfully!");
 					physicalDatabase.unregisterProtectedEntity(entity.getX(), entity.getY(), entity.getZ());
 					physicalDatabase.unregisterProtectionRights(entity.getID());
-					if (parent.notInPersistentMode(player.getName())) {
+					if (lwc.notInPersistentMode(player.getName())) {
 						memoryDatabase.unregisterAllActions(player.getName());
 					}
 					return false;
 				} else {
 					player.sendMessage(Colors.Red + "You do not own that chest!");
-					if (parent.notInPersistentMode(player.getName())) {
+					if (lwc.notInPersistentMode(player.getName())) {
 						memoryDatabase.unregisterAllActions(player.getName());
 					}
 					return true;
 				}
 			} else if (modifyChest) {
-				if (parent.canAdminChest(player, entity)) {
+				if (lwc.canAdminChest(player, entity)) {
 					final Action action = memoryDatabase.getAction("modify", player.getName());
 
 					final String defaultEntities = action.getData();
@@ -254,7 +254,7 @@ public class LWCListener extends PluginListener {
 						entities = defaultEntities.split(" ");
 					}
 
-					if (parent.notInPersistentMode(player.getName())) {
+					if (lwc.notInPersistentMode(player.getName())) {
 						memoryDatabase.unregisterAllActions(player.getName());
 					}
 
@@ -293,7 +293,7 @@ public class LWCListener extends PluginListener {
 					return false;
 				} else {
 					player.sendMessage(Colors.Red + "You do not own that chest!");
-					if (parent.notInPersistentMode(player.getName())) {
+					if (lwc.notInPersistentMode(player.getName())) {
 						memoryDatabase.unregisterAllActions(player.getName());
 					}
 					return true;
@@ -312,19 +312,19 @@ public class LWCListener extends PluginListener {
 
 		if (requestInfo || hasFreeRequest) {
 			player.sendMessage(Colors.Red + "Chest is unregistered");
-			if (parent.notInPersistentMode(player.getName())) {
+			if (lwc.notInPersistentMode(player.getName())) {
 				memoryDatabase.unregisterAllActions(player.getName());
 			}
 			return false;
 		}
 
 		if ((createChest || modifyChest) && !hasNoOwner) {
-			if (!parent.canAdminChest(player, entity)) {
+			if (!lwc.canAdminChest(player, entity)) {
 				player.sendMessage(Colors.Red + "You do not own that chest!");
 			} else {
 				player.sendMessage(Colors.Red + "You have already registered that chest!");
 			}
-			if (parent.notInPersistentMode(player.getName())) {
+			if (lwc.notInPersistentMode(player.getName())) {
 				memoryDatabase.unregisterAllActions(player.getName());
 			}
 			return true;
@@ -344,8 +344,8 @@ public class LWCListener extends PluginListener {
 				}
 			}
 
-			if (parent.enforceChestLimits(player)) {
-				if (parent.notInPersistentMode(player.getName())) {
+			if (lwc.enforceChestLimits(player)) {
+				if (lwc.notInPersistentMode(player.getName())) {
 					memoryDatabase.unregisterAllActions(player.getName());
 				}
 				return false;
@@ -356,7 +356,7 @@ public class LWCListener extends PluginListener {
 				player.sendMessage(Colors.Green + "Registered chest lock.");
 			} else if (type.equals("password")) {
 				String password = action.getData().substring("password ".length());
-				password = parent.encrypt(password);
+				password = lwc.encrypt(password);
 
 				physicalDatabase.registerProtectedEntity(EntityTypes.PASSWORD, player.getName(), password, block.getX(), block.getY(), block.getZ());
 				memoryDatabase.registerPlayer(player.getName(), physicalDatabase.loadProtectedEntity(block.getX(), block.getY(), block.getZ()).getID());
@@ -400,7 +400,7 @@ public class LWCListener extends PluginListener {
 				}
 			}
 
-			if (parent.notInPersistentMode(player.getName())) {
+			if (lwc.notInPersistentMode(player.getName())) {
 				memoryDatabase.unregisterAllActions(player.getName());
 			}
 		}
@@ -415,11 +415,11 @@ public class LWCListener extends PluginListener {
 			return;
 		}
 
-		if (parent.isAdmin(player) && !debugMode) {
+		if (lwc.isAdmin(player) && !debugMode) {
 			return;
 		}
 
-		List<ComplexBlock> entitySet = parent.getEntitySet(blockClicked.getX(), blockClicked.getY(), blockClicked.getZ());
+		List<ComplexBlock> entitySet = lwc.getEntitySet(blockClicked.getX(), blockClicked.getY(), blockClicked.getZ());
 		boolean hasAccess = true;
 
 		_main: for (final ComplexBlock chest : entitySet) {
@@ -433,7 +433,7 @@ public class LWCListener extends PluginListener {
 				continue;
 			}
 
-			hasAccess = parent.canAccessChest(player, entity);
+			hasAccess = lwc.canAccessChest(player, entity);
 
 			switch (entity.getType()) {
 			case EntityTypes.PUBLIC:
@@ -506,7 +506,7 @@ public class LWCListener extends PluginListener {
 		 */
 		if (command.equalsIgnoreCase("lwc")) {
 			if (split.length < 2) {
-				parent.sendFullHelp(player);
+				lwc.sendFullHelp(player);
 				return true;
 			}
 
@@ -547,7 +547,7 @@ public class LWCListener extends PluginListener {
 
 				final String subAction = split[2];
 
-				if (parent.enforceChestLimits(player)) {
+				if (lwc.enforceChestLimits(player)) {
 					return true;
 				}
 
@@ -564,7 +564,7 @@ public class LWCListener extends PluginListener {
 
 					final String password = subActions.substring("password ".length()); // Neatness
 					// !
-					final String hiddenPass = parent.transform(password, '*');
+					final String hiddenPass = lwc.transform(password, '*');
 
 					memoryDatabase.unregisterAllActions(player.getName());
 					memoryDatabase.registerAction("create", player.getName(), subActions);
@@ -641,7 +641,7 @@ public class LWCListener extends PluginListener {
 					return true;
 				}
 
-				final String password = parent.encrypt(subActions);
+				final String password = lwc.encrypt(subActions);
 
 				if (!memoryDatabase.hasPendingUnlock(player.getName())) {
 					player.sendMessage(Colors.Red + "No chest selected. (Open a locked chest)");
@@ -661,7 +661,7 @@ public class LWCListener extends PluginListener {
 						memoryDatabase.unregisterUnlock(player.getName());
 						memoryDatabase.registerPlayer(player.getName(), chestID);
 
-						for (final ComplexBlock entity : parent.getEntitySet(chest.getX(), chest.getY(), chest.getZ())) {
+						for (final ComplexBlock entity : lwc.getEntitySet(chest.getX(), chest.getY(), chest.getZ())) {
 							if (entity != null) {
 								entity.update();
 							}
@@ -678,7 +678,7 @@ public class LWCListener extends PluginListener {
 			} else if (action.equals("persist")) {
 				String mode = "persist";
 
-				if (!parent.isAdmin(player) && parent.isModeBlacklisted(mode)) {
+				if (!lwc.isAdmin(player) && lwc.isModeBlacklisted(mode)) {
 					player.sendMessage(Colors.Red + "That mode is currently disabled");
 					return true;
 				}
@@ -689,7 +689,7 @@ public class LWCListener extends PluginListener {
 			} else if (action.equals("droptransfer")) {
 				String mode = "dropTransfer";
 
-				if (!parent.isAdmin(player) && parent.isModeBlacklisted(mode)) {
+				if (!lwc.isAdmin(player) && lwc.isModeBlacklisted(mode)) {
 					player.sendMessage(Colors.Red + "That mode is currently disabled");
 					return true;
 				}
@@ -708,7 +708,7 @@ public class LWCListener extends PluginListener {
 				final String playerName = player.getName();
 
 				if (subAction.equals("select")) {
-					if (parent.playerIsDropTransferring(playerName)) {
+					if (lwc.playerIsDropTransferring(playerName)) {
 						player.sendMessage(Colors.Red + "Please turn off drop transfer before reselecting a chest.");
 						return true;
 					}
@@ -717,7 +717,7 @@ public class LWCListener extends PluginListener {
 					memoryDatabase.registerAction("dropTransferSelect", playerName, "");
 					player.sendMessage(Colors.Green + "Please left-click a registered chest to set as your transfer target.");
 				} else if (subAction.equals("on")) {
-					int target = parent.getPlayerDropTransferTarget(playerName);
+					int target = lwc.getPlayerDropTransferTarget(playerName);
 					if (target == -1) {
 						player.sendMessage(Colors.Red + "Please register a chest before turning drop transfer on.");
 						return true;
@@ -728,7 +728,7 @@ public class LWCListener extends PluginListener {
 					player.sendMessage(Colors.Green + "Drop transfer is now on.");
 					player.sendMessage(Colors.Green + "Any items dropped will be transferred to your chest.");
 				} else if (subAction.equals("off")) {
-					int target = parent.getPlayerDropTransferTarget(playerName);
+					int target = lwc.getPlayerDropTransferTarget(playerName);
 					if (target == -1) {
 						player.sendMessage(Colors.Red + "Please register a chest before turning drop transfer off.");
 						return true;
@@ -738,11 +738,11 @@ public class LWCListener extends PluginListener {
 					memoryDatabase.registerMode(playerName, "dropTransfer", "f" + target);
 					player.sendMessage(Colors.Green + "Drop transfer is now off.");
 				} else if (subAction.equals("status")) {
-					if (parent.getPlayerDropTransferTarget(playerName) == -1) {
+					if (lwc.getPlayerDropTransferTarget(playerName) == -1) {
 						player.sendMessage(Colors.Green + "You have not registered a drop transfer target.");
 						return true;
 					} else {
-						if (parent.playerIsDropTransferring(playerName)) {
+						if (lwc.playerIsDropTransferring(playerName)) {
 							player.sendMessage(Colors.Green + "Drop transfer is currently active.");
 						} else {
 							player.sendMessage(Colors.Green + "Drop transfer is currently inactive.");
@@ -750,7 +750,7 @@ public class LWCListener extends PluginListener {
 					}
 				}
 				return true;
-			} else if (action.equals("admin") && parent.isAdmin(player)) {
+			} else if (action.equals("admin") && lwc.isAdmin(player)) {
 
 				if (split.length < 3) {
 					player.sendMessage("");
@@ -768,7 +768,7 @@ public class LWCListener extends PluginListener {
 				final String subAction = split[2];
 
 				if (subAction.equalsIgnoreCase("report")) {
-					Performance.setChestCount(parent.getPhysicalDatabase().entityCount());
+					Performance.setChestCount(lwc.getPhysicalDatabase().entityCount());
 					Performance.setPlayersOnline(etc.getServer().getPlayerList().size());
 
 					for(String line : Performance.getGeneratedReport()) {
@@ -822,7 +822,7 @@ public class LWCListener extends PluginListener {
 					return true;
 				}
 
-			} else if (action.equals("convert") && parent.isAdmin(player)) {
+			} else if (action.equals("convert") && lwc.isAdmin(player)) {
 				if (split.length < 3) {
 					player.sendMessage("");
 					player.sendMessage(Colors.Green + "LWC Conversion Help");
@@ -877,9 +877,9 @@ public class LWCListener extends PluginListener {
 	@Override
 	public boolean onItemDrop(Player player, Item item) {
 		final String pn = player.getName();
-		final int targetId = parent.getPlayerDropTransferTarget(pn);
+		final int targetId = lwc.getPlayerDropTransferTarget(pn);
 
-		if (targetId == -1 || !parent.playerIsDropTransferring(pn)) {
+		if (targetId == -1 || !lwc.playerIsDropTransferring(pn)) {
 			return false;
 		}
 
@@ -900,7 +900,7 @@ public class LWCListener extends PluginListener {
 			return false;
 		}
 
-		if (!parent.canAccessChest(player, entity)) {
+		if (!lwc.canAccessChest(player, entity)) {
 			player.sendMessage(Colors.Red + "You have lost access to your target chest.");
 			player.sendMessage(Colors.Red + "Please re-register a target chest. Drop transfer will be deactivated.");
 
@@ -908,7 +908,7 @@ public class LWCListener extends PluginListener {
 			return false;
 		}
 
-		List<ComplexBlock> chests = parent.getEntitySet(entity.getX(), entity.getY(), entity.getZ());
+		List<ComplexBlock> chests = lwc.getEntitySet(entity.getX(), entity.getY(), entity.getZ());
 		int remainingAmt = item.getAmount();
 
 		for (ComplexBlock chest : chests) {
@@ -952,7 +952,7 @@ public class LWCListener extends PluginListener {
 
 	@Override
 	public boolean onOpenInventory(Player player, Inventory inventory) {
-		if (parent.isAdmin(player) && !debugMode) {
+		if (lwc.isAdmin(player) && !debugMode) {
 			return false;
 		}
 
@@ -966,7 +966,7 @@ public class LWCListener extends PluginListener {
 			return false;
 		}
 
-		List<ComplexBlock> entitySet = parent.getEntitySet(block.getX(), block.getY(), block.getZ());
+		List<ComplexBlock> entitySet = lwc.getEntitySet(block.getX(), block.getY(), block.getZ());
 		boolean hasAccess = true;
 
 		for (final ComplexBlock chest : entitySet) {
@@ -980,7 +980,7 @@ public class LWCListener extends PluginListener {
 				continue;
 			}
 
-			hasAccess = parent.canAccessChest(player, entity);
+			hasAccess = lwc.canAccessChest(player, entity);
 		}
 
 		return !hasAccess;
