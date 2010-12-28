@@ -955,6 +955,10 @@ public class LWCListener extends PluginListener {
 		if (parent.isAdmin(player) && !debugMode) {
 			return false;
 		}
+		
+		if(inventory instanceof Workbench) {
+			return false;
+		}
 
 		ComplexBlock block = (ComplexBlock) inventory;
 		
