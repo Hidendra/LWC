@@ -375,8 +375,7 @@ public class LWC extends Plugin {
 		registerHook(PluginLoader.Hook.BLOCK_DESTROYED);
 		registerHook(PluginLoader.Hook.OPEN_INVENTORY);
 		registerHook(PluginLoader.Hook.EXPLODE);
-		
-		// registerHook(PluginLoader.Hook.ITEM_DROP); // can't modify inventories correctly at the moment ?
+		registerHook(PluginLoader.Hook.ITEM_DROP);
 	}
 
 	/**
