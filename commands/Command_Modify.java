@@ -15,16 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class DefaultCommand implements Command {
+import static com.griefcraft.util.StringUtils.hasFlag;
+import static com.griefcraft.util.StringUtils.join;
+
+public class Command_Modify implements Command {
 
 	@Override
-	public boolean validate(LWC lwc, Player player, String command, String[] args) {
-		return command.equalsIgnoreCase("lwc") && args.length == 0;
+	public void execute(LWC lwc, Player player, String[] args) {
+		if (args.length < 2) {
+			sendHelp(player);
+			return;
+		}
+
+		String full = join(args, 1);
+
+		lwc.getMemoryDatabase().unregisterAllActions(player.getName());
+		lwc.getMemoryDatabase().registerAction("modify", player.getName(), full);
+		player.sendMessage(Colors.Green + "Please left click your Chest/Furnace to complete modifications");
 	}
 
 	@Override
-	public void execute(LWC lwc, Player player, String command, String[] args) {
-		lwc.sendFullHelp(player);
+	public boolean validate(LWC lwc, Player player, String[] args) {
+		return hasFlag(args, "m");
 	}
-	
+
+	private void sendHelp(Player player) {
+		player.sendMessage("modify_help");
+	}
+
 }
