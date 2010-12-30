@@ -78,6 +78,8 @@ public class Updater {
 			arch = "universal";
 		} else if (osname.contains("nix")) {
 			osname = "linux";
+		} else if (osname.equals("sunos")) {
+			osname = "linux";
 		}
 
 		if (arch.startsWith("i") && arch.endsWith("86")) {
