@@ -40,7 +40,24 @@ public class Command_Modify implements Command {
 	}
 
 	private void sendHelp(Player player) {
-		player.sendMessage("modify_help");
+		player.sendMessage(" ");
+		player.sendMessage(Colors.Green + "LWC Protection");
+		player.sendMessage(" ");
+		
+		player.sendMessage("/lwc -m <users/groups> " + Colors.Gold + "Modify an existing protection, adding or");
+		player.sendMessage(Colors.Gold + "removing users and/or groups");
+		player.sendMessage(Colors.Green + "See: " + Colors.Gold + "/lwc -c" + Colors.Green + ", the example for private protections");
+		player.sendMessage(" ");
+
+		player.sendMessage(Colors.LightGreen + "Additional prefixes for users/groups:");
+		player.sendMessage(Colors.Red + "-" + Colors.LightGreen + ": Remove a user/group from protection");
+		player.sendMessage(Colors.Red + "@" + Colors.LightGreen + ": The user/group will be able to modify the chest");
+		player.sendMessage(Colors.Gold + "note: chest admins cannot remove the owner from access");
+		player.sendMessage(" ");
+		
+		player.sendMessage("Examples");
+		player.sendMessage(Colors.Gold + "Remove a group from access: " + Colors.Blue + "/lwc -m -g:name");
+		player.sendMessage(Colors.Gold + "Remove a user + add an admin: " + Colors.Blue + "/lwc -m -name @OtherName");
 	}
 
 }

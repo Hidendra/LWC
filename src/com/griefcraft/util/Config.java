@@ -30,6 +30,13 @@ import com.griefcraft.logging.Logger;
 public class Config extends Properties {
 
 	/**
+	 * Destroy the config instance
+	 */
+	public static void destroy() {
+		instance = null;
+	}
+
+	/**
 	 * @return the instance of Config
 	 */
 	public static Config getInstance() {
@@ -40,7 +47,7 @@ public class Config extends Properties {
 	 * Init the config class
 	 */
 	public static void init() {
-		if(instance == null) {
+		if (instance == null) {
 			instance = new Config();
 		}
 	}

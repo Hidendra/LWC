@@ -20,7 +20,7 @@ public class Command_Free implements Command {
 			
 			lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 			lwc.getMemoryDatabase().registerAction("free", player.getName());
-			player.sendMessage(Colors.LightGreen + "Left click your Chest/Furnace to remove the lock");
+			player.sendMessage(Colors.LightGreen + "Left click your Chest or Furnace to remove the lock");
 		}
 		
 		else if(type.equals("modes")) {
@@ -37,7 +37,7 @@ public class Command_Free implements Command {
 
 	@Override
 	public boolean validate(LWC lwc, Player player, String[] args) {
-		return hasFlag(args, "r") || hasFlag(args, "free");
+		return hasFlag(args, "r") || hasFlag(args, "free") || hasFlag(args, "remove");
 	}
 
 }

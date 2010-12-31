@@ -17,34 +17,13 @@
 
 package com.griefcraft.util;
 
-/**
- * This is the class you would edit to add new config values to lwc.properties - NO others !!
- * 
- * Config.class DEPENDS on the listed enums in this class. If you want to get the current value for BLACKLISTED_MODES, do
- * <p>
- * ConfigValues.BLACKLISTED_MODES.getValue();
- * </p>
- * 
- * If you use a value a lot, you can import it statically in your class like so:
- * <p>
- * import static com.griefcraft.util.ConfigValues.BLACKLISTED_MODES; // or *, but not recommended
- * 
- * [...] BLACKLISTED_MODES.getValue();
- * </p>
- * 
- * 
- * Create new config values by creating a new enum:
- * <p>
- * DECLARATION("simple-name", "default-value")
- * </p>
- * 
- * Keep declarations obvious and in caps. Simple names shouldn't be too descriptive but specific enough
- */
 public enum ConfigValues {
 
 	// TODO: furnace protection
 
-	BLACKLISTED_MODES("blacklisted-modes", ""), ALLOW_FURNACE_PROTECTION("furnace-locks", "true"), DB_PATH("db-path", "lwc.db");
+	BLACKLISTED_MODES("blacklisted-modes", ""), ALLOW_FURNACE_PROTECTION("furnace-locks", "true"), 
+	DB_PATH("db-path", "lwc.db"), CUBOID_SAFE_AREAS("only-protect-in-cuboid-safe-zones", "false"),
+	AUTO_UPDATE("auto-update", "false");
 
 	/**
 	 * The name of the config value used in the conf file
