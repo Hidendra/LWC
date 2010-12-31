@@ -61,8 +61,30 @@ public class Command_Create implements Command {
 		return hasFlag(args, "c") || hasFlag(args, "create");
 	}
 
-	private void sendHelp(Player player) {
-		player.sendMessage("create_help");
+	public void sendHelp(Player player) {
+		player.sendMessage(" ");
+		player.sendMessage(Colors.Green + "LWC Protection");
+		player.sendMessage(" ");
+		
+		player.sendMessage("/lwc -c public " + Colors.Gold + "Create a public protection");
+		player.sendMessage(Colors.LightGreen + "Anyone can access a Public chest, but no one can protect it");
+		player.sendMessage(" ");
+		
+		player.sendMessage("/lwc -c password <password> " + Colors.Gold + "Create a password-protected");
+		player.sendMessage(Colors.Gold + "Chest or Furnace");
+		player.sendMessage(Colors.LightGreen + "Each time you login you need to enter the password to access");
+		player.sendMessage(Colors.LightGreen + "the chest (if someone knows the pass, they can use it too!)");
+		player.sendMessage(" ");
+		
+		player.sendMessage("/lwc -c private " + Colors.Gold + "Create a private protection");
+		player.sendMessage(Colors.LightGreen + "Private means private. You can also allow other users or");
+		player.sendMessage(Colors.LightGreen + "groups to access the chest or furnace. This is done by");
+		player.sendMessage(Colors.LightGreen + "adding them after \"private\".");
+		player.sendMessage(" ");
+		player.sendMessage("Example:");
+		player.sendMessage(Colors.Blue + "/lwc -c private UserName g:GroupName OtherGuy");
+		player.sendMessage(" ");
+		player.sendMessage(Colors.LightGreen + "You can specify more than 1 group and/or user per command!");
 	}
 
 }

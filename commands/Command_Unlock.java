@@ -2,7 +2,7 @@ import com.griefcraft.model.Entity;
 import com.griefcraft.model.EntityTypes;
 
 import static com.griefcraft.util.StringUtils.*;
-
+import static com.griefcraft.util.StringUtils.*;
 
 public class Command_Unlock implements Command {
 
@@ -14,6 +14,7 @@ public class Command_Unlock implements Command {
 		}
 
 		String password = join(args, 1);
+		password = lwc.encrypt(password);
 
 		if(!lwc.getMemoryDatabase().hasPendingUnlock(player.getName())) {
 			player.sendMessage(Colors.Red + "Nothing selected. Open a locked Chest/Furnace first.");
@@ -53,8 +54,7 @@ public class Command_Unlock implements Command {
 
 	@Override
 	public boolean validate(LWC lwc, Player player, String[] args) {
-		// TODO Auto-generated method stub
-		return false;
+		return hasFlag(args, "u") || hasFlag(args, "unlock");
 	}
 
 }

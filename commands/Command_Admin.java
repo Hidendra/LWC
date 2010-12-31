@@ -17,18 +17,22 @@
 
 import static com.griefcraft.util.StringUtils.hasFlag;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import com.griefcraft.util.Performance;
+import com.griefcraft.util.Updater;
 
 public class Command_Admin implements Command {
 
 	@Override
 	public void execute(LWC lwc, Player player, String[] args) {
-		if (args.length < 1) {
+		if (args.length < 2) {
 			sendHelp(player);
 			return;
 		}
 
-		String action = args[0].toLowerCase();
+		String action = args[1].toLowerCase();
 
 		if (action.equals("report")) {
 			Performance.setChestCount(lwc.getPhysicalDatabase().entityCount());
@@ -39,6 +43,17 @@ public class Command_Admin implements Command {
 			}
 
 			Performance.clear();
+		}
+		
+		else if(action.equals("update")) {
+			boolean updated = lwc.getUpdater().checkDist();
+			
+			if(updated) {
+				etc.getLoader().reloadPlugin("LWC");
+				player.sendMessage(Colors.Green + "Updated LWC successfully to version: " + lwc.getUpdater().getLatestVersion());
+			} else {
+				player.sendMessage(Colors.Red + "No update found.");
+			}
 		}
 
 		else if (action.equals("convert")) {
@@ -60,9 +75,9 @@ public class Command_Admin implements Command {
 				return;
 			}
 
-			String toClear = args[1].toLowerCase();
+			String toClear = args[2].toLowerCase();
 
-			if (toClear.equals("chests")) {
+			if (toClear.equals("protections")) {
 				lwc.getPhysicalDatabase().unregisterProtectionEntities();
 
 				player.sendMessage(Colors.Green + "Removed all protected chests and furnaces");
@@ -79,12 +94,20 @@ public class Command_Admin implements Command {
 	}
 
 	public void sendHelp(Player player) {
-		player.sendMessage("admin_help");
+		player.sendMessage(" ");
+		player.sendMessage(Colors.Green + "LWC Administration");
+		player.sendMessage(" ");
+		player.sendMessage("/lwc admin report - " + Colors.Gold + "Generate a Performance report");
+		player.sendMessage("/lwc admin update - " + Colors.Gold + "Check for an update (if one, update)");
+		player.sendMessage("/lwc admin convert " + Colors.Gold + "<chestprotect> - Convert X to LWC");
+		player.sendMessage(" ");
+		player.sendMessage("/lwc admin clear - " + Colors.Red + "PERMANENTLY removes data");
+		player.sendMessage("/lwc admin clear " + Colors.Gold + "<protections|rights|limits>");
 	}
 
 	@Override
 	public boolean validate(LWC lwc, Player player, String[] args) {
-		return lwc.isAdmin(player) && hasFlag(args, "admin");
+		return lwc.isAdmin(player) && (hasFlag(args, "a") || hasFlag(args, "admin"));
 	}
 
 }
