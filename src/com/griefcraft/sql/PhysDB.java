@@ -709,6 +709,19 @@ public class PhysDB extends Database {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Remove all protection rights
+	 */
+	public void unregisterProtectionRights() {
+		try {
+			Statement statement = connection.createStatement();
+			statement.executeUpdate("DELETE FROM `rights`");
+			statement.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Remove all of the rights from a chest
