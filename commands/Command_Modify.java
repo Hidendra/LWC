@@ -36,7 +36,7 @@ public class Command_Modify implements Command {
 
 	@Override
 	public boolean validate(LWC lwc, Player player, String[] args) {
-		return hasFlag(args, "m");
+		return hasFlag(args, "m") || hasFlag(args, "modify");
 	}
 
 	private void sendHelp(Player player) {

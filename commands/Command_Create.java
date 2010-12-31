@@ -42,7 +42,9 @@ public class Command_Create implements Command {
 			String hiddenPass = transform(password, '*');
 
 			player.sendMessage(Colors.LightGreen + "Using password: " + Colors.Yellow + hiddenPass);
-		} else if (!type.equals("public") && !type.equals("private")) {
+		}
+		
+		else if (!type.equals("public") && !type.equals("private")) {
 			sendHelp(player);
 			return;
 		}
@@ -56,7 +58,7 @@ public class Command_Create implements Command {
 
 	@Override
 	public boolean validate(LWC lwc, Player player, String[] args) {
-		return hasFlag(args, "c");
+		return hasFlag(args, "c") || hasFlag(args, "create");
 	}
 
 	private void sendHelp(Player player) {
