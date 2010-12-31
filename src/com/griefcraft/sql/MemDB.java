@@ -450,6 +450,34 @@ public class MemDB extends Database {
 	 * @param chestID
 	 *            the chestID to unlock
 	 */
+	public void registerAction(String action, String player) {
+		try {
+			/*
+			 * We only want 1 action per player, no matter what!
+			 */
+			unregisterAction(action, player);
+
+			final PreparedStatement statement = connection.prepareStatement("INSERT INTO `actions` (action, player, chest) VALUES (?, ?, ?)");
+			statement.setString(1, action);
+			statement.setString(2, player);
+			statement.setInt(3, -1);
+
+			statement.executeUpdate();
+			statement.close();
+			Performance.addMemDBQuery();
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Register a pending chest unlock, for when the player does /unlock <pass>
+	 * 
+	 * @param player
+	 *            the player to register
+	 * @param chestID
+	 *            the chestID to unlock
+	 */
 	public void registerAction(String action, String player, int chestID) {
 		try {
 			/*
