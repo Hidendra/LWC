@@ -22,13 +22,13 @@ public class Command_Info implements Command {
 	@Override
 	public void execute(LWC lwc, Player player, String[] args) {
 		lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-		lwc.getMemoryDatabase().registerAction("info", player.getName(), 0);
+		lwc.getMemoryDatabase().registerAction("info", player.getName());
 		player.sendMessage(Colors.LightGreen + "Left click a Chest or Furnace to see information about it");
 	}
 
 	@Override
 	public boolean validate(LWC lwc, Player player, String[] args) {
-		return hasFlag(args, "i");
+		return hasFlag(args, "i") || hasFlag(args, "info");
 	}
 
 }
