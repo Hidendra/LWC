@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -25,7 +27,6 @@ import com.griefcraft.logging.Logger;
 import com.griefcraft.model.Entity;
 import com.griefcraft.model.EntityTypes;
 import com.griefcraft.model.RightTypes;
-
 import com.griefcraft.sql.Database;
 import com.griefcraft.sql.MemDB;
 import com.griefcraft.sql.PhysDB;
@@ -55,6 +56,16 @@ public class LWC extends Plugin {
 	 * Memory database instance
 	 */
 	private MemDB memoryDatabase;
+	
+	/**
+	 * The updater instance
+	 */
+	private Updater updater;
+
+	/**
+	 * List of commands
+	 */
+	private List<Command> commands;
 
 	/**
 	 * Check if a player can access a chest
@@ -155,24 +166,58 @@ public class LWC extends Plugin {
 
 	@Override
 	public void disable() {
+		log("Stopping LWC");
 		Config.getInstance().save();
+		Config.destroy();
+		
+		etc.getInstance().removeCommand("/lwc");
+
+		try {
+			physicalDatabase.connection.close();
+			memoryDatabase.connection.close();
+
+			physicalDatabase = null;
+			memoryDatabase = null;
+		} catch (Exception e) {
+
+		}
+	}
+	
+	/**
+	 * @return the updater instance
+	 */
+	public Updater getUpdater() {
+		return updater;
 	}
 
 	@Override
 	public void enable() {
 		try {
 			log("Initializing LWC");
-			
+
 			Performance.init();
 
+			commands = new ArrayList<Command>();
 			physicalDatabase = new PhysDB();
 			memoryDatabase = new MemDB();
+			
+			log("Binding commands");
+			loadCommands();
+			etc.getInstance().addCommand("/lwc", "- Chest/Furnace protection");
 
 			Config.init();
 
-			Updater updater = new Updater();
+			updater = new Updater();
 			updater.check();
 			updater.update();
+			
+			if(ConfigValues.AUTO_UPDATE.getBool()) {
+				if(updater.checkDist()) {
+					log("Reloading LWC");
+					etc.getLoader().reloadPlugin("LWC");
+					return;
+				}
+			}
 
 			log("LWC config:      " + LWCInfo.CONF_FILE);
 			log("SQLite jar:      lib/sqlite.jar");
@@ -187,8 +232,14 @@ public class LWC extends Plugin {
 			physicalDatabase.load();
 			memoryDatabase.load();
 
-			log("Entity count: " + physicalDatabase.entityCount());
-			log("Limit count: " + physicalDatabase.limitCount());
+			log("Protections:\t" + physicalDatabase.entityCount());
+			log("Limits:\t\t" + physicalDatabase.limitCount());
+			
+			if(ConfigValues.CUBOID_SAFE_AREAS.getBool()) {
+				log("Only allowing chests to be protected in Cuboid-protected zones that DO NOT have PvP toggled!");
+			}
+			
+			Config.getInstance().save();
 		} catch (Exception e) {
 			log("Error occured while initializing LWC : " + e.getMessage());
 			e.printStackTrace();
@@ -221,10 +272,10 @@ public class LWC extends Plugin {
 	 * @return true if they are limited
 	 */
 	public boolean enforceChestLimits(Player player) {
-		if(isAdmin(player)) {
+		if (isAdmin(player)) {
 			return false;
 		}
-		
+
 		final int userLimit = physicalDatabase.getUserLimit(player.getName());
 
 		/*
@@ -240,44 +291,44 @@ public class LWC extends Plugin {
 		} else {
 			List<String> inheritedGroups = new ArrayList<String>();
 			String groupName = player.getGroups().length > 0 ? player.getGroups()[0] : etc.getInstance().getDefaultGroup().Name;
-			
+
 			inheritedGroups.add(groupName);
-			
+
 			/**
 			 * Recurse down the user's group tree
 			 */
-			while(true) {
+			while (true) {
 				Group group = etc.getDataSource().getGroup(groupName);
-				
-				if(group == null) {
+
+				if (group == null) {
 					break;
 				}
-				
+
 				String[] inherited = group.InheritedGroups;
-				
-				if(inherited == null || inherited.length == 0) {
+
+				if (inherited == null || inherited.length == 0) {
 					break;
 				}
-				
+
 				groupName = inherited[0];
-				
-				for(String _groupName : inherited) {
+
+				for (String _groupName : inherited) {
 					_groupName = _groupName.trim();
-					
-					if(_groupName.isEmpty()) {
+
+					if (_groupName.isEmpty()) {
 						continue;
 					}
-					
+
 					inheritedGroups.add(_groupName);
 				}
 			}
-			
-			for(String group : inheritedGroups) {
+
+			for (String group : inheritedGroups) {
 				final int groupLimit = physicalDatabase.getGroupLimit(group);
-	
+
 				if (groupLimit != -1) {
 					final int chests = physicalDatabase.getChestCount(player.getName());
-	
+
 					if (chests >= groupLimit) {
 						player.sendMessage(Colors.Red + "You have exceeded the amount of chests you can lock!");
 						return true;
@@ -287,6 +338,13 @@ public class LWC extends Plugin {
 		}
 
 		return false;
+	}
+
+	/**
+	 * @return the commands
+	 */
+	public List<Command> getCommands() {
+		return commands;
 	}
 
 	/**
@@ -311,13 +369,13 @@ public class LWC extends Plugin {
 		boolean isXDir = true;
 
 		entities = _validateChest(entities, baseBlock);
-		
-		while(true) {
+
+		while (true) {
 			ComplexBlock block = etc.getServer().getComplexBlock(x + (isXDir ? dev : 0), y, z + (isXDir ? 0 : dev));
 			entities = _validateChest(entities, block);
-			
-			if(dev == 1) {
-				if(isXDir) {
+
+			if (dev == 1) {
+				if (isXDir) {
 					isXDir = false;
 					dev = -1;
 					continue;
@@ -325,7 +383,7 @@ public class LWC extends Plugin {
 					break;
 				}
 			}
-			
+
 			dev = 1;
 		}
 
@@ -370,7 +428,7 @@ public class LWC extends Plugin {
 
 		registerHook(PluginLoader.Hook.DISCONNECT);
 		registerHook(PluginLoader.Hook.COMMAND);
-		registerHook(PluginLoader.Hook.BLOCK_RIGHTCLICKED);
+		// registerHook(PluginLoader.Hook.BLOCK_RIGHTCLICKED);
 		registerHook(PluginLoader.Hook.BLOCK_BROKEN);
 		registerHook(PluginLoader.Hook.BLOCK_DESTROYED);
 		registerHook(PluginLoader.Hook.OPEN_INVENTORY);
@@ -445,7 +503,7 @@ public class LWC extends Plugin {
 	 * @param player
 	 * @return
 	 */
-	public boolean playerIsDropTransferring(String player) {
+	public boolean isPlayerDropTransferring(String player) {
 		return memoryDatabase.hasMode(player, "dropTransfer") && memoryDatabase.getModeData(player, "dropTransfer").startsWith("t");
 	}
 
@@ -456,64 +514,101 @@ public class LWC extends Plugin {
 	 *            the player to send to
 	 */
 	public void sendFullHelp(Player player) {
+		player.sendMessage(" ");
 		player.sendMessage(Colors.Green + "Welcome to LWC, a Protection mod");
-		player.sendMessage("");
+		player.sendMessage(" ");
+		player.sendMessage(Colors.LightGreen + "/lwc -c - View creation help");
+		player.sendMessage(Colors.LightGreen + "/lwc -c <public|private|password>");
+		player.sendMessage(Colors.LightGreen + "/lwc -m - Modify an existing private protection");
+		player.sendMessage(Colors.LightGreen + "/lwc -u - Unlock a password protected entity");
+		player.sendMessage(Colors.LightGreen + "/lwc -i  - View information on a protected Chest or Furnace");
+		player.sendMessage(Colors.LightGreen + "/lwc -r <chest|furnace|modes>");
 
-		player.sendMessage(Colors.Green + " Commands:");
+		player.sendMessage(Colors.LightGreen + "/lwc -p <persist|droptransfer>"); // TODO: dynamic
 
-		player.sendMessage(Colors.LightGreen + "/lwc create - View detailed info on protection types");
-		player.sendMessage(Colors.LightGreen + "/lwc create public - Create a public protection");
-		player.sendMessage(Colors.LightGreen + "/lwc create password - Create a password protected entity");
-		player.sendMessage(Colors.LightGreen + "/lwc create private - Create a private protection");
-		player.sendMessage("");
-
-		player.sendMessage(Colors.LightGreen + "/lwc modify - Modify a protected entity");
-		player.sendMessage("");
-
-		player.sendMessage(Colors.LightGreen + "/lwc free entity - Remove a protected entity");
-		player.sendMessage(Colors.LightGreen + "/lwc free modes - Remove temporary modes on you");
-		player.sendMessage("");
-
-		player.sendMessage(Colors.LightGreen + "/lwc unlock - Unlock a password protected entity");
-		player.sendMessage(Colors.LightGreen + "/lwc info - View information on a protected entity");
-		player.sendMessage("");
-
-		if (!isModeBlacklisted("persist")) {
-			player.sendMessage(Colors.LightGreen + "/lwc persist - Allow use of 1 command multiple times");
-		}
-
-		if (!isModeBlacklisted("dropTransfer")) {
-			player.sendMessage(Colors.LightGreen + "/lwc droptransfer - View Drop Transfer help");
-		}
-
-		if(isAdmin(player)) {
+		if (isAdmin(player)) {
 			player.sendMessage("");
 			player.sendMessage(Colors.Red + "/lwc admin - Admin functions");
 		}
 	}
+	
+	/**
+	 * Check if a player is in a cuboid safe zone. When calling this, you can assume
+	 * the result WILL be false if CuboidPlugin is not enabled OR the config option
+	 * CUBOID_SAFE_AREAS is FALSE
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public boolean isInCuboidSafeZone(Player player) {
+		/* Check if the config option is enabled. If it isn't.. well, don't continue! */
+		if(!ConfigValues.CUBOID_SAFE_AREAS.getBool()) {
+			return false;
+		}
+		
+		Class<?> cuboidClass, cuboidPluginClass;
+		
+		try {
+			Plugin cuboidPlugin = etc.getLoader().getPlugin("CuboidPlugin");
+			
+			if(cuboidPlugin == null) {
+				player.sendMessage("CuboidPlugin is not activated");
+				return false;
+			}
+			
+			/* Load Cuboid's areas class that checks for protected areas */
+			cuboidClass = cuboidPlugin.getClass().getClassLoader().loadClass("CuboidAreas");
+			
+			/* Call the static method CuboidAreas.findCuboidArea */
+			Method findCuboidArea = cuboidClass.getMethod("findCuboidArea", int.class, int.class, int.class);
+			
+			/* Get the cuboid object. If this is null, we either have a problem or it's just not protected! */
+			Object cuboidC = findCuboidArea.invoke(null, (int) player.getX(), (int) player.getY(), (int) player.getZ());
+			
+			/* They're in a protected area.. Let's check to see if it's PvP enabled or not */
+			if(cuboidC != null) {
+				/* Make it accessible.. By default, it's the default accessor :( */
+				Field pvp = cuboidC.getClass().getDeclaredField("PvP");
+				pvp.setAccessible(true);
+				
+				boolean isPvP = pvp.getBoolean(cuboidC);
+				
+				return isPvP;
+			} else {
+				/* We need the CuboidPlugin class now, let's load it! */
+				cuboidPluginClass = cuboidPlugin.getClass().getClassLoader().loadClass("CuboidPlugin");
+				
+				/* Now we need to check if global pvp is on or off (It's static!!) */
+				Field globalDisablePvP = cuboidPluginClass.getDeclaredField("globalDisablePvP");
+				globalDisablePvP.setAccessible(true);
+				
+				boolean isPvP = !globalDisablePvP.getBoolean(null);
+				
+				return isPvP;
+			}
+		} catch(Exception e) {
+			return false;
+		}
+	}
 
+	/**
+	 * Inform the player they already have a pening request
+	 * 
+	 * @param player
+	 */
 	public void sendPendingRequest(Player player) {
 		player.sendMessage(Colors.Red + "You already have a pending chest request.");
 		player.sendMessage(Colors.Red + "To remove it, type /lwc free pending");
 	}
 
 	/**
-	 * Transform a string into one char
+	 * Send simple usage of a command
 	 * 
-	 * @param str
-	 *            The string to transform
-	 * @param chr
-	 *            The char to transform all chars to (ie '*')
-	 * @return the transformed string
+	 * @param player
+	 * @param command
 	 */
-	public String transform(String str, char chr) {
-		final char[] charArray = str.toCharArray();
-
-		for (int i = 0; i < charArray.length; i++) {
-			charArray[i] = chr;
-		}
-
-		return new String(charArray);
+	public void sendSimpleUsage(Player player, String command) {
+		player.sendMessage(Colors.Red + "Usage:" + Colors.Gold + " " + command);
 	}
 
 	/**
@@ -555,7 +650,7 @@ public class LWC extends Plugin {
 				entities.add(block);
 			}
 		}
-		
+
 		return entities;
 	}
 
@@ -572,6 +667,37 @@ public class LWC extends Plugin {
 			formatter.format("%02x", b);
 		}
 		return formatter.toString();
+	}
+
+	/***
+	 * Load all of the commands
+	 * TODO: commands
+	 */
+	private void loadCommands() {
+		registerCommand(Command_Admin.class);
+		registerCommand(Command_Create.class);
+		registerCommand(Command_Free.class);
+		registerCommand(Command_Info.class);
+		registerCommand(Command_Modes.class);
+		registerCommand(Command_Modify.class);
+		registerCommand(Command_Unlock.class);
+	}
+
+	/**
+	 * Register a command
+	 * 
+	 * @param command
+	 */
+	private void registerCommand(Class<?> clazz) {
+		try {
+			Command command = (Command) clazz.newInstance();
+			commands.add(command);
+			log("Loaded command : " + clazz.getSimpleName());
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
