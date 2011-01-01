@@ -435,6 +435,22 @@ public class LWCListener extends PluginListener {
 				subCommand += split[i] + " ";
 			}
 		}
+		
+		if(command.equals("cpublic")) {
+			return onCommand(player, "/lwc -c public".split(" "));
+		}
+		else if(command.equals("cpassword")) {
+			return onCommand(player, ("/lwc -c password " + subCommand).split(" "));
+		}
+		else if(command.equals("cprivate")) {
+			return onCommand(player, "/lwc -c private".split(" "));
+		}
+		else if(command.equals("cinfo")) {
+			return onCommand(player, "/lwc -i".split(" "));
+		}
+		else if(command.equals("cunlock")) {
+			return onCommand(player, "/lwc -u".split(" "));
+		}
 
 		if (!player.canUseCommand(split[0])) {
 			return false;
