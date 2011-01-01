@@ -1,5 +1,5 @@
 /**
- * This file is part of LWC (https://github.com/Hidendra/LWC)
+\ * This file is part of LWC (https://github.com/Hidendra/LWC)
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +53,32 @@ public class Command_Admin implements Command {
 				player.sendMessage(Colors.Green + "Updated LWC successfully to version: " + lwc.getUpdater().getLatestVersion());
 			} else {
 				player.sendMessage(Colors.Red + "No update found.");
+			}
+		}
+		
+		else if (action.equalsIgnoreCase("limits")) {
+			if (args.length < 3) {
+				lwc.sendSimpleUsage(player, "/lwc -admin limits <count> <Group/User>");
+				return;
+			}
+
+			final int limit = Integer.parseInt(args[2]);
+
+			for (int i = 3; i < args.length; i++) {
+				String entity = args[i]; 
+				final boolean isGroup = entity.startsWith("g:");
+
+				if (isGroup) {
+					entity = entity.substring(2);
+				}
+
+				if (limit != -2) {
+					lwc.getPhysicalDatabase().registerProtectionLimit(isGroup ? 0 : 1, limit, entity);
+					player.sendMessage(Colors.Green + "Registered limit of " + Colors.Gold + limit + Colors.Green + " chests to the " + (isGroup ? "group" : "user") + " " + Colors.Gold + entity);
+				} else {
+					lwc.getPhysicalDatabase().unregisterProtectionLimit(isGroup ? 0 : 1, entity);
+					player.sendMessage(Colors.Green + "Unregistered limit for " + Colors.Gold + entity);
+				}
 			}
 		}
 
