@@ -333,6 +333,8 @@ public class LWC extends Plugin {
 						player.sendMessage(Colors.Red + "You have exceeded the amount of chests you can lock!");
 						return true;
 					}
+					
+					return false;
 				}
 			}
 		}
