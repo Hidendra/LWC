@@ -77,7 +77,10 @@ public class Updater {
 			File file = new File(path);
 
 			if (file != null && !file.exists() && !file.isDirectory()) {
-				needsUpdating.add(new UpdaterFile(path));
+				UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + path);
+				updaterFile.setLocalLocation(path);
+				
+				needsUpdating.add(updaterFile);
 			}
 		}
 		
