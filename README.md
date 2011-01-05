@@ -1,3 +1,6 @@
+#Note: Ported to Bukkit!
+## Bukkit build/source not yet available,, soon!
+
 #LWC: Lightweight Chest+Furnace Protection and Management
 
 Designed on top of hMod, It is fast and scalable. It does not use flat files, but instead <b>sqlite</b> -- a stateless, serverless SQL engine. In some cases it is actually <i>faster</i> than MySQL and other SQL engines.
