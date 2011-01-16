@@ -12,9 +12,7 @@ function install_step()
 	var curr_step = $('step').getValue();
 	
 	if(curr_step > 0)
-	{	
-		curr_step--;
-		
-		set_progress(curr_step * 25);
+	{
+		set_progress((curr_step - 1) * 25);
 	}
 }
