@@ -74,14 +74,3 @@ function do_fade_submit()
 {
 	new Effect.Fade( 'content', { duration: CONTAINER_FADE_DURATION });
 }
-
-function sleep(milliseconds)
-{
-    var start = new Date().getTime();   
-       
-    for (var i = 0; i < 1e7; i++) {   
-        if ((new Date().getTime() - start) > milliseconds) {   
-            break;   
-        }   
-    }   
-}
