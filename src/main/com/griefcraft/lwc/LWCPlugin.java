@@ -19,6 +19,7 @@ import com.griefcraft.commands.Modes;
 import com.griefcraft.commands.Modify;
 import com.griefcraft.commands.Unlock;
 import com.griefcraft.listeners.LWCBlockListener;
+import com.griefcraft.listeners.LWCEntityListener;
 import com.griefcraft.listeners.LWCPlayerListener;
 import com.griefcraft.logging.Logger;
 import com.griefcraft.util.Config;
@@ -47,6 +48,11 @@ public class LWCPlugin extends JavaPlugin {
 	private LWCBlockListener blockListener;
 	
 	/**
+	 * The entity listener
+	 */
+	private LWCEntityListener entityListener;
+	
+	/**
 	 * LWC updater
 	 * 
 	 * TODO: Remove when Bukkit has an updater that is working
@@ -63,6 +69,7 @@ public class LWCPlugin extends JavaPlugin {
 		lwc = new LWC(this);
 		playerListener = new LWCPlayerListener(this);
 		blockListener = new LWCBlockListener(this);
+		entityListener = new LWCEntityListener(this);
 		updater = new Updater();
 		
 		try {
@@ -110,8 +117,8 @@ public class LWCPlugin extends JavaPlugin {
 		registerEvent(playerListener, Type.PLAYER_COMMAND);
 		registerEvent(playerListener, Type.PLAYER_QUIT);
 		
-		/* Inventory events */
-		// registerEvent(inventoryListener, Type.INVENTORY_OPEN);
+		/* Entity events */
+		registerEvent(entityListener, Type.ENTITY_EXPLODE);
 		
 		/* Block events */
 		registerEvent(blockListener, Type.BLOCK_INTERACT);

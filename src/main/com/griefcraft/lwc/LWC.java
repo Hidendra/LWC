@@ -72,6 +72,13 @@ public class LWC {
 	}
 	
 	/**
+	 * @return the plugin version
+	 */
+	public double getVersion() {
+		return Double.parseDouble(plugin.getDescription().getVersion());
+	}
+	
+	/**
 	 * Load sqlite (done only when LWC is loaded so memory isn't used unnecessarily)
 	 */
 	public void load() {
