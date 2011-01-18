@@ -19,15 +19,15 @@ package com.griefcraft.commands;
 
 import static com.griefcraft.util.StringUtils.hasFlag;
 
-import org.bukkit.Player;
+import org.bukkit.entity.Player;
 
 import com.griefcraft.CCConverter;
 import com.griefcraft.CPConverter;
-import com.griefcraft.LWC;
+import com.griefcraft.lwc.LWC;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.Performance;
 
-public class Admin implements Command {
+public class Admin implements ICommand {
 
 	@Override
 	public void execute(LWC lwc, Player player, String[] args) {
