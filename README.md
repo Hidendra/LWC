@@ -1,6 +1,12 @@
-#LWC: Lightweight Chest+Furnace Protection and Management
+#LWC: Lightweight Inventory Protection and Management
 
-Designed on top of hMod, It is fast and scalable. It does not use flat files, but instead <b>sqlite</b> -- a stateless, serverless SQL engine. In some cases it is actually <i>faster</i> than MySQL and other SQL engines.
+A simple (<i>but advanced!</i>) inventory protection mod. It does not use flat files, but instead <b>sqlite</b> -- a stateless, serverless SQL engine. In some cases it is actually <i>faster</i> than MySQL and other SQL engines.
+
+What you can protect
+----------------------
+* Chests
+* Dispensers
+* Furnaces
 
 Features
 ----------------------
