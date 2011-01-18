@@ -420,8 +420,6 @@ public class LWC {
 			dev = 1;
 		}
 
-		log("size: " + entities.size());
-
 		return entities;
 	}
 
