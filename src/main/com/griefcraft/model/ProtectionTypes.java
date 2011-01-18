@@ -15,20 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import static com.griefcraft.util.StringUtils.hasFlag;
+package com.griefcraft.model;
 
-public class Command_Info implements Command {
+public class ProtectionTypes {
 
-	@Override
-	public void execute(LWC lwc, Player player, String[] args) {
-		lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-		lwc.getMemoryDatabase().registerAction("info", player.getName());
-		player.sendMessage(Colors.LightGreen + "Left click a Chest or Furnace to see information about it");
-	}
-
-	@Override
-	public boolean validate(LWC lwc, Player player, String[] args) {
-		return hasFlag(args, "i") || hasFlag(args, "info");
-	}
+	public static final int PUBLIC = 0;
+	public static final int PASSWORD = 1;
+	public static final int PRIVATE = 2;
 
 }

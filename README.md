@@ -1,6 +1,3 @@
-#Note: Ported to Bukkit!
-## Bukkit build/source not yet available,, soon!
-
 #LWC: Lightweight Chest+Furnace Protection and Management
 
 Designed on top of hMod, It is fast and scalable. It does not use flat files, but instead <b>sqlite</b> -- a stateless, serverless SQL engine. In some cases it is actually <i>faster</i> than MySQL and other SQL engines.
@@ -19,10 +16,8 @@ Features
 Converting
 ----------------------
 
-Are you using ChestProtect? LWC can seamlessly convert every chest from Chest Protect 100% to LWC. If you use a different chest plugin, open a GitHub issue, and it could possibly be created.
-To convert a chest, do one of the following:
-<b>In-game:</b> `/lwc convert chestprotect`
-<b>Console:</b> `java -cp plugins/LWC.jar CPConverter`
+Are you using ChestProtect or Chastity chests? LWC can seamlessly convert every chest from ChestProtect and all private chests from Chastity (only user permissions)
+<b>In-game</b>: `/lwc -a convert <chestprotect|chastity>`
 
 Commands
 ----------------------
