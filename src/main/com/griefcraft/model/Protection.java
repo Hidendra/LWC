@@ -17,7 +17,7 @@
 
 package com.griefcraft.model;
 
-public class Entity {
+public class Protection {
 
 	/**
 	 * Chest ID (in sql)

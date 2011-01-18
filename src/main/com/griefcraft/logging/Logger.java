@@ -15,12 +15,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.griefcraft.model;
+package com.griefcraft.logging;
 
-public class EntityTypes {
+import com.griefcraft.lwc.LWCInfo;
 
-	public static final int PUBLIC = 0;
-	public static final int PASSWORD = 1;
-	public static final int PRIVATE = 2;
+public class Logger {
+	
+	public void info(String str) {
+		System.out.println(String.format("%s\t[v%.2f]\t%s", name, LWCInfo.VERSION, str));
+	}
+	
+	/**
+	 * Create a new logger
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public static Logger getLogger(String name) {
+		return new Logger(name);
+	}
+
+	/**
+	 * Logger name
+	 */
+	private String name;
+
+	private Logger(String name) {
+		this.name = name;
+	}
 
 }

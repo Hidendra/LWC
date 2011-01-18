@@ -15,10 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+package com.griefcraft.commands;
+
 import static com.griefcraft.util.StringUtils.hasFlag;
 import static com.griefcraft.util.StringUtils.join;
 
-public class Command_Modify implements Command {
+import org.bukkit.entity.Player;
+
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.util.Colors;
+
+public class Modify implements ICommand {
 
 	@Override
 	public void execute(LWC lwc, Player player, String[] args) {

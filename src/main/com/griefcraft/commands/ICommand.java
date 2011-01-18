@@ -15,21 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.griefcraft;
+package com.griefcraft.commands;
 
-/**
- * Temporary, just need to get version info, etc into a packaged class
- */
-public class LWCInfo {
+import org.bukkit.entity.Player;
 
-	/**
-	 * The version
-	 */
-	public static final double VERSION = 1.44;
+import com.griefcraft.lwc.LWC;
+
+public interface ICommand {
 
 	/**
-	 * Location of the properties file relative to the root Minecraft directory
+	 * Execute a command if it validates
+	 * 
+	 * @param lwc
+	 * @param player
+	 * @param command
+	 * @param args
 	 */
-	public static final String CONF_FILE = "lwc.properties";
+	public void execute(LWC lwc, Player player, String[] args);
+
+	/**
+	 * Validate a command to check if it should be executed
+	 * 
+	 * @param lwc
+	 * @param command
+	 * @param args
+	 * @return
+	 */
+	public boolean validate(LWC lwc, Player player, String[] args);
 
 }
