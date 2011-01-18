@@ -24,33 +24,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
-import com.griefcraft.LWCInfo;
 import com.griefcraft.logging.Logger;
+import com.griefcraft.lwc.LWCInfo;
 
 public class Config extends Properties {
-
-	/**
-	 * Destroy the config instance
-	 */
-	public static void destroy() {
-		instance = null;
-	}
-
-	/**
-	 * @return the instance of Config
-	 */
-	public static Config getInstance() {
-		return instance;
-	}
-
-	/**
-	 * Init the config class
-	 */
-	public static void init() {
-		if (instance == null) {
-			instance = new Config();
-		}
-	}
 
 	/**
 	 * Load the logger instance
@@ -90,6 +67,29 @@ public class Config extends Properties {
 			logger.info("Loaded " + size() + " config entries");
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Destroy the config instance
+	 */
+	public static void destroy() {
+		instance = null;
+	}
+
+	/**
+	 * @return the instance of Config
+	 */
+	public static Config getInstance() {
+		return instance;
+	}
+
+	/**
+	 * Init the config class
+	 */
+	public static void init() {
+		if (instance == null) {
+			instance = new Config();
 		}
 	}
 

@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.griefcraft.model.Action;
-import com.griefcraft.model.Entity;
+import com.griefcraft.model.Protection;
 import com.griefcraft.util.Performance;
 
 public class MemDB extends Database {
@@ -269,7 +269,7 @@ public class MemDB extends Database {
 	 *            the chest to check
 	 * @return true if the player has access
 	 */
-	public boolean hasAccess(String player, Entity chest) {
+	public boolean hasAccess(String player, Protection chest) {
 		if (chest == null) {
 			return true;
 		}

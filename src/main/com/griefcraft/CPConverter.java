@@ -1,3 +1,4 @@
+package com.griefcraft;
 /**
  * This file is part of LWC (https://github.com/Hidendra/LWC)
  * 
@@ -22,9 +23,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.ConnectException;
 
-import com.griefcraft.model.EntityTypes;
+import org.bukkit.entity.Player;
+
+import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.model.RightTypes;
 import com.griefcraft.sql.PhysDB;
+import com.griefcraft.util.Config;
 
 /**
  * Convert Chest Protect chests to LWC
@@ -112,7 +116,7 @@ public class CPConverter implements Runnable {
 			String users = "";
 
 			if (type == 1) {
-				type = EntityTypes.PUBLIC;
+				type = ProtectionTypes.PUBLIC;
 			} else if (type > 1) {
 				if (type == 3) {
 					rightsType = RightTypes.GROUP;
@@ -120,7 +124,7 @@ public class CPConverter implements Runnable {
 					rightsType = RightTypes.PLAYER;
 				}
 
-				type = EntityTypes.PRIVATE;
+				type = ProtectionTypes.PRIVATE;
 			}
 
 			if (split.length > 5) {
@@ -171,6 +175,8 @@ public class CPConverter implements Runnable {
 	@Override
 	public void run() {
 		try {
+			Config.init();
+			
 			log("LWC Conversion tool for Chest Protect chests");
 			log("");
 			log("Initializing sqlite");
@@ -192,7 +198,7 @@ public class CPConverter implements Runnable {
 			log("Done.");
 			log("");
 			log("Converted >" + converted + "< Chest Protect chests to LWC");
-			log("LWC database now holds " + physicalDatabase.entityCount() + " protected chests!");
+			log("LWC database now holds " + physicalDatabase.getProtectionCount() + " protected chests!");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
