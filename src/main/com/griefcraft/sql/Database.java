@@ -40,12 +40,19 @@ public abstract class Database {
 	/**
 	 * The connection to the database
 	 */
-	public Connection connection = null;
+	protected Connection connection = null;
 
 	/**
 	 * If we are connected to sqlite
 	 */
 	private static boolean connected = false;
+	
+	/**
+	 * @return the connection to the database
+	 */
+	public Connection getConnection() {
+		return connection;
+	}
 
 	/**
 	 * Connect to MySQL

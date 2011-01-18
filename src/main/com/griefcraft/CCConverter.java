@@ -23,7 +23,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.ConnectException;
 
-import org.bukkit.Player;
+import org.bukkit.entity.Player;
 
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.sql.PhysDB;

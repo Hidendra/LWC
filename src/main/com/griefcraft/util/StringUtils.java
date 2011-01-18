@@ -17,6 +17,9 @@
 
 package com.griefcraft.util;
 
+import java.security.MessageDigest;
+import java.util.Formatter;
+
 public class StringUtils {
 
 	/**
@@ -36,6 +39,28 @@ public class StringUtils {
 		String endLetters = str.substring(1);
 
 		return firstLetter.toUpperCase() + endLetters.toLowerCase();
+	}
+
+	/**
+	 * Encrypt a string using SHA1
+	 * 
+	 * @param plaintext
+	 * @return
+	 */
+	public static String encrypt(String plaintext) {
+		MessageDigest md = null;
+
+		try {
+			md = MessageDigest.getInstance("SHA");
+			md.update(plaintext.getBytes("UTF-8"));
+
+			final byte[] raw = md.digest();
+			return byteArray2Hex(raw);
+		} catch (final Exception e) {
+
+		}
+
+		return "";
 	}
 
 	/**
@@ -88,6 +113,21 @@ public class StringUtils {
 		}
 
 		return new String(charArray);
+	}
+
+	/**
+	 * Convert a byte array to hex
+	 * 
+	 * @param hash
+	 *            the hash to convert
+	 * @return the converted hash
+	 */
+	private static String byteArray2Hex(byte[] hash) {
+		final Formatter formatter = new Formatter();
+		for (final byte b : hash) {
+			formatter.format("%02x", b);
+		}
+		return formatter.toString();
 	}
 
 }

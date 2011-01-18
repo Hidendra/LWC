@@ -15,12 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+package com.griefcraft.commands;
+
 import static com.griefcraft.util.StringUtils.capitalizeFirstLetter;
 import static com.griefcraft.util.StringUtils.hasFlag;
 import static com.griefcraft.util.StringUtils.join;
 import static com.griefcraft.util.StringUtils.transform;
 
-public class Command_Create implements Command {
+import org.bukkit.entity.Player;
+
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.util.Colors;
+
+public class Create implements ICommand {
 
 	@Override
 	public void execute(LWC lwc, Player player, String[] args) {
