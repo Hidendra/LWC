@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.security.Security;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.griefcraft.logging.Logger;
@@ -189,7 +190,11 @@ public class Updater {
 
 		logger.info("Need to download " + needsUpdating.size() + " object(s)");
 
-		for (UpdaterFile item : needsUpdating) {
+		Iterator<UpdaterFile> iterator = needsUpdating.iterator();
+		
+		while(iterator.hasNext()) {
+			UpdaterFile item = iterator.next();
+			
 			logger.info(" - Downloading file : " + item.getRemoteLocation());
 
 			URL url = new URL(item.getRemoteLocation());
@@ -208,6 +213,7 @@ public class Updater {
 			outputStream.close();
 
 			logger.info("  + Download complete");
+			iterator.remove();
 		}
 	}
 
@@ -215,8 +221,13 @@ public class Updater {
 	 * Enable SSL. github is 100% ssl
 	 */
 	private void enableSSL() {
-		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-		System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
+		try {
+			Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+			System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
+		} catch(Exception e) {
+			logger.info("SEVERE ERROR :: SSL NOT SUPPORTED");
+			logger.info("Are you using OpenJDK?");
+		}
 	}
 
 	/**
