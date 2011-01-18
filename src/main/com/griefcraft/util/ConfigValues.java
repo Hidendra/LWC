@@ -19,11 +19,12 @@ package com.griefcraft.util;
 
 public enum ConfigValues {
 
-	// TODO: furnace protection
-
-	BLACKLISTED_MODES("blacklisted-modes", ""), ALLOW_FURNACE_PROTECTION("furnace-locks", "true"), 
-	DB_PATH("db-path", "lwc.db"), CUBOID_SAFE_AREAS("only-protect-in-cuboid-safe-zones", "false"),
-	AUTO_UPDATE("auto-update", "false");
+	BLACKLISTED_MODES("blacklisted-modes", ""), //
+	// ALLOW_FURNACE_PROTECTION("furnace-locks", "true"), //
+	DB_PATH("db-path", "lwc.db"), //
+	CUBOID_SAFE_AREAS("only-protect-in-cuboid-safe-zones", "false"), //
+	AUTO_UPDATE("auto-update", "false"), //
+	FLUSH_DB_INTERVAL("flush-db-interval", "60"); //
 
 	/**
 	 * The name of the config value used in the conf file

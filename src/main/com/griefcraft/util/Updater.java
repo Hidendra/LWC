@@ -29,10 +29,8 @@ import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.griefcraft.LWCInfo;
 import com.griefcraft.logging.Logger;
-
-import static com.griefcraft.util.ConfigValues.AUTO_UPDATE;
+import com.griefcraft.lwc.LWCInfo;
 
 public class Updater {
 
@@ -45,12 +43,12 @@ public class Updater {
 	 * URL to the base update site
 	 */
 	private final static String UPDATE_SITE = "https://github.com/Hidendra/LWC/raw/master/";
-	
+
 	/**
 	 * File used to obtain the latest version
 	 */
 	private final static String VERSION_FILE = "VERSION";
-	
+
 	/**
 	 * File used for the distribution
 	 */
@@ -60,7 +58,7 @@ public class Updater {
 	 * List of files to download
 	 */
 	private List<UpdaterFile> needsUpdating = new ArrayList<UpdaterFile>();
-	
+
 	public Updater() {
 		enableSSL();
 	}
@@ -79,19 +77,19 @@ public class Updater {
 			if (file != null && !file.exists() && !file.isDirectory()) {
 				UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + path);
 				updaterFile.setLocalLocation(path);
-				
+
 				needsUpdating.add(updaterFile);
 			}
 		}
-		
+
 		double latestVersion = getLatestVersion();
-		
-		if(latestVersion > LWCInfo.VERSION) {
+
+		if (latestVersion > LWCInfo.VERSION) {
 			logger.info("Update detected for LWC");
 			logger.info("Latest version: " + latestVersion);
 		}
 	}
-	
+
 	/**
 	 * Check to see if the distribution is outdated
 	 * 
@@ -100,8 +98,8 @@ public class Updater {
 	public boolean checkDist() {
 
 		double latestVersion = getLatestVersion();
-		
-		if(latestVersion > LWCInfo.VERSION) {
+
+		if (latestVersion > LWCInfo.VERSION) {
 			UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + DIST_FILE);
 			updaterFile.setLocalLocation("plugins/LWC.jar");
 
@@ -111,7 +109,7 @@ public class Updater {
 				update();
 				logger.info("Updated successful");
 				return true;
-			} catch(Exception e) {
+			} catch (Exception e) {
 				logger.info("Update failed: " + e.getMessage());
 				e.printStackTrace();
 			}
@@ -128,28 +126,20 @@ public class Updater {
 	public double getLatestVersion() {
 		try {
 			URL url = new URL(UPDATE_SITE + VERSION_FILE);
-			
+
 			InputStream inputStream = url.openStream();
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-			
+
 			double version = Double.parseDouble(bufferedReader.readLine());
-			
+
 			bufferedReader.close();
-			
+
 			return version;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return 0.00;
-	}
-	
-	/**
-	 * Enable SSL. github is 100% ssl
-	 */
-	private void enableSSL() {
-		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-		System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
 	}
 
 	/**
@@ -220,7 +210,15 @@ public class Updater {
 			logger.info("  + Download complete");
 		}
 	}
-	
+
+	/**
+	 * Enable SSL. github is 100% ssl
+	 */
+	private void enableSSL() {
+		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+		System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
+	}
+
 	/**
 	 * Write an input stream to an output stream
 	 * 
