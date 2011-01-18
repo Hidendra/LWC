@@ -23,10 +23,10 @@ package com.griefcraft.lwc;
 public class LWCInfo {
 
 	/**
-	 * The version
+	 * LWC's version
 	 */
-	public static final double VERSION = 1.45;
-
+	public static final double VERSION = 1.46;
+	
 	/**
 	 * Location of the properties file relative to the root Minecraft directory
 	 */
