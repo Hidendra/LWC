@@ -26,22 +26,23 @@ import java.net.ConnectException;
 import org.bukkit.entity.Player;
 
 import com.griefcraft.model.ProtectionTypes;
+import com.griefcraft.model.RightTypes;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Config;
 
 /**
- * Convert Chastity chests to LWC
+ * Convert Chest Protect chests to LWC
  */
-public class CCConverter implements Runnable {
+public class CPConverter implements Runnable {
 
 	public static void main(String[] args) throws Exception {
-		new CCConverter();
+		new CPConverter();
 	}
 
 	/**
-	 * File where potential chest dbs are
+	 * File where Chest Protect saves chests
 	 */
-	private String[] CHESTS_FILES = new String[] { "ChastityChest.chests", "ChastityChest/ChastityChest.chests" };
+	private String[] CHESTS_FILES = new String[] { "../lockedChests.txt", "lockedChests.txt" };
 
 	/**
 	 * How many chests were converted
@@ -58,12 +59,12 @@ public class CCConverter implements Runnable {
 	 */
 	private PhysDB physicalDatabase;
 
-	public CCConverter() {
+	public CPConverter() {
 		new Thread(this).start();
 		physicalDatabase = new PhysDB();
 	}
 
-	public CCConverter(Player player) {
+	public CPConverter(Player player) {
 		this();
 		this.player = player;
 	}
@@ -83,7 +84,7 @@ public class CCConverter implements Runnable {
 		}
 
 		if (file == null || !file.exists()) {
-			throw new FileNotFoundException("No Chastity Chest database found");
+			throw new FileNotFoundException("No Chest Protect chest database found");
 		}
 
 		String line;
@@ -100,20 +101,35 @@ public class CCConverter implements Runnable {
 				continue;
 			}
 
-			String[] split = line.split("=");
+			String[] split = line.split(",");
 
-			if (split.length < 2) {
+			if (split.length < 5) {
 				continue;
 			}
 
-			int[] coords = splitCoordinates(split[0]);
-			
-			int x = coords[0];
-			int y = coords[1];
-			int z = coords[2];
-			String owner = split[1];
+			String owner = split[0];
+			int x = Integer.parseInt(split[1]);
+			int y = Integer.parseInt(split[2]);
+			int z = Integer.parseInt(split[3]);
+			int type = Integer.parseInt(split[4]);
+			int rightsType = -1;
+			String users = "";
 
-			int type = ProtectionTypes.PRIVATE;
+			if (type == 1) {
+				type = ProtectionTypes.PUBLIC;
+			} else if (type > 1) {
+				if (type == 3) {
+					rightsType = RightTypes.GROUP;
+				} else if (type == 4) {
+					rightsType = RightTypes.PLAYER;
+				}
+
+				type = ProtectionTypes.PRIVATE;
+			}
+
+			if (split.length > 5) {
+				users = split[5].trim();
+			}
 
 			log(String.format("Registering chest to %s at location {%d,%d,%d}", owner, x, y, z));
 
@@ -123,34 +139,29 @@ public class CCConverter implements Runnable {
 			physicalDatabase.registerProtectedEntity(type, owner, "", x, y, z);
 
 			converted++;
-		}
-	}
-	
-	/**
-	 * WHY OH WHY
-	 * 
-	 * @param str
-	 * @return
-	 */
-	private int[] splitCoordinates(String str) {
-		int[] coords = new int[3];
-		String[] split = str.split("-");
-		int index = 0;
-		
-		boolean _neg = false;
-		
-		for(String string : split) {
-			if(string.isEmpty()) {
-				_neg = true;
+
+			/**
+			 * If rightsType is still -1, we're done with this chest
+			 */
+			if (rightsType == -1) {
+				continue;
 			}
-			else {
-				coords[index] = Integer.parseInt((_neg ? "-" : "") + string);
-				_neg = false;
-				index ++;
+
+			/**
+			 * The id of the chest we just registered
+			 */
+			int chestID = physicalDatabase.loadProtectedEntity(x, y, z).getID();
+
+			/**
+			 * Now register the extra users
+			 */
+			String[] extra = users.split(";");
+
+			for (String entity : extra) {
+				physicalDatabase.registerProtectionRights(chestID, entity, 0, rightsType);
+				log(String.format("  -> Registering rights to %s on chest %d", entity, chestID));
 			}
 		}
-		
-		return coords;
 	}
 
 	public void log(String str) {
@@ -166,7 +177,7 @@ public class CCConverter implements Runnable {
 		try {
 			Config.init();
 			
-			log("LWC Conversion tool for Chastity Chest chests");
+			log("LWC Conversion tool for Chest Protect chests");
 			log("");
 			log("Initializing sqlite");
 
