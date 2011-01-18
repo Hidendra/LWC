@@ -89,6 +89,7 @@ public class UpdateThread implements Runnable {
 		thread.interrupt();
 	}
 	
+	@Override
 	public void run() {
 		while(running) {
 			long curr = System.currentTimeMillis();

@@ -17,9 +17,6 @@
 
 package com.griefcraft.listeners;
 
-import java.util.List;
-
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityListener;
