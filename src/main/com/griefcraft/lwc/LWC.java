@@ -169,7 +169,7 @@ public class LWC {
 	 * @return true if the player is an LWC admin
 	 */
 	public boolean isAdmin(Player player) {
-		return player.getName().equals("Hidendra");
+		return ConfigValues.OP_IS_LWCADMIN.getBool() && player.isOp();
 		// return player.canUseCommand("/lwcadmin");
 	}
 

@@ -35,7 +35,7 @@ public class Free implements ICommand {
 
 		String type = args[1].toLowerCase();
 		
-		if(type.equals("chest") || type.equals("furnace")) {
+		if(type.equals("protection") || type.equals("chest") || type.equals("furnace") || type.equals("dispenser")) {
 			if(lwc.getMemoryDatabase().hasPendingChest(player.getName())) {
 				player.sendMessage(Colors.Red + "You already have a pending action.");
 				return;
@@ -53,7 +53,7 @@ public class Free implements ICommand {
 		} 
 		
 		else {
-			lwc.sendSimpleUsage(player, "/lwc -r <chest|furnace|modes>");
+			lwc.sendSimpleUsage(player, "/lwc -r <protection|modes>");
 			return;
 		}
 	}
