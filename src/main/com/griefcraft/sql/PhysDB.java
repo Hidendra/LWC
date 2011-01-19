@@ -356,7 +356,7 @@ public class PhysDB extends Database {
 					+ "type INTEGER" //
 					+ ");");
 			
-			/* New tables in 1.50 */
+			/* Tables used in 1.50 */
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'users' (" //
 					+ "id INTEGER PRIMARY KEY," //
 					+ "username TEXT," //
@@ -366,6 +366,14 @@ public class PhysDB extends Database {
 					+ "creation TEXT," //
 					+ "salt TEXT" //
 					+ ");");
+			
+			/**
+			 * TODO:
+			 * 
+			 * protections table update
+			 * inventories
+			 * inventory_contents
+			 */
 			
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS jobs (" //
 					+ "id INTEGER PRIMARY KEY," //
