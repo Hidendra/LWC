@@ -61,7 +61,7 @@ public class LWCPlugin extends JavaPlugin {
 	
 	public LWCPlugin(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader) {
 		super(pluginLoader, instance, desc, folder, plugin, cLoader);
-
+		
 		log("Loading shared objects");
 		
 		Config.init();

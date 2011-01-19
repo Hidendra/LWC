@@ -49,6 +49,11 @@ public class UpdateThread implements Runnable {
 	 */
 	private Thread thread;
 	
+	/**
+	 * True begins the flush
+	 */
+	private boolean flush = false;
+	
 	public UpdateThread(LWC lwc) {
 		this.lwc = lwc;
 		
@@ -63,7 +68,7 @@ public class UpdateThread implements Runnable {
 	 * Flush any caches to the database
 	 * TODO
 	 */
-	public void flush() {
+	private void _flush() {
 		// logger.info("Now checking caches to flush");
 		
 		if(lwc.getInventoryCache().size() > 0) {
@@ -76,8 +81,9 @@ public class UpdateThread implements Runnable {
 			
 			
 		}
-		
-		
+
+		flush = false;
+		lastUpdate = System.currentTimeMillis();
 	}
 	
 	/**
@@ -92,12 +98,16 @@ public class UpdateThread implements Runnable {
 	@Override
 	public void run() {
 		while(running) {
+			if(flush) {
+				_flush();
+				continue;
+			}
+			
 			long curr = System.currentTimeMillis();
 			long interval = ConfigValues.FLUSH_DB_INTERVAL.getInt() * 1000L;
 			
 			if(curr - lastUpdate > interval) {
-				flush();
-				lastUpdate = System.currentTimeMillis();
+				flush = true;
 			}
 			
 			try {
