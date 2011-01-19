@@ -19,12 +19,16 @@ package com.griefcraft.sql;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.griefcraft.logging.Logger;
 import com.griefcraft.util.ConfigValues;
 
 public abstract class Database {
-
+	
 	/**
 	 * @return true if connected to sqlite
 	 */
@@ -37,6 +41,13 @@ public abstract class Database {
 	 */
 	private Logger logger = Logger.getLogger(getClass().getSimpleName());
 
+	/**
+	 * Store cached prepared statements.
+	 * 
+	 * Since SQLite JDBC doesn't cache them.. we do it ourselves :S
+	 */
+	private Map<String, PreparedStatement> statementCache = new HashMap<String, PreparedStatement>();
+	
 	/**
 	 * The connection to the database
 	 */
@@ -52,6 +63,34 @@ public abstract class Database {
 	 */
 	public Connection getConnection() {
 		return connection;
+	}
+	
+	/**
+	 * Prepare a statement unless it's already cached (and if so, just return it)
+	 * 
+	 * @param sql
+	 * @return
+	 */
+	public PreparedStatement prepare(String sql) {
+		if(connection == null) {
+			return null;
+		}
+		
+		if(statementCache.containsKey(sql)) {
+			return statementCache.get(sql);
+		}
+		
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			statementCache.put(sql, preparedStatement);
+			
+			return preparedStatement;
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 
 	/**
