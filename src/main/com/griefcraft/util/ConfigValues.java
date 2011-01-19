@@ -25,7 +25,8 @@ public enum ConfigValues {
 	CUBOID_SAFE_AREAS("only-protect-in-cuboid-safe-zones", "false"), //
 	AUTO_UPDATE("auto-update", "false"), //
 	FLUSH_DB_INTERVAL("flush-db-interval", "60"), //
-	MAX_JOBS("max-jobs", "0");
+	MAX_JOBS("max-jobs", "0"),
+	OP_IS_LWCADMIN("op-is-lwcadmin", "true");
 
 	/**
 	 * The name of the config value used in the conf file
