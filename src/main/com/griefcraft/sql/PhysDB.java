@@ -317,6 +317,7 @@ public class PhysDB extends Database {
 		try {
 			Statement statement = connection.createStatement();
 			statement.executeQuery("SELECT payload FROM jobs");
+			statement.executeQuery("SELECT timestamp FROM jobs");
 			statement.close();
 		} catch(SQLException e) {
 			log("Fixing jobs table");
@@ -385,7 +386,7 @@ public class PhysDB extends Database {
 					+ "password TEXT," //
 					+ "mc_username TEXT," //
 					+ "rights INTEGER," //
-					+ "creation TEXT," //
+					+ "timestamp TEXT," //
 					+ "salt TEXT" //
 					+ ");");
 			
