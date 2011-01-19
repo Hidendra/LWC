@@ -21,6 +21,7 @@ import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.Performance;
+import com.griefcraft.util.StringUtils;
 
 public class LWC {
 
@@ -96,6 +97,8 @@ public class LWC {
 			
 			physicalDatabase.load();
 			memoryDatabase.load();
+
+			Logger.getLogger("SQLite").info("Using: " + StringUtils.capitalizeFirstLetter(physicalDatabase.getConnection().getMetaData().getDriverVersion()));
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
