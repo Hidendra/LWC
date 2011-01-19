@@ -411,8 +411,8 @@ public class PhysDB extends Database {
 			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in2 ON `limits` (type, entity)");
 			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in3 ON `rights` (chest, entity)");
 
-			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in3 ON `users` (username)");
-			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in3 ON `jobs` (type, owner)");
+			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in4 ON `users` (username)");
+			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in5 ON `jobs` (type, owner)");
 
 			connection.commit();
 			connection.setAutoCommit(true);
