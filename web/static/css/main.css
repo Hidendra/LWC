@@ -57,8 +57,14 @@ label.unselected
 #inventory
 {
 	// background-image: url(../images/items/inventory.png);
-	background-repeat: no-repeat;
+	// background-repeat: no-repeat;
 	width: 300px;
+}
+
+#inventory .combust
+{
+	height: 50px;
+	float: right;
 }
 
 #inventory .row

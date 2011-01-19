@@ -30,9 +30,9 @@ public class UnitTestInserts {
 		mem.connect();
 		mem.load();
 
-		// speedTest();
 		try {
-			createChests(500);
+			// createChests(5000);
+			speedTest();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
