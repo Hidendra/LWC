@@ -87,6 +87,10 @@ public class LWCPlayerListener extends PlayerListener {
 			onPlayerCommand(new PlayerChatEvent(Type.PLAYER_COMMAND, player, "/lwc -u " + subCommand));
 			return;
 		}
+		else if(command.equals("cremove")) {
+			onPlayerCommand(new PlayerChatEvent(Type.PLAYER_COMMAND, player, "/lwc -r protection"));
+			return;
+		}
 		
 		// TODO: check if they can use the command ??
 		/* if (!player.canUseCommand(split[0])) {
