@@ -31,7 +31,7 @@ public class MemDB extends Database {
 
 	public Action getAction(String action, String player) {
 		try {
-			final PreparedStatement statement = connection.prepareStatement("SELECT * FROM `actions` WHERE `player` = ? AND `action` = ?");
+			PreparedStatement statement = prepare("SELECT * FROM `actions` WHERE `player` = ? AND `action` = ?");
 			statement.setString(1, player);
 			statement.setString(2, action);
 
@@ -54,7 +54,7 @@ public class MemDB extends Database {
 				return act;
 			}
 
-			statement.close();
+			
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -74,7 +74,7 @@ public class MemDB extends Database {
 		try {
 			int chestID = -1;
 
-			final PreparedStatement statement = connection.prepareStatement("SELECT `chest` FROM `actions` WHERE `action` = ? AND `player` = ?");
+			PreparedStatement statement = prepare("SELECT `chest` FROM `actions` WHERE `action` = ? AND `player` = ?");
 			statement.setString(1, action);
 			statement.setString(2, player);
 
@@ -84,7 +84,7 @@ public class MemDB extends Database {
 				chestID = set.getInt("chest");
 			}
 
-			statement.close();
+			
 			Performance.addMemDBQuery();
 
 			return chestID;
@@ -106,7 +106,7 @@ public class MemDB extends Database {
 		final List<String> actions = new ArrayList<String>();
 
 		try {
-			final PreparedStatement statement = connection.prepareStatement("SELECT `action` FROM `actions` WHERE `player` = ?");
+			PreparedStatement statement = prepare("SELECT `action` FROM `actions` WHERE `player` = ?");
 			statement.setString(1, player);
 
 			final ResultSet set = statement.executeQuery();
@@ -143,7 +143,7 @@ public class MemDB extends Database {
 		try {
 			String password = "";
 
-			final PreparedStatement statement = connection.prepareStatement("SELECT `password` FROM `locks` WHERE `player` = ?");
+			PreparedStatement statement = prepare("SELECT `password` FROM `locks` WHERE `player` = ?");
 			statement.setString(1, player);
 
 			final ResultSet set = statement.executeQuery();
@@ -152,7 +152,7 @@ public class MemDB extends Database {
 				password = set.getString("password");
 			}
 
-			statement.close();
+			
 			Performance.addMemDBQuery();
 
 			return password;
@@ -173,7 +173,7 @@ public class MemDB extends Database {
 	public String getModeData(String player, String mode) {
 		String ret = null;
 		try {
-			final PreparedStatement statement = connection.prepareStatement("SELECT `data` from `modes` WHERE `player` = ? AND `mode` = ?");
+			PreparedStatement statement = prepare("SELECT `data` from `modes` WHERE `player` = ? AND `mode` = ?");
 			statement.setString(1, player);
 			statement.setString(2, mode);
 
@@ -181,7 +181,7 @@ public class MemDB extends Database {
 			if (set.next()) {
 				ret = set.getString("data");
 			}
-			statement.close();
+			
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -200,7 +200,7 @@ public class MemDB extends Database {
 		final List<String> modes = new ArrayList<String>();
 
 		try {
-			final PreparedStatement statement = connection.prepareStatement("SELECT * from `modes` WHERE `player` = ?");
+			PreparedStatement statement = prepare("SELECT * from `modes` WHERE `player` = ?");
 			statement.setString(1, player);
 
 			final ResultSet set = statement.executeQuery();
@@ -211,7 +211,7 @@ public class MemDB extends Database {
 				modes.add(mode);
 			}
 
-			statement.close();
+			
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -231,7 +231,7 @@ public class MemDB extends Database {
 		final List<String> sessionUsers = new ArrayList<String>();
 
 		try {
-			final PreparedStatement statement = connection.prepareStatement("SELECT `player` FROM `sessions` WHERE `chest` = ?");
+			PreparedStatement statement = prepare("SELECT `player` FROM `sessions` WHERE `chest` = ?");
 			statement.setInt(1, chestID);
 
 			final ResultSet set = statement.executeQuery();
@@ -288,7 +288,7 @@ public class MemDB extends Database {
 	 */
 	public boolean hasAccess(String player, int chestID) {
 		try {
-			final PreparedStatement statement = connection.prepareStatement("SELECT `player` FROM `sessions` WHERE `chest` = ?");
+			PreparedStatement statement = prepare("SELECT `player` FROM `sessions` WHERE `chest` = ?");
 			statement.setInt(1, chestID);
 
 			final ResultSet set = statement.executeQuery();
@@ -297,13 +297,13 @@ public class MemDB extends Database {
 				final String player2 = set.getString("player");
 
 				if (player.equals(player2)) {
-					statement.close();
+					
 					Performance.addMemDBQuery();
 					return true;
 				}
 			}
 
-			statement.close();
+			
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -348,18 +348,18 @@ public class MemDB extends Database {
 	 */
 	public boolean hasPendingChest(String player) {
 		try {
-			final PreparedStatement statement = connection.prepareStatement("SELECT `id` FROM `locks` WHERE `player` = ?");
+			PreparedStatement statement = prepare("SELECT `id` FROM `locks` WHERE `player` = ?");
 			statement.setString(1, player);
 
 			final ResultSet set = statement.executeQuery();
 
 			while (set.next()) {
-				statement.close();
+				
 				Performance.addMemDBQuery();
 				return true;
 			}
 
-			statement.close();
+			
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -385,7 +385,7 @@ public class MemDB extends Database {
 	@Override
 	public void load() {
 		try {
-			final Statement statement = connection.createStatement();
+			Statement statement = connection.createStatement();
 
 			log("Creating memory tables");
 
@@ -413,6 +413,7 @@ public class MemDB extends Database {
 					+ ");");
 
 			statement.close();
+			
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -426,7 +427,7 @@ public class MemDB extends Database {
 		int count = 0;
 
 		try {
-			final Statement statement = connection.createStatement();
+			Statement statement = connection.createStatement();
 			final ResultSet set = statement.executeQuery("SELECT `id` FROM `locks`");
 
 			while (set.next()) {
@@ -457,13 +458,13 @@ public class MemDB extends Database {
 			 */
 			unregisterAction(action, player);
 
-			final PreparedStatement statement = connection.prepareStatement("INSERT INTO `actions` (action, player, chest) VALUES (?, ?, ?)");
+			PreparedStatement statement = prepare("INSERT INTO `actions` (action, player, chest) VALUES (?, ?, ?)");
 			statement.setString(1, action);
 			statement.setString(2, player);
 			statement.setInt(3, -1);
 
 			statement.executeUpdate();
-			statement.close();
+			
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -485,13 +486,13 @@ public class MemDB extends Database {
 			 */
 			unregisterAction(action, player);
 
-			final PreparedStatement statement = connection.prepareStatement("INSERT INTO `actions` (action, player, chest) VALUES (?, ?, ?)");
+			PreparedStatement statement = prepare("INSERT INTO `actions` (action, player, chest) VALUES (?, ?, ?)");
 			statement.setString(1, action);
 			statement.setString(2, player);
 			statement.setInt(3, chestID);
 
 			statement.executeUpdate();
-			statement.close();
+			
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -513,13 +514,13 @@ public class MemDB extends Database {
 			 */
 			unregisterAction(action, player);
 
-			final PreparedStatement statement = connection.prepareStatement("INSERT INTO `actions` (action, player, data) VALUES (?, ?, ?)");
+			PreparedStatement statement = prepare("INSERT INTO `actions` (action, player, data) VALUES (?, ?, ?)");
 			statement.setString(1, action);
 			statement.setString(2, player);
 			statement.setString(3, data);
 
 			statement.executeUpdate();
-			statement.close();
+			
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -536,12 +537,12 @@ public class MemDB extends Database {
 	 */
 	public void registerChest(String player, String password) {
 		try {
-			final PreparedStatement statement = connection.prepareStatement("INSERT INTO `locks` (player, password) VALUES (?, ?)");
+			PreparedStatement statement = prepare("INSERT INTO `locks` (player, password) VALUES (?, ?)");
 			statement.setString(1, player);
 			statement.setString(2, password);
 
 			statement.executeUpdate();
-			statement.close();
+			
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -558,12 +559,12 @@ public class MemDB extends Database {
 	 */
 	public void registerMode(String player, String mode) {
 		try {
-			final PreparedStatement statement = connection.prepareStatement("INSERT INTO `modes` (player, mode) VALUES (?, ?)");
+			PreparedStatement statement = prepare("INSERT INTO `modes` (player, mode) VALUES (?, ?)");
 			statement.setString(1, player);
 			statement.setString(2, mode);
 
 			statement.executeUpdate();
-			statement.close();
+			
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -582,13 +583,13 @@ public class MemDB extends Database {
 	 */
 	public void registerMode(String player, String mode, String data) {
 		try {
-			final PreparedStatement statement = connection.prepareStatement("INSERT INTO `modes` (player, mode, data) VALUES (?, ?, ?)");
+			PreparedStatement statement = prepare("INSERT INTO `modes` (player, mode, data) VALUES (?, ?, ?)");
 			statement.setString(1, player);
 			statement.setString(2, mode);
 			statement.setString(3, data);
 
 			statement.executeUpdate();
-			statement.close();
+			
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -605,12 +606,12 @@ public class MemDB extends Database {
 	 */
 	public void registerPlayer(String player, int chestID) {
 		try {
-			final PreparedStatement statement = connection.prepareStatement("INSERT INTO `sessions` (player, chest) VALUES(?, ?)");
+			PreparedStatement statement = prepare("INSERT INTO `sessions` (player, chest) VALUES(?, ?)");
 			statement.setString(1, player);
 			statement.setInt(2, chestID);
 
 			statement.executeUpdate();
-			statement.close();
+			
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -636,7 +637,7 @@ public class MemDB extends Database {
 		int count = 0;
 
 		try {
-			final Statement statement = connection.createStatement();
+			Statement statement = connection.createStatement();
 			final ResultSet set = statement.executeQuery("SELECT `id` FROM `sessions`");
 
 			while (set.next()) {
@@ -660,12 +661,12 @@ public class MemDB extends Database {
 	 */
 	public void unregisterAction(String action, String player) {
 		try {
-			final PreparedStatement statement = connection.prepareStatement("DELETE FROM `actions` WHERE `action` = ? AND `player` = ?");
+			PreparedStatement statement = prepare("DELETE FROM `actions` WHERE `action` = ? AND `player` = ?");
 			statement.setString(1, action);
 			statement.setString(2, player);
 
 			statement.executeUpdate();
-			statement.close();
+			
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -680,11 +681,11 @@ public class MemDB extends Database {
 	 */
 	public void unregisterAllActions(String player) {
 		try {
-			final PreparedStatement statement = connection.prepareStatement("DELETE FROM `actions` WHERE `player` = ?");
+			PreparedStatement statement = prepare("DELETE FROM `actions` WHERE `player` = ?");
 			statement.setString(1, player);
 
 			statement.executeUpdate();
-			statement.close();
+			
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -696,8 +697,9 @@ public class MemDB extends Database {
 	 */
 	public void unregisterAllChests() {
 		try {
-			final Statement statement = connection.createStatement();
+			Statement statement = connection.createStatement();
 			statement.executeUpdate("DELETE FROM `locks`");
+			
 			statement.close();
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
@@ -713,11 +715,11 @@ public class MemDB extends Database {
 	 */
 	public void unregisterAllModes(String player) {
 		try {
-			final PreparedStatement statement = connection.prepareStatement("DELETE FROM `modes` WHERE `player` = ?");
+			PreparedStatement statement = prepare("DELETE FROM `modes` WHERE `player` = ?");
 			statement.setString(1, player);
 
 			statement.executeUpdate();
-			statement.close();
+			
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -732,11 +734,11 @@ public class MemDB extends Database {
 	 */
 	public void unregisterChest(String player) {
 		try {
-			final PreparedStatement statement = connection.prepareStatement("DELETE FROM `locks` WHERE `player` = ?");
+			PreparedStatement statement = prepare("DELETE FROM `locks` WHERE `player` = ?");
 			statement.setString(1, player);
 
 			statement.executeUpdate();
-			statement.close();
+			
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -753,12 +755,12 @@ public class MemDB extends Database {
 	 */
 	public void unregisterMode(String player, String mode) {
 		try {
-			final PreparedStatement statement = connection.prepareStatement("DELETE FROM `modes` WHERE `player` = ? AND `mode` = ?");
+			PreparedStatement statement = prepare("DELETE FROM `modes` WHERE `player` = ? AND `mode` = ?");
 			statement.setString(1, player);
 			statement.setString(2, mode);
 
 			statement.executeUpdate();
-			statement.close();
+			
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -773,11 +775,10 @@ public class MemDB extends Database {
 	 */
 	public void unregisterPlayer(String player) {
 		try {
-			final PreparedStatement statement = connection.prepareStatement("DELETE FROM `sessions` WHERE `player` = ?");
+			PreparedStatement statement = prepare("DELETE FROM `sessions` WHERE `player` = ?");
 			statement.setString(1, player);
 
 			statement.executeUpdate();
-			statement.close();
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
 			e.printStackTrace();
