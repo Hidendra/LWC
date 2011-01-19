@@ -35,26 +35,6 @@ public class PhysDB extends Database {
 	 * If the database was already loaded
 	 */
 	private boolean loaded = false;
-
-	/**
-	 * Queries
-	 */
-	private PreparedStatement _select_protectedEntity_ID;
-	private PreparedStatement _select_chestExist_ID;
-	private PreparedStatement _select_chestCount_user;
-	private PreparedStatement _select_limit_type_entity;
-	private PreparedStatement _select_privateAccess_type_ID_entities;
-	private PreparedStatement _select_protectedEntity_x_y_z_radius;
-	private PreparedStatement _select_protectedEntity_x_y_z;
-	private PreparedStatement _insert_inventories_id_protectionid;
-	private PreparedStatement _insert_protectedEntity_type_player_password_x_y_z;
-	private PreparedStatement _insert_protectedLimit_type_amount_entity;
-	private PreparedStatement _insert_rights_ID_entity_rights_type;
-	private PreparedStatement _delete_protectedEntity_ID;
-	private PreparedStatement _delete_protectedEntity_x_y_z;
-	private PreparedStatement _delete_limit_type_entity;
-	private PreparedStatement _delete_rights_ID;
-	private PreparedStatement _delete_rights_ID_entity;
 	
 	/**
 	 * Load every protection, use _sparingly_
@@ -110,9 +90,10 @@ public class PhysDB extends Database {
 		boolean retur = false;
 
 		try {
-			_select_chestExist_ID.setInt(1, chestID);
+			PreparedStatement statement = prepare("SELECT COUNT(*) AS count FROM `protections` WHERE `id` = ?");
+			statement.setInt(1, chestID);
 
-			final ResultSet set = _select_chestExist_ID.executeQuery();
+			final ResultSet set = statement.executeQuery();
 
 			retur = set.getInt("count") > 0;
 
@@ -161,50 +142,6 @@ public class PhysDB extends Database {
 		}
 	}
 
-	public void doUpdate130() {
-		boolean needsUpdate = true;
-
-		try {
-			Statement statement = connection.createStatement();
-			ResultSet set = statement.executeQuery("PRAGMA INDEX_LIST('protections')");
-
-			while (set.next()) {
-				needsUpdate = false;
-			}
-
-			statement.close();
-			Performance.addPhysDBQuery();
-		} catch (SQLException e) {
-
-		}
-
-		if (!needsUpdate) {
-			return;
-		}
-
-		log("Outdated database!");
-		log("UPGRADING FROM 1.10 TO 1.30");
-
-		log("CREATING INDEXES!");
-
-		try {
-			Statement statement = connection.createStatement();
-			statement.addBatch("BEGIN TRANSACTION");
-			statement.addBatch("CREATE INDEX in1 ON `protections` (owner, x, y, z)");
-			statement.addBatch("CREATE INDEX in2 ON `limits` (type, entity)");
-			statement.addBatch("CREATE INDEX in3 ON `rights` (chest, entity)");
-			statement.addBatch("END TRANSACTION");
-			statement.executeBatch();
-			statement.close();
-			Performance.addPhysDBQuery();
-		} catch (SQLException e) {
-			log("Oops! Something went wrong: ");
-			e.printStackTrace();
-		}
-
-		log("Update complete!");
-	}
-
 	/**
 	 * @return the number of protected chests
 	 */
@@ -239,9 +176,10 @@ public class PhysDB extends Database {
 		int amount = 0;
 
 		try {
-			_select_chestCount_user.setString(1, user);
+			PreparedStatement statement = prepare("SELECT `id` FROM `protections` WHERE `owner` = ?");
+			statement.setString(1, user);
 
-			final ResultSet set = _select_chestCount_user.executeQuery();
+			final ResultSet set = statement.executeQuery();
 
 			while (set.next()) {
 				amount++;
@@ -280,10 +218,11 @@ public class PhysDB extends Database {
 		int limit = -1;
 
 		try {
-			_select_limit_type_entity.setInt(1, type);
-			_select_limit_type_entity.setString(2, entity.toLowerCase());
+			PreparedStatement statement = prepare("SELECT `amount` FROM `limits` WHERE `type` = ? AND `entity` = ?");
+			statement.setInt(1, type);
+			statement.setString(2, entity.toLowerCase());
 
-			final ResultSet set = _select_limit_type_entity.executeQuery();
+			final ResultSet set = statement.executeQuery();
 
 			while (set.next()) {
 				limit = set.getInt("amount");
@@ -311,10 +250,11 @@ public class PhysDB extends Database {
 		int access = -1;
 
 		try {
-			_select_privateAccess_type_ID_entities.setInt(1, type);
-			_select_privateAccess_type_ID_entities.setInt(2, chestID);
+			PreparedStatement statement = prepare("SELECT `entity`, `rights` FROM `rights` WHERE `type` = ? AND `chest` = ?");
+			statement.setInt(1, type);
+			statement.setInt(2, chestID);
 
-			final ResultSet set = _select_privateAccess_type_ID_entities.executeQuery();
+			final ResultSet set = statement.executeQuery();
 
 			_main: while (set.next()) {
 				final String entity = set.getString("entity");
@@ -417,15 +357,23 @@ public class PhysDB extends Database {
 					+ ");");
 			
 			/* New tables in 1.50 */
-			/* statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'users' ("
-					+ "id INTEGER PRIMARY KEY,"
-					+ "username TEXT,"
-					+ "password TEXT,"
-					+ "minecraft_username TEXT," // ?
-					+ "group INTEGER,"
-					+ "creation TEXT,"
-					+ "salt TEXT"
-					+ ");"); */
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'users' (" //
+					+ "id INTEGER PRIMARY KEY," //
+					+ "username TEXT," //
+					+ "password TEXT," //
+					+ "mc_username TEXT," //
+					+ "rights INTEGER," //
+					+ "creation TEXT," //
+					+ "salt TEXT" //
+					+ ");");
+			
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS jobs (" //
+					+ "id INTEGER PRIMARY KEY," //
+					+ "type INTEGER,"
+					+ "owner TEXT,"
+					+ "payloud TEXT,"
+					+ "date TEXT"
+					+ ");");
 
 			connection.commit();
 			connection.setAutoCommit(true);
@@ -433,15 +381,38 @@ public class PhysDB extends Database {
 			statement.close();
 			Performance.addPhysDBQuery();
 
-			loadPreparedStatements();
+			loadIndexes();
 		} catch (final SQLException e) {
 			e.printStackTrace();
 		}
 
 		doUpdate100();
-		doUpdate130();
 
 		loaded = true;
+	}
+	
+	/**
+	 * Instead of "updating indexes", let's just use IF NOT EXISTS each time
+	 */
+	private void loadIndexes() {
+		try {
+			connection.setAutoCommit(false);
+			Statement statement = connection.createStatement();
+			
+			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in1 ON `protections` (owner, x, y, z)");
+			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in2 ON `limits` (type, entity)");
+			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in3 ON `rights` (chest, entity)");
+
+			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in3 ON `users` (username)");
+			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in3 ON `jobs` (type, owner)");
+
+			connection.commit();
+			connection.setAutoCommit(true);
+			
+			statement.close();
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -461,14 +432,16 @@ public class PhysDB extends Database {
 		List<Protection> chests = new ArrayList<Protection>();
 
 		try {
-			_select_protectedEntity_x_y_z_radius.setInt(1, _x - radius);
-			_select_protectedEntity_x_y_z_radius.setInt(2, _x + radius);
-			_select_protectedEntity_x_y_z_radius.setInt(3, _y - radius);
-			_select_protectedEntity_x_y_z_radius.setInt(4, _y + radius);
-			_select_protectedEntity_x_y_z_radius.setInt(5, _z - radius);
-			_select_protectedEntity_x_y_z_radius.setInt(6, _z + radius);
+			PreparedStatement statement = prepare("SELECT * FROM `protections` WHERE x >= ? AND x <= ? AND y >= ? AND y <= ? AND z >= ? AND z <= ?");
+			
+			statement.setInt(1, _x - radius);
+			statement.setInt(2, _x + radius);
+			statement.setInt(3, _y - radius);
+			statement.setInt(4, _y + radius);
+			statement.setInt(5, _z - radius);
+			statement.setInt(6, _z + radius);
 
-			final ResultSet set = _select_protectedEntity_x_y_z_radius.executeQuery();
+			final ResultSet set = statement.executeQuery();
 
 			while (set.next()) {
 				final int id = set.getInt("id");
@@ -511,9 +484,10 @@ public class PhysDB extends Database {
 	 */
 	public Protection loadProtectedEntity(int chestID) {
 		try {
-			_select_protectedEntity_ID.setInt(1, chestID);
+			PreparedStatement statement = prepare("SELECT * FROM `protections` WHERE `id` = ?");
+			statement.setInt(1, chestID);
 
-			final ResultSet set = _select_protectedEntity_ID.executeQuery();
+			final ResultSet set = statement.executeQuery();
 
 			while (set.next()) {
 				final int id = set.getInt("id");
@@ -562,11 +536,12 @@ public class PhysDB extends Database {
 	 */
 	public Protection loadProtectedEntity(int x, int y, int z) {
 		try {
-			_select_protectedEntity_x_y_z.setInt(1, x);
-			_select_protectedEntity_x_y_z.setInt(2, y);
-			_select_protectedEntity_x_y_z.setInt(3, z);
+			PreparedStatement statement = prepare("SELECT `id`, `type`, `owner`, `password`, `date` FROM `protections` WHERE `x` = ? AND `y` = ? AND `z` = ?");
+			statement.setInt(1, x);
+			statement.setInt(2, y);
+			statement.setInt(3, z);
 
-			final ResultSet set = _select_protectedEntity_x_y_z.executeQuery();
+			final ResultSet set = statement.executeQuery();
 
 			while (set.next()) {
 				final int id = set.getInt("id");
@@ -615,15 +590,17 @@ public class PhysDB extends Database {
 	 */
 	public void registerProtectedEntity(int type, String player, String password, int x, int y, int z) {
 		try {
-			_insert_protectedEntity_type_player_password_x_y_z.setInt(1, type);
-			_insert_protectedEntity_type_player_password_x_y_z.setString(2, player);
-			_insert_protectedEntity_type_player_password_x_y_z.setString(3, password);
-			_insert_protectedEntity_type_player_password_x_y_z.setInt(4, x);
-			_insert_protectedEntity_type_player_password_x_y_z.setInt(5, y);
-			_insert_protectedEntity_type_player_password_x_y_z.setInt(6, z);
-			_insert_protectedEntity_type_player_password_x_y_z.setString(7, new Timestamp(new Date().getTime()).toString());
+			PreparedStatement statement = prepare("INSERT INTO `protections` (type, owner, password, x, y, z, date) VALUES(?, ?, ?, ?, ?, ?, ?)");
 			
-			_insert_protectedEntity_type_player_password_x_y_z.executeUpdate();
+			statement.setInt(1, type);
+			statement.setString(2, player);
+			statement.setString(3, password);
+			statement.setInt(4, x);
+			statement.setInt(5, y);
+			statement.setInt(6, z);
+			statement.setString(7, new Timestamp(new Date().getTime()).toString());
+			
+			statement.executeUpdate();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
 			e.printStackTrace();
@@ -642,11 +619,13 @@ public class PhysDB extends Database {
 		try {
 			unregisterProtectionLimit(type, entity.toLowerCase());
 
-			_insert_protectedLimit_type_amount_entity.setInt(1, type);
-			_insert_protectedLimit_type_amount_entity.setInt(2, amount);
-			_insert_protectedLimit_type_amount_entity.setString(3, entity.toLowerCase());
+			PreparedStatement statement = prepare("INSERT INTO `limits` (type, amount, entity) VALUES(?, ?, ?)");
+			
+			statement.setInt(1, type);
+			statement.setInt(2, amount);
+			statement.setString(3, entity.toLowerCase());
 
-			_insert_protectedLimit_type_amount_entity.executeUpdate();
+			statement.executeUpdate();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
 			e.printStackTrace();
@@ -667,12 +646,14 @@ public class PhysDB extends Database {
 	 */
 	public void registerProtectionRights(int chestID, String entity, int rights, int type) {
 		try {
-			_insert_rights_ID_entity_rights_type.setInt(1, chestID);
-			_insert_rights_ID_entity_rights_type.setString(2, entity.toLowerCase());
-			_insert_rights_ID_entity_rights_type.setInt(3, rights);
-			_insert_rights_ID_entity_rights_type.setInt(4, type);
+			PreparedStatement statement = prepare("INSERT INTO `rights` (chest, entity, rights, type) VALUES (?, ?, ?, ?)");
+			
+			statement.setInt(1, chestID);
+			statement.setString(2, entity.toLowerCase());
+			statement.setInt(3, rights);
+			statement.setInt(4, type);
 
-			_insert_rights_ID_entity_rights_type.executeUpdate();
+			statement.executeUpdate();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
 			e.printStackTrace();
@@ -687,9 +668,11 @@ public class PhysDB extends Database {
 	 */
 	public void unregisterProtection(int chestID) {
 		try {
-			_delete_protectedEntity_ID.setInt(1, chestID);
+			PreparedStatement statement = prepare("DELETE FROM `protections` WHERE `id` = ?");
+			
+			statement.setInt(1, chestID);
 
-			_delete_protectedEntity_ID.executeUpdate();
+			statement.executeUpdate();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
 			e.printStackTrace();
@@ -706,11 +689,13 @@ public class PhysDB extends Database {
 	 */
 	public void unregisterProtectedEntity(int x, int y, int z) {
 		try {
-			_delete_protectedEntity_x_y_z.setInt(1, x);
-			_delete_protectedEntity_x_y_z.setInt(2, y);
-			_delete_protectedEntity_x_y_z.setInt(3, z);
+			PreparedStatement statement = prepare("DELETE FROM `protections` WHERE `x` = ? AND `y` = ? AND `z` = ?");
+			
+			statement.setInt(1, x);
+			statement.setInt(2, y);
+			statement.setInt(3, z);
 
-			_delete_protectedEntity_x_y_z.executeUpdate();
+			statement.executeUpdate();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
 			e.printStackTrace();
@@ -741,10 +726,12 @@ public class PhysDB extends Database {
 	 */
 	public void unregisterProtectionLimit(int type, String entity) {
 		try {
-			_delete_limit_type_entity.setInt(1, type);
-			_delete_limit_type_entity.setString(2, entity.toLowerCase());
+			PreparedStatement statement = prepare("DELETE FROM `limits` WHERE `type` = ? AND `entity` = ?");
+			
+			statement.setInt(1, type);
+			statement.setString(2, entity.toLowerCase());
 
-			_delete_limit_type_entity.executeUpdate();
+			statement.executeUpdate();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
 			e.printStackTrace();
@@ -787,8 +774,10 @@ public class PhysDB extends Database {
 	 */
 	public void unregisterProtectionRights(int chestID) {
 		try {
-			_delete_rights_ID.setInt(1, chestID);
-			_delete_rights_ID.executeUpdate();
+			PreparedStatement statement = prepare("DELETE FROM `rights` WHERE `chest` = ?");
+			
+			statement.setInt(1, chestID);
+			statement.executeUpdate();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
 			e.printStackTrace();
@@ -803,10 +792,12 @@ public class PhysDB extends Database {
 	 */
 	public void unregisterProtectionRights(int chestID, String entity) {
 		try {
-			_delete_rights_ID_entity.setInt(1, chestID);
-			_delete_rights_ID_entity.setString(2, entity.toLowerCase());
+			PreparedStatement statement = prepare("DELETE FROM `rights` WHERE `chest` = ? AND `entity` = ?");
+			
+			statement.setInt(1, chestID);
+			statement.setString(2, entity.toLowerCase());
 
-			_delete_rights_ID_entity.executeUpdate();
+			statement.executeUpdate();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
 			e.printStackTrace();
@@ -847,41 +838,12 @@ public class PhysDB extends Database {
 	 */
 	public void updateInventory(int id) {
 		try {
-			_insert_inventories_id_protectionid.setInt(1, 1);
+			throw new SQLException("Not supported");
+			// _insert_inventories_id_protectionid.setInt(1, 1);
 			
 		} catch(SQLException e) {
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * Load all of the prepared statements
-	 * 
-	 * @throws SQLSQLException
-	 */
-	private void loadPreparedStatements() throws SQLException {
-		log("Caching Prepared Statements");
-		
-		_select_protectedEntity_ID = connection.prepareStatement("SELECT * FROM `protections` WHERE `id` = ?");
-		_select_chestExist_ID = connection.prepareStatement("SELECT COUNT(*) AS count FROM `protections` WHERE `id` = ?");
-		_select_chestCount_user = connection.prepareStatement("SELECT `id` FROM `protections` WHERE `owner` = ?");
-		_select_limit_type_entity = connection.prepareStatement("SELECT `amount` FROM `limits` WHERE `type` = ? AND `entity` = ?");
-		_select_privateAccess_type_ID_entities = connection.prepareStatement("SELECT `entity`, `rights` FROM `rights` WHERE `type` = ? AND `chest` = ?");
-		_select_protectedEntity_x_y_z_radius = connection.prepareStatement("SELECT * FROM `protections` WHERE x >= ? AND x <= ? AND y >= ? AND y <= ? AND z >= ? AND z <= ?");
-		_select_protectedEntity_x_y_z = connection.prepareStatement("SELECT `id`, `type`, `owner`, `password`, `date` FROM `protections` WHERE `x` = ? AND `y` = ? AND `z` = ?");
-
-		// _insert_inventories_id_protectionid = connection.prepareStatement("INSERT OR REPLACE INTO `inventories` (id, protection_id) VALUES(?, ?)");
-		// connection.prepareStatement("INSERT OR REPLACE INTO `inventory_contents`");
-		
-		_insert_protectedEntity_type_player_password_x_y_z = connection.prepareStatement("INSERT INTO `protections` (type, owner, password, x, y, z, date) VALUES(?, ?, ?, ?, ?, ?, ?)");
-		_insert_protectedLimit_type_amount_entity = connection.prepareStatement("INSERT INTO `limits` (type, amount, entity) VALUES(?, ?, ?)");
-		_insert_rights_ID_entity_rights_type = connection.prepareStatement("INSERT INTO `rights` (chest, entity, rights, type) VALUES (?, ?, ?, ?)");
-
-		_delete_protectedEntity_ID = connection.prepareStatement("DELETE FROM `protections` WHERE `id` = ?");
-		_delete_protectedEntity_x_y_z = connection.prepareStatement("DELETE FROM `protections` WHERE `x` = ? AND `y` = ? AND `z` = ?");
-		_delete_limit_type_entity = connection.prepareStatement("DELETE FROM `limits` WHERE `type` = ? AND `entity` = ?");
-		_delete_rights_ID = connection.prepareStatement("DELETE FROM `rights` WHERE `chest` = ?");
-		_delete_rights_ID_entity = connection.prepareStatement("DELETE FROM `rights` WHERE `chest` = ? AND `entity` = ?");
 	}
 
 }
