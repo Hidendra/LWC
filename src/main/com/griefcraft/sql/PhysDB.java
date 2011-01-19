@@ -309,6 +309,27 @@ public class PhysDB extends Database {
 
 		return count;
 	}
+	
+	/**
+	 * Pushed an LWC pre-1.5 tables with a mis-spelled column name. Damn me
+	 */
+	private void fixJobsTable() {
+		try {
+			Statement statement = connection.createStatement();
+			statement.executeQuery("SELECT payload FROM jobs");
+			statement.close();
+		} catch(SQLException e) {
+			log("Fixing jobs table");
+			
+			try {
+				Statement statement = connection.createStatement();
+				statement.executeUpdate("DROP TABLE jobs");
+				statement.close();
+			} catch(SQLException ex) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	/**
 	 * Create the table needed if it does not already exist
@@ -323,6 +344,7 @@ public class PhysDB extends Database {
 		 * 1.40 renamed a table, so it needs to be renamed before LWC attempts to create it
 		 */
 		doUpdate140();
+		fixJobsTable();
 
 		try {
 			final Statement statement = connection.createStatement();
@@ -379,7 +401,7 @@ public class PhysDB extends Database {
 					+ "id INTEGER PRIMARY KEY," //
 					+ "type INTEGER,"
 					+ "owner TEXT,"
-					+ "payloud TEXT,"
+					+ "payload TEXT,"
 					+ "date TEXT"
 					+ ");");
 
