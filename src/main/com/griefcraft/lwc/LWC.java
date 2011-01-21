@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import com.griefcraft.commands.ICommand;
 import com.griefcraft.logging.Logger;
@@ -22,6 +23,7 @@ import com.griefcraft.util.Colors;
 import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.Performance;
 import com.griefcraft.util.StringUtils;
+import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class LWC {
 
@@ -56,6 +58,11 @@ public class LWC {
 	private MemDB memoryDatabase;
 	
 	/**
+	 * Permissions plugin
+	 */
+	private Permissions permissions;
+	
+	/**
 	 * List of commands
 	 */
 	private List<ICommand> commands;
@@ -73,6 +80,13 @@ public class LWC {
 	}
 	
 	/**
+	 * @return the update thread
+	 */
+	public UpdateThread getUpdateThread() {
+		return updateThread;
+	}
+	
+	/**
 	 * @return the plugin version
 	 */
 	public double getVersion() {
@@ -85,10 +99,19 @@ public class LWC {
 	public void load() {
 		Performance.init();
 		
+		log("Dev mode: " + Boolean.toString(LWCInfo.DEVELOPMENT).toUpperCase());
+		
 		inventoryCache = new InventoryCache();
 		physicalDatabase = new PhysDB();
 		memoryDatabase = new MemDB();
 		updateThread = new UpdateThread(this);
+		
+		Plugin permissionsPlugin = plugin.getServer().getPluginManager().getPlugin("Permissions");
+		
+		if(permissionsPlugin != null) {
+			logger.info("Using Nijikokun's permissions plugin for permissions");
+			permissions = (Permissions) permissionsPlugin;
+		}
 
 		log("Loading SQLite");
 		try {
@@ -169,7 +192,7 @@ public class LWC {
 	 * @return true if the player is an LWC admin
 	 */
 	public boolean isAdmin(Player player) {
-		return ConfigValues.OP_IS_LWCADMIN.getBool() && player.isOp();
+		return (ConfigValues.OP_IS_LWCADMIN.getBool() && player.isOp()) || (permissions != null && Permissions.Security.permission(player, "lwc.admin"));
 		// return player.canUseCommand("/lwcadmin");
 	}
 
@@ -181,8 +204,15 @@ public class LWC {
 	 * @return true if the player is an LWC mod
 	 */
 	public boolean isMod(Player player) {
-		return false;
+		return (permissions != null && Permissions.Security.permission(player, "lwc.mod"));
 		// return player.canUseCommand("/lwcmod");
+	}
+	
+	/**
+	 * @return the permissions
+	 */
+	public Permissions getPermissions() {
+		return permissions;
 	}
 
 	/**
