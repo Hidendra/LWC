@@ -261,7 +261,7 @@ public class LWCBlockListener extends BlockListener {
 				return;
 			} else if (hasFreeRequest) {
 				if (lwc.isAdmin(player) || entity.getOwner().equals(player.getName())) {
-					player.sendMessage(Colors.LightGreen + "Removed lock on the chest succesfully!");
+					player.sendMessage(Colors.LightGreen + "Removed lock on the chest successfully!");
 					lwc.getPhysicalDatabase().unregisterProtectedEntity(entity.getX(), entity.getY(), entity.getZ());
 					lwc.getPhysicalDatabase().unregisterProtectionRights(entity.getID());
 					if (lwc.notInPersistentMode(player.getName())) {

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.griefcraft.model.Job;
 import com.griefcraft.model.Protection;
 import com.griefcraft.util.Performance;
 
@@ -77,6 +78,99 @@ public class PhysDB extends Database {
 		}
 		
 		return protections;
+	}
+	
+	/**
+	 * Schedule a Job
+	 * 
+	 * @param type
+	 * @param owner
+	 * @param payload
+	 */
+	public void createJob(int type, String owner, String payload) {
+		try {
+			PreparedStatement statement = prepare("INSERT INTO jobs (type, owner, payload, timestamp) VALUES(?, ?, ?, ?)");
+			
+			statement.setInt(1, type);
+			statement.setString(2, owner);
+			statement.setString(3, payload);
+			statement.setLong(4, System.currentTimeMillis() / 1000L);
+			
+			statement.executeUpdate();
+			Performance.addPhysDBQuery();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Remove a scheduled job
+	 * 
+	 * @param id
+	 */
+	public void removeJob(int id) {
+		try {
+			PreparedStatement statement = prepare("DELETE FROM jobs WHERE id = ?");
+			
+			statement.setInt(1, id);
+			
+			statement.executeUpdate();
+			Performance.addPhysDBQuery();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Load the whole job queue
+	 * 
+	 * @return
+	 */
+	public List<Job> getJobQueue() {
+		return getJobQueue(0);
+	}
+	
+	/**
+	 * Load a job queue of size n. if size is 0, will return all jobs
+	 * 
+	 * @param size
+	 * @return
+	 */
+	public List<Job> getJobQueue(int size) {
+		List<Job> jobs = new ArrayList<Job>();
+		
+		try {
+			String where = size > 0 ? (" LIMIT " + size) : "";
+			
+			PreparedStatement statement = prepare("SELECT * FROM jobs" + where);
+			
+			ResultSet set = statement.executeQuery();
+			
+			while(set.next()) {
+				Job job = new Job();
+				
+				int id = set.getInt("id");
+				int type = set.getInt("type");
+				String owner = set.getString("owner");
+				String payload = set.getString("payload");
+				long timestamp = set.getLong("timestamp");
+				
+				job.setId(id);
+				job.setType(type);
+				job.setOwner(owner);
+				job.setPayload(payload);
+				job.setTimestamp(timestamp);
+				
+				jobs.add(job);
+			}
+			
+			set.close();
+			Performance.addPhysDBQuery();
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return jobs;
 	}
 
 	/**
@@ -331,6 +425,43 @@ public class PhysDB extends Database {
 			}
 		}
 	}
+	
+	/**
+	 * Rename users table
+	 */
+	private void fixPlayerTable() {
+		try {
+			Statement statement = connection.createStatement();
+			statement.executeQuery("SELECT * from users");
+			statement.close();
+		} catch(SQLException e) {
+			log("Fixing players table");
+			
+			try {
+				Statement statement = connection.createStatement();
+				statement.executeUpdate("DROP TABLE users");
+				statement.close();
+			} catch(SQLException ex) {
+				e.printStackTrace();
+			}
+		}
+		
+		try {
+			Statement statement = connection.createStatement();
+			statement.executeQuery("SELECT mcusername from players");
+			statement.close();
+		} catch(SQLException e) {
+			log("Fixing players table");
+			
+			try {
+				Statement statement = connection.createStatement();
+				statement.executeUpdate("DROP TABLE players");
+				statement.close();
+			} catch(SQLException ex) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	/**
 	 * Create the table needed if it does not already exist
@@ -346,6 +477,7 @@ public class PhysDB extends Database {
 		 */
 		doUpdate140();
 		fixJobsTable();
+		fixPlayerTable();
 
 		try {
 			final Statement statement = connection.createStatement();
@@ -380,11 +512,11 @@ public class PhysDB extends Database {
 					+ ");");
 			
 			/* Tables used in 1.50 */
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'users' (" //
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'players' (" //
 					+ "id INTEGER PRIMARY KEY," //
 					+ "username TEXT," //
 					+ "password TEXT," //
-					+ "mc_username TEXT," //
+					+ "mcusername TEXT," //
 					+ "rights INTEGER," //
 					+ "timestamp TEXT," //
 					+ "salt TEXT" //
@@ -403,7 +535,7 @@ public class PhysDB extends Database {
 					+ "type INTEGER,"
 					+ "owner TEXT,"
 					+ "payload TEXT,"
-					+ "date TEXT"
+					+ "timestamp TEXT"
 					+ ");");
 
 			connection.commit();

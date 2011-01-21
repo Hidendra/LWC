@@ -159,6 +159,10 @@ label.unselected
     padding:14px;
     margin:0 auto;
 }
+#column
+{
+	width: 85%;
+}
 #form h1
 {
     font-size:14px;
@@ -317,13 +321,18 @@ cite
 #column1
 {
 	float: left;
-	width: 50%;
+	width: 75%;
 }
 
 #column2
 {
 	float: left;
-	width: 50%;
+	width: 22%;
+}
+
+#column2 ul
+{
+	padding-left: 0;
 }
 
 #content
@@ -384,8 +393,7 @@ cite
 
 #navigation li { float: left; margin: 0 0 0 5px; padding: 0; }
 
-#navigation a:link,
-#navigation a:visited
+#navigation a
 {
     float: left;
     display: block;
