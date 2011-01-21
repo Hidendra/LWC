@@ -49,7 +49,7 @@ public class LWCPlayerListener extends PlayerListener {
 		LWC lwc = plugin.getLWC();
 		Player player = event.getPlayer();
 		
-		if(lwc.getPermissions() != null && Permissions.Security.permission(player, "lwc.protect")) {
+		if(lwc.getPermissions() != null && !Permissions.Security.permission(player, "lwc.protect")) {
 			return;
 		}
 		
