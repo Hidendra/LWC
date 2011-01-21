@@ -27,6 +27,7 @@ import org.bukkit.event.player.PlayerListener;
 import com.griefcraft.commands.ICommand;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
+import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class LWCPlayerListener extends PlayerListener {
 
@@ -47,6 +48,10 @@ public class LWCPlayerListener extends PlayerListener {
 		
 		LWC lwc = plugin.getLWC();
 		Player player = event.getPlayer();
+		
+		if(lwc.getPermissions() != null && Permissions.Security.permission(player, "lwc.protect")) {
+			return;
+		}
 		
 		String[] split = event.getMessage().split(" ");
 		String command = split[0].substring(1);

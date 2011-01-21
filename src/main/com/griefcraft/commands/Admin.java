@@ -18,6 +18,7 @@
 package com.griefcraft.commands;
 
 import static com.griefcraft.util.StringUtils.hasFlag;
+import static com.griefcraft.util.StringUtils.join;
 
 import org.bukkit.entity.Player;
 
@@ -47,6 +48,31 @@ public class Admin implements ICommand {
 			}
 
 			Performance.clear();
+		}
+		
+		else if(action.equals("createjob")) {
+			if(args.length < 5) {
+				lwc.sendSimpleUsage(player, "/lwc -a createjob <type> <owner> <payload>");
+				return;
+			}
+			
+			try {
+				// -a createjob type owner payload
+				
+				int type = Integer.parseInt(args[2]);
+				String owner = args[3];
+				String payload = join(args, 4);
+				
+				lwc.getPhysicalDatabase().createJob(type, owner, payload);
+				player.sendMessage(Colors.Green + "Scheduled job");
+			} catch(Exception e) {
+				lwc.sendSimpleUsage(player, "/lwc -a createjob <type> <owner> <payload>");
+			}
+		}
+		
+		else if(action.equals("flush")) {
+			player.sendMessage(Colors.Green + "Flushing Update Thread..");
+			lwc.getUpdateThread().flush();
 		}
 		
 		else if(action.equals("cleanup")) {

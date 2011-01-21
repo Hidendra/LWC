@@ -23,6 +23,11 @@ package com.griefcraft.lwc;
 public class LWCInfo {
 
 	/**
+	 * Enable/disable dev mode
+	 */
+	public static final boolean DEVELOPMENT = false;
+	
+	/**
 	 * LWC's version
 	 */
 	public static final double VERSION = 1.46;
