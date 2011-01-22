@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.model.Job;
 import com.griefcraft.model.Protection;
 import com.griefcraft.util.Performance;
@@ -421,7 +422,6 @@ public class PhysDB extends Database {
 				statement.executeUpdate("DROP TABLE jobs");
 				statement.close();
 			} catch(SQLException ex) {
-				e.printStackTrace();
 			}
 		}
 	}
@@ -442,7 +442,6 @@ public class PhysDB extends Database {
 				statement.executeUpdate("DROP TABLE users");
 				statement.close();
 			} catch(SQLException ex) {
-				e.printStackTrace();
 			}
 		}
 		
@@ -458,7 +457,6 @@ public class PhysDB extends Database {
 				statement.executeUpdate("DROP TABLE players");
 				statement.close();
 			} catch(SQLException ex) {
-				e.printStackTrace();
 			}
 		}
 	}
@@ -476,8 +474,11 @@ public class PhysDB extends Database {
 		 * 1.40 renamed a table, so it needs to be renamed before LWC attempts to create it
 		 */
 		doUpdate140();
-		fixJobsTable();
-		fixPlayerTable();
+		
+		if(LWCInfo.DEVELOPMENT) {
+			fixJobsTable();
+			fixPlayerTable();
+		}
 
 		try {
 			final Statement statement = connection.createStatement();
