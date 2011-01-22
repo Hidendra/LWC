@@ -432,7 +432,7 @@ public class PhysDB extends Database {
 	private void fixPlayerTable() {
 		try {
 			Statement statement = connection.createStatement();
-			statement.executeQuery("SELECT * from users");
+			statement.executeQuery("SELECT * from players");
 			statement.close();
 		} catch(SQLException e) {
 			log("Fixing players table");
