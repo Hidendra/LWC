@@ -981,14 +981,12 @@ public class PhysDB extends Database {
 
 			log("Renaming table `chests` to `protections`");
 
-			// Sexy.
 			try {
 				Statement statement = connection.createStatement();
 				statement.executeUpdate("ALTER TABLE `chests` RENAME TO `protections`");
 				statement.close();
 				Performance.addPhysDBQuery();
 			} catch (SQLException e_) {
-				e_.printStackTrace();
 			}
 		}
 	}
