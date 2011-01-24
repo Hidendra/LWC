@@ -6,6 +6,9 @@ import org.bukkit.Server;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockListener;
+import org.bukkit.event.entity.EntityListener;
+import org.bukkit.event.player.PlayerListener;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -40,17 +43,17 @@ public class LWCPlugin extends JavaPlugin {
 	/**
 	 * The player listener
 	 */
-	private LWCPlayerListener playerListener;
+	private PlayerListener playerListener;
 
 	/**
 	 * The block listener
 	 */
-	private LWCBlockListener blockListener;
+	private BlockListener blockListener;
 	
 	/**
 	 * The entity listener
 	 */
-	private LWCEntityListener entityListener;
+	private EntityListener entityListener;
 	
 	/**
 	 * LWC updater

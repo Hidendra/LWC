@@ -42,6 +42,10 @@ public class LWCEntityListener extends EntityListener {
 	
 	@Override
 	public void onEntityExplode(EntityExplodeEvent event) {
+		if(event.isCancelled()) {
+			return;
+		}
+		
 		for(Block block : event.blockList()) {
 			Protection protection = plugin.getLWC().getPhysicalDatabase().loadProtectedEntity(block.getX(), block.getY(), block.getZ());
 			

@@ -22,8 +22,8 @@ import static com.griefcraft.util.StringUtils.join;
 
 import org.bukkit.entity.Player;
 
-import com.griefcraft.CCConverter;
-import com.griefcraft.CPConverter;
+import com.griefcraft.converters.ChastityChest;
+import com.griefcraft.converters.ChestProtect;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.Performance;
@@ -125,10 +125,10 @@ public class Admin implements ICommand {
 			String pluginToConvert = args[1].toLowerCase();
 
 			if (pluginToConvert.equals("chestprotect")) {
-				new CPConverter(player);
+				new ChestProtect(player);
 			}
 			else if (pluginToConvert.equals("chastity")) {
-				new CCConverter(player);
+				new ChastityChest(player);
 			}
 		}
 
