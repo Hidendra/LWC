@@ -1,4 +1,4 @@
-package com.griefcraft;
+package com.griefcraft.converters;
 /**
  * This file is part of LWC (https://github.com/Hidendra/LWC)
  * 
@@ -33,10 +33,10 @@ import com.griefcraft.util.Config;
 /**
  * Convert Chest Protect chests to LWC
  */
-public class CPConverter implements Runnable {
+public class ChestProtect implements Runnable {
 
 	public static void main(String[] args) throws Exception {
-		new CPConverter();
+		new ChestProtect();
 	}
 
 	/**
@@ -59,12 +59,12 @@ public class CPConverter implements Runnable {
 	 */
 	private PhysDB physicalDatabase;
 
-	public CPConverter() {
+	public ChestProtect() {
 		new Thread(this).start();
 		physicalDatabase = new PhysDB();
 	}
 
-	public CPConverter(Player player) {
+	public ChestProtect(Player player) {
 		this();
 		this.player = player;
 	}
