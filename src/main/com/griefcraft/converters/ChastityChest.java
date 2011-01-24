@@ -1,4 +1,4 @@
-package com.griefcraft;
+package com.griefcraft.converters;
 /**
  * This file is part of LWC (https://github.com/Hidendra/LWC)
  * 
@@ -32,10 +32,10 @@ import com.griefcraft.util.Config;
 /**
  * Convert Chastity chests to LWC
  */
-public class CCConverter implements Runnable {
+public class ChastityChest implements Runnable {
 
 	public static void main(String[] args) throws Exception {
-		new CCConverter();
+		new ChastityChest();
 	}
 
 	/**
@@ -58,12 +58,12 @@ public class CCConverter implements Runnable {
 	 */
 	private PhysDB physicalDatabase;
 
-	public CCConverter() {
+	public ChastityChest() {
 		new Thread(this).start();
 		physicalDatabase = new PhysDB();
 	}
 
-	public CCConverter(Player player) {
+	public ChastityChest(Player player) {
 		this();
 		this.player = player;
 	}
