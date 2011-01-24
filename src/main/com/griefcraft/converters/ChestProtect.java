@@ -1,4 +1,3 @@
-package com.griefcraft.converters;
 /**
  * This file is part of LWC (https://github.com/Hidendra/LWC)
  * 
@@ -15,6 +14,8 @@ package com.griefcraft.converters;
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+package com.griefcraft.converters;
 
 import java.io.BufferedReader;
 import java.io.File;
