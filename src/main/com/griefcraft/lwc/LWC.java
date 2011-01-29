@@ -1,5 +1,8 @@
 package com.griefcraft.lwc;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -24,6 +27,11 @@ import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.Performance;
 import com.griefcraft.util.StringUtils;
 import com.nijikokun.bukkit.Permissions.Permissions;
+import com.sk89q.worldedit.Vector;
+import com.sk89q.worldguard.LocalPlayer;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.RegionManager;
 
 public class LWC {
 
@@ -31,7 +39,7 @@ public class LWC {
 	 * Plugin instance
 	 */
 	private LWCPlugin plugin;
-	
+
 	/**
 	 * Logging instance
 	 */
@@ -41,7 +49,7 @@ public class LWC {
 	 * Checks for updates that need to be pushed to the sql database
 	 */
 	private UpdateThread updateThread;
-	
+
 	/**
 	 * The inventory cache (their contents)
 	 */
@@ -56,77 +64,234 @@ public class LWC {
 	 * Memory database instance
 	 */
 	private MemDB memoryDatabase;
-	
+
 	/**
 	 * Permissions plugin
 	 */
 	private Permissions permissions;
-	
+
 	/**
 	 * List of commands
 	 */
 	private List<ICommand> commands;
-	
+
 	public LWC(LWCPlugin plugin) {
 		this.plugin = plugin;
 		commands = new ArrayList<ICommand>();
 	}
-	
+
 	/**
 	 * @return the inventory cache
 	 */
 	public InventoryCache getInventoryCache() {
 		return inventoryCache;
 	}
-	
+
 	/**
 	 * @return the update thread
 	 */
 	public UpdateThread getUpdateThread() {
 		return updateThread;
 	}
-	
+
 	/**
 	 * @return the plugin version
 	 */
 	public double getVersion() {
 		return Double.parseDouble(plugin.getDescription().getVersion());
 	}
-	
+
+	/**
+	 * Get a string representation of a block's material
+	 * 
+	 * @param block
+	 * @return
+	 */
+	public String blockToString(Block block) {
+		if (block != null) {
+			return StringUtils.capitalizeFirstLetter(block.getType().toString().replaceAll("_", " "));
+		}
+
+		return "";
+	}
+
+	/**
+	 * Enforce access to a protection block
+	 * 
+	 * @param player
+	 * @param block
+	 * @return
+	 */
+	public boolean enforceAccess(Player player, Block block) {
+		if (block == null) {
+			return true;
+		}
+
+		List<Block> protectionSet = getProtectionSet(block.getWorld(), block.getX(), block.getY(), block.getZ());
+		boolean hasAccess = true;
+
+		for (final Block _block : protectionSet) {
+			if (_block == null) {
+				continue;
+			}
+
+			final Protection protection = getPhysicalDatabase().loadProtectedEntity(_block.getX(), _block.getY(), _block.getZ());
+
+			if (protection == null) {
+				continue;
+			}
+
+			hasAccess = canAccessChest(player, protection);
+
+			switch (protection.getType()) {
+			case ProtectionTypes.PASSWORD:
+				if (!hasAccess) {
+					getMemoryDatabase().unregisterUnlock(player.getName());
+					getMemoryDatabase().registerUnlock(player.getName(), protection.getID());
+
+					player.sendMessage(Colors.Red + "This " + blockToString(block) + " is locked.");
+					player.sendMessage(Colors.Red + "Type " + Colors.Gold + "/lwc -u <password>" + Colors.Red + " to unlock it");
+				}
+
+				break;
+
+			case ProtectionTypes.PRIVATE:
+				if (!hasAccess) {
+					player.sendMessage(Colors.Red + "This " + blockToString(block) + " is locked with a magical spell.");
+				}
+
+				break;
+			}
+		}
+
+		return hasAccess;
+	}
+
+	/**
+	 * Enforce world guard regions
+	 * 
+	 * @param player
+	 * @return true if a protection should be stopped
+	 */
+	public boolean enforceWorldGuard(Player player, Block block) {
+		/*
+		 * Check the configuration
+		 */
+		if (!ConfigValues.ENFORCE_WORLDGUARD_REGIONS.getBool()) {
+			return false;
+		}
+
+		Plugin plugin = this.plugin.getServer().getPluginManager().getPlugin("WorldGuard");
+
+		try {
+			if (plugin != null) {
+				/*
+				 * World guard is enabled.. let's boogie
+				 */
+				WorldGuardPlugin worldGuard = (WorldGuardPlugin) plugin;
+
+				/*
+				 * Reflect our way in. The values we want are.. protected
+				 */
+				Field useRegions = worldGuard.getClass().getDeclaredField("useRegions");
+				Field regionManager = worldGuard.getClass().getDeclaredField("regionManager");
+				// Method hasPermission = worldGuard.getClass().getMethod("hasPermission");
+
+				/*
+				 * Make the fields/methods we want accessible
+				 */
+				useRegions.setAccessible(true);
+				regionManager.setAccessible(true);
+				// hasPermission.setAccessible(true);
+
+				/*
+				 * Now check if we're using regions
+				 */
+				boolean isUsingRegions = useRegions.getBoolean(worldGuard);
+
+				if (!isUsingRegions) {
+					return false;
+				}
+
+				/*
+				 * Now get the region manager
+				 */
+				RegionManager regions = (RegionManager) regionManager.get(worldGuard);
+
+				/*
+				 * We need to reflect into BukkitUtil.toVector
+				 */
+				Class<?> bukkitUtil = worldGuard.getClass().getClassLoader().loadClass("com.sk89q.worldguard.bukkit.BukkitUtil");
+				Method toVector = bukkitUtil.getMethod("toVector", Block.class);
+				Vector blockVector = (Vector) toVector.invoke(null, block);
+
+				/*
+				 * Create the local player .. again we need to create it via reflection
+				 */
+				Class<?> bukkitPlayer = worldGuard.getClass().getClassLoader().loadClass("com.sk89q.worldguard.bukkit.BukkitPlayer");
+				Constructor<?> construct = bukkitPlayer.getConstructor(WorldGuardPlugin.class, Player.class);
+				LocalPlayer localPlayer = (LocalPlayer) construct.newInstance(worldGuard, player);
+
+				/*
+				 * Now let's get the region we're dealing with
+				 */
+				ApplicableRegionSet region = regions.getApplicableRegions(blockVector);
+
+				/*
+				 * Finally, check the permissions ..
+				 */
+				if (!region.canBuild(localPlayer)) {
+					player.sendMessage(Colors.Red + "You cannot protect that " + blockToString(block) + " in WorldGuard regions");
+
+					return true;
+				}
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+
 	/**
 	 * Load sqlite (done only when LWC is loaded so memory isn't used unnecessarily)
 	 */
 	public void load() {
 		Performance.init();
-		
+
 		log("Dev mode: " + Boolean.toString(LWCInfo.DEVELOPMENT).toUpperCase());
-		
+
 		inventoryCache = new InventoryCache();
 		physicalDatabase = new PhysDB();
 		memoryDatabase = new MemDB();
 		updateThread = new UpdateThread(this);
-		
+
 		Plugin permissionsPlugin = plugin.getServer().getPluginManager().getPlugin("Permissions");
-		
-		if(permissionsPlugin != null) {
+
+		if (permissionsPlugin != null) {
 			logger.info("Using Nijikokun's permissions plugin for permissions");
 			permissions = (Permissions) permissionsPlugin;
+		}
+
+		if (ConfigValues.ENFORCE_WORLDGUARD_REGIONS.getBool() && plugin.getServer().getPluginManager().getPlugin("WorldGuard") != null) {
+			logger.info("Using WorldGuard protected regions");
 		}
 
 		log("Loading SQLite");
 		try {
 			physicalDatabase.connect();
 			memoryDatabase.connect();
-			
+
 			physicalDatabase.load();
 			memoryDatabase.load();
 
 			Logger.getLogger("SQLite").info("Using: " + StringUtils.capitalizeFirstLetter(physicalDatabase.getConnection().getMetaData().getDriverVersion()));
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Log a string
 	 * 
@@ -135,34 +300,34 @@ public class LWC {
 	private void log(String str) {
 		logger.info(str);
 	}
-	
+
 	/**
 	 * Free some memory (LWC was disabled)
 	 */
 	public void destruct() {
 		log("Freeing SQLite");
-		
+
 		try {
 			physicalDatabase.getConnection().close();
 			memoryDatabase.getConnection().close();
-		} catch(Exception e) {
-			
+		} catch (Exception e) {
+
 		}
-		
+
 		updateThread.stop();
 		updateThread = null;
 		inventoryCache = null;
 		physicalDatabase = null;
 		memoryDatabase = null;
 	}
-	
+
 	/**
 	 * @return the plugin class
 	 */
 	public LWCPlugin getPlugin() {
 		return plugin;
 	}
-	
+
 	/**
 	 * @return the list of commands
 	 */
@@ -207,7 +372,7 @@ public class LWC {
 		return (permissions != null && Permissions.Security.permission(player, "lwc.mod"));
 		// return player.canUseCommand("/lwcmod");
 	}
-	
+
 	/**
 	 * @return the permissions
 	 */
@@ -226,26 +391,92 @@ public class LWC {
 	}
 
 	/**
+	 * Check if a block is blacklisted
+	 * 
+	 * @param block
+	 * @return
+	 */
+	public boolean isBlockBlacklisted(Block block) {
+		String blacklist = ConfigValues.PROTECTION_BLACKLIST.getString();
+
+		if (blacklist.isEmpty()) {
+			return false;
+		}
+
+		String[] values = blacklist.split(",");
+
+		if (values == null || values.length == 0) {
+			return false;
+		}
+
+		String blockName = blockToString(block).replaceAll(" ", "");
+		blockName = blockName.replaceAll("Block", "").trim();
+
+		for (String value : values) {
+			String noSpaces = value.replaceAll(" ", "");
+
+			try {
+				int id = Integer.parseInt(value);
+
+				if (id == block.getTypeId()) {
+					return true;
+				}
+			} catch (Exception e) {
+			}
+
+			if (value.equalsIgnoreCase(blockName) || noSpaces.equalsIgnoreCase(blockName)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Check a block to see if it is protectable
 	 * 
 	 * @param block
 	 * @return
 	 */
 	public boolean isProtectable(Block block) {
+		if (isBlockBlacklisted(block)) {
+			return false;
+		}
+
 		switch (block.getTypeId()) {
 
-		case 54: /* Chest */
-			return true;
-			
-		case 23: /* Dispenser! */
+		/*
+		 * Chest
+		 */
+		case 54:
 			return true;
 
-		case 61: /* Furnace */
-		case 62: /* Lit furnace */
-			/* if (ALLOW_FURNACE_PROTECTION.getBool()) {
-				return true;
-			} */
+			/*
+			 * Dispenser
+			 */
+		case 23:
+			return true;
 
+			/*
+			 * Furnaces
+			 */
+		case 61:
+		case 62:
+
+			return true;
+
+			/*
+			 * Bonus: doors
+			 */
+		case 64:
+		case 71:
+			return true;
+
+			/*
+			 * Bonus: sign
+			 */
+		case 63:
+		case 68:
 			return true;
 
 		}
@@ -328,10 +559,6 @@ public class LWC {
 	 * @return true if they are limited
 	 */
 	public boolean enforceChestLimits(Player player) {
-		if (isAdmin(player)) {
-			return false;
-		}
-
 		final int userLimit = physicalDatabase.getUserLimit(player.getName());
 
 		/*
@@ -348,54 +575,36 @@ public class LWC {
 			// no groups yet
 			// TODO: fix when applicable
 			/*
-			
-			List<String> inheritedGroups = new ArrayList<String>();
-			String groupName = player.getGroups().length > 0 ? player.getGroups()[0] : etc.getInstance().getDefaultGroup().Name;
-
-			inheritedGroups.add(groupName);
-
-			while (true) {
-				Group group = etc.getDataSource().getGroup(groupName);
-
-				if (group == null) {
-					break;
-				}
-
-				String[] inherited = group.InheritedGroups;
-
-				if (inherited == null || inherited.length == 0) {
-					break;
-				}
-
-				groupName = inherited[0];
-
-				for (String _groupName : inherited) {
-					_groupName = _groupName.trim();
-
-					if (_groupName.isEmpty()) {
-						continue;
-					}
-
-					inheritedGroups.add(_groupName);
-				}
-			}
-
-			for (String group : inheritedGroups) {
-				final int groupLimit = physicalDatabase.getGroupLimit(group);
-
-				if (groupLimit != -1) {
-					final int chests = physicalDatabase.getChestCount(player.getName());
-
-					if (chests >= groupLimit) {
-						player.sendMessage(Colors.Red + "You have exceeded the amount of chests you can lock!");
-						return true;
-					}
-					
-					return false;
-				}
-			}
-			
-			*/
+			 * 
+			 * List<String> inheritedGroups = new ArrayList<String>(); String groupName = player.getGroups().length > 0 ? player.getGroups()[0] :
+			 * etc.getInstance().getDefaultGroup().Name;
+			 * 
+			 * inheritedGroups.add(groupName);
+			 * 
+			 * while (true) { Group group = etc.getDataSource().getGroup(groupName);
+			 * 
+			 * if (group == null) { break; }
+			 * 
+			 * String[] inherited = group.InheritedGroups;
+			 * 
+			 * if (inherited == null || inherited.length == 0) { break; }
+			 * 
+			 * groupName = inherited[0];
+			 * 
+			 * for (String _groupName : inherited) { _groupName = _groupName.trim();
+			 * 
+			 * if (_groupName.isEmpty()) { continue; }
+			 * 
+			 * inheritedGroups.add(_groupName); } }
+			 * 
+			 * for (String group : inheritedGroups) { final int groupLimit = physicalDatabase.getGroupLimit(group);
+			 * 
+			 * if (groupLimit != -1) { final int chests = physicalDatabase.getChestCount(player.getName());
+			 * 
+			 * if (chests >= groupLimit) { player.sendMessage(Colors.Red + "You have exceeded the amount of chests you can lock!"); return true; }
+			 * 
+			 * return false; } }
+			 */
 		}
 
 		return false;
@@ -427,7 +636,7 @@ public class LWC {
 	 *            the z coordinate
 	 * @return the Chest[] array of chests
 	 */
-	public List<Block> getEntitySet(World world, int x, int y, int z) {
+	public List<Block> getProtectionSet(World world, int x, int y, int z) {
 		List<Block> entities = new ArrayList<Block>(2);
 
 		/*
@@ -437,15 +646,11 @@ public class LWC {
 		int dev = -1;
 		boolean isXDir = true;
 
-		entities = _validateChest(entities, baseBlock);
-		// entities = _validateChest(entities, world.getBlockAt(x + 1, y, z));
-		// entities = _validateChest(entities, world.getBlockAt(x - 1, y, z));
-		// entities = _validateChest(entities, world.getBlockAt(x, y, z + 1));
-		// entities = _validateChest(entities, world.getBlockAt(x, y, z - 1));
+		entities = _validateBlock(entities, baseBlock);
 
 		while (true) {
 			Block block = world.getBlockAt(x + (isXDir ? dev : 0), y, z + (isXDir ? 0 : dev));
-			entities = _validateChest(entities, block);
+			entities = _validateBlock(entities, block);
 
 			if (dev == 1) {
 				if (isXDir) {
@@ -470,7 +675,7 @@ public class LWC {
 	 * @param size
 	 * @return
 	 */
-	private List<Block> _validateChest(List<Block> entities, Block block) {
+	private List<Block> _validateBlock(List<Block> entities, Block block) {
 		if (block == null) {
 			return entities;
 		}
@@ -491,8 +696,7 @@ public class LWC {
 			}
 
 			return entities;
-		} 
-		else {
+		} else {
 			if (entities.size() == 1) {
 				Block other = entities.get(0);
 
@@ -591,7 +795,8 @@ public class LWC {
 
 		case ProtectionTypes.PRIVATE:
 			return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) >= 0;
-			// return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) >= 0 || physicalDatabase.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) >= 0;
+			// return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) >= 0 ||
+			// physicalDatabase.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) >= 0;
 
 		default:
 			return false;
@@ -642,11 +847,12 @@ public class LWC {
 
 		case ProtectionTypes.PRIVATE:
 			return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) == 1;
-			// return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) == 1 || physicalDatabase.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) == 1;
+			// return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) == 1 ||
+			// physicalDatabase.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) == 1;
 
 		default:
 			return false;
 		}
 	}
-	
+
 }

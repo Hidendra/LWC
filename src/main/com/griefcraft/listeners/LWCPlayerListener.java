@@ -17,12 +17,15 @@
 
 package com.griefcraft.listeners;
 
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.event.player.PlayerItemEvent;
 import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.player.PlayerMoveEvent;
 
 import com.griefcraft.commands.ICommand;
 import com.griefcraft.lwc.LWC;
@@ -35,24 +38,48 @@ public class LWCPlayerListener extends PlayerListener {
 	 * The plugin instance
 	 */
 	private LWCPlugin plugin;
-	
+
 	public LWCPlayerListener(LWCPlugin plugin) {
 		this.plugin = plugin;
 	}
 
 	@Override
-	public void onPlayerCommand(PlayerChatEvent event) {
-		if(event.isCancelled()) {
+	public void onPlayerMove(PlayerMoveEvent event) {
+		if (event.isCancelled()) {
 			return;
 		}
-		
+
+		Player player = event.getPlayer();
+		Location location = event.getTo();
+
+		Block block = player.getWorld().getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+		LWC lwc = plugin.getLWC();
+
+		if (!lwc.isProtectable(block) || (block.getType() != Material.WOODEN_DOOR && block.getType() != Material.IRON_DOOR)) {
+			return;
+		}
+
+		boolean access = lwc.enforceAccess(player, block);
+
+		if (!access) {
+			event.setCancelled(true);
+			player.teleportTo(event.getFrom());
+		}
+	}
+
+	@Override
+	public void onPlayerCommand(PlayerChatEvent event) {
+		if (event.isCancelled()) {
+			return;
+		}
+
 		LWC lwc = plugin.getLWC();
 		Player player = event.getPlayer();
 
-		if(lwc.getPermissions() != null && !Permissions.Security.permission(player, "lwc.protect")) {
+		if (lwc.getPermissions() != null && !Permissions.Security.permission(player, "lwc.protect")) {
 			return;
 		}
-		
+
 		String[] split = event.getMessage().split(" ");
 		String command = split[0].substring(1);
 		String subCommand = "";
@@ -71,36 +98,34 @@ public class LWCPlayerListener extends PlayerListener {
 				subCommand += split[i] + " ";
 			}
 		}
-		
-		if(command.equals("cpublic")) {
+
+		/*
+		 * Aliases
+		 */
+		if (command.equals("cpublic")) {
 			onPlayerCommand(new PlayerChatEvent(Type.PLAYER_COMMAND, player, "/lwc -c public"));
 			return;
-		}
-		else if(command.equals("cpassword")) {
+		} else if (command.equals("cpassword")) {
 			onPlayerCommand(new PlayerChatEvent(Type.PLAYER_COMMAND, player, "/lwc -c password " + subCommand));
 			return;
-		}
-		else if(command.equals("cprivate")) {
+		} else if (command.equals("cprivate")) {
 			onPlayerCommand(new PlayerChatEvent(Type.PLAYER_COMMAND, player, "/lwc -c private"));
 			return;
-		}
-		else if(command.equals("cinfo")) {
+		} else if (command.equals("cinfo")) {
 			onPlayerCommand(new PlayerChatEvent(Type.PLAYER_COMMAND, player, "/lwc -i"));
 			return;
-		}
-		else if(command.equals("cunlock")) {
+		} else if (command.equals("cunlock")) {
 			onPlayerCommand(new PlayerChatEvent(Type.PLAYER_COMMAND, player, "/lwc -u " + subCommand));
 			return;
-		}
-		else if(command.equals("cremove")) {
+		} else if (command.equals("cremove")) {
 			onPlayerCommand(new PlayerChatEvent(Type.PLAYER_COMMAND, player, "/lwc -r protection"));
 			return;
 		}
-		
+
 		// TODO: check if they can use the command ??
-		/* if (!player.canUseCommand(split[0])) {
-			return;
-		} */
+		/*
+		 * if (!player.canUseCommand(split[0])) { return; }
+		 */
 
 		if (!"lwc".equalsIgnoreCase(command)) {
 			return;
@@ -120,7 +145,7 @@ public class LWCPlayerListener extends PlayerListener {
 			event.setCancelled(true);
 		}
 	}
-	
+
 	/**
 	 * Player dcd, clear them from memory if they're in it
 	 */
@@ -128,11 +153,11 @@ public class LWCPlayerListener extends PlayerListener {
 	public void onPlayerQuit(PlayerEvent event) {
 		LWC lwc = plugin.getLWC();
 		String player = event.getPlayer().getName();
-		
+
 		lwc.getMemoryDatabase().unregisterPlayer(player);
 		lwc.getMemoryDatabase().unregisterUnlock(player);
 		lwc.getMemoryDatabase().unregisterChest(player);
 		lwc.getMemoryDatabase().unregisterAllActions(player);
 	}
-	
+
 }

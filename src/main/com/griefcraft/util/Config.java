@@ -51,9 +51,9 @@ public class Config extends Properties {
 	/**
 	 * Initialized via Config.init()
 	 */
-	private Config() {
+	private Config(String path) {
 		try {
-			File conf = new File(LWCInfo.CONF_FILE);
+			File conf = new File(path);
 
 			if (!conf.exists()) {
 				save();
@@ -85,11 +85,21 @@ public class Config extends Properties {
 	}
 
 	/**
+	 * Get a config instance of a specific file
+	 * 
+	 * @param path
+	 * @return
+	 */
+	public static Config getInstance(String path) {
+		return new Config(path);
+	}
+
+	/**
 	 * Init the config class
 	 */
 	public static void init() {
 		if (instance == null) {
-			instance = new Config();
+			instance = new Config(LWCInfo.CONF_FILE);
 		}
 	}
 

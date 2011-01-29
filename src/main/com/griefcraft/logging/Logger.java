@@ -20,11 +20,11 @@ package com.griefcraft.logging;
 import com.griefcraft.lwc.LWCInfo;
 
 public class Logger {
-	
+
 	public void info(String str) {
 		System.out.println(String.format("%s\t[v%.2f]\t%s", name, LWCInfo.VERSION, str));
 	}
-	
+
 	/**
 	 * Create a new logger
 	 * 

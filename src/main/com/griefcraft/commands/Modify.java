@@ -28,6 +28,11 @@ import com.griefcraft.util.Colors;
 public class Modify implements ICommand {
 
 	@Override
+	public String getName() {
+		return "/lwc -modify";
+	}
+
+	@Override
 	public void execute(LWC lwc, Player player, String[] args) {
 		if (args.length < 2) {
 			sendHelp(player);
@@ -50,7 +55,7 @@ public class Modify implements ICommand {
 		player.sendMessage(" ");
 		player.sendMessage(Colors.Green + "LWC Protection");
 		player.sendMessage(" ");
-		
+
 		player.sendMessage("/lwc -m <users/groups> " + Colors.Gold + "Modify an existing protection, adding or");
 		player.sendMessage(Colors.Gold + "removing users and/or groups");
 		player.sendMessage(Colors.Green + "See: " + Colors.Gold + "/lwc -c" + Colors.Green + ", the example for private protections");
@@ -61,7 +66,7 @@ public class Modify implements ICommand {
 		player.sendMessage(Colors.Red + "@" + Colors.LightGreen + ": The user/group will be able to modify the chest");
 		player.sendMessage(Colors.Gold + "note: chest admins cannot remove the owner from access");
 		player.sendMessage(" ");
-		
+
 		player.sendMessage("Examples");
 		player.sendMessage(Colors.Gold + "Remove a group from access: " + Colors.Blue + "/lwc -m -g:name");
 		player.sendMessage(Colors.Gold + "Remove a user + add an admin: " + Colors.Blue + "/lwc -m -name @OtherName");

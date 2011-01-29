@@ -27,6 +27,11 @@ import com.griefcraft.util.Colors;
 public class Info implements ICommand {
 
 	@Override
+	public String getName() {
+		return "/lwc -info";
+	}
+
+	@Override
 	public void execute(LWC lwc, Player player, String[] args) {
 		lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 		lwc.getMemoryDatabase().registerAction("info", player.getName());

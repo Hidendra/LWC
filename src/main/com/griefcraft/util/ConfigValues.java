@@ -22,10 +22,11 @@ public enum ConfigValues {
 	BLACKLISTED_MODES("blacklisted-modes", ""), //
 	// ALLOW_FURNACE_PROTECTION("furnace-locks", "true"), //
 	DB_PATH("db-path", "lwc.db"), //
-	CUBOID_SAFE_AREAS("only-protect-in-cuboid-safe-zones", "false"), //
+	ENFORCE_WORLDGUARD_REGIONS("enforce-worldguard-regions", "false"), //
 	AUTO_UPDATE("auto-update", "false"), //
 	FLUSH_DB_INTERVAL("flush-db-interval", "10"), //
-	MAX_JOBS("max-jobs", "0"),
+	MAX_JOBS("max-jobs", "0"), //
+	PROTECTION_BLACKLIST("protection-blacklist", ""), //
 	OP_IS_LWCADMIN("op-is-lwcadmin", "true");
 
 	/**

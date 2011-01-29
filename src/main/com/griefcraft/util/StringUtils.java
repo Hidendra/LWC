@@ -35,10 +35,29 @@ public class StringUtils {
 			return str.toUpperCase();
 		}
 
-		String firstLetter = str.substring(0, 1);
-		String endLetters = str.substring(1);
+		/*
+		 * First cast it all to lower case and get the char array
+		 */
+		char[] string = str.toLowerCase().toCharArray();
 
-		return firstLetter.toUpperCase() + endLetters.toLowerCase();
+		/*
+		 * First letter -- capitalize it
+		 */
+		string[0] = Character.toUpperCase(string[0]);
+
+		/*
+		 * Scan for spaces
+		 */
+		for (int index = 0; index < string.length; index++) {
+			if (string[index] == ' ' && index != string.length) {
+				/*
+				 * convert chars after spaces to upper case
+				 */
+				string[index + 1] = Character.toUpperCase(string[index + 1]);
+			}
+		}
+
+		return new String(string);
 	}
 
 	/**
