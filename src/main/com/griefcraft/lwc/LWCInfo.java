@@ -26,15 +26,15 @@ public class LWCInfo {
 	 * Enable/disable dev mode
 	 */
 	public static final boolean DEVELOPMENT = false;
-	
+
 	/**
 	 * LWC's version
 	 */
-	public static final double VERSION = 1.46;
-	
+	public static final double VERSION = 1.47;
+
 	/**
 	 * Location of the properties file relative to the root Minecraft directory
 	 */
-	public static final String CONF_FILE = "lwc.properties";
+	public static final String CONF_FILE = "plugins/LWC/lwc.properties";
 
 }

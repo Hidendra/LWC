@@ -31,6 +31,11 @@ import com.griefcraft.util.Performance;
 public class Admin implements ICommand {
 
 	@Override
+	public String getName() {
+		return "/lwc -admin";
+	}
+
+	@Override
 	public void execute(LWC lwc, Player player, String[] args) {
 		if (args.length < 2) {
 			sendHelp(player);
@@ -49,47 +54,43 @@ public class Admin implements ICommand {
 
 			Performance.clear();
 		}
-		
-		else if(action.equals("createjob")) {
-			if(args.length < 5) {
+
+		else if (action.equals("createjob")) {
+			if (args.length < 5) {
 				lwc.sendSimpleUsage(player, "/lwc -a createjob <type> <owner> <payload>");
 				return;
 			}
-			
+
 			try {
 				// -a createjob type owner payload
-				
+
 				int type = Integer.parseInt(args[2]);
 				String owner = args[3];
 				String payload = join(args, 4);
-				
+
 				lwc.getPhysicalDatabase().createJob(type, owner, payload);
 				player.sendMessage(Colors.Green + "Scheduled job");
-			} catch(Exception e) {
+			} catch (Exception e) {
 				lwc.sendSimpleUsage(player, "/lwc -a createjob <type> <owner> <payload>");
 			}
 		}
-		
-		else if(action.equals("flush")) {
+
+		else if (action.equals("flush")) {
 			player.sendMessage(Colors.Green + "Flushing Update Thread..");
 			lwc.getUpdateThread().flush();
 		}
-		
-		else if(action.equals("cleanup")) {
-			
+
+		else if (action.equals("cleanup")) {
+
 		}
-		
-		/* else if(action.equals("update")) {
-			boolean updated = lwc.getUpdater().checkDist();
-			
-			if(updated) {
-				etc.getLoader().reloadPlugin("LWC");
-				player.sendMessage(Colors.Green + "Updated LWC successfully to version: " + lwc.getUpdater().getLatestVersion());
-			} else {
-				player.sendMessage(Colors.Red + "No update found.");
-			}
-		} */
-		
+
+		/*
+		 * else if(action.equals("update")) { boolean updated = lwc.getUpdater().checkDist();
+		 * 
+		 * if(updated) { etc.getLoader().reloadPlugin("LWC"); player.sendMessage(Colors.Green + "Updated LWC successfully to version: " + lwc.getUpdater().getLatestVersion()); }
+		 * else { player.sendMessage(Colors.Red + "No update found."); } }
+		 */
+
 		else if (action.equalsIgnoreCase("limits")) {
 			if (args.length < 3) {
 				lwc.sendSimpleUsage(player, "/lwc -admin limits <count> <Group/User>");
@@ -99,7 +100,7 @@ public class Admin implements ICommand {
 			final int limit = Integer.parseInt(args[2]);
 
 			for (int i = 3; i < args.length; i++) {
-				String entity = args[i]; 
+				String entity = args[i];
 				final boolean isGroup = entity.startsWith("g:");
 
 				if (isGroup) {
@@ -126,8 +127,7 @@ public class Admin implements ICommand {
 
 			if (pluginToConvert.equals("chestprotect")) {
 				new ChestProtect(player);
-			}
-			else if (pluginToConvert.equals("chastity")) {
+			} else if (pluginToConvert.equals("chastity")) {
 				new ChastityChest(player);
 			}
 		}

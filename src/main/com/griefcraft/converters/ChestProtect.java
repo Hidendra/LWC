@@ -177,7 +177,7 @@ public class ChestProtect implements Runnable {
 	public void run() {
 		try {
 			Config.init();
-			
+
 			log("LWC Conversion tool for Chest Protect chests");
 			log("");
 			log("Initializing sqlite");

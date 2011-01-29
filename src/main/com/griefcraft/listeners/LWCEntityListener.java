@@ -30,29 +30,29 @@ public class LWCEntityListener extends EntityListener {
 	 * Blast radius for TNT / Creepers
 	 */
 	public final static int BLAST_RADIUS = 4;
-	
+
 	/**
 	 * The plugin instance
 	 */
 	private LWCPlugin plugin;
-	
+
 	public LWCEntityListener(LWCPlugin plugin) {
 		this.plugin = plugin;
 	}
-	
+
 	@Override
 	public void onEntityExplode(EntityExplodeEvent event) {
-		if(event.isCancelled()) {
+		if (event.isCancelled()) {
 			return;
 		}
-		
-		for(Block block : event.blockList()) {
+
+		for (Block block : event.blockList()) {
 			Protection protection = plugin.getLWC().getPhysicalDatabase().loadProtectedEntity(block.getX(), block.getY(), block.getZ());
-			
-			if(protection != null) {
+
+			if (protection != null) {
 				event.setCancelled(true);
 			}
 		}
 	}
-	
+
 }

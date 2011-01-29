@@ -191,10 +191,10 @@ public class Updater {
 		logger.info("Need to download " + needsUpdating.size() + " object(s)");
 
 		Iterator<UpdaterFile> iterator = needsUpdating.iterator();
-		
-		while(iterator.hasNext()) {
+
+		while (iterator.hasNext()) {
 			UpdaterFile item = iterator.next();
-			
+
 			logger.info(" - Downloading file : " + item.getRemoteLocation());
 
 			URL url = new URL(item.getRemoteLocation());
@@ -224,7 +224,7 @@ public class Updater {
 		try {
 			Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 			System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.info("SEVERE ERROR :: SSL NOT SUPPORTED");
 			logger.info("Are you using OpenJDK?");
 		}

@@ -28,7 +28,7 @@ import com.griefcraft.logging.Logger;
 import com.griefcraft.util.ConfigValues;
 
 public abstract class Database {
-	
+
 	/**
 	 * @return true if connected to sqlite
 	 */
@@ -47,7 +47,7 @@ public abstract class Database {
 	 * Since SQLite JDBC doesn't cache them.. we do it ourselves :S
 	 */
 	private Map<String, PreparedStatement> statementCache = new HashMap<String, PreparedStatement>();
-	
+
 	/**
 	 * The connection to the database
 	 */
@@ -57,14 +57,14 @@ public abstract class Database {
 	 * If we are connected to sqlite
 	 */
 	private static boolean connected = false;
-	
+
 	/**
 	 * @return the connection to the database
 	 */
 	public Connection getConnection() {
 		return connection;
 	}
-	
+
 	/**
 	 * Prepare a statement unless it's already cached (and if so, just return it)
 	 * 
@@ -72,24 +72,23 @@ public abstract class Database {
 	 * @return
 	 */
 	public PreparedStatement prepare(String sql) {
-		if(connection == null) {
+		if (connection == null) {
 			return null;
 		}
-		
-		if(statementCache.containsKey(sql)) {
+
+		if (statementCache.containsKey(sql)) {
 			return statementCache.get(sql);
 		}
-		
+
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			statementCache.put(sql, preparedStatement);
-			
+
 			return preparedStatement;
-		}
-		catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
 

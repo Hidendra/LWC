@@ -108,7 +108,7 @@ public class ChastityChest implements Runnable {
 			}
 
 			int[] coords = splitCoordinates(split[0]);
-			
+
 			int x = coords[0];
 			int y = coords[1];
 			int z = coords[2];
@@ -126,7 +126,7 @@ public class ChastityChest implements Runnable {
 			converted++;
 		}
 	}
-	
+
 	/**
 	 * WHY OH WHY
 	 * 
@@ -137,20 +137,19 @@ public class ChastityChest implements Runnable {
 		int[] coords = new int[3];
 		String[] split = str.split("-");
 		int index = 0;
-		
+
 		boolean _neg = false;
-		
-		for(String string : split) {
-			if(string.isEmpty()) {
+
+		for (String string : split) {
+			if (string.isEmpty()) {
 				_neg = true;
-			}
-			else {
+			} else {
 				coords[index] = Integer.parseInt((_neg ? "-" : "") + string);
 				_neg = false;
-				index ++;
+				index++;
 			}
 		}
-		
+
 		return coords;
 	}
 
@@ -166,7 +165,7 @@ public class ChastityChest implements Runnable {
 	public void run() {
 		try {
 			Config.init();
-			
+
 			log("LWC Conversion tool for Chastity Chest chests");
 			log("");
 			log("Initializing sqlite");

@@ -27,31 +27,36 @@ import com.griefcraft.util.Colors;
 public class Free implements ICommand {
 
 	@Override
+	public String getName() {
+		return "/lwc -free";
+	}
+
+	@Override
 	public void execute(LWC lwc, Player player, String[] args) {
-		if(args.length < 2) {
+		if (args.length < 2) {
 			lwc.sendSimpleUsage(player, "/lwc -r <chest|furnace|modes>");
 			return;
 		}
 
 		String type = args[1].toLowerCase();
-		
-		if(type.equals("protection") || type.equals("chest") || type.equals("furnace") || type.equals("dispenser")) {
-			if(lwc.getMemoryDatabase().hasPendingChest(player.getName())) {
+
+		if (type.equals("protection") || type.equals("chest") || type.equals("furnace") || type.equals("dispenser")) {
+			if (lwc.getMemoryDatabase().hasPendingChest(player.getName())) {
 				player.sendMessage(Colors.Red + "You already have a pending action.");
 				return;
 			}
-			
+
 			lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 			lwc.getMemoryDatabase().registerAction("free", player.getName());
 			player.sendMessage(Colors.LightGreen + "Left click your Chest or Furnace to remove the lock");
 		}
-		
-		else if(type.equals("modes")) {
+
+		else if (type.equals("modes")) {
 			lwc.getMemoryDatabase().unregisterAllModes(player.getName());
-			
+
 			player.sendMessage(Colors.Green + "Successfully removed all set modes.");
-		} 
-		
+		}
+
 		else {
 			lwc.sendSimpleUsage(player, "/lwc -r <protection|modes>");
 			return;
