@@ -1,4 +1,5 @@
 package com.griefcraft;
+
 import java.util.Random;
 
 import com.griefcraft.logging.Logger;
@@ -33,7 +34,7 @@ public class UnitTestInserts {
 		try {
 			// createChests(5000);
 			speedTest();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -43,7 +44,7 @@ public class UnitTestInserts {
 		Random rand = new Random();
 
 		phys.getConnection().setAutoCommit(false);
-		
+
 		logger.info("Creating " + count + " queries");
 
 		while (count > 0) {

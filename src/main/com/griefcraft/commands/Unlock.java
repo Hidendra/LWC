@@ -31,6 +31,11 @@ import com.griefcraft.util.Colors;
 public class Unlock implements ICommand {
 
 	@Override
+	public String getName() {
+		return "/lwc -unlock";
+	}
+
+	@Override
 	public void execute(LWC lwc, Player player, String[] args) {
 		if (args.length < 1) {
 			player.sendMessage(Colors.Red + "Usage: " + Colors.Gold + "/lwc -u <Password>");
@@ -40,27 +45,27 @@ public class Unlock implements ICommand {
 		String password = join(args, 1);
 		password = encrypt(password);
 
-		if(!lwc.getMemoryDatabase().hasPendingUnlock(player.getName())) {
+		if (!lwc.getMemoryDatabase().hasPendingUnlock(player.getName())) {
 			player.sendMessage(Colors.Red + "Nothing selected. Open a locked Chest/Furnace first.");
 			return;
-		} 
-		
+		}
+
 		else {
 			int chestID = lwc.getMemoryDatabase().getUnlockID(player.getName());
 
-			if(chestID == -1) {
+			if (chestID == -1) {
 				player.sendMessage(Colors.Red + "[lwc] Internal error. [ulock]");
 				return;
 			}
 
 			Protection entity = lwc.getPhysicalDatabase().loadProtectedEntity(chestID);
 
-			if(entity.getType() != ProtectionTypes.PASSWORD) {
+			if (entity.getType() != ProtectionTypes.PASSWORD) {
 				player.sendMessage(Colors.Red + "That is not password protected!");
 				return;
 			}
 
-			if(entity.getPassword().equals(password)) {
+			if (entity.getPassword().equals(password)) {
 				player.sendMessage(Colors.Green + "Password accepted.");
 				lwc.getMemoryDatabase().unregisterUnlock(player.getName());
 				lwc.getMemoryDatabase().registerPlayer(player.getName(), chestID);

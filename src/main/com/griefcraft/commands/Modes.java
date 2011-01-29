@@ -27,25 +27,30 @@ import com.griefcraft.util.Colors;
 public class Modes implements ICommand {
 
 	@Override
+	public String getName() {
+		return "/lwc -p";
+	}
+
+	@Override
 	public void execute(LWC lwc, Player player, String[] args) {
-		if(args.length < 2) {
+		if (args.length < 2) {
 			lwc.sendSimpleUsage(player, "/lwc -p <persist|droptransfer>");
 			return;
 		}
-		
+
 		String mode = args[1].toLowerCase();
-		
-		if(mode.equals("persist")) {
-			if(!lwc.isAdmin(player) && lwc.isModeBlacklisted(mode)) {
+
+		if (mode.equals("persist")) {
+			if (!lwc.isAdmin(player) && lwc.isModeBlacklisted(mode)) {
 				player.sendMessage(Colors.Red + "That mode is currently disabled");
 				return;
 			}
-			
+
 			lwc.getMemoryDatabase().registerMode(player.getName(), mode);
 			player.sendMessage(Colors.Green + "Persistance mode activated");
 			player.sendMessage(Colors.Green + "Type " + Colors.Gold + "/lwc -r modes" + Colors.Green + " to undo (or logout)");
 		}
-		
+
 		else if (mode.equals("droptransfer")) {
 			mode = "dropTransfer";
 
@@ -75,11 +80,11 @@ public class Modes implements ICommand {
 
 				lwc.getMemoryDatabase().unregisterMode(playerName, mode);
 				lwc.getMemoryDatabase().registerAction("dropTransferSelect", playerName, "");
-				
+
 				player.sendMessage(Colors.Green + "Please left-click a registered chest to set as your transfer target.");
 			} else if (action.equals("on")) {
 				int target = lwc.getPlayerDropTransferTarget(playerName);
-				
+
 				if (target == -1) {
 					player.sendMessage(Colors.Red + "Please register a chest before turning drop transfer on.");
 					return;
@@ -91,7 +96,7 @@ public class Modes implements ICommand {
 				player.sendMessage(Colors.Green + "Any items dropped will be transferred to your chest.");
 			} else if (action.equals("off")) {
 				int target = lwc.getPlayerDropTransferTarget(playerName);
-				
+
 				if (target == -1) {
 					player.sendMessage(Colors.Red + "Please register a chest before turning drop transfer off.");
 					return;
@@ -99,7 +104,7 @@ public class Modes implements ICommand {
 
 				lwc.getMemoryDatabase().unregisterMode(playerName, "dropTransfer");
 				lwc.getMemoryDatabase().registerMode(playerName, "dropTransfer", "f" + target);
-				
+
 				player.sendMessage(Colors.Green + "Drop transfer is now off.");
 			} else if (action.equals("status")) {
 				if (lwc.getPlayerDropTransferTarget(playerName) == -1) {
@@ -108,12 +113,12 @@ public class Modes implements ICommand {
 					if (lwc.isPlayerDropTransferring(playerName)) {
 						player.sendMessage(Colors.Green + "Drop transfer is currently active.");
 					} else {
-						player.sendMessage(Colors.Green + "Drop transfer is currently inactive."); 
+						player.sendMessage(Colors.Green + "Drop transfer is currently inactive.");
 					}
 				}
 			}
 		}
-		
+
 	}
 
 	@Override

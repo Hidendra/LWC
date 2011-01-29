@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.model.Job;
 import com.griefcraft.model.Protection;
 import com.griefcraft.util.Performance;
@@ -37,7 +36,7 @@ public class PhysDB extends Database {
 	 * If the database was already loaded
 	 */
 	private boolean loaded = false;
-	
+
 	/**
 	 * Load every protection, use _sparingly_
 	 * 
@@ -45,16 +44,15 @@ public class PhysDB extends Database {
 	 */
 	public List<Protection> loadProtections() {
 		List<Protection> protections = new ArrayList<Protection>();
-		
+
 		try {
 			Statement statement = connection.createStatement();
-			
+
 			ResultSet set = statement.executeQuery("SELECT id,type,x,y,z FROM protections");
-			
-			while(set.next()) {
+
+			while (set.next()) {
 				/*
-				 * Only grab relevent data ..
-				 * We don't want the overhead of owner/password/date !
+				 * Only grab relevent data .. We don't want the overhead of owner/password/date !
 				 */
 				int id = set.getInt("id");
 				int type = set.getInt("type");
@@ -68,19 +66,19 @@ public class PhysDB extends Database {
 				protection.setX(x);
 				protection.setY(y);
 				protection.setZ(z);
-				
+
 				protections.add(protection);
 			}
-		
+
 			set.close();
 			statement.close();
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return protections;
 	}
-	
+
 	/**
 	 * Schedule a Job
 	 * 
@@ -91,19 +89,19 @@ public class PhysDB extends Database {
 	public void createJob(int type, String owner, String payload) {
 		try {
 			PreparedStatement statement = prepare("INSERT INTO jobs (type, owner, payload, timestamp) VALUES(?, ?, ?, ?)");
-			
+
 			statement.setInt(1, type);
 			statement.setString(2, owner);
 			statement.setString(3, payload);
 			statement.setLong(4, System.currentTimeMillis() / 1000L);
-			
+
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Remove a scheduled job
 	 * 
@@ -112,16 +110,16 @@ public class PhysDB extends Database {
 	public void removeJob(int id) {
 		try {
 			PreparedStatement statement = prepare("DELETE FROM jobs WHERE id = ?");
-			
+
 			statement.setInt(1, id);
-			
+
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Load the whole job queue
 	 * 
@@ -130,7 +128,7 @@ public class PhysDB extends Database {
 	public List<Job> getJobQueue() {
 		return getJobQueue(0);
 	}
-	
+
 	/**
 	 * Load a job queue of size n. if size is 0, will return all jobs
 	 * 
@@ -139,38 +137,38 @@ public class PhysDB extends Database {
 	 */
 	public List<Job> getJobQueue(int size) {
 		List<Job> jobs = new ArrayList<Job>();
-		
+
 		try {
 			String where = size > 0 ? (" LIMIT " + size) : "";
-			
+
 			PreparedStatement statement = prepare("SELECT * FROM jobs" + where);
-			
+
 			ResultSet set = statement.executeQuery();
-			
-			while(set.next()) {
+
+			while (set.next()) {
 				Job job = new Job();
-				
+
 				int id = set.getInt("id");
 				int type = set.getInt("type");
 				String owner = set.getString("owner");
 				String payload = set.getString("payload");
 				long timestamp = set.getLong("timestamp");
-				
+
 				job.setId(id);
 				job.setType(type);
 				job.setOwner(owner);
 				job.setPayload(payload);
 				job.setTimestamp(timestamp);
-				
+
 				jobs.add(job);
 			}
-			
+
 			set.close();
 			Performance.addPhysDBQuery();
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return jobs;
 	}
 
@@ -404,7 +402,7 @@ public class PhysDB extends Database {
 
 		return count;
 	}
-	
+
 	/**
 	 * Pushed an LWC pre-1.5 tables with a mis-spelled column name. Damn me
 	 */
@@ -414,18 +412,18 @@ public class PhysDB extends Database {
 			statement.executeQuery("SELECT payload FROM jobs");
 			statement.executeQuery("SELECT timestamp FROM jobs");
 			statement.close();
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			log("Fixing jobs table");
-			
+
 			try {
 				Statement statement = connection.createStatement();
 				statement.executeUpdate("DROP TABLE jobs");
 				statement.close();
-			} catch(SQLException ex) {
+			} catch (SQLException ex) {
 			}
 		}
 	}
-	
+
 	/**
 	 * Rename users table
 	 */
@@ -434,29 +432,29 @@ public class PhysDB extends Database {
 			Statement statement = connection.createStatement();
 			statement.executeQuery("SELECT * from players");
 			statement.close();
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			log("Fixing players table");
-			
+
 			try {
 				Statement statement = connection.createStatement();
 				statement.executeUpdate("DROP TABLE users");
 				statement.close();
-			} catch(SQLException ex) {
+			} catch (SQLException ex) {
 			}
 		}
-		
+
 		try {
 			Statement statement = connection.createStatement();
 			statement.executeQuery("SELECT mcusername from players");
 			statement.close();
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			log("Fixing players table");
-			
+
 			try {
 				Statement statement = connection.createStatement();
 				statement.executeUpdate("DROP TABLE players");
 				statement.close();
-			} catch(SQLException ex) {
+			} catch (SQLException ex) {
 			}
 		}
 	}
@@ -509,7 +507,7 @@ public class PhysDB extends Database {
 					+ "rights INTEGER," //
 					+ "type INTEGER" //
 					+ ");");
-			
+
 			/* Tables used in 1.50 */
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'players' (" //
 					+ "id INTEGER PRIMARY KEY," //
@@ -520,22 +518,16 @@ public class PhysDB extends Database {
 					+ "timestamp TEXT," //
 					+ "salt TEXT" //
 					+ ");");
-			
+
 			/**
 			 * TODO:
 			 * 
-			 * protections table update
-			 * inventories
-			 * inventory_contents
+			 * protections table update inventories inventory_contents
 			 */
-			
+
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS jobs (" //
 					+ "id INTEGER PRIMARY KEY," //
-					+ "type INTEGER,"
-					+ "owner TEXT,"
-					+ "payload TEXT,"
-					+ "timestamp TEXT"
-					+ ");");
+					+ "type INTEGER," + "owner TEXT," + "payload TEXT," + "timestamp TEXT" + ");");
 
 			connection.commit();
 			connection.setAutoCommit(true);
@@ -552,7 +544,7 @@ public class PhysDB extends Database {
 
 		loaded = true;
 	}
-	
+
 	/**
 	 * Instead of "updating indexes", let's just use IF NOT EXISTS each time
 	 */
@@ -560,7 +552,7 @@ public class PhysDB extends Database {
 		try {
 			connection.setAutoCommit(false);
 			Statement statement = connection.createStatement();
-			
+
 			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in1 ON `protections` (owner, x, y, z)");
 			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in2 ON `limits` (type, entity)");
 			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in3 ON `rights` (chest, entity)");
@@ -570,9 +562,9 @@ public class PhysDB extends Database {
 
 			connection.commit();
 			connection.setAutoCommit(true);
-			
+
 			statement.close();
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -595,7 +587,7 @@ public class PhysDB extends Database {
 
 		try {
 			PreparedStatement statement = prepare("SELECT * FROM `protections` WHERE x >= ? AND x <= ? AND y >= ? AND y <= ? AND z >= ? AND z <= ?");
-			
+
 			statement.setInt(1, _x - radius);
 			statement.setInt(2, _x + radius);
 			statement.setInt(3, _y - radius);
@@ -753,7 +745,7 @@ public class PhysDB extends Database {
 	public void registerProtectedEntity(int type, String player, String password, int x, int y, int z) {
 		try {
 			PreparedStatement statement = prepare("INSERT INTO `protections` (type, owner, password, x, y, z, date) VALUES(?, ?, ?, ?, ?, ?, ?)");
-			
+
 			statement.setInt(1, type);
 			statement.setString(2, player);
 			statement.setString(3, password);
@@ -761,7 +753,7 @@ public class PhysDB extends Database {
 			statement.setInt(5, y);
 			statement.setInt(6, z);
 			statement.setString(7, new Timestamp(new Date().getTime()).toString());
-			
+
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
@@ -782,7 +774,7 @@ public class PhysDB extends Database {
 			unregisterProtectionLimit(type, entity.toLowerCase());
 
 			PreparedStatement statement = prepare("INSERT INTO `limits` (type, amount, entity) VALUES(?, ?, ?)");
-			
+
 			statement.setInt(1, type);
 			statement.setInt(2, amount);
 			statement.setString(3, entity.toLowerCase());
@@ -809,7 +801,7 @@ public class PhysDB extends Database {
 	public void registerProtectionRights(int chestID, String entity, int rights, int type) {
 		try {
 			PreparedStatement statement = prepare("INSERT INTO `rights` (chest, entity, rights, type) VALUES (?, ?, ?, ?)");
-			
+
 			statement.setInt(1, chestID);
 			statement.setString(2, entity.toLowerCase());
 			statement.setInt(3, rights);
@@ -831,7 +823,7 @@ public class PhysDB extends Database {
 	public void unregisterProtection(int chestID) {
 		try {
 			PreparedStatement statement = prepare("DELETE FROM `protections` WHERE `id` = ?");
-			
+
 			statement.setInt(1, chestID);
 
 			statement.executeUpdate();
@@ -852,7 +844,7 @@ public class PhysDB extends Database {
 	public void unregisterProtectedEntity(int x, int y, int z) {
 		try {
 			PreparedStatement statement = prepare("DELETE FROM `protections` WHERE `x` = ? AND `y` = ? AND `z` = ?");
-			
+
 			statement.setInt(1, x);
 			statement.setInt(2, y);
 			statement.setInt(3, z);
@@ -889,7 +881,7 @@ public class PhysDB extends Database {
 	public void unregisterProtectionLimit(int type, String entity) {
 		try {
 			PreparedStatement statement = prepare("DELETE FROM `limits` WHERE `type` = ? AND `entity` = ?");
-			
+
 			statement.setInt(1, type);
 			statement.setString(2, entity.toLowerCase());
 
@@ -914,7 +906,7 @@ public class PhysDB extends Database {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Remove all protection rights
 	 */
@@ -923,7 +915,7 @@ public class PhysDB extends Database {
 			Statement statement = connection.createStatement();
 			statement.executeUpdate("DELETE FROM `rights`");
 			statement.close();
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -937,7 +929,7 @@ public class PhysDB extends Database {
 	public void unregisterProtectionRights(int chestID) {
 		try {
 			PreparedStatement statement = prepare("DELETE FROM `rights` WHERE `chest` = ?");
-			
+
 			statement.setInt(1, chestID);
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
@@ -955,7 +947,7 @@ public class PhysDB extends Database {
 	public void unregisterProtectionRights(int chestID, String entity) {
 		try {
 			PreparedStatement statement = prepare("DELETE FROM `rights` WHERE `chest` = ? AND `entity` = ?");
-			
+
 			statement.setInt(1, chestID);
 			statement.setString(2, entity.toLowerCase());
 
@@ -990,7 +982,7 @@ public class PhysDB extends Database {
 			}
 		}
 	}
-	
+
 	/**
 	 * Update the inventories in lwc.db
 	 * 
@@ -1000,8 +992,8 @@ public class PhysDB extends Database {
 		try {
 			throw new SQLException("Not supported");
 			// _insert_inventories_id_protectionid.setInt(1, 1);
-			
-		} catch(SQLException e) {
+
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}

@@ -24,6 +24,11 @@ import com.griefcraft.lwc.LWC;
 public interface ICommand {
 
 	/**
+	 * @return the name of the command (i.e /lwc -a)
+	 */
+	public String getName();
+
+	/**
 	 * Execute a command if it validates
 	 * 
 	 * @param lwc

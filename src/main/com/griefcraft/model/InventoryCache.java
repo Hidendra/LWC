@@ -22,46 +22,46 @@ import java.util.LinkedList;
 import org.bukkit.inventory.Inventory;
 
 public class InventoryCache {
-	
+
 	/**
 	 * Holds the cached inventories
 	 * 
 	 * We will be removing/adding potentially a lot of different inventories if the cache size is relatively small
 	 */
 	private LinkedList<Inventory> inventories = new LinkedList<Inventory>();
-	
+
 	/**
 	 * @return the inventories
 	 */
 	public LinkedList<Inventory> getAll() {
 		return inventories;
 	}
-	
+
 	/**
 	 * Empty the inventory cache
 	 */
 	public void empty() {
 		inventories.clear();
 	}
-	
+
 	/**
 	 * @return the size of the cache
 	 */
 	public int size() {
 		return inventories.size();
 	}
-	
+
 	/**
 	 * Push an inventory to the front of the cache
 	 * 
 	 * @param inventory
 	 */
 	public void push(Inventory inventory) {
-		if(inventories.contains(inventory)) {
+		if (inventories.contains(inventory)) {
 			return;
 		}
-		
+
 		inventories.add(inventory);
 	}
-	
+
 }
