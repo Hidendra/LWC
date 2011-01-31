@@ -231,6 +231,7 @@ public class LWCBlockListener extends BlockListener {
 					if (lwc.notInPersistentMode(player.getName())) {
 						lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 					}
+					
 					return;
 				} else {
 					player.sendMessage(Colors.Red + "You do not own that " + lwc.blockToString(block) + "!");
@@ -238,7 +239,6 @@ public class LWCBlockListener extends BlockListener {
 						lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 					}
 
-					event.setCancelled(true);
 					return;
 				}
 			} else if (modifyChest) {
@@ -295,7 +295,6 @@ public class LWCBlockListener extends BlockListener {
 						lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 					}
 
-					event.setCancelled(true);
 					return;
 				}
 			}
@@ -329,7 +328,6 @@ public class LWCBlockListener extends BlockListener {
 				lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 			}
 
-			event.setCancelled(true);
 			return;
 		}
 
@@ -408,10 +406,6 @@ public class LWCBlockListener extends BlockListener {
 				lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 			}
 		}
-
-		if (!hasAccess) {
-			event.setCancelled(true);
-		}
 	}
 
 	/**
@@ -425,7 +419,7 @@ public class LWCBlockListener extends BlockListener {
 		Block block = event.getBlock();
 
 		List<Block> protectionSet = lwc.getProtectionSet(block.getWorld(), block.getX(), block.getY(), block.getZ());
-		boolean hasAccess = true;
+		// boolean hasAccess = true;
 		boolean canAdmin = true;
 		Protection protection = null;
 
@@ -440,20 +434,19 @@ public class LWCBlockListener extends BlockListener {
 				continue;
 			}
 
-			hasAccess = lwc.canAccessChest(player, protection);
+			// hasAccess = lwc.canAccessChest(player, protection);
 			canAdmin = lwc.canAdminChest(player, protection);
 		}
 
-		if (hasAccess && protection != null) {
-			if (canAdmin) {
+		
+		if(protection != null) {
+			if(canAdmin) {
 				lwc.getPhysicalDatabase().unregisterProtectedEntity(protection.getX(), protection.getY(), protection.getZ());
 				lwc.getPhysicalDatabase().unregisterProtectionRights(protection.getID());
-				player.sendMessage(Colors.Red + "Chest unregistered.");
+				player.sendMessage(Colors.Red + lwc.blockToString(block) + " unregistered.");
+			} else {
+				event.setCancelled(true);
 			}
-		}
-
-		if (!canAdmin) {
-			event.setCancelled(true);
 		}
 	}
 

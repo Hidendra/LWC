@@ -44,6 +44,11 @@ public class LWC {
 	 * Logging instance
 	 */
 	private Logger logger = Logger.getLogger("LWC");
+	
+	/**
+	 * Development logging
+	 */
+	private Logger devLogger = Logger.getLogger("Dev");
 
 	/**
 	 * Checks for updates that need to be pushed to the sql database
@@ -80,6 +85,17 @@ public class LWC {
 		commands = new ArrayList<ICommand>();
 	}
 
+	/**
+	 * Print a line if development mode is enabled
+	 * 
+	 * @param str
+	 */
+	public void dev(String str) {
+		if(LWCInfo.DEVELOPMENT) {
+			devLogger.info(str);
+		}
+	}
+	
 	/**
 	 * @return the inventory cache
 	 */
@@ -639,14 +655,26 @@ public class LWC {
 	public List<Block> getProtectionSet(World world, int x, int y, int z) {
 		List<Block> entities = new ArrayList<Block>(2);
 
-		/*
-		 * First check the block they actually clicked
-		 */
 		Block baseBlock = world.getBlockAt(x, y, z);
+		Material baseType = baseBlock.getType();
+
+		/*
+		 * First check the block they clicked
+		 */
+		entities = _validateBlock(entities, baseBlock);
+		
+		/*
+		 * First check if it's a door
+		 */
+		if(baseType == Material.WOODEN_DOOR || baseType == Material.IRON_DOOR_BLOCK) {
+			entities = _validateBlock(entities, world.getBlockAt(x, y + 1, z));
+			entities = _validateBlock(entities, world.getBlockAt(x, y - 1, z));
+			
+			return entities;
+		}
+		
 		int dev = -1;
 		boolean isXDir = true;
-
-		entities = _validateBlock(entities, baseBlock);
 
 		while (true) {
 			Block block = world.getBlockAt(x + (isXDir ? dev : 0), y, z + (isXDir ? 0 : dev));
@@ -686,9 +714,7 @@ public class LWC {
 
 		Material type = block.getType();
 
-		if (type == Material.FURNACE || type == Material.DISPENSER || type == Material.SIGN 
-				|| type == Material.SIGN_POST || type == Material.WOODEN_DOOR 
-				|| type == Material.WOOD_DOOR || type == Material.IRON_DOOR || type == Material.IRON_DOOR_BLOCK) {
+		if (type == Material.FURNACE || type == Material.DISPENSER || type == Material.SIGN || type == Material.SIGN_POST) {
 			if (entities.size() == 0) {
 
 				if (!entities.contains(block)) {
@@ -702,9 +728,40 @@ public class LWC {
 			if (entities.size() == 1) {
 				Block other = entities.get(0);
 
-				if (other.getType() != Material.CHEST) {
-					return entities;
+				switch(other.getTypeId()) {
+				
+				/*
+				 * Chest
+				 */
+				case 54:
+					if (other.getType() != Material.CHEST) {
+						return entities;
+					}
+					
+					break;
+					
+				/*
+				 * Wooden door
+				 */
+				case 64:
+					if (other.getType() != Material.WOODEN_DOOR) {
+						return entities;
+					}
+					
+					break;
+					
+				/*
+				 * Iron door
+				 */
+				case 71:
+					if (other.getType() != Material.IRON_DOOR_BLOCK) {
+						return entities;
+					}
+					
+					break;
+				
 				}
+
 			}
 
 			if (!entities.contains(block) && isProtectable(block)) {

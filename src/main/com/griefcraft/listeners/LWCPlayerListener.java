@@ -44,30 +44,6 @@ public class LWCPlayerListener extends PlayerListener {
 	}
 
 	@Override
-	public void onPlayerMove(PlayerMoveEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
-
-		Player player = event.getPlayer();
-		Location location = event.getTo();
-
-		Block block = player.getWorld().getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-		LWC lwc = plugin.getLWC();
-
-		if (!lwc.isProtectable(block) || (block.getType() != Material.WOODEN_DOOR && block.getType() != Material.IRON_DOOR)) {
-			return;
-		}
-
-		boolean access = lwc.enforceAccess(player, block);
-
-		if (!access) {
-			event.setCancelled(true);
-			player.teleportTo(event.getFrom());
-		}
-	}
-
-	@Override
 	public void onPlayerCommand(PlayerChatEvent event) {
 		if (event.isCancelled()) {
 			return;
