@@ -79,6 +79,13 @@ public class LWCPlugin extends JavaPlugin {
 		blockListener = new LWCBlockListener(this);
 		entityListener = new LWCEntityListener(this);
 		updater = new Updater();
+		
+		/*
+		 * Set the SQLite native library path
+		 */
+		System.setProperty("org.sqlite.lib.path", updater.getOSSpecificFolder());
+
+		log("Native library: " + updater.getFullNativeLibraryPath());
 
 		try {
 			updater.check();
@@ -174,6 +181,8 @@ public class LWCPlugin extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		Config.getInstance().save();
+		updater.saveInternal();
+		
 		lwc.destruct();
 	}
 

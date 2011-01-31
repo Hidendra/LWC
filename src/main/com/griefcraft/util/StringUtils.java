@@ -102,6 +102,18 @@ public class StringUtils {
 	 * @return
 	 */
 	public static String join(String[] arr, int offset) {
+		return join(arr, offset, " ");
+	}
+
+	/**
+	 * Join an array command into a String
+	 * 
+	 * @param arr
+	 * @param offset
+	 * @param delim
+	 * @return
+	 */
+	public static String join(String[] arr, int offset, String delim) {
 		String str = "";
 
 		if (arr == null || arr.length == 0) {
@@ -109,7 +121,7 @@ public class StringUtils {
 		}
 
 		for (int i = offset; i < arr.length; i++) {
-			str += arr[i] + " ";
+			str += arr[i] + delim;
 		}
 
 		return str.trim();
