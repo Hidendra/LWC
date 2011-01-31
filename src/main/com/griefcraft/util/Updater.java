@@ -214,7 +214,7 @@ public class Updater {
 	 * @return the internal config file
 	 */
 	private File getInternalFile() {
-		return new File("plugins/lwc/internal.ini");
+		return new File("plugins/LWC/internal.ini");
 	}
 	
 	/**
