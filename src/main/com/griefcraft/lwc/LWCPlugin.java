@@ -99,6 +99,13 @@ public class LWCPlugin extends JavaPlugin {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * @return the Updater instance
+	 */
+	public Updater getUpdater() {
+		return updater;
+	}
 
 	/**
 	 * Check if an update is needed for 1.xx->1.47
