@@ -29,6 +29,7 @@ import com.griefcraft.listeners.LWCEntityListener;
 import com.griefcraft.listeners.LWCPlayerListener;
 import com.griefcraft.logging.Logger;
 import com.griefcraft.util.Config;
+import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.Updater;
 
 public class LWCPlugin extends JavaPlugin {
@@ -88,7 +89,11 @@ public class LWCPlugin extends JavaPlugin {
 		log("Native library: " + updater.getFullNativeLibraryPath());
 
 		try {
-			updater.check();
+			if(ConfigValues.AUTO_UPDATE.getBool()) {
+				updater.checkDist();
+			} else {
+				updater.check();
+			}
 			updater.update();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -189,7 +194,11 @@ public class LWCPlugin extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		try {
-			updater.check();
+			if(ConfigValues.AUTO_UPDATE.getBool()) {
+				updater.checkDist();
+			} else {
+				updater.check();
+			}
 			updater.update();
 		} catch (Exception e) {
 			e.printStackTrace();
