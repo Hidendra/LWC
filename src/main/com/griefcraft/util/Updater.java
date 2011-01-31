@@ -18,15 +18,18 @@
 package com.griefcraft.util;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
-import java.security.Security;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -64,9 +67,24 @@ public class Updater {
 	 * List of files to download
 	 */
 	private List<UpdaterFile> needsUpdating = new ArrayList<UpdaterFile>();
+	
+	/**
+	 * Internal config
+	 */
+	private HashMap<String, String> config = new HashMap<String, String>();
 
 	public Updater() {
 		enableSSL();
+		
+		/*
+		 * Default config values
+		 */
+		config.put("sqlite", "1.00");
+
+		/*
+		 * Parse the internal config
+		 */
+		parseInternalConfig();
 	}
 
 	/**
@@ -75,7 +93,7 @@ public class Updater {
 	 * @return true if LWC should be reloaded
 	 */
 	public void check() {
-		String[] paths = new String[] { "lib/sqlite.jar", "lib/" + getOSSpecificFileName() };
+		String[] paths = new String[] { "lib/sqlite.jar", getFullNativeLibraryPath() };
 
 		for (String path : paths) {
 			File file = new File(path);
@@ -93,6 +111,20 @@ public class Updater {
 		if (latestVersion > LWCInfo.VERSION) {
 			logger.info("Update detected for LWC");
 			logger.info("Latest version: " + latestVersion);
+		}
+	}
+	
+	/**
+	 * Force update of binaries
+	 */
+	private void requireBinaryUpdate() {
+		String[] paths = new String[] { "lib/sqlite.jar", getFullNativeLibraryPath() };
+
+		for (String path : paths) {
+			UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + path);
+			updaterFile.setLocalLocation(path);
+
+			needsUpdating.add(updaterFile);
 		}
 	}
 
@@ -147,53 +179,197 @@ public class Updater {
 
 		return 0.00;
 	}
+	
+	/**
+	 * @return the current internal sqlite version
+	 */
+	public double getCurrentInternalSQLiteVersion() {
+		return Double.parseDouble(config.get("sqlite"));
+	}
+	
+	/**
+	 * @return the latest internal sqlite version
+	 */
+	public double getLatestInternalSQLiteVersion() {
+		try {
+			URL url = new URL(UPDATE_SITE + VERSION_FILE);
+
+			InputStream inputStream = url.openStream();
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+			bufferedReader.readLine();
+			double version = Double.parseDouble(bufferedReader.readLine());
+
+			bufferedReader.close();
+
+			return version;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return 0.00;
+	}
+	
+	/**
+	 * @return the internal config file
+	 */
+	private File getInternalFile() {
+		return new File("plugins/lwc/internal.ini");
+	}
+	
+	/**
+	 * Parse the internal config file
+	 */
+	private void parseInternalConfig() {
+		try {
+			File file = getInternalFile();
+			
+			if(!file.exists()) {
+				saveInternal();
+				return;
+			}
+			
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+			String line;
+			
+			while((line = reader.readLine()) != null) {
+				if(line.trim().startsWith("#")) {
+					continue;
+				}
+				
+				if(!line.contains(":")) {
+					continue;
+				}
+				
+				/*
+				 * Split the array
+				 */
+				String[] arr = line.split(":");
+				
+				if(arr.length < 2) {
+					continue;
+				}
+				
+				/*
+				 * Get the key/value
+				 */
+				String key = arr[0];
+				String value = StringUtils.join(arr, 1, ":");
+				value = value.substring(0, value.length() - 1);
+				
+				/*
+				 * Set the config value
+				 */
+				config.put(key, value);
+			}
+			
+			reader.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Create the internal updater config file
+	 */
+	public void saveInternal() {
+		try {
+			File file = getInternalFile();
+			
+			if(file.exists()) {
+				file.delete();
+			}
+			
+			file.createNewFile();
+			
+			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+			
+			writer.write("# LWC Internal Config\n");
+			writer.write("###############################\n");
+			writer.write("### DO NOT MODIFY THIS FILE ###\n");
+			writer.write("### THIS DOES NOT CHANGE    ###\n");
+			writer.write("### LWC'S VISIBLE BEHAVIOUR ###\n");
+			writer.write("###############################\n\n");
+			writer.write("###############################\n");
+			writer.write("###        THANK YOU!       ###\n");
+			writer.write("###############################\n\n");
+			
+			for(String key : config.keySet()) {
+				String value = config.get(key);
+				
+				writer.write(key + ":" + value + "\n");
+			}
+			
+			writer.flush();
+			writer.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
-	 * Get the OS specific sqlite file name (arch specific, too, for linux)
-	 * 
-	 * @return
+	 * @return the full path to the native library for sqlite
+	 */
+	public String getFullNativeLibraryPath() {
+		return getOSSpecificFolder() + getOSSpecificFileName();
+	}
+	
+	/**
+	 * @return the os/arch specific file name for sqlite's native library
 	 */
 	public String getOSSpecificFileName() {
 		String osname = System.getProperty("os.name").toLowerCase();
-		String arch = System.getProperty("os.arch");
-
-		if (osname.contains("windows")) {
-			osname = "win";
-			arch = "x86";
-		} else if (osname.contains("mac")) {
-			osname = "mac";
-			arch = "universal";
-		} else if (osname.contains("nix")) {
-			osname = "linux";
-		} else if (osname.equals("sunos")) {
-			osname = "linux";
+		
+		if(osname.contains("windows")) {
+			return "sqlitejdbc.dll";
+		} else if(osname.contains("mac")) {
+			return "libsqlitejdbc.jnilib";
+		} else { /* We assume linux/unix */
+			return "libsqlitejdbc.so";
 		}
-
-		if (arch.startsWith("i") && arch.endsWith("86")) {
-			arch = "x86";
+	}
+	
+	/**
+	 * @return the os/arch specific folder location for SQLite's native library
+	 */
+	public String getOSSpecificFolder() {
+		String osname = System.getProperty("os.name").toLowerCase();
+		String arch = System.getProperty("os.arch").toLowerCase();
+		
+		if(osname.contains("windows")) {
+			return "lib/native/Windows/" + arch + "/";
+		} else if(osname.contains("mac")) {
+			return "lib/native/Mac/" + arch + "/";
+		} else { /* We assume linux/unix */
+			return "lib/native/Linux/" + arch + "/";
 		}
-
-		return osname + "-" + arch + ".lib";
 	}
 
 	/**
 	 * Ensure we have all of the required files (if not, download them)
 	 */
 	public void update() throws Exception {
+		/*
+		 * Check internal versions
+		 */
+		double latestVersion = getLatestInternalSQLiteVersion();
+		if(latestVersion > getCurrentInternalSQLiteVersion()) {
+			requireBinaryUpdate();
+			logger.info("Binary update required");
+			config.put("sqlite", latestVersion + "");
+		}
+
 		if (needsUpdating.size() == 0) {
 			return;
 		}
+		
+		/*
+		 * Make the native folder hierarchy if needed
+		 */
+		File folder = new File(getOSSpecificFolder());
+		folder.mkdirs();
 
-		File folder = new File("lib");
-
-		if (folder.exists() && !folder.isDirectory()) {
-			throw new Exception("Folder \"lib\" cannot be created ! It is a file!");
-		} else if (!folder.exists()) {
-			logger.info("Creating folder : lib");
-			folder.mkdir();
-		}
-
-		logger.info("Need to download " + needsUpdating.size() + " object(s)");
+		logger.info("Need to download " + needsUpdating.size() + " file(s)");
 
 		Iterator<UpdaterFile> iterator = needsUpdating.iterator();
 
@@ -220,6 +396,11 @@ public class Updater {
 			logger.info("  + Download complete");
 			iterator.remove();
 		}
+		
+		/*
+		 * In the event we updated binaries, we should force an ini save!
+		 */
+		saveInternal();
 	}
 
 	/**
@@ -234,13 +415,16 @@ public class Updater {
 		 */
 		TrustManager[] trustAllCerts = new TrustManager[]{
 			    new X509TrustManager() {
-			        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+			        @Override
+					public java.security.cert.X509Certificate[] getAcceptedIssuers() {
 			            return null;
 			        }
-			        public void checkClientTrusted(
+			        @Override
+					public void checkClientTrusted(
 			            java.security.cert.X509Certificate[] certs, String authType) {
 			        }
-			        public void checkServerTrusted(
+			        @Override
+					public void checkServerTrusted(
 			            java.security.cert.X509Certificate[] certs, String authType) {
 			        }
 			    }
