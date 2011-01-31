@@ -39,7 +39,7 @@ public class PhysDB extends Database {
 
 	/**
 	 * Load every protection, use _sparingly_
-	 * 
+	 *  
 	 * @return
 	 */
 	public List<Protection> loadProtections() {

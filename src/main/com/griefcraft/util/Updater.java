@@ -30,6 +30,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 import com.griefcraft.logging.Logger;
 import com.griefcraft.lwc.LWCInfo;
 
@@ -221,12 +226,32 @@ public class Updater {
 	 * Enable SSL. github is 100% ssl
 	 */
 	private void enableSSL() {
+		/*
+		 * This seems hackish.. 
+		 * but seems more than a few people don't have their trust stores OR OpenJDK
+		 * 
+		 * This approach does not depend on com.sun !!
+		 */
+		TrustManager[] trustAllCerts = new TrustManager[]{
+			    new X509TrustManager() {
+			        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+			            return null;
+			        }
+			        public void checkClientTrusted(
+			            java.security.cert.X509Certificate[] certs, String authType) {
+			        }
+			        public void checkServerTrusted(
+			            java.security.cert.X509Certificate[] certs, String authType) {
+			        }
+			    }
+			};
+		
 		try {
-			Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-			System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
+			SSLContext sc = SSLContext.getInstance("SSL");
+		    sc.init(null, trustAllCerts, new java.security.SecureRandom());
+		    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 		} catch (Exception e) {
 			logger.info("SEVERE ERROR :: SSL NOT SUPPORTED");
-			logger.info("Are you using OpenJDK?");
 		}
 	}
 

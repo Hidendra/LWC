@@ -20,8 +20,6 @@ import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.model.RightTypes;
 import com.griefcraft.sql.Database;
-import com.griefcraft.sql.MemDB;
-import com.griefcraft.sql.PhysDB;
 
 /**
  * Run tests using JUnit. Runs a minecraft server to virtualize a real server. MC server that is run is ran on a random port and is only up until tests are completed

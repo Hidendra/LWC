@@ -79,8 +79,8 @@ public class UnitTestInserts {
 				lastUpdate = seconds;
 			}
 
-			// phys.loadProtectedEntity(rand.nextInt(50000));
-			mem.getModeData("Hidendra", "m" + rand.nextInt(50000));
+			phys.loadProtectedEntity(rand.nextInt(50000));
+			// mem.getModeData("Hidendra", "m" + rand.nextInt(50000));
 			queryCount++;
 
 			// Thread.sleep(100);
