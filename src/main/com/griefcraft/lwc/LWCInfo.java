@@ -31,6 +31,11 @@ public class LWCInfo {
 	 * LWC's version
 	 */
 	public static final double VERSION = 1.47;
+	
+	/**
+	 * Full LWC version
+	 */
+	public static final String FULL_VERSION = String.format("%.2fb", VERSION);
 
 	/**
 	 * Location of the properties file relative to the root Minecraft directory

@@ -209,7 +209,6 @@ public class LWCPlugin extends JavaPlugin {
 	private void registerEvents() {
 		/* Player events */
 		registerEvent(playerListener, Type.PLAYER_COMMAND);
-		registerEvent(playerListener, Type.PLAYER_MOVE);
 		registerEvent(playerListener, Type.PLAYER_QUIT, Priority.Monitor);
 
 		/* Entity events */

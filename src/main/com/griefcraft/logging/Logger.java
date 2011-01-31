@@ -22,7 +22,7 @@ import com.griefcraft.lwc.LWCInfo;
 public class Logger {
 
 	public void info(String str) {
-		System.out.println(String.format("%s\t[v%.2f]\t%s", name, LWCInfo.VERSION, str));
+		System.out.println(String.format("%s\t[v%s]\t%s", name, LWCInfo.FULL_VERSION, str));
 	}
 
 	/**
