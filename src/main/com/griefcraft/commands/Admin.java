@@ -25,8 +25,10 @@ import org.bukkit.entity.Player;
 import com.griefcraft.converters.ChastityChest;
 import com.griefcraft.converters.ChestProtect;
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.Performance;
+import com.griefcraft.util.Updater;
 
 public class Admin implements ICommand {
 
@@ -55,6 +57,36 @@ public class Admin implements ICommand {
 			Performance.clear();
 		}
 
+		else if (action.equals("version")) {
+			player.sendMessage("");
+
+			Updater updater = lwc.getPlugin().getUpdater();
+			
+			String pluginColor = Colors.Green;
+			String updaterColor = Colors.Green;
+			
+			double currPluginVersion = LWCInfo.VERSION;
+			double currSqlVersion = updater.getCurrentSQLiteVersion();
+			
+			double latestPluginVersion = updater.getLatestPluginVersion();
+			double latestSqlVersion = updater.getLatestSQLiteVersion();
+			
+			if(latestPluginVersion > currPluginVersion) {
+				pluginColor = Colors.Red;
+			}
+			
+			if(latestSqlVersion > currSqlVersion) {
+				pluginColor = Colors.Red;
+			}
+
+			player.sendMessage(Colors.Blue + "Main plugin: " + pluginColor + LWCInfo.FULL_VERSION + Colors.Yellow + "/" + Colors.Green + latestPluginVersion);
+			player.sendMessage(Colors.Blue + "SQLite: " + updaterColor + currSqlVersion + Colors.Yellow + "/" + Colors.Green + latestSqlVersion);
+
+			player.sendMessage("");
+			player.sendMessage(Colors.Green + "Green: Up to date");
+			player.sendMessage(Colors.Red + "Red: Out of date");
+		}
+		
 		else if (action.equals("createjob")) {
 			if (args.length < 5) {
 				lwc.sendSimpleUsage(player, "/lwc -a createjob <type> <owner> <payload>");
