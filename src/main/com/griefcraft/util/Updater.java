@@ -67,7 +67,7 @@ public class Updater {
 	 * List of files to download
 	 */
 	private List<UpdaterFile> needsUpdating = new ArrayList<UpdaterFile>();
-	
+
 	/**
 	 * Internal config
 	 */
@@ -75,7 +75,7 @@ public class Updater {
 
 	public Updater() {
 		enableSSL();
-		
+
 		/*
 		 * Default config values
 		 */
@@ -106,14 +106,14 @@ public class Updater {
 			}
 		}
 
-		double latestVersion = getLatestVersion();
+		double latestVersion = getLatestPluginVersion();
 
 		if (latestVersion > LWCInfo.VERSION) {
 			logger.info("Update detected for LWC");
 			logger.info("Latest version: " + latestVersion);
 		}
 	}
-	
+
 	/**
 	 * Force update of binaries
 	 */
@@ -135,7 +135,7 @@ public class Updater {
 	 */
 	public boolean checkDist() {
 
-		double latestVersion = getLatestVersion();
+		double latestVersion = getLatestPluginVersion();
 
 		if (latestVersion > LWCInfo.VERSION) {
 			UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + DIST_FILE);
@@ -161,7 +161,7 @@ public class Updater {
 	 * 
 	 * @return
 	 */
-	public double getLatestVersion() {
+	public double getLatestPluginVersion() {
 		try {
 			URL url = new URL(UPDATE_SITE + VERSION_FILE);
 
@@ -179,18 +179,18 @@ public class Updater {
 
 		return 0.00;
 	}
-	
+
 	/**
-	 * @return the current internal sqlite version
+	 * @return the current sqlite version
 	 */
-	public double getCurrentInternalSQLiteVersion() {
+	public double getCurrentSQLiteVersion() {
 		return Double.parseDouble(config.get("sqlite"));
 	}
-	
+
 	/**
-	 * @return the latest internal sqlite version
+	 * @return the latest sqlite version
 	 */
-	public double getLatestInternalSQLiteVersion() {
+	public double getLatestSQLiteVersion() {
 		try {
 			URL url = new URL(UPDATE_SITE + VERSION_FILE);
 
@@ -209,81 +209,81 @@ public class Updater {
 
 		return 0.00;
 	}
-	
+
 	/**
 	 * @return the internal config file
 	 */
 	private File getInternalFile() {
 		return new File("plugins/LWC/internal.ini");
 	}
-	
+
 	/**
 	 * Parse the internal config file
 	 */
 	private void parseInternalConfig() {
 		try {
 			File file = getInternalFile();
-			
-			if(!file.exists()) {
+
+			if (!file.exists()) {
 				saveInternal();
 				return;
 			}
-			
+
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			String line;
-			
-			while((line = reader.readLine()) != null) {
-				if(line.trim().startsWith("#")) {
+
+			while ((line = reader.readLine()) != null) {
+				if (line.trim().startsWith("#")) {
 					continue;
 				}
-				
-				if(!line.contains(":")) {
+
+				if (!line.contains(":")) {
 					continue;
 				}
-				
+
 				/*
 				 * Split the array
 				 */
 				String[] arr = line.split(":");
-				
-				if(arr.length < 2) {
+
+				if (arr.length < 2) {
 					continue;
 				}
-				
+
 				/*
 				 * Get the key/value
 				 */
 				String key = arr[0];
 				String value = StringUtils.join(arr, 1, ":");
 				value = value.substring(0, value.length() - 1);
-				
+
 				/*
 				 * Set the config value
 				 */
 				config.put(key, value);
 			}
-			
+
 			reader.close();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Create the internal updater config file
 	 */
 	public void saveInternal() {
 		try {
 			File file = getInternalFile();
-			
-			if(file.exists()) {
+
+			if (file.exists()) {
 				file.delete();
 			}
-			
+
 			file.createNewFile();
-			
+
 			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-			
+
 			writer.write("# LWC Internal Config\n");
 			writer.write("###############################\n");
 			writer.write("### DO NOT MODIFY THIS FILE ###\n");
@@ -293,16 +293,16 @@ public class Updater {
 			writer.write("###############################\n");
 			writer.write("###        THANK YOU!       ###\n");
 			writer.write("###############################\n\n");
-			
-			for(String key : config.keySet()) {
+
+			for (String key : config.keySet()) {
 				String value = config.get(key);
-				
+
 				writer.write(key + ":" + value + "\n");
 			}
-			
+
 			writer.flush();
 			writer.close();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -313,32 +313,32 @@ public class Updater {
 	public String getFullNativeLibraryPath() {
 		return getOSSpecificFolder() + getOSSpecificFileName();
 	}
-	
+
 	/**
 	 * @return the os/arch specific file name for sqlite's native library
 	 */
 	public String getOSSpecificFileName() {
 		String osname = System.getProperty("os.name").toLowerCase();
-		
-		if(osname.contains("windows")) {
+
+		if (osname.contains("windows")) {
 			return "sqlitejdbc.dll";
-		} else if(osname.contains("mac")) {
+		} else if (osname.contains("mac")) {
 			return "libsqlitejdbc.jnilib";
 		} else { /* We assume linux/unix */
 			return "libsqlitejdbc.so";
 		}
 	}
-	
+
 	/**
 	 * @return the os/arch specific folder location for SQLite's native library
 	 */
 	public String getOSSpecificFolder() {
 		String osname = System.getProperty("os.name").toLowerCase();
 		String arch = System.getProperty("os.arch").toLowerCase();
-		
-		if(osname.contains("windows")) {
+
+		if (osname.contains("windows")) {
 			return "lib/native/Windows/" + arch + "/";
-		} else if(osname.contains("mac")) {
+		} else if (osname.contains("mac")) {
 			return "lib/native/Mac/" + arch + "/";
 		} else { /* We assume linux/unix */
 			return "lib/native/Linux/" + arch + "/";
@@ -352,8 +352,8 @@ public class Updater {
 		/*
 		 * Check internal versions
 		 */
-		double latestVersion = getLatestInternalSQLiteVersion();
-		if(latestVersion > getCurrentInternalSQLiteVersion()) {
+		double latestVersion = getLatestSQLiteVersion();
+		if (latestVersion > getCurrentSQLiteVersion()) {
 			requireBinaryUpdate();
 			logger.info("Binary update required");
 			config.put("sqlite", latestVersion + "");
@@ -362,7 +362,7 @@ public class Updater {
 		if (needsUpdating.size() == 0) {
 			return;
 		}
-		
+
 		/*
 		 * Make the native folder hierarchy if needed
 		 */
@@ -396,7 +396,7 @@ public class Updater {
 			logger.info("  + Download complete");
 			iterator.remove();
 		}
-		
+
 		/*
 		 * In the event we updated binaries, we should force an ini save!
 		 */
@@ -408,32 +408,29 @@ public class Updater {
 	 */
 	private void enableSSL() {
 		/*
-		 * This seems hackish.. 
-		 * but seems more than a few people don't have their trust stores OR OpenJDK
+		 * This seems hackish.. but seems more than a few people don't have their trust stores OR OpenJDK
 		 * 
 		 * This approach does not depend on com.sun !!
 		 */
-		TrustManager[] trustAllCerts = new TrustManager[]{
-			    new X509TrustManager() {
-			        @Override
-					public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-			            return null;
-			        }
-			        @Override
-					public void checkClientTrusted(
-			            java.security.cert.X509Certificate[] certs, String authType) {
-			        }
-			        @Override
-					public void checkServerTrusted(
-			            java.security.cert.X509Certificate[] certs, String authType) {
-			        }
-			    }
-			};
-		
+		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+			@Override
+			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+				return null;
+			}
+
+			@Override
+			public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+			}
+
+			@Override
+			public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+			}
+		} };
+
 		try {
 			SSLContext sc = SSLContext.getInstance("SSL");
-		    sc.init(null, trustAllCerts, new java.security.SecureRandom());
-		    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+			sc.init(null, trustAllCerts, new java.security.SecureRandom());
+			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 		} catch (Exception e) {
 			logger.info("SEVERE ERROR :: SSL NOT SUPPORTED");
 		}
