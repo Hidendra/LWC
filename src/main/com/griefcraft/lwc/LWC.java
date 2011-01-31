@@ -686,7 +686,9 @@ public class LWC {
 
 		Material type = block.getType();
 
-		if (type == Material.FURNACE || type == Material.DISPENSER) {
+		if (type == Material.FURNACE || type == Material.DISPENSER || type == Material.SIGN 
+				|| type == Material.SIGN_POST || type == Material.WOODEN_DOOR 
+				|| type == Material.WOOD_DOOR || type == Material.IRON_DOOR || type == Material.IRON_DOOR_BLOCK) {
 			if (entities.size() == 0) {
 
 				if (!entities.contains(block)) {
