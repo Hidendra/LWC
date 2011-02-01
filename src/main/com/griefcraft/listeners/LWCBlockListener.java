@@ -24,6 +24,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockDamageLevel;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockInteractEvent;
 import org.bukkit.event.block.BlockListener;
 
@@ -225,7 +226,7 @@ public class LWCBlockListener extends BlockListener {
 				return;
 			} else if (hasFreeRequest) {
 				if (lwc.isAdmin(player) || protection.getOwner().equals(player.getName())) {
-					player.sendMessage(Colors.LightGreen + "Removed lock on the " + lwc.blockToString(block) + " successfully!");
+					player.sendMessage(Colors.Green + "Removed lock on the " + lwc.blockToString(block) + " successfully!");
 					lwc.getPhysicalDatabase().unregisterProtectedEntity(protection.getX(), protection.getY(), protection.getZ());
 					lwc.getPhysicalDatabase().unregisterProtectionRights(protection.getID());
 					if (lwc.notInPersistentMode(player.getName())) {
@@ -281,10 +282,10 @@ public class LWCBlockListener extends BlockListener {
 						if (!remove) {
 							lwc.getPhysicalDatabase().unregisterProtectionRights(chestID, userEntity);
 							lwc.getPhysicalDatabase().registerProtectionRights(chestID, userEntity, isAdmin ? 1 : 0, chestType);
-							player.sendMessage(Colors.LightGreen + "Registered rights for " + Colors.Gold + userEntity + Colors.Green + " " + (isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "") + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
+							player.sendMessage(Colors.Green + "Registered rights for " + Colors.Gold + userEntity + Colors.Green + " " + (isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "") + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
 						} else {
 							lwc.getPhysicalDatabase().unregisterProtectionRights(chestID, userEntity);
-							player.sendMessage(Colors.LightGreen + "Removed rights for " + Colors.Gold + userEntity + Colors.Green + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
+							player.sendMessage(Colors.Green + "Removed rights for " + Colors.Gold + userEntity + Colors.Green + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
 						}
 					}
 
@@ -367,8 +368,8 @@ public class LWCBlockListener extends BlockListener {
 				lwc.getPhysicalDatabase().registerProtectedEntity(ProtectionTypes.PASSWORD, player.getName(), password, block.getX(), block.getY(), block.getZ());
 				lwc.getMemoryDatabase().registerPlayer(player.getName(), lwc.getPhysicalDatabase().loadProtectedEntity(block.getX(), block.getY(), block.getZ()).getID());
 				player.sendMessage(Colors.Green + "Created password protected " + lwc.blockToString(block) + " successfully");
-				player.sendMessage(Colors.LightGreen + "For convenience, you don't have to enter your password until");
-				player.sendMessage(Colors.LightGreen + "you next log in");
+				player.sendMessage(Colors.Blue + "For convenience, you don't have to enter your password until");
+				player.sendMessage(Colors.Blue + "you next log in");
 
 			} else if (type.equals("private")) {
 				String defaultEntities = action.getData();
@@ -398,7 +399,7 @@ public class LWCBlockListener extends BlockListener {
 					}
 
 					lwc.getPhysicalDatabase().registerProtectionRights(lwc.getPhysicalDatabase().loadProtectedEntity(block.getX(), block.getY(), block.getZ()).getID(), userEntity, isAdmin ? 1 : 0, chestType);
-					player.sendMessage(Colors.LightGreen + "Registered rights for " + Colors.Gold + userEntity + ": " + (isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "") + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
+					player.sendMessage(Colors.Green + "Registered rights for " + Colors.Gold + userEntity + ": " + (isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "") + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
 				}
 			}
 

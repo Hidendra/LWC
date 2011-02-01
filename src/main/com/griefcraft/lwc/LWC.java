@@ -800,14 +800,14 @@ public class LWC {
 		player.sendMessage(" ");
 		player.sendMessage(Colors.Green + "Welcome to LWC, a Protection mod");
 		player.sendMessage(" ");
-		player.sendMessage(Colors.LightGreen + "/lwc -c - View creation help");
-		player.sendMessage(Colors.LightGreen + "/lwc -c <public|private|password>");
-		player.sendMessage(Colors.LightGreen + "/lwc -m - Modify an existing private protection");
-		player.sendMessage(Colors.LightGreen + "/lwc -u - Unlock a password protected entity");
-		player.sendMessage(Colors.LightGreen + "/lwc -i  - View information on a protected Chest or Furnace");
-		player.sendMessage(Colors.LightGreen + "/lwc -r <chest|furnace|modes>");
+		player.sendMessage(Colors.Blue + "/lwc -c - View creation help");
+		player.sendMessage(Colors.Blue + "/lwc -c <public|private|password>");
+		player.sendMessage(Colors.Blue + "/lwc -m - Modify an existing private protection");
+		player.sendMessage(Colors.Blue + "/lwc -u - Unlock a password protected entity");
+		player.sendMessage(Colors.Blue + "/lwc -i  - View information on a protected Chest or Furnace");
+		player.sendMessage(Colors.Blue + "/lwc -r <chest|furnace|modes>");
 
-		player.sendMessage(Colors.LightGreen + "/lwc -p <persist|droptransfer>"); // TODO: dynamic
+		player.sendMessage(Colors.Blue + "/lwc -p <persist|droptransfer>"); // TODO: dynamic
 
 		if (isAdmin(player)) {
 			player.sendMessage("");

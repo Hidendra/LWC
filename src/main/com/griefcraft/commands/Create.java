@@ -53,7 +53,7 @@ public class Create implements ICommand {
 			String password = join(args, 2);
 			String hiddenPass = transform(password, '*');
 
-			player.sendMessage(Colors.LightGreen + "Using password: " + Colors.Yellow + hiddenPass);
+			player.sendMessage(Colors.Blue + "Using password: " + Colors.Yellow + hiddenPass);
 		}
 
 		else if (!type.equals("public") && !type.equals("private")) {
@@ -64,7 +64,7 @@ public class Create implements ICommand {
 		lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 		lwc.getMemoryDatabase().registerAction("create", player.getName(), full);
 
-		player.sendMessage(Colors.LightGreen + "Lock type: " + Colors.Green + capitalizeFirstLetter(type));
+		player.sendMessage(Colors.Blue + "Lock type: " + Colors.Green + capitalizeFirstLetter(type));
 		player.sendMessage(Colors.Green + "Please left click your block to lock it.");
 	}
 
@@ -79,24 +79,24 @@ public class Create implements ICommand {
 		player.sendMessage(" ");
 
 		player.sendMessage("/lwc -c public " + Colors.Gold + "Create a public protection");
-		player.sendMessage(Colors.LightGreen + "Anyone can access a Public protection, but no one can protect it");
+		player.sendMessage(Colors.Blue + "Anyone can use a Public protection, but no one can protect it");
 		player.sendMessage(" ");
 
 		player.sendMessage("/lwc -c password <password> " + Colors.Gold + "Create a password-protected");
 		player.sendMessage(Colors.Gold + "block");
-		player.sendMessage(Colors.LightGreen + "Each time you login you need to enter the password to access");
-		player.sendMessage(Colors.LightGreen + "the chest (if someone knows the pass, they can use it too!)");
+		player.sendMessage(Colors.Blue + "Each time you login you need to enter the password to access");
+		player.sendMessage(Colors.Blue + "the chest (if someone knows the pass, they can use it too!)");
 		player.sendMessage(" ");
 
 		player.sendMessage("/lwc -c private " + Colors.Gold + "Create a private protection");
-		player.sendMessage(Colors.LightGreen + "Private means private. You can also allow other users or");
-		player.sendMessage(Colors.LightGreen + "groups to access the chest or furnace. This is done by");
-		player.sendMessage(Colors.LightGreen + "adding them after \"private\".");
+		player.sendMessage(Colors.Blue + "Private means private. You can also allow other users or");
+		player.sendMessage(Colors.Blue + "groups to access the chest or furnace. This is done by");
+		player.sendMessage(Colors.Blue + "adding them after \"private\".");
 		player.sendMessage(" ");
 		player.sendMessage("Example:");
 		player.sendMessage(Colors.Blue + "/lwc -c private UserName g:GroupName OtherGuy");
 		player.sendMessage(" ");
-		player.sendMessage(Colors.LightGreen + "You can specify more than 1 group and/or user per command!");
+		player.sendMessage(Colors.Blue + "You can specify more than 1 group and/or user per command!");
 	}
 
 }

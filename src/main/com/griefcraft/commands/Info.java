@@ -35,7 +35,7 @@ public class Info implements ICommand {
 	public void execute(LWC lwc, Player player, String[] args) {
 		lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 		lwc.getMemoryDatabase().registerAction("info", player.getName());
-		player.sendMessage(Colors.LightGreen + "Left click a Chest or Furnace to see information about it");
+		player.sendMessage(Colors.Blue + "Punch a protection to view information on it");
 	}
 
 	@Override

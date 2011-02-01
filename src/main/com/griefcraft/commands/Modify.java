@@ -61,9 +61,9 @@ public class Modify implements ICommand {
 		player.sendMessage(Colors.Green + "See: " + Colors.Gold + "/lwc -c" + Colors.Green + ", the example for private protections");
 		player.sendMessage(" ");
 
-		player.sendMessage(Colors.LightGreen + "Additional prefixes for users/groups:");
-		player.sendMessage(Colors.Red + "-" + Colors.LightGreen + ": Remove a user/group from protection");
-		player.sendMessage(Colors.Red + "@" + Colors.LightGreen + ": The user/group will be able to modify the chest");
+		player.sendMessage(Colors.Blue + "Additional prefixes for users/groups:");
+		player.sendMessage(Colors.Red + "-" + Colors.Blue + ": Remove a user/group from protection");
+		player.sendMessage(Colors.Red + "@" + Colors.Blue + ": The user/group will be able to modify the chest");
 		player.sendMessage(Colors.Gold + "note: chest admins cannot remove the owner from access");
 		player.sendMessage(" ");
 
