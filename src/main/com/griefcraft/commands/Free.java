@@ -48,7 +48,7 @@ public class Free implements ICommand {
 
 			lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 			lwc.getMemoryDatabase().registerAction("free", player.getName());
-			player.sendMessage(Colors.LightGreen + "Left click your Chest or Furnace to remove the lock");
+			player.sendMessage(Colors.Blue + "Punch your protection to remove the lock");
 		}
 
 		else if (type.equals("modes")) {

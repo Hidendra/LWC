@@ -62,10 +62,10 @@ public class Modes implements ICommand {
 			if (args.length < 3) {
 				player.sendMessage(Colors.Green + "LWC Drop Transfer");
 				player.sendMessage("");
-				player.sendMessage(Colors.LightGreen + "/lwc -p droptransfer select - Select a chest to drop transfer to");
-				player.sendMessage(Colors.LightGreen + "/lwc -p droptransfer on - Turn on drop transferring");
-				player.sendMessage(Colors.LightGreen + "/lwc -p droptransfer off - Turn off drop transferring");
-				player.sendMessage(Colors.LightGreen + "/lwc -p droptransfer status - Check the status of drop transferring");
+				player.sendMessage(Colors.Blue + "/lwc -p droptransfer select - Select a chest to drop transfer to");
+				player.sendMessage(Colors.Blue + "/lwc -p droptransfer on - Turn on drop transferring");
+				player.sendMessage(Colors.Blue + "/lwc -p droptransfer off - Turn off drop transferring");
+				player.sendMessage(Colors.Blue + "/lwc -p droptransfer status - Check the status of drop transferring");
 				return;
 			}
 
