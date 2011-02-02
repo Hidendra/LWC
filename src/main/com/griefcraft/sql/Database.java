@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.griefcraft.logging.Logger;
+import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.util.ConfigValues;
 
 public abstract class Database {
@@ -40,6 +41,11 @@ public abstract class Database {
 	 * Logging object
 	 */
 	private Logger logger = Logger.getLogger(getClass().getSimpleName());
+	
+	/**
+	 * Dev logger
+	 */
+	private Logger devLogger = Logger.getLogger("Dev");
 
 	/**
 	 * Store cached prepared statements.
@@ -125,6 +131,17 @@ public abstract class Database {
 	}
 
 	public abstract void load();
+	
+	/**
+	 * Log a string of dev mode if enabled
+	 * 
+	 * @param str
+	 */
+	public void dev(String str) {
+		if(LWCInfo.DEVELOPMENT) {
+			devLogger.info(str);
+		}
+	}
 
 	/**
 	 * Log a string to stdout
