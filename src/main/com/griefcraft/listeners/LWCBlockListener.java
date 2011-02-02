@@ -420,7 +420,7 @@ public class LWCBlockListener extends BlockListener {
 		Block block = event.getBlock();
 
 		List<Block> protectionSet = lwc.getProtectionSet(block.getWorld(), block.getX(), block.getY(), block.getZ());
-		// boolean hasAccess = true;
+		boolean hasAccess = true;
 		boolean canAdmin = true;
 		Protection protection = null;
 
@@ -435,7 +435,7 @@ public class LWCBlockListener extends BlockListener {
 				continue;
 			}
 
-			// hasAccess = lwc.canAccessChest(player, protection);
+			hasAccess = lwc.canAccessChest(player, protection);
 			canAdmin = lwc.canAdminChest(player, protection);
 		}
 
@@ -448,6 +448,10 @@ public class LWCBlockListener extends BlockListener {
 			} else {
 				event.setCancelled(true);
 			}
+		}
+		
+		if(!hasAccess) {
+			event.setCancelled(true);
 		}
 	}
 
