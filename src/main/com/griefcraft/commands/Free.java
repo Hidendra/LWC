@@ -34,7 +34,7 @@ public class Free implements ICommand {
 	@Override
 	public void execute(LWC lwc, Player player, String[] args) {
 		if (args.length < 2) {
-			lwc.sendSimpleUsage(player, "/lwc -r <chest|furnace|modes>");
+			lwc.sendSimpleUsage(player, "/lwc -r <protection|modes>");
 			return;
 		}
 
