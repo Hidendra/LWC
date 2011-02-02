@@ -6,11 +6,15 @@ import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 
 import org.bukkit.Server;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.entity.EntityListener;
+import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
@@ -18,7 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.griefcraft.commands.Admin;
 import com.griefcraft.commands.Create;
-import com.griefcraft.commands.Free;
+import com.griefcraft.commands.Remove;
 import com.griefcraft.commands.ICommand;
 import com.griefcraft.commands.Info;
 import com.griefcraft.commands.Modes;
@@ -28,9 +32,12 @@ import com.griefcraft.listeners.LWCBlockListener;
 import com.griefcraft.listeners.LWCEntityListener;
 import com.griefcraft.listeners.LWCPlayerListener;
 import com.griefcraft.logging.Logger;
+import com.griefcraft.util.Colors;
 import com.griefcraft.util.Config;
 import com.griefcraft.util.ConfigValues;
+import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.Updater;
+import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class LWCPlugin extends JavaPlugin {
 
@@ -98,6 +105,74 @@ public class LWCPlugin extends JavaPlugin {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
+		String commandName = command.getName().toLowerCase();
+
+		/*
+		 * The only command the console could use is -admin ??, make it compatible sometime
+		 */
+		if(!(sender instanceof Player)) {
+			return false;
+		}
+		
+		Player player = (Player) sender;
+		String argString = StringUtils.join(args, 0);
+
+		/*
+		 * Aliases
+		 */
+		if (commandName.equals("cpublic")) {
+			lwc.getCommand(Create.class).execute(lwc, player, "-create public".split(" "));
+			return true;
+		} else if (commandName.equals("cpassword")) {
+			lwc.getCommand(Create.class).execute(lwc, player, ("-create password " + argString).split(" "));
+			return true;
+		} else if (commandName.equals("cprivate")) {
+			lwc.getCommand(Create.class).execute(lwc, player, ("-create private " + argString).split(" "));
+			return true;
+		} else if (commandName.equals("cinfo")) {
+			lwc.getCommand(Info.class).execute(lwc, player, "-info".split(" "));
+			return true;
+		} else if (commandName.equals("cunlock")) {
+			lwc.getCommand(Unlock.class).execute(lwc, player, ("-unlock " + argString).split(" "));
+			return true;
+		} else if (commandName.equals("cremove")) {
+			lwc.getCommand(Remove.class).execute(lwc, player, "-remove protection".split(" "));
+			return true;
+		}
+
+		// TODO: check if they can use the command ??
+		/*
+		 * if (!player.canUseCommand(split[0])) { return; }
+		 */
+
+		if (!"lwc".equalsIgnoreCase(commandName)) {
+			return true;
+		}
+
+		if (lwc.getPermissions() != null && !Permissions.Security.permission(player, "lwc.protect")) {
+			player.sendMessage(Colors.Red + "You do not have permission to do that");
+			return true;
+		}
+
+		if (args.length == 0) {
+			lwc.sendFullHelp(player);
+			return true;
+		}
+
+		for (ICommand cmd : lwc.getCommands()) {
+			if (!cmd.validate(lwc, player, args)) {
+				continue;
+			}
+
+			cmd.execute(lwc, player, args);
+			return true;
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -233,7 +308,6 @@ public class LWCPlugin extends JavaPlugin {
 	 */
 	private void registerEvents() {
 		/* Player events */
-		registerEvent(playerListener, Type.PLAYER_COMMAND);
 		registerEvent(playerListener, Type.PLAYER_QUIT, Priority.Monitor);
 
 		/* Entity events */
@@ -250,7 +324,7 @@ public class LWCPlugin extends JavaPlugin {
 	private void registerCommands() {
 		registerCommand(Admin.class);
 		registerCommand(Create.class);
-		registerCommand(Free.class);
+		registerCommand(Remove.class);
 		registerCommand(Info.class);
 		registerCommand(Modes.class);
 		registerCommand(Modify.class);

@@ -24,7 +24,7 @@ import org.bukkit.entity.Player;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.util.Colors;
 
-public class Free implements ICommand {
+public class Remove implements ICommand {
 
 	@Override
 	public String getName() {
