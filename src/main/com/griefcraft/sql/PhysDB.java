@@ -210,13 +210,9 @@ public class PhysDB extends Database {
 			statement.close();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
-			/*
-			 * This means we need to commit the update!
-			 */
-
-			log("Outdated database!");
-			log("UPGRADING FROM 1.00 TO 1.10");
-			log("ALTERING TABLE `protections` AND FILLING WITH DEFAULT DATA");
+			dev("Outdated database!");
+			dev("UPGRADING FROM 1.00 TO 1.10");
+			dev("ALTERING TABLE `protections` AND FILLING WITH DEFAULT DATA");
 
 			try {
 				final Statement statement = connection.createStatement();
@@ -413,7 +409,7 @@ public class PhysDB extends Database {
 			statement.executeQuery("SELECT timestamp FROM jobs");
 			statement.close();
 		} catch (SQLException e) {
-			log("Fixing jobs table");
+			dev("Fixing jobs table");
 
 			try {
 				Statement statement = connection.createStatement();
@@ -433,7 +429,7 @@ public class PhysDB extends Database {
 			statement.executeQuery("SELECT * from players");
 			statement.close();
 		} catch (SQLException e) {
-			log("Fixing players table");
+			dev("Fixing players table");
 
 			try {
 				Statement statement = connection.createStatement();
@@ -448,7 +444,7 @@ public class PhysDB extends Database {
 			statement.executeQuery("SELECT mcusername from players");
 			statement.close();
 		} catch (SQLException e) {
-			log("Fixing players table");
+			dev("Fixing players table");
 
 			try {
 				Statement statement = connection.createStatement();
@@ -968,10 +964,10 @@ public class PhysDB extends Database {
 			statement.close();
 			Performance.addPhysDBQuery();
 		} catch (SQLException e) {
-			log("Outdated database!");
-			log("UPGRADING FROM 1.30 TO 1.40");
+			dev("Outdated database!");
+			dev("UPGRADING FROM 1.30 TO 1.40");
 
-			log("Renaming table `chests` to `protections`");
+			dev("Renaming table `chests` to `protections`");
 
 			try {
 				Statement statement = connection.createStatement();
