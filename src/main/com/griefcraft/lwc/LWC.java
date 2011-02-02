@@ -736,6 +736,12 @@ public class LWC {
 				case 61:
 				case 62:
 					return entities;
+				
+				/*
+				 * Dispensers
+				 */
+				case 23:
+					return entities;
 
 				/*
 				 * Sign
