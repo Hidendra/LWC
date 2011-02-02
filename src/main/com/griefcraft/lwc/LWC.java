@@ -44,7 +44,7 @@ public class LWC {
 	 * Logging instance
 	 */
 	private Logger logger = Logger.getLogger("LWC");
-	
+
 	/**
 	 * Development logging
 	 */
@@ -95,7 +95,7 @@ public class LWC {
 			devLogger.info(str);
 		}
 	}
-	
+
 	/**
 	 * @return the inventory cache
 	 */
@@ -662,17 +662,17 @@ public class LWC {
 		 * First check the block they clicked
 		 */
 		entities = _validateBlock(entities, baseBlock);
-		
+
 		/*
 		 * First check if it's a door
 		 */
 		if(baseType == Material.WOODEN_DOOR || baseType == Material.IRON_DOOR_BLOCK) {
 			entities = _validateBlock(entities, world.getBlockAt(x, y + 1, z));
 			entities = _validateBlock(entities, world.getBlockAt(x, y - 1, z));
-			
+
 			return entities;
 		}
-		
+
 		int dev = -1;
 		boolean isXDir = true;
 
@@ -729,7 +729,21 @@ public class LWC {
 				Block other = entities.get(0);
 
 				switch(other.getTypeId()) {
-				
+
+				/*
+				 * Furnace
+				 */
+				case 61:
+				case 62:
+					return entities;
+
+				/*
+				 * Sign
+				 */
+				case 63:
+				case 68:
+					return entities;
+
 				/*
 				 * Chest
 				 */
@@ -737,9 +751,9 @@ public class LWC {
 					if (other.getType() != Material.CHEST) {
 						return entities;
 					}
-					
+
 					break;
-					
+
 				/*
 				 * Wooden door
 				 */
@@ -747,9 +761,9 @@ public class LWC {
 					if (other.getType() != Material.WOODEN_DOOR) {
 						return entities;
 					}
-					
+
 					break;
-					
+
 				/*
 				 * Iron door
 				 */
@@ -757,9 +771,9 @@ public class LWC {
 					if (other.getType() != Material.IRON_DOOR_BLOCK) {
 						return entities;
 					}
-					
+
 					break;
-				
+
 				}
 
 			}
