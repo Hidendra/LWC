@@ -350,6 +350,22 @@ public class LWC {
 	public List<ICommand> getCommands() {
 		return commands;
 	}
+	
+	/**
+	 * Get a command represented by a specific class
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public ICommand getCommand(Class<?> clazz) {
+		for(ICommand command : commands) {
+			if(command.getClass() == clazz) {
+				return command;
+			}
+		}
+		
+		return null;
+	}
 
 	/**
 	 * @return memory database object
