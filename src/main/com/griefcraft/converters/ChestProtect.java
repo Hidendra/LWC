@@ -27,7 +27,7 @@ import java.net.ConnectException;
 import org.bukkit.entity.Player;
 
 import com.griefcraft.model.ProtectionTypes;
-import com.griefcraft.model.RightTypes;
+import com.griefcraft.model.Rights;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Config;
 
@@ -120,9 +120,9 @@ public class ChestProtect implements Runnable {
 				type = ProtectionTypes.PUBLIC;
 			} else if (type > 1) {
 				if (type == 3) {
-					rightsType = RightTypes.GROUP;
+					rightsType = Rights.GROUP;
 				} else if (type == 4) {
-					rightsType = RightTypes.PLAYER;
+					rightsType = Rights.PLAYER;
 				}
 
 				type = ProtectionTypes.PRIVATE;

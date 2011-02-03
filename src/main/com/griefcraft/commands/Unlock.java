@@ -46,7 +46,7 @@ public class Unlock implements ICommand {
 		password = encrypt(password);
 
 		if (!lwc.getMemoryDatabase().hasPendingUnlock(player.getName())) {
-			player.sendMessage(Colors.Red + "Nothing selected. Open a locked Chest/Furnace first.");
+			player.sendMessage(Colors.Red + "Nothing selected. Open a locked protection first.");
 			return;
 		}
 

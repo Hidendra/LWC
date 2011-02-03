@@ -15,33 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.griefcraft.logging;
+package com.griefcraft.model;
 
-import com.griefcraft.lwc.LWCInfo;
+public class Rights {
 
-public class Logger {
-
-	public void info(String str) {
-		System.out.println(String.format("%s\t[%s]\t%s", name, LWCInfo.FULL_VERSION, str));
-	}
-
-	/**
-	 * Create a new logger
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public static Logger getLogger(String name) {
-		return new Logger(name);
-	}
-
-	/**
-	 * Logger name
-	 */
-	private String name;
-
-	private Logger(String name) {
-		this.name = name;
-	}
+	public static final int GROUP = 0;
+	public static final int PLAYER = 1;
 
 }

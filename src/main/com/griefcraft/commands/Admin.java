@@ -26,6 +26,7 @@ import com.griefcraft.converters.ChastityChest;
 import com.griefcraft.converters.ChestProtect;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
+import com.griefcraft.model.Limit;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.Performance;
 import com.griefcraft.util.Updater;
@@ -115,17 +116,21 @@ public class Admin implements ICommand {
 		else if (action.equals("cleanup")) {
 
 		}
-
-		/*
-		 * else if(action.equals("update")) { boolean updated = lwc.getUpdater().checkDist();
-		 * 
-		 * if(updated) { etc.getLoader().reloadPlugin("LWC"); player.sendMessage(Colors.Green + "Updated LWC successfully to version: " + lwc.getUpdater().getLatestVersion()); }
-		 * else { player.sendMessage(Colors.Red + "No update found."); } }
-		 */
+		
+		else if(action.equals("update")) {
+			Updater updater = lwc.getPlugin().getUpdater();
+			
+			if(updater.checkDist()) {
+				player.sendMessage(Colors.Green + "Updated LWC successfully to version: " + updater.getLatestPluginVersion());
+				player.sendMessage(Colors.Green + "Please reload LWC to complete the update");
+			} else {
+				player.sendMessage(Colors.Red + "No update found.");
+			}
+		}
 
 		else if (action.equalsIgnoreCase("limits")) {
 			if (args.length < 3) {
-				lwc.sendSimpleUsage(player, "/lwc -admin limits <count> <Group/User>");
+				lwc.sendSimpleUsage(player, "/lwc -admin limits <count> <Groups/Users>");
 				return;
 			}
 
@@ -133,17 +138,26 @@ public class Admin implements ICommand {
 
 			for (int i = 3; i < args.length; i++) {
 				String entity = args[i];
-				final boolean isGroup = entity.startsWith("g:");
+				int type = Limit.PLAYER;
+				boolean isGroup = entity.startsWith("g:");
 
 				if (isGroup) {
 					entity = entity.substring(2);
+					type = Limit.GROUP;
 				}
-
-				if (limit != -2) {
-					lwc.getPhysicalDatabase().registerProtectionLimit(isGroup ? 0 : 1, limit, entity);
-					player.sendMessage(Colors.Green + "Registered limit of " + Colors.Gold + limit + Colors.Green + " chests to the " + (isGroup ? "group" : "user") + " " + Colors.Gold + entity);
+				
+				if(entity.equalsIgnoreCase("-global")) {
+					type = Limit.GLOBAL;
+				}
+				
+				if (type == Limit.GLOBAL) {
+					lwc.getPhysicalDatabase().registerProtectionLimit(type, limit, "");
+					player.sendMessage(Colors.Green + "Registered global limit of " + Colors.Gold + limit + Colors.Green + " protections");
+				} else if (limit != -2) {
+					lwc.getPhysicalDatabase().registerProtectionLimit(type, limit, entity);
+					player.sendMessage(Colors.Green + "Registered limit of " + Colors.Gold + limit + Colors.Green + " protections to the " + (isGroup ? "group" : "user") + " " + Colors.Gold + entity);
 				} else {
-					lwc.getPhysicalDatabase().unregisterProtectionLimit(isGroup ? 0 : 1, entity);
+					lwc.getPhysicalDatabase().unregisterProtectionLimit(type, entity);
 					player.sendMessage(Colors.Green + "Unregistered limit for " + Colors.Gold + entity);
 				}
 			}
@@ -174,8 +188,9 @@ public class Admin implements ICommand {
 
 			if (toClear.equals("protections")) {
 				lwc.getPhysicalDatabase().unregisterProtectionEntities();
+				lwc.getPhysicalDatabase().unregisterProtectionRights();
 
-				player.sendMessage(Colors.Green + "Removed all protected chests and furnaces");
+				player.sendMessage(Colors.Green + "Removed all protections + rights");
 			} else if (toClear.equals("rights")) {
 				lwc.getPhysicalDatabase().unregisterProtectionRights();
 
@@ -190,14 +205,17 @@ public class Admin implements ICommand {
 
 	public void sendHelp(Player player) {
 		player.sendMessage(" ");
-		player.sendMessage(Colors.Green + "LWC Administration");
+		player.sendMessage(Colors.Red + "LWC Administration");
 		player.sendMessage(" ");
-		player.sendMessage("/lwc admin report - " + Colors.Gold + "Generate a Performance report");
-		player.sendMessage("/lwc admin update - " + Colors.Gold + "Check for an update (if one, update)");
-		player.sendMessage("/lwc admin convert " + Colors.Gold + "<chestprotect> - Convert X to LWC");
+		player.sendMessage("/lwc admin limits " + Colors.LightBlue + "<count> <Users/Groups/" + Colors.Yellow + "-global" + Colors.LightBlue + ">");
+		player.sendMessage(Colors.Yellow + "-global " + Colors.Blue + "is optional and will be applied to anyone without a limit");
 		player.sendMessage(" ");
-		player.sendMessage("/lwc admin clear - " + Colors.Red + "PERMANENTLY removes data");
-		player.sendMessage("/lwc admin clear " + Colors.Gold + "<protections|rights|limits>");
+		player.sendMessage("/lwc admin version " + Colors.Blue + "View the current/latest version of LWC");
+		player.sendMessage("/lwc admin report  " + Colors.Blue + "Generate a Performance report");
+		player.sendMessage("/lwc admin update  " + Colors.Blue + "Update if outdated");
+		player.sendMessage("/lwc admin convert " + Colors.LightBlue + "<chestprotect|chastity> " + Colors.Blue + "- Convert X to LWC");
+		player.sendMessage(" ");
+		player.sendMessage("/lwc admin clear  " + Colors.LightBlue + "<protections|rights|limits> " + Colors.Blue + "- " + Colors.Red + "IRREVERSIBLE FUN");
 	}
 
 	@Override

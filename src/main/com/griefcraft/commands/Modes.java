@@ -47,7 +47,7 @@ public class Modes implements ICommand {
 			}
 
 			lwc.getMemoryDatabase().registerMode(player.getName(), mode);
-			player.sendMessage(Colors.Green + "Persistance mode activated");
+			player.sendMessage(Colors.Green + "Your commands will now persist");
 			player.sendMessage(Colors.Green + "Type " + Colors.Gold + "/lwc -r modes" + Colors.Green + " to undo (or logout)");
 		}
 
