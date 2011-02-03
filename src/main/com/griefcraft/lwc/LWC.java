@@ -19,13 +19,14 @@ import com.griefcraft.logging.Logger;
 import com.griefcraft.model.InventoryCache;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
-import com.griefcraft.model.RightTypes;
+import com.griefcraft.model.Rights;
 import com.griefcraft.sql.MemDB;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.Performance;
 import com.griefcraft.util.StringUtils;
+import com.nijiko.permissions.Control;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.LocalPlayer;
@@ -350,7 +351,7 @@ public class LWC {
 	public List<ICommand> getCommands() {
 		return commands;
 	}
-	
+
 	/**
 	 * Get a command represented by a specific class
 	 * 
@@ -363,7 +364,7 @@ public class LWC {
 				return command;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -584,59 +585,51 @@ public class LWC {
 	}
 
 	/**
-	 * Check for chest limits on a given player and return true if they are limited
+	 * Check for protection limits on a given player and return true if they are limited
+	 * We also assume they are not an LWC admin
 	 * 
-	 * @param player
-	 *            the player to check
+	 * @param player the player to check
 	 * @return true if they are limited
 	 */
-	public boolean enforceChestLimits(Player player) {
-		final int userLimit = physicalDatabase.getUserLimit(player.getName());
+	public boolean enforceProtectionLimits(Player player) {
+		int limit;
 
 		/*
-		 * Sort of redundant, but use the least amount of queries we can!
+		 * Apply player limits
 		 */
-		if (userLimit != -1) {
-			final int chests = physicalDatabase.getChestCount(player.getName());
+		limit = physicalDatabase.getPlayerLimit(player.getName());
+		
+		/*
+		 * Apply group limits.. can't be one line however
+		 */
+		if(limit != -1) {
+			Control control = (Control) Permissions.Security;
+			String[] groups = control.getGroups(player.getName());
 
-			if (chests >= userLimit) {
-				player.sendMessage(Colors.Red + "You have exceeded the amount of chests you can lock!");
+			for (String group : groups) {
+				if(limit >= 0) {
+					break;
+				}
+				
+				limit = physicalDatabase.getGroupLimit(group);
+			}
+		}
+		
+		/*
+		 * Apply global limits if need be
+		 */
+		limit = limit != -1 ? limit : physicalDatabase.getGlobalLimit();
+
+		/*
+		 * Alert the user if they're above or at the limit
+		 */
+		if(limit != -1) {
+			int protections = physicalDatabase.getProtectionCount(player.getName());
+			
+			if(protections >= limit) {
+				player.sendMessage(Colors.Red + "You have exceeded your allowed amount of protections!");
 				return true;
 			}
-		} else {
-			// no groups yet
-			// TODO: fix when applicable
-			/*
-			 * 
-			 * List<String> inheritedGroups = new ArrayList<String>(); String groupName = player.getGroups().length > 0 ? player.getGroups()[0] :
-			 * etc.getInstance().getDefaultGroup().Name;
-			 * 
-			 * inheritedGroups.add(groupName);
-			 * 
-			 * while (true) { Group group = etc.getDataSource().getGroup(groupName);
-			 * 
-			 * if (group == null) { break; }
-			 * 
-			 * String[] inherited = group.InheritedGroups;
-			 * 
-			 * if (inherited == null || inherited.length == 0) { break; }
-			 * 
-			 * groupName = inherited[0];
-			 * 
-			 * for (String _groupName : inherited) { _groupName = _groupName.trim();
-			 * 
-			 * if (_groupName.isEmpty()) { continue; }
-			 * 
-			 * inheritedGroups.add(_groupName); } }
-			 * 
-			 * for (String group : inheritedGroups) { final int groupLimit = physicalDatabase.getGroupLimit(group);
-			 * 
-			 * if (groupLimit != -1) { final int chests = physicalDatabase.getChestCount(player.getName());
-			 * 
-			 * if (chests >= groupLimit) { player.sendMessage(Colors.Red + "You have exceeded the amount of chests you can lock!"); return true; }
-			 * 
-			 * return false; } }
-			 */
 		}
 
 		return false;
@@ -752,23 +745,23 @@ public class LWC {
 				case 61:
 				case 62:
 					return entities;
-				
-				/*
-				 * Dispensers
-				 */
+
+					/*
+					 * Dispensers
+					 */
 				case 23:
 					return entities;
 
-				/*
-				 * Sign
-				 */
+					/*
+					 * Sign
+					 */
 				case 63:
 				case 68:
 					return entities;
 
-				/*
-				 * Chest
-				 */
+					/*
+					 * Chest
+					 */
 				case 54:
 					if (other.getType() != Material.CHEST) {
 						return entities;
@@ -776,9 +769,9 @@ public class LWC {
 
 					break;
 
-				/*
-				 * Wooden door
-				 */
+					/*
+					 * Wooden door
+					 */
 				case 64:
 					if (other.getType() != Material.WOODEN_DOOR) {
 						return entities;
@@ -786,9 +779,9 @@ public class LWC {
 
 					break;
 
-				/*
-				 * Iron door
-				 */
+					/*
+					 * Iron door
+					 */
 				case 71:
 					if (other.getType() != Material.IRON_DOOR_BLOCK) {
 						return entities;
@@ -836,18 +829,18 @@ public class LWC {
 		player.sendMessage(" ");
 		player.sendMessage(Colors.Green + "Welcome to LWC, a Protection mod");
 		player.sendMessage(" ");
-		player.sendMessage(Colors.Blue + "/lwc -c - View creation help");
-		player.sendMessage(Colors.Blue + "/lwc -c <public|private|password>");
-		player.sendMessage(Colors.Blue + "/lwc -m - Modify an existing private protection");
-		player.sendMessage(Colors.Blue + "/lwc -u - Unlock a password protected entity");
-		player.sendMessage(Colors.Blue + "/lwc -i  - View information on a protected Chest or Furnace");
-		player.sendMessage(Colors.Blue + "/lwc -r <chest|furnace|modes>");
+		player.sendMessage("/lwc -c  " + Colors.Blue + "View creation help");
+		player.sendMessage("/lwc -c " + Colors.LightBlue + "<public|private|password>");
+		player.sendMessage("/lwc -m  " + Colors.Blue + "Modify an existing private protection");
+		player.sendMessage("/lwc -u  " + Colors.Blue + "Unlock a passworded protection");
+		player.sendMessage("/lwc -i   " + Colors.Blue + "View information on a protected Chest or Furnace");
+		player.sendMessage("/lwc -r " + Colors.LightBlue + "<protection|modes>");
 
-		player.sendMessage(Colors.Blue + "/lwc -p <persist|droptransfer>"); // TODO: dynamic
+		player.sendMessage("/lwc -p " + Colors.LightBlue + "<persist|" + Colors.Black + "droptransfer" + Colors.LightBlue + ">"); // TODO: dynamic
 
 		if (isAdmin(player)) {
 			player.sendMessage("");
-			player.sendMessage(Colors.Red + "/lwc admin - Admin functions");
+			player.sendMessage(Colors.Red + "/lwc admin - Administration");
 		}
 	}
 
@@ -889,7 +882,7 @@ public class LWC {
 			return memoryDatabase.hasAccess(player.getName(), chest);
 
 		case ProtectionTypes.PRIVATE:
-			return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) >= 0;
+			return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(Rights.PLAYER, chest.getID(), player.getName()) >= 0;
 			// return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) >= 0 ||
 			// physicalDatabase.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) >= 0;
 
@@ -941,7 +934,7 @@ public class LWC {
 			return player.getName().equalsIgnoreCase(chest.getOwner()) && memoryDatabase.hasAccess(player.getName(), chest);
 
 		case ProtectionTypes.PRIVATE:
-			return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) == 1;
+			return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(Rights.PLAYER, chest.getID(), player.getName()) == 1;
 			// return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) == 1 ||
 			// physicalDatabase.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) == 1;
 

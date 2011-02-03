@@ -82,10 +82,9 @@ public class Create implements ICommand {
 		player.sendMessage(Colors.Blue + "Anyone can use a Public protection, but no one can protect it");
 		player.sendMessage(" ");
 
-		player.sendMessage("/lwc -c password <password> " + Colors.Gold + "Create a password-protected");
-		player.sendMessage(Colors.Gold + "block");
+		player.sendMessage("/lwc -c password <password> " + Colors.Gold + "Create a passworded protection");
 		player.sendMessage(Colors.Blue + "Each time you login you need to enter the password to access");
-		player.sendMessage(Colors.Blue + "the chest (if someone knows the pass, they can use it too!)");
+		player.sendMessage(Colors.Blue + "it (if someone knows the pass, they can use it too!)");
 		player.sendMessage(" ");
 
 		player.sendMessage("/lwc -c private " + Colors.Gold + "Create a private protection");

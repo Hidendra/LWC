@@ -33,7 +33,7 @@ import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Action;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
-import com.griefcraft.model.RightTypes;
+import com.griefcraft.model.Rights;
 import com.griefcraft.util.Colors;
 
 public class LWCBlockListener extends BlockListener {
@@ -260,7 +260,7 @@ public class LWCBlockListener extends BlockListener {
 					for (String userEntity : entities) {
 						boolean remove = false;
 						boolean isAdmin = false;
-						int chestType = RightTypes.PLAYER;
+						int chestType = Rights.PLAYER;
 
 						if (userEntity.startsWith("-")) {
 							remove = true;
@@ -273,7 +273,7 @@ public class LWCBlockListener extends BlockListener {
 						}
 
 						if (userEntity.toLowerCase().startsWith("g:")) {
-							chestType = RightTypes.GROUP;
+							chestType = Rights.GROUP;
 							userEntity = userEntity.substring(2);
 						}
 
@@ -282,10 +282,10 @@ public class LWCBlockListener extends BlockListener {
 						if (!remove) {
 							lwc.getPhysicalDatabase().unregisterProtectionRights(chestID, userEntity);
 							lwc.getPhysicalDatabase().registerProtectionRights(chestID, userEntity, isAdmin ? 1 : 0, chestType);
-							player.sendMessage(Colors.Green + "Registered rights for " + Colors.Gold + userEntity + Colors.Green + " " + (isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "") + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
+							player.sendMessage(Colors.Green + "Registered rights for " + Colors.Gold + userEntity + Colors.Green + " " + (isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "") + " [" + (chestType == Rights.PLAYER ? "Player" : "Group") + "]");
 						} else {
 							lwc.getPhysicalDatabase().unregisterProtectionRights(chestID, userEntity);
-							player.sendMessage(Colors.Green + "Removed rights for " + Colors.Gold + userEntity + Colors.Green + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
+							player.sendMessage(Colors.Green + "Removed rights for " + Colors.Gold + userEntity + Colors.Green + " [" + (chestType == Rights.PLAYER ? "Player" : "Group") + "]");
 						}
 					}
 
@@ -350,10 +350,11 @@ public class LWCBlockListener extends BlockListener {
 			 * Enforce anything preventing us from creating a protection
 			 */
 			if (!lwc.isAdmin(player)) {
-				if (lwc.enforceChestLimits(player) || lwc.enforceWorldGuard(player, block)) {
+				if (lwc.enforceProtectionLimits(player) || lwc.enforceWorldGuard(player, block)) {
 					if (lwc.notInPersistentMode(player.getName())) {
 						lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 					}
+					
 					return;
 				}
 			}
@@ -386,7 +387,7 @@ public class LWCBlockListener extends BlockListener {
 
 				for (String userEntity : entities) {
 					boolean isAdmin = false;
-					int chestType = RightTypes.PLAYER;
+					int chestType = Rights.PLAYER;
 
 					if (userEntity.startsWith("@")) {
 						isAdmin = true;
@@ -394,12 +395,12 @@ public class LWCBlockListener extends BlockListener {
 					}
 
 					if (userEntity.toLowerCase().startsWith("g:")) {
-						chestType = RightTypes.GROUP;
+						chestType = Rights.GROUP;
 						userEntity = userEntity.substring(2);
 					}
 
 					lwc.getPhysicalDatabase().registerProtectionRights(lwc.getPhysicalDatabase().loadProtectedEntity(block.getX(), block.getY(), block.getZ()).getID(), userEntity, isAdmin ? 1 : 0, chestType);
-					player.sendMessage(Colors.Green + "Registered rights for " + Colors.Gold + userEntity + ": " + (isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "") + " [" + (chestType == RightTypes.PLAYER ? "Player" : "Group") + "]");
+					player.sendMessage(Colors.Green + "Registered rights for " + Colors.Gold + userEntity + ": " + (isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "") + " [" + (chestType == Rights.PLAYER ? "Player" : "Group") + "]");
 				}
 			}
 

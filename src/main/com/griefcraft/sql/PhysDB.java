@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.griefcraft.model.Job;
+import com.griefcraft.model.Limit;
 import com.griefcraft.model.Protection;
 import com.griefcraft.util.Performance;
 
@@ -261,7 +262,7 @@ public class PhysDB extends Database {
 	 *            the player to check
 	 * @return the amount of chests they have locked
 	 */
-	public int getChestCount(String user) {
+	public int getProtectionCount(String user) {
 		int amount = 0;
 
 		try {
@@ -291,7 +292,14 @@ public class PhysDB extends Database {
 	 * @return the amount of chests they are limited to. -1 = infinite
 	 */
 	public int getGroupLimit(String group) {
-		return getLimit(0, group);
+		return getLimit(Limit.GROUP, group);
+	}
+	
+	/**
+	 * @return the Global limit for anyone without explicit limits
+	 */
+	public int getGlobalLimit() {
+		return getLimit(Limit.GLOBAL, "");
 	}
 
 	/**
@@ -313,10 +321,10 @@ public class PhysDB extends Database {
 
 			final ResultSet set = statement.executeQuery();
 
-			while (set.next()) {
+			if(set.next()) {
 				limit = set.getInt("amount");
 			}
-
+			
 			set.close();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
@@ -366,20 +374,20 @@ public class PhysDB extends Database {
 	}
 
 	/**
-	 * Retrieve a user's chest limit
+	 * Retrieve a player's chest limit
 	 * 
 	 * @param user
 	 *            the user to check
 	 * @return the amount of chests they are limited to. -1 = infinite
 	 */
-	public int getUserLimit(String user) {
-		return getLimit(1, user);
+	public int getPlayerLimit(String user) {
+		return getLimit(Limit.PLAYER, user);
 	}
 
 	/**
 	 * @return the number of limits
 	 */
-	public int limitCount() {
+	public int getLimitCount() {
 		int count = 0;
 
 		try {
