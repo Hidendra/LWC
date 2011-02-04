@@ -120,7 +120,7 @@ public class PhysDB extends Database {
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Load the whole job queue
 	 * 
@@ -837,6 +837,44 @@ public class PhysDB extends Database {
 		}
 
 		unregisterProtectionRights(chestID);
+	}
+	
+	/**
+	 * Remove all protections made by a player
+	 * 
+	 * @param player
+	 */
+	public void removeProtectionByPlayer(String player) {
+		try {
+			PreparedStatement statement = prepare("DELETE FROM `protections` WHERE `owner` = ?");
+			
+			statement.setString(1, player);
+			
+			statement.executeUpdate();
+			Performance.addPhysDBQuery();
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		removeProtectionRightsByPlayer(player);
+	}
+	
+	/**
+	 * Remove all protection rights for a player
+	 * 
+	 * @param player
+	 */
+	public void removeProtectionRightsByPlayer(String player) {
+		try {
+			PreparedStatement statement = prepare("DELETE FROM `rights` WHERE `entity` = ?");
+			
+			statement.setString(1, player);
+			
+			statement.executeUpdate();
+			Performance.addPhysDBQuery();
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
