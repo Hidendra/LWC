@@ -29,6 +29,7 @@ import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.model.Limit;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.Performance;
+import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.Updater;
 
 public class Admin implements ICommand {
@@ -56,6 +57,20 @@ public class Admin implements ICommand {
 			}
 
 			Performance.clear();
+		}
+		
+		else if(action.equals("purge")) {
+			if(args.length < 3) {
+				lwc.sendSimpleUsage(player, "/lwc -a purge <Players>");
+				return;
+			}
+			
+			String players = StringUtils.join(args, 2);
+			
+			for(String toRemove : players.split(" ")) {
+				lwc.getPhysicalDatabase().removeProtectionByPlayer(toRemove);
+				player.sendMessage(Colors.Green + "Removed all protections created by " + Colors.Blue + toRemove);
+			}
 		}
 
 		else if (action.equals("version")) {
@@ -207,8 +222,9 @@ public class Admin implements ICommand {
 		player.sendMessage(" ");
 		player.sendMessage(Colors.Red + "LWC Administration");
 		player.sendMessage(" ");
-		player.sendMessage("/lwc admin limits " + Colors.LightBlue + "<count> <Users/Groups/" + Colors.Yellow + "-global" + Colors.LightBlue + ">");
+		player.sendMessage("/lwc admin limits " + Colors.LightBlue + "<count> <Players/Groups/" + Colors.Yellow + "-global" + Colors.LightBlue + ">");
 		player.sendMessage(Colors.Yellow + "-global " + Colors.Blue + "is optional and will be applied to anyone without a limit");
+		player.sendMessage("/lwc admin purge " + Colors.LightBlue + "<Players> " + Colors.Blue + "Remove all protections by a player");
 		player.sendMessage(" ");
 		player.sendMessage("/lwc admin version " + Colors.Blue + "View the current/latest version of LWC");
 		player.sendMessage("/lwc admin report  " + Colors.Blue + "Generate a Performance report");
