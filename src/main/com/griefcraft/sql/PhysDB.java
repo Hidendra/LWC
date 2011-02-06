@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Job;
 import com.griefcraft.model.Limit;
 import com.griefcraft.model.Protection;
@@ -253,6 +254,83 @@ public class PhysDB extends Database {
 		}
 
 		return count;
+	}
+	
+	/**
+	 * Fetch an object from the sql database
+	 * 
+	 * @param sql
+	 * @param column
+	 * @return
+	 */
+	public Object fetch(String sql, String column, Object... toBind) {
+		try {
+			int index = 1;
+			PreparedStatement statement = prepare(sql);
+			
+			for(Object bind : toBind) {
+				statement.setObject(index, bind);
+				index ++;
+			}
+			
+			ResultSet set = statement.executeQuery();
+			
+			if(set.next()) {
+				return set.getObject(column);
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Count the rights
+	 * 
+	 * @param protectionId
+	 * @return
+	 */
+	public int countRights(int protectionId) {
+		return (Integer) fetch("SELECT COUNT(*) AS COUNT FROM rights WHERE chest=?", "count", protectionId);
+	}
+	
+	/**
+	 * Get the rights for a protection id ranging from start-max
+	 * 
+	 * @param protectionId
+	 * @param start
+	 * @param max
+	 * @return
+	 */
+	public List<AccessRight> getAccessRights(int protectionId, int start, int max) {
+		List<AccessRight> accessRights = new ArrayList<AccessRight>();
+		
+		try {
+			PreparedStatement statement = prepare("SELECT * FROM rights WHERE chest = ? ORDER BY rights DESC LIMIT ?,?");
+			statement.setInt(1, protectionId);
+			statement.setInt(2, start);
+			statement.setInt(3, max);
+			
+			ResultSet set = statement.executeQuery();
+			
+			while(set.next()) {
+				AccessRight accessRight = new AccessRight();
+				
+				accessRight.setId(set.getInt("id"));
+				accessRight.setProtectionId(protectionId);
+				accessRight.setEntity(set.getString("entity"));
+				accessRight.setRights(set.getInt("rights"));
+				accessRight.setType(set.getInt("type"));
+				
+				accessRights.add(accessRight);
+			}
+			
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return accessRights;
 	}
 
 	/**

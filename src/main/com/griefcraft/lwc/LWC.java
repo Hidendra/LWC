@@ -19,7 +19,7 @@ import com.griefcraft.logging.Logger;
 import com.griefcraft.model.InventoryCache;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
-import com.griefcraft.model.Rights;
+import com.griefcraft.model.AccessRight;
 import com.griefcraft.sql.MemDB;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
@@ -890,7 +890,7 @@ public class LWC {
 			return memoryDatabase.hasAccess(player.getName(), chest);
 
 		case ProtectionTypes.PRIVATE:
-			return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(Rights.PLAYER, chest.getID(), player.getName()) >= 0;
+			return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, chest.getID(), player.getName()) >= 0;
 			// return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) >= 0 ||
 			// physicalDatabase.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) >= 0;
 
@@ -942,7 +942,7 @@ public class LWC {
 			return player.getName().equalsIgnoreCase(chest.getOwner()) && memoryDatabase.hasAccess(player.getName(), chest);
 
 		case ProtectionTypes.PRIVATE:
-			return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(Rights.PLAYER, chest.getID(), player.getName()) == 1;
+			return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, chest.getID(), player.getName()) == 1;
 			// return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) == 1 ||
 			// physicalDatabase.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) == 1;
 

@@ -13,83 +13,95 @@ label.unchecked,
 label.selected,
 label.unselected
 {
-	position:relative;
-	display:block;
-	background-position:8px center;
-	background-repeat:no-repeat;
-	clear:both;
-	cursor:pointer;
+    position:relative;
+    display:block;
+    background-position:8px center;
+    background-repeat:no-repeat;
+    clear:both;
+    cursor:pointer;
 }
 
 .checked
 {
-	background-color: #545454;
-	background-image:url(../images/chk_on.png);
+    background-color: #545454;
+    background-image:url(../images/chk_on.png);
 }
 .unchecked
 {
-	background-color: #545454;
-	background-image: url(../images/chk_off.png);
+    background-color: #545454;
+    background-image: url(../images/chk_off.png);
 }
 .selected
 {
-	background-color: #545454;
-	background-image: url(../images/rdo_on.png);
+    background-color: #545454;
+    background-image: url(../images/rdo_on.png);
 }
 .unselected
 {
-	background-color: #545454;
-	background-image: url(../images/rdo_off.png);
+    background-color: #545454;
+    background-image: url(../images/rdo_off.png);
 }
 .leftcol
 {
-	float: left;
-	clear: left;
-	width: 50%
+    float: left;
+    clear: left;
+    width: 50%
 }
 .rightcol
 {
-	float: left;
-	clear: right;
-	width: 50%
+    float: left;
+    clear: right;
+    width: 50%
 }
 
 #inventory
 {
-	// background-image: url(../images/items/inventory.png);
-	// background-repeat: no-repeat;
-	width: 300px;
+    /* background-image: url(../images/items/inventory.png);
+    background-repeat: no-repeat; */
+    width: 300px;
 }
 
 #inventory .combust
 {
-	height: 50px;
-	float: right;
+    height: 50px;
+    float: right;
 }
 
 #inventory .row
 {
-	clear: both;
-	height: 30px;
+    clear: both;
+    height: 30px;
+}
+
+#inventory .slot
+{
+    margin-left: 4px;
+    margin-top: 5px;
+    float: left;
+    background-image: url(../images/items/slot.png);
+    background-repeat: no-repeat;
+    width: 29px;
+    height: 29px;
+}
+
+/* Used for removing specific items from the chest */
+#inventory .remov
+{
+    margin-left: 4px;
+    margin-top: 5px;
+    float: left;
+    background-image: url(../images/items/slot_red.png);
+    background-repeat: no-repeat;
+    width: 29px;
+    height: 29px;
 }
 
 /* Display the count of the item for the slot */
-#inventory .slot
-{
-	margin-left: 4px;
-	margin-top: 5px;
-	float: left;
-	background-image: url(../images/items/slot.png);
-	background-repeat: no-repeat;
-	width: 29px;
-	height: 29px;
-}
-
 #inventory .slot span
 {
-	position: relative;
-	bottom: 20px;
-	left: 13px;
+    position: relative;
+    bottom: 20px;
+    left: 13px;
     color:#FFFFFF;
     font-weight: bold;
     font-size:10px;
@@ -97,30 +109,33 @@ label.unselected
 
 #inventory .single span
 {
-	left: 19px;
+    left: 19px;
 }
 
 #inventory img
 {
-	background-image: url(../images/items/slot.png);
-	background-repeat: no-repeat;
-	padding-left: 2px;
-	padding-top: 2px;
+    padding-left: 2px;
+    padding-top: 2px;
+}
+
+#inventory a:hover
+{
+    background-color: transparent;
 }
 
 #form #info
 {
-	float: left;
+    float: left;
 }
 
 #form #tools 
 {
-	float: right;
+    float: right;
 }
 
 #form #tools label, #column label
 {
-	width: 125px;
+    width: 125px;
     text-align:center;
     line-height:31px;
     color:#FFFFFF;
@@ -130,30 +145,30 @@ label.unselected
 
 #form #tools button
 {
-	margin-left: 0;
+    margin-left: 0;
 }
 
 #form ul li, #column ul li {
-	list-style: none;
-	padding-top: 5px;
+    list-style: none;
+    padding-top: 5px;
 }
 
 #error  {
-	border:             #999 1px solid;
-	background-color:   #fff;
-	padding:            20px 20px 12px 20px;
+    border:             #999 1px solid;
+    background-color:   #fff;
+    padding:            20px 20px 12px 20px;
 }
 
 #error h1 {
-	font-weight:        normal;
-	font-size:          14px;
-	color:              #990000;
-	margin:             0 0 4px 0;
+    font-weight:        normal;
+    font-size:          14px;
+    color:              #990000;
+    margin:             0 0 4px 0;
 }
 
 #form,#column
 {
-	width: 65%;
+    width: 65%;
     border:solid 2px #b0b0b0;
     background:#eee;
     padding:14px;
@@ -161,7 +176,7 @@ label.unselected
 }
 #column
 {
-	width: 85%;
+    width: 85%;
 }
 #form h1
 {
@@ -198,6 +213,15 @@ label.unselected
     width:140px;
 }
 #form input, input
+{
+    float:left;
+    font-size:12px;
+    padding:4px 2px;
+    border:solid 1px #a8a8a8;
+    width:200px;
+    margin:2px 0 20px 10px;
+}
+#form select, select
 {
     float:left;
     font-size:12px;
@@ -320,19 +344,19 @@ cite
 
 #column1
 {
-	float: left;
-	width: 75%;
+    float: left;
+    width: 75%;
 }
 
 #column2
 {
-	float: left;
-	width: 22%;
+    float: left;
+    width: 22%;
 }
 
 #column2 ul
 {
-	padding-left: 0;
+    padding-left: 0;
 }
 
 #content

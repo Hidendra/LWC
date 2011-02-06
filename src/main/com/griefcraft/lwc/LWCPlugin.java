@@ -22,6 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.griefcraft.commands.Admin;
 import com.griefcraft.commands.Create;
+import com.griefcraft.commands.Owners;
 import com.griefcraft.commands.Remove;
 import com.griefcraft.commands.ICommand;
 import com.griefcraft.commands.Info;
@@ -329,6 +330,7 @@ public class LWCPlugin extends JavaPlugin {
 		registerCommand(Modes.class);
 		registerCommand(Modify.class);
 		registerCommand(Unlock.class);
+		registerCommand(Owners.class);
 	}
 
 	/**

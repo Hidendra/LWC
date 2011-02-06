@@ -24,12 +24,16 @@ import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Dispenser;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import com.griefcraft.logging.Logger;
 import com.griefcraft.model.Job;
 import com.griefcraft.util.ConfigValues;
+import com.griefcraft.util.StringUtils;
 
 public class UpdateThread implements Runnable {
 
@@ -73,6 +77,31 @@ public class UpdateThread implements Runnable {
 		thread = new Thread(this);
 		thread.start();
 	}
+	
+	/**
+	 * Get the two Block objects for a door
+	 * doors[0] = Bottom half of door
+	 * doors[1] = Top half of door
+	 * 
+	 * @param world
+	 * @param block
+	 * @return
+	 */
+	private Block[] getDoors(World world, Block block) {
+		Block[] doors = new Block[2];
+		
+		Block temp;
+		
+		if((temp = block.getFace(BlockFace.UP)) != null && temp.getType() == block.getType()) {
+			doors[0] = block;
+			doors[1] = temp;
+		} else if((temp = block.getFace(BlockFace.DOWN)) != null && temp.getType() == block.getType()) {
+			doors[0] = temp;
+			doors[1] = block;
+		}
+		
+		return doors;
+	}
 
 	/**
 	 * Just keep this seperate
@@ -86,12 +115,22 @@ public class UpdateThread implements Runnable {
 			for (Job job : jobs) {
 				logger.info("Executing job id #" + job.getId());
 
-				switch (job.getType()) {
+				int type = job.getType();
+				
+				switch (type) {
+				/*
+				 * Jobs that start with "x y z". 
+				 * Optional payload can be passed after Z following a space: "x y z extra"
+				 */
+				
 				case Job.REMOVE_BLOCK:
-					/* Expected payload: "x y z" */
+				case Job.OPEN_DOOR:
+				case Job.DISPENSE_DISPENSER:
+				case Job.UPDATE_SIGN:
+					/* Expected initial payload: "x y z" */
 					String[] coordinates = job.getPayload().split(" ");
 
-					if (coordinates.length != 3) {
+					if (coordinates.length < 3) {
 						logger.info("Unexpected payload: " + job.getPayload());
 						continue;
 					}
@@ -107,14 +146,58 @@ public class UpdateThread implements Runnable {
 						/* Get the current block from the world */
 						Block block = world.getBlockAt(x, y, z);
 
-						/* Remove the block */
-						block.setData((byte) 0);
-						block.setType(Material.AIR);
+						/* Now find out what the job specifically does */
+						
+						if(type == Job.REMOVE_BLOCK) {
+							block.setData((byte) 0);
+							block.setType(Material.AIR);
+						} else if(type == Job.OPEN_DOOR) {
+							if(block.getType() == Material.WOODEN_DOOR || block.getType() == Material.IRON_DOOR_BLOCK) {
+								Block[] doors = getDoors(world, block);
+								
+								byte bottomDoor = doors[0].getData();
+								byte topDoor = doors[1].getData();
+								
+								if((block.getData() & 0x4) == 0x4) {
+									bottomDoor -= 4;
+									topDoor -= 4;
+								} else {
+									bottomDoor |= 0x4;
+									topDoor |= 0x4;
+								}
+								
+								doors[0].setData(bottomDoor);
+								doors[1].setData(topDoor);
+							}
+						} else if(type == Job.DISPENSE_DISPENSER) {
+							if(block.getType() == Material.DISPENSER) {
+								Dispenser dispenser = (Dispenser) block.getState();
+								dispenser.dispense();
+							}
+						} else if(type == Job.UPDATE_SIGN) {
+							if(block.getType() == Material.SIGN || block.getType() == Material.SIGN_POST) {
+								Sign sign = (Sign) block.getState();
+								
+								String linePayload = StringUtils.join(coordinates, 3).trim();
+								String[] lines = linePayload.split("==X8LarE=="); // split by how lines are split internally
+
+								for(int line=0; line<lines.length; line++) {
+									if(line > 3) {
+										break;
+									}
+									logger.info(line + ":" + lines[line]);
+									sign.setLine(line, lines[line]);
+								}
+								
+								sign.update();
+							}
+						}
 
 						/* Remove the job, we assume it's done.. */
 						lwc.getPhysicalDatabase().removeJob(job.getId());
 						logger.info("Job completed: #" + job.getId());
 					} catch (Exception e) {
+						e.printStackTrace();
 						logger.info("Unexpected payload: " + job.getPayload());
 					}
 
@@ -154,8 +237,6 @@ public class UpdateThread implements Runnable {
 	 * Flush any caches to the database TODO
 	 */
 	private void _flush() {
-		logger.info("Now checking caches to flush");
-
 		if (lwc.getInventoryCache().size() > 0) {
 			logger.info("Flushing " + lwc.getInventoryCache().size() + " inventories");
 
