@@ -40,6 +40,7 @@ public class Owners implements ICommand {
 				page = Integer.parseInt(args[1]);
 			} catch(Exception e) {
 				lwc.sendSimpleUsage(player, "/lwc -owners [page]");
+				return;
 			}
 		}
 		
