@@ -18,7 +18,7 @@ import org.junit.Test;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.ProtectionTypes;
-import com.griefcraft.model.Rights;
+import com.griefcraft.model.AccessRight;
 import com.griefcraft.sql.Database;
 
 /**
@@ -86,8 +86,8 @@ public class UnitTestAll {
 		lwc.getPhysicalDatabase().registerProtectedEntity(ProtectionTypes.PRIVATE, "Hidendra", "", 0, 0, 0);
 		lwc.getPhysicalDatabase().registerProtectedEntity(ProtectionTypes.PRIVATE, "Bob", "", 10, 0, 0);
 		lwc.getPhysicalDatabase().registerProtectedEntity(ProtectionTypes.PRIVATE, "Bob", "", 15, 0, 0);
-		lwc.getPhysicalDatabase().registerProtectionLimit(Rights.GROUP, 1, "g:default");
-		lwc.getPhysicalDatabase().registerProtectionLimit(Rights.PLAYER, 2, "Hidendra");
+		lwc.getPhysicalDatabase().registerProtectionLimit(AccessRight.GROUP, 1, "g:default");
+		lwc.getPhysicalDatabase().registerProtectionLimit(AccessRight.PLAYER, 2, "Hidendra");
 
 		assertTrue(lwc.getMemoryDatabase().getUnlockID("Action") == 1);
 		assertNotNull(lwc.getPhysicalDatabase().loadProtectedEntity(0, 0, 0));
