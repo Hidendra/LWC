@@ -1,10 +1,10 @@
 package com.griefcraft.lwc;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Formatter;
 import java.util.List;
 
@@ -29,9 +29,7 @@ import com.griefcraft.util.StringUtils;
 import com.nijiko.permissions.Control;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.sk89q.worldedit.Vector;
-import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.RegionManager;
 
 public class LWC {
@@ -212,14 +210,12 @@ public class LWC {
 				 */
 				Field useRegions = worldGuard.getClass().getDeclaredField("useRegions");
 				Field regionManager = worldGuard.getClass().getDeclaredField("regionManager");
-				// Method hasPermission = worldGuard.getClass().getMethod("hasPermission");
 
 				/*
 				 * Make the fields/methods we want accessible
 				 */
 				useRegions.setAccessible(true);
 				regionManager.setAccessible(true);
-				// hasPermission.setAccessible(true);
 
 				/*
 				 * Now check if we're using regions
@@ -243,23 +239,35 @@ public class LWC {
 				Vector blockVector = (Vector) toVector.invoke(null, block);
 
 				/*
-				 * Create the local player .. again we need to create it via reflection
+				 * Now let's get the list of regions at the block we're clicking
 				 */
-				Class<?> bukkitPlayer = worldGuard.getClass().getClassLoader().loadClass("com.sk89q.worldguard.bukkit.BukkitPlayer");
-				Constructor<?> construct = bukkitPlayer.getConstructor(WorldGuardPlugin.class, Player.class);
-				LocalPlayer localPlayer = (LocalPlayer) construct.newInstance(worldGuard, player);
-
+				List<String> regionSet = regions.getApplicableRegionsIDs(blockVector);
+				List<String> allowedRegions = Arrays.asList(ConfigValues.WORLDGUARD_ALLOWED_REGIONS.getString().split(","));
+				
+				boolean deny = true;
+				
 				/*
-				 * Now let's get the region we're dealing with
+				 * Check for *
 				 */
-				ApplicableRegionSet region = regions.getApplicableRegions(blockVector);
-
+				if(ConfigValues.WORLDGUARD_ALLOWED_REGIONS.getString().equals("*")) {
+					if(regionSet.size() > 0) {
+						 return false;
+					}
+				}
+				
 				/*
-				 * Finally, check the permissions ..
+				 * If there are no regions, we need to deny them
 				 */
-				if (!region.canBuild(localPlayer)) {
-					player.sendMessage(Colors.Red + "You cannot protect that " + blockToString(block) + " in WorldGuard regions");
+				for(String region : regionSet) {
+					if(allowedRegions.contains(region)) {
+						deny = false;
+						break;
+					}
+				}
 
+				if(deny) {
+					player.sendMessage(Colors.Red + "You cannot protect that " + blockToString(block) + " outside of WorldGuard regions");
+					
 					return true;
 				}
 
