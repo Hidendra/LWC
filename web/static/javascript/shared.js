@@ -5,72 +5,81 @@ var form = null;
 var form_ajax_callback = function() {};
 
 Event.observe(window, 'load', function() {
-	/* Start Fancy Form */
-	FancyForm.start();
+    /* Start Fancy Form */
+    FancyForm.start();
 	
-	/* Create our form events */
-	create_form_events();
+    /* Create our form events */
+    create_form_events();
 });
 
 function do_ajax(form_obj)
 {
-	form = form_obj;
+    form = form_obj;
 	
-	/* Hide the submit button */
-	$('submit').hide();
+    /* Hide the submit button */
+    $('submit').hide();
 	
-	/* Fade the form */
-	do_fade_submit();
+    /* Fade the form */
+    do_fade_submit();
 	
-	/* Finish the form request */
-	setTimeout('_finish_form_request();', CONTAINER_FADE_DURATION * 1000);
+    /* Finish the form request */
+    setTimeout('_finish_form_request();', CONTAINER_FADE_DURATION * 1000);
 	
-	return false;
+    return false;
+}
+
+function trigger_item_click(obj)
+{
+    var slot = $(obj);
+    
+    Element.toggleClassName(slot, 'remov');
 }
 
 function create_form_events()
 {
-	$$('.form').invoke('observe', 'submit', function()
-	{
-		element.observe('submit', function(event) {
-			/* Stop the event, we're using Ajax */
-			event.stop();
+    $$('.form').invoke('observe', 'submit', function()
+    {
+        element.observe('submit', function(event) {
+            /* Stop the event, we're using Ajax */
+            event.stop();
 			
-			$('submit').hide();
+            $('submit').hide();
 			
-			/* Fade the form */
-			do_fade_submit();
-		});
-	});
+            /* Fade the form */
+            do_fade_submit();
+        });
+    });
 }
 
 function _finish_form_request()
 {
-	form.request({
-		onFailure: function(o) {
-			$('content').update(o.responseText);
-			$('content').show();
+    form.request({
+        onFailure: function(o) {
+            $('content').update(o.responseText);
+            $('content').show();
 			
-			form_ajax_callback();
-		},
-		onSuccess: function(o) {
-			$('content').update(o.responseText);
-			$('content').show();
+            form_ajax_callback();
+        },
+        onSuccess: function(o) {
+            $('content').update(o.responseText);
+            $('content').show();
 			
-			form_ajax_callback();
-		}
-	});
+            form_ajax_callback();
+        }
+    });
 }
 
 function set_progress(progress)
 {
-	$$('.ui-progress').invoke('setStyle', {
-		width: progress + '%'
-	});
-	$$('.value').invoke('update', progress + "%");
+    $$('.ui-progress').invoke('setStyle', {
+        width: progress + '%'
+    });
+    $$('.value').invoke('update', progress + "%");
 }
 
 function do_fade_submit()
 {
-	new Effect.Fade( 'content', { duration: CONTAINER_FADE_DURATION });
+    new Effect.Fade( 'content', {
+        duration: CONTAINER_FADE_DURATION
+    });
 }

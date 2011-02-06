@@ -17,59 +17,68 @@
 
 package com.griefcraft.model;
 
-public class Job {
+public class AccessRight {
+
+	public static final int GROUP = 0;
+	public static final int PLAYER = 1;
 
 	/**
-	 * Job type constants
+	 * Used in conjunction with /lwc -O
 	 */
-	public static final int REMOVE_BLOCK = 1;
-	public static final int SEND_MESSAGE = 2;
-	public static final int OPEN_DOOR = 3;
-	public static final int DISPENSE_DISPENSER = 4;
-	public static final int UPDATE_SIGN = 5;
-
+	public static final int RESULTS_PER_PAGE = 15;
+	
 	private int id;
+	private int protectionId;
+	private String entity;
+	private int rights;
 	private int type;
-	private String owner;
-	private String payload;
-	private long timestamp;
-
+	
+	public static String typeToString(int rights) {
+		if(rights == GROUP) {
+			return "Group";
+		} else if(rights == PLAYER) {
+			return "Player";
+		}
+		
+		return "Unknown";
+	}
+	
 	public int getId() {
 		return id;
 	}
-
-	public String getOwner() {
-		return owner;
+	
+	public int getprotectionId() {
+		return protectionId;
 	}
-
-	public String getPayload() {
-		return payload;
+	
+	public String getEntity() {
+		return entity;
 	}
-
-	public long getTimestamp() {
-		return timestamp;
+	
+	public int getRights() {
+		return rights;
 	}
-
+	
 	public int getType() {
 		return type;
 	}
-
+	
 	public void setId(int id) {
 		this.id = id;
 	}
-
-	public void setOwner(String owner) {
-		this.owner = owner;
+	
+	public void setProtectionId(int protectionId) {
+		this.protectionId = protectionId;
 	}
-
-	public void setPayload(String payload) {
-		this.payload = payload;
+	
+	public void setEntity(String entity) {
+		this.entity = entity;
 	}
-
-	public void setTimestamp(long timestamp) {
-		this.timestamp = timestamp;
+	
+	public void setRights(int rights) {
+		this.rights = rights;
 	}
-
+	
 	public void setType(int type) {
 		this.type = type;
 	}

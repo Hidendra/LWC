@@ -23,6 +23,7 @@ public enum ConfigValues {
 	// ALLOW_FURNACE_PROTECTION("furnace-locks", "true"), //
 	DB_PATH("db-path", "lwc.db"), //
 	ENFORCE_WORLDGUARD_REGIONS("enforce-worldguard-regions", "false"), //
+	WORLDGUARD_ALLOWED_REGIONS("worldguard-allowed-regions", "*"), //
 	AUTO_UPDATE("auto-update", "false"), //
 	FLUSH_DB_INTERVAL("flush-db-interval", "10"), //
 	MAX_JOBS("max-jobs", "0"), //
