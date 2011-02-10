@@ -137,7 +137,7 @@ public class ChestProtect implements Runnable {
 			/*
 			 * Register the chest
 			 */
-			physicalDatabase.registerProtectedEntity(type, owner, "", x, y, z);
+			physicalDatabase.registerProtectedEntity(0, type, owner, "", x, y, z);
 
 			converted++;
 
@@ -151,7 +151,7 @@ public class ChestProtect implements Runnable {
 			/**
 			 * The id of the chest we just registered
 			 */
-			int chestID = physicalDatabase.loadProtectedEntity(x, y, z).getID();
+			int chestID = physicalDatabase.loadProtectedEntity(x, y, z).getId();
 
 			/**
 			 * Now register the extra users

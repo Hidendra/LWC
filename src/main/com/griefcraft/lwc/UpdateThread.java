@@ -18,8 +18,9 @@
 package com.griefcraft.lwc;
 
 import java.sql.Connection;
-import java.util.Iterator;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -29,9 +30,12 @@ import org.bukkit.block.Dispenser;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import com.griefcraft.logging.Logger;
 import com.griefcraft.model.Job;
+import com.griefcraft.model.PInventory;
+import com.griefcraft.model.Protection;
 import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.StringUtils;
 
@@ -63,19 +67,29 @@ public class UpdateThread implements Runnable {
 	 * True begins the flush
 	 */
 	private boolean flush = false;
+	
+	/**
+	 * Temporary for 1.5 while ALL protection block ids need to be fully populated
+	 */
+	private ConcurrentLinkedQueue<Protection> blockIdUpdateQueue = new ConcurrentLinkedQueue<Protection>();
 
 	public UpdateThread(LWC lwc) {
 		this.lwc = lwc;
-
-		if (LWCInfo.DEVELOPMENT == false) {
-			return;
-		}
 
 		running = true;
 		lastUpdate = System.currentTimeMillis();
 
 		thread = new Thread(this);
 		thread.start();
+	}
+	
+	/**
+	 * Add a protection to be updated to the top of the queue (JUST block ids!!)
+	 * 
+	 * @param protection
+	 */
+	public void queueProtectionBlockIdUpdate(Protection protection) {
+		blockIdUpdateQueue.offer(protection);
 	}
 	
 	/**
@@ -131,7 +145,7 @@ public class UpdateThread implements Runnable {
 					String[] coordinates = job.getPayload().split(" ");
 
 					if (coordinates.length < 3) {
-						logger.info("Unexpected payload: " + job.getPayload());
+						logger.info("Unexpected payload in job " + job.getId() + ": " + job.getPayload());
 						continue;
 					}
 
@@ -139,6 +153,11 @@ public class UpdateThread implements Runnable {
 						int x = Integer.parseInt(coordinates[0]);
 						int y = Integer.parseInt(coordinates[1]);
 						int z = Integer.parseInt(coordinates[2]);
+						String extra = "";
+						
+						if(coordinates.length > 3) {
+							extra = StringUtils.join(coordinates, 3).trim();
+						}
 
 						/* TODO: ?? */
 						World world = lwc.getPlugin().getServer().getWorlds()[0];
@@ -177,9 +196,8 @@ public class UpdateThread implements Runnable {
 						} else if(type == Job.UPDATE_SIGN) {
 							if(block.getType() == Material.SIGN || block.getType() == Material.SIGN_POST) {
 								Sign sign = (Sign) block.getState();
-								
-								String linePayload = StringUtils.join(coordinates, 3).trim();
-								String[] lines = linePayload.split("==X8LarE=="); // split by how lines are split internally
+
+								String[] lines = extra.split("==X8LarE=="); // split by how lines are split internally
 
 								for(int line=0; line<lines.length; line++) {
 									if(line > 3) {
@@ -195,10 +213,10 @@ public class UpdateThread implements Runnable {
 
 						/* Remove the job, we assume it's done.. */
 						lwc.getPhysicalDatabase().removeJob(job.getId());
-						logger.info("Job completed: #" + job.getId());
+						lwc.dev("Job completed: #" + job.getId());
 					} catch (Exception e) {
 						e.printStackTrace();
-						logger.info("Unexpected payload: " + job.getPayload());
+						logger.info("Unexpected payload in job " + job.getId() + ": " + job.getPayload());
 					}
 
 					break;
@@ -208,7 +226,7 @@ public class UpdateThread implements Runnable {
 					int index = job.getPayload().indexOf(":");
 
 					if (index == -1) {
-						logger.info("Unexpected payload: " + job.getPayload());
+						logger.info("Unexpected payload in job " + job.getId() + ": " + job.getPayload());
 						continue;
 					}
 
@@ -223,7 +241,7 @@ public class UpdateThread implements Runnable {
 					if (sendTo != null && sendTo.isOnline()) {
 						sendTo.sendMessage(message);
 						lwc.getPhysicalDatabase().removeJob(job.getId());
-						logger.info("Job completed: #" + job.getId());
+						lwc.dev("Job completed: #" + job.getId());
 					}
 
 					break;
@@ -237,12 +255,114 @@ public class UpdateThread implements Runnable {
 	 * Flush any caches to the database TODO
 	 */
 	private void _flush() {
-		if (lwc.getInventoryCache().size() > 0) {
-			logger.info("Flushing " + lwc.getInventoryCache().size() + " inventories");
-
-			Iterator<Inventory> iterator = lwc.getInventoryCache().getAll().iterator();
+		/*
+		 * TODO: Remove at some point
+		 */
+		if(blockIdUpdateQueue.size() > 0) {
 			Connection connection = lwc.getPhysicalDatabase().getConnection();
-
+			Protection protection = null;
+			
+			try {
+				connection.setAutoCommit(false);
+			} catch(SQLException e) {
+				e.printStackTrace();
+			}
+			
+			/*
+			 * Loop through
+			 */
+			while((protection = blockIdUpdateQueue.poll()) != null) {
+				lwc.getPhysicalDatabase().updateProtectionBlockId(protection.getId(), protection.getBlockId());
+			}
+			
+			/*
+			 * Commit
+			 */
+			try {
+				connection.commit();
+				connection.setAutoCommit(true);
+			} catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		/*
+		 * Inventory caching
+		 */
+		if (lwc.getInventoryQueue().size() > 0) {
+			ConcurrentLinkedQueue<PInventory> queue = lwc.getInventoryQueue();
+			Connection connection = lwc.getPhysicalDatabase().getConnection();
+			PInventory pInventory = null;
+			int count = 0;
+			
+			/*
+			 * Turn off auto commit
+			 */
+			try {
+				connection.setAutoCommit(false);
+			} catch(SQLException e) {
+				e.printStackTrace();
+			}
+			
+			/*
+			 * Peeeek and remove
+			 */
+			while((pInventory = queue.poll()) != null) {
+				ItemStack[] itemStacks = pInventory.getItemStacks();
+				int protectionId = pInventory.getProtectionId();
+				
+				int slots = itemStacks.length;
+				String stacks = "";
+				String items = "";
+				String durability = "";
+				String last_transaction = ""; // TODO: implement
+				String last_update = (System.currentTimeMillis() / 1000) + "";
+				
+				/*
+				 * Populate the strings
+				 */
+				for(ItemStack itemStack : itemStacks) {
+					if(itemStack == null) {
+						System.out.println("null");
+						continue;
+					}
+					
+					stacks += itemStack.getAmount() + ",";
+					items += itemStack.getTypeId() + ",";
+					durability += itemStack.getDurability() + ",";
+				}
+				
+				/*
+				 * Trim that comma!
+				 */
+				stacks = stacks.substring(0, stacks.length() - 1);
+				items = items.substring(0, items.length() - 1);
+				durability = durability.substring(0, durability.length() - 1);
+				
+				/*
+				 * Update the database
+				 */
+				lwc.getPhysicalDatabase().createInventory(protectionId, slots, stacks, items, durability, last_transaction, last_update);
+				
+				count ++;
+			}
+			
+			/*
+			 * Good, good. Let's commit!
+			 */
+			try {
+				connection.commit();
+				connection.setAutoCommit(true);
+			} catch(SQLException e) {
+				e.printStackTrace();
+			}
+			
+			/*
+			 * Notify if in dev mode
+			 */
+			if(LWCInfo.DEVELOPMENT) {
+				System.out.println("Pushed " + count + " inventories to the database");
+			}
 		}
 
 		doJobs();
