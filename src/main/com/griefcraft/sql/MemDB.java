@@ -270,7 +270,7 @@ public class MemDB extends Database {
 			return true;
 		}
 
-		return hasAccess(player, chest.getID());
+		return hasAccess(player, chest.getId());
 	}
 
 	/**

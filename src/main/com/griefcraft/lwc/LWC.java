@@ -7,16 +7,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Formatter;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+import com.firestar.mcbans.mcbans;
 import com.griefcraft.commands.ICommand;
 import com.griefcraft.logging.Logger;
-import com.griefcraft.model.InventoryCache;
+import com.griefcraft.model.PInventory;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.model.AccessRight;
@@ -55,9 +60,9 @@ public class LWC {
 	private UpdateThread updateThread;
 
 	/**
-	 * The inventory cache (their contents)
+	 * The inventory queue
 	 */
-	private InventoryCache inventoryCache;
+	private ConcurrentLinkedQueue<PInventory> inventoryQueue;
 
 	/**
 	 * Physical database instance
@@ -96,10 +101,10 @@ public class LWC {
 	}
 
 	/**
-	 * @return the inventory cache
+	 * @return the inventory query
 	 */
-	public InventoryCache getInventoryCache() {
-		return inventoryCache;
+	public ConcurrentLinkedQueue<PInventory> getInventoryQueue() {
+		return inventoryQueue;
 	}
 
 	/**
@@ -131,6 +136,40 @@ public class LWC {
 	}
 
 	/**
+	 * Merge inventories into one
+	 * 
+	 * @param blocks
+	 * @return
+	 */
+	public ItemStack[] mergeInventories(List<Block> blocks) {
+		ItemStack[] stacks = new ItemStack[54];
+		int index = 0;
+		
+		try {
+			for(Block block : blocks) {
+				if(!(block.getState() instanceof ContainerBlock)) {
+					continue;
+				}
+				
+				ContainerBlock containerBlock = (ContainerBlock) block.getState();
+				Inventory inventory = containerBlock.getInventory();
+				
+				/*
+				 * Add all the items from this inventory
+				 */
+				for(ItemStack stack : inventory.getContents()) {
+					stacks[index] = stack;
+					index ++;
+				}
+			}
+		} catch(Exception e) {
+			return mergeInventories(blocks);
+		}
+		
+		return stacks;
+	}
+	
+	/**
 	 * Enforce access to a protection block
 	 * 
 	 * @param player
@@ -145,15 +184,53 @@ public class LWC {
 		List<Block> protectionSet = getProtectionSet(block.getWorld(), block.getX(), block.getY(), block.getZ());
 		boolean hasAccess = true;
 
-		for (final Block _block : protectionSet) {
-			if (_block == null) {
+		for (final Block protectedBlock : protectionSet) {
+			if (protectedBlock == null) {
 				continue;
 			}
 
-			final Protection protection = getPhysicalDatabase().loadProtectedEntity(_block.getX(), _block.getY(), _block.getZ());
+			final Protection protection = getPhysicalDatabase().loadProtectedEntity(protectedBlock.getX(), protectedBlock.getY(), protectedBlock.getZ());
 
 			if (protection == null) {
 				continue;
+			}
+			
+			/*
+			 * TODO: Remove at some point
+			 */
+			if(protection.getBlockId() == 0) {
+				protection.setBlockId(block.getTypeId());
+				updateThread.queueProtectionBlockIdUpdate(protection);
+			}
+			
+			/*
+			 * Queue the block if it's an inventory
+			 */
+			if(block.getState() instanceof ContainerBlock) {
+				Inventory inventory = ((ContainerBlock) block.getState()).getInventory();
+				PInventory pInventory = new PInventory();
+				
+				ItemStack[] stacks = inventory.getContents();
+				
+				/*
+				 * Merge the inventory if it's a double chest
+				 */
+				if(protectionSet.size() == 2) {
+					stacks = mergeInventories(protectionSet);
+				}
+				
+				pInventory.setProtectionId(protection.getId());
+				pInventory.setItemStacks(stacks);
+				
+				/*
+				 * Check if the inventory is already in the inventory queue
+				 */
+				if(!pInventory.isIn(inventoryQueue)) {
+					/*
+					 * Push it into the queue
+					 */
+					inventoryQueue.offer(pInventory);
+				}
 			}
 
 			hasAccess = canAccessChest(player, protection);
@@ -162,7 +239,7 @@ public class LWC {
 			case ProtectionTypes.PASSWORD:
 				if (!hasAccess) {
 					getMemoryDatabase().unregisterUnlock(player.getName());
-					getMemoryDatabase().registerUnlock(player.getName(), protection.getID());
+					getMemoryDatabase().registerUnlock(player.getName(), protection.getId());
 
 					player.sendMessage(Colors.Red + "This " + blockToString(block) + " is locked.");
 					player.sendMessage(Colors.Red + "Type " + Colors.Gold + "/lwc -u <password>" + Colors.Red + " to unlock it");
@@ -175,6 +252,33 @@ public class LWC {
 					player.sendMessage(Colors.Red + "This " + blockToString(block) + " is locked with a magical spell.");
 				}
 
+				break;
+				
+			case ProtectionTypes.TRAP_KICK:
+				if(!hasAccess) {
+					player.kickPlayer(protection.getData());
+					log(player.getName() + " triggered the kick trap: " + protection.toString());
+				}
+				break;
+				
+			case ProtectionTypes.TRAP_BAN:
+				if(!hasAccess) {
+					Plugin mcbansPlugin;
+					
+					/*
+					 * See if we have mcbans
+					 */
+					if((mcbansPlugin = plugin.getServer().getPluginManager().getPlugin("MCBans")) != null) {
+						mcbans mcbans = (mcbans) mcbansPlugin;
+						
+						/*
+						 * good good, ban them
+						 */
+						mcbans.mcb_handler.ban(player.getName(), "LWC", protection.getData(), "");
+					}
+					
+					log(player.getName() + " triggered the ban trap: " + protection.toString());
+				}
 				break;
 			}
 		}
@@ -285,9 +389,11 @@ public class LWC {
 	public void load() {
 		Performance.init();
 
-		log("Dev mode: " + Boolean.toString(LWCInfo.DEVELOPMENT).toUpperCase());
-
-		inventoryCache = new InventoryCache();
+		if(LWCInfo.DEVELOPMENT) {
+			log("Development mode is ON");
+		}
+		
+		inventoryQueue = new ConcurrentLinkedQueue<PInventory>();
 		physicalDatabase = new PhysDB();
 		memoryDatabase = new MemDB();
 		updateThread = new UpdateThread(this);
@@ -341,7 +447,7 @@ public class LWC {
 
 		updateThread.stop();
 		updateThread = null;
-		inventoryCache = null;
+		inventoryQueue = null;
 		physicalDatabase = null;
 		memoryDatabase = null;
 	}
@@ -507,17 +613,23 @@ public class LWC {
 			return true;
 
 			/*
-			 * Bonus: doors
+			 * Doors
 			 */
 		case 64:
 		case 71:
 			return true;
 
 			/*
-			 * Bonus: sign
+			 * Sign
 			 */
 		case 63:
 		case 68:
+			return true;
+			
+			/*
+			 * Jukebox
+			 */
+		case 84:
 			return true;
 
 		}
@@ -731,7 +843,7 @@ public class LWC {
 
 		Material type = block.getType();
 
-		if (type == Material.FURNACE || type == Material.DISPENSER || type == Material.SIGN || type == Material.SIGN_POST) {
+		if (type == Material.FURNACE || type == Material.DISPENSER || type == Material.SIGN || type == Material.SIGN_POST || type == Material.JUKEBOX) {
 			if (entities.size() == 0) {
 
 				if (!entities.contains(block)) {
@@ -890,7 +1002,7 @@ public class LWC {
 			return memoryDatabase.hasAccess(player.getName(), chest);
 
 		case ProtectionTypes.PRIVATE:
-			return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, chest.getID(), player.getName()) >= 0;
+			return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, chest.getId(), player.getName()) >= 0;
 			// return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) >= 0 ||
 			// physicalDatabase.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) >= 0;
 
@@ -942,7 +1054,7 @@ public class LWC {
 			return player.getName().equalsIgnoreCase(chest.getOwner()) && memoryDatabase.hasAccess(player.getName(), chest);
 
 		case ProtectionTypes.PRIVATE:
-			return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, chest.getID(), player.getName()) == 1;
+			return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, chest.getId(), player.getName()) == 1;
 			// return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) == 1 ||
 			// physicalDatabase.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) == 1;
 

@@ -121,7 +121,7 @@ public class ChastityChest implements Runnable {
 			/*
 			 * Register the chest
 			 */
-			physicalDatabase.registerProtectedEntity(type, owner, "", x, y, z);
+			physicalDatabase.registerProtectedEntity(0, type, owner, "", x, y, z);
 
 			converted++;
 		}
