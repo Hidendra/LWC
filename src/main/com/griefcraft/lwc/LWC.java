@@ -206,7 +206,7 @@ public class LWC {
 			/*
 			 * Queue the block if it's an inventory
 			 */
-			if(block.getState() instanceof ContainerBlock) {
+			if((block.getState() instanceof ContainerBlock) && LWCInfo.DEVELOPMENT) {
 				Inventory inventory = ((ContainerBlock) block.getState()).getInventory();
 				PInventory pInventory = new PInventory();
 				
