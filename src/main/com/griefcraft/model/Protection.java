@@ -20,9 +20,14 @@ package com.griefcraft.model;
 public class Protection {
 
 	/**
-	 * Chest ID (in sql)
+	 * Unique id (in sql)
 	 */
 	private int id;
+	
+	/**
+	 * The block id
+	 */
+	private int blockId;
 
 	/**
 	 * The chest type
@@ -37,7 +42,7 @@ public class Protection {
 	/**
 	 * The password for the chest
 	 */
-	private String password;
+	private String data;
 
 	/**
 	 * The x coordinate
@@ -58,21 +63,32 @@ public class Protection {
 	 * The date created
 	 */
 	private String date;
+	
+	/**
+	 * @return id:owner->[x,y,z]
+	 */
+	public String toString() {
+		return String.format("%d:%s->[%d,%d,%d]", id, owner, x, y, z);
+	}
 
 	public String getDate() {
 		return date;
 	}
 
-	public int getID() {
+	public int getId() {
 		return id;
+	}
+	
+	public int getBlockId() {
+		return blockId;
 	}
 
 	public String getOwner() {
 		return owner;
 	}
 
-	public String getPassword() {
-		return password;
+	public String getData() {
+		return data;
 	}
 
 	public int getType() {
@@ -95,16 +111,20 @@ public class Protection {
 		this.date = date;
 	}
 
-	public void setID(int id) {
+	public void setId(int id) {
 		this.id = id;
+	}
+	
+	public void setBlockId(int blockId) {
+		this.blockId = blockId;
 	}
 
 	public void setOwner(String owner) {
 		this.owner = owner;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setData(String data) {
+		this.data = data;
 	}
 
 	public void setType(int type) {

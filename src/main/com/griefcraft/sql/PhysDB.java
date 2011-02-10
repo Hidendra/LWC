@@ -63,7 +63,7 @@ public class PhysDB extends Database {
 				int z = set.getInt("z");
 
 				Protection protection = new Protection();
-				protection.setID(id);
+				protection.setId(id);
 				protection.setType(type);
 				protection.setX(x);
 				protection.setY(y);
@@ -223,13 +223,34 @@ public class PhysDB extends Database {
 				statement.executeBatch();
 				statement.close();
 				Performance.addPhysDBQuery();
-			} catch (final SQLException e_) {
+			} catch (final SQLException ex) {
 				log("Oops! Something went wrong: ");
-				e.printStackTrace();
+				ex.printStackTrace();
 				System.exit(0);
 			}
 
 			log("Update completed!");
+		}
+	}
+	
+	/**
+	 * Update to 150, altered a table
+	 */
+	public void doUpdate150() {
+		try {
+			Statement statement = connection.createStatement();
+			statement.executeQuery("SELECT blockId FROM protections");
+			statement.close();
+			Performance.addPhysDBQuery();
+		} catch(SQLException e) {
+			try {
+				Statement statement = connection.createStatement();
+				statement.executeUpdate("ALTER TABLE `protections` ADD `blockId` INTEGER");
+				statement.close();
+				Performance.addPhysDBQuery();
+			} catch(SQLException ex) {
+				ex.printStackTrace();
+			}
 		}
 	}
 
@@ -551,9 +572,10 @@ public class PhysDB extends Database {
 		}
 
 		/**
-		 * 1.40 renamed a table, so it needs to be renamed before LWC attempts to create it
+		 * Updates that alter or rename a table go here
 		 */
 		doUpdate140();
+		doUpdate150();
 
 		fixJobsTable();
 		fixPlayerTable();
@@ -564,7 +586,7 @@ public class PhysDB extends Database {
 
 			log("Creating physical tables if needed");
 
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'protections' (" //
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS protections (" //
 					+ "id INTEGER PRIMARY KEY," //
 					+ "type INTEGER," //
 					+ "owner TEXT," //
@@ -575,14 +597,14 @@ public class PhysDB extends Database {
 					+ "date TEXT" //
 					+ ");");
 
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'limits' (" //
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS limits (" //
 					+ "id INTEGER PRIMARY KEY," //
 					+ "type INTEGER," //
 					+ "amount INTEGER," //
 					+ "entity TEXT" //
 					+ ");");
 
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'rights' (" //
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS rights (" //
 					+ "id INTEGER PRIMARY KEY," //
 					+ "chest INTEGER," //
 					+ "entity TEXT," //
@@ -591,7 +613,7 @@ public class PhysDB extends Database {
 					+ ");");
 
 			/* Tables used in 1.50 */
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'players' (" //
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS players (" //
 					+ "id INTEGER PRIMARY KEY," //
 					+ "username TEXT," //
 					+ "password TEXT," //
@@ -601,6 +623,17 @@ public class PhysDB extends Database {
 					+ "salt TEXT" //
 					+ ");");
 
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS inventory (" //
+					+ "protectionId INTEGER UNIQUE," //
+					+ "blockId INTEGER," //
+					+ "slots INTEGER," //
+					+ "stacks TEXT," //
+					+ "items TEXT," //
+					+ "durability TEXT," //
+					+ "last_transaction TEXT," //
+					+ "last_update TEXT" //
+					+ ");");
+			
 			/**
 			 * TODO:
 			 * 
@@ -626,6 +659,34 @@ public class PhysDB extends Database {
 
 		loaded = true;
 	}
+	
+	/**
+	 * Insert or update an inventory in the database
+	 * 
+	 * @param protectionId
+	 * @param slots
+	 * @param stacks
+	 * @param items
+	 * @param durability
+	 * @param last_transaction
+	 * @param last_update
+	 */
+	public void createInventory(int protectionId, int slots, String stacks, String items, String durability, String last_transaction, String last_update) {
+		try {
+			PreparedStatement statement = prepare("INSERT OR REPLACE INTO inventory (protectionId, slots, stacks, items, durability, last_transaction, last_update) VALUES (?, ?, ?, ?, ?, ?, ?)");
+			statement.setInt(1, protectionId);
+			statement.setInt(2, slots);
+			statement.setString(3, stacks);
+			statement.setString(4, items);
+			statement.setString(5, durability);
+			statement.setString(6, last_transaction);
+			statement.setString(7, last_update);
+			
+			statement.executeUpdate();
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Instead of "updating indexes", let's just use IF NOT EXISTS each time
@@ -635,12 +696,13 @@ public class PhysDB extends Database {
 			connection.setAutoCommit(false);
 			Statement statement = connection.createStatement();
 
-			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in1 ON `protections` (owner, x, y, z)");
-			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in2 ON `limits` (type, entity)");
-			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in3 ON `rights` (chest, entity)");
+			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in1 ON protections (owner, x, y, z)");
+			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in2 ON limits (type, entity)");
+			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in3 ON rights (chest, entity)");
 
-			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in4 ON `players` (username)");
-			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in5 ON `jobs` (type, owner)");
+			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in4 ON players (username)");
+			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in5 ON jobs (type, owner)");
+			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in6 ON inventory (protectionId, slots)");
 
 			connection.commit();
 			connection.setAutoCommit(true);
@@ -681,6 +743,7 @@ public class PhysDB extends Database {
 
 			while (set.next()) {
 				final int id = set.getInt("id");
+				int blockId = set.getInt("blockId");
 				final int type = set.getInt("type");
 				final String owner = set.getString("owner");
 				final String password = set.getString("password");
@@ -689,17 +752,18 @@ public class PhysDB extends Database {
 				int z = set.getInt("z");
 				final String date = set.getString("date");
 
-				final Protection chest = new Protection();
-				chest.setID(id);
-				chest.setType(type);
-				chest.setOwner(owner);
-				chest.setPassword(password);
-				chest.setX(x);
-				chest.setY(y);
-				chest.setZ(z);
-				chest.setDate(date);
+				final Protection protection = new Protection();
+				protection.setId(id);
+				protection.setBlockId(blockId);
+				protection.setType(type);
+				protection.setOwner(owner);
+				protection.setData(password);
+				protection.setX(x);
+				protection.setY(y);
+				protection.setZ(z);
+				protection.setDate(date);
 
-				chests.add(chest);
+				chests.add(protection);
 			}
 
 			set.close();
@@ -727,6 +791,7 @@ public class PhysDB extends Database {
 
 			while (set.next()) {
 				final int id = set.getInt("id");
+				final int blockId = set.getInt("blockId");
 				final int type = set.getInt("type");
 				final String owner = set.getString("owner");
 				final String password = set.getString("password");
@@ -735,20 +800,21 @@ public class PhysDB extends Database {
 				final int z = set.getInt("z");
 				final String date = set.getString("date");
 
-				final Protection chest = new Protection();
-				chest.setID(id);
-				chest.setType(type);
-				chest.setOwner(owner);
-				chest.setPassword(password);
-				chest.setX(x);
-				chest.setY(y);
-				chest.setZ(z);
-				chest.setDate(date);
+				final Protection protection = new Protection();
+				protection.setId(id);
+				protection.setBlockId(blockId);
+				protection.setType(type);
+				protection.setOwner(owner);
+				protection.setData(password);
+				protection.setX(x);
+				protection.setY(y);
+				protection.setZ(z);
+				protection.setDate(date);
 
 				set.close();
 				Performance.addPhysDBQuery();
 
-				return chest;
+				return protection;
 			}
 
 			set.close();
@@ -757,6 +823,25 @@ public class PhysDB extends Database {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	/**
+	 * Update a protection's block id
+	 * 
+	 * @param protectionId
+	 * @param blockId
+	 */
+	public void updateProtectionBlockId(int protectionId, int blockId) {
+		try {
+			PreparedStatement statement = prepare("UPDATE protections SET blockId = ? WHERE id = ?");
+			
+			statement.setInt(1, blockId);
+			statement.setInt(2, protectionId);
+			
+			statement.executeUpdate();
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -772,7 +857,7 @@ public class PhysDB extends Database {
 	 */
 	public Protection loadProtectedEntity(int x, int y, int z) {
 		try {
-			PreparedStatement statement = prepare("SELECT `id`, `type`, `owner`, `password`, `date` FROM `protections` WHERE `x` = ? AND `y` = ? AND `z` = ?");
+			PreparedStatement statement = prepare("SELECT * FROM `protections` WHERE `x` = ? AND `y` = ? AND `z` = ?");
 			statement.setInt(1, x);
 			statement.setInt(2, y);
 			statement.setInt(3, z);
@@ -781,24 +866,26 @@ public class PhysDB extends Database {
 
 			while (set.next()) {
 				final int id = set.getInt("id");
+				final int blockId = set.getInt("blockId");
 				final int type = set.getInt("type");
 				final String owner = set.getString("owner");
 				final String password = set.getString("password");
 				final String date = set.getString("date");
 
-				final Protection chest = new Protection();
-				chest.setID(id);
-				chest.setType(type);
-				chest.setOwner(owner);
-				chest.setPassword(password);
-				chest.setX(x);
-				chest.setY(y);
-				chest.setZ(z);
-				chest.setDate(date);
+				final Protection protection = new Protection();
+				protection.setId(id);
+				protection.setBlockId(blockId);
+				protection.setType(type);
+				protection.setOwner(owner);
+				protection.setData(password);
+				protection.setX(x);
+				protection.setY(y);
+				protection.setZ(z);
+				protection.setDate(date);
 
 				set.close();
 				Performance.addPhysDBQuery();
-				return chest;
+				return protection;
 			}
 
 			set.close();
@@ -824,17 +911,18 @@ public class PhysDB extends Database {
 	 * @param z
 	 *            the z coordinate of the chest
 	 */
-	public void registerProtectedEntity(int type, String player, String password, int x, int y, int z) {
+	public void registerProtectedEntity(int blockId, int type, String player, String password, int x, int y, int z) {
 		try {
-			PreparedStatement statement = prepare("INSERT INTO `protections` (type, owner, password, x, y, z, date) VALUES(?, ?, ?, ?, ?, ?, ?)");
+			PreparedStatement statement = prepare("INSERT INTO `protections` (blockId, type, owner, password, x, y, z, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
 
-			statement.setInt(1, type);
-			statement.setString(2, player);
-			statement.setString(3, password);
-			statement.setInt(4, x);
-			statement.setInt(5, y);
-			statement.setInt(6, z);
-			statement.setString(7, new Timestamp(new Date().getTime()).toString());
+			statement.setInt(1, blockId);
+			statement.setInt(2, type);
+			statement.setString(3, player);
+			statement.setString(4, password);
+			statement.setInt(5, x);
+			statement.setInt(6, y);
+			statement.setInt(7, z);
+			statement.setString(8, new Timestamp(new Date().getTime()).toString());
 
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();

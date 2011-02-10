@@ -65,7 +65,7 @@ public class Unlock implements ICommand {
 				return;
 			}
 
-			if (entity.getPassword().equals(password)) {
+			if (entity.getData().equals(password)) {
 				player.sendMessage(Colors.Green + "Password accepted.");
 				lwc.getMemoryDatabase().unregisterUnlock(player.getName());
 				lwc.getMemoryDatabase().registerPlayer(player.getName(), chestID);
