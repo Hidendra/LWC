@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -127,9 +128,29 @@ public class LWC {
 	 * @param block
 	 * @return
 	 */
-	public String blockToString(Block block) {
-		if (block != null) {
-			return StringUtils.capitalizeFirstLetter(block.getType().toString().replaceAll("_", " "));
+	public String materialToString(Block block) {
+		return materialToString(block.getType());
+	}
+
+	/**
+	 * Get a string representation of a block type
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public String materialToString(int id) {
+		return materialToString(Material.getMaterial(id));
+	}
+
+	/**
+	 * Get a string representation of a block material
+	 * 
+	 * @param material
+	 * @return
+	 */
+	public String materialToString(Material material) {
+		if (material != null) {
+			return StringUtils.capitalizeFirstLetter(material.toString().replaceAll("_", " "));
 		}
 
 		return "";
@@ -144,16 +165,16 @@ public class LWC {
 	public ItemStack[] mergeInventories(List<Block> blocks) {
 		ItemStack[] stacks = new ItemStack[54];
 		int index = 0;
-		
+
 		try {
 			for(Block block : blocks) {
 				if(!(block.getState() instanceof ContainerBlock)) {
 					continue;
 				}
-				
+
 				ContainerBlock containerBlock = (ContainerBlock) block.getState();
 				Inventory inventory = containerBlock.getInventory();
-				
+
 				/*
 				 * Add all the items from this inventory
 				 */
@@ -165,10 +186,10 @@ public class LWC {
 		} catch(Exception e) {
 			return mergeInventories(blocks);
 		}
-		
+
 		return stacks;
 	}
-	
+
 	/**
 	 * Enforce access to a protection block
 	 * 
@@ -183,6 +204,7 @@ public class LWC {
 
 		List<Block> protectionSet = getProtectionSet(block.getWorld(), block.getX(), block.getY(), block.getZ());
 		boolean hasAccess = true;
+		boolean canAdmin = false;
 
 		for (final Block protectedBlock : protectionSet) {
 			if (protectedBlock == null) {
@@ -194,7 +216,7 @@ public class LWC {
 			if (protection == null) {
 				continue;
 			}
-			
+
 			/*
 			 * TODO: Remove at some point
 			 */
@@ -202,26 +224,26 @@ public class LWC {
 				protection.setBlockId(block.getTypeId());
 				updateThread.queueProtectionBlockIdUpdate(protection);
 			}
-			
+
 			/*
 			 * Queue the block if it's an inventory
 			 */
 			if((block.getState() instanceof ContainerBlock) && LWCInfo.DEVELOPMENT) {
 				Inventory inventory = ((ContainerBlock) block.getState()).getInventory();
 				PInventory pInventory = new PInventory();
-				
+
 				ItemStack[] stacks = inventory.getContents();
-				
+
 				/*
 				 * Merge the inventory if it's a double chest
 				 */
 				if(protectionSet.size() == 2) {
 					stacks = mergeInventories(protectionSet);
 				}
-				
+
 				pInventory.setProtectionId(protection.getId());
 				pInventory.setItemStacks(stacks);
-				
+
 				/*
 				 * Check if the inventory is already in the inventory queue
 				 */
@@ -233,7 +255,14 @@ public class LWC {
 				}
 			}
 
-			hasAccess = canAccessChest(player, protection);
+			hasAccess = canAccessProtection(player, protection);
+
+			// let admins know that the thing they're using is protected :)
+			canAdmin = canAdminProtection(player, protection);
+
+			if(canAdmin) {
+				player.sendMessage(Colors.Red + "Notice: " + Colors.White + "That " + materialToString(block) + " is protected.");
+			}
 
 			switch (protection.getType()) {
 			case ProtectionTypes.PASSWORD:
@@ -241,7 +270,7 @@ public class LWC {
 					getMemoryDatabase().unregisterUnlock(player.getName());
 					getMemoryDatabase().registerUnlock(player.getName(), protection.getId());
 
-					player.sendMessage(Colors.Red + "This " + blockToString(block) + " is locked.");
+					player.sendMessage(Colors.Red + "This " + materialToString(block) + " is locked.");
 					player.sendMessage(Colors.Red + "Type " + Colors.Gold + "/lwc -u <password>" + Colors.Red + " to unlock it");
 				}
 
@@ -249,34 +278,34 @@ public class LWC {
 
 			case ProtectionTypes.PRIVATE:
 				if (!hasAccess) {
-					player.sendMessage(Colors.Red + "This " + blockToString(block) + " is locked with a magical spell.");
+					player.sendMessage(Colors.Red + "This " + materialToString(block) + " is locked with a magical spell.");
 				}
 
 				break;
-				
+
 			case ProtectionTypes.TRAP_KICK:
 				if(!hasAccess) {
 					player.kickPlayer(protection.getData());
 					log(player.getName() + " triggered the kick trap: " + protection.toString());
 				}
 				break;
-				
+
 			case ProtectionTypes.TRAP_BAN:
 				if(!hasAccess) {
 					Plugin mcbansPlugin;
-					
+
 					/*
 					 * See if we have mcbans
 					 */
 					if((mcbansPlugin = plugin.getServer().getPluginManager().getPlugin("MCBans")) != null) {
 						mcbans mcbans = (mcbans) mcbansPlugin;
-						
+
 						/*
 						 * good good, ban them
 						 */
 						mcbans.mcb_handler.ban(player.getName(), "LWC", protection.getData(), "");
 					}
-					
+
 					log(player.getName() + " triggered the ban trap: " + protection.toString());
 				}
 				break;
@@ -347,18 +376,18 @@ public class LWC {
 				 */
 				List<String> regionSet = regions.getApplicableRegionsIDs(blockVector);
 				List<String> allowedRegions = Arrays.asList(ConfigValues.WORLDGUARD_ALLOWED_REGIONS.getString().split(","));
-				
+
 				boolean deny = true;
-				
+
 				/*
 				 * Check for *
 				 */
 				if(ConfigValues.WORLDGUARD_ALLOWED_REGIONS.getString().equals("*")) {
 					if(regionSet.size() > 0) {
-						 return false;
+						return false;
 					}
 				}
-				
+
 				/*
 				 * If there are no regions, we need to deny them
 				 */
@@ -370,8 +399,8 @@ public class LWC {
 				}
 
 				if(deny) {
-					player.sendMessage(Colors.Red + "You cannot protect that " + blockToString(block) + " outside of WorldGuard regions");
-					
+					player.sendMessage(Colors.Red + "You cannot protect that " + materialToString(block) + " outside of WorldGuard regions");
+
 					return true;
 				}
 
@@ -392,7 +421,7 @@ public class LWC {
 		if(LWCInfo.DEVELOPMENT) {
 			log("Development mode is ON");
 		}
-		
+
 		inventoryQueue = new ConcurrentLinkedQueue<PInventory>();
 		physicalDatabase = new PhysDB();
 		memoryDatabase = new MemDB();
@@ -556,7 +585,7 @@ public class LWC {
 			return false;
 		}
 
-		String blockName = blockToString(block).replaceAll(" ", "");
+		String blockName = materialToString(block).replaceAll(" ", "");
 		blockName = blockName.replaceAll("Block", "").trim();
 
 		for (String value : values) {
@@ -625,7 +654,7 @@ public class LWC {
 		case 63:
 		case 68:
 			return true;
-			
+
 			/*
 			 * Jukebox
 			 */
@@ -718,11 +747,11 @@ public class LWC {
 		 * Apply player limits
 		 */
 		limit = physicalDatabase.getPlayerLimit(player.getName());
-		
+
 		/*
 		 * Apply group limits.. can't be one line however
 		 */
-		if(limit != -1) {
+		if(limit == -1 && permissions != null) {
 			Control control = (Control) Permissions.Security;
 			String[] groups = control.getGroups(player.getName());
 
@@ -730,11 +759,11 @@ public class LWC {
 				if(limit >= 0) {
 					break;
 				}
-				
+
 				limit = physicalDatabase.getGroupLimit(group);
 			}
 		}
-		
+
 		/*
 		 * Apply global limits if need be
 		 */
@@ -745,7 +774,7 @@ public class LWC {
 		 */
 		if(limit != -1) {
 			int protections = physicalDatabase.getProtectionCount(player.getName());
-			
+
 			if(protections >= limit) {
 				player.sendMessage(Colors.Red + "You have exceeded your allowed amount of protections!");
 				return true;
@@ -792,16 +821,6 @@ public class LWC {
 		 */
 		entities = _validateBlock(entities, baseBlock);
 
-		/*
-		 * First check if it's a door
-		 */
-		if(baseType == Material.WOODEN_DOOR || baseType == Material.IRON_DOOR_BLOCK) {
-			entities = _validateBlock(entities, world.getBlockAt(x, y + 1, z));
-			entities = _validateBlock(entities, world.getBlockAt(x, y - 1, z));
-
-			return entities;
-		}
-
 		int dev = -1;
 		boolean isXDir = true;
 
@@ -842,18 +861,50 @@ public class LWC {
 		}
 
 		Material type = block.getType();
+		Block up = block.getFace(BlockFace.UP);
 
-		if (type == Material.FURNACE || type == Material.DISPENSER || type == Material.SIGN || type == Material.SIGN_POST || type == Material.JUKEBOX) {
-			if (entities.size() == 0) {
-
-				if (!entities.contains(block)) {
-					entities.add(block);
+		if (up.getType() == Material.WOODEN_DOOR || up.getType() == Material.IRON_DOOR_BLOCK || type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK) {
+			/*
+			 * check if they're clicking the block under the door
+			 */
+			if(type != Material.WOODEN_DOOR && type != Material.IRON_DOOR_BLOCK) {
+				entities.add(block); // block under the door
+				entities.add(block.getFace(BlockFace.UP)); // bottom half
+				entities.add(block.getWorld().getBlockAt(block.getX(), block.getY() + 2, block.getZ())); // top half
+			} else {
+				if(up.getType() == Material.WOODEN_DOOR || up.getType() == Material.IRON_DOOR_BLOCK) {
+					entities.add(block); // bottom half
+					entities.add(up); // top half
+				} else {
+					entities.add(block.getFace(BlockFace.DOWN)); // bottom half
+					entities.add(block); // top half
 				}
+			}
+		}
+		else if (up.getType() == Material.SIGN_POST || up.getType() == Material.WALL_SIGN || type == Material.SIGN_POST || type == Material.WALL_SIGN) {
+			/*
+			 * If it's a wall sign, also protect the wall it's attached to!
+			 */
 
+			if(entities.size() == 0) {
+				/*
+				 * Check if we're clicking on the sign itself, otherwise it's the block above it
+				 */
+				if(type == Material.SIGN_POST || type == Material.WALL_SIGN) {
+					entities.add(block);
+				} else {
+					entities.add(up);
+				}
+			}
+		}
+		else if (type == Material.FURNACE || type == Material.DISPENSER || type == Material.JUKEBOX) {
+			if (entities.size() == 0) {
+				entities.add(block);
 			}
 
 			return entities;
-		} else {
+		}
+		else {
 			if (entities.size() == 1) {
 				Block other = entities.get(0);
 
@@ -911,9 +962,60 @@ public class LWC {
 
 				}
 
+			} else {
+				/*
+				 * Look for a ronery wall sign
+				 */
+				Block face = null;
+				
+				BlockFace[] faces = new BlockFace[] {
+					BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST
+				};
+				
+				/*
+				 * Match wall signs to the wall it's attached to
+				 */
+				for(BlockFace blockFace : faces) {
+					if((face = block.getFace(blockFace)) != null) {
+						if(face.getType() == Material.WALL_SIGN) {
+							byte direction = face.getData();
+							
+							/*
+							 * Protect the wall the wall sign is attached to
+							 */
+							switch(direction) {
+							case 0x02: // east
+								if(blockFace == BlockFace.EAST) {
+									entities.add(face);
+								}
+								break;
+								
+							case 0x03: // west
+								if(blockFace == BlockFace.WEST) {
+									entities.add(face);
+								}
+								break;
+								
+							case 0x04: // north
+								if(blockFace == BlockFace.NORTH) {
+									entities.add(face);
+								}
+								break;
+								
+							case 0x05: // south
+								if(blockFace == BlockFace.SOUTH) {
+									entities.add(face);
+								}
+								break;
+							}
+							
+						}
+						
+					}
+				}
 			}
 
-			if (!entities.contains(block) && isProtectable(block)) {
+			if (!entities.contains(block)) {
 				entities.add(block);
 			}
 		}
@@ -965,16 +1067,14 @@ public class LWC {
 	}
 
 	/**
-	 * Check if a player can access a chest
+	 * Check if a player has the ability to access a protection
 	 * 
 	 * @param player
-	 *            the player to check
-	 * @param Entity
-	 *            the chest to check
-	 * @return if the player can access the chest
+	 * @param protection
+	 * @return
 	 */
-	public boolean canAccessChest(Player player, Protection chest) {
-		if (chest == null) {
+	public boolean canAccessProtection(Player player, Protection protection) {
+		if (protection == null) {
 			return true;
 		}
 
@@ -983,7 +1083,7 @@ public class LWC {
 		}
 
 		if (isMod(player)) {
-			Player chestOwner = plugin.getServer().getPlayer(chest.getOwner());
+			Player chestOwner = plugin.getServer().getPlayer(protection.getOwner());
 
 			if (chestOwner == null) {
 				return true;
@@ -994,15 +1094,16 @@ public class LWC {
 			}
 		}
 
-		switch (chest.getType()) {
+		switch (protection.getType()) {
 		case ProtectionTypes.PUBLIC:
 			return true;
 
 		case ProtectionTypes.PASSWORD:
-			return memoryDatabase.hasAccess(player.getName(), chest);
+			return memoryDatabase.hasAccess(player.getName(), protection);
 
 		case ProtectionTypes.PRIVATE:
-			return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, chest.getId(), player.getName()) >= 0;
+			return player.getName().equalsIgnoreCase(protection.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, protection.getId(), player.getName()) >= 0 ||
+			(permissions != null && physicalDatabase.getPrivateAccess(AccessRight.GROUP, protection.getId(), Permissions.Security.getGroup(player.getName())) >= 0);
 			// return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) >= 0 ||
 			// physicalDatabase.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) >= 0;
 
@@ -1012,33 +1113,27 @@ public class LWC {
 	}
 
 	/**
-	 * Check if a player can access a chest
+	 * Check if a player has the ability to access a protection
 	 * 
 	 * @param player
-	 *            the player to check
 	 * @param x
-	 *            x coordinate of the chest
 	 * @param y
-	 *            y coordinate of the chest
 	 * @param z
-	 *            z coordinate of the chest
-	 * @return if the player can access the chest
+	 * @return
 	 */
-	public boolean canAccessChest(Player player, int x, int y, int z) {
-		return canAccessChest(player, physicalDatabase.loadProtectedEntity(x, y, z));
+	public boolean canAccessProtection(Player player, int x, int y, int z) {
+		return canAccessProtection(player, physicalDatabase.loadProtectedEntity(x, y, z));
 	}
 
 	/**
-	 * Check if a player can administrate a chest
+	 * Check if a player has the ability to administrate a protection
 	 * 
 	 * @param player
-	 *            the player to check
 	 * @param Entity
-	 *            the chest to check
-	 * @return if the player can administrate the chest
+	 * @return
 	 */
-	public boolean canAdminChest(Player player, Protection chest) {
-		if (chest == null) {
+	public boolean canAdminProtection(Player player, Protection protection) {
+		if (protection == null) {
 			return true;
 		}
 
@@ -1046,21 +1141,68 @@ public class LWC {
 			return true;
 		}
 
-		switch (chest.getType()) {
+		switch (protection.getType()) {
 		case ProtectionTypes.PUBLIC:
-			return player.getName().equalsIgnoreCase(chest.getOwner());
+			return player.getName().equalsIgnoreCase(protection.getOwner());
 
 		case ProtectionTypes.PASSWORD:
-			return player.getName().equalsIgnoreCase(chest.getOwner()) && memoryDatabase.hasAccess(player.getName(), chest);
+			return player.getName().equalsIgnoreCase(protection.getOwner()) && memoryDatabase.hasAccess(player.getName(), protection);
 
 		case ProtectionTypes.PRIVATE:
-			return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, chest.getId(), player.getName()) == 1;
+			return player.getName().equalsIgnoreCase(protection.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, protection.getId(), player.getName()) == 1 ||
+			(permissions != null && physicalDatabase.getPrivateAccess(AccessRight.GROUP, protection.getId(), Permissions.Security.getGroup(player.getName())) == 1);
 			// return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) == 1 ||
 			// physicalDatabase.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) == 1;
 
 		default:
 			return false;
 		}
+	}
+	
+	/**
+	 * Check if a player has the ability to administrate a protection
+	 * 
+	 * @param player
+	 * @param block
+	 * @return
+	 */
+	public boolean canAdminProtection(Player player, Block block) {
+		List<Block> protectedBlocks = getProtectionSet(player.getWorld(), block.getX(), block.getY(), block.getZ());
+
+		if(protectedBlocks.size() > 0) {
+			for(Block protectedBlock : protectedBlocks) {
+				Protection protection = getPhysicalDatabase().loadProtectedEntity(protectedBlock.getX(), protectedBlock.getY(), protectedBlock.getZ());
+
+				if(protection != null) {
+					return canAdminProtection(player, protection);
+				}
+			}
+		}
+
+		return false;
+	}
+	
+	/**
+	 * Check if a player has the ability to access a protection
+	 * 
+	 * @param player
+	 * @param block
+	 * @return
+	 */
+	public boolean canAccessProtection(Player player, Block block) {
+		List<Block> protectedBlocks = getProtectionSet(player.getWorld(), block.getX(), block.getY(), block.getZ());
+
+		if(protectedBlocks.size() > 0) {
+			for(Block protectedBlock : protectedBlocks) {
+				Protection protection = getPhysicalDatabase().loadProtectedEntity(protectedBlock.getX(), protectedBlock.getY(), protectedBlock.getZ());
+
+				if(protection != null) {
+					return canAccessProtection(player, protection);
+				}
+			}
+		}
+
+		return false;
 	}
 
 }

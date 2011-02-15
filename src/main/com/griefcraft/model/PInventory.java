@@ -54,6 +54,10 @@ public class PInventory {
 		
 		return false;
 	}
+
+	public int hashCode() {
+		return 0x00;
+	}
 	
 	/**
 	 * Set the protection id

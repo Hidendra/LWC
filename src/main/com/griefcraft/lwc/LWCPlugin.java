@@ -317,6 +317,7 @@ public class LWCPlugin extends JavaPlugin {
 		/* Block events */
 		registerEvent(blockListener, Type.BLOCK_INTERACT);
 		registerEvent(blockListener, Type.BLOCK_DAMAGED);
+		registerEvent(blockListener, Type.BLOCK_PLACED);
 	}
 
 	/***

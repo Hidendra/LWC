@@ -28,7 +28,8 @@ public enum ConfigValues {
 	FLUSH_DB_INTERVAL("flush-db-interval", "10"), //
 	MAX_JOBS("max-jobs", "0"), //
 	PROTECTION_BLACKLIST("protection-blacklist", ""), //
-	OP_IS_LWCADMIN("op-is-lwcadmin", "true");
+	OP_IS_LWCADMIN("op-is-lwcadmin", "true"), //
+	AUTO_REGISTER("auto-register-as", "none"); // public, private
 
 	/**
 	 * The name of the config value used in the conf file

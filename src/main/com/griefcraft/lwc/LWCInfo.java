@@ -30,12 +30,12 @@ public class LWCInfo {
 	/**
 	 * LWC's version
 	 */
-	public static final double VERSION = 1.491;
+	public static final double VERSION = 1.5;
 	
 	/**
 	 * Full LWC version
 	 */
-	public static final String FULL_VERSION = String.format("%.3f", VERSION);
+	public static final String FULL_VERSION = String.format("v%.2f", VERSION);
 
 	/**
 	 * Location of the properties file relative to the root Minecraft directory
