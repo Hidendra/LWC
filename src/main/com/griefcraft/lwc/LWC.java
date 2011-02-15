@@ -752,15 +752,22 @@ public class LWC {
 		 * Apply group limits.. can't be one line however
 		 */
 		if(limit == -1 && permissions != null) {
-			Control control = (Control) Permissions.Security;
-			String[] groups = control.getGroups(player.getName());
-
-			for (String group : groups) {
-				if(limit >= 0) {
-					break;
+			try {
+				Control control = (Control) Permissions.Security;
+				String[] groups = control.getGroups(player.getName());
+	
+				for (String group : groups) {
+					if(limit >= 0) {
+						break;
+					}
+	
+					limit = physicalDatabase.getGroupLimit(group);
 				}
-
-				limit = physicalDatabase.getGroupLimit(group);
+			} catch(NullPointerException e) {
+				/*
+				 * NPE is thrown when user is not in any groups
+				 */
+				limit = physicalDatabase.getGroupLimit(Permissions.Security.getGroup(player.getName()));
 			}
 		}
 
