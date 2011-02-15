@@ -22,11 +22,13 @@ import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockDamageLevel;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockInteractEvent;
 import org.bukkit.event.block.BlockListener;
+import org.bukkit.event.block.BlockPlaceEvent;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
@@ -35,7 +37,9 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.util.Colors;
+import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.StringUtils;
+import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class LWCBlockListener extends BlockListener {
 
@@ -61,9 +65,16 @@ public class LWCBlockListener extends BlockListener {
 		LWC lwc = plugin.getLWC();
 
 		Block block = event.getBlock();
-
-		if (!lwc.isProtectable(block)) {
-			return;
+		
+		/*
+		 * Prevent players with the 
+		 */
+		if (lwc.getPermissions() != null && Permissions.Security.permission(player, "lwc.blockinventory") && !lwc.isAdmin(player) && !lwc.isMod(player)) {
+			if(block.getState() instanceof ContainerBlock) {
+				player.sendMessage(Colors.Red + "The server admin is blocking you from opening that.");
+				event.setCancelled(true);
+				return;
+			}
 		}
 
 		boolean access = lwc.enforceAccess(player, block);
@@ -76,14 +87,8 @@ public class LWCBlockListener extends BlockListener {
 	/**
 	 * Redirect certain events (to more seperate the two distinct functions they are used for)
 	 */
-	@Override
 	public void onBlockDamage(BlockDamageEvent event) {
 		BlockDamageLevel level = event.getDamageLevel();
-		Block block = event.getBlock();
-
-		if (!plugin.getLWC().isProtectable(block)) {
-			return;
-		}
 
 		if (level == BlockDamageLevel.BROKEN) {
 			blockBroken(event);
@@ -93,6 +98,86 @@ public class LWCBlockListener extends BlockListener {
 			blockTouched(event);
 		}
 
+	}
+	
+	/**
+	 * Used for auto registering placed protections
+	 */
+	public void onBlockPlace(BlockPlaceEvent event) {
+		String autoRegisterType = ConfigValues.AUTO_REGISTER.getString();
+		
+		/*
+		 * Check if it's enabled
+		 */
+		if(!autoRegisterType.equalsIgnoreCase("private") && !autoRegisterType.equalsIgnoreCase("public")) {
+			return;
+		}
+		
+		// default to public
+		int type = ProtectionTypes.PUBLIC;
+		
+		if(autoRegisterType.equalsIgnoreCase("private")) {
+			type = ProtectionTypes.PRIVATE;
+		}
+		
+		/*
+		 * Get info required for finishing the protection
+		 */
+		LWC lwc = plugin.getLWC();
+		Player player = event.getPlayer();
+		Block block = event.getBlockPlaced();
+		
+		/*
+		 * If the block isn't protectable, don't let them
+		 */
+		if(!lwc.isProtectable(block)) {
+			return;
+		}
+		
+		/*
+		 * If it's a chest, make sure they aren't trying to place it beside an already
+		 * registered chest
+		 */
+		if(block.getType() == Material.CHEST) {
+			BlockFace[] faces = new BlockFace[] {
+					BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST
+			};
+			
+			for(BlockFace blockFace : faces) {
+				Block face = block.getFace(blockFace);
+				
+				/*
+				 * They're placing it beside a chest, check if it's protected
+				 */
+				if(face.getType() == Material.CHEST) {
+					/*
+					 * If it's protected, just return -- don't auto protect it
+					 */
+					if(lwc.getPhysicalDatabase().loadProtectedEntity(face.getX(), face.getY(), face.getZ()) != null) {
+						return;
+					}
+				}
+			}
+		}
+		
+		/*
+		 * Enforce anything preventing us from creating a protection
+		 */
+		if (!lwc.isAdmin(player)) {
+			if (lwc.enforceProtectionLimits(player) || lwc.enforceWorldGuard(player, block)) {
+				return;
+			}
+		}
+		
+		/*
+		 * All's good, protect the object!
+		 */
+		lwc.getPhysicalDatabase().registerProtectedEntity(block.getTypeId(), type, player.getName(), "", block.getX(), block.getY(), block.getZ());
+		
+		/*
+		 * Tell them
+		 */
+		player.sendMessage(Colors.Green + "Created " + StringUtils.capitalizeFirstLetter(autoRegisterType) + " " + lwc.materialToString(block) + " successfully");
 	}
 
 	/**
@@ -106,11 +191,10 @@ public class LWCBlockListener extends BlockListener {
 		Block block = event.getBlock();
 
 		List<Block> protectionSet = lwc.getProtectionSet(block.getWorld(), block.getX(), block.getY(), block.getZ());
-		boolean hasAccess = true;
 		Protection protection = null;
 		boolean hasNoOwner = true;
 
-		for (final Block _block : protectionSet) {
+		for (Block _block : protectionSet) {
 			if (_block == null) {
 				continue;
 			}
@@ -121,9 +205,7 @@ public class LWCBlockListener extends BlockListener {
 				continue;
 			}
 
-			hasAccess = lwc.canAccessChest(player, protection);
 			hasNoOwner = false;
-
 			break;
 		}
 
@@ -131,7 +213,7 @@ public class LWCBlockListener extends BlockListener {
 
 		boolean hasFreeRequest = actions.contains("free");
 		boolean requestInfo = actions.contains("info");
-		boolean createChest = actions.contains("create");
+		boolean createProtection = actions.contains("create");
 		boolean modifyChest = actions.contains("modify");
 		boolean dropTransferReg = actions.contains("dropTransferSelect");
 		boolean showAccessList = false;
@@ -191,7 +273,7 @@ public class LWCBlockListener extends BlockListener {
 					break;
 				}
 
-				boolean canAdmin = lwc.canAdminChest(player, protection);
+				boolean canAdmin = lwc.canAdminProtection(player, protection);
 				// boolean canAccess = parent.canAccessChest(player,
 				// entity);
 
@@ -218,7 +300,7 @@ public class LWCBlockListener extends BlockListener {
 			} 
 			
 			else if (dropTransferReg) {
-				final boolean canAccess = lwc.canAccessChest(player, protection);
+				final boolean canAccess = lwc.canAccessProtection(player, protection);
 
 				if (!canAccess) {
 					player.sendMessage(Colors.Red + "You cannot use a chest that you cannot access as a drop transfer target.");
@@ -243,7 +325,7 @@ public class LWCBlockListener extends BlockListener {
 			
 			else if (hasFreeRequest) {
 				if (lwc.isAdmin(player) || protection.getOwner().equals(player.getName())) {
-					player.sendMessage(Colors.Green + "Removed lock on the " + lwc.blockToString(block) + " successfully!");
+					player.sendMessage(Colors.Green + "Removed lock on the " + lwc.materialToString(protection.getBlockId()) + " successfully!");
 					lwc.getPhysicalDatabase().unregisterProtectedEntity(protection.getX(), protection.getY(), protection.getZ());
 					lwc.getPhysicalDatabase().unregisterProtectionRights(protection.getId());
 					if (lwc.notInPersistentMode(player.getName())) {
@@ -252,7 +334,7 @@ public class LWCBlockListener extends BlockListener {
 					
 					return;
 				} else {
-					player.sendMessage(Colors.Red + "You do not own that " + lwc.blockToString(block) + "!");
+					player.sendMessage(Colors.Red + "You do not own that " + lwc.materialToString(protection.getBlockId()) + "!");
 					if (lwc.notInPersistentMode(player.getName())) {
 						lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 					}
@@ -262,7 +344,7 @@ public class LWCBlockListener extends BlockListener {
 			} 
 			
 			else if (modifyChest) {
-				if (lwc.canAdminChest(player, protection)) {
+				if (lwc.canAdminProtection(player, protection)) {
 					final Action action = lwc.getMemoryDatabase().getAction("modify", player.getName());
 
 					final String defaultEntities = action.getData();
@@ -310,7 +392,7 @@ public class LWCBlockListener extends BlockListener {
 
 					return;
 				} else {
-					player.sendMessage(Colors.Red + "You do not own that " + lwc.blockToString(block) + "!");
+					player.sendMessage(Colors.Red + "You do not own that " + lwc.materialToString(protection.getBlockId()) + "!");
 					if (lwc.notInPersistentMode(player.getName())) {
 						lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 					}
@@ -375,18 +457,18 @@ public class LWCBlockListener extends BlockListener {
 		}
 
 		if (requestInfo || hasFreeRequest || showAccessList) {
-			player.sendMessage(Colors.Red + "That " + lwc.blockToString(block) + " is not registered!");
+			player.sendMessage(Colors.Red + "That " + lwc.materialToString(block) + " is not registered!");
 			if (lwc.notInPersistentMode(player.getName())) {
 				lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 			}
 			return;
 		}
 
-		if ((createChest || modifyChest) && !hasNoOwner) {
-			if (!lwc.canAdminChest(player, protection)) {
-				player.sendMessage(Colors.Red + "You do not own that " + lwc.blockToString(block) + "!");
+		if ((createProtection || modifyChest) && !hasNoOwner) {
+			if (!lwc.canAdminProtection(player, protection)) {
+				player.sendMessage(Colors.Red + "You do not own that " + lwc.materialToString(protection.getBlockId()) + "!");
 			} else {
-				player.sendMessage(Colors.Red + "You have already registered that " + lwc.blockToString(block) + "!");
+				player.sendMessage(Colors.Red + "You have already registered that " + lwc.materialToString(protection.getBlockId()) + "!");
 			}
 
 			if (lwc.notInPersistentMode(player.getName())) {
@@ -396,7 +478,7 @@ public class LWCBlockListener extends BlockListener {
 			return;
 		}
 
-		if (hasNoOwner && createChest) {
+		if (hasNoOwner && createProtection) {
 			final Action action = lwc.getMemoryDatabase().getAction("create", player.getName());
 
 			final String data = action.getData();
@@ -408,6 +490,15 @@ public class LWCBlockListener extends BlockListener {
 				for (int i = 1; i < chop.length; i++) {
 					subset += chop[i] + " ";
 				}
+			}
+			
+			/*
+			 * Make sure it's protectable
+			 * Even though it would work fine (ie using block UNDER the sign instead), 
+			 * I would rather all protections being tagged on the real block itself instead of fucking myself in the future.
+			 */
+			if(!lwc.isProtectable(block)) {
+				return;
 			}
 
 			/*
@@ -425,14 +516,14 @@ public class LWCBlockListener extends BlockListener {
 
 			if (type.equals("public")) {
 				lwc.getPhysicalDatabase().registerProtectedEntity(block.getTypeId(), ProtectionTypes.PUBLIC, player.getName(), "", block.getX(), block.getY(), block.getZ());
-				player.sendMessage(Colors.Green + "Created Public " + lwc.blockToString(block) + " successfully");
+				player.sendMessage(Colors.Green + "Created Public " + lwc.materialToString(block) + " successfully");
 			} else if (type.equals("password")) {
 				String password = data.substring("password ".length());
 				password = lwc.encrypt(password);
 
 				lwc.getPhysicalDatabase().registerProtectedEntity(block.getTypeId(), ProtectionTypes.PASSWORD, player.getName(), password, block.getX(), block.getY(), block.getZ());
 				lwc.getMemoryDatabase().registerPlayer(player.getName(), lwc.getPhysicalDatabase().loadProtectedEntity(block.getX(), block.getY(), block.getZ()).getId());
-				player.sendMessage(Colors.Green + "Created password protected " + lwc.blockToString(block) + " successfully");
+				player.sendMessage(Colors.Green + "Created password protected " + lwc.materialToString(block) + " successfully");
 				player.sendMessage(Colors.Blue + "For convenience, you don't have to enter your password until");
 				player.sendMessage(Colors.Blue + "you next log in");
 
@@ -447,7 +538,7 @@ public class LWCBlockListener extends BlockListener {
 
 				lwc.getPhysicalDatabase().registerProtectedEntity(block.getTypeId(), ProtectionTypes.PRIVATE, player.getName(), "", block.getX(), block.getY(), block.getZ());
 
-				player.sendMessage(Colors.Green + "Created Private " + lwc.blockToString(block) + " successfully");
+				player.sendMessage(Colors.Green + "Created Private " + lwc.materialToString(block) + " successfully");
 
 				for (String userEntity : entities) {
 					boolean isAdmin = false;
@@ -479,7 +570,7 @@ public class LWCBlockListener extends BlockListener {
 					protectionType = ProtectionTypes.TRAP_BAN;
 				}
 				
-				player.sendMessage(Colors.Green + "Created " + StringUtils.capitalizeFirstLetter(trapType) + " trap on " + lwc.blockToString(block) + " successfully");
+				player.sendMessage(Colors.Green + "Created " + StringUtils.capitalizeFirstLetter(trapType) + " trap on " + lwc.materialToString(protection.getBlockId()) + " successfully");
 				player.sendMessage(Colors.Green + "Will use the reason: " + Colors.Blue + "\"" + Colors.Red + reason + Colors.Blue + "\"");
 
 				/*
@@ -521,8 +612,8 @@ public class LWCBlockListener extends BlockListener {
 				continue;
 			}
 
-			hasAccess = lwc.canAccessChest(player, protection);
-			canAdmin = lwc.canAdminChest(player, protection);
+			hasAccess = lwc.canAccessProtection(player, protection);
+			canAdmin = lwc.canAdminProtection(player, protection);
 		}
 
 		
@@ -530,7 +621,7 @@ public class LWCBlockListener extends BlockListener {
 			if(canAdmin) {
 				lwc.getPhysicalDatabase().unregisterProtectedEntity(protection.getX(), protection.getY(), protection.getZ());
 				lwc.getPhysicalDatabase().unregisterProtectionRights(protection.getId());
-				player.sendMessage(Colors.Red + lwc.blockToString(block) + " unregistered.");
+				player.sendMessage(Colors.Red + lwc.materialToString(protection.getBlockId()) + " unregistered.");
 			} else {
 				event.setCancelled(true);
 			}
