@@ -88,6 +88,10 @@ public class LWCBlockListener extends BlockListener {
 	 * Redirect certain events (to more seperate the two distinct functions they are used for)
 	 */
 	public void onBlockDamage(BlockDamageEvent event) {
+		if(event.isCancelled()) {
+			return;
+		}
+		
 		BlockDamageLevel level = event.getDamageLevel();
 
 		if (level == BlockDamageLevel.BROKEN) {
@@ -104,6 +108,10 @@ public class LWCBlockListener extends BlockListener {
 	 * Used for auto registering placed protections
 	 */
 	public void onBlockPlace(BlockPlaceEvent event) {
+		if(event.isCancelled()) {
+			return;
+		}
+		
 		String autoRegisterType = ConfigValues.AUTO_REGISTER.getString();
 		
 		/*
