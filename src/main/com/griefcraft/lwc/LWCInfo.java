@@ -25,7 +25,7 @@ public class LWCInfo {
 	/**
 	 * Enable/disable dev mode
 	 */
-	public static final boolean DEVELOPMENT = false;
+	public static final boolean DEVELOPMENT = true;
 
 	/**
 	 * LWC's version
