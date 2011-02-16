@@ -260,7 +260,7 @@ public class LWC {
 			// let admins know that the thing they're using is protected :)
 			canAdmin = canAdminProtection(player, protection);
 
-			if(canAdmin) {
+			if(isAdmin(player) || isMod(player)) {
 				player.sendMessage(Colors.Red + "Notice: " + Colors.White + "That " + materialToString(block) + " is protected.");
 			}
 
