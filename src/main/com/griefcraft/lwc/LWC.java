@@ -821,7 +821,6 @@ public class LWC {
 		List<Block> entities = new ArrayList<Block>(2);
 
 		Block baseBlock = world.getBlockAt(x, y, z);
-		Material baseType = baseBlock.getType();
 
 		/*
 		 * First check the block they clicked
@@ -941,7 +940,7 @@ public class LWC {
 					 * Chest
 					 */
 				case 54:
-					if (other.getType() != Material.CHEST) {
+					if (type != Material.CHEST) {
 						return entities;
 					}
 
@@ -951,7 +950,7 @@ public class LWC {
 					 * Wooden door
 					 */
 				case 64:
-					if (other.getType() != Material.WOODEN_DOOR) {
+					if (type != Material.WOODEN_DOOR) {
 						return entities;
 					}
 
@@ -961,7 +960,7 @@ public class LWC {
 					 * Iron door
 					 */
 				case 71:
-					if (other.getType() != Material.IRON_DOOR_BLOCK) {
+					if (type != Material.IRON_DOOR_BLOCK) {
 						return entities;
 					}
 
