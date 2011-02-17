@@ -51,17 +51,17 @@ public class Updater {
 	/**
 	 * URL to the base update site
 	 */
-	private final static String UPDATE_SITE = "https://github.com/Hidendra/LWC/raw/master/";
+	private final static String UPDATE_SITE = "http://griefcraft.com/bukkit/";
 
 	/**
 	 * File used to obtain the latest version
 	 */
-	private final static String VERSION_FILE = "VERSION";
+	private final static String VERSION_FILE = "lwc/VERSION";
 
 	/**
 	 * File used for the distribution
 	 */
-	private final static String DIST_FILE = "dist/LWC.jar";
+	private final static String DIST_FILE = "lwc/release/LWC.jar";
 
 	/**
 	 * List of files to download
@@ -74,7 +74,7 @@ public class Updater {
 	private HashMap<String, String> config = new HashMap<String, String>();
 
 	public Updater() {
-		enableSSL();
+		// enableSSL();
 
 		/*
 		 * Default config values
@@ -99,7 +99,7 @@ public class Updater {
 			File file = new File(path);
 
 			if (file != null && !file.exists() && !file.isDirectory()) {
-				UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + path);
+				UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "shared/" + path);
 				updaterFile.setLocalLocation(path);
 
 				needsUpdating.add(updaterFile);
@@ -121,7 +121,7 @@ public class Updater {
 		String[] paths = new String[] { "lib/sqlite.jar", getFullNativeLibraryPath() };
 
 		for (String path : paths) {
-			UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + path);
+			UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "shared/" + path);
 			updaterFile.setLocalLocation(path);
 
 			needsUpdating.add(updaterFile);
@@ -134,8 +134,9 @@ public class Updater {
 	 * @return
 	 */
 	public boolean checkDist() {
-
 		double latestVersion = getLatestPluginVersion();
+		
+		check();
 
 		if (latestVersion > LWCInfo.VERSION) {
 			UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + DIST_FILE);
