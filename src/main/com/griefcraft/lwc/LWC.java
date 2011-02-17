@@ -43,7 +43,7 @@ public class LWC {
 	/**
 	 * Plugin instance
 	 */
-	private LWCPlugin plugin;
+	private LWCPlugin plugin; 
 
 	/**
 	 * Logging instance

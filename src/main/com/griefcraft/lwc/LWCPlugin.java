@@ -102,6 +102,7 @@ public class LWCPlugin extends JavaPlugin {
 			} else {
 				updater.check();
 			}
+			
 			updater.update();
 		} catch (Exception e) {
 			e.printStackTrace();
