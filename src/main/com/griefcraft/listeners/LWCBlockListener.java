@@ -25,12 +25,16 @@ import org.bukkit.block.BlockDamageLevel;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockInteractEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Action;
 import com.griefcraft.model.Protection;
@@ -50,6 +54,32 @@ public class LWCBlockListener extends BlockListener {
 
 	public LWCBlockListener(LWCPlugin plugin) {
 		this.plugin = plugin;
+	}
+	
+	public void onBlockRedstoneChange(BlockRedstoneEvent event) {
+		if(!LWCInfo.DEVELOPMENT) {
+			return; // wip
+		}
+		
+		LWC lwc = plugin.getLWC();
+		Block poweredBlock = event.getBlock();
+		
+		System.out.println(poweredBlock.getType().toString() + ": " + event.getOldCurrent() + "->" + event.getNewCurrent());
+		
+		if(!lwc.isProtectable(poweredBlock)) {
+			return;
+		}
+		
+		List<Block> blocks = lwc.getProtectionSet(poweredBlock.getWorld(), poweredBlock.getX(), poweredBlock.getY(), poweredBlock.getZ());
+		
+		for(Block block : blocks) {
+			Protection protection = lwc.getPhysicalDatabase().loadProtectedEntity(block.getX(), block.getY(), block.getZ());
+			
+			if(protection != null) {
+				event.setNewCurrent(event.getOldCurrent());
+				break;
+			}
+		}
 	}
 
 	/**
