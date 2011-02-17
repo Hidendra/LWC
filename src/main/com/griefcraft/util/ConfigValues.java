@@ -29,7 +29,8 @@ public enum ConfigValues {
 	MAX_JOBS("max-jobs", "0"), //
 	PROTECTION_BLACKLIST("protection-blacklist", ""), //
 	OP_IS_LWCADMIN("op-is-lwcadmin", "true"), //
-	AUTO_REGISTER("auto-register-as", "none"); // public, private
+	AUTO_REGISTER("auto-register-as", "none"), // public, private
+	DENY_REDSTONE("deny-redstone", "false"); // on valid protections (i.e door)
 
 	/**
 	 * The name of the config value used in the conf file
