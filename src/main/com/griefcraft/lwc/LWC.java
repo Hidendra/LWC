@@ -755,12 +755,12 @@ public class LWC {
 			try {
 				Control control = (Control) Permissions.Security;
 				String[] groups = control.getGroups(player.getName());
-	
+
 				for (String group : groups) {
 					if(limit >= 0) {
 						break;
 					}
-	
+
 					limit = physicalDatabase.getGroupLimit(group);
 				}
 			} catch(NullPointerException e) {
@@ -869,7 +869,73 @@ public class LWC {
 		Material type = block.getType();
 		Block up = block.getFace(BlockFace.UP);
 
-		if (up.getType() == Material.WOODEN_DOOR || up.getType() == Material.IRON_DOOR_BLOCK || type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK) {
+		if (isProtectable(block)) {
+			if (!entities.contains(block)) {
+				entities.add(block);
+			}
+		}
+		else if (entities.size() == 1) {
+			Block other = entities.get(0);
+
+			switch(other.getTypeId()) {
+
+			/*
+			 * Furnace
+			 */
+			case 61:
+			case 62:
+				return entities;
+
+				/*
+				 * Dispensers
+				 */
+			case 23:
+				return entities;
+
+				/*
+				 * Sign
+				 */
+			case 63:
+			case 68:
+				return entities;
+
+				/*
+				 * Chest
+				 */
+			case 54:
+				if (type != Material.CHEST) {
+					return entities;
+				}
+
+				break;
+
+				/*
+				 * Wooden door
+				 */
+			case 64:
+				if (type != Material.WOODEN_DOOR) {
+					return entities;
+				}
+
+				break;
+
+				/*
+				 * Iron door
+				 */
+			case 71:
+				if (type != Material.IRON_DOOR_BLOCK) {
+					return entities;
+				}
+
+				break;
+
+			}
+			
+			if(!entities.contains(block)) {
+				entities.add(block);
+			}
+		}
+		else if (up.getType() == Material.WOODEN_DOOR || up.getType() == Material.IRON_DOOR_BLOCK || type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK) {
 			/*
 			 * check if they're clicking the block under the door
 			 */
@@ -878,7 +944,7 @@ public class LWC {
 				entities.add(block.getFace(BlockFace.UP)); // bottom half
 				entities.add(block.getWorld().getBlockAt(block.getX(), block.getY() + 2, block.getZ())); // top half
 			} else {
-				if(up.getType() == Material.WOODEN_DOOR || up.getType() == Material.IRON_DOOR_BLOCK) {
+				if(up.getType() == Material.WOODEN_DOOR || up.getType() == Material.IRON_DOOR_BLOCK && !isProtectable(block)) {
 					entities.add(block); // bottom half
 					entities.add(up); // top half
 				} else {
@@ -910,119 +976,56 @@ public class LWC {
 
 			return entities;
 		}
-		else {
-			if (entities.size() == 1) {
-				Block other = entities.get(0);
+		else if (!isProtectable(block)) {
+			/*
+			 * Look for a ronery wall sign
+			 */
+			Block face = null;
 
-				switch(other.getTypeId()) {
-
-				/*
-				 * Furnace
-				 */
-				case 61:
-				case 62:
-					return entities;
-
-					/*
-					 * Dispensers
-					 */
-				case 23:
-					return entities;
-
-					/*
-					 * Sign
-					 */
-				case 63:
-				case 68:
-					return entities;
-
-					/*
-					 * Chest
-					 */
-				case 54:
-					if (type != Material.CHEST) {
-						return entities;
-					}
-
-					break;
-
-					/*
-					 * Wooden door
-					 */
-				case 64:
-					if (type != Material.WOODEN_DOOR) {
-						return entities;
-					}
-
-					break;
-
-					/*
-					 * Iron door
-					 */
-				case 71:
-					if (type != Material.IRON_DOOR_BLOCK) {
-						return entities;
-					}
-
-					break;
-
-				}
-
-			} else {
-				/*
-				 * Look for a ronery wall sign
-				 */
-				Block face = null;
-				
-				BlockFace[] faces = new BlockFace[] {
+			BlockFace[] faces = new BlockFace[] {
 					BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST
-				};
-				
-				/*
-				 * Match wall signs to the wall it's attached to
-				 */
-				for(BlockFace blockFace : faces) {
-					if((face = block.getFace(blockFace)) != null) {
-						if(face.getType() == Material.WALL_SIGN) {
-							byte direction = face.getData();
-							
-							/*
-							 * Protect the wall the wall sign is attached to
-							 */
-							switch(direction) {
-							case 0x02: // east
-								if(blockFace == BlockFace.EAST) {
-									entities.add(face);
-								}
-								break;
-								
-							case 0x03: // west
-								if(blockFace == BlockFace.WEST) {
-									entities.add(face);
-								}
-								break;
-								
-							case 0x04: // north
-								if(blockFace == BlockFace.NORTH) {
-									entities.add(face);
-								}
-								break;
-								
-							case 0x05: // south
-								if(blockFace == BlockFace.SOUTH) {
-									entities.add(face);
-								}
-								break;
-							}
-							
-						}
-						
-					}
-				}
-			}
+			};
 
-			if (!entities.contains(block)) {
-				entities.add(block);
+			/*
+			 * Match wall signs to the wall it's attached to
+			 */
+			for(BlockFace blockFace : faces) {
+				if((face = block.getFace(blockFace)) != null) {
+					if(face.getType() == Material.WALL_SIGN) {
+						byte direction = face.getData();
+
+						/*
+						 * Protect the wall the wall sign is attached to
+						 */
+						switch(direction) {
+						case 0x02: // east
+							if(blockFace == BlockFace.EAST) {
+								entities.add(face);
+							}
+							break;
+
+						case 0x03: // west
+							if(blockFace == BlockFace.WEST) {
+								entities.add(face);
+							}
+							break;
+
+						case 0x04: // north
+							if(blockFace == BlockFace.NORTH) {
+								entities.add(face);
+							}
+							break;
+
+						case 0x05: // south
+							if(blockFace == BlockFace.SOUTH) {
+								entities.add(face);
+							}
+							break;
+						}
+
+					}
+
+				}
 			}
 		}
 
@@ -1080,7 +1083,7 @@ public class LWC {
 	 * @return
 	 */
 	public boolean canAccessProtection(Player player, Protection protection) {
-		if (protection == null) {
+		if (protection == null || player == null) {
 			return true;
 		}
 
@@ -1139,7 +1142,7 @@ public class LWC {
 	 * @return
 	 */
 	public boolean canAdminProtection(Player player, Protection protection) {
-		if (protection == null) {
+		if (protection == null || player == null) {
 			return true;
 		}
 
@@ -1164,7 +1167,7 @@ public class LWC {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Check if a player has the ability to administrate a protection
 	 * 
@@ -1187,7 +1190,7 @@ public class LWC {
 
 		return false;
 	}
-	
+
 	/**
 	 * Check if a player has the ability to access a protection
 	 * 
