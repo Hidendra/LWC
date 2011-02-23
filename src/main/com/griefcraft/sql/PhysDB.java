@@ -633,12 +633,6 @@ public class PhysDB extends Database {
 					+ "last_transaction TEXT," //
 					+ "last_update TEXT" //
 					+ ");");
-			
-			/**
-			 * TODO:
-			 * 
-			 * protections table update inventories inventory_contents
-			 */
 
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS jobs (" //
 					+ "id INTEGER PRIMARY KEY," //

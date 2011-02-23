@@ -25,9 +25,8 @@ import org.bukkit.block.BlockDamageLevel;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockInteractEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -124,14 +123,56 @@ public class LWCBlockListener extends BlockListener {
 		
 		BlockDamageLevel level = event.getDamageLevel();
 
-		if (level == BlockDamageLevel.BROKEN) {
-			blockBroken(event);
-		}
-
-		else if (level == BlockDamageLevel.STARTED) {
+		if (level == BlockDamageLevel.STARTED) {
 			blockTouched(event);
 		}
 
+	}
+	
+	@Override
+	public void onBlockBreak(BlockBreakEvent event) {
+		if(event.isCancelled()) {
+			return;
+		}
+		
+		LWC lwc = plugin.getLWC();
+		Player player = event.getPlayer();
+		Block block = event.getBlock();
+
+		List<Block> protectionSet = lwc.getProtectionSet(block.getWorld(), block.getX(), block.getY(), block.getZ());
+		boolean hasAccess = true;
+		boolean canAdmin = true;
+		Protection protection = null;
+
+		for (Block _block : protectionSet) {
+			if (_block == null) {
+				continue;
+			}
+
+			protection = lwc.getPhysicalDatabase().loadProtectedEntity(_block.getX(), _block.getY(), _block.getZ());
+
+			if (protection == null) {
+				continue;
+			}
+
+			hasAccess = lwc.canAccessProtection(player, protection);
+			canAdmin = lwc.canAdminProtection(player, protection);
+		}
+
+		
+		if(protection != null) {
+			if(canAdmin) {
+				lwc.getPhysicalDatabase().unregisterProtectedEntity(protection.getX(), protection.getY(), protection.getZ());
+				lwc.getPhysicalDatabase().unregisterProtectionRights(protection.getId());
+				player.sendMessage(Colors.Red + lwc.materialToString(protection.getBlockId()) + " unregistered.");
+			} else {
+				event.setCancelled(true);
+			}
+		}
+		
+		if(!hasAccess) {
+			event.setCancelled(true);
+		}
 	}
 	
 	/**
@@ -621,52 +662,6 @@ public class LWCBlockListener extends BlockListener {
 			if (lwc.notInPersistentMode(player.getName())) {
 				lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 			}
-		}
-	}
-
-	/**
-	 * Prevent a player from destroying a protected block We can safely -assume- that onBlockDamage already checked if the block being called can be protected
-	 * 
-	 * @param event
-	 */
-	private void blockBroken(BlockDamageEvent event) {
-		LWC lwc = plugin.getLWC();
-		Player player = event.getPlayer();
-		Block block = event.getBlock();
-
-		List<Block> protectionSet = lwc.getProtectionSet(block.getWorld(), block.getX(), block.getY(), block.getZ());
-		boolean hasAccess = true;
-		boolean canAdmin = true;
-		Protection protection = null;
-
-		for (Block _block : protectionSet) {
-			if (_block == null) {
-				continue;
-			}
-
-			protection = lwc.getPhysicalDatabase().loadProtectedEntity(_block.getX(), _block.getY(), _block.getZ());
-
-			if (protection == null) {
-				continue;
-			}
-
-			hasAccess = lwc.canAccessProtection(player, protection);
-			canAdmin = lwc.canAdminProtection(player, protection);
-		}
-
-		
-		if(protection != null) {
-			if(canAdmin) {
-				lwc.getPhysicalDatabase().unregisterProtectedEntity(protection.getX(), protection.getY(), protection.getZ());
-				lwc.getPhysicalDatabase().unregisterProtectionRights(protection.getId());
-				player.sendMessage(Colors.Red + lwc.materialToString(protection.getBlockId()) + " unregistered.");
-			} else {
-				event.setCancelled(true);
-			}
-		}
-		
-		if(!hasAccess) {
-			event.setCancelled(true);
 		}
 	}
 
