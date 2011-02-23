@@ -74,9 +74,7 @@ public class LWCPlugin extends JavaPlugin {
 	 */
 	private Updater updater;
 
-	public LWCPlugin(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader) {
-		super(pluginLoader, instance, desc, folder, plugin, cLoader);
-
+	public LWCPlugin() {
 		update147();
 
 		log("Loading shared objects");
@@ -318,6 +316,7 @@ public class LWCPlugin extends JavaPlugin {
 		/* Block events */
 		registerEvent(blockListener, Type.BLOCK_INTERACT);
 		registerEvent(blockListener, Type.BLOCK_DAMAGED);
+		registerEvent(blockListener, Type.BLOCK_BREAK);
 		registerEvent(blockListener, Type.BLOCK_PLACED);
 		registerEvent(blockListener, Type.REDSTONE_CHANGE);
 	}

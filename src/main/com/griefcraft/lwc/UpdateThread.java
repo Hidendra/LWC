@@ -160,7 +160,7 @@ public class UpdateThread implements Runnable {
 						}
 
 						/* TODO: ?? */
-						World world = lwc.getPlugin().getServer().getWorlds()[0];
+						World world = lwc.getPlugin().getServer().getWorlds().get(0);
 
 						/* Get the current block from the world */
 						Block block = world.getBlockAt(x, y, z);
