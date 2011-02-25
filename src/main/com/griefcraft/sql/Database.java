@@ -41,7 +41,7 @@ public abstract class Database {
 	 * Logging object
 	 */
 	private Logger logger = Logger.getLogger(getClass().getSimpleName());
-	
+
 	/**
 	 * Dev logger
 	 */
@@ -131,14 +131,14 @@ public abstract class Database {
 	}
 
 	public abstract void load();
-	
+
 	/**
 	 * Log a string of dev mode if enabled
 	 * 
 	 * @param str
 	 */
 	public void dev(String str) {
-		if(LWCInfo.DEVELOPMENT) {
+		if (LWCInfo.DEVELOPMENT) {
 			devLogger.info(str);
 		}
 	}

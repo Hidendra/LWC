@@ -34,16 +34,16 @@ public class Owners implements ICommand {
 	@Override
 	public void execute(LWC lwc, Player player, String[] args) {
 		int page = 1;
-		
-		if(args.length > 1) {
+
+		if (args.length > 1) {
 			try {
 				page = Integer.parseInt(args[1]);
-			} catch(Exception e) {
+			} catch (Exception e) {
 				lwc.sendSimpleUsage(player, "/lwc -owners [page]");
 				return;
 			}
 		}
-		
+
 		lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 		lwc.getMemoryDatabase().registerAction("owners:" + page, player.getName());
 		player.sendMessage(Colors.Blue + "Punch a protection to view who has access");
