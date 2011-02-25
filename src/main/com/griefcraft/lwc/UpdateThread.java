@@ -29,7 +29,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.griefcraft.logging.Logger;
@@ -67,7 +66,7 @@ public class UpdateThread implements Runnable {
 	 * True begins the flush
 	 */
 	private boolean flush = false;
-	
+
 	/**
 	 * Temporary for 1.5 while ALL protection block ids need to be fully populated
 	 */
@@ -82,7 +81,7 @@ public class UpdateThread implements Runnable {
 		thread = new Thread(this);
 		thread.start();
 	}
-	
+
 	/**
 	 * Add a protection to be updated to the top of the queue (JUST block ids!!)
 	 * 
@@ -91,11 +90,9 @@ public class UpdateThread implements Runnable {
 	public void queueProtectionBlockIdUpdate(Protection protection) {
 		blockIdUpdateQueue.offer(protection);
 	}
-	
+
 	/**
-	 * Get the two Block objects for a door
-	 * doors[0] = Bottom half of door
-	 * doors[1] = Top half of door
+	 * Get the two Block objects for a door doors[0] = Bottom half of door doors[1] = Top half of door
 	 * 
 	 * @param world
 	 * @param block
@@ -103,17 +100,17 @@ public class UpdateThread implements Runnable {
 	 */
 	private Block[] getDoors(World world, Block block) {
 		Block[] doors = new Block[2];
-		
+
 		Block temp;
-		
-		if((temp = block.getFace(BlockFace.UP)) != null && temp.getType() == block.getType()) {
+
+		if ((temp = block.getFace(BlockFace.UP)) != null && temp.getType() == block.getType()) {
 			doors[0] = block;
 			doors[1] = temp;
-		} else if((temp = block.getFace(BlockFace.DOWN)) != null && temp.getType() == block.getType()) {
+		} else if ((temp = block.getFace(BlockFace.DOWN)) != null && temp.getType() == block.getType()) {
 			doors[0] = temp;
 			doors[1] = block;
 		}
-		
+
 		return doors;
 	}
 
@@ -130,13 +127,12 @@ public class UpdateThread implements Runnable {
 				logger.info("Executing job id #" + job.getId());
 
 				int type = job.getType();
-				
+
 				switch (type) {
 				/*
-				 * Jobs that start with "x y z". 
-				 * Optional payload can be passed after Z following a space: "x y z extra"
+				 * Jobs that start with "x y z". Optional payload can be passed after Z following a space: "x y z extra"
 				 */
-				
+
 				case Job.REMOVE_BLOCK:
 				case Job.OPEN_DOOR:
 				case Job.DISPENSE_DISPENSER:
@@ -154,8 +150,8 @@ public class UpdateThread implements Runnable {
 						int y = Integer.parseInt(coordinates[1]);
 						int z = Integer.parseInt(coordinates[2]);
 						String extra = "";
-						
-						if(coordinates.length > 3) {
+
+						if (coordinates.length > 3) {
 							extra = StringUtils.join(coordinates, 3).trim();
 						}
 
@@ -166,47 +162,47 @@ public class UpdateThread implements Runnable {
 						Block block = world.getBlockAt(x, y, z);
 
 						/* Now find out what the job specifically does */
-						
-						if(type == Job.REMOVE_BLOCK) {
+
+						if (type == Job.REMOVE_BLOCK) {
 							block.setData((byte) 0);
 							block.setType(Material.AIR);
-						} else if(type == Job.OPEN_DOOR) {
-							if(block.getType() == Material.WOODEN_DOOR || block.getType() == Material.IRON_DOOR_BLOCK) {
+						} else if (type == Job.OPEN_DOOR) {
+							if (block.getType() == Material.WOODEN_DOOR || block.getType() == Material.IRON_DOOR_BLOCK) {
 								Block[] doors = getDoors(world, block);
-								
+
 								byte bottomDoor = doors[0].getData();
 								byte topDoor = doors[1].getData();
-								
-								if((block.getData() & 0x4) == 0x4) {
+
+								if ((block.getData() & 0x4) == 0x4) {
 									bottomDoor -= 4;
 									topDoor -= 4;
 								} else {
 									bottomDoor |= 0x4;
 									topDoor |= 0x4;
 								}
-								
+
 								doors[0].setData(bottomDoor);
 								doors[1].setData(topDoor);
 							}
-						} else if(type == Job.DISPENSE_DISPENSER) {
-							if(block.getType() == Material.DISPENSER) {
+						} else if (type == Job.DISPENSE_DISPENSER) {
+							if (block.getType() == Material.DISPENSER) {
 								Dispenser dispenser = (Dispenser) block.getState();
 								dispenser.dispense();
 							}
-						} else if(type == Job.UPDATE_SIGN) {
-							if(block.getType() == Material.SIGN || block.getType() == Material.SIGN_POST) {
+						} else if (type == Job.UPDATE_SIGN) {
+							if (block.getType() == Material.SIGN || block.getType() == Material.SIGN_POST) {
 								Sign sign = (Sign) block.getState();
 
 								String[] lines = extra.split("==X8LarE=="); // split by how lines are split internally
 
-								for(int line=0; line<lines.length; line++) {
-									if(line > 3) {
+								for (int line = 0; line < lines.length; line++) {
+									if (line > 3) {
 										break;
 									}
 									logger.info(line + ":" + lines[line]);
 									sign.setLine(line, lines[line]);
 								}
-								
+
 								sign.update();
 							}
 						}
@@ -258,34 +254,34 @@ public class UpdateThread implements Runnable {
 		/*
 		 * TODO: Remove at some point
 		 */
-		if(blockIdUpdateQueue.size() > 0) {
+		if (blockIdUpdateQueue.size() > 0) {
 			Connection connection = lwc.getPhysicalDatabase().getConnection();
 			Protection protection = null;
-			
+
 			try {
 				connection.setAutoCommit(false);
-			} catch(SQLException e) {
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			
+
 			/*
 			 * Loop through
 			 */
-			while((protection = blockIdUpdateQueue.poll()) != null) {
+			while ((protection = blockIdUpdateQueue.poll()) != null) {
 				lwc.getPhysicalDatabase().updateProtectionBlockId(protection.getId(), protection.getBlockId());
 			}
-			
+
 			/*
 			 * Commit
 			 */
 			try {
 				connection.commit();
 				connection.setAutoCommit(true);
-			} catch(SQLException e) {
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 		/*
 		 * Inventory caching
 		 */
@@ -294,73 +290,73 @@ public class UpdateThread implements Runnable {
 			Connection connection = lwc.getPhysicalDatabase().getConnection();
 			PInventory pInventory = null;
 			int count = 0;
-			
+
 			/*
 			 * Turn off auto commit
 			 */
 			try {
 				connection.setAutoCommit(false);
-			} catch(SQLException e) {
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			
+
 			/*
 			 * Peeeek and remove
 			 */
-			while((pInventory = queue.poll()) != null) {
+			while ((pInventory = queue.poll()) != null) {
 				ItemStack[] itemStacks = pInventory.getItemStacks();
 				int protectionId = pInventory.getProtectionId();
-				
+
 				int slots = itemStacks.length;
 				String stacks = "";
 				String items = "";
 				String durability = "";
 				String last_transaction = ""; // TODO: implement
 				String last_update = (System.currentTimeMillis() / 1000) + "";
-				
+
 				/*
 				 * Populate the strings
 				 */
-				for(ItemStack itemStack : itemStacks) {
-					if(itemStack == null) {
+				for (ItemStack itemStack : itemStacks) {
+					if (itemStack == null) {
 						System.out.println("null");
 						continue;
 					}
-					
+
 					stacks += itemStack.getAmount() + ",";
 					items += itemStack.getTypeId() + ",";
 					durability += itemStack.getDurability() + ",";
 				}
-				
+
 				/*
 				 * Trim that comma!
 				 */
 				stacks = stacks.substring(0, stacks.length() - 1);
 				items = items.substring(0, items.length() - 1);
 				durability = durability.substring(0, durability.length() - 1);
-				
+
 				/*
 				 * Update the database
 				 */
 				lwc.getPhysicalDatabase().createInventory(protectionId, slots, stacks, items, durability, last_transaction, last_update);
-				
-				count ++;
+
+				count++;
 			}
-			
+
 			/*
 			 * Good, good. Let's commit!
 			 */
 			try {
 				connection.commit();
 				connection.setAutoCommit(true);
-			} catch(SQLException e) {
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			
+
 			/*
 			 * Notify if in dev mode
 			 */
-			if(LWCInfo.DEVELOPMENT) {
+			if (LWCInfo.DEVELOPMENT) {
 				System.out.println("Pushed " + count + " inventories to the database");
 			}
 		}

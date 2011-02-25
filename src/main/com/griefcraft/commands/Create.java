@@ -45,17 +45,17 @@ public class Create implements ICommand {
 		String full = join(args, 1);
 
 		if (type.equals("trap")) {
-			if(!lwc.isAdmin(player)) {
+			if (!lwc.isAdmin(player)) {
 				player.sendMessage(Colors.Blue + "[lwc] " + Colors.Red + "Permission denied. ");
 				return;
 			}
-			
-			if(args.length < 3) {
+
+			if (args.length < 3) {
 				lwc.sendSimpleUsage(player, "/lwc -c trap <kick/ban> [reason]");
 				return;
 			}
 		}
-		
+
 		else if (type.equals("password")) {
 			if (args.length < 3) {
 				lwc.sendSimpleUsage(player, "/lwc -c password <Password>");

@@ -26,59 +26,59 @@ public class AccessRight {
 	 * Used in conjunction with /lwc -O
 	 */
 	public static final int RESULTS_PER_PAGE = 15;
-	
+
 	private int id;
 	private int protectionId;
 	private String entity;
 	private int rights;
 	private int type;
-	
+
 	public static String typeToString(int rights) {
-		if(rights == GROUP) {
+		if (rights == GROUP) {
 			return "Group";
-		} else if(rights == PLAYER) {
+		} else if (rights == PLAYER) {
 			return "Player";
 		}
-		
+
 		return "Unknown";
 	}
-	
+
 	public int getId() {
 		return id;
 	}
-	
+
 	public int getprotectionId() {
 		return protectionId;
 	}
-	
+
 	public String getEntity() {
 		return entity;
 	}
-	
+
 	public int getRights() {
 		return rights;
 	}
-	
+
 	public int getType() {
 		return type;
 	}
-	
+
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+
 	public void setProtectionId(int protectionId) {
 		this.protectionId = protectionId;
 	}
-	
+
 	public void setEntity(String entity) {
 		this.entity = entity;
 	}
-	
+
 	public void setRights(int rights) {
 		this.rights = rights;
 	}
-	
+
 	public void setType(int type) {
 		this.type = type;
 	}

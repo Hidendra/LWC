@@ -41,7 +41,7 @@ public class PhysDB extends Database {
 
 	/**
 	 * Load every protection, use _sparingly_
-	 *  
+	 * 
 	 * @return
 	 */
 	public List<Protection> loadProtections() {
@@ -121,7 +121,7 @@ public class PhysDB extends Database {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Load the whole job queue
 	 * 
@@ -232,7 +232,7 @@ public class PhysDB extends Database {
 			log("Update completed!");
 		}
 	}
-	
+
 	/**
 	 * Update to 150, altered a table
 	 */
@@ -242,13 +242,13 @@ public class PhysDB extends Database {
 			statement.executeQuery("SELECT blockId FROM protections");
 			statement.close();
 			Performance.addPhysDBQuery();
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			try {
 				Statement statement = connection.createStatement();
 				statement.executeUpdate("ALTER TABLE `protections` ADD `blockId` INTEGER");
 				statement.close();
 				Performance.addPhysDBQuery();
-			} catch(SQLException ex) {
+			} catch (SQLException ex) {
 				ex.printStackTrace();
 			}
 		}
@@ -276,7 +276,7 @@ public class PhysDB extends Database {
 
 		return count;
 	}
-	
+
 	/**
 	 * Fetch an object from the sql database
 	 * 
@@ -288,24 +288,24 @@ public class PhysDB extends Database {
 		try {
 			int index = 1;
 			PreparedStatement statement = prepare(sql);
-			
-			for(Object bind : toBind) {
+
+			for (Object bind : toBind) {
 				statement.setObject(index, bind);
-				index ++;
+				index++;
 			}
-			
+
 			ResultSet set = statement.executeQuery();
-			
-			if(set.next()) {
+
+			if (set.next()) {
 				return set.getObject(column);
 			}
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Count the rights
 	 * 
@@ -315,7 +315,7 @@ public class PhysDB extends Database {
 	public int countRights(int protectionId) {
 		return (Integer) fetch("SELECT COUNT(*) AS COUNT FROM rights WHERE chest=?", "count", protectionId);
 	}
-	
+
 	/**
 	 * Get the rights for a protection id ranging from start-max
 	 * 
@@ -326,31 +326,31 @@ public class PhysDB extends Database {
 	 */
 	public List<AccessRight> getAccessRights(int protectionId, int start, int max) {
 		List<AccessRight> accessRights = new ArrayList<AccessRight>();
-		
+
 		try {
 			PreparedStatement statement = prepare("SELECT * FROM rights WHERE chest = ? ORDER BY rights DESC LIMIT ?,?");
 			statement.setInt(1, protectionId);
 			statement.setInt(2, start);
 			statement.setInt(3, max);
-			
+
 			ResultSet set = statement.executeQuery();
-			
-			while(set.next()) {
+
+			while (set.next()) {
 				AccessRight accessRight = new AccessRight();
-				
+
 				accessRight.setId(set.getInt("id"));
 				accessRight.setProtectionId(protectionId);
 				accessRight.setEntity(set.getString("entity"));
 				accessRight.setRights(set.getInt("rights"));
 				accessRight.setType(set.getInt("type"));
-				
+
 				accessRights.add(accessRight);
 			}
-			
-		} catch(SQLException e) {
+
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return accessRights;
 	}
 
@@ -393,7 +393,7 @@ public class PhysDB extends Database {
 	public int getGroupLimit(String group) {
 		return getLimit(Limit.GROUP, group);
 	}
-	
+
 	/**
 	 * @return the Global limit for anyone without explicit limits
 	 */
@@ -420,10 +420,10 @@ public class PhysDB extends Database {
 
 			final ResultSet set = statement.executeQuery();
 
-			if(set.next()) {
+			if (set.next()) {
 				limit = set.getInt("amount");
 			}
-			
+
 			set.close();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
@@ -653,7 +653,7 @@ public class PhysDB extends Database {
 
 		loaded = true;
 	}
-	
+
 	/**
 	 * Insert or update an inventory in the database
 	 * 
@@ -675,9 +675,9 @@ public class PhysDB extends Database {
 			statement.setString(5, durability);
 			statement.setString(6, last_transaction);
 			statement.setString(7, last_update);
-			
+
 			statement.executeUpdate();
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -818,7 +818,7 @@ public class PhysDB extends Database {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Update a protection's block id
 	 * 
@@ -828,12 +828,12 @@ public class PhysDB extends Database {
 	public void updateProtectionBlockId(int protectionId, int blockId) {
 		try {
 			PreparedStatement statement = prepare("UPDATE protections SET blockId = ? WHERE id = ?");
-			
+
 			statement.setInt(1, blockId);
 			statement.setInt(2, protectionId);
-			
+
 			statement.executeUpdate();
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -998,7 +998,7 @@ public class PhysDB extends Database {
 
 		unregisterProtectionRights(chestID);
 	}
-	
+
 	/**
 	 * Remove all protections made by a player
 	 * 
@@ -1007,18 +1007,18 @@ public class PhysDB extends Database {
 	public void removeProtectionByPlayer(String player) {
 		try {
 			PreparedStatement statement = prepare("DELETE FROM `protections` WHERE `owner` = ?");
-			
+
 			statement.setString(1, player);
-			
+
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		removeProtectionRightsByPlayer(player);
 	}
-	
+
 	/**
 	 * Remove all protection rights for a player
 	 * 
@@ -1027,12 +1027,12 @@ public class PhysDB extends Database {
 	public void removeProtectionRightsByPlayer(String player) {
 		try {
 			PreparedStatement statement = prepare("DELETE FROM `rights` WHERE `entity` = ?");
-			
+
 			statement.setString(1, player);
-			
+
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}

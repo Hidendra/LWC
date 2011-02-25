@@ -9,6 +9,7 @@ import java.util.Formatter;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.anjocaido.groupmanager.GroupManager;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -32,8 +33,6 @@ import com.griefcraft.util.Colors;
 import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.Performance;
 import com.griefcraft.util.StringUtils;
-import com.nijiko.permissions.Control;
-import com.nijikokun.bukkit.Permissions.Permissions;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.RegionManager;
@@ -43,7 +42,7 @@ public class LWC {
 	/**
 	 * Plugin instance
 	 */
-	private LWCPlugin plugin; 
+	private LWCPlugin plugin;
 
 	/**
 	 * Logging instance
@@ -78,7 +77,7 @@ public class LWC {
 	/**
 	 * Permissions plugin
 	 */
-	private Permissions permissions;
+	private GroupManager groupHandler;
 
 	/**
 	 * List of commands
@@ -96,7 +95,7 @@ public class LWC {
 	 * @param str
 	 */
 	public void dev(String str) {
-		if(LWCInfo.DEVELOPMENT) {
+		if (LWCInfo.DEVELOPMENT) {
 			devLogger.info(str);
 		}
 	}
@@ -167,8 +166,8 @@ public class LWC {
 		int index = 0;
 
 		try {
-			for(Block block : blocks) {
-				if(!(block.getState() instanceof ContainerBlock)) {
+			for (Block block : blocks) {
+				if (!(block.getState() instanceof ContainerBlock)) {
 					continue;
 				}
 
@@ -178,12 +177,12 @@ public class LWC {
 				/*
 				 * Add all the items from this inventory
 				 */
-				for(ItemStack stack : inventory.getContents()) {
+				for (ItemStack stack : inventory.getContents()) {
 					stacks[index] = stack;
-					index ++;
+					index++;
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			return mergeInventories(blocks);
 		}
 
@@ -220,7 +219,7 @@ public class LWC {
 			/*
 			 * TODO: Remove at some point
 			 */
-			if(protection.getBlockId() == 0) {
+			if (protection.getBlockId() == 0) {
 				protection.setBlockId(block.getTypeId());
 				updateThread.queueProtectionBlockIdUpdate(protection);
 			}
@@ -228,7 +227,7 @@ public class LWC {
 			/*
 			 * Queue the block if it's an inventory
 			 */
-			if((block.getState() instanceof ContainerBlock) && LWCInfo.DEVELOPMENT) {
+			if ((block.getState() instanceof ContainerBlock) && LWCInfo.DEVELOPMENT) {
 				Inventory inventory = ((ContainerBlock) block.getState()).getInventory();
 				PInventory pInventory = new PInventory();
 
@@ -237,7 +236,7 @@ public class LWC {
 				/*
 				 * Merge the inventory if it's a double chest
 				 */
-				if(protectionSet.size() == 2) {
+				if (protectionSet.size() == 2) {
 					stacks = mergeInventories(protectionSet);
 				}
 
@@ -247,7 +246,7 @@ public class LWC {
 				/*
 				 * Check if the inventory is already in the inventory queue
 				 */
-				if(!pInventory.isIn(inventoryQueue)) {
+				if (!pInventory.isIn(inventoryQueue)) {
 					/*
 					 * Push it into the queue
 					 */
@@ -260,7 +259,7 @@ public class LWC {
 			// let admins know that the thing they're using is protected :)
 			canAdmin = canAdminProtection(player, protection);
 
-			if(isAdmin(player) || isMod(player)) {
+			if (ConfigValues.SHOW_PROTECTION_NOTICES.getBool() && (isAdmin(player) || isMod(player))) {
 				player.sendMessage(Colors.Red + "Notice: " + Colors.White + "That " + materialToString(block) + " is protected.");
 			}
 
@@ -284,20 +283,20 @@ public class LWC {
 				break;
 
 			case ProtectionTypes.TRAP_KICK:
-				if(!hasAccess) {
+				if (!hasAccess) {
 					player.kickPlayer(protection.getData());
 					log(player.getName() + " triggered the kick trap: " + protection.toString());
 				}
 				break;
 
 			case ProtectionTypes.TRAP_BAN:
-				if(!hasAccess) {
+				if (!hasAccess) {
 					Plugin mcbansPlugin;
 
 					/*
 					 * See if we have mcbans
 					 */
-					if((mcbansPlugin = plugin.getServer().getPluginManager().getPlugin("MCBans")) != null) {
+					if ((mcbansPlugin = plugin.getServer().getPluginManager().getPlugin("MCBans")) != null) {
 						mcbans mcbans = (mcbans) mcbansPlugin;
 
 						/*
@@ -382,8 +381,8 @@ public class LWC {
 				/*
 				 * Check for *
 				 */
-				if(ConfigValues.WORLDGUARD_ALLOWED_REGIONS.getString().equals("*")) {
-					if(regionSet.size() > 0) {
+				if (ConfigValues.WORLDGUARD_ALLOWED_REGIONS.getString().equals("*")) {
+					if (regionSet.size() > 0) {
 						return false;
 					}
 				}
@@ -391,14 +390,14 @@ public class LWC {
 				/*
 				 * If there are no regions, we need to deny them
 				 */
-				for(String region : regionSet) {
-					if(allowedRegions.contains(region)) {
+				for (String region : regionSet) {
+					if (allowedRegions.contains(region)) {
 						deny = false;
 						break;
 					}
 				}
 
-				if(deny) {
+				if (deny) {
 					player.sendMessage(Colors.Red + "You cannot protect that " + materialToString(block) + " outside of WorldGuard regions");
 
 					return true;
@@ -418,7 +417,7 @@ public class LWC {
 	public void load() {
 		Performance.init();
 
-		if(LWCInfo.DEVELOPMENT) {
+		if (LWCInfo.DEVELOPMENT) {
 			log("Development mode is ON");
 		}
 
@@ -427,11 +426,16 @@ public class LWC {
 		memoryDatabase = new MemDB();
 		updateThread = new UpdateThread(this);
 
-		Plugin permissionsPlugin = plugin.getServer().getPluginManager().getPlugin("Permissions");
+		Plugin permissionsPlugin = plugin.getServer().getPluginManager().getPlugin("GroupManager");
 
 		if (permissionsPlugin != null) {
 			logger.info("Using Nijikokun's permissions plugin for permissions");
-			permissions = (Permissions) permissionsPlugin;
+
+			if (!permissionsPlugin.isEnabled()) {
+				plugin.getServer().getPluginManager().enablePlugin(permissionsPlugin);
+			}
+
+			groupHandler = (GroupManager) permissionsPlugin;
 		}
 
 		if (ConfigValues.ENFORCE_WORLDGUARD_REGIONS.getBool() && plugin.getServer().getPluginManager().getPlugin("WorldGuard") != null) {
@@ -502,8 +506,8 @@ public class LWC {
 	 * @return
 	 */
 	public ICommand getCommand(Class<?> clazz) {
-		for(ICommand command : commands) {
-			if(command.getClass() == clazz) {
+		for (ICommand command : commands) {
+			if (command.getClass() == clazz) {
 				return command;
 			}
 		}
@@ -533,7 +537,7 @@ public class LWC {
 	 * @return true if the player is an LWC admin
 	 */
 	public boolean isAdmin(Player player) {
-		return (ConfigValues.OP_IS_LWCADMIN.getBool() && player.isOp()) || (permissions != null && Permissions.Security.permission(player, "lwc.admin"));
+		return (ConfigValues.OP_IS_LWCADMIN.getBool() && player.isOp()) || (groupHandler != null && groupHandler.getPermissionHandler().has(player, "lwc.admin"));
 		// return player.canUseCommand("/lwcadmin");
 	}
 
@@ -545,15 +549,15 @@ public class LWC {
 	 * @return true if the player is an LWC mod
 	 */
 	public boolean isMod(Player player) {
-		return (permissions != null && Permissions.Security.permission(player, "lwc.mod"));
+		return (groupHandler != null && groupHandler.getPermissionHandler().has(player, "lwc.mod"));
 		// return player.canUseCommand("/lwcmod");
 	}
 
 	/**
 	 * @return the permissions
 	 */
-	public Permissions getPermissions() {
-		return permissions;
+	public GroupManager getGroupHandler() {
+		return groupHandler;
 	}
 
 	/**
@@ -734,10 +738,10 @@ public class LWC {
 	}
 
 	/**
-	 * Check for protection limits on a given player and return true if they are limited
-	 * We also assume they are not an LWC admin
+	 * Check for protection limits on a given player and return true if they are limited We also assume they are not an LWC admin
 	 * 
-	 * @param player the player to check
+	 * @param player
+	 *            the player to check
 	 * @return true if they are limited
 	 */
 	public boolean enforceProtectionLimits(Player player) {
@@ -751,24 +755,8 @@ public class LWC {
 		/*
 		 * Apply group limits.. can't be one line however
 		 */
-		if(limit == -1 && permissions != null) {
-			try {
-				Control control = (Control) Permissions.Security;
-				String[] groups = control.getGroups(player.getName());
-
-				for (String group : groups) {
-					if(limit >= 0) {
-						break;
-					}
-
-					limit = physicalDatabase.getGroupLimit(group);
-				}
-			} catch(NullPointerException e) {
-				/*
-				 * NPE is thrown when user is not in any groups
-				 */
-				limit = physicalDatabase.getGroupLimit(Permissions.Security.getGroup(player.getName()));
-			}
+		if (limit == -1 && groupHandler != null) {
+			limit = physicalDatabase.getGroupLimit(groupHandler.getPermissionHandler().getGroup(player.getName()));
 		}
 
 		/*
@@ -777,12 +765,12 @@ public class LWC {
 		limit = limit != -1 ? limit : physicalDatabase.getGlobalLimit();
 
 		/*
-		 * Alert the user if they're above or at the limit
+		 * Alert the player if they're above or at the limit
 		 */
-		if(limit != -1) {
+		if (limit != -1) {
 			int protections = physicalDatabase.getProtectionCount(player.getName());
 
-			if(protections >= limit) {
+			if (protections >= limit) {
 				player.sendMessage(Colors.Red + "You have exceeded your allowed amount of protections!");
 				return true;
 			}
@@ -869,15 +857,10 @@ public class LWC {
 		Material type = block.getType();
 		Block up = block.getFace(BlockFace.UP);
 
-		if (isProtectable(block)) {
-			if (!entities.contains(block)) {
-				entities.add(block);
-			}
-		}
-		else if (entities.size() == 1) {
+		if (entities.size() == 1) {
 			Block other = entities.get(0);
 
-			switch(other.getTypeId()) {
+			switch (other.getTypeId()) {
 
 			/*
 			 * Furnace
@@ -909,9 +892,9 @@ public class LWC {
 
 				break;
 
-				/*
-				 * Wooden door
-				 */
+			/*
+			 * Wooden door
+			 */
 			case 64:
 				if (type != Material.WOODEN_DOOR) {
 					return entities;
@@ -919,9 +902,9 @@ public class LWC {
 
 				break;
 
-				/*
-				 * Iron door
-				 */
+			/*
+			 * Iron door
+			 */
 			case 71:
 				if (type != Material.IRON_DOOR_BLOCK) {
 					return entities;
@@ -930,21 +913,20 @@ public class LWC {
 				break;
 
 			}
-			
-			if(!entities.contains(block)) {
+
+			if (!entities.contains(block)) {
 				entities.add(block);
 			}
-		}
-		else if (up.getType() == Material.WOODEN_DOOR || up.getType() == Material.IRON_DOOR_BLOCK || type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK) {
+		} else if (up.getType() == Material.WOODEN_DOOR || up.getType() == Material.IRON_DOOR_BLOCK || type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK) {
 			/*
 			 * check if they're clicking the block under the door
 			 */
-			if(type != Material.WOODEN_DOOR && type != Material.IRON_DOOR_BLOCK) {
+			if (type != Material.WOODEN_DOOR && type != Material.IRON_DOOR_BLOCK) {
 				entities.add(block); // block under the door
 				entities.add(block.getFace(BlockFace.UP)); // bottom half
 				entities.add(block.getWorld().getBlockAt(block.getX(), block.getY() + 2, block.getZ())); // top half
 			} else {
-				if(up.getType() == Material.WOODEN_DOOR || up.getType() == Material.IRON_DOOR_BLOCK && !isProtectable(block)) {
+				if (up.getType() == Material.WOODEN_DOOR || up.getType() == Material.IRON_DOOR_BLOCK && !isProtectable(block)) {
 					entities.add(block); // bottom half
 					entities.add(up); // top half
 				} else {
@@ -952,72 +934,69 @@ public class LWC {
 					entities.add(block); // top half
 				}
 			}
-		}
-		else if (up.getType() == Material.SIGN_POST || up.getType() == Material.WALL_SIGN || type == Material.SIGN_POST || type == Material.WALL_SIGN) {
+		} else if (up.getType() == Material.SIGN_POST || up.getType() == Material.WALL_SIGN || type == Material.SIGN_POST || type == Material.WALL_SIGN) {
 			/*
 			 * If it's a wall sign, also protect the wall it's attached to!
 			 */
 
-			if(entities.size() == 0) {
+			if (entities.size() == 0) {
 				/*
 				 * Check if we're clicking on the sign itself, otherwise it's the block above it
 				 */
-				if(type == Material.SIGN_POST || type == Material.WALL_SIGN) {
+				if (type == Material.SIGN_POST || type == Material.WALL_SIGN) {
 					entities.add(block);
 				} else {
 					entities.add(up);
 				}
 			}
-		}
-		else if (type == Material.FURNACE || type == Material.DISPENSER || type == Material.JUKEBOX) {
+		} else if (type == Material.FURNACE || type == Material.DISPENSER || type == Material.JUKEBOX) {
+			// blocks that are just 1 block
 			if (entities.size() == 0) {
 				entities.add(block);
 			}
 
 			return entities;
-		}
-		else if (!isProtectable(block)) {
+		} else if (!isProtectable(block)) {
 			/*
 			 * Look for a ronery wall sign
 			 */
 			Block face = null;
 
-			BlockFace[] faces = new BlockFace[] {
-					BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST
-			};
+			// this shortens it quite a bit, just put the possible faces into an array
+			BlockFace[] faces = new BlockFace[] { BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST };
 
 			/*
 			 * Match wall signs to the wall it's attached to
 			 */
-			for(BlockFace blockFace : faces) {
-				if((face = block.getFace(blockFace)) != null) {
-					if(face.getType() == Material.WALL_SIGN) {
+			for (BlockFace blockFace : faces) {
+				if ((face = block.getFace(blockFace)) != null) {
+					if (face.getType() == Material.WALL_SIGN) {
 						byte direction = face.getData();
 
 						/*
 						 * Protect the wall the wall sign is attached to
 						 */
-						switch(direction) {
+						switch (direction) {
 						case 0x02: // east
-							if(blockFace == BlockFace.EAST) {
+							if (blockFace == BlockFace.EAST) {
 								entities.add(face);
 							}
 							break;
 
 						case 0x03: // west
-							if(blockFace == BlockFace.WEST) {
+							if (blockFace == BlockFace.WEST) {
 								entities.add(face);
 							}
 							break;
 
 						case 0x04: // north
-							if(blockFace == BlockFace.NORTH) {
+							if (blockFace == BlockFace.NORTH) {
 								entities.add(face);
 							}
 							break;
 
 						case 0x05: // south
-							if(blockFace == BlockFace.SOUTH) {
+							if (blockFace == BlockFace.SOUTH) {
 								entities.add(face);
 							}
 							break;
@@ -1026,6 +1005,10 @@ public class LWC {
 					}
 
 				}
+			}
+		} else if (isProtectable(block)) {
+			if (!entities.contains(block)) {
+				entities.add(block);
 			}
 		}
 
@@ -1111,8 +1094,7 @@ public class LWC {
 			return memoryDatabase.hasAccess(player.getName(), protection);
 
 		case ProtectionTypes.PRIVATE:
-			return player.getName().equalsIgnoreCase(protection.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, protection.getId(), player.getName()) >= 0 ||
-			(permissions != null && physicalDatabase.getPrivateAccess(AccessRight.GROUP, protection.getId(), Permissions.Security.getGroup(player.getName())) >= 0);
+			return player.getName().equalsIgnoreCase(protection.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, protection.getId(), player.getName()) >= 0 || (groupHandler != null && physicalDatabase.getPrivateAccess(AccessRight.GROUP, protection.getId(), groupHandler.getPermissionHandler().getGroup(player.getName())) >= 0);
 			// return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) >= 0 ||
 			// physicalDatabase.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) >= 0;
 
@@ -1158,8 +1140,7 @@ public class LWC {
 			return player.getName().equalsIgnoreCase(protection.getOwner()) && memoryDatabase.hasAccess(player.getName(), protection);
 
 		case ProtectionTypes.PRIVATE:
-			return player.getName().equalsIgnoreCase(protection.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, protection.getId(), player.getName()) == 1 ||
-			(permissions != null && physicalDatabase.getPrivateAccess(AccessRight.GROUP, protection.getId(), Permissions.Security.getGroup(player.getName())) == 1);
+			return player.getName().equalsIgnoreCase(protection.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, protection.getId(), player.getName()) == 1 || (groupHandler != null && physicalDatabase.getPrivateAccess(AccessRight.GROUP, protection.getId(), groupHandler.getPermissionHandler().getGroup(player.getName())) == 1);
 			// return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) == 1 ||
 			// physicalDatabase.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) == 1;
 
@@ -1178,11 +1159,11 @@ public class LWC {
 	public boolean canAdminProtection(Player player, Block block) {
 		List<Block> protectedBlocks = getProtectionSet(player.getWorld(), block.getX(), block.getY(), block.getZ());
 
-		if(protectedBlocks.size() > 0) {
-			for(Block protectedBlock : protectedBlocks) {
+		if (protectedBlocks.size() > 0) {
+			for (Block protectedBlock : protectedBlocks) {
 				Protection protection = getPhysicalDatabase().loadProtectedEntity(protectedBlock.getX(), protectedBlock.getY(), protectedBlock.getZ());
 
-				if(protection != null) {
+				if (protection != null) {
 					return canAdminProtection(player, protection);
 				}
 			}
@@ -1201,11 +1182,11 @@ public class LWC {
 	public boolean canAccessProtection(Player player, Block block) {
 		List<Block> protectedBlocks = getProtectionSet(player.getWorld(), block.getX(), block.getY(), block.getZ());
 
-		if(protectedBlocks.size() > 0) {
-			for(Block protectedBlock : protectedBlocks) {
+		if (protectedBlocks.size() > 0) {
+			for (Block protectedBlock : protectedBlocks) {
 				Protection protection = getPhysicalDatabase().loadProtectedEntity(protectedBlock.getX(), protectedBlock.getY(), protectedBlock.getZ());
 
-				if(protection != null) {
+				if (protection != null) {
 					return canAccessProtection(player, protection);
 				}
 			}
