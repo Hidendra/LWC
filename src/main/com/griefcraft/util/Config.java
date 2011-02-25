@@ -60,9 +60,13 @@ public class Config extends Properties {
 				return;
 			}
 
+			// load the config
 			InputStream inputStream = new FileInputStream(conf);
 			load(inputStream);
 			inputStream.close();
+
+			// save it (new config values, perhaps?)
+			save();
 
 			logger.info("Loaded " + size() + " config entries");
 		} catch (Exception e) {
@@ -98,11 +102,12 @@ public class Config extends Properties {
 	 * Init the config class
 	 */
 	public static void init() {
-		if (instance == null) {
-			instance = new Config(LWCInfo.CONF_FILE);
-		}
+		instance = new Config(LWCInfo.CONF_FILE);
 	}
 
+	/**
+	 * Save the config file
+	 */
 	public void save() {
 		try {
 			File file = new File(LWCInfo.CONF_FILE);
@@ -113,7 +118,7 @@ public class Config extends Properties {
 
 			OutputStream outputStream = new FileOutputStream(file);
 
-			store(outputStream, "# LWC configuration file\n\n# + Github project page: https://github.com/Hidendra/LWC\n# + hMod thread link: http://forum.hey0.net/showthread.php?tid=837\n");
+			store(outputStream, "# LWC configuration file\n\n# + Github project page: https://github.com/Hidendra/LWC\n# + Bukkit thread link: http://forums.bukkit.org/threads/sec-mech-lwc-v1-54-lightweight-inventory-protection-management-403.967/\n");
 			outputStream.close();
 		} catch (Exception e) {
 			e.printStackTrace();

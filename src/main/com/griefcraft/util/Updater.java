@@ -135,7 +135,7 @@ public class Updater {
 	 */
 	public boolean checkDist() {
 		double latestVersion = getLatestPluginVersion();
-		
+
 		check();
 
 		if (latestVersion > LWCInfo.VERSION) {

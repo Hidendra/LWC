@@ -1,11 +1,11 @@
 name: LWC
 main: com.griefcraft.lwc.LWCPlugin
-version: 1.54
+version: 1.55
 website: http://griefcraft.com
 author: Hidendra
 description: >
-             Inventory protection & management utilizing SQLite
-             This plugin can also protect Doors and Signs aside Chests, Furnaces, etc
+             Inventory protection & management utilizing SQLite as its backend
+             Other blocks can be protected such as Doors and Signs
 commands:
   lwc:
     description: LWC's main command to access everything

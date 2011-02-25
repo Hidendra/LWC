@@ -17,16 +17,11 @@
 
 package com.griefcraft.listeners;
 
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Type;
-import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerListener;
 
-import com.griefcraft.commands.ICommand;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
-import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class LWCPlayerListener extends PlayerListener {
 

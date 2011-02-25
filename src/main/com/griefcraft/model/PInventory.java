@@ -20,7 +20,6 @@ package com.griefcraft.model;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class PInventory {
@@ -29,12 +28,12 @@ public class PInventory {
 	 * The protection id this inventory is attached to
 	 */
 	private int protectionId;
-	
+
 	/**
 	 * The inventory
 	 */
 	private ItemStack[] itemStacks;
-	
+
 	/**
 	 * Check if this inventory is in a queue
 	 * 
@@ -43,22 +42,23 @@ public class PInventory {
 	 */
 	public boolean isIn(ConcurrentLinkedQueue<PInventory> queue) {
 		Iterator<PInventory> iterator = queue.iterator();
-		
-		while(iterator.hasNext()) {
+
+		while (iterator.hasNext()) {
 			PInventory pInventory = iterator.next();
-			
-			if(pInventory.getProtectionId() == protectionId) {
+
+			if (pInventory.getProtectionId() == protectionId) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
+	@Override
 	public int hashCode() {
 		return 0x00;
 	}
-	
+
 	/**
 	 * Set the protection id
 	 * 
@@ -67,7 +67,7 @@ public class PInventory {
 	public void setProtectionId(int protectionId) {
 		this.protectionId = protectionId;
 	}
-	
+
 	/**
 	 * Set the inventory
 	 * 
@@ -76,19 +76,19 @@ public class PInventory {
 	public void setItemStacks(ItemStack[] itemStacks) {
 		this.itemStacks = itemStacks;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public int getProtectionId() {
 		return protectionId;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public ItemStack[] getItemStacks() {
 		return itemStacks;
 	}
-	
+
 }

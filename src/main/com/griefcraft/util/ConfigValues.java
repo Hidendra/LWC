@@ -30,7 +30,8 @@ public enum ConfigValues {
 	PROTECTION_BLACKLIST("protection-blacklist", ""), //
 	OP_IS_LWCADMIN("op-is-lwcadmin", "true"), //
 	AUTO_REGISTER("auto-register-as", "none"), // public, private
-	DENY_REDSTONE("deny-redstone", "false"); // on valid protections (i.e door)
+	DENY_REDSTONE("deny-redstone", "false"), // on valid protections (i.e door)
+	SHOW_PROTECTION_NOTICES("show-protection-notices", "true"); // show "this is protected" to admins/mods
 
 	/**
 	 * The name of the config value used in the conf file

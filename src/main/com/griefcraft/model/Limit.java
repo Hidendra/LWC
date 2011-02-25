@@ -22,5 +22,5 @@ public class Limit {
 	public final static int GROUP = 0;
 	public final static int PLAYER = 1;
 	public final static int GLOBAL = 2;
-	
+
 }

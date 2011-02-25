@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 
-import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -14,10 +13,7 @@ import org.bukkit.event.Event.Type;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.entity.EntityListener;
-import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerListener;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.griefcraft.commands.Admin;
@@ -38,7 +34,6 @@ import com.griefcraft.util.Config;
 import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.Updater;
-import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class LWCPlugin extends JavaPlugin {
 
@@ -86,7 +81,7 @@ public class LWCPlugin extends JavaPlugin {
 		blockListener = new LWCBlockListener(this);
 		entityListener = new LWCEntityListener(this);
 		updater = new Updater();
-		
+
 		/*
 		 * Set the SQLite native library path
 		 */
@@ -95,18 +90,18 @@ public class LWCPlugin extends JavaPlugin {
 		log("Native library: " + updater.getFullNativeLibraryPath());
 
 		try {
-			if(ConfigValues.AUTO_UPDATE.getBool()) {
+			if (ConfigValues.AUTO_UPDATE.getBool()) {
 				updater.checkDist();
 			} else {
 				updater.check();
 			}
-			
+
 			updater.update();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
 		String commandName = command.getName().toLowerCase();
@@ -114,10 +109,10 @@ public class LWCPlugin extends JavaPlugin {
 		/*
 		 * The only command the console could use is -admin ??, make it compatible sometime
 		 */
-		if(!(sender instanceof Player)) {
+		if (!(sender instanceof Player)) {
 			return false;
 		}
-		
+
 		Player player = (Player) sender;
 		String argString = StringUtils.join(args, 0);
 
@@ -153,7 +148,7 @@ public class LWCPlugin extends JavaPlugin {
 			return true;
 		}
 
-		if (lwc.getPermissions() != null && !Permissions.Security.permission(player, "lwc.protect")) {
+		if (lwc.getGroupHandler() != null && !lwc.getGroupHandler().getPermissionHandler().has(player, "lwc.protect")) {
 			player.sendMessage(Colors.Red + "You do not have permission to do that");
 			return true;
 		}
@@ -171,10 +166,10 @@ public class LWCPlugin extends JavaPlugin {
 			cmd.execute(lwc, player, args);
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * @return the Updater instance
 	 */
@@ -267,16 +262,17 @@ public class LWCPlugin extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		Config.getInstance().save();
 		updater.saveInternal();
-		
+
 		lwc.destruct();
 	}
 
 	@Override
 	public void onEnable() {
+		Config.init();
+
 		try {
-			if(ConfigValues.AUTO_UPDATE.getBool()) {
+			if (ConfigValues.AUTO_UPDATE.getBool()) {
 				updater.checkDist();
 			} else {
 				updater.check();
@@ -290,8 +286,6 @@ public class LWCPlugin extends JavaPlugin {
 		registerEvents();
 
 		lwc.load();
-
-		Config.getInstance().save();
 	}
 
 	/**

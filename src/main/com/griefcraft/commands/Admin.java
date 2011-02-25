@@ -28,6 +28,7 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.model.Limit;
 import com.griefcraft.util.Colors;
+import com.griefcraft.util.Config;
 import com.griefcraft.util.Performance;
 import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.Updater;
@@ -58,40 +59,45 @@ public class Admin implements ICommand {
 
 			Performance.clear();
 		}
-		
-		else if(action.equals("purge")) {
-			if(args.length < 3) {
+
+		else if (action.equals("purge")) {
+			if (args.length < 3) {
 				lwc.sendSimpleUsage(player, "/lwc -a purge <Players>");
 				return;
 			}
-			
+
 			String players = StringUtils.join(args, 2);
-			
-			for(String toRemove : players.split(" ")) {
+
+			for (String toRemove : players.split(" ")) {
 				lwc.getPhysicalDatabase().removeProtectionByPlayer(toRemove);
 				player.sendMessage(Colors.Green + "Removed all protections created by " + Colors.Blue + toRemove);
 			}
+		}
+
+		else if (action.equals("reload")) {
+			Config.init();
+			player.sendMessage(Colors.Green + "Reloaded LWC config!");
 		}
 
 		else if (action.equals("version")) {
 			player.sendMessage("");
 
 			Updater updater = lwc.getPlugin().getUpdater();
-			
+
 			String pluginColor = Colors.Green;
 			String updaterColor = Colors.Green;
-			
+
 			double currPluginVersion = LWCInfo.VERSION;
 			double currSqlVersion = updater.getCurrentSQLiteVersion();
-			
+
 			double latestPluginVersion = updater.getLatestPluginVersion();
 			double latestSqlVersion = updater.getLatestSQLiteVersion();
-			
-			if(latestPluginVersion > currPluginVersion) {
+
+			if (latestPluginVersion > currPluginVersion) {
 				pluginColor = Colors.Red;
 			}
-			
-			if(latestSqlVersion > currSqlVersion) {
+
+			if (latestSqlVersion > currSqlVersion) {
 				pluginColor = Colors.Red;
 			}
 
@@ -102,7 +108,7 @@ public class Admin implements ICommand {
 			player.sendMessage(Colors.Green + "Green: Up to date");
 			player.sendMessage(Colors.Red + "Red: Out of date");
 		}
-		
+
 		else if (action.equals("createjob")) {
 			if (args.length < 5) {
 				lwc.sendSimpleUsage(player, "/lwc -a createjob <type> <owner> <payload>");
@@ -131,11 +137,11 @@ public class Admin implements ICommand {
 		else if (action.equals("cleanup")) {
 
 		}
-		
-		else if(action.equals("update")) {
+
+		else if (action.equals("update")) {
 			Updater updater = lwc.getPlugin().getUpdater();
-			
-			if(updater.checkDist()) {
+
+			if (updater.checkDist()) {
 				player.sendMessage(Colors.Green + "Updated LWC successfully to version: " + updater.getLatestPluginVersion());
 				player.sendMessage(Colors.Green + "Please reload LWC to complete the update");
 			} else {
@@ -160,11 +166,11 @@ public class Admin implements ICommand {
 					entity = entity.substring(2);
 					type = Limit.GROUP;
 				}
-				
-				if(entity.equalsIgnoreCase("-global")) {
+
+				if (entity.equalsIgnoreCase("-global")) {
 					type = Limit.GLOBAL;
 				}
-				
+
 				if (type == Limit.GLOBAL) {
 					lwc.getPhysicalDatabase().registerProtectionLimit(type, limit, "");
 					player.sendMessage(Colors.Green + "Registered global limit of " + Colors.Gold + limit + Colors.Green + " protections");

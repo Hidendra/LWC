@@ -23,7 +23,7 @@ public class Protection {
 	 * Unique id (in sql)
 	 */
 	private int id;
-	
+
 	/**
 	 * The block id
 	 */
@@ -63,10 +63,11 @@ public class Protection {
 	 * The date created
 	 */
 	private String date;
-	
+
 	/**
 	 * @return id:owner->[x,y,z]
 	 */
+	@Override
 	public String toString() {
 		return String.format("%d:%s->[%d,%d,%d]", id, owner, x, y, z);
 	}
@@ -78,7 +79,7 @@ public class Protection {
 	public int getId() {
 		return id;
 	}
-	
+
 	public int getBlockId() {
 		return blockId;
 	}
@@ -114,7 +115,7 @@ public class Protection {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+
 	public void setBlockId(int blockId) {
 		this.blockId = blockId;
 	}
