@@ -228,6 +228,7 @@ public class Admin implements ICommand {
 		player.sendMessage(" ");
 		player.sendMessage(Colors.Red + "LWC Administration");
 		player.sendMessage(" ");
+		player.sendMessage("/lwc admin reload " + Colors.Blue + "Reload LWC configuration");
 		player.sendMessage("/lwc admin limits " + Colors.LightBlue + "<count> <Players/Groups/" + Colors.Yellow + "-global" + Colors.LightBlue + ">");
 		player.sendMessage(Colors.Yellow + "-global " + Colors.Blue + "is optional and will be applied to anyone without a limit");
 		player.sendMessage("/lwc admin purge " + Colors.LightBlue + "<Players> " + Colors.Blue + "Remove all protections by a player");
