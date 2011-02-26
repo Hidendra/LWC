@@ -302,7 +302,7 @@ public class LWCPlugin extends JavaPlugin {
 	 */
 	private void registerEvents() {
 		/* Player events */
-		registerEvent(playerListener, Type.PLAYER_QUIT, Priority.Monitor);
+		registerEvent(playerListener, Type.PLAYER_QUIT, Priority.Highest);
 
 		/* Entity events */
 		registerEvent(entityListener, Type.ENTITY_EXPLODE);
@@ -338,7 +338,7 @@ public class LWCPlugin extends JavaPlugin {
 	 *            the hook to register
 	 */
 	private void registerEvent(Listener listener, Type eventType) {
-		registerEvent(listener, eventType, Priority.Monitor);
+		registerEvent(listener, eventType, Priority.Highest);
 	}
 
 	/**
