@@ -338,7 +338,7 @@ public class LWCPlugin extends JavaPlugin {
 	 *            the hook to register
 	 */
 	private void registerEvent(Listener listener, Type eventType) {
-		registerEvent(listener, eventType, Priority.Monitor);
+		registerEvent(listener, eventType, Priority.Highest);
 	}
 
 	/**
