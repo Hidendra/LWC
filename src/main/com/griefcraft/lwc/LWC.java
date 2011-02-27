@@ -6,6 +6,7 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Formatter;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -813,7 +814,7 @@ public class LWC {
 		/*
 		 * First check the block they clicked
 		 */
-		entities = _validateBlock(entities, baseBlock);
+		entities = _validateBlock(entities, baseBlock, true);
 
 		int dev = -1;
 		boolean isXDir = true;
@@ -837,7 +838,77 @@ public class LWC {
 
 		return entities;
 	}
-
+	
+	/**
+	 * Check if a block is more than just protectable blocks (i.e signs, doors)
+	 * 
+	 * @param block
+	 * @return
+	 */
+	private boolean isComplexBlock(Block block) {
+		switch(block.getTypeId()) {
+		case 63: // sign post
+		case 64: // wood door
+		case 68: // wall sign
+		case 71: // iron door
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Check if we found the correct blocks
+	 * 
+	 * @param blocks
+	 * @return
+	 */
+	private boolean isSolved(List<Block> blocks) {
+		int size = blocks.size();
+		
+		// it cant already be solved if the size is 0
+		if(size == 0) {
+			return false;
+		}
+		
+		// hold all the block ids
+		List<Integer> blockIds = new ArrayList<Integer>();
+		
+		// store them
+		for(Block block : blocks) {
+			blockIds.add(block.getTypeId());
+		}
+		
+		// only check against complex blocks
+		for(int id : blockIds) {
+			switch(id) {
+			case 63: // sign post
+				if(size == 2) {
+					return true;
+				}
+				
+				break;
+			case 68: // wall sign
+				if(size == 3) {
+					return true;
+				}
+				
+				break;
+				
+			case 64: // wood door
+			case 71: // iron door
+				if(size == 3) {
+					return true;
+				}
+				
+				break;
+			}
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * Ensure a chest/furnace is protectable where it's at
 	 * 
@@ -846,6 +917,18 @@ public class LWC {
 	 * @return
 	 */
 	private List<Block> _validateBlock(List<Block> entities, Block block) {
+		return _validateBlock(entities, block, false);
+	}
+
+	/**
+	 * Ensure a chest/furnace is protectable where it's at
+	 * 
+	 * @param block
+	 * @param size
+	 * @param isBaseBlock
+	 * @return
+	 */
+	private List<Block> _validateBlock(List<Block> entities, Block block, boolean isBaseBlock) {
 		if (block == null) {
 			return entities;
 		}
@@ -917,16 +1000,20 @@ public class LWC {
 			if (!entities.contains(block)) {
 				entities.add(block);
 			}
-		} else if (up.getType() == Material.WOODEN_DOOR || up.getType() == Material.IRON_DOOR_BLOCK || type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK) {
+		} else if (isProtectable(block) && isBaseBlock && !isComplexBlock(block)) {
+			entities.add(block);
+		} else if (isBaseBlock && (up.getType() == Material.WOODEN_DOOR || up.getType() == Material.IRON_DOOR_BLOCK || type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK)) {
 			/*
 			 * check if they're clicking the block under the door
 			 */
 			if (type != Material.WOODEN_DOOR && type != Material.IRON_DOOR_BLOCK) {
+				entities.clear();
 				entities.add(block); // block under the door
 				entities.add(block.getFace(BlockFace.UP)); // bottom half
 				entities.add(block.getWorld().getBlockAt(block.getX(), block.getY() + 2, block.getZ())); // top half
 			} else {
-				if (up.getType() == Material.WOODEN_DOOR || up.getType() == Material.IRON_DOOR_BLOCK && !isProtectable(block)) {
+				entities.clear();
+				if (up.getType() == Material.WOODEN_DOOR || up.getType() == Material.IRON_DOOR_BLOCK) {
 					entities.add(block); // bottom half
 					entities.add(up); // top half
 				} else {
@@ -934,7 +1021,7 @@ public class LWC {
 					entities.add(block); // top half
 				}
 			}
-		} else if (up.getType() == Material.SIGN_POST || up.getType() == Material.WALL_SIGN || type == Material.SIGN_POST || type == Material.WALL_SIGN) {
+		} else if (isBaseBlock && (up.getType() == Material.SIGN_POST || up.getType() == Material.WALL_SIGN || type == Material.SIGN_POST || type == Material.WALL_SIGN)) {
 			/*
 			 * If it's a wall sign, also protect the wall it's attached to!
 			 */
@@ -956,7 +1043,7 @@ public class LWC {
 			}
 
 			return entities;
-		} else if (!isProtectable(block)) {
+		} else if (!isProtectable(block) && entities.size() == 0) {
 			/*
 			 * Look for a ronery wall sign
 			 */
@@ -972,7 +1059,7 @@ public class LWC {
 				if ((face = block.getFace(blockFace)) != null) {
 					if (face.getType() == Material.WALL_SIGN) {
 						byte direction = face.getData();
-
+						
 						/*
 						 * Protect the wall the wall sign is attached to
 						 */
@@ -1005,10 +1092,6 @@ public class LWC {
 					}
 
 				}
-			}
-		} else if (isProtectable(block)) {
-			if (!entities.contains(block)) {
-				entities.add(block);
 			}
 		}
 
