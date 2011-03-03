@@ -42,6 +42,7 @@ import com.griefcraft.model.AccessRight;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.StringUtils;
+import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class LWCBlockListener extends BlockListener {
 
@@ -97,7 +98,7 @@ public class LWCBlockListener extends BlockListener {
 		/*
 		 * Prevent players with lwc.blockinventories from opening inventories
 		 */
-		if (lwc.getGroupHandler() != null && !lwc.getGroupHandler().getPermissionHandler().has(player, "lwc.protect") && lwc.getGroupHandler().getPermissionHandler().has(player, "lwc.blockinventory") && !lwc.isAdmin(player) && !lwc.isMod(player)) {
+		if (lwc.getPermissions() != null && !Permissions.Security.permission(player, "lwc.protect") && Permissions.Security.permission(player, "lwc.blockinventory") && !lwc.isAdmin(player) && !lwc.isMod(player)) {
 			if (block.getState() instanceof ContainerBlock) {
 				player.sendMessage(Colors.Red + "The server admin is blocking you from opening that.");
 				event.setCancelled(true);

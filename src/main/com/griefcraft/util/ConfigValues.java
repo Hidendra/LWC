@@ -21,7 +21,7 @@ public enum ConfigValues {
 
 	BLACKLISTED_MODES("blacklisted-modes", ""), //
 	// ALLOW_FURNACE_PROTECTION("furnace-locks", "true"), //
-	DB_PATH("db-path", "lwc.db"), //
+	DB_PATH("db-path", "plugins/LWC/lwc.db"), //
 	ENFORCE_WORLDGUARD_REGIONS("enforce-worldguard-regions", "false"), //
 	WORLDGUARD_ALLOWED_REGIONS("worldguard-allowed-regions", "*"), //
 	AUTO_UPDATE("auto-update", "false"), //

@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.anjocaido.groupmanager.GroupManager;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -34,6 +33,7 @@ import com.griefcraft.util.Colors;
 import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.Performance;
 import com.griefcraft.util.StringUtils;
+import com.nijikokun.bukkit.Permissions.Permissions;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.RegionManager;
@@ -78,7 +78,7 @@ public class LWC {
 	/**
 	 * Permissions plugin
 	 */
-	private GroupManager groupHandler;
+	private Permissions permissions;
 
 	/**
 	 * List of commands
@@ -427,7 +427,7 @@ public class LWC {
 		memoryDatabase = new MemDB();
 		updateThread = new UpdateThread(this);
 
-		Plugin permissionsPlugin = plugin.getServer().getPluginManager().getPlugin("GroupManager");
+		Plugin permissionsPlugin = plugin.getServer().getPluginManager().getPlugin("Permissions");
 
 		if (permissionsPlugin != null) {
 			logger.info("Using Nijikokun's permissions plugin for permissions");
@@ -436,7 +436,7 @@ public class LWC {
 				plugin.getServer().getPluginManager().enablePlugin(permissionsPlugin);
 			}
 
-			groupHandler = (GroupManager) permissionsPlugin;
+			permissions = (Permissions) permissionsPlugin;
 		}
 
 		if (ConfigValues.ENFORCE_WORLDGUARD_REGIONS.getBool() && plugin.getServer().getPluginManager().getPlugin("WorldGuard") != null) {
@@ -538,7 +538,7 @@ public class LWC {
 	 * @return true if the player is an LWC admin
 	 */
 	public boolean isAdmin(Player player) {
-		return (ConfigValues.OP_IS_LWCADMIN.getBool() && player.isOp()) || (groupHandler != null && groupHandler.getPermissionHandler().has(player, "lwc.admin"));
+		return (ConfigValues.OP_IS_LWCADMIN.getBool() && player.isOp()) || (permissions != null && Permissions.Security.permission(player, "lwc.admin"));
 		// return player.canUseCommand("/lwcadmin");
 	}
 
@@ -550,15 +550,15 @@ public class LWC {
 	 * @return true if the player is an LWC mod
 	 */
 	public boolean isMod(Player player) {
-		return (groupHandler != null && groupHandler.getPermissionHandler().has(player, "lwc.mod"));
+		return (permissions != null && Permissions.Security.permission(player, "lwc.mod"));
 		// return player.canUseCommand("/lwcmod");
 	}
 
 	/**
 	 * @return the permissions
 	 */
-	public GroupManager getGroupHandler() {
-		return groupHandler;
+	public Permissions getPermissions() {
+		return permissions;
 	}
 
 	/**
@@ -756,8 +756,8 @@ public class LWC {
 		/*
 		 * Apply group limits.. can't be one line however
 		 */
-		if (limit == -1 && groupHandler != null) {
-			limit = physicalDatabase.getGroupLimit(groupHandler.getPermissionHandler().getGroup(player.getName()));
+		if (limit == -1 && permissions != null) {
+			limit = physicalDatabase.getGroupLimit(Permissions.Security.getGroup(player.getName()));
 		}
 
 		/*
@@ -1177,7 +1177,7 @@ public class LWC {
 			return memoryDatabase.hasAccess(player.getName(), protection);
 
 		case ProtectionTypes.PRIVATE:
-			return player.getName().equalsIgnoreCase(protection.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, protection.getId(), player.getName()) >= 0 || (groupHandler != null && physicalDatabase.getPrivateAccess(AccessRight.GROUP, protection.getId(), groupHandler.getPermissionHandler().getGroup(player.getName())) >= 0);
+			return player.getName().equalsIgnoreCase(protection.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, protection.getId(), player.getName()) >= 0 || (permissions != null && physicalDatabase.getPrivateAccess(AccessRight.GROUP, protection.getId(), Permissions.Security.getGroup(player.getName())) >= 0);
 			// return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) >= 0 ||
 			// physicalDatabase.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) >= 0;
 
@@ -1223,7 +1223,7 @@ public class LWC {
 			return player.getName().equalsIgnoreCase(protection.getOwner()) && memoryDatabase.hasAccess(player.getName(), protection);
 
 		case ProtectionTypes.PRIVATE:
-			return player.getName().equalsIgnoreCase(protection.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, protection.getId(), player.getName()) == 1 || (groupHandler != null && physicalDatabase.getPrivateAccess(AccessRight.GROUP, protection.getId(), groupHandler.getPermissionHandler().getGroup(player.getName())) == 1);
+			return player.getName().equalsIgnoreCase(protection.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, protection.getId(), player.getName()) == 1 || (permissions != null && physicalDatabase.getPrivateAccess(AccessRight.GROUP, protection.getId(), Permissions.Security.getGroup(player.getName())) == 1);
 			// return player.getName().equalsIgnoreCase(chest.getOwner()) || physicalDatabase.getPrivateAccess(RightTypes.PLAYER, chest.getID(), player.getName()) == 1 ||
 			// physicalDatabase.getPrivateAccess(RightTypes.GROUP, chest.getID(), player.getGroups()) == 1;
 
