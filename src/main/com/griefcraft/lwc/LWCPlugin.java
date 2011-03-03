@@ -34,6 +34,7 @@ import com.griefcraft.util.Config;
 import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.Updater;
+import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class LWCPlugin extends JavaPlugin {
 
@@ -115,7 +116,7 @@ public class LWCPlugin extends JavaPlugin {
 
 		Player player = (Player) sender;
 		String argString = StringUtils.join(args, 0);
-
+		
 		/*
 		 * Aliases
 		 */
@@ -148,7 +149,7 @@ public class LWCPlugin extends JavaPlugin {
 			return true;
 		}
 
-		if (lwc.getGroupHandler() != null && !lwc.getGroupHandler().getPermissionHandler().has(player, "lwc.protect")) {
+		if (lwc.getPermissions() != null && !Permissions.Security.permission(player, "lwc.protect")) {
 			player.sendMessage(Colors.Red + "You do not have permission to do that");
 			return true;
 		}
