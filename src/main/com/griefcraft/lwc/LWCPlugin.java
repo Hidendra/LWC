@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -32,6 +35,7 @@ import com.griefcraft.logging.Logger;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.Config;
 import com.griefcraft.util.ConfigValues;
+import com.griefcraft.util.LocaleClassLoader;
 import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.Updater;
 import com.nijikokun.bukkit.Permissions.Permissions;
@@ -47,6 +51,11 @@ public class LWCPlugin extends JavaPlugin {
 	 * The LWC instance
 	 */
 	private LWC lwc;
+	
+	/**
+	 * The locale for LWC
+	 */
+	private ResourceBundle locale;
 
 	/**
 	 * The player listener
@@ -87,6 +96,15 @@ public class LWCPlugin extends JavaPlugin {
 		 * Set the SQLite native library path
 		 */
 		System.setProperty("org.sqlite.lib.path", updater.getOSSpecificFolder());
+		
+		// we want to force people who used sqlite.purejava before to switch:
+		System.setProperty("sqlite.purejava", "");
+		
+		// BUT, some can't use native, so we need to give them the option to use pure:
+		String isPureJava = System.getProperty("lwc.purejava");
+		if(isPureJava != null && isPureJava.equalsIgnoreCase("true")) {
+			System.setProperty("sqlite.purejava", "true");
+		}
 
 		log("Native library: " + updater.getFullNativeLibraryPath());
 
@@ -263,22 +281,48 @@ public class LWCPlugin extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		updater.saveInternal();
-
-		lwc.destruct();
+		if(updater != null) {
+			updater.saveInternal();
+		}
+		
+		if(lwc != null) {
+			lwc.destruct();
+		}
+	}
+	
+	/**
+	 * @return the locale
+	 */
+	public ResourceBundle getLocale() {
+		return locale;
 	}
 
 	@Override
 	public void onEnable() {
 		Config.init();
 
+		if(LWCInfo.DEVELOPMENT) {
+			try {
+				locale = ResourceBundle.getBundle("lwc", new Locale(ConfigValues.LOCALE.getString()), new LocaleClassLoader());
+			} catch(MissingResourceException e) {
+				log(" ############################# ");
+				log(" ############################# ");
+				log(" ############################# ");
+				log("    MISSING LOCALE: " + ConfigValues.LOCALE.getString() + "!!");
+				log(" ##        STOPPING !!      ## ");
+				log(" ############################# ");
+				log(" ############################# ");
+				log(" ############################# ");
+				getServer().getPluginManager().disablePlugin(this);
+				return;
+			}
+		}
+
 		try {
 			if (ConfigValues.AUTO_UPDATE.getBool()) {
 				updater.checkDist();
-			} else {
-				updater.check();
+				updater.update();
 			}
-			updater.update();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
