@@ -51,17 +51,22 @@ public class Updater {
 	/**
 	 * URL to the base update site
 	 */
-	private final static String UPDATE_SITE = "http://griefcraft.com/bukkit/";
+	public final static String UPDATE_SITE = "http://griefcraft.com/bukkit/";
 
 	/**
 	 * File used to obtain the latest version
 	 */
-	private final static String VERSION_FILE = "lwc/VERSION";
+	public final static String VERSION_FILE = "lwc/VERSION";
 
 	/**
 	 * File used for the distribution
 	 */
-	private final static String DIST_FILE = "lwc/release/LWC.jar";
+	public final static String DIST_FILE = "lwc/release/LWC.jar";
+	
+	/**
+	 * The folder where libraries are stored
+	 */
+	public final static String DEST_LIBRARY_FOLDER = "plugins/LWC/";
 
 	/**
 	 * List of files to download
@@ -93,13 +98,13 @@ public class Updater {
 	 * @return true if LWC should be reloaded
 	 */
 	public void check() {
-		String[] paths = new String[] { "lib/sqlite.jar", getFullNativeLibraryPath() };
+		String[] paths = new String[] { DEST_LIBRARY_FOLDER + "lib/sqlite.jar", getFullNativeLibraryPath() };
 
 		for (String path : paths) {
 			File file = new File(path);
 
 			if (file != null && !file.exists() && !file.isDirectory()) {
-				UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "shared/" + path);
+				UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "shared/" + path.replaceAll(DEST_LIBRARY_FOLDER, ""));
 				updaterFile.setLocalLocation(path);
 
 				needsUpdating.add(updaterFile);
@@ -118,10 +123,10 @@ public class Updater {
 	 * Force update of binaries
 	 */
 	private void requireBinaryUpdate() {
-		String[] paths = new String[] { "lib/sqlite.jar", getFullNativeLibraryPath() };
+		String[] paths = new String[] { DEST_LIBRARY_FOLDER + "lib/sqlite.jar", getFullNativeLibraryPath() };
 
 		for (String path : paths) {
-			UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "shared/" + path);
+			UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "shared/" +  path.replaceAll(DEST_LIBRARY_FOLDER, ""));
 			updaterFile.setLocalLocation(path);
 
 			needsUpdating.add(updaterFile);
@@ -215,7 +220,7 @@ public class Updater {
 	 * @return the internal config file
 	 */
 	private File getInternalFile() {
-		return new File("plugins/LWC/internal.ini");
+		return new File(DEST_LIBRARY_FOLDER + "internal.ini");
 	}
 
 	/**
@@ -338,11 +343,11 @@ public class Updater {
 		String arch = System.getProperty("os.arch").toLowerCase();
 
 		if (osname.contains("windows")) {
-			return "lib/native/Windows/" + arch + "/";
+			return DEST_LIBRARY_FOLDER + "lib/native/Windows/" + arch + "/";
 		} else if (osname.contains("mac")) {
-			return "lib/native/Mac/" + arch + "/";
+			return DEST_LIBRARY_FOLDER + "lib/native/Mac/" + arch + "/";
 		} else { /* We assume linux/unix */
-			return "lib/native/Linux/" + arch + "/";
+			return DEST_LIBRARY_FOLDER + "lib/native/Linux/" + arch + "/";
 		}
 	}
 
@@ -365,9 +370,11 @@ public class Updater {
 		}
 
 		/*
-		 * Make the native folder hierarchy if needed
+		 * Make the folder hierarchy if needed
 		 */
 		File folder = new File(getOSSpecificFolder());
+		folder.mkdirs();
+		folder = new File(DEST_LIBRARY_FOLDER + "lib/");
 		folder.mkdirs();
 
 		logger.info("Need to download " + needsUpdating.size() + " file(s)");
