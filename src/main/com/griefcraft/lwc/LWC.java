@@ -6,8 +6,8 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Formatter;
-import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.bukkit.Material;
@@ -120,6 +120,59 @@ public class LWC {
 	 */
 	public double getVersion() {
 		return Double.parseDouble(plugin.getDescription().getVersion());
+	}
+	
+	/**
+	 * @return the locale
+	 */
+	public ResourceBundle getLocaasdle() {
+		/**
+		 * Locale to-do:
+		 * 
+		 * change this.getLocale() to return string :
+		 * - map %'s to colors -- manually write out %1 -> \u00A71 (navy), etc etc, use map ?
+		 * - map {block} to the block name: materialToString(block)
+		 * 
+		 * perhaps:
+		 * getLocale(String key, Object... args)
+		 * 
+		 * for(Object arg : args) {
+		 * 	if(arg instanceof Block) {
+		 * 		value.replaceAll("{block}", materialToString((Block) arg));
+		 * 	} // etc
+		 * }
+		 */
+		
+		return plugin.getLocale();
+	}
+	
+	/**
+	 * Get the locale value for a given key
+	 * 
+	 * @param key
+	 * @param args
+	 * @return
+	 */
+	public String getLocale(String key, Object... args) {
+		String value = plugin.getLocale().getString(key);
+		
+		// check for colors and replace
+		for(String colorKey : Colors.localeColors.keySet()) {
+			String color = Colors.localeColors.get(colorKey);
+			
+			if(value.contains(colorKey)) {
+				value.replaceAll(colorKey, color);
+			}
+		}
+		
+		// check for specific arguments, i.e Block
+		for(Object arg : args) {
+			if(arg instanceof Block) {
+				value.replaceAll("{block}", materialToString((Block) arg));
+			}
+		}
+		
+		return value;
 	}
 
 	/**
@@ -262,6 +315,7 @@ public class LWC {
 
 			if (ConfigValues.SHOW_PROTECTION_NOTICES.getBool() && (isAdmin(player) || isMod(player))) {
 				player.sendMessage(Colors.Red + "Notice: " + Colors.White + "That " + materialToString(block) + " is protected.");
+				// sendLocale(player, "protection.general.notice.protected");
 			}
 
 			switch (protection.getType()) {
@@ -272,6 +326,7 @@ public class LWC {
 
 					player.sendMessage(Colors.Red + "This " + materialToString(block) + " is locked.");
 					player.sendMessage(Colors.Red + "Type " + Colors.Gold + "/lwc -u <password>" + Colors.Red + " to unlock it");
+					// sendLocale(player, "protection.general.locked.password", block);
 				}
 
 				break;
@@ -279,6 +334,7 @@ public class LWC {
 			case ProtectionTypes.PRIVATE:
 				if (!hasAccess) {
 					player.sendMessage(Colors.Red + "This " + materialToString(block) + " is locked with a magical spell.");
+					// sendLocale(player, "protection.general.locked.private", block);
 				}
 
 				break;
@@ -473,14 +529,22 @@ public class LWC {
 		log("Freeing SQLite");
 
 		try {
-			physicalDatabase.getConnection().close();
-			memoryDatabase.getConnection().close();
+			if(physicalDatabase != null) {
+				physicalDatabase.getConnection().close();
+			}
+			
+			if(memoryDatabase != null) {
+				memoryDatabase.getConnection().close();
+			}
 		} catch (Exception e) {
 
 		}
 
-		updateThread.stop();
-		updateThread = null;
+		if(updateThread != null) {
+			updateThread.stop();
+			updateThread = null;
+		}
+		
 		inventoryQueue = null;
 		physicalDatabase = null;
 		memoryDatabase = null;
@@ -1036,8 +1100,8 @@ public class LWC {
 					entities.add(up);
 				}
 			}
-		} else if (type == Material.FURNACE || type == Material.DISPENSER || type == Material.JUKEBOX) {
-			// blocks that are just 1 block
+		} else if (isBaseBlock && (type == Material.FURNACE || type == Material.DISPENSER || type == Material.JUKEBOX)) {
+			// protections that are just 1 block
 			if (entities.size() == 0) {
 				entities.add(block);
 			}

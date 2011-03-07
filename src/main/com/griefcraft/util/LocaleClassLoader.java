@@ -15,31 +15,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.griefcraft.lwc;
+package com.griefcraft.util;
 
-/**
- * Temporary, just need to get version info, etc into a packaged class
- */
-public class LWCInfo {
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-	/**
-	 * Dev mode flag
-	 */
-	public static final boolean DEVELOPMENT = false;
+public class LocaleClassLoader extends ClassLoader {
 
-	/**
-	 * LWC's version
-	 */
-	public static final double VERSION = 1.58;
-
-	/**
-	 * Full LWC version
-	 */
-	public static final String FULL_VERSION = String.format("v%.2f", VERSION);
-
-	/**
-	 * Location of the properties file relative to the root Minecraft directory
-	 */
-	public static final String CONF_FILE = "plugins/LWC/lwc.properties";
+	protected URL findResource(String name) {
+		File file = new File(Updater.DEST_LIBRARY_FOLDER + "locale/" + name);
+		
+		try
+		{
+			return new URL("file:/" + file.getAbsolutePath());
+		}
+		catch (MalformedURLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return super.findResource(name);
+	}
 
 }
