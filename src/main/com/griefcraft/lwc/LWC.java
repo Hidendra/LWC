@@ -123,30 +123,6 @@ public class LWC {
 	}
 	
 	/**
-	 * @return the locale
-	 */
-	public ResourceBundle getLocaasdle() {
-		/**
-		 * Locale to-do:
-		 * 
-		 * change this.getLocale() to return string :
-		 * - map %'s to colors -- manually write out %1 -> \u00A71 (navy), etc etc, use map ?
-		 * - map {block} to the block name: materialToString(block)
-		 * 
-		 * perhaps:
-		 * getLocale(String key, Object... args)
-		 * 
-		 * for(Object arg : args) {
-		 * 	if(arg instanceof Block) {
-		 * 		value.replaceAll("{block}", materialToString((Block) arg));
-		 * 	} // etc
-		 * }
-		 */
-		
-		return plugin.getLocale();
-	}
-	
-	/**
 	 * Get the locale value for a given key
 	 * 
 	 * @param key
@@ -154,6 +130,10 @@ public class LWC {
 	 * @return
 	 */
 	public String getLocale(String key, Object... args) {
+		if(!plugin.getLocale().containsKey(key)) {
+			return null;
+		}
+		
 		String value = plugin.getLocale().getString(key);
 		
 		// check for colors and replace
@@ -173,6 +153,21 @@ public class LWC {
 		}
 		
 		return value;
+	}
+	
+	/**
+	 * Send a locale to a player
+	 * 
+	 * @param player
+	 * @param locale
+	 * @param args
+	 */
+	public void sendLocale(Player player, String key, Object... args) {
+		String message = getLocale(key, args);
+		
+		if(message != null) {
+			player.sendMessage(message);
+		}
 	}
 
 	/**
