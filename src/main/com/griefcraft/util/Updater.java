@@ -111,11 +111,13 @@ public class Updater {
 			}
 		}
 
-		double latestVersion = getLatestPluginVersion();
-
-		if (latestVersion > LWCInfo.VERSION) {
-			logger.info("Update detected for LWC");
-			logger.info("Latest version: " + latestVersion);
+		if(ConfigValues.AUTO_UPDATE.getBool()) {
+			double latestVersion = getLatestPluginVersion();
+	
+			if (latestVersion > LWCInfo.VERSION) {
+				logger.info("Update detected for LWC");
+				logger.info("Latest version: " + latestVersion);
+			}
 		}
 	}
 

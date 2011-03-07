@@ -17,7 +17,11 @@
 
 package com.griefcraft.sql;
 
+import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -27,9 +31,26 @@ import java.util.Map;
 import com.griefcraft.logging.Logger;
 import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.util.ConfigValues;
+import com.griefcraft.util.Updater;
 
 public abstract class Database {
 
+	public enum Type {
+		SQLite("sqlite.jar"),
+		MySQL ("mysql.jar");
+		
+		private String driver;
+		
+		Type(String driver) {
+			this.driver = driver;
+		}
+		
+		public String getDriver() {
+			return driver;
+		}
+		
+	}
+	
 	/**
 	 * @return true if connected to sqlite
 	 */
@@ -107,8 +128,18 @@ public abstract class Database {
 		if (connection != null) {
 			return true;
 		}
+		
+		// load the database jar
+		URLClassLoader classLoader = new URLClassLoader(new URL[] {
+				new URL("jar:file:/" + new File(Updater.DEST_LIBRARY_FOLDER + "lib/sqlite.jar").getAbsolutePath() + "!/")
+		});
 
-		Class.forName("org.sqlite.JDBC");
+		log(classLoader.getURLs()[0].getPath());
+		
+		// load and register the driver
+		Driver driver = (Driver) Class.forName("org.sqlite.JDBC", true, classLoader).newInstance();
+		DriverManager.registerDriver(new DriverStub(driver));
+		
 		connection = DriverManager.getConnection("jdbc:sqlite:" + getDatabasePath());
 		connected = true;
 
