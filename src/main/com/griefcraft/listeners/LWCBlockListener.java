@@ -185,18 +185,12 @@ public class LWCBlockListener extends BlockListener {
 		LWC lwc = plugin.getLWC();
 		Player player = event.getPlayer();
 		Block block = event.getBlockPlaced();
-		
+
 		// check for an adjacent chest
-		if(block.getType() == Material.CHEST) {
-			Block adjacentBlock;
-			if((adjacentBlock = lwc.findAdjacentBlock(block, Material.CHEST)) != null) {
-				// we found a chest, ensure it isn't a double chest
-				// see: water placement exploit
-				if(lwc.findAdjacentBlock(adjacentBlock, Material.CHEST, block) != null) {
-					// it IS a double chest .. just block it from being placed
-					event.setCancelled(true);
-					return;
-				}
+		if (block.getType() == Material.CHEST) {
+			if (lwc.findAdjacentDoubleChest(block)) {
+				event.setCancelled(true);
+				return;
 			}
 		}
 

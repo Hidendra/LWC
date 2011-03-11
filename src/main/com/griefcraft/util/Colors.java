@@ -7,7 +7,7 @@ public class Colors {
 
 	// contains colors for locales
 	public static final Map<String, String> localeColors = new HashMap<String, String>();
-	
+
 	static {
 		localeColors.put("%%0", "\u00A70");
 		localeColors.put("%%1", "\u00A71");
@@ -26,7 +26,7 @@ public class Colors {
 		localeColors.put("%%e", "\u00A7e");
 		localeColors.put("%%f", "\u00A7f");
 	}
-	
+
 	public static final String Black = "\u00A70";
 	public static final String Navy = "\u00A71";
 	public static final String Green = "\u00A72";

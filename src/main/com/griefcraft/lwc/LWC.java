@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Formatter;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.bukkit.Material;
@@ -101,7 +100,34 @@ public class LWC {
 			devLogger.log(str);
 		}
 	}
-	
+
+	/**
+	 * Look for a double chest adjacent to a block
+	 * 
+	 * @param block
+	 * @return
+	 */
+	public boolean findAdjacentDoubleChest(Block block) {
+		Block adjacentBlock;
+		List<Block> attempts = new ArrayList<Block>(5);
+		attempts.add(block);
+
+		for (int attempt = 0; attempt < 4; attempt++) {
+			Block[] attemptsArray = attempts.toArray(new Block[attempts.size()]);
+
+			if ((adjacentBlock = findAdjacentBlock(block, Material.CHEST, attemptsArray)) != null) {
+				// see: water placement exploit
+				if (findAdjacentBlock(adjacentBlock, Material.CHEST, attemptsArray) != null) {
+					return true;
+				}
+
+				attempts.add(adjacentBlock);
+			}
+		}
+
+		return false;
+	}
+
 	/**
 	 * Find a block that is adjacent to another block given a Material
 	 * 
@@ -113,15 +139,15 @@ public class LWC {
 	public Block findAdjacentBlock(Block block, Material material, Block... ignore) {
 		BlockFace[] faces = new BlockFace[] { BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST };
 		List<Block> ignoreList = Arrays.asList(ignore);
-		
-		for(BlockFace face : faces) {
+
+		for (BlockFace face : faces) {
 			Block adjacentBlock = block.getFace(face);
-			
-			if(adjacentBlock.getType() == material && !ignoreList.contains(adjacentBlock)) {
+
+			if (adjacentBlock.getType() == material && !ignoreList.contains(adjacentBlock)) {
 				return adjacentBlock;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -145,7 +171,7 @@ public class LWC {
 	public double getVersion() {
 		return Double.parseDouble(plugin.getDescription().getVersion());
 	}
-	
+
 	/**
 	 * Get the locale value for a given key
 	 * 
@@ -154,28 +180,28 @@ public class LWC {
 	 * @return
 	 */
 	public String getLocale(String key, Object... args) {
-		if(!plugin.getLocale().containsKey(key)) {
+		if (!plugin.getLocale().containsKey(key)) {
 			return null;
 		}
-		
+
 		String value = plugin.getLocale().getString(key);
-		
+
 		// check for colors and replace
-		for(String colorKey : Colors.localeColors.keySet()) {
+		for (String colorKey : Colors.localeColors.keySet()) {
 			String color = Colors.localeColors.get(colorKey);
-			
-			if(value.contains(colorKey)) {
+
+			if (value.contains(colorKey)) {
 				value = value.replaceAll(colorKey, color);
 			}
 		}
-		
-		if(args.length > 0) {
+
+		if (args.length > 0) {
 			return String.format(value, args);
 		} else {
 			return value;
 		}
 	}
-	
+
 	/**
 	 * Send a locale to a player
 	 * 
@@ -185,12 +211,12 @@ public class LWC {
 	 */
 	public void sendLocale(Player player, String key, Object... args) {
 		String message = getLocale(key, args);
-		
-		if(message == null) {
+
+		if (message == null) {
 			player.sendMessage(Colors.Red + "LWC: " + Colors.White + "Undefined locale: \"" + Colors.Gray + key + Colors.White + "\"");
 		} else {
 			// split the lines
-			for(String line : message.split("\\n")) {
+			for (String line : message.split("\\n")) {
 				player.sendMessage(line);
 			}
 		}
@@ -519,7 +545,7 @@ public class LWC {
 		if (ConfigValues.ENFORCE_WORLDGUARD_REGIONS.getBool() && plugin.getServer().getPluginManager().getPlugin("WorldGuard") != null) {
 			logger.log("Using WorldGuard protected regions");
 		}
-		
+
 		log("Loading " + Database.DefaultType);
 		try {
 			physicalDatabase.connect();
@@ -550,22 +576,22 @@ public class LWC {
 		log("Freeing SQLite");
 
 		try {
-			if(physicalDatabase != null) {
+			if (physicalDatabase != null) {
 				physicalDatabase.getConnection().close();
 			}
-			
-			if(memoryDatabase != null) {
+
+			if (memoryDatabase != null) {
 				memoryDatabase.getConnection().close();
 			}
 		} catch (Exception e) {
 
 		}
 
-		if(updateThread != null) {
+		if (updateThread != null) {
 			updateThread.stop();
 			updateThread = null;
 		}
-		
+
 		inventoryQueue = null;
 		physicalDatabase = null;
 		memoryDatabase = null;
@@ -924,7 +950,7 @@ public class LWC {
 
 		return entities;
 	}
-	
+
 	/**
 	 * Check if a block is more than just protectable blocks (i.e signs, doors)
 	 * 
@@ -932,18 +958,18 @@ public class LWC {
 	 * @return
 	 */
 	private boolean isComplexBlock(Block block) {
-		switch(block.getTypeId()) {
+		switch (block.getTypeId()) {
 		case 63: // sign post
 		case 64: // wood door
 		case 68: // wall sign
 		case 71: // iron door
-			
+
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * Check if we found the correct blocks
 	 * 
@@ -952,49 +978,49 @@ public class LWC {
 	 */
 	private boolean isSolved(List<Block> blocks) {
 		int size = blocks.size();
-		
+
 		// it cant already be solved if the size is 0
-		if(size == 0) {
+		if (size == 0) {
 			return false;
 		}
-		
+
 		// hold all the block ids
 		List<Integer> blockIds = new ArrayList<Integer>();
-		
+
 		// store them
-		for(Block block : blocks) {
+		for (Block block : blocks) {
 			blockIds.add(block.getTypeId());
 		}
-		
+
 		// only check against complex blocks
-		for(int id : blockIds) {
-			switch(id) {
+		for (int id : blockIds) {
+			switch (id) {
 			case 63: // sign post
-				if(size == 2) {
+				if (size == 2) {
 					return true;
 				}
-				
+
 				break;
 			case 68: // wall sign
-				if(size == 3) {
+				if (size == 3) {
 					return true;
 				}
-				
+
 				break;
-				
+
 			case 64: // wood door
 			case 71: // iron door
-				if(size == 3) {
+				if (size == 3) {
 					return true;
 				}
-				
+
 				break;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * Ensure a chest/furnace is protectable where it's at
 	 * 
@@ -1145,7 +1171,7 @@ public class LWC {
 				if ((face = block.getFace(blockFace)) != null) {
 					if (face.getType() == Material.WALL_SIGN) {
 						byte direction = face.getData();
-						
+
 						/*
 						 * Protect the wall the wall sign is attached to
 						 */

@@ -61,25 +61,25 @@ public class Admin implements ICommand {
 		}
 
 		else if (action.equals("locale")) {
-			if(args.length < 3) {
+			if (args.length < 3) {
 				lwc.sendSimpleUsage(player, "/lwc -a locale <key> [args]");
 				return;
 			}
-			
+
 			String locale = args[2];
 			String[] localeArgs = new String[0];
-			
-			if(args.length > 3) {
+
+			if (args.length > 3) {
 				localeArgs = StringUtils.join(args, 3).split(" ");
 			}
-			
-			if(localeArgs.length > 0) {
+
+			if (localeArgs.length > 0) {
 				lwc.sendLocale(player, locale, (Object[]) localeArgs);
 			} else {
 				lwc.sendLocale(player, locale);
 			}
 		}
-		
+
 		else if (action.equals("purge")) {
 			if (args.length < 3) {
 				lwc.sendSimpleUsage(player, "/lwc -a purge <Players>");

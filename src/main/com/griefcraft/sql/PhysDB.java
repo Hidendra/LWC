@@ -31,7 +31,6 @@ import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Job;
 import com.griefcraft.model.Limit;
 import com.griefcraft.model.Protection;
-import com.griefcraft.sql.Database.Type;
 import com.griefcraft.util.Performance;
 
 public class PhysDB extends Database {
@@ -40,11 +39,11 @@ public class PhysDB extends Database {
 	 * If the database was already loaded
 	 */
 	private boolean loaded = false;
-	
+
 	public PhysDB() {
 		super();
 	}
-	
+
 	public PhysDB(Type currentType) {
 		super(currentType);
 	}
@@ -593,65 +592,65 @@ public class PhysDB extends Database {
 			connection.setAutoCommit(false);
 
 			Column column;
-			
+
 			Table protections = new Table(this, "protections");
-			
+
 			{
 				column = new Column("id");
 				column.setType("INTEGER");
 				column.setPrimary(true);
 				protections.addColumn(column);
-				
+
 				column = new Column("type");
 				column.setType("INTEGER");
 				protections.addColumn(column);
-				
+
 				column = new Column("owner");
 				column.setType("TEXT");
 				protections.addColumn(column);
-				
+
 				column = new Column("password");
 				column.setType("TEXT");
 				protections.addColumn(column);
-				
+
 				column = new Column("x");
 				column.setType("INTEGER");
 				protections.addColumn(column);
-				
+
 				column = new Column("y");
 				column.setType("INTEGER");
 				protections.addColumn(column);
-				
+
 				column = new Column("z");
 				column.setType("INTEGER");
 				protections.addColumn(column);
-				
+
 				column = new Column("date");
 				column.setType("TEXT");
 				protections.addColumn(column);
 			}
-			
+
 			Table limits = new Table(this, "limits");
-			
+
 			{
 				column = new Column("id");
 				column.setType("INTEGER");
 				column.setPrimary(true);
 				limits.addColumn(column);
-				
+
 				column = new Column("type");
 				column.setType("INTEGER");
 				limits.addColumn(column);
-				
+
 				column = new Column("amount");
 				column.setType("INTEGER");
 				limits.addColumn(column);
-				
+
 				column = new Column("entity");
 				column.setType("TEXT");
 				limits.addColumn(column);
 			}
-			
+
 			Table rights = new Table(this, "rights");
 
 			{
@@ -659,40 +658,40 @@ public class PhysDB extends Database {
 				column.setType("INTEGER");
 				column.setPrimary(true);
 				rights.addColumn(column);
-				
+
 				column = new Column("chest");
 				column.setType("INTEGER");
 				rights.addColumn(column);
-				
+
 				column = new Column("entity");
 				column.setType("TEXT");
 				rights.addColumn(column);
-				
+
 				column = new Column("rights");
 				column.setType("INTEGER");
 				rights.addColumn(column);
-				
+
 				column = new Column("type");
 				column.setType("INTEGER");
 				rights.addColumn(column);
 			}
-			
+
 			Table players = new Table(this, "players");
-			
+
 			{
 				column = new Column("id");
 				column.setType("INTEGER");
 				column.setPrimary(true);
 				players.addColumn(column);
-				
+
 				column = new Column("username");
 				column.setType("TEXT");
 				players.addColumn(column);
-				
+
 				column = new Column("password");
 				column.setType("TEXT");
 				players.addColumn(column);
-				
+
 				column = new Column("mcusername");
 				column.setType("TEXT");
 				players.addColumn(column);
@@ -700,55 +699,55 @@ public class PhysDB extends Database {
 				column = new Column("rights");
 				column.setType("INTEGER");
 				players.addColumn(column);
-				
+
 				column = new Column("timestamp");
 				column.setType("TEXT");
 				players.addColumn(column);
-				
+
 				column = new Column("salt");
 				column.setType("TEXT");
 				players.addColumn(column);
 			}
-			
+
 			Table inventory = new Table(this, "inventory");
-			
+
 			{
 				column = new Column("protectionId");
 				column.setType("INTEGER");
 				column.setPrimary(true);
 				inventory.addColumn(column);
-				
+
 				column = new Column("blockId");
 				column.setType("INTEGER");
 				inventory.addColumn(column);
-				
+
 				column = new Column("slots");
 				column.setType("INTEGER");
 				inventory.addColumn(column);
-				
+
 				column = new Column("stacks");
 				column.setType("TEXT");
 				inventory.addColumn(column);
-				
+
 				column = new Column("items");
 				column.setType("TEXT");
 				inventory.addColumn(column);
-				
+
 				column = new Column("durability");
 				column.setType("TEXT");
 				inventory.addColumn(column);
-				
+
 				column = new Column("last_transaction");
 				column.setType("TEXT");
 				inventory.addColumn(column);
-				
+
 				column = new Column("last_update");
 				column.setType("TEXT");
 				inventory.addColumn(column);
 			}
 
 			Table jobs = new Table(this, "jobs");
-			
+
 			{
 				column = new Column("id");
 				column.setType("INTEGER");
@@ -758,21 +757,20 @@ public class PhysDB extends Database {
 				column = new Column("type");
 				column.setType("INTEGER");
 				jobs.addColumn(column);
-				
+
 				column = new Column("owner");
 				column.setType("TEXT");
 				jobs.addColumn(column);
-				
+
 				column = new Column("payload");
 				column.setType("TEXT");
 				jobs.addColumn(column);
-				
+
 				column = new Column("timestamp");
 				column.setType("TEXT");
 				jobs.addColumn(column);
 			}
 
-			
 			protections.execute();
 			limits.execute();
 			rights.execute();
@@ -829,11 +827,11 @@ public class PhysDB extends Database {
 			connection.setAutoCommit(false);
 			Statement statement = connection.createStatement();
 
-			if(currentType == Type.SQLite) {
+			if (currentType == Type.SQLite) {
 				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in1 ON protections (owner, x, y, z)");
 				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in2 ON limits (type, entity)");
 				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in3 ON rights (chest, entity)");
-	
+
 				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in4 ON players (username)");
 				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in5 ON jobs (type, owner)");
 				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in6 ON inventory (protectionId, slots)");
@@ -841,12 +839,12 @@ public class PhysDB extends Database {
 				statement.executeUpdate("CREATE INDEX in1 ON protections (x, y, z)");
 				statement.executeUpdate("CREATE INDEX in2 ON limits (type)");
 				statement.executeUpdate("CREATE INDEX in3 ON rights (chest)");
-	
+
 				// statement.executeUpdate("CREATE INDEX in4 ON players (username)");
 				statement.executeUpdate("CREATE INDEX in5 ON jobs (type)");
 				statement.executeUpdate("CREATE INDEX in6 ON inventory (protectionId, slots)");
 			}
-			
+
 			connection.commit();
 			connection.setAutoCommit(true);
 

@@ -31,36 +31,33 @@ import java.util.Properties;
 import java.util.logging.Level;
 
 import com.griefcraft.logging.Logger;
-import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.Updater;
 
 public abstract class Database {
 
 	public enum Type {
-		SQLite("sqlite.jar"),
-		MySQL ("mysql.jar"),
-		NONE  ("nil");
-		
+		SQLite("sqlite.jar"), MySQL("mysql.jar"), NONE("nil");
+
 		private String driver;
-		
+
 		Type(String driver) {
 			this.driver = driver;
 		}
-		
+
 		public String getDriver() {
 			return driver;
 		}
-		
+
 	}
-	
+
 	/**
 	 * @return true if connected to sqlite
 	 */
 	public static boolean isConnected() {
 		return connected;
 	}
-	
+
 	/**
 	 * The default database engine being used. This is set via config
 	 * 
@@ -89,27 +86,27 @@ public abstract class Database {
 	 * The database engine being used for this connection
 	 */
 	public Type currentType;
-	
+
 	/**
 	 * If we are connected to sqlite
 	 */
 	private static boolean connected = false;
-	
+
 	public Database() {
 		currentType = DefaultType;
 	}
-	
+
 	public Database(Type currentType) {
 		this.currentType = currentType;
 	}
-	
+
 	/**
 	 * @return the database engine type
 	 */
 	public Type getType() {
 		return currentType;
 	}
-	
+
 	/**
 	 * @return the connection to the database
 	 */
@@ -153,31 +150,29 @@ public abstract class Database {
 		if (connection != null) {
 			return true;
 		}
-		
+
 		// load the database jar
-		URLClassLoader classLoader = new URLClassLoader(new URL[] {
-				new URL("jar:file:" + new File(Updater.DEST_LIBRARY_FOLDER + "lib/" + currentType.getDriver()).getAbsolutePath() + "!/")
-		});
+		URLClassLoader classLoader = new URLClassLoader(new URL[] { new URL("jar:file:" + new File(Updater.DEST_LIBRARY_FOLDER + "lib/" + currentType.getDriver()).getAbsolutePath() + "!/") });
 
 		// log(classLoader.getURLs()[0].getPath());
-		
+
 		// load and register the driver
 		// Driver driver = (Driver) Class.forName("org.sqlite.JDBC", true, classLoader).newInstance();
 		String className = "";
-		
-		if(currentType == Type.MySQL) {
+
+		if (currentType == Type.MySQL) {
 			className = "com.mysql.jdbc.Driver";
 		} else {
 			className = "org.sqlite.JDBC";
 		}
-		
+
 		Driver driver = (Driver) classLoader.loadClass(className).newInstance();
 		DriverManager.registerDriver(new DriverStub(driver));
-		
+
 		Properties properties = new Properties();
-		
+
 		// if we're using mysql, append the database info
-		if(currentType == Type.MySQL) {
+		if (currentType == Type.MySQL) {
 			properties.put("autoReconnect", "true");
 			properties.put("user", ConfigValues.MYSQL_USER.getString());
 			properties.put("password", ConfigValues.MYSQL_PASS.getString());
@@ -193,10 +188,10 @@ public abstract class Database {
 	 * @return the path where the database file should be saved
 	 */
 	public String getDatabasePath() {
-		if(currentType == Type.MySQL) {
+		if (currentType == Type.MySQL) {
 			return "//" + ConfigValues.MYSQL_HOST.getString() + ":" + ConfigValues.MYSQL_PORT.getString() + "/" + ConfigValues.MYSQL_DATABASE.getString();
 		}
-		
+
 		return ConfigValues.DB_PATH.getString();
 	}
 
@@ -211,7 +206,7 @@ public abstract class Database {
 	public void log(String str) {
 		logger.log(str);
 	}
-	
+
 	public void log(String str, Level level) {
 		logger.log(str, level);
 	}
