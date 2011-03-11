@@ -67,8 +67,6 @@ public class Config extends Properties {
 
 			// save it (new config values, perhaps?)
 			save();
-
-			logger.info("Loaded " + size() + " config entries");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

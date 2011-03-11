@@ -29,7 +29,7 @@ public class Modify implements ICommand {
 
 	@Override
 	public String getName() {
-		return "/lwc -modify";
+		return "modify";
 	}
 
 	@Override

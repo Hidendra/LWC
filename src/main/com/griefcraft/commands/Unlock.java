@@ -32,7 +32,7 @@ public class Unlock implements ICommand {
 
 	@Override
 	public String getName() {
-		return "/lwc -unlock";
+		return "unlock";
 	}
 
 	@Override

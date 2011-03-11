@@ -46,7 +46,7 @@ public class Performance {
 	 * @param str
 	 */
 	public static void add(String str) {
-		logger.info(str);
+		logger.log(str);
 		generatedReport.add(str);
 	}
 

@@ -121,10 +121,10 @@ public class UpdateThread implements Runnable {
 		List<Job> jobs = lwc.getPhysicalDatabase().getJobQueue(ConfigValues.MAX_JOBS.getInt());
 
 		if (jobs.size() > 0) {
-			logger.info("Loaded " + jobs.size() + " Jobs");
+			logger.log("Loaded " + jobs.size() + " Jobs");
 
 			for (Job job : jobs) {
-				logger.info("Executing job id #" + job.getId());
+				logger.log("Executing job id #" + job.getId());
 
 				int type = job.getType();
 
@@ -141,7 +141,7 @@ public class UpdateThread implements Runnable {
 					String[] coordinates = job.getPayload().split(" ");
 
 					if (coordinates.length < 3) {
-						logger.info("Unexpected payload in job " + job.getId() + ": " + job.getPayload());
+						logger.log("Unexpected payload in job " + job.getId() + ": " + job.getPayload());
 						continue;
 					}
 
@@ -199,7 +199,7 @@ public class UpdateThread implements Runnable {
 									if (line > 3) {
 										break;
 									}
-									logger.info(line + ":" + lines[line]);
+									logger.log(line + ":" + lines[line]);
 									sign.setLine(line, lines[line]);
 								}
 
@@ -212,7 +212,7 @@ public class UpdateThread implements Runnable {
 						lwc.dev("Job completed: #" + job.getId());
 					} catch (Exception e) {
 						e.printStackTrace();
-						logger.info("Unexpected payload in job " + job.getId() + ": " + job.getPayload());
+						logger.log("Unexpected payload in job " + job.getId() + ": " + job.getPayload());
 					}
 
 					break;
@@ -222,7 +222,7 @@ public class UpdateThread implements Runnable {
 					int index = job.getPayload().indexOf(":");
 
 					if (index == -1) {
-						logger.info("Unexpected payload in job " + job.getId() + ": " + job.getPayload());
+						logger.log("Unexpected payload in job " + job.getId() + ": " + job.getPayload());
 						continue;
 					}
 

@@ -28,7 +28,7 @@ public class Owners implements ICommand {
 
 	@Override
 	public String getName() {
-		return "/lwc -owners";
+		return "owners";
 	}
 
 	@Override

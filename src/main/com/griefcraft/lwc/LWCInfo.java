@@ -30,7 +30,7 @@ public class LWCInfo {
 	/**
 	 * LWC's version
 	 */
-	public static final double VERSION = 1.58;
+	public static final double VERSION = 1.62;
 
 	/**
 	 * Full LWC version

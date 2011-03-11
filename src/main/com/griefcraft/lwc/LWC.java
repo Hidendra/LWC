@@ -27,6 +27,7 @@ import com.griefcraft.model.PInventory;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.model.AccessRight;
+import com.griefcraft.sql.Database;
 import com.griefcraft.sql.MemDB;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
@@ -97,8 +98,31 @@ public class LWC {
 	 */
 	public void dev(String str) {
 		if (LWCInfo.DEVELOPMENT) {
-			devLogger.info(str);
+			devLogger.log(str);
 		}
+	}
+	
+	/**
+	 * Find a block that is adjacent to another block given a Material
+	 * 
+	 * @param block
+	 * @param material
+	 * @param ignore
+	 * @return
+	 */
+	public Block findAdjacentBlock(Block block, Material material, Block... ignore) {
+		BlockFace[] faces = new BlockFace[] { BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST };
+		List<Block> ignoreList = Arrays.asList(ignore);
+		
+		for(BlockFace face : faces) {
+			Block adjacentBlock = block.getFace(face);
+			
+			if(adjacentBlock.getType() == material && !ignoreList.contains(adjacentBlock)) {
+				return adjacentBlock;
+			}
+		}
+		
+		return null;
 	}
 
 	/**
@@ -141,18 +165,15 @@ public class LWC {
 			String color = Colors.localeColors.get(colorKey);
 			
 			if(value.contains(colorKey)) {
-				value.replaceAll(colorKey, color);
+				value = value.replaceAll(colorKey, color);
 			}
 		}
 		
-		// check for specific arguments, i.e Block
-		for(Object arg : args) {
-			if(arg instanceof Block) {
-				value.replaceAll("{block}", materialToString((Block) arg));
-			}
+		if(args.length > 0) {
+			return String.format(value, args);
+		} else {
+			return value;
 		}
-		
-		return value;
 	}
 	
 	/**
@@ -165,8 +186,13 @@ public class LWC {
 	public void sendLocale(Player player, String key, Object... args) {
 		String message = getLocale(key, args);
 		
-		if(message != null) {
-			player.sendMessage(message);
+		if(message == null) {
+			player.sendMessage(Colors.Red + "LWC: " + Colors.White + "Undefined locale: \"" + Colors.Gray + key + Colors.White + "\"");
+		} else {
+			// split the lines
+			for(String line : message.split("\\n")) {
+				player.sendMessage(line);
+			}
 		}
 	}
 
@@ -321,7 +347,7 @@ public class LWC {
 
 					player.sendMessage(Colors.Red + "This " + materialToString(block) + " is locked.");
 					player.sendMessage(Colors.Red + "Type " + Colors.Gold + "/lwc -u <password>" + Colors.Red + " to unlock it");
-					// sendLocale(player, "protection.general.locked.password", block);
+					// sendLocale(player, "protection.general.locked.password", materialToString(block));
 				}
 
 				break;
@@ -329,7 +355,7 @@ public class LWC {
 			case ProtectionTypes.PRIVATE:
 				if (!hasAccess) {
 					player.sendMessage(Colors.Red + "This " + materialToString(block) + " is locked with a magical spell.");
-					// sendLocale(player, "protection.general.locked.private", block);
+					// sendLocale(player, "protection.general.locked.private", materialToString(block));
 				}
 
 				break;
@@ -481,7 +507,7 @@ public class LWC {
 		Plugin permissionsPlugin = plugin.getServer().getPluginManager().getPlugin("Permissions");
 
 		if (permissionsPlugin != null) {
-			logger.info("Using Nijikokun's permissions plugin for permissions");
+			logger.log("Using Nijikokun's permissions plugin for permissions");
 
 			if (!permissionsPlugin.isEnabled()) {
 				plugin.getServer().getPluginManager().enablePlugin(permissionsPlugin);
@@ -491,10 +517,10 @@ public class LWC {
 		}
 
 		if (ConfigValues.ENFORCE_WORLDGUARD_REGIONS.getBool() && plugin.getServer().getPluginManager().getPlugin("WorldGuard") != null) {
-			logger.info("Using WorldGuard protected regions");
+			logger.log("Using WorldGuard protected regions");
 		}
-
-		log("Loading SQLite");
+		
+		log("Loading " + Database.DefaultType);
 		try {
 			physicalDatabase.connect();
 			memoryDatabase.connect();
@@ -502,7 +528,7 @@ public class LWC {
 			physicalDatabase.load();
 			memoryDatabase.load();
 
-			Logger.getLogger("SQLite").info("Using: " + StringUtils.capitalizeFirstLetter(physicalDatabase.getConnection().getMetaData().getDriverVersion()));
+			Logger.getLogger(Database.DefaultType.toString()).log("Using: " + StringUtils.capitalizeFirstLetter(physicalDatabase.getConnection().getMetaData().getDriverVersion()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -514,7 +540,7 @@ public class LWC {
 	 * @param str
 	 */
 	private void log(String str) {
-		logger.info(str);
+		logger.log(str);
 	}
 
 	/**
@@ -621,13 +647,14 @@ public class LWC {
 	}
 
 	/**
-	 * Send simple usage of a command
+	 * Send the simple usage of a command
 	 * 
 	 * @param player
 	 * @param command
 	 */
 	public void sendSimpleUsage(Player player, String command) {
 		player.sendMessage(Colors.Red + "Usage:" + Colors.Gold + " " + command);
+		// sendLocale(player, "help.simpleusage", command);
 	}
 
 	/**

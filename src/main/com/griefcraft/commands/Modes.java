@@ -28,7 +28,7 @@ public class Modes implements ICommand {
 
 	@Override
 	public String getName() {
-		return "/lwc -p";
+		return "modes";
 	}
 
 	@Override

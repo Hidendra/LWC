@@ -28,7 +28,7 @@ public class Info implements ICommand {
 
 	@Override
 	public String getName() {
-		return "/lwc -info";
+		return "info";
 	}
 
 	@Override
