@@ -53,7 +53,7 @@ public class LWCPlugin extends JavaPlugin {
 	 * The LWC instance
 	 */
 	private LWC lwc;
-	
+
 	/**
 	 * The locale for LWC
 	 */
@@ -83,7 +83,7 @@ public class LWCPlugin extends JavaPlugin {
 
 	public LWCPlugin() {
 		update147();
-		
+
 		log("Loading shared objects");
 
 		Config.init();
@@ -98,14 +98,14 @@ public class LWCPlugin extends JavaPlugin {
 		 * Set the SQLite native library path
 		 */
 		System.setProperty("org.sqlite.lib.path", updater.getOSSpecificFolder());
-		
+
 		// we want to force people who used sqlite.purejava before to switch:
 		System.setProperty("sqlite.purejava", "");
-		
+
 		// BUT, some can't use native, so we need to give them the option to use pure:
 		String isPureJava = System.getProperty("lwc.purejava");
 
-		if(isPureJava != null && isPureJava.equalsIgnoreCase("true")) {
+		if (isPureJava != null && isPureJava.equalsIgnoreCase("true")) {
 			System.setProperty("sqlite.purejava", "true");
 		}
 
@@ -125,7 +125,7 @@ public class LWCPlugin extends JavaPlugin {
 
 		Player player = (Player) sender;
 		String argString = StringUtils.join(args, 0);
-		
+
 		/*
 		 * Aliases
 		 */
@@ -199,11 +199,11 @@ public class LWCPlugin extends JavaPlugin {
 		if (folder.isDirectory()) {
 			return;
 		}
-		
+
 		// check for existing file
 		File configFile = new File("lwc.properties");
-		
-		if(!configFile.exists()) {
+
+		if (!configFile.exists()) {
 			return;
 		}
 
@@ -279,15 +279,15 @@ public class LWCPlugin extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		if(updater != null) {
+		if (updater != null) {
 			updater.saveInternal();
 		}
-		
-		if(lwc != null) {
+
+		if (lwc != null) {
 			lwc.destruct();
 		}
 	}
-	
+
 	/**
 	 * @return the locale
 	 */
@@ -299,11 +299,11 @@ public class LWCPlugin extends JavaPlugin {
 	public void onEnable() {
 		Config.init();
 
-		if(LWCInfo.DEVELOPMENT) {
+		if (LWCInfo.DEVELOPMENT) {
 			try {
 				locale = ResourceBundle.getBundle("lwc", new Locale(ConfigValues.LOCALE.getString()), new LocaleClassLoader());
 				log("Loaded " + locale.keySet().size() + " locale strings");
-			} catch(MissingResourceException e) {
+			} catch (MissingResourceException e) {
 				log(" ############################# ");
 				log(" ############################# ");
 				log(" ############################# ");
@@ -316,11 +316,11 @@ public class LWCPlugin extends JavaPlugin {
 				return;
 			}
 		}
-		
+
 		// load the database type
 		String database = ConfigValues.DATABASE.getString().toLowerCase();
-		
-		if(database.equals("mysql") && false) {
+
+		if (database.equals("mysql") && false) {
 			Database.DefaultType = Database.Type.MySQL;
 		} else {
 			Database.DefaultType = Database.Type.SQLite;

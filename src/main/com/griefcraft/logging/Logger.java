@@ -47,10 +47,10 @@ public class Logger {
 	}
 
 	public void log(String str, Level level) {
-		if(level == Level.CONFIG && !ConfigValues.VERBOSE.getBool()) {
+		if (level == Level.CONFIG && !ConfigValues.VERBOSE.getBool()) {
 			return;
 		}
-		
+
 		System.out.println(String.format("%s\t%s", name, str));
 	}
 

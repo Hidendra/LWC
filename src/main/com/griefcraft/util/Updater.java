@@ -33,11 +33,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
 import com.griefcraft.logging.Logger;
 import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.sql.Database;
@@ -63,7 +58,7 @@ public class Updater {
 	 * File used for the distribution
 	 */
 	public final static String DIST_FILE = "lwc/release/LWC.jar";
-	
+
 	/**
 	 * The folder where libraries are stored
 	 */
@@ -106,15 +101,15 @@ public class Updater {
 				UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "shared/" + path.replaceAll(DEST_LIBRARY_FOLDER, ""));
 				updaterFile.setLocalLocation(path);
 
-				if(!needsUpdating.contains(updaterFile)) {
+				if (!needsUpdating.contains(updaterFile)) {
 					needsUpdating.add(updaterFile);
 				}
 			}
 		}
 
-		if(ConfigValues.AUTO_UPDATE.getBool()) {
+		if (ConfigValues.AUTO_UPDATE.getBool()) {
 			double latestVersion = getLatestPluginVersion();
-	
+
 			if (latestVersion > LWCInfo.VERSION) {
 				logger.log("Update detected for LWC");
 				logger.log("Latest version: " + latestVersion);
@@ -129,10 +124,10 @@ public class Updater {
 		String[] paths = new String[] { DEST_LIBRARY_FOLDER + "lib/" + Database.DefaultType.getDriver(), getFullNativeLibraryPath() };
 
 		for (String path : paths) {
-			UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "shared/" +  path.replaceAll(DEST_LIBRARY_FOLDER, ""));
+			UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "shared/" + path.replaceAll(DEST_LIBRARY_FOLDER, ""));
 			updaterFile.setLocalLocation(path);
 
-			if(!needsUpdating.contains(updaterFile)) {
+			if (!needsUpdating.contains(updaterFile)) {
 				needsUpdating.add(updaterFile);
 			}
 		}
@@ -391,7 +386,7 @@ public class Updater {
 
 			String fileName = item.getRemoteLocation();
 			fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
-			
+
 			logger.log(" - Downloading file: " + fileName);
 
 			URL url = new URL(item.getRemoteLocation());

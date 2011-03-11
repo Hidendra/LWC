@@ -22,11 +22,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-
 import com.griefcraft.model.Action;
 import com.griefcraft.model.Protection;
-import com.griefcraft.sql.Database.Type;
 import com.griefcraft.util.Performance;
 
 public class MemDB extends Database {
@@ -138,7 +135,7 @@ public class MemDB extends Database {
 	@Override
 	public String getDatabasePath() {
 		// if we're using mysql, just open another connection
-		if(currentType == Type.MySQL) {
+		if (currentType == Type.MySQL) {
 			return super.getDatabasePath();
 		}
 
@@ -423,11 +420,11 @@ public class MemDB extends Database {
 				column.setType("INTEGER");
 				column.setPrimary(true);
 				locks.addColumn(column);
-				
+
 				column = new Column("player");
 				column.setType("VARCHAR(255)");
 				locks.addColumn(column);
-				
+
 				column = new Column("password");
 				column.setType("VARCHAR(100)");
 				locks.addColumn(column);
@@ -435,17 +432,17 @@ public class MemDB extends Database {
 
 			Table actions = new Table(this, "actions");
 			actions.setMemory(true);
-			
+
 			{
 				column = new Column("id");
 				column.setType("INTEGER");
 				column.setPrimary(true);
 				actions.addColumn(column);
-				
+
 				column = new Column("action");
 				column.setType("VARCHAR(255)");
 				actions.addColumn(column);
-				
+
 				column = new Column("player");
 				column.setType("VARCHAR(255)");
 				actions.addColumn(column);
@@ -453,34 +450,34 @@ public class MemDB extends Database {
 				column = new Column("chest");
 				column.setType("INTEGER");
 				actions.addColumn(column);
-				
+
 				column = new Column("data");
 				column.setType("VARCHAR(255)");
 				actions.addColumn(column);
 			}
-			
+
 			Table modes = new Table(this, "modes");
 			modes.setMemory(true);
-			
+
 			{
 				column = new Column("id");
 				column.setType("INTEGER");
 				column.setPrimary(true);
 				modes.addColumn(column);
-				
+
 				column = new Column("player");
 				column.setType("VARCHAR(255)");
 				modes.addColumn(column);
-				
+
 				column = new Column("mode");
 				column.setType("VARCHAR(255)");
 				modes.addColumn(column);
-				
+
 				column = new Column("data");
 				column.setType("VARCHAR(255)");
 				modes.addColumn(column);
 			}
-			
+
 			// now create all of the tables
 			sessions.execute();
 			locks.execute();
