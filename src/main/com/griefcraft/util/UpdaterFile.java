@@ -36,15 +36,15 @@ public class UpdaterFile {
 
 	@Override
 	public boolean equals(Object obj) {
-		if(!(obj instanceof UpdaterFile)) {
+		if (!(obj instanceof UpdaterFile)) {
 			return false;
 		}
-		
+
 		UpdaterFile other = (UpdaterFile) obj;
-		
+
 		return other.getLocalLocation().equals(localLocation) && other.getRemoteLocation().equals(remoteLocation);
 	}
-	
+
 	/**
 	 * @return the local file location
 	 */

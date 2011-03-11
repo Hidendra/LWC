@@ -37,7 +37,7 @@ public enum ConfigValues {
 	MYSQL_HOST("mysql-host", "localhost"), // default mysql info
 	MYSQL_PORT("mysql-port", "3306"), //
 	MYSQL_DATABASE("mysql-database", "lwc"), //
-	MYSQL_USER("mysql-user", "user"), // 
+	MYSQL_USER("mysql-user", "user"), //
 	MYSQL_PASS("mysql-pass", ""), //
 	VERBOSE("verbose", "false"); //
 
@@ -55,7 +55,7 @@ public enum ConfigValues {
 		this.name = name;
 		this.defaultValue = defaultValue;
 	}
-	
+
 	@Override
 	public String toString() {
 		return getString();
