@@ -80,8 +80,6 @@ public class Updater {
 	private HashMap<String, String> config = new HashMap<String, String>();
 
 	public Updater() {
-		// enableSSL();
-
 		/*
 		 * Default config values
 		 */
@@ -108,7 +106,9 @@ public class Updater {
 				UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "shared/" + path.replaceAll(DEST_LIBRARY_FOLDER, ""));
 				updaterFile.setLocalLocation(path);
 
-				needsUpdating.add(updaterFile);
+				if(!needsUpdating.contains(updaterFile)) {
+					needsUpdating.add(updaterFile);
+				}
 			}
 		}
 
@@ -132,7 +132,9 @@ public class Updater {
 			UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "shared/" +  path.replaceAll(DEST_LIBRARY_FOLDER, ""));
 			updaterFile.setLocalLocation(path);
 
-			needsUpdating.add(updaterFile);
+			if(!needsUpdating.contains(updaterFile)) {
+				needsUpdating.add(updaterFile);
+			}
 		}
 	}
 
@@ -387,7 +389,10 @@ public class Updater {
 		while (iterator.hasNext()) {
 			UpdaterFile item = iterator.next();
 
-			logger.log(" - Downloading file : " + item.getRemoteLocation());
+			String fileName = item.getRemoteLocation();
+			fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
+			
+			logger.log(" - Downloading file: " + fileName);
 
 			URL url = new URL(item.getRemoteLocation());
 			File file = new File(item.getLocalLocation());
@@ -412,39 +417,6 @@ public class Updater {
 		 * In the event we updated binaries, we should force an ini save!
 		 */
 		saveInternal();
-	}
-
-	/**
-	 * Enable SSL. github is 100% ssl
-	 */
-	private void enableSSL() {
-		/*
-		 * This seems hackish.. but seems more than a few people don't have their trust stores OR OpenJDK
-		 * 
-		 * This approach does not depend on com.sun !!
-		 */
-		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-			@Override
-			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-				return null;
-			}
-
-			@Override
-			public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-			}
-
-			@Override
-			public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-			}
-		} };
-
-		try {
-			SSLContext sc = SSLContext.getInstance("SSL");
-			sc.init(null, trustAllCerts, new java.security.SecureRandom());
-			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-		} catch (Exception e) {
-			logger.log("SEVERE ERROR :: SSL NOT SUPPORTED");
-		}
 	}
 
 	/**
