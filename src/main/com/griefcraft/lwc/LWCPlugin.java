@@ -199,6 +199,13 @@ public class LWCPlugin extends JavaPlugin {
 		if (folder.isDirectory()) {
 			return;
 		}
+		
+		// check for existing file
+		File configFile = new File("lwc.properties");
+		
+		if(!configFile.exists()) {
+			return;
+		}
 
 		log("Migration required");
 
