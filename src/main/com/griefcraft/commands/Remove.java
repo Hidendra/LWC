@@ -28,7 +28,7 @@ public class Remove implements ICommand {
 
 	@Override
 	public String getName() {
-		return "/lwc -free";
+		return "remove";
 	}
 
 	@Override

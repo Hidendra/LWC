@@ -63,7 +63,7 @@ public class LWCBlockListener extends BlockListener {
 		LWC lwc = plugin.getLWC();
 		Block poweredBlock = event.getBlock();
 
-		System.out.println(poweredBlock.getType().toString() + ": " + event.getOldCurrent() + "->" + event.getNewCurrent());
+		// System.out.println(poweredBlock.getType().toString() + ": " + event.getOldCurrent() + "->" + event.getNewCurrent());
 
 		if (!lwc.isProtectable(poweredBlock)) {
 			return;
@@ -182,6 +182,24 @@ public class LWCBlockListener extends BlockListener {
 			return;
 		}
 
+		LWC lwc = plugin.getLWC();
+		Player player = event.getPlayer();
+		Block block = event.getBlockPlaced();
+		
+		// check for an adjacent chest
+		if(block.getType() == Material.CHEST) {
+			Block adjacentBlock;
+			if((adjacentBlock = lwc.findAdjacentBlock(block, Material.CHEST)) != null) {
+				// we found a chest, ensure it isn't a double chest
+				// see: water placement exploit
+				if(lwc.findAdjacentBlock(adjacentBlock, Material.CHEST, block) != null) {
+					// it IS a double chest .. just block it from being placed
+					event.setCancelled(true);
+					return;
+				}
+			}
+		}
+
 		String autoRegisterType = ConfigValues.AUTO_REGISTER.getString();
 
 		/*
@@ -197,13 +215,6 @@ public class LWCBlockListener extends BlockListener {
 		if (autoRegisterType.equalsIgnoreCase("private")) {
 			type = ProtectionTypes.PRIVATE;
 		}
-
-		/*
-		 * Get info required for finishing the protection
-		 */
-		LWC lwc = plugin.getLWC();
-		Player player = event.getPlayer();
-		Block block = event.getBlockPlaced();
 
 		/*
 		 * If the block isn't protectable, don't let them

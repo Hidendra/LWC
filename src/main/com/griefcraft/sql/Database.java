@@ -27,6 +27,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Level;
 
 import com.griefcraft.logging.Logger;
 import com.griefcraft.lwc.LWCInfo;
@@ -37,7 +39,8 @@ public abstract class Database {
 
 	public enum Type {
 		SQLite("sqlite.jar"),
-		MySQL ("mysql.jar");
+		MySQL ("mysql.jar"),
+		NONE  ("nil");
 		
 		private String driver;
 		
@@ -57,16 +60,18 @@ public abstract class Database {
 	public static boolean isConnected() {
 		return connected;
 	}
+	
+	/**
+	 * The default database engine being used. This is set via config
+	 * 
+	 * @default SQLite
+	 */
+	public static Type DefaultType = Type.NONE;
 
 	/**
 	 * Logging object
 	 */
-	private Logger logger = Logger.getLogger(getClass().getSimpleName());
-
-	/**
-	 * Dev logger
-	 */
-	private Logger devLogger = Logger.getLogger("Dev");
+	protected Logger logger = Logger.getLogger(getClass().getSimpleName());
 
 	/**
 	 * Store cached prepared statements.
@@ -81,10 +86,30 @@ public abstract class Database {
 	protected Connection connection = null;
 
 	/**
+	 * The database engine being used for this connection
+	 */
+	public Type currentType;
+	
+	/**
 	 * If we are connected to sqlite
 	 */
 	private static boolean connected = false;
-
+	
+	public Database() {
+		currentType = DefaultType;
+	}
+	
+	public Database(Type currentType) {
+		this.currentType = currentType;
+	}
+	
+	/**
+	 * @return the database engine type
+	 */
+	public Type getType() {
+		return currentType;
+	}
+	
 	/**
 	 * @return the connection to the database
 	 */
@@ -131,16 +156,34 @@ public abstract class Database {
 		
 		// load the database jar
 		URLClassLoader classLoader = new URLClassLoader(new URL[] {
-				new URL("jar:file:/" + new File(Updater.DEST_LIBRARY_FOLDER + "lib/sqlite.jar").getAbsolutePath() + "!/")
+				new URL("jar:file:" + new File(Updater.DEST_LIBRARY_FOLDER + "lib/" + currentType.getDriver()).getAbsolutePath() + "!/")
 		});
 
-		log(classLoader.getURLs()[0].getPath());
+		// log(classLoader.getURLs()[0].getPath());
 		
 		// load and register the driver
-		Driver driver = (Driver) Class.forName("org.sqlite.JDBC", true, classLoader).newInstance();
+		// Driver driver = (Driver) Class.forName("org.sqlite.JDBC", true, classLoader).newInstance();
+		String className = "";
+		
+		if(currentType == Type.MySQL) {
+			className = "com.mysql.jdbc.Driver";
+		} else {
+			className = "org.sqlite.JDBC";
+		}
+		
+		Driver driver = (Driver) classLoader.loadClass(className).newInstance();
 		DriverManager.registerDriver(new DriverStub(driver));
 		
-		connection = DriverManager.getConnection("jdbc:sqlite:" + getDatabasePath());
+		Properties properties = new Properties();
+		
+		// if we're using mysql, append the database info
+		if(currentType == Type.MySQL) {
+			properties.put("autoReconnect", "true");
+			properties.put("user", ConfigValues.MYSQL_USER.getString());
+			properties.put("password", ConfigValues.MYSQL_PASS.getString());
+		}
+
+		connection = DriverManager.getConnection("jdbc:" + currentType.toString().toLowerCase() + ":" + getDatabasePath(), properties);
 		connected = true;
 
 		return true;
@@ -150,29 +193,14 @@ public abstract class Database {
 	 * @return the path where the database file should be saved
 	 */
 	public String getDatabasePath() {
-		/*
-		 * try { String path = Database.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-		 * 
-		 * if (path.endsWith(".jar") || path.endsWith("/")) { path = path.substring(0, path.lastIndexOf("/")); } path = path.substring(0, path.lastIndexOf("/"));
-		 * 
-		 * return path + File.separator + "lwc.db"; } catch (final Exception e) { e.printStackTrace(); }
-		 */
-
+		if(currentType == Type.MySQL) {
+			return "//" + ConfigValues.MYSQL_HOST.getString() + ":" + ConfigValues.MYSQL_PORT.getString() + "/" + ConfigValues.MYSQL_DATABASE.getString();
+		}
+		
 		return ConfigValues.DB_PATH.getString();
 	}
 
 	public abstract void load();
-
-	/**
-	 * Log a string of dev mode if enabled
-	 * 
-	 * @param str
-	 */
-	public void dev(String str) {
-		if (LWCInfo.DEVELOPMENT) {
-			devLogger.info(str);
-		}
-	}
 
 	/**
 	 * Log a string to stdout
@@ -181,7 +209,11 @@ public abstract class Database {
 	 *            The string to log
 	 */
 	public void log(String str) {
-		logger.info(str);
+		logger.log(str);
+	}
+	
+	public void log(String str, Level level) {
+		logger.log(str, level);
 	}
 
 }

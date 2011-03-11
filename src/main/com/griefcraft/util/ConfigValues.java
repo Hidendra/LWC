@@ -32,7 +32,14 @@ public enum ConfigValues {
 	AUTO_REGISTER("auto-register-as", "none"), // public, private
 	DENY_REDSTONE("deny-redstone", "false"), // on valid protections (i.e door)
 	SHOW_PROTECTION_NOTICES("show-protection-notices", "true"), // show "this is protected" to admins/mods
-	LOCALE("locale", "eng"); // the locale to use
+	LOCALE("locale", "eng"), // the locale to use
+	DATABASE("database", "sqlite"), //
+	MYSQL_HOST("mysql-host", "localhost"), // default mysql info
+	MYSQL_PORT("mysql-port", "3306"), //
+	MYSQL_DATABASE("mysql-database", "lwc"), //
+	MYSQL_USER("mysql-user", "user"), // 
+	MYSQL_PASS("mysql-pass", ""), //
+	VERBOSE("verbose", "false"); //
 
 	/**
 	 * The name of the config value used in the conf file
@@ -47,6 +54,11 @@ public enum ConfigValues {
 	private ConfigValues(String name, String defaultValue) {
 		this.name = name;
 		this.defaultValue = defaultValue;
+	}
+	
+	@Override
+	public String toString() {
+		return getString();
 	}
 
 	/**
