@@ -655,7 +655,7 @@ public class LWCBlockListener extends BlockListener {
 					protectionType = ProtectionTypes.TRAP_BAN;
 				}
 
-				player.sendMessage(Colors.Green + "Created " + StringUtils.capitalizeFirstLetter(trapType) + " trap on " + lwc.materialToString(protection.getBlockId()) + " successfully");
+				player.sendMessage(Colors.Green + "Created " + StringUtils.capitalizeFirstLetter(trapType) + " trap on " + block.getTypeId() + " successfully");
 				player.sendMessage(Colors.Green + "Will use the reason: " + Colors.Blue + "\"" + Colors.Red + reason + Colors.Blue + "\"");
 
 				/*
