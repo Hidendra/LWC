@@ -40,6 +40,7 @@ import javax.net.ssl.X509TrustManager;
 
 import com.griefcraft.logging.Logger;
 import com.griefcraft.lwc.LWCInfo;
+import com.griefcraft.sql.Database;
 
 public class Updater {
 
@@ -98,7 +99,7 @@ public class Updater {
 	 * @return true if LWC should be reloaded
 	 */
 	public void check() {
-		String[] paths = new String[] { DEST_LIBRARY_FOLDER + "lib/sqlite.jar", getFullNativeLibraryPath() };
+		String[] paths = new String[] { DEST_LIBRARY_FOLDER + "lib/" + Database.DefaultType.getDriver(), getFullNativeLibraryPath() };
 
 		for (String path : paths) {
 			File file = new File(path);
@@ -115,8 +116,8 @@ public class Updater {
 			double latestVersion = getLatestPluginVersion();
 	
 			if (latestVersion > LWCInfo.VERSION) {
-				logger.info("Update detected for LWC");
-				logger.info("Latest version: " + latestVersion);
+				logger.log("Update detected for LWC");
+				logger.log("Latest version: " + latestVersion);
 			}
 		}
 	}
@@ -125,7 +126,7 @@ public class Updater {
 	 * Force update of binaries
 	 */
 	private void requireBinaryUpdate() {
-		String[] paths = new String[] { DEST_LIBRARY_FOLDER + "lib/sqlite.jar", getFullNativeLibraryPath() };
+		String[] paths = new String[] { DEST_LIBRARY_FOLDER + "lib/" + Database.DefaultType.getDriver(), getFullNativeLibraryPath() };
 
 		for (String path : paths) {
 			UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "shared/" +  path.replaceAll(DEST_LIBRARY_FOLDER, ""));
@@ -153,10 +154,10 @@ public class Updater {
 
 			try {
 				update();
-				logger.info("Updated successful");
+				logger.log("Updated successful");
 				return true;
 			} catch (Exception e) {
-				logger.info("Update failed: " + e.getMessage());
+				logger.log("Update failed: " + e.getMessage());
 				e.printStackTrace();
 			}
 		}
@@ -363,7 +364,7 @@ public class Updater {
 		double latestVersion = getLatestSQLiteVersion();
 		if (latestVersion > getCurrentSQLiteVersion()) {
 			requireBinaryUpdate();
-			logger.info("Binary update required");
+			logger.log("Binary update required");
 			config.put("sqlite", latestVersion + "");
 		}
 
@@ -379,14 +380,14 @@ public class Updater {
 		folder = new File(DEST_LIBRARY_FOLDER + "lib/");
 		folder.mkdirs();
 
-		logger.info("Need to download " + needsUpdating.size() + " file(s)");
+		logger.log("Need to download " + needsUpdating.size() + " file(s)");
 
 		Iterator<UpdaterFile> iterator = needsUpdating.iterator();
 
 		while (iterator.hasNext()) {
 			UpdaterFile item = iterator.next();
 
-			logger.info(" - Downloading file : " + item.getRemoteLocation());
+			logger.log(" - Downloading file : " + item.getRemoteLocation());
 
 			URL url = new URL(item.getRemoteLocation());
 			File file = new File(item.getLocalLocation());
@@ -403,7 +404,7 @@ public class Updater {
 			inputStream.close();
 			outputStream.close();
 
-			logger.info("  + Download complete");
+			logger.log("  + Download complete");
 			iterator.remove();
 		}
 
@@ -442,7 +443,7 @@ public class Updater {
 			sc.init(null, trustAllCerts, new java.security.SecureRandom());
 			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 		} catch (Exception e) {
-			logger.info("SEVERE ERROR :: SSL NOT SUPPORTED");
+			logger.log("SEVERE ERROR :: SSL NOT SUPPORTED");
 		}
 	}
 

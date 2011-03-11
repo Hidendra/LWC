@@ -22,12 +22,22 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import com.griefcraft.model.Action;
 import com.griefcraft.model.Protection;
+import com.griefcraft.sql.Database.Type;
 import com.griefcraft.util.Performance;
 
 public class MemDB extends Database {
+
+	public MemDB() {
+		super();
+	}
+
+	public MemDB(Type currentType) {
+		super(currentType);
+	}
 
 	public Action getAction(String action, String player) {
 		try {
@@ -127,6 +137,11 @@ public class MemDB extends Database {
 	 */
 	@Override
 	public String getDatabasePath() {
+		// if we're using mysql, just open another connection
+		if(currentType == Type.MySQL) {
+			return super.getDatabasePath();
+		}
+
 		return ":memory:";
 	}
 
@@ -379,34 +394,98 @@ public class MemDB extends Database {
 	@Override
 	public void load() {
 		try {
-			Statement statement = connection.createStatement();
+			// reusable column
+			Column column;
 
-			log("Creating memory tables");
+			Table sessions = new Table(this, "sessions");
+			sessions.setMemory(true);
 
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'sessions' (" //
-					+ "id INTEGER PRIMARY KEY," //
-					+ "player TEXT," //
-					+ "chest INTEGER" + ");"); //
+			{
+				column = new Column("id");
+				column.setType("INTEGER");
+				column.setPrimary(true);
+				sessions.addColumn(column);
 
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'locks' (" + "id INTEGER PRIMARY KEY," //
-					+ "player TEXT," //
-					+ "password TEXT" + ");"); //
+				column = new Column("player");
+				column.setType("VARCHAR(255)");
+				sessions.addColumn(column);
 
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'actions' (" //
-					+ "id INTEGER PRIMARY KEY," //
-					+ "action TEXT," //
-					+ "player TEXT," //
-					+ "chest INTEGER," //
-					+ "data TEXT" //
-					+ ");"); //
+				column = new Column("chest");
+				column.setType("INTEGER");
+				sessions.addColumn(column);
+			}
 
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'modes' (" + "id INTEGER PRIMARY KEY," //
-					+ "player TEXT," //
-					+ "mode TEXT," //
-					+ "data TEXT" //
-					+ ");");
+			Table locks = new Table(this, "locks");
+			locks.setMemory(true);
 
-			statement.close();
+			{
+				column = new Column("id");
+				column.setType("INTEGER");
+				column.setPrimary(true);
+				locks.addColumn(column);
+				
+				column = new Column("player");
+				column.setType("VARCHAR(255)");
+				locks.addColumn(column);
+				
+				column = new Column("password");
+				column.setType("VARCHAR(100)");
+				locks.addColumn(column);
+			}
+
+			Table actions = new Table(this, "actions");
+			actions.setMemory(true);
+			
+			{
+				column = new Column("id");
+				column.setType("INTEGER");
+				column.setPrimary(true);
+				actions.addColumn(column);
+				
+				column = new Column("action");
+				column.setType("VARCHAR(255)");
+				actions.addColumn(column);
+				
+				column = new Column("player");
+				column.setType("VARCHAR(255)");
+				actions.addColumn(column);
+
+				column = new Column("chest");
+				column.setType("INTEGER");
+				actions.addColumn(column);
+				
+				column = new Column("data");
+				column.setType("VARCHAR(255)");
+				actions.addColumn(column);
+			}
+			
+			Table modes = new Table(this, "modes");
+			modes.setMemory(true);
+			
+			{
+				column = new Column("id");
+				column.setType("INTEGER");
+				column.setPrimary(true);
+				modes.addColumn(column);
+				
+				column = new Column("player");
+				column.setType("VARCHAR(255)");
+				modes.addColumn(column);
+				
+				column = new Column("mode");
+				column.setType("VARCHAR(255)");
+				modes.addColumn(column);
+				
+				column = new Column("data");
+				column.setType("VARCHAR(255)");
+				modes.addColumn(column);
+			}
+			
+			// now create all of the tables
+			sessions.execute();
+			locks.execute();
+			actions.execute();
+			modes.execute();
 
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {

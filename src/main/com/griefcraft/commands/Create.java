@@ -31,7 +31,7 @@ public class Create implements ICommand {
 
 	@Override
 	public String getName() {
-		return "/lwc -create";
+		return "creation";
 	}
 
 	@Override

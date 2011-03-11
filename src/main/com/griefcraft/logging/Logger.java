@@ -17,13 +17,11 @@
 
 package com.griefcraft.logging;
 
-import com.griefcraft.lwc.LWCInfo;
+import java.util.logging.Level;
+
+import com.griefcraft.util.ConfigValues;
 
 public class Logger {
-
-	public void info(String str) {
-		System.out.println(String.format("%s\t[%s]\t%s", name, LWCInfo.FULL_VERSION, str));
-	}
 
 	/**
 	 * Create a new logger
@@ -42,6 +40,18 @@ public class Logger {
 
 	private Logger(String name) {
 		this.name = name;
+	}
+
+	public void log(String str) {
+		log(str, Level.INFO);
+	}
+
+	public void log(String str, Level level) {
+		if(level == Level.CONFIG && !ConfigValues.VERBOSE.getBool()) {
+			return;
+		}
+		
+		System.out.println(String.format("%s\t%s", name, str));
 	}
 
 }

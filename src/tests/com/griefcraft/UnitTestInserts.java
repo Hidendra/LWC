@@ -45,7 +45,7 @@ public class UnitTestInserts {
 
 		phys.getConnection().setAutoCommit(false);
 
-		logger.info("Creating " + count + " queries");
+		logger.log("Creating " + count + " queries");
 
 		while (count > 0) {
 			phys.registerProtectedEntity(rand.nextInt(1), "Hidendra", "", rand.nextInt(255), rand.nextInt(255), rand.nextInt(255));
@@ -53,12 +53,12 @@ public class UnitTestInserts {
 			count--;
 		}
 
-		logger.info("Commiting");
+		logger.log("Commiting");
 
 		phys.getConnection().commit();
 		phys.getConnection().setAutoCommit(true);
 
-		logger.info("Done. Count : " + phys.getProtectionCount());
+		logger.log("Done. Count : " + phys.getProtectionCount());
 	}
 
 	@SuppressWarnings("unused")
@@ -75,7 +75,7 @@ public class UnitTestInserts {
 			int perSecond = seconds > 0 ? (int) (queryCount / seconds) : 0;
 
 			if (lastUpdate != seconds && delta % 1000 == 0) {
-				logger.info(String.format("[%ds] [Q:%d] QUERIES/SEC:%d", seconds, queryCount, perSecond));
+				logger.log(String.format("[%ds] [Q:%d] QUERIES/SEC:%d", seconds, queryCount, perSecond));
 				lastUpdate = seconds;
 			}
 

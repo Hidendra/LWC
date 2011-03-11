@@ -25,11 +25,13 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Job;
 import com.griefcraft.model.Limit;
 import com.griefcraft.model.Protection;
+import com.griefcraft.sql.Database.Type;
 import com.griefcraft.util.Performance;
 
 public class PhysDB extends Database {
@@ -38,6 +40,14 @@ public class PhysDB extends Database {
 	 * If the database was already loaded
 	 */
 	private boolean loaded = false;
+	
+	public PhysDB() {
+		super();
+	}
+	
+	public PhysDB(Type currentType) {
+		super(currentType);
+	}
 
 	/**
 	 * Load every protection, use _sparingly_
@@ -212,9 +222,9 @@ public class PhysDB extends Database {
 			statement.close();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
-			dev("Outdated database!");
-			dev("UPGRADING FROM 1.00 TO 1.10");
-			dev("ALTERING TABLE `protections` AND FILLING WITH DEFAULT DATA");
+			logger.log("Outdated database!", Level.CONFIG);
+			logger.log("UPGRADING FROM 1.00 TO 1.10", Level.CONFIG);
+			logger.log("ALTERING TABLE `protections` AND FILLING WITH DEFAULT DATA", Level.CONFIG);
 
 			try {
 				final Statement statement = connection.createStatement();
@@ -249,7 +259,6 @@ public class PhysDB extends Database {
 				statement.close();
 				Performance.addPhysDBQuery();
 			} catch (SQLException ex) {
-				ex.printStackTrace();
 			}
 		}
 	}
@@ -516,7 +525,7 @@ public class PhysDB extends Database {
 			statement.executeQuery("SELECT timestamp FROM jobs");
 			statement.close();
 		} catch (SQLException e) {
-			dev("Fixing jobs table");
+			logger.log("Fixing jobs table", Level.CONFIG);
 
 			try {
 				Statement statement = connection.createStatement();
@@ -536,7 +545,7 @@ public class PhysDB extends Database {
 			statement.executeQuery("SELECT * from players");
 			statement.close();
 		} catch (SQLException e) {
-			dev("Fixing players table");
+			logger.log("Fixing players table", Level.CONFIG);
 
 			try {
 				Statement statement = connection.createStatement();
@@ -551,7 +560,7 @@ public class PhysDB extends Database {
 			statement.executeQuery("SELECT mcusername from players");
 			statement.close();
 		} catch (SQLException e) {
-			dev("Fixing players table");
+			logger.log("Fixing players table", Level.CONFIG);
 
 			try {
 				Statement statement = connection.createStatement();
@@ -581,68 +590,198 @@ public class PhysDB extends Database {
 		fixPlayerTable();
 
 		try {
-			final Statement statement = connection.createStatement();
 			connection.setAutoCommit(false);
 
-			log("Creating physical tables if needed");
+			Column column;
+			
+			Table protections = new Table(this, "protections");
+			
+			{
+				column = new Column("id");
+				column.setType("INTEGER");
+				column.setPrimary(true);
+				protections.addColumn(column);
+				
+				column = new Column("type");
+				column.setType("INTEGER");
+				protections.addColumn(column);
+				
+				column = new Column("owner");
+				column.setType("TEXT");
+				protections.addColumn(column);
+				
+				column = new Column("password");
+				column.setType("TEXT");
+				protections.addColumn(column);
+				
+				column = new Column("x");
+				column.setType("INTEGER");
+				protections.addColumn(column);
+				
+				column = new Column("y");
+				column.setType("INTEGER");
+				protections.addColumn(column);
+				
+				column = new Column("z");
+				column.setType("INTEGER");
+				protections.addColumn(column);
+				
+				column = new Column("date");
+				column.setType("TEXT");
+				protections.addColumn(column);
+			}
+			
+			Table limits = new Table(this, "limits");
+			
+			{
+				column = new Column("id");
+				column.setType("INTEGER");
+				column.setPrimary(true);
+				limits.addColumn(column);
+				
+				column = new Column("type");
+				column.setType("INTEGER");
+				limits.addColumn(column);
+				
+				column = new Column("amount");
+				column.setType("INTEGER");
+				limits.addColumn(column);
+				
+				column = new Column("entity");
+				column.setType("TEXT");
+				limits.addColumn(column);
+			}
+			
+			Table rights = new Table(this, "rights");
 
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS protections (" //
-					+ "id INTEGER PRIMARY KEY," //
-					+ "type INTEGER," //
-					+ "owner TEXT," //
-					+ "password TEXT," //
-					+ "x INTEGER," //
-					+ "y INTEGER," //
-					+ "z INTEGER," //
-					+ "date TEXT" //
-					+ ");");
+			{
+				column = new Column("id");
+				column.setType("INTEGER");
+				column.setPrimary(true);
+				rights.addColumn(column);
+				
+				column = new Column("chest");
+				column.setType("INTEGER");
+				rights.addColumn(column);
+				
+				column = new Column("entity");
+				column.setType("TEXT");
+				rights.addColumn(column);
+				
+				column = new Column("rights");
+				column.setType("INTEGER");
+				rights.addColumn(column);
+				
+				column = new Column("type");
+				column.setType("INTEGER");
+				rights.addColumn(column);
+			}
+			
+			Table players = new Table(this, "players");
+			
+			{
+				column = new Column("id");
+				column.setType("INTEGER");
+				column.setPrimary(true);
+				players.addColumn(column);
+				
+				column = new Column("username");
+				column.setType("TEXT");
+				players.addColumn(column);
+				
+				column = new Column("password");
+				column.setType("TEXT");
+				players.addColumn(column);
+				
+				column = new Column("mcusername");
+				column.setType("TEXT");
+				players.addColumn(column);
 
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS limits (" //
-					+ "id INTEGER PRIMARY KEY," //
-					+ "type INTEGER," //
-					+ "amount INTEGER," //
-					+ "entity TEXT" //
-					+ ");");
+				column = new Column("rights");
+				column.setType("INTEGER");
+				players.addColumn(column);
+				
+				column = new Column("timestamp");
+				column.setType("TEXT");
+				players.addColumn(column);
+				
+				column = new Column("salt");
+				column.setType("TEXT");
+				players.addColumn(column);
+			}
+			
+			Table inventory = new Table(this, "inventory");
+			
+			{
+				column = new Column("protectionId");
+				column.setType("INTEGER");
+				column.setPrimary(true);
+				inventory.addColumn(column);
+				
+				column = new Column("blockId");
+				column.setType("INTEGER");
+				inventory.addColumn(column);
+				
+				column = new Column("slots");
+				column.setType("INTEGER");
+				inventory.addColumn(column);
+				
+				column = new Column("stacks");
+				column.setType("TEXT");
+				inventory.addColumn(column);
+				
+				column = new Column("items");
+				column.setType("TEXT");
+				inventory.addColumn(column);
+				
+				column = new Column("durability");
+				column.setType("TEXT");
+				inventory.addColumn(column);
+				
+				column = new Column("last_transaction");
+				column.setType("TEXT");
+				inventory.addColumn(column);
+				
+				column = new Column("last_update");
+				column.setType("TEXT");
+				inventory.addColumn(column);
+			}
 
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS rights (" //
-					+ "id INTEGER PRIMARY KEY," //
-					+ "chest INTEGER," //
-					+ "entity TEXT," //
-					+ "rights INTEGER," //
-					+ "type INTEGER" //
-					+ ");");
+			Table jobs = new Table(this, "jobs");
+			
+			{
+				column = new Column("id");
+				column.setType("INTEGER");
+				column.setPrimary(true);
+				jobs.addColumn(column);
 
-			/* Tables used in 1.50 */
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS players (" //
-					+ "id INTEGER PRIMARY KEY," //
-					+ "username TEXT," //
-					+ "password TEXT," //
-					+ "mcusername TEXT," //
-					+ "rights INTEGER," //
-					+ "timestamp TEXT," //
-					+ "salt TEXT" //
-					+ ");");
+				column = new Column("type");
+				column.setType("INTEGER");
+				jobs.addColumn(column);
+				
+				column = new Column("owner");
+				column.setType("TEXT");
+				jobs.addColumn(column);
+				
+				column = new Column("payload");
+				column.setType("TEXT");
+				jobs.addColumn(column);
+				
+				column = new Column("timestamp");
+				column.setType("TEXT");
+				jobs.addColumn(column);
+			}
 
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS inventory (" //
-					+ "protectionId INTEGER UNIQUE," //
-					+ "blockId INTEGER," //
-					+ "slots INTEGER," //
-					+ "stacks TEXT," //
-					+ "items TEXT," //
-					+ "durability TEXT," //
-					+ "last_transaction TEXT," //
-					+ "last_update TEXT" //
-					+ ");");
-
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS jobs (" //
-					+ "id INTEGER PRIMARY KEY," //
-					+ "type INTEGER," + "owner TEXT," + "payload TEXT," + "timestamp TEXT" + ");");
+			
+			protections.execute();
+			limits.execute();
+			rights.execute();
+			players.execute();
+			inventory.execute();
+			jobs.execute();
 
 			connection.commit();
 			connection.setAutoCommit(true);
-
-			statement.close();
-			Performance.addPhysDBQuery();
 
 			loadIndexes();
 		} catch (final SQLException e) {
@@ -667,7 +806,7 @@ public class PhysDB extends Database {
 	 */
 	public void createInventory(int protectionId, int slots, String stacks, String items, String durability, String last_transaction, String last_update) {
 		try {
-			PreparedStatement statement = prepare("INSERT OR REPLACE INTO inventory (protectionId, slots, stacks, items, durability, last_transaction, last_update) VALUES (?, ?, ?, ?, ?, ?, ?)");
+			PreparedStatement statement = prepare("REPLACE INTO inventory (protectionId, slots, stacks, items, durability, last_transaction, last_update) VALUES (?, ?, ?, ?, ?, ?, ?)");
 			statement.setInt(1, protectionId);
 			statement.setInt(2, slots);
 			statement.setString(3, stacks);
@@ -690,20 +829,30 @@ public class PhysDB extends Database {
 			connection.setAutoCommit(false);
 			Statement statement = connection.createStatement();
 
-			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in1 ON protections (owner, x, y, z)");
-			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in2 ON limits (type, entity)");
-			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in3 ON rights (chest, entity)");
-
-			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in4 ON players (username)");
-			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in5 ON jobs (type, owner)");
-			statement.executeUpdate("CREATE INDEX IF NOT EXISTS in6 ON inventory (protectionId, slots)");
-
+			if(currentType == Type.SQLite) {
+				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in1 ON protections (owner, x, y, z)");
+				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in2 ON limits (type, entity)");
+				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in3 ON rights (chest, entity)");
+	
+				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in4 ON players (username)");
+				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in5 ON jobs (type, owner)");
+				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in6 ON inventory (protectionId, slots)");
+			} else {
+				statement.executeUpdate("CREATE INDEX in1 ON protections (x, y, z)");
+				statement.executeUpdate("CREATE INDEX in2 ON limits (type)");
+				statement.executeUpdate("CREATE INDEX in3 ON rights (chest)");
+	
+				// statement.executeUpdate("CREATE INDEX in4 ON players (username)");
+				statement.executeUpdate("CREATE INDEX in5 ON jobs (type)");
+				statement.executeUpdate("CREATE INDEX in6 ON inventory (protectionId, slots)");
+			}
+			
 			connection.commit();
 			connection.setAutoCommit(true);
 
 			statement.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 	}
 
@@ -1170,10 +1319,10 @@ public class PhysDB extends Database {
 			statement.close();
 			Performance.addPhysDBQuery();
 		} catch (SQLException e) {
-			dev("Outdated database!");
-			dev("UPGRADING FROM 1.30 TO 1.40");
+			logger.log("Outdated database!", Level.CONFIG);
+			logger.log("UPGRADING FROM 1.30 TO 1.40", Level.CONFIG);
 
-			dev("Renaming table `chests` to `protections`");
+			logger.log("Renaming table `chests` to `protections`", Level.CONFIG);
 
 			try {
 				Statement statement = connection.createStatement();

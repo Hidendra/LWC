@@ -7,6 +7,7 @@ import java.nio.channels.FileChannel;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -32,6 +33,7 @@ import com.griefcraft.listeners.LWCBlockListener;
 import com.griefcraft.listeners.LWCEntityListener;
 import com.griefcraft.listeners.LWCPlayerListener;
 import com.griefcraft.logging.Logger;
+import com.griefcraft.sql.Database;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.Config;
 import com.griefcraft.util.ConfigValues;
@@ -81,7 +83,7 @@ public class LWCPlugin extends JavaPlugin {
 
 	public LWCPlugin() {
 		update147();
-
+		
 		log("Loading shared objects");
 
 		Config.init();
@@ -102,23 +104,12 @@ public class LWCPlugin extends JavaPlugin {
 		
 		// BUT, some can't use native, so we need to give them the option to use pure:
 		String isPureJava = System.getProperty("lwc.purejava");
+
 		if(isPureJava != null && isPureJava.equalsIgnoreCase("true")) {
 			System.setProperty("sqlite.purejava", "true");
 		}
 
 		log("Native library: " + updater.getFullNativeLibraryPath());
-
-		try {
-			if (ConfigValues.AUTO_UPDATE.getBool()) {
-				updater.checkDist();
-			} else {
-				updater.check();
-			}
-
-			updater.update();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override
@@ -304,6 +295,7 @@ public class LWCPlugin extends JavaPlugin {
 		if(LWCInfo.DEVELOPMENT) {
 			try {
 				locale = ResourceBundle.getBundle("lwc", new Locale(ConfigValues.LOCALE.getString()), new LocaleClassLoader());
+				log("Loaded " + locale.keySet().size() + " locale strings");
 			} catch(MissingResourceException e) {
 				log(" ############################# ");
 				log(" ############################# ");
@@ -317,12 +309,24 @@ public class LWCPlugin extends JavaPlugin {
 				return;
 			}
 		}
+		
+		// load the database type
+		String database = ConfigValues.DATABASE.getString().toLowerCase();
+		
+		if(database.equals("mysql") && false) {
+			Database.DefaultType = Database.Type.MySQL;
+		} else {
+			Database.DefaultType = Database.Type.SQLite;
+		}
 
 		try {
 			if (ConfigValues.AUTO_UPDATE.getBool()) {
 				updater.checkDist();
-				updater.update();
+			} else {
+				updater.check();
 			}
+
+			updater.update();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -331,6 +335,8 @@ public class LWCPlugin extends JavaPlugin {
 		registerEvents();
 
 		lwc.load();
+
+		log("At version: " + LWCInfo.FULL_VERSION);
 	}
 
 	/**
@@ -394,7 +400,7 @@ public class LWCPlugin extends JavaPlugin {
 	 * @priority the priority to use
 	 */
 	private void registerEvent(Listener listener, Type eventType, Priority priority) {
-		log("-> " + eventType.toString());
+		logger.log("-> " + eventType.toString(), Level.CONFIG);
 
 		getServer().getPluginManager().registerEvent(eventType, listener, priority, this);
 	}
@@ -408,7 +414,7 @@ public class LWCPlugin extends JavaPlugin {
 		try {
 			ICommand command = (ICommand) clazz.newInstance();
 			lwc.getCommands().add(command);
-			log("Loaded command: " + command.getName());
+			logger.log("Loaded command: " + command.getName(), Level.CONFIG);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -422,7 +428,7 @@ public class LWCPlugin extends JavaPlugin {
 	 * @param str
 	 */
 	private void log(String str) {
-		logger.info(str);
+		logger.log(str);
 	}
 
 }

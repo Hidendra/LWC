@@ -37,7 +37,7 @@ public class Admin implements ICommand {
 
 	@Override
 	public String getName() {
-		return "/lwc -admin";
+		return "admin";
 	}
 
 	@Override
@@ -60,6 +60,26 @@ public class Admin implements ICommand {
 			Performance.clear();
 		}
 
+		else if (action.equals("locale")) {
+			if(args.length < 3) {
+				lwc.sendSimpleUsage(player, "/lwc -a locale <key> [args]");
+				return;
+			}
+			
+			String locale = args[2];
+			String[] localeArgs = new String[0];
+			
+			if(args.length > 3) {
+				localeArgs = StringUtils.join(args, 3).split(" ");
+			}
+			
+			if(localeArgs.length > 0) {
+				lwc.sendLocale(player, locale, (Object[]) localeArgs);
+			} else {
+				lwc.sendLocale(player, locale);
+			}
+		}
+		
 		else if (action.equals("purge")) {
 			if (args.length < 3) {
 				lwc.sendSimpleUsage(player, "/lwc -a purge <Players>");
@@ -132,6 +152,7 @@ public class Admin implements ICommand {
 		else if (action.equals("flush")) {
 			player.sendMessage(Colors.Green + "Flushing Update Thread..");
 			lwc.getUpdateThread().flush();
+			player.sendMessage(Colors.Green + "Done.");
 		}
 
 		else if (action.equals("cleanup")) {
