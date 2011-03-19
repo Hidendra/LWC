@@ -111,8 +111,6 @@ public class Table {
 
 		// end it
 		buffer.append(";");
-		
-		System.out.println(buffer.toString());
 
 		// execute it directly to the database
 		Statement statement = null;

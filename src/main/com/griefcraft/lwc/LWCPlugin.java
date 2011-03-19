@@ -317,10 +317,22 @@ public class LWCPlugin extends JavaPlugin {
 			}
 		}
 
-		// load the database type
+		loadDatabase();
+		registerCommands();
+		registerEvents();
+
+		lwc.load();
+
+		log("At version: " + LWCInfo.FULL_VERSION);
+	}
+	
+	/**
+	 * Load the database
+	 */
+	public void loadDatabase() {
 		String database = ConfigValues.DATABASE.getString().toLowerCase();
 
-		if (database.equals("mysql") && !LWCInfo.DEVELOPMENT) {
+		if (database.equals("mysql") && LWCInfo.DEVELOPMENT) {
 			Database.DefaultType = Database.Type.MySQL;
 		} else {
 			Database.DefaultType = Database.Type.SQLite;
@@ -337,13 +349,6 @@ public class LWCPlugin extends JavaPlugin {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		registerCommands();
-		registerEvents();
-
-		lwc.load();
-
-		log("At version: " + LWCInfo.FULL_VERSION);
 	}
 
 	/**

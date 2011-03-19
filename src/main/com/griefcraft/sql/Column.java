@@ -17,6 +17,9 @@
 
 package com.griefcraft.sql;
 
+/**
+ * FIXME:
+ */
 public class Column {
 
 	/**

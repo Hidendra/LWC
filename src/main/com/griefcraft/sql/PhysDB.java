@@ -321,7 +321,7 @@ public class PhysDB extends Database {
 	 * @return
 	 */
 	public int countRights(int protectionId) {
-		return (Integer) fetch("SELECT COUNT(*) AS COUNT FROM rights WHERE chest=?", "count", protectionId);
+		return (Integer) fetch("SELECT COUNT(*) FROM rights WHERE chest=?", "count", protectionId);
 	}
 
 	/**
