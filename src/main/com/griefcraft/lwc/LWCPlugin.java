@@ -111,7 +111,30 @@ public class LWCPlugin extends JavaPlugin {
 
 		log("Native library: " + updater.getFullNativeLibraryPath());
 	}
+	
+	public boolean isValidCommand(String name) {
+		name = name.toLowerCase();
+		
+		if(name.equals("lwc")) {
+			return true;
+		} else if(name.equals("cpublic")) {
+			return true;
+		} else if(name.equals("cpassword")) {
+			return true;
+		} else if(name.equals("cprivate")) {
+			return true;
+		} else if(name.equals("cinfo")) {
+			return true;
+		} else if(name.equals("cunlock")) {
+			return true;
+		} else if(name.equals("cremove")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
 		String commandName = command.getName().toLowerCase();
@@ -125,6 +148,15 @@ public class LWCPlugin extends JavaPlugin {
 
 		Player player = (Player) sender;
 		String argString = StringUtils.join(args, 0);
+
+		if (!isValidCommand(commandName)) {
+			return false;
+		}
+
+		if (lwc.getPermissions() != null && !Permissions.Security.permission(player, "lwc.protect")) {
+			player.sendMessage(Colors.Red + "You do not have permission to do that");
+			return true;
+		}
 
 		/*
 		 * Aliases
@@ -153,15 +185,6 @@ public class LWCPlugin extends JavaPlugin {
 		/*
 		 * if (!player.canUseCommand(split[0])) { return; }
 		 */
-
-		if (!"lwc".equalsIgnoreCase(commandName)) {
-			return true;
-		}
-
-		if (lwc.getPermissions() != null && !Permissions.Security.permission(player, "lwc.protect")) {
-			player.sendMessage(Colors.Red + "You do not have permission to do that");
-			return true;
-		}
 
 		if (args.length == 0) {
 			lwc.sendFullHelp(player);
