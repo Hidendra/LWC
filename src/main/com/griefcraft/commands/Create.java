@@ -22,6 +22,7 @@ import static com.griefcraft.util.StringUtils.hasFlag;
 import static com.griefcraft.util.StringUtils.join;
 import static com.griefcraft.util.StringUtils.transform;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.griefcraft.lwc.LWC;
@@ -33,59 +34,65 @@ public class Create implements ICommand {
 	public String getName() {
 		return "creation";
 	}
+	
+	@Override
+	public boolean supportsConsole() {
+		return false;
+	}
 
 	@Override
-	public void execute(LWC lwc, Player player, String[] args) {
+	public void execute(LWC lwc, CommandSender sender, String[] args) {
 		if (args.length == 1) {
-			sendHelp(player);
+			sendHelp(sender);
 			return;
 		}
 
 		String type = args[1].toLowerCase();
 		String full = join(args, 1);
+		Player player = (Player) sender;
 
 		if (type.equals("trap")) {
-			if (!lwc.isAdmin(player)) {
-				player.sendMessage(Colors.Blue + "[lwc] " + Colors.Red + "Permission denied. ");
+			if (!lwc.isAdmin(sender)) {
+				sender.sendMessage(Colors.Blue + "[lwc] " + Colors.Red + "Permission denied. ");
 				return;
 			}
 
 			if (args.length < 3) {
-				lwc.sendSimpleUsage(player, "/lwc -c trap <kick/ban> [reason]");
+				lwc.sendSimpleUsage(sender, "/lwc -c trap <kick/ban> [reason]");
 				return;
 			}
 		}
 
 		else if (type.equals("password")) {
 			if (args.length < 3) {
-				lwc.sendSimpleUsage(player, "/lwc -c password <Password>");
+				lwc.sendSimpleUsage(sender, "/lwc -c password <Password>");
 				return;
 			}
 
 			String password = join(args, 2);
 			String hiddenPass = transform(password, '*');
 
-			player.sendMessage(Colors.Blue + "Using password: " + Colors.Yellow + hiddenPass);
+			sender.sendMessage(Colors.Blue + "Using password: " + Colors.Yellow + hiddenPass);
 		}
 
 		else if (!type.equals("public") && !type.equals("private")) {
-			sendHelp(player);
+			sendHelp(sender);
 			return;
 		}
 
 		lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 		lwc.getMemoryDatabase().registerAction("create", player.getName(), full);
 
-		player.sendMessage(Colors.Blue + "Lock type: " + Colors.Green + capitalizeFirstLetter(type));
-		player.sendMessage(Colors.Green + "Please left click your block to lock it.");
+		sender.sendMessage(Colors.Blue + "Lock type: " + Colors.Green + capitalizeFirstLetter(type));
+		sender.sendMessage(Colors.Green + "Please left click your block to lock it.");
 	}
 
 	@Override
-	public boolean validate(LWC lwc, Player player, String[] args) {
+	public boolean validate(LWC lwc, CommandSender player, String[] args) {
 		return hasFlag(args, "c") || hasFlag(args, "create");
 	}
 
-	public void sendHelp(Player player) {
+	public void sendHelp(CommandSender player) {
 		player.sendMessage(" ");
 		player.sendMessage(Colors.Green + "LWC Protection");
 		player.sendMessage(" ");

@@ -19,6 +19,7 @@ package com.griefcraft.commands;
 
 import static com.griefcraft.util.StringUtils.hasFlag;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.griefcraft.lwc.LWC;
@@ -30,16 +31,23 @@ public class Info implements ICommand {
 	public String getName() {
 		return "info";
 	}
+	
+	@Override
+	public boolean supportsConsole() {
+		return false;
+	}
 
 	@Override
-	public void execute(LWC lwc, Player player, String[] args) {
+	public void execute(LWC lwc, CommandSender sender, String[] args) {
+		Player player = (Player) sender;
+
 		lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 		lwc.getMemoryDatabase().registerAction("info", player.getName());
 		player.sendMessage(Colors.Blue + "Punch a protection to view information on it");
 	}
 
 	@Override
-	public boolean validate(LWC lwc, Player player, String[] args) {
+	public boolean validate(LWC lwc, CommandSender player, String[] args) {
 		return hasFlag(args, "i") || hasFlag(args, "info");
 	}
 

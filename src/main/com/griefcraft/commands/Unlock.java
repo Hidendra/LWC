@@ -21,6 +21,7 @@ import static com.griefcraft.util.StringUtils.encrypt;
 import static com.griefcraft.util.StringUtils.hasFlag;
 import static com.griefcraft.util.StringUtils.join;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.griefcraft.lwc.LWC;
@@ -34,23 +35,27 @@ public class Unlock implements ICommand {
 	public String getName() {
 		return "unlock";
 	}
+	
+	@Override
+	public boolean supportsConsole() {
+		return false;
+	}
 
 	@Override
-	public void execute(LWC lwc, Player player, String[] args) {
+	public void execute(LWC lwc, CommandSender sender, String[] args) {
 		if (args.length < 1) {
-			player.sendMessage(Colors.Red + "Usage: " + Colors.Gold + "/lwc -u <Password>");
+			lwc.sendSimpleUsage(sender, "/lwc -u <Password>");
 			return;
 		}
 
+		Player player = (Player) sender;
 		String password = join(args, 1);
 		password = encrypt(password);
 
 		if (!lwc.getMemoryDatabase().hasPendingUnlock(player.getName())) {
 			player.sendMessage(Colors.Red + "Nothing selected. Open a locked protection first.");
 			return;
-		}
-
-		else {
+		} else {
 			int chestID = lwc.getMemoryDatabase().getUnlockID(player.getName());
 
 			if (chestID == -1) {
@@ -76,7 +81,7 @@ public class Unlock implements ICommand {
 	}
 
 	@Override
-	public boolean validate(LWC lwc, Player player, String[] args) {
+	public boolean validate(LWC lwc, CommandSender player, String[] args) {
 		return hasFlag(args, "u") || hasFlag(args, "unlock");
 	}
 
