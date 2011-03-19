@@ -320,7 +320,7 @@ public class LWCPlugin extends JavaPlugin {
 		// load the database type
 		String database = ConfigValues.DATABASE.getString().toLowerCase();
 
-		if (database.equals("mysql") && false) {
+		if (database.equals("mysql") && !LWCInfo.DEVELOPMENT) {
 			Database.DefaultType = Database.Type.MySQL;
 		} else {
 			Database.DefaultType = Database.Type.SQLite;
