@@ -26,6 +26,7 @@ import java.net.ConnectException;
 
 import org.bukkit.entity.Player;
 
+import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Config;
@@ -164,23 +165,12 @@ public class ChastityChest implements Runnable {
 	@Override
 	public void run() {
 		try {
-			Config.init();
-
 			log("LWC Conversion tool for Chastity Chest chests");
 			log("");
-			log("Initializing sqlite");
-
-			boolean connected = physicalDatabase.connect();
-
-			if (!connected) {
-				throw new ConnectException("Failed to connect to the sqlite database");
-			}
-
-			physicalDatabase.load();
-
-			log("Done.");
-			log("Starting conversion of Chest Protect chests");
-			log("");
+			
+			LWCPlugin plugin = new LWCPlugin();
+			plugin.loadDatabase();
+			physicalDatabase = plugin.getLWC().getPhysicalDatabase();
 
 			convertChests();
 
