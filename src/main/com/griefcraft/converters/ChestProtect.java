@@ -22,10 +22,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.ConnectException;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.ProtectionTypes;
