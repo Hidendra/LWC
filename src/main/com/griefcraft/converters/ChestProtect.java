@@ -24,6 +24,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.ConnectException;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.griefcraft.lwc.LWCPlugin;
@@ -54,7 +55,7 @@ public class ChestProtect implements Runnable {
 	/**
 	 * The player that issued the command ingame (if any)
 	 */
-	private Player player;
+	private CommandSender player;
 
 	/**
 	 * Physical database object
@@ -66,7 +67,7 @@ public class ChestProtect implements Runnable {
 		physicalDatabase = new PhysDB();
 	}
 
-	public ChestProtect(Player player) {
+	public ChestProtect(CommandSender player) {
 		this();
 		this.player = player;
 	}
@@ -180,9 +181,13 @@ public class ChestProtect implements Runnable {
 			log("LWC Conversion tool for Chest Protect chests");
 			log("");
 			
+			Config.init();
+			
 			LWCPlugin plugin = new LWCPlugin();
 			plugin.loadDatabase();
-			physicalDatabase = plugin.getLWC().getPhysicalDatabase();
+			physicalDatabase = new PhysDB();
+			physicalDatabase.connect();
+			physicalDatabase.load();
 
 			convertChests();
 
