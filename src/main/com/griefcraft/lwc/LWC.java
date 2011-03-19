@@ -14,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.ContainerBlock;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -201,23 +202,23 @@ public class LWC {
 			return value;
 		}
 	}
-
+	
 	/**
-	 * Send a locale to a player
+	 * Send a locale to a player or console
 	 * 
 	 * @param player
 	 * @param locale
 	 * @param args
 	 */
-	public void sendLocale(Player player, String key, Object... args) {
+	public void sendLocale(CommandSender sender, String key, Object... args) {
 		String message = getLocale(key, args);
 
 		if (message == null) {
-			player.sendMessage(Colors.Red + "LWC: " + Colors.White + "Undefined locale: \"" + Colors.Gray + key + Colors.White + "\"");
+			sender.sendMessage(Colors.Red + "LWC: " + Colors.White + "Undefined locale: \"" + Colors.Gray + key + Colors.White + "\"");
 		} else {
 			// split the lines
 			for (String line : message.split("\\n")) {
-				player.sendMessage(line);
+				sender.sendMessage(line);
 			}
 		}
 	}
@@ -652,6 +653,20 @@ public class LWC {
 		return (ConfigValues.OP_IS_LWCADMIN.getBool() && player.isOp()) || (permissions != null && Permissions.Security.permission(player, "lwc.admin"));
 		// return player.canUseCommand("/lwcadmin");
 	}
+	
+	/**
+	 * Check if a player is an LWC admin -- Console defaults to *YES*
+	 * 
+	 * @param sender
+	 * @return
+	 */
+	public boolean isAdmin(CommandSender sender) {
+		if(sender instanceof Player) {
+			return isAdmin((Player) sender);
+		}
+		
+		return true;
+	}
 
 	/**
 	 * Check if a player can do mod functions on LWC
@@ -678,7 +693,7 @@ public class LWC {
 	 * @param player
 	 * @param command
 	 */
-	public void sendSimpleUsage(Player player, String command) {
+	public void sendSimpleUsage(CommandSender player, String command) {
 		player.sendMessage(Colors.Red + "Usage:" + Colors.Gold + " " + command);
 		// sendLocale(player, "help.simpleusage", command);
 	}
@@ -1231,25 +1246,25 @@ public class LWC {
 	/**
 	 * Send the full help to a player
 	 * 
-	 * @param player
+	 * @param sender
 	 *            the player to send to
 	 */
-	public void sendFullHelp(Player player) {
-		player.sendMessage(" ");
-		player.sendMessage(Colors.Green + "Welcome to LWC, a Protection mod");
-		player.sendMessage(" ");
-		player.sendMessage("/lwc -c  " + Colors.Blue + "View creation help");
-		player.sendMessage("/lwc -c " + Colors.LightBlue + "<public|private|password>");
-		player.sendMessage("/lwc -m  " + Colors.Blue + "Modify an existing private protection");
-		player.sendMessage("/lwc -u  " + Colors.Blue + "Unlock a passworded protection");
-		player.sendMessage("/lwc -i   " + Colors.Blue + "View information on a protected Chest or Furnace");
-		player.sendMessage("/lwc -r " + Colors.LightBlue + "<protection|modes>");
+	public void sendFullHelp(CommandSender sender) {
+		sender.sendMessage(" ");
+		sender.sendMessage(Colors.Green + "Welcome to LWC, a Protection mod");
+		sender.sendMessage(" ");
+		sender.sendMessage("/lwc -c  " + Colors.Blue + "View creation help");
+		sender.sendMessage("/lwc -c " + Colors.LightBlue + "<public|private|password>");
+		sender.sendMessage("/lwc -m  " + Colors.Blue + "Modify an existing private protection");
+		sender.sendMessage("/lwc -u  " + Colors.Blue + "Unlock a passworded protection");
+		sender.sendMessage("/lwc -i   " + Colors.Blue + "View information on a protected Chest or Furnace");
+		sender.sendMessage("/lwc -r " + Colors.LightBlue + "<protection|modes>");
 
-		player.sendMessage("/lwc -p " + Colors.LightBlue + "<persist|" + Colors.Black + "droptransfer" + Colors.LightBlue + ">"); // TODO: dynamic
+		sender.sendMessage("/lwc -p " + Colors.LightBlue + "<persist|" + Colors.Black + "droptransfer" + Colors.LightBlue + ">"); // TODO: dynamic
 
-		if (isAdmin(player)) {
-			player.sendMessage("");
-			player.sendMessage(Colors.Red + "/lwc admin - Administration");
+		if (isAdmin(sender)) {
+			sender.sendMessage("");
+			sender.sendMessage(Colors.Red + "/lwc admin - Administration");
 		}
 	}
 

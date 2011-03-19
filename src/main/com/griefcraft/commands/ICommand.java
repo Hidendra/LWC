@@ -17,16 +17,21 @@
 
 package com.griefcraft.commands;
 
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 
 import com.griefcraft.lwc.LWC;
 
 public interface ICommand {
 
 	/**
-	 * @return the name of the command (i.e /lwc -a)
+	 * @return the "friendly" name of the command (i.e creation)
 	 */
 	public String getName();
+	
+	/**
+	 * @return true if the command can be used by the console
+	 */
+	public boolean supportsConsole();
 
 	/**
 	 * Execute a command if it validates
@@ -36,7 +41,7 @@ public interface ICommand {
 	 * @param command
 	 * @param args
 	 */
-	public void execute(LWC lwc, Player player, String[] args);
+	public void execute(LWC lwc, CommandSender sender, String[] args);
 
 	/**
 	 * Validate a command to check if it should be executed
@@ -46,6 +51,6 @@ public interface ICommand {
 	 * @param args
 	 * @return
 	 */
-	public boolean validate(LWC lwc, Player player, String[] args);
+	public boolean validate(LWC lwc, CommandSender sender, String[] args);
 
 }
