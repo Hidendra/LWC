@@ -19,6 +19,7 @@ package com.griefcraft.commands;
 
 import static com.griefcraft.util.StringUtils.hasFlag;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.griefcraft.lwc.LWC;
@@ -30,16 +31,22 @@ public class Owners implements ICommand {
 	public String getName() {
 		return "owners";
 	}
+	
+	@Override
+	public boolean supportsConsole() {
+		return false;
+	}
 
 	@Override
-	public void execute(LWC lwc, Player player, String[] args) {
+	public void execute(LWC lwc, CommandSender sender, String[] args) {
+		Player player = (Player) sender;
 		int page = 1;
 
 		if (args.length > 1) {
 			try {
 				page = Integer.parseInt(args[1]);
 			} catch (Exception e) {
-				lwc.sendSimpleUsage(player, "/lwc -owners [page]");
+				lwc.sendSimpleUsage(sender, "/lwc -owners [page]");
 				return;
 			}
 		}
@@ -50,7 +57,7 @@ public class Owners implements ICommand {
 	}
 
 	@Override
-	public boolean validate(LWC lwc, Player player, String[] args) {
+	public boolean validate(LWC lwc, CommandSender player, String[] args) {
 		return hasFlag(args, "o") || hasFlag(args, "owner") || hasFlag(args, "owners");
 	}
 

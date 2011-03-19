@@ -112,6 +112,12 @@ public class LWCPlugin extends JavaPlugin {
 		log("Native library: " + updater.getFullNativeLibraryPath());
 	}
 	
+	/**
+	 * Verify a command name
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public boolean isValidCommand(String name) {
 		name = name.toLowerCase();
 		
@@ -133,70 +139,71 @@ public class LWCPlugin extends JavaPlugin {
 			return false;
 		}
 	}
-
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
 		String commandName = command.getName().toLowerCase();
 
-		/*
-		 * The only command the console could use is -admin ??, make it compatible sometime
-		 */
-		if (!(sender instanceof Player)) {
-			return false;
-		}
-
-		Player player = (Player) sender;
+		// Player player = (Player) sender;
 		String argString = StringUtils.join(args, 0);
+		boolean isPlayer = (sender instanceof Player); // check if they're a player
 
 		if (!isValidCommand(commandName)) {
 			return false;
 		}
 
-		if (lwc.getPermissions() != null && !Permissions.Security.permission(player, "lwc.protect")) {
-			player.sendMessage(Colors.Red + "You do not have permission to do that");
-			return true;
-		}
+		// these can only apply to players, not the console (who has absolute power :P)
+		if(isPlayer) {
+			if (lwc.getPermissions() != null && !Permissions.Security.permission((Player) sender, "lwc.protect")) {
+				sender.sendMessage(Colors.Red + "You do not have permission to do that");
+				return true;
+			}
 
-		/*
-		 * Aliases
-		 */
-		if (commandName.equals("cpublic")) {
-			lwc.getCommand(Create.class).execute(lwc, player, "-create public".split(" "));
-			return true;
-		} else if (commandName.equals("cpassword")) {
-			lwc.getCommand(Create.class).execute(lwc, player, ("-create password " + argString).split(" "));
-			return true;
-		} else if (commandName.equals("cprivate")) {
-			lwc.getCommand(Create.class).execute(lwc, player, ("-create private " + argString).split(" "));
-			return true;
-		} else if (commandName.equals("cinfo")) {
-			lwc.getCommand(Info.class).execute(lwc, player, "-info".split(" "));
-			return true;
-		} else if (commandName.equals("cunlock")) {
-			lwc.getCommand(Unlock.class).execute(lwc, player, ("-unlock " + argString).split(" "));
-			return true;
-		} else if (commandName.equals("cremove")) {
-			lwc.getCommand(Remove.class).execute(lwc, player, "-remove protection".split(" "));
-			return true;
+			/*
+			 * Aliases
+			 */
+			if (commandName.equals("cpublic")) {
+				lwc.getCommand(Create.class).execute(lwc, sender, "-create public".split(" "));
+				return true;
+			} else if (commandName.equals("cpassword")) {
+				lwc.getCommand(Create.class).execute(lwc, sender, ("-create password " + argString).split(" "));
+				return true;
+			} else if (commandName.equals("cprivate")) {
+				lwc.getCommand(Create.class).execute(lwc, sender, ("-create private " + argString).split(" "));
+				return true;
+			} else if (commandName.equals("cinfo")) {
+				lwc.getCommand(Info.class).execute(lwc, sender, "-info".split(" "));
+				return true;
+			} else if (commandName.equals("cunlock")) {
+				lwc.getCommand(Unlock.class).execute(lwc, sender, ("-unlock " + argString).split(" "));
+				return true;
+			} else if (commandName.equals("cremove")) {
+				lwc.getCommand(Remove.class).execute(lwc, sender, "-remove protection".split(" "));
+				return true;
+			}
 		}
-
-		// TODO: check if they can use the command ??
-		/*
-		 * if (!player.canUseCommand(split[0])) { return; }
-		 */
 
 		if (args.length == 0) {
-			lwc.sendFullHelp(player);
+			lwc.sendFullHelp(sender);
 			return true;
 		}
 
 		for (ICommand cmd : lwc.getCommands()) {
-			if (!cmd.validate(lwc, player, args)) {
+			if (!cmd.validate(lwc, sender, args)) {
+				continue;
+			}
+			
+			if(!isPlayer && !cmd.supportsConsole()) {
 				continue;
 			}
 
-			cmd.execute(lwc, player, args);
+			try {
+				cmd.execute(lwc, sender, args);
+			} catch(Exception e) {
+				log("Oh no! An LWC command threw an exception!");
+				e.printStackTrace();
+			}
+
 			return true;
 		}
 
@@ -238,9 +245,7 @@ public class LWCPlugin extends JavaPlugin {
 		log(" - loading old lwc.properties");
 		Config config = Config.getInstance("lwc.properties");
 
-		/*
-		 * People's initial flush-db was 60 seconds.. then i lowered to 30.. which both is too high let's take this opportunity to change that, shall we?
-		 */
+		// People's initial flush-db was 60 seconds.. then i lowered to 30.. which both is too high let's take this opportunity to change that, shall we?
 		if (Integer.parseInt((String) config.get("flush-db-interval")) > 20) {
 			config.setProperty("flush-db-interval", "10");
 		}
@@ -250,24 +255,15 @@ public class LWCPlugin extends JavaPlugin {
 
 		if (databaseFile.exists()) {
 			try {
-				/*
-				 * Get the file channels
-				 */
 				FileChannel inChannel = new FileInputStream(databaseFile).getChannel();
 				FileChannel outChannel = new FileOutputStream("plugins/LWC/lwc.db").getChannel();
 
-				/*
-				 * Now copy the file
-				 */
 				outChannel.transferFrom(inChannel, 0, inChannel.size());
 
 				log(" ++ lwc.db moved");
 
 				config.setProperty("db-path", "plugins/LWC/lwc.db");
 
-				/*
-				 * We're done
-				 */
 				inChannel.close();
 				outChannel.close();
 			} catch (Exception e) {
@@ -277,16 +273,12 @@ public class LWCPlugin extends JavaPlugin {
 			log(" -- lwc.db not found, ignoring");
 		}
 
-		/*
-		 * Now initialize the regular config so we can copy the loaded values
-		 */
+		// Now initialize the regular config so we can copy the loaded values
 		Config.init();
 
 		log(" - moving the old lwc.properties");
 
-		/*
-		 * Copy
-		 */
+		// Copy
 		for (Object key : config.keySet()) {
 			Config.getInstance().put(key, config.get(key));
 		}

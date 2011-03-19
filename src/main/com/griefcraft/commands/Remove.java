@@ -19,6 +19,7 @@ package com.griefcraft.commands;
 
 import static com.griefcraft.util.StringUtils.hasFlag;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.griefcraft.lwc.LWC;
@@ -30,15 +31,21 @@ public class Remove implements ICommand {
 	public String getName() {
 		return "remove";
 	}
+	
+	@Override
+	public boolean supportsConsole() {
+		return false;
+	}
 
 	@Override
-	public void execute(LWC lwc, Player player, String[] args) {
+	public void execute(LWC lwc, CommandSender sender, String[] args) {
 		if (args.length < 2) {
-			lwc.sendSimpleUsage(player, "/lwc -r <protection|modes>");
+			lwc.sendSimpleUsage(sender, "/lwc -r <protection|modes>");
 			return;
 		}
 
 		String type = args[1].toLowerCase();
+		Player player = (Player) sender;
 
 		if (type.equals("protection") || type.equals("chest") || type.equals("furnace") || type.equals("dispenser")) {
 			if (lwc.getMemoryDatabase().hasPendingChest(player.getName())) {
@@ -58,13 +65,13 @@ public class Remove implements ICommand {
 		}
 
 		else {
-			lwc.sendSimpleUsage(player, "/lwc -r <protection|modes>");
+			lwc.sendSimpleUsage(sender, "/lwc -r <protection|modes>");
 			return;
 		}
 	}
 
 	@Override
-	public boolean validate(LWC lwc, Player player, String[] args) {
+	public boolean validate(LWC lwc, CommandSender player, String[] args) {
 		return hasFlag(args, "r") || hasFlag(args, "free") || hasFlag(args, "remove");
 	}
 
