@@ -299,7 +299,7 @@ public class LWCPlugin extends JavaPlugin {
 	public void onEnable() {
 		Config.init();
 
-		if (LWCInfo.DEVELOPMENT) {
+		if (LWCInfo.DEVELOPMENT && false) {
 			try {
 				locale = ResourceBundle.getBundle("lwc", new Locale(ConfigValues.LOCALE.getString()), new LocaleClassLoader());
 				log("Loaded " + locale.keySet().size() + " locale strings");
