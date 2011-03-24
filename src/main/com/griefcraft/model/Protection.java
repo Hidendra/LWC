@@ -17,12 +17,10 @@
 
 package com.griefcraft.model;
 
-public class Protection {
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.util.Colors;
 
-	/**
-	 * Unique id (in sql)
-	 */
-	private int id;
+public class Protection {
 
 	/**
 	 * The block id
@@ -30,9 +28,19 @@ public class Protection {
 	private int blockId;
 
 	/**
-	 * The chest type
+	 * The password for the chest
 	 */
-	private int type;
+	private String data;
+
+	/**
+	 * The date created
+	 */
+	private String date;
+
+	/**
+	 * Unique id (in sql)
+	 */
+	private int id;
 
 	/**
 	 * The owner of the chest
@@ -40,9 +48,14 @@ public class Protection {
 	private String owner;
 
 	/**
-	 * The password for the chest
+	 * The chest type
 	 */
-	private String data;
+	private int type;
+
+	/**
+	 * The world this protection is in
+	 */
+	private String world;
 
 	/**
 	 * The x coordinate
@@ -59,17 +72,12 @@ public class Protection {
 	 */
 	private int z;
 
-	/**
-	 * The date created
-	 */
-	private String date;
+	public int getBlockId() {
+		return blockId;
+	}
 
-	/**
-	 * @return id:owner->[x,y,z]
-	 */
-	@Override
-	public String toString() {
-		return String.format("%d:%s->[%d,%d,%d]", id, owner, x, y, z);
+	public String getData() {
+		return data;
 	}
 
 	public String getDate() {
@@ -80,20 +88,16 @@ public class Protection {
 		return id;
 	}
 
-	public int getBlockId() {
-		return blockId;
-	}
-
 	public String getOwner() {
 		return owner;
 	}
 
-	public String getData() {
-		return data;
-	}
-
 	public int getType() {
 		return type;
+	}
+
+	public String getWorld() {
+		return world;
 	}
 
 	public int getX() {
@@ -108,6 +112,14 @@ public class Protection {
 		return z;
 	}
 
+	public void setBlockId(int blockId) {
+		this.blockId = blockId;
+	}
+
+	public void setData(String data) {
+		this.data = data;
+	}
+
 	public void setDate(String date) {
 		this.date = date;
 	}
@@ -116,20 +128,16 @@ public class Protection {
 		this.id = id;
 	}
 
-	public void setBlockId(int blockId) {
-		this.blockId = blockId;
-	}
-
 	public void setOwner(String owner) {
 		this.owner = owner;
 	}
 
-	public void setData(String data) {
-		this.data = data;
-	}
-
 	public void setType(int type) {
 		this.type = type;
+	}
+
+	public void setWorld(String world) {
+		this.world = world;
 	}
 
 	public void setX(int x) {
@@ -142,6 +150,38 @@ public class Protection {
 
 	public void setZ(int z) {
 		this.z = z;
+	}
+
+	/**
+	 * @return id:owner->[x,y,z]
+	 */
+	@Override
+	public String toString() {
+		return String.format("%s %s" + Colors.White + " {" + Colors.Green + "Id=%d Owner=%s Location=[@%s %d,%d,%d] Created=%s" + Colors.White + "}", typeToString(), (blockId > 0 ? (LWC.materialToString(blockId)) : "Not yet cached"), id, owner, world, x, y, z, date);
+	}
+
+	/**
+	 * @return string representation of the protection type
+	 */
+	public String typeToString() {
+		switch (type) {
+		case ProtectionTypes.PRIVATE:
+			return "Private";
+
+		case ProtectionTypes.PUBLIC:
+			return "Public";
+
+		case ProtectionTypes.PASSWORD:
+			return "Password";
+
+		case ProtectionTypes.TRAP_KICK:
+			return "Kick trap";
+
+		case ProtectionTypes.TRAP_BAN:
+			return "Ban trap";
+		}
+
+		return "Unknown(raw:" + type + ")";
 	}
 
 }

@@ -33,12 +33,27 @@ import org.bukkit.inventory.ItemStack;
 
 import com.griefcraft.logging.Logger;
 import com.griefcraft.model.Job;
-import com.griefcraft.model.PInventory;
+import com.griefcraft.model.ProtectionInventory;
 import com.griefcraft.model.Protection;
 import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.StringUtils;
 
 public class UpdateThread implements Runnable {
+
+	/**
+	 * Temporary for 1.5 while ALL protection block ids need to be fully populated
+	 */
+	private ConcurrentLinkedQueue<Protection> blockIdUpdateQueue = new ConcurrentLinkedQueue<Protection>();
+
+	/**
+	 * True begins the flush
+	 */
+	private boolean flush = false;
+
+	/**
+	 * The last update
+	 */
+	private long lastUpdate = -1L;
 
 	private Logger logger = Logger.getLogger("Cache");
 
@@ -53,24 +68,14 @@ public class UpdateThread implements Runnable {
 	private boolean running = false;
 
 	/**
-	 * The last update
-	 */
-	private long lastUpdate = -1L;
-
-	/**
 	 * Thread being used
 	 */
 	private Thread thread;
 
 	/**
-	 * True begins the flush
+	 * Pre-1.70, the world the protection was in was not stored in the database, this remedies just that
 	 */
-	private boolean flush = false;
-
-	/**
-	 * Temporary for 1.5 while ALL protection block ids need to be fully populated
-	 */
-	private ConcurrentLinkedQueue<Protection> blockIdUpdateQueue = new ConcurrentLinkedQueue<Protection>();
+	private ConcurrentLinkedQueue<Protection> worldUpdateQueue = new ConcurrentLinkedQueue<Protection>();
 
 	public UpdateThread(LWC lwc) {
 		this.lwc = lwc;
@@ -83,6 +88,13 @@ public class UpdateThread implements Runnable {
 	}
 
 	/**
+	 * Activate flushing
+	 */
+	public void flush() {
+		flush = true;
+	}
+
+	/**
 	 * Add a protection to be updated to the top of the queue (JUST block ids!!)
 	 * 
 	 * @param protection
@@ -92,26 +104,186 @@ public class UpdateThread implements Runnable {
 	}
 
 	/**
-	 * Get the two Block objects for a door doors[0] = Bottom half of door doors[1] = Top half of door
+	 * Add a protection to the top of the world update queue
 	 * 
-	 * @param world
-	 * @param block
-	 * @return
+	 * @param protection
 	 */
-	private Block[] getDoors(World world, Block block) {
-		Block[] doors = new Block[2];
+	public void queueWorldUpdate(Protection protection) {
+		worldUpdateQueue.offer(protection);
+	}
 
-		Block temp;
+	@Override
+	public void run() {
+		while (running) {
+			if (flush) {
+				_flush();
+				continue;
+			}
 
-		if ((temp = block.getFace(BlockFace.UP)) != null && temp.getType() == block.getType()) {
-			doors[0] = block;
-			doors[1] = temp;
-		} else if ((temp = block.getFace(BlockFace.DOWN)) != null && temp.getType() == block.getType()) {
-			doors[0] = temp;
-			doors[1] = block;
+			long curr = System.currentTimeMillis();
+			long interval = ConfigValues.FLUSH_DB_INTERVAL.getInt() * 1000L;
+
+			if (curr - lastUpdate > interval) {
+				flush = true;
+			}
+
+			try {
+				Thread.sleep(1000L);
+			} catch (Exception e) {
+			}
+		}
+	}
+
+	/**
+	 * Stop the update thread. Also flush the remaining updates since we're stopping anyway
+	 */
+	public void stop() {
+		running = false;
+
+		if (thread != null && !thread.isInterrupted()) {
+			thread.interrupt();
+		}
+	}
+
+	/**
+	 * Flush any caches to the database TODO
+	 */
+	private void _flush() {
+		/*
+		 * TODO: Remove at some point
+		 */
+		if (blockIdUpdateQueue.size() > 0) {
+			Connection connection = lwc.getPhysicalDatabase().getConnection();
+			Protection protection = null;
+
+			try {
+				connection.setAutoCommit(false);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+			/*
+			 * Loop through
+			 */
+			while ((protection = blockIdUpdateQueue.poll()) != null) {
+				lwc.getPhysicalDatabase().updateProtectionBlockId(protection.getId(), protection.getBlockId());
+			}
+
+			/*
+			 * Commit
+			 */
+			try {
+				connection.commit();
+				connection.setAutoCommit(true);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 
-		return doors;
+		/*
+		 * FIXME
+		 */
+		if (worldUpdateQueue.size() > 0) {
+			Connection connection = lwc.getPhysicalDatabase().getConnection();
+			Protection protection = null;
+
+			try {
+				connection.setAutoCommit(false);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+			/*
+			 * Loop through
+			 */
+			while ((protection = worldUpdateQueue.poll()) != null) {
+				lwc.getPhysicalDatabase().updateWorld(protection.getId(), protection.getWorld());
+			}
+
+			try {
+				connection.commit();
+				connection.setAutoCommit(true);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		/*
+		 * Inventory caching
+		 */
+		if (lwc.getInventoryQueue().size() > 0) {
+			ConcurrentLinkedQueue<ProtectionInventory> queue = lwc.getInventoryQueue();
+			Connection connection = lwc.getPhysicalDatabase().getConnection();
+			ProtectionInventory pInventory = null;
+			int count = 0;
+
+			/*
+			 * Turn off auto commit
+			 */
+			try {
+				connection.setAutoCommit(false);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+			/*
+			 * Peeeek and remove
+			 */
+			while ((pInventory = queue.poll()) != null) {
+				ItemStack[] itemStacks = pInventory.getItemStacks();
+				int protectionId = pInventory.getProtectionId();
+
+				int slots = itemStacks.length;
+				String stacks = "";
+				String items = "";
+				String durability = "";
+				String last_transaction = ""; // TODO: implement
+				String last_update = (System.currentTimeMillis() / 1000) + "";
+
+				/*
+				 * Populate the strings
+				 */
+				for (ItemStack itemStack : itemStacks) {
+					if (itemStack == null) {
+						System.out.println("null");
+						continue;
+					}
+
+					stacks += itemStack.getAmount() + ",";
+					items += itemStack.getTypeId() + ",";
+					durability += itemStack.getDurability() + ",";
+				}
+
+				/*
+				 * Trim that comma!
+				 */
+				stacks = stacks.substring(0, stacks.length() - 1);
+				items = items.substring(0, items.length() - 1);
+				durability = durability.substring(0, durability.length() - 1);
+
+				/*
+				 * Update the database
+				 */
+				lwc.getPhysicalDatabase().createInventory(protectionId, slots, stacks, items, durability, last_transaction, last_update);
+
+				count++;
+			}
+
+			/*
+			 * Good, good. Let's commit!
+			 */
+			try {
+				connection.commit();
+				connection.setAutoCommit(true);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		doJobs();
+
+		flush = false;
+		lastUpdate = System.currentTimeMillis();
 	}
 
 	/**
@@ -193,7 +365,13 @@ public class UpdateThread implements Runnable {
 							if (block.getType() == Material.SIGN || block.getType() == Material.SIGN_POST) {
 								Sign sign = (Sign) block.getState();
 
-								String[] lines = extra.split("==X8LarE=="); // split by how lines are split internally
+								String[] lines = extra.split("==X8LarE=="); // split
+																			// by
+																			// how
+																			// lines
+																			// are
+																			// split
+																			// internally
 
 								for (int line = 0; line < lines.length; line++) {
 									if (line > 3) {
@@ -209,7 +387,7 @@ public class UpdateThread implements Runnable {
 
 						/* Remove the job, we assume it's done.. */
 						lwc.getPhysicalDatabase().removeJob(job.getId());
-						lwc.dev("Job completed: #" + job.getId());
+						// lwc.dev("Job completed: #" + job.getId());
 					} catch (Exception e) {
 						e.printStackTrace();
 						logger.log("Unexpected payload in job " + job.getId() + ": " + job.getPayload());
@@ -237,7 +415,7 @@ public class UpdateThread implements Runnable {
 					if (sendTo != null && sendTo.isOnline()) {
 						sendTo.sendMessage(message);
 						lwc.getPhysicalDatabase().removeJob(job.getId());
-						lwc.dev("Job completed: #" + job.getId());
+						// lwc.dev("Job completed: #" + job.getId());
 					}
 
 					break;
@@ -248,163 +426,26 @@ public class UpdateThread implements Runnable {
 	}
 
 	/**
-	 * Flush any caches to the database TODO
+	 * Get the two Block objects for a door doors[0] = Bottom half of door doors[1] = Top half of door
+	 * 
+	 * @param world
+	 * @param block
+	 * @return
 	 */
-	private void _flush() {
-		/*
-		 * TODO: Remove at some point
-		 */
-		if (blockIdUpdateQueue.size() > 0) {
-			Connection connection = lwc.getPhysicalDatabase().getConnection();
-			Protection protection = null;
+	private Block[] getDoors(World world, Block block) {
+		Block[] doors = new Block[2];
 
-			try {
-				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+		Block temp;
 
-			/*
-			 * Loop through
-			 */
-			while ((protection = blockIdUpdateQueue.poll()) != null) {
-				lwc.getPhysicalDatabase().updateProtectionBlockId(protection.getId(), protection.getBlockId());
-			}
-
-			/*
-			 * Commit
-			 */
-			try {
-				connection.commit();
-				connection.setAutoCommit(true);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+		if ((temp = block.getFace(BlockFace.UP)) != null && temp.getType() == block.getType()) {
+			doors[0] = block;
+			doors[1] = temp;
+		} else if ((temp = block.getFace(BlockFace.DOWN)) != null && temp.getType() == block.getType()) {
+			doors[0] = temp;
+			doors[1] = block;
 		}
 
-		/*
-		 * Inventory caching
-		 */
-		if (lwc.getInventoryQueue().size() > 0) {
-			ConcurrentLinkedQueue<PInventory> queue = lwc.getInventoryQueue();
-			Connection connection = lwc.getPhysicalDatabase().getConnection();
-			PInventory pInventory = null;
-			int count = 0;
-
-			/*
-			 * Turn off auto commit
-			 */
-			try {
-				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-
-			/*
-			 * Peeeek and remove
-			 */
-			while ((pInventory = queue.poll()) != null) {
-				ItemStack[] itemStacks = pInventory.getItemStacks();
-				int protectionId = pInventory.getProtectionId();
-
-				int slots = itemStacks.length;
-				String stacks = "";
-				String items = "";
-				String durability = "";
-				String last_transaction = ""; // TODO: implement
-				String last_update = (System.currentTimeMillis() / 1000) + "";
-
-				/*
-				 * Populate the strings
-				 */
-				for (ItemStack itemStack : itemStacks) {
-					if (itemStack == null) {
-						System.out.println("null");
-						continue;
-					}
-
-					stacks += itemStack.getAmount() + ",";
-					items += itemStack.getTypeId() + ",";
-					durability += itemStack.getDurability() + ",";
-				}
-
-				/*
-				 * Trim that comma!
-				 */
-				stacks = stacks.substring(0, stacks.length() - 1);
-				items = items.substring(0, items.length() - 1);
-				durability = durability.substring(0, durability.length() - 1);
-
-				/*
-				 * Update the database
-				 */
-				lwc.getPhysicalDatabase().createInventory(protectionId, slots, stacks, items, durability, last_transaction, last_update);
-
-				count++;
-			}
-
-			/*
-			 * Good, good. Let's commit!
-			 */
-			try {
-				connection.commit();
-				connection.setAutoCommit(true);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-
-			/*
-			 * Notify if in dev mode
-			 */
-			if (LWCInfo.DEVELOPMENT) {
-				System.out.println("Pushed " + count + " inventories to the database");
-			}
-		}
-
-		doJobs();
-
-		flush = false;
-		lastUpdate = System.currentTimeMillis();
-	}
-
-	/**
-	 * Activate flushing
-	 */
-	public void flush() {
-		flush = true;
-	}
-
-	/**
-	 * Stop the update thread. Also flush the remaining updates since we're stopping anyway
-	 */
-	public void stop() {
-		running = false;
-
-		if (thread != null && !thread.isInterrupted()) {
-			thread.interrupt();
-		}
-	}
-
-	@Override
-	public void run() {
-		while (running) {
-			if (flush) {
-				_flush();
-				continue;
-			}
-
-			long curr = System.currentTimeMillis();
-			long interval = ConfigValues.FLUSH_DB_INTERVAL.getInt() * 1000L;
-
-			if (curr - lastUpdate > interval) {
-				flush = true;
-			}
-
-			try {
-				Thread.sleep(1000L);
-			} catch (Exception e) {
-			}
-		}
+		return doors;
 	}
 
 }

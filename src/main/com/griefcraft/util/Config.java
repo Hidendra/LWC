@@ -22,7 +22,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Properties;
+import java.util.Vector;
 
 import com.griefcraft.logging.Logger;
 import com.griefcraft.lwc.LWCInfo;
@@ -55,6 +58,9 @@ public class Config extends Properties {
 		try {
 			File conf = new File(path);
 
+			File folder = new File("plugins/LWC");
+			folder.mkdirs();
+
 			if (!conf.exists()) {
 				save();
 				return;
@@ -67,6 +73,43 @@ public class Config extends Properties {
 
 			// save it (new config values, perhaps?)
 			save();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Sort the properties' keys :-)
+	 */
+	@Override
+	public Enumeration keys() {
+		Enumeration<Object> keysEnum = super.keys();
+		Vector<String> keyList = new Vector<String>();
+
+		while (keysEnum.hasMoreElements()) {
+			keyList.add((String) keysEnum.nextElement());
+		}
+
+		Collections.sort(keyList);
+
+		return keyList.elements();
+	}
+
+	/**
+	 * Save the config file
+	 */
+	public void save() {
+		try {
+			File file = new File(LWCInfo.CONF_FILE);
+
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+
+			OutputStream outputStream = new FileOutputStream(file);
+
+			store(outputStream, "# LWC configuration file\n\n# + Github project page: https://github.com/Hidendra/LWC\n# + Bukkit thread link: http://forums.bukkit.org/threads/sec-mech-lwc-v1-54-lightweight-inventory-protection-management-403.967/\n");
+			outputStream.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -101,26 +144,6 @@ public class Config extends Properties {
 	 */
 	public static void init() {
 		instance = new Config(LWCInfo.CONF_FILE);
-	}
-
-	/**
-	 * Save the config file
-	 */
-	public void save() {
-		try {
-			File file = new File(LWCInfo.CONF_FILE);
-
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-
-			OutputStream outputStream = new FileOutputStream(file);
-
-			store(outputStream, "# LWC configuration file\n\n# + Github project page: https://github.com/Hidendra/LWC\n# + Bukkit thread link: http://forums.bukkit.org/threads/sec-mech-lwc-v1-54-lightweight-inventory-protection-management-403.967/\n");
-			outputStream.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 }

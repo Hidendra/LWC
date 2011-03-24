@@ -19,9 +19,9 @@ package com.griefcraft.model;
 
 public class StopWatch {
 
+	private boolean running = false;
 	private long startTime = 0;
 	private long stopTime = 0;
-	private boolean running = false;
 
 	public long getElapsedTime() {
 		long elapsed;

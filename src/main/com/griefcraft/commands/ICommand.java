@@ -24,16 +24,6 @@ import com.griefcraft.lwc.LWC;
 public interface ICommand {
 
 	/**
-	 * @return the "friendly" name of the command (i.e creation)
-	 */
-	public String getName();
-	
-	/**
-	 * @return true if the command can be used by the console
-	 */
-	public boolean supportsConsole();
-
-	/**
 	 * Execute a command if it validates
 	 * 
 	 * @param lwc
@@ -42,6 +32,16 @@ public interface ICommand {
 	 * @param args
 	 */
 	public void execute(LWC lwc, CommandSender sender, String[] args);
+
+	/**
+	 * @return the "friendly" name of the command (i.e creation)
+	 */
+	public String getName();
+
+	/**
+	 * @return true if the command can be used by the console
+	 */
+	public boolean supportsConsole();
 
 	/**
 	 * Validate a command to check if it should be executed

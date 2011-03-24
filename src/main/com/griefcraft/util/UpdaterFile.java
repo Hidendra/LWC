@@ -20,14 +20,14 @@ package com.griefcraft.util;
 public class UpdaterFile {
 
 	/**
-	 * The remote url location
-	 */
-	private String remoteLocation;
-
-	/**
 	 * The local url location
 	 */
 	private String localLocation;
+
+	/**
+	 * The remote url location
+	 */
+	private String remoteLocation;
 
 	public UpdaterFile(String location) {
 		remoteLocation = location;

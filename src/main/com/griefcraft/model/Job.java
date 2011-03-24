@@ -19,20 +19,24 @@ package com.griefcraft.model;
 
 public class Job {
 
+	private int id;
+	private String owner;
+	private String payload;
+	private long timestamp;
+	private int type;
+
+	public static final int DISPENSE_DISPENSER = 4;
+
+	public static final int OPEN_DOOR = 3;
+
 	/**
 	 * Job type constants
 	 */
 	public static final int REMOVE_BLOCK = 1;
-	public static final int SEND_MESSAGE = 2;
-	public static final int OPEN_DOOR = 3;
-	public static final int DISPENSE_DISPENSER = 4;
-	public static final int UPDATE_SIGN = 5;
 
-	private int id;
-	private int type;
-	private String owner;
-	private String payload;
-	private long timestamp;
+	public static final int SEND_MESSAGE = 2;
+
+	public static final int UPDATE_SIGN = 5;
 
 	public int getId() {
 		return id;

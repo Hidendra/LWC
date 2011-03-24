@@ -24,16 +24,6 @@ import com.griefcraft.util.ConfigValues;
 public class Logger {
 
 	/**
-	 * Create a new logger
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public static Logger getLogger(String name) {
-		return new Logger(name);
-	}
-
-	/**
 	 * Logger name
 	 */
 	private String name;
@@ -52,6 +42,16 @@ public class Logger {
 		}
 
 		System.out.println(String.format("%s\t%s", name, str));
+	}
+
+	/**
+	 * Create a new logger
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public static Logger getLogger(String name) {
+		return new Logger(name);
 	}
 
 }

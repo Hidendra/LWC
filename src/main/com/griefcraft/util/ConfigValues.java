@@ -19,46 +19,43 @@ package com.griefcraft.util;
 
 public enum ConfigValues {
 
-	BLACKLISTED_MODES("blacklisted-modes", ""), //
 	// ALLOW_FURNACE_PROTECTION("furnace-locks", "true"), //
-	DB_PATH("db-path", "plugins/LWC/lwc.db"), //
-	ENFORCE_WORLDGUARD_REGIONS("enforce-worldguard-regions", "false"), //
-	WORLDGUARD_ALLOWED_REGIONS("worldguard-allowed-regions", "*"), //
-	AUTO_UPDATE("auto-update", "false"), //
-	FLUSH_DB_INTERVAL("flush-db-interval", "10"), //
-	MAX_JOBS("max-jobs", "0"), //
-	PROTECTION_BLACKLIST("protection-blacklist", ""), //
-	OP_IS_LWCADMIN("op-is-lwcadmin", "true"), //
+	ALLOW_BLOCK_DESTRUCTION("allow-block-destruction", "false"), //
 	AUTO_REGISTER("auto-register-as", "none"), // public, private
-	DENY_REDSTONE("deny-redstone", "false"), // on valid protections (i.e door)
-	SHOW_PROTECTION_NOTICES("show-protection-notices", "true"), // show "this is protected" to admins/mods
-	LOCALE("locale", "eng"), // the locale to use
+	AUTO_UPDATE("auto-update", "false"), //
+	BLACKLISTED_MODES("blacklisted-modes", ""), //
 	DATABASE("database", "sqlite"), //
-	MYSQL_HOST("mysql-host", "localhost"), // default mysql info
-	MYSQL_PORT("mysql-port", "3306"), //
+	DB_PATH("db-path", "plugins/LWC/lwc.db"), //
+	DEFAULT_MENU_STYLE("default-menu-style", "basic"), //
+	DENY_REDSTONE("deny-redstone", "false"), // on valid protections (i.e door)
+	ENFORCE_WORLDGUARD_REGIONS("enforce-worldguard-regions", "false"), //
+	FLUSH_DB_INTERVAL("flush-db-interval", "10"), //
+	LOCALE("locale", "eng"), // the locale to use
+	MAX_JOBS("max-jobs", "0"), //
 	MYSQL_DATABASE("mysql-database", "lwc"), //
-	MYSQL_USER("mysql-user", "user"), //
+	MYSQL_HOST("mysql-host", "localhost"), // default mysql info
 	MYSQL_PASS("mysql-pass", ""), //
-	VERBOSE("verbose", "false"); //
-
-	/**
-	 * The name of the config value used in the conf file
-	 */
-	private String name;
+	MYSQL_PORT("mysql-port", "3306"), //
+	MYSQL_USER("mysql-user", "user"), //
+	OP_IS_LWCADMIN("op-is-lwcadmin", "true"), //
+	PROTECTION_BLACKLIST("protection-blacklist", ""), //
+	SHOW_PROTECTION_NOTICES("show-protection-notices", "true"), // show "this is protected" to admins
+	VERBOSE("verbose", "false"), //
+	WORLDGUARD_ALLOWED_REGIONS("worldguard-allowed-regions", "*"); //
 
 	/**
 	 * The default value
 	 */
 	private String defaultValue;
 
+	/**
+	 * The name of the config value used in the conf file
+	 */
+	private String name;
+
 	private ConfigValues(String name, String defaultValue) {
 		this.name = name;
 		this.defaultValue = defaultValue;
-	}
-
-	@Override
-	public String toString() {
-		return getString();
 	}
 
 	/**
@@ -94,6 +91,11 @@ public enum ConfigValues {
 	 */
 	public String getString() {
 		return Config.getInstance().getProperty(name, defaultValue);
+	}
+
+	@Override
+	public String toString() {
+		return getString();
 	}
 
 }

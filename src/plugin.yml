@@ -1,14 +1,14 @@
 name: LWC
 main: com.griefcraft.lwc.LWCPlugin
-version: 1.66
+version: 2.00
 website: http://griefcraft.com
 author: Hidendra
 description: >
-             Inventory protection & management utilizing SQLite as its backend
+             Inventory protection & management utilizing SQLite or MySQL as its backend
              Other blocks can be protected such as Doors and Signs
 commands:
   lwc:
-    description: LWC's main command to access everything
+    description: LWC's hub command to access everything
     usage: /<command>
   cpublic:
     description: Alias command for /lwc -c public
@@ -19,6 +19,9 @@ commands:
   cprivate:
     description: Alias command for /lwc -c private
     usage: /<command> <Users/Groups>
+  cmodify:
+    description: Alias command for /lwc -m
+    usage: /<command> <Modifications>
   cunlock:
     description: Alias command for /lwc -u <password>
     usage: /<command> <password>

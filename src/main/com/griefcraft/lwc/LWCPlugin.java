@@ -22,12 +22,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.griefcraft.commands.Admin;
 import com.griefcraft.commands.Create;
-import com.griefcraft.commands.Owners;
-import com.griefcraft.commands.Remove;
 import com.griefcraft.commands.ICommand;
 import com.griefcraft.commands.Info;
+import com.griefcraft.commands.Menu;
 import com.griefcraft.commands.Modes;
 import com.griefcraft.commands.Modify;
+import com.griefcraft.commands.Owners;
+import com.griefcraft.commands.Remove;
 import com.griefcraft.commands.Unlock;
 import com.griefcraft.listeners.LWCBlockListener;
 import com.griefcraft.listeners.LWCEntityListener;
@@ -37,12 +38,29 @@ import com.griefcraft.sql.Database;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.Config;
 import com.griefcraft.util.ConfigValues;
+import com.griefcraft.util.LWCResourceBundle;
 import com.griefcraft.util.LocaleClassLoader;
 import com.griefcraft.util.StringUtils;
+import com.griefcraft.util.UTF8Control;
 import com.griefcraft.util.Updater;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class LWCPlugin extends JavaPlugin {
+
+	/**
+	 * The block listener
+	 */
+	private BlockListener blockListener;
+
+	/**
+	 * The entity listener
+	 */
+	private EntityListener entityListener;
+
+	/**
+	 * The locale for LWC
+	 */
+	private LWCResourceBundle locale;
 
 	/**
 	 * The logging object
@@ -55,24 +73,9 @@ public class LWCPlugin extends JavaPlugin {
 	private LWC lwc;
 
 	/**
-	 * The locale for LWC
-	 */
-	private ResourceBundle locale;
-
-	/**
 	 * The player listener
 	 */
 	private PlayerListener playerListener;
-
-	/**
-	 * The block listener
-	 */
-	private BlockListener blockListener;
-
-	/**
-	 * The entity listener
-	 */
-	private EntityListener entityListener;
 
 	/**
 	 * LWC updater
@@ -102,7 +105,8 @@ public class LWCPlugin extends JavaPlugin {
 		// we want to force people who used sqlite.purejava before to switch:
 		System.setProperty("sqlite.purejava", "");
 
-		// BUT, some can't use native, so we need to give them the option to use pure:
+		// BUT, some can't use native, so we need to give them the option to use
+		// pure:
 		String isPureJava = System.getProperty("lwc.purejava");
 
 		if (isPureJava != null && isPureJava.equalsIgnoreCase("true")) {
@@ -111,7 +115,28 @@ public class LWCPlugin extends JavaPlugin {
 
 		log("Native library: " + updater.getFullNativeLibraryPath());
 	}
-	
+
+	/**
+	 * @return the locale
+	 */
+	public ResourceBundle getLocale() {
+		return locale;
+	}
+
+	/**
+	 * @return the LWC instance
+	 */
+	public LWC getLWC() {
+		return lwc;
+	}
+
+	/**
+	 * @return the Updater instance
+	 */
+	public Updater getUpdater() {
+		return updater;
+	}
+
 	/**
 	 * Verify a command name
 	 * 
@@ -120,31 +145,46 @@ public class LWCPlugin extends JavaPlugin {
 	 */
 	public boolean isValidCommand(String name) {
 		name = name.toLowerCase();
-		
-		if(name.equals("lwc")) {
+
+		if (name.equals("lwc")) {
 			return true;
-		} else if(name.equals("cpublic")) {
+		} else if (name.equals("cpublic")) {
 			return true;
-		} else if(name.equals("cpassword")) {
+		} else if (name.equals("cpassword")) {
 			return true;
-		} else if(name.equals("cprivate")) {
+		} else if (name.equals("cprivate")) {
 			return true;
-		} else if(name.equals("cinfo")) {
+		} else if (name.equals("cinfo")) {
 			return true;
-		} else if(name.equals("cunlock")) {
+		} else if (name.equals("cmodify")) {
 			return true;
-		} else if(name.equals("cremove")) {
+		} else if (name.equals("cunlock")) {
+			return true;
+		} else if (name.equals("cremove")) {
 			return true;
 		} else {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * Load the database
+	 */
+	public void loadDatabase() {
+		String database = ConfigValues.DATABASE.getString().toLowerCase();
+
+		if (database.equals("mysql")) {
+			Database.DefaultType = Database.Type.MySQL;
+		} else {
+			Database.DefaultType = Database.Type.SQLite;
+		}
+		
+		updater.loadVersions(false);
+	}
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
 		String commandName = command.getName().toLowerCase();
-
-		// Player player = (Player) sender;
 		String argString = StringUtils.join(args, 0);
 		boolean isPlayer = (sender instanceof Player); // check if they're a player
 
@@ -152,8 +192,8 @@ public class LWCPlugin extends JavaPlugin {
 			return false;
 		}
 
-		// these can only apply to players, not the console (who has absolute power :P)
-		if(isPlayer) {
+		// these can only apply to players, not the console (who has absolute player :P)
+		if (isPlayer) {
 			if (lwc.getPermissions() != null && !Permissions.Security.permission((Player) sender, "lwc.protect")) {
 				sender.sendMessage(Colors.Red + "You do not have permission to do that");
 				return true;
@@ -170,6 +210,9 @@ public class LWCPlugin extends JavaPlugin {
 				return true;
 			} else if (commandName.equals("cprivate")) {
 				lwc.getCommand(Create.class).execute(lwc, sender, ("-create private " + argString).split(" "));
+				return true;
+			} else if (commandName.equals("cmodify")) {
+				lwc.getCommand(Modify.class).execute(lwc, sender, args);
 				return true;
 			} else if (commandName.equals("cinfo")) {
 				lwc.getCommand(Info.class).execute(lwc, sender, "-info".split(" "));
@@ -192,14 +235,14 @@ public class LWCPlugin extends JavaPlugin {
 			if (!cmd.validate(lwc, sender, args)) {
 				continue;
 			}
-			
-			if(!isPlayer && !cmd.supportsConsole()) {
+
+			if (!isPlayer && !cmd.supportsConsole()) {
 				continue;
 			}
 
 			try {
 				cmd.execute(lwc, sender, args);
-			} catch(Exception e) {
+			} catch (Exception e) {
 				log("Oh no! An LWC command threw an exception!");
 				e.printStackTrace();
 			}
@@ -207,14 +250,168 @@ public class LWCPlugin extends JavaPlugin {
 			return true;
 		}
 
+		if (!isPlayer) {
+			sender.sendMessage(Colors.Red + "That LWC command is not supported through the console :-)");
+			return true;
+		}
+
 		return false;
 	}
 
+	@Override
+	public void onDisable() {
+		if (updater != null) {
+			updater.saveInternal();
+		}
+
+		if (lwc != null) {
+			lwc.destruct();
+		}
+
+		System.gc();
+		System.gc();
+	}
+
+	@Override
+	public void onEnable() {
+		Config.init();
+
+		try {
+			ResourceBundle defaultBundle = null;
+
+			// attempt to load a language-specific locale bundled with LWC
+			try {
+				defaultBundle = ResourceBundle.getBundle("lwc", new Locale(ConfigValues.LOCALE.getString()), new UTF8Control());
+			} catch (MissingResourceException e) {
+			}
+
+			// use default locale if language specific override was not found
+			if (defaultBundle == null) {
+				defaultBundle = ResourceBundle.getBundle("lwc", new Locale("default"), new UTF8Control());
+			}
+
+			locale = new LWCResourceBundle(defaultBundle);
+		} catch (MissingResourceException e) {
+			log("We are missing the default locale in LWC.jar.. What happened to it? :-(");
+			log("###########################");
+			log("## SHUTTING DOWN LWC !!! ##");
+			;
+			log("###########################");
+			getServer().getPluginManager().disablePlugin(this);
+			return;
+		}
+
+		// located in plugins/LWC/locale/, values in this overrides the ones in the default :-)
+		ResourceBundle optionalBundle = null;
+
+		try {
+			optionalBundle = ResourceBundle.getBundle("lwc", new Locale(ConfigValues.LOCALE.getString()), new LocaleClassLoader(), new UTF8Control());
+		} catch (MissingResourceException e) {
+		}
+
+		if (optionalBundle != null) {
+			locale.addExtensionBundle(optionalBundle);
+			log("Loaded override bundle: ");
+		}
+
+		int overrides = optionalBundle != null ? optionalBundle.keySet().size() : 0;
+
+		log("Loaded " + locale.keySet().size() + " locale strings (" + overrides + " overrides)");
+
+		loadDatabase();
+		registerCommands();
+		registerEvents();
+
+		lwc.load();
+
+		log("At version: " + LWCInfo.FULL_VERSION);
+	}
+
 	/**
-	 * @return the Updater instance
+	 * Log a string to the console
+	 * 
+	 * @param str
 	 */
-	public Updater getUpdater() {
-		return updater;
+	private void log(String str) {
+		logger.log(str);
+	}
+
+	/**
+	 * Register a command
+	 * 
+	 * @param command
+	 */
+	private void registerCommand(Class<?> clazz) {
+		try {
+			ICommand command = (ICommand) clazz.newInstance();
+			lwc.getCommands().add(command);
+			logger.log("Loaded command: " + command.getName(), Level.CONFIG);
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/***
+	 * Load all of the commands
+	 */
+	private void registerCommands() {
+		registerCommand(Admin.class);
+		registerCommand(Create.class);
+		registerCommand(Remove.class);
+		registerCommand(Info.class);
+		registerCommand(Modes.class);
+		registerCommand(Modify.class);
+		registerCommand(Unlock.class);
+		registerCommand(Owners.class);
+		registerCommand(Menu.class);
+	}
+
+	/**
+	 * Register a hook with default priority
+	 * 
+	 * TODO: Change priority back to NORMAL when real permissions are in
+	 * 
+	 * @param hook
+	 *            the hook to register
+	 */
+	private void registerEvent(Listener listener, Type eventType) {
+		registerEvent(listener, eventType, Priority.Highest);
+	}
+
+	/**
+	 * Register a hook
+	 * 
+	 * @param hook
+	 *            the hook to register
+	 * @priority the priority to use
+	 */
+	private void registerEvent(Listener listener, Type eventType, Priority priority) {
+		logger.log("-> " + eventType.toString(), Level.CONFIG);
+
+		getServer().getPluginManager().registerEvent(eventType, listener, priority, this);
+	}
+
+	/**
+	 * Register all of the events used by LWC
+	 * 
+	 * TODO: Change priority back to NORMAL when real permissions are in
+	 */
+	private void registerEvents() {
+		/* Player events */
+		registerEvent(playerListener, Type.PLAYER_QUIT, Priority.Monitor);
+		registerEvent(playerListener, Type.PLAYER_DROP_ITEM);
+
+		/* Entity events */
+		registerEvent(entityListener, Type.ENTITY_EXPLODE);
+
+		/* Block events */
+		registerEvent(blockListener, Type.BLOCK_INTERACT);
+		registerEvent(blockListener, Type.BLOCK_DAMAGED);
+		registerEvent(blockListener, Type.BLOCK_BREAK);
+		registerEvent(blockListener, Type.BLOCK_PLACED);
+		registerEvent(blockListener, Type.REDSTONE_CHANGE);
 	}
 
 	/**
@@ -245,7 +442,9 @@ public class LWCPlugin extends JavaPlugin {
 		log(" - loading old lwc.properties");
 		Config config = Config.getInstance("lwc.properties");
 
-		// People's initial flush-db was 60 seconds.. then i lowered to 30.. which both is too high let's take this opportunity to change that, shall we?
+		// People's initial flush-db was 60 seconds.. then i lowered to 30..
+		// which both is too high let's take this opportunity to change that,
+		// shall we?
 		if (Integer.parseInt((String) config.get("flush-db-interval")) > 20) {
 			config.setProperty("flush-db-interval", "10");
 		}
@@ -290,172 +489,6 @@ public class LWCPlugin extends JavaPlugin {
 		databaseFile.delete();
 		new File("lwc.properties").delete();
 		log(" +++ migration complete");
-	}
-
-	@Override
-	public void onDisable() {
-		if (updater != null) {
-			updater.saveInternal();
-		}
-
-		if (lwc != null) {
-			lwc.destruct();
-		}
-	}
-
-	/**
-	 * @return the locale
-	 */
-	public ResourceBundle getLocale() {
-		return locale;
-	}
-
-	@Override
-	public void onEnable() {
-		Config.init();
-
-		if (LWCInfo.DEVELOPMENT && false) {
-			try {
-				locale = ResourceBundle.getBundle("lwc", new Locale(ConfigValues.LOCALE.getString()), new LocaleClassLoader());
-				log("Loaded " + locale.keySet().size() + " locale strings");
-			} catch (MissingResourceException e) {
-				log(" ############################# ");
-				log(" ############################# ");
-				log(" ############################# ");
-				log("    MISSING LOCALE: " + ConfigValues.LOCALE.getString() + "!!");
-				log(" ##        STOPPING !!      ## ");
-				log(" ############################# ");
-				log(" ############################# ");
-				log(" ############################# ");
-				getServer().getPluginManager().disablePlugin(this);
-				return;
-			}
-		}
-
-		loadDatabase();
-		registerCommands();
-		registerEvents();
-
-		lwc.load();
-
-		log("At version: " + LWCInfo.FULL_VERSION);
-	}
-	
-	/**
-	 * Load the database
-	 */
-	public void loadDatabase() {
-		String database = ConfigValues.DATABASE.getString().toLowerCase();
-
-		if (database.equals("mysql") && LWCInfo.DEVELOPMENT) {
-			Database.DefaultType = Database.Type.MySQL;
-		} else {
-			Database.DefaultType = Database.Type.SQLite;
-		}
-
-		try {
-			if (ConfigValues.AUTO_UPDATE.getBool()) {
-				updater.checkDist();
-			} else {
-				updater.check();
-			}
-
-			updater.update();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * @return the LWC instance
-	 */
-	public LWC getLWC() {
-		return lwc;
-	}
-
-	/**
-	 * Register all of the events used by LWC
-	 * 
-	 * TODO: Change priority back to NORMAL when real permissions are in
-	 */
-	private void registerEvents() {
-		/* Player events */
-		registerEvent(playerListener, Type.PLAYER_QUIT, Priority.Monitor);
-
-		/* Entity events */
-		registerEvent(entityListener, Type.ENTITY_EXPLODE);
-
-		/* Block events */
-		registerEvent(blockListener, Type.BLOCK_INTERACT);
-		registerEvent(blockListener, Type.BLOCK_DAMAGED);
-		registerEvent(blockListener, Type.BLOCK_BREAK);
-		registerEvent(blockListener, Type.BLOCK_PLACED);
-		registerEvent(blockListener, Type.REDSTONE_CHANGE);
-	}
-
-	/***
-	 * Load all of the commands
-	 */
-	private void registerCommands() {
-		registerCommand(Admin.class);
-		registerCommand(Create.class);
-		registerCommand(Remove.class);
-		registerCommand(Info.class);
-		registerCommand(Modes.class);
-		registerCommand(Modify.class);
-		registerCommand(Unlock.class);
-		registerCommand(Owners.class);
-	}
-
-	/**
-	 * Register a hook with default priority
-	 * 
-	 * TODO: Change priority back to NORMAL when real permissions are in
-	 * 
-	 * @param hook
-	 *            the hook to register
-	 */
-	private void registerEvent(Listener listener, Type eventType) {
-		registerEvent(listener, eventType, Priority.Highest);
-	}
-
-	/**
-	 * Register a hook
-	 * 
-	 * @param hook
-	 *            the hook to register
-	 * @priority the priority to use
-	 */
-	private void registerEvent(Listener listener, Type eventType, Priority priority) {
-		logger.log("-> " + eventType.toString(), Level.CONFIG);
-
-		getServer().getPluginManager().registerEvent(eventType, listener, priority, this);
-	}
-
-	/**
-	 * Register a command
-	 * 
-	 * @param command
-	 */
-	private void registerCommand(Class<?> clazz) {
-		try {
-			ICommand command = (ICommand) clazz.newInstance();
-			lwc.getCommands().add(command);
-			logger.log("Loaded command: " + command.getName(), Level.CONFIG);
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Log a string to the console
-	 * 
-	 * @param str
-	 */
-	private void log(String str) {
-		logger.log(str);
 	}
 
 }
