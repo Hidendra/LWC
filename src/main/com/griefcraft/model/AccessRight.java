@@ -19,7 +19,16 @@ package com.griefcraft.model;
 
 public class AccessRight {
 
+	private String entity;
+	private int id;
+
+	private int protectionId;
+
+	private int rights;
+	private int type;
+
 	public static final int GROUP = 0;
+
 	public static final int PLAYER = 1;
 
 	/**
@@ -27,20 +36,8 @@ public class AccessRight {
 	 */
 	public static final int RESULTS_PER_PAGE = 15;
 
-	private int id;
-	private int protectionId;
-	private String entity;
-	private int rights;
-	private int type;
-
-	public static String typeToString(int rights) {
-		if (rights == GROUP) {
-			return "Group";
-		} else if (rights == PLAYER) {
-			return "Player";
-		}
-
-		return "Unknown";
+	public String getEntity() {
+		return entity;
 	}
 
 	public int getId() {
@@ -51,16 +48,16 @@ public class AccessRight {
 		return protectionId;
 	}
 
-	public String getEntity() {
-		return entity;
-	}
-
 	public int getRights() {
 		return rights;
 	}
 
 	public int getType() {
 		return type;
+	}
+
+	public void setEntity(String entity) {
+		this.entity = entity;
 	}
 
 	public void setId(int id) {
@@ -71,16 +68,22 @@ public class AccessRight {
 		this.protectionId = protectionId;
 	}
 
-	public void setEntity(String entity) {
-		this.entity = entity;
-	}
-
 	public void setRights(int rights) {
 		this.rights = rights;
 	}
 
 	public void setType(int type) {
 		this.type = type;
+	}
+
+	public static String typeToString(int rights) {
+		if (rights == GROUP) {
+			return "Group";
+		} else if (rights == PLAYER) {
+			return "Player";
+		}
+
+		return "Unknown";
 	}
 
 }

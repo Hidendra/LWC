@@ -21,9 +21,9 @@ public class Action {
 
 	public int id;
 	private String action;
-	private String player;
 	private int chestID;
 	private String data;
+	private String player;
 
 	/**
 	 * @return the action

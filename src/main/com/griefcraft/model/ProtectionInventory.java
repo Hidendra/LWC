@@ -22,12 +22,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.bukkit.inventory.ItemStack;
 
-public class PInventory {
-
-	/**
-	 * The protection id this inventory is attached to
-	 */
-	private int protectionId;
+public class ProtectionInventory {
 
 	/**
 	 * The inventory
@@ -35,23 +30,22 @@ public class PInventory {
 	private ItemStack[] itemStacks;
 
 	/**
-	 * Check if this inventory is in a queue
-	 * 
-	 * @param queue
+	 * The protection id this inventory is attached to
+	 */
+	private int protectionId;
+
+	/**
 	 * @return
 	 */
-	public boolean isIn(ConcurrentLinkedQueue<PInventory> queue) {
-		Iterator<PInventory> iterator = queue.iterator();
+	public ItemStack[] getItemStacks() {
+		return itemStacks;
+	}
 
-		while (iterator.hasNext()) {
-			PInventory pInventory = iterator.next();
-
-			if (pInventory.getProtectionId() == protectionId) {
-				return true;
-			}
-		}
-
-		return false;
+	/**
+	 * @return
+	 */
+	public int getProtectionId() {
+		return protectionId;
 	}
 
 	@Override
@@ -60,12 +54,23 @@ public class PInventory {
 	}
 
 	/**
-	 * Set the protection id
+	 * Check if this inventory is in a queue
 	 * 
-	 * @param protectionId
+	 * @param queue
+	 * @return
 	 */
-	public void setProtectionId(int protectionId) {
-		this.protectionId = protectionId;
+	public boolean isIn(ConcurrentLinkedQueue<ProtectionInventory> queue) {
+		Iterator<ProtectionInventory> iterator = queue.iterator();
+
+		while (iterator.hasNext()) {
+			ProtectionInventory pInventory = iterator.next();
+
+			if (pInventory.getProtectionId() == protectionId) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -78,17 +83,12 @@ public class PInventory {
 	}
 
 	/**
-	 * @return
+	 * Set the protection id
+	 * 
+	 * @param protectionId
 	 */
-	public int getProtectionId() {
-		return protectionId;
-	}
-
-	/**
-	 * @return
-	 */
-	public ItemStack[] getItemStacks() {
-		return itemStacks;
+	public void setProtectionId(int protectionId) {
+		this.protectionId = protectionId;
 	}
 
 }

@@ -40,9 +40,36 @@ import com.griefcraft.sql.Database;
 public class Updater {
 
 	/**
+	 * Internal config
+	 */
+	private HashMap<String, String> config = new HashMap<String, String>();
+
+	private double latestInternalVersion = 0.00;
+
+	/**
+	 * The latest LWC version
+	 */
+	private double latestPluginVersion = 0.00;
+
+	/**
 	 * The logging object for this class
 	 */
 	private Logger logger = Logger.getLogger(getClass().getSimpleName());
+
+	/**
+	 * List of files to download
+	 */
+	private List<UpdaterFile> needsUpdating = new ArrayList<UpdaterFile>();
+
+	/**
+	 * The folder where libraries are stored
+	 */
+	public final static String DEST_LIBRARY_FOLDER = "plugins/LWC/";
+
+	/**
+	 * File used for the distribution
+	 */
+	public final static String DIST_FILE = "lwc/release/LWC.jar";
 
 	/**
 	 * URL to the base update site
@@ -53,26 +80,6 @@ public class Updater {
 	 * File used to obtain the latest version
 	 */
 	public final static String VERSION_FILE = "lwc/VERSION";
-
-	/**
-	 * File used for the distribution
-	 */
-	public final static String DIST_FILE = "lwc/release/LWC.jar";
-
-	/**
-	 * The folder where libraries are stored
-	 */
-	public final static String DEST_LIBRARY_FOLDER = "plugins/LWC/";
-
-	/**
-	 * List of files to download
-	 */
-	private List<UpdaterFile> needsUpdating = new ArrayList<UpdaterFile>();
-
-	/**
-	 * Internal config
-	 */
-	private HashMap<String, String> config = new HashMap<String, String>();
 
 	public Updater() {
 		/*
@@ -108,27 +115,9 @@ public class Updater {
 		}
 
 		if (ConfigValues.AUTO_UPDATE.getBool()) {
-			double latestVersion = getLatestPluginVersion();
-
-			if (latestVersion > LWCInfo.VERSION) {
+			if (latestPluginVersion > LWCInfo.VERSION) {
 				logger.log("Update detected for LWC");
-				logger.log("Latest version: " + latestVersion);
-			}
-		}
-	}
-
-	/**
-	 * Force update of binaries
-	 */
-	private void requireBinaryUpdate() {
-		String[] paths = new String[] { DEST_LIBRARY_FOLDER + "lib/" + Database.DefaultType.getDriver(), getFullNativeLibraryPath() };
-
-		for (String path : paths) {
-			UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "shared/" + path.replaceAll(DEST_LIBRARY_FOLDER, ""));
-			updaterFile.setLocalLocation(path);
-
-			if (!needsUpdating.contains(updaterFile)) {
-				needsUpdating.add(updaterFile);
+				logger.log("Latest version: " + latestPluginVersion);
 			}
 		}
 	}
@@ -139,11 +128,9 @@ public class Updater {
 	 * @return
 	 */
 	public boolean checkDist() {
-		double latestVersion = getLatestPluginVersion();
-
 		check();
 
-		if (latestVersion > LWCInfo.VERSION) {
+		if (latestPluginVersion > LWCInfo.VERSION) {
 			UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + DIST_FILE);
 			updaterFile.setLocalLocation("plugins/LWC.jar");
 
@@ -163,30 +150,6 @@ public class Updater {
 	}
 
 	/**
-	 * Get the latest version
-	 * 
-	 * @return
-	 */
-	public double getLatestPluginVersion() {
-		try {
-			URL url = new URL(UPDATE_SITE + VERSION_FILE);
-
-			InputStream inputStream = url.openStream();
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-			double version = Double.parseDouble(bufferedReader.readLine());
-
-			bufferedReader.close();
-
-			return version;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return 0.00;
-	}
-
-	/**
 	 * @return the current sqlite version
 	 */
 	public double getCurrentSQLiteVersion() {
@@ -194,26 +157,204 @@ public class Updater {
 	}
 
 	/**
-	 * @return the latest sqlite version
+	 * @return the full path to the native library for sqlite
 	 */
-	public double getLatestSQLiteVersion() {
+	public String getFullNativeLibraryPath() {
+		return getOSSpecificFolder() + getOSSpecificFileName();
+	}
+
+	/**
+	 * @return the latest internal version
+	 */
+	public double getLatestInternalVersion() {
+		return latestInternalVersion;
+	}
+
+	/**
+	 * @return the latest plugin version
+	 */
+	public double getLatestPluginVersion() {
+		return latestPluginVersion;
+	}
+
+	/**
+	 * @return the os/arch specific file name for sqlite's native library
+	 */
+	public String getOSSpecificFileName() {
+		String osname = System.getProperty("os.name").toLowerCase();
+
+		if (osname.contains("windows")) {
+			return "sqlitejdbc.dll";
+		} else if (osname.contains("mac")) {
+			return "libsqlitejdbc.jnilib";
+		} else { /* We assume linux/unix */
+			return "libsqlitejdbc.so";
+		}
+	}
+
+	/**
+	 * @return the os/arch specific folder location for SQLite's native library
+	 */
+	public String getOSSpecificFolder() {
+		String osname = System.getProperty("os.name").toLowerCase();
+		String arch = System.getProperty("os.arch").toLowerCase();
+
+		if (osname.contains("windows")) {
+			return DEST_LIBRARY_FOLDER + "lib/native/Windows/" + arch + "/";
+		} else if (osname.contains("mac")) {
+			return DEST_LIBRARY_FOLDER + "lib/native/Mac/" + arch + "/";
+		} else { /* We assume linux/unix */
+			return DEST_LIBRARY_FOLDER + "lib/native/Linux/" + arch + "/";
+		}
+	}
+
+	/**
+	 * Load the latest versions
+	 * 
+	 * @param background
+	 *            if true, will be run in the background
+	 */
+	public void loadVersions(boolean background) {
+		class Background_Check_Thread implements Runnable {
+			public void run() {
+				try {
+					URL url = new URL(UPDATE_SITE + VERSION_FILE);
+
+					InputStream inputStream = url.openStream();
+					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+					// load up them versions!
+					// expected: PLUGINVERSION\nINTERNALVERSION
+					latestPluginVersion = Double.parseDouble(bufferedReader.readLine());
+					latestInternalVersion = Double.parseDouble(bufferedReader.readLine());
+
+					bufferedReader.close();
+				} catch (Exception e) {
+				}
+
+				try {
+					if (ConfigValues.AUTO_UPDATE.getBool()) {
+						checkDist();
+					} else {
+						check();
+					}
+
+					update();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		Background_Check_Thread worker = new Background_Check_Thread();
+
+		if (background) {
+			new Thread(worker).start();
+		} else {
+			worker.run();
+		}
+	}
+
+	/**
+	 * Create the internal updater config file
+	 */
+	public void saveInternal() {
 		try {
-			URL url = new URL(UPDATE_SITE + VERSION_FILE);
+			File file = getInternalFile();
 
-			InputStream inputStream = url.openStream();
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+			if (file.exists()) {
+				file.delete();
+			}
 
-			bufferedReader.readLine();
-			double version = Double.parseDouble(bufferedReader.readLine());
+			file.createNewFile();
 
-			bufferedReader.close();
+			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 
-			return version;
+			writer.write("# LWC Internal Config\n");
+			writer.write("###############################\n");
+			writer.write("### DO NOT MODIFY THIS FILE ###\n");
+			writer.write("### THIS DOES NOT CHANGE    ###\n");
+			writer.write("### LWC'S VISIBLE BEHAVIOUR ###\n");
+			writer.write("###############################\n\n");
+			writer.write("###############################\n");
+			writer.write("###        THANK YOU!       ###\n");
+			writer.write("###############################\n\n");
+
+			for (String key : config.keySet()) {
+				String value = config.get(key);
+
+				writer.write(key + ":" + value + "\n");
+			}
+
+			writer.flush();
+			writer.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
 
-		return 0.00;
+	/**
+	 * Ensure we have all of the required files (if not, download them)
+	 */
+	public void update() throws Exception {
+		if (needsUpdating.size() == 0) {
+			return;
+		}
+
+		/*
+		 * Make the folder hierarchy if needed
+		 */
+		File folder = new File(getOSSpecificFolder());
+		folder.mkdirs();
+		folder = new File(DEST_LIBRARY_FOLDER + "lib/");
+		folder.mkdirs();
+
+		logger.log("Need to download " + needsUpdating.size() + " file(s)");
+
+		Iterator<UpdaterFile> iterator = needsUpdating.iterator();
+
+		while (iterator.hasNext()) {
+			UpdaterFile item = iterator.next();
+
+			String fileName = item.getRemoteLocation();
+			fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
+
+			logger.log(" - Downloading file: " + fileName);
+
+			URL url = new URL(item.getRemoteLocation());
+			File file = new File(item.getLocalLocation());
+
+			if (file.exists()) {
+				file.delete();
+			}
+
+			InputStream inputStream = url.openStream();
+			OutputStream outputStream = new FileOutputStream(file);
+
+			saveTo(inputStream, outputStream);
+
+			inputStream.close();
+			outputStream.close();
+
+			logger.log("  + Download complete");
+			iterator.remove();
+		}
+
+		/*
+		 * In the event we updated binaries, we should force an ini save!
+		 */
+		saveInternal();
+	}
+
+	/**
+	 * Check the internal LWC version
+	 */
+	private void checkInternal() {
+		if (latestInternalVersion > getCurrentSQLiteVersion()) {
+			requireBinaryUpdate();
+			logger.log("Binary update required");
+			config.put("sqlite", latestInternalVersion + "");
+		}
 	}
 
 	/**
@@ -276,142 +417,19 @@ public class Updater {
 	}
 
 	/**
-	 * Create the internal updater config file
+	 * Force update of binaries
 	 */
-	public void saveInternal() {
-		try {
-			File file = getInternalFile();
+	private void requireBinaryUpdate() {
+		String[] paths = new String[] { DEST_LIBRARY_FOLDER + "lib/" + Database.DefaultType.getDriver(), getFullNativeLibraryPath() };
 
-			if (file.exists()) {
-				file.delete();
+		for (String path : paths) {
+			UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "shared/" + path.replaceAll(DEST_LIBRARY_FOLDER, ""));
+			updaterFile.setLocalLocation(path);
+
+			if (!needsUpdating.contains(updaterFile)) {
+				needsUpdating.add(updaterFile);
 			}
-
-			file.createNewFile();
-
-			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-
-			writer.write("# LWC Internal Config\n");
-			writer.write("###############################\n");
-			writer.write("### DO NOT MODIFY THIS FILE ###\n");
-			writer.write("### THIS DOES NOT CHANGE    ###\n");
-			writer.write("### LWC'S VISIBLE BEHAVIOUR ###\n");
-			writer.write("###############################\n\n");
-			writer.write("###############################\n");
-			writer.write("###        THANK YOU!       ###\n");
-			writer.write("###############################\n\n");
-
-			for (String key : config.keySet()) {
-				String value = config.get(key);
-
-				writer.write(key + ":" + value + "\n");
-			}
-
-			writer.flush();
-			writer.close();
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * @return the full path to the native library for sqlite
-	 */
-	public String getFullNativeLibraryPath() {
-		return getOSSpecificFolder() + getOSSpecificFileName();
-	}
-
-	/**
-	 * @return the os/arch specific file name for sqlite's native library
-	 */
-	public String getOSSpecificFileName() {
-		String osname = System.getProperty("os.name").toLowerCase();
-
-		if (osname.contains("windows")) {
-			return "sqlitejdbc.dll";
-		} else if (osname.contains("mac")) {
-			return "libsqlitejdbc.jnilib";
-		} else { /* We assume linux/unix */
-			return "libsqlitejdbc.so";
-		}
-	}
-
-	/**
-	 * @return the os/arch specific folder location for SQLite's native library
-	 */
-	public String getOSSpecificFolder() {
-		String osname = System.getProperty("os.name").toLowerCase();
-		String arch = System.getProperty("os.arch").toLowerCase();
-
-		if (osname.contains("windows")) {
-			return DEST_LIBRARY_FOLDER + "lib/native/Windows/" + arch + "/";
-		} else if (osname.contains("mac")) {
-			return DEST_LIBRARY_FOLDER + "lib/native/Mac/" + arch + "/";
-		} else { /* We assume linux/unix */
-			return DEST_LIBRARY_FOLDER + "lib/native/Linux/" + arch + "/";
-		}
-	}
-
-	/**
-	 * Ensure we have all of the required files (if not, download them)
-	 */
-	public void update() throws Exception {
-		/*
-		 * Check internal versions
-		 */
-		double latestVersion = getLatestSQLiteVersion();
-		if (latestVersion > getCurrentSQLiteVersion()) {
-			requireBinaryUpdate();
-			logger.log("Binary update required");
-			config.put("sqlite", latestVersion + "");
-		}
-
-		if (needsUpdating.size() == 0) {
-			return;
-		}
-
-		/*
-		 * Make the folder hierarchy if needed
-		 */
-		File folder = new File(getOSSpecificFolder());
-		folder.mkdirs();
-		folder = new File(DEST_LIBRARY_FOLDER + "lib/");
-		folder.mkdirs();
-
-		logger.log("Need to download " + needsUpdating.size() + " file(s)");
-
-		Iterator<UpdaterFile> iterator = needsUpdating.iterator();
-
-		while (iterator.hasNext()) {
-			UpdaterFile item = iterator.next();
-
-			String fileName = item.getRemoteLocation();
-			fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
-
-			logger.log(" - Downloading file: " + fileName);
-
-			URL url = new URL(item.getRemoteLocation());
-			File file = new File(item.getLocalLocation());
-
-			if (file.exists()) {
-				file.delete();
-			}
-
-			InputStream inputStream = url.openStream();
-			OutputStream outputStream = new FileOutputStream(file);
-
-			saveTo(inputStream, outputStream);
-
-			inputStream.close();
-			outputStream.close();
-
-			logger.log("  + Download complete");
-			iterator.remove();
-		}
-
-		/*
-		 * In the event we updated binaries, we should force an ini save!
-		 */
-		saveInternal();
 	}
 
 	/**

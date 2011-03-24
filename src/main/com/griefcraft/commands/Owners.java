@@ -23,19 +23,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.util.Colors;
 
 public class Owners implements ICommand {
-
-	@Override
-	public String getName() {
-		return "owners";
-	}
-	
-	@Override
-	public boolean supportsConsole() {
-		return false;
-	}
 
 	@Override
 	public void execute(LWC lwc, CommandSender sender, String[] args) {
@@ -52,8 +41,18 @@ public class Owners implements ICommand {
 		}
 
 		lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-		lwc.getMemoryDatabase().registerAction("owners:" + page, player.getName());
-		player.sendMessage(Colors.Blue + "Punch a protection to view who has access");
+		lwc.getMemoryDatabase().registerAction("owners", player.getName(), page + "");
+		lwc.sendLocale(sender, "protection.owners.finalize");
+	}
+
+	@Override
+	public String getName() {
+		return "owners";
+	}
+
+	@Override
+	public boolean supportsConsole() {
+		return false;
 	}
 
 	@Override

@@ -28,16 +28,6 @@ import com.griefcraft.util.Colors;
 public class Remove implements ICommand {
 
 	@Override
-	public String getName() {
-		return "remove";
-	}
-	
-	@Override
-	public boolean supportsConsole() {
-		return false;
-	}
-
-	@Override
 	public void execute(LWC lwc, CommandSender sender, String[] args) {
 		if (args.length < 2) {
 			lwc.sendSimpleUsage(sender, "/lwc -r <protection|modes>");
@@ -55,19 +45,28 @@ public class Remove implements ICommand {
 
 			lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 			lwc.getMemoryDatabase().registerAction("free", player.getName());
-			player.sendMessage(Colors.Blue + "Punch your protection to remove the lock");
+			lwc.sendLocale(sender, "protection.remove.protection.finalize");
 		}
 
 		else if (type.equals("modes")) {
 			lwc.getMemoryDatabase().unregisterAllModes(player.getName());
-
-			player.sendMessage(Colors.Green + "Successfully removed all set modes.");
+			lwc.sendLocale(sender, "protection.remove.modes.finalize");
 		}
 
 		else {
 			lwc.sendSimpleUsage(sender, "/lwc -r <protection|modes>");
 			return;
 		}
+	}
+
+	@Override
+	public String getName() {
+		return "remove";
+	}
+
+	@Override
+	public boolean supportsConsole() {
+		return false;
 	}
 
 	@Override

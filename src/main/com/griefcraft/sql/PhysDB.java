@@ -31,6 +31,7 @@ import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Job;
 import com.griefcraft.model.Limit;
 import com.griefcraft.model.Protection;
+import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.Performance;
 
 public class PhysDB extends Database {
@@ -49,45 +50,41 @@ public class PhysDB extends Database {
 	}
 
 	/**
-	 * Load every protection, use _sparingly_
+	 * Count the rights
 	 * 
+	 * @param protectionId
 	 * @return
 	 */
-	public List<Protection> loadProtections() {
-		List<Protection> protections = new ArrayList<Protection>();
+	public int countRightsForProtection(int protectionId) {
+		return Integer.decode(fetch("SELECT COUNT(*) AS count FROM rights WHERE chest=?", "count", protectionId) + "");
+	}
 
+	/**
+	 * Insert or update an inventory in the database
+	 * 
+	 * @param protectionId
+	 * @param slots
+	 * @param stacks
+	 * @param items
+	 * @param durability
+	 * @param last_transaction
+	 * @param last_update
+	 */
+	public void createInventory(int protectionId, int slots, String stacks, String items, String durability, String last_transaction, String last_update) {
 		try {
-			Statement statement = connection.createStatement();
+			PreparedStatement statement = prepare("REPLACE INTO inventory (protectionId, slots, stacks, items, durability, last_transaction, last_update) VALUES (?, ?, ?, ?, ?, ?, ?)");
+			statement.setInt(1, protectionId);
+			statement.setInt(2, slots);
+			statement.setString(3, stacks);
+			statement.setString(4, items);
+			statement.setString(5, durability);
+			statement.setString(6, last_transaction);
+			statement.setString(7, last_update);
 
-			ResultSet set = statement.executeQuery("SELECT id,type,x,y,z FROM protections");
-
-			while (set.next()) {
-				/*
-				 * Only grab relevent data .. We don't want the overhead of owner/password/date !
-				 */
-				int id = set.getInt("id");
-				int type = set.getInt("type");
-				int x = set.getInt("x");
-				int y = set.getInt("y");
-				int z = set.getInt("z");
-
-				Protection protection = new Protection();
-				protection.setId(id);
-				protection.setType(type);
-				protection.setX(x);
-				protection.setY(y);
-				protection.setZ(z);
-
-				protections.add(protection);
-			}
-
-			set.close();
-			statement.close();
+			statement.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
-		return protections;
 	}
 
 	/**
@@ -114,21 +111,54 @@ public class PhysDB extends Database {
 	}
 
 	/**
-	 * Remove a scheduled job
+	 * Fetch an object from the sql database
 	 * 
-	 * @param id
+	 * @param sql
+	 * @param column
+	 * @return
 	 */
-	public void removeJob(int id) {
+	public Object fetch(String sql, String column, Object... toBind) {
 		try {
-			PreparedStatement statement = prepare("DELETE FROM jobs WHERE id = ?");
+			int index = 1;
+			PreparedStatement statement = prepare(sql);
 
-			statement.setInt(1, id);
+			for (Object bind : toBind) {
+				statement.setObject(index, bind);
+				index++;
+			}
 
-			statement.executeUpdate();
-			Performance.addPhysDBQuery();
-		} catch (Exception e) {
+			ResultSet set = statement.executeQuery();
+
+			if (set.next()) {
+				Object object = set.getObject(column);
+				set.close();
+				return object;
+			}
+
+			set.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
+		return null;
+	}
+
+	/**
+	 * @return the Global limit for anyone without explicit limits
+	 */
+	public int getGlobalLimit() {
+		return getLimit(Limit.GLOBAL, "");
+	}
+
+	/**
+	 * Retrieve a group's chest limit
+	 * 
+	 * @param group
+	 *            the group to check
+	 * @return the amount of chests they are limited to. -1 = infinite
+	 */
+	public int getGroupLimit(String group) {
+		return getLimit(Limit.GROUP, group);
 	}
 
 	/**
@@ -184,232 +214,6 @@ public class PhysDB extends Database {
 	}
 
 	/**
-	 * Get the amount of chests a player has
-	 * 
-	 * @param user
-	 *            the player to check
-	 * @return the amount of chests they have locked
-	 */
-	public boolean doesChestExist(int chestID) {
-		boolean retur = false;
-
-		try {
-			PreparedStatement statement = prepare("SELECT COUNT(*) AS count FROM `protections` WHERE `id` = ?");
-			statement.setInt(1, chestID);
-
-			final ResultSet set = statement.executeQuery();
-
-			retur = set.getInt("count") > 0;
-
-			set.close();
-			Performance.addPhysDBQuery();
-
-		} catch (final SQLException e) {
-			e.printStackTrace();
-		}
-
-		return retur;
-	}
-
-	/**
-	 * Update process from 1.00 -> 1.10
-	 */
-	public void doUpdate100() {
-		try {
-			final Statement statement = connection.createStatement();
-			statement.executeQuery("SELECT `type` FROM `protections`");
-			statement.close();
-			Performance.addPhysDBQuery();
-		} catch (final SQLException e) {
-			logger.log("Outdated database!", Level.CONFIG);
-			logger.log("UPGRADING FROM 1.00 TO 1.10", Level.CONFIG);
-			logger.log("ALTERING TABLE `protections` AND FILLING WITH DEFAULT DATA", Level.CONFIG);
-
-			try {
-				final Statement statement = connection.createStatement();
-				statement.addBatch("ALTER TABLE `protections` ADD `type` INTEGER");
-				statement.addBatch("UPDATE `protections` SET `type`='1'");
-				statement.executeBatch();
-				statement.close();
-				Performance.addPhysDBQuery();
-			} catch (final SQLException ex) {
-				log("Oops! Something went wrong: ");
-				ex.printStackTrace();
-				System.exit(0);
-			}
-
-			log("Update completed!");
-		}
-	}
-
-	/**
-	 * Update to 150, altered a table
-	 */
-	public void doUpdate150() {
-		try {
-			Statement statement = connection.createStatement();
-			statement.executeQuery("SELECT blockId FROM protections");
-			statement.close();
-			Performance.addPhysDBQuery();
-		} catch (SQLException e) {
-			try {
-				Statement statement = connection.createStatement();
-				statement.executeUpdate("ALTER TABLE `protections` ADD `blockId` INTEGER");
-				statement.close();
-				Performance.addPhysDBQuery();
-			} catch (SQLException ex) {
-			}
-		}
-	}
-
-	/**
-	 * @return the number of protected chests
-	 */
-	public int getProtectionCount() {
-		int count = 0;
-
-		try {
-			final Statement statement = connection.createStatement();
-			final ResultSet set = statement.executeQuery("SELECT `id` FROM `protections`");
-
-			while (set.next()) {
-				count++;
-			}
-
-			statement.close();
-			Performance.addPhysDBQuery();
-		} catch (final SQLException e) {
-			e.printStackTrace();
-		}
-
-		return count;
-	}
-
-	/**
-	 * Fetch an object from the sql database
-	 * 
-	 * @param sql
-	 * @param column
-	 * @return
-	 */
-	public Object fetch(String sql, String column, Object... toBind) {
-		try {
-			int index = 1;
-			PreparedStatement statement = prepare(sql);
-
-			for (Object bind : toBind) {
-				statement.setObject(index, bind);
-				index++;
-			}
-
-			ResultSet set = statement.executeQuery();
-
-			if (set.next()) {
-				return set.getObject(column);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	/**
-	 * Count the rights
-	 * 
-	 * @param protectionId
-	 * @return
-	 */
-	public int countRights(int protectionId) {
-		return (Integer) fetch("SELECT COUNT(*) FROM rights WHERE chest=?", "count", protectionId);
-	}
-
-	/**
-	 * Get the rights for a protection id ranging from start-max
-	 * 
-	 * @param protectionId
-	 * @param start
-	 * @param max
-	 * @return
-	 */
-	public List<AccessRight> getAccessRights(int protectionId, int start, int max) {
-		List<AccessRight> accessRights = new ArrayList<AccessRight>();
-
-		try {
-			PreparedStatement statement = prepare("SELECT * FROM rights WHERE chest = ? ORDER BY rights DESC LIMIT ?,?");
-			statement.setInt(1, protectionId);
-			statement.setInt(2, start);
-			statement.setInt(3, max);
-
-			ResultSet set = statement.executeQuery();
-
-			while (set.next()) {
-				AccessRight accessRight = new AccessRight();
-
-				accessRight.setId(set.getInt("id"));
-				accessRight.setProtectionId(protectionId);
-				accessRight.setEntity(set.getString("entity"));
-				accessRight.setRights(set.getInt("rights"));
-				accessRight.setType(set.getInt("type"));
-
-				accessRights.add(accessRight);
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return accessRights;
-	}
-
-	/**
-	 * Get the amount of chests a player has
-	 * 
-	 * @param user
-	 *            the player to check
-	 * @return the amount of chests they have locked
-	 */
-	public int getProtectionCount(String user) {
-		int amount = 0;
-
-		try {
-			PreparedStatement statement = prepare("SELECT `id` FROM `protections` WHERE `owner` = ?");
-			statement.setString(1, user);
-
-			final ResultSet set = statement.executeQuery();
-
-			while (set.next()) {
-				amount++;
-			}
-
-			set.close();
-			Performance.addPhysDBQuery();
-		} catch (final SQLException e) {
-			e.printStackTrace();
-		}
-
-		return amount;
-	}
-
-	/**
-	 * Retrieve a group's chest limit
-	 * 
-	 * @param group
-	 *            the group to check
-	 * @return the amount of chests they are limited to. -1 = infinite
-	 */
-	public int getGroupLimit(String group) {
-		return getLimit(Limit.GROUP, group);
-	}
-
-	/**
-	 * @return the Global limit for anyone without explicit limits
-	 */
-	public int getGlobalLimit() {
-		return getLimit(Limit.GLOBAL, "");
-	}
-
-	/**
 	 * Retrieve a limit for a given type
 	 * 
 	 * @param type
@@ -439,6 +243,51 @@ public class PhysDB extends Database {
 		}
 
 		return limit;
+	}
+
+	/**
+	 * @return the number of limits
+	 */
+	public int getLimitCount() {
+		return Integer.decode(fetch("SELECT COUNT(*) AS count FROM limits", "count") + "");
+	}
+
+	/**
+	 * Get the menu style for a player
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public String getMenuStyle(String player) {
+		try {
+			PreparedStatement statement = prepare("SELECT menu FROM menu_styles WHERE player = ?");
+			statement.setString(1, player);
+
+			ResultSet set = statement.executeQuery();
+
+			if (set.next()) {
+				String style = set.getString("menu");
+				set.close();
+				return style;
+			}
+
+			set.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return ConfigValues.DEFAULT_MENU_STYLE.getString();
+	}
+
+	/**
+	 * Retrieve a player's chest limit
+	 * 
+	 * @param user
+	 *            the user to check
+	 * @return the amount of chests they are limited to. -1 = infinite
+	 */
+	public int getPlayerLimit(String user) {
+		return getLimit(Limit.PLAYER, user);
 	}
 
 	/**
@@ -481,93 +330,46 @@ public class PhysDB extends Database {
 	}
 
 	/**
-	 * Retrieve a player's chest limit
-	 * 
-	 * @param user
-	 *            the user to check
-	 * @return the amount of chests they are limited to. -1 = infinite
+	 * @return the number of protected chests
 	 */
-	public int getPlayerLimit(String user) {
-		return getLimit(Limit.PLAYER, user);
+	public int getProtectionCount() {
+		return Integer.decode(fetch("SELECT COUNT(*) AS count FROM protections", "count") + "");
 	}
 
 	/**
-	 * @return the number of limits
+	 * Get the amount of chests a player has
+	 * 
+	 * @param user
+	 *            the player to check
+	 * @return the amount of chests they have locked
 	 */
-	public int getLimitCount() {
-		int count = 0;
+	public int getProtectionCount(String user) {
+		int amount = 0;
 
 		try {
-			final Statement statement = connection.createStatement();
-			final ResultSet set = statement.executeQuery("SELECT `id` FROM `limits`");
+			PreparedStatement statement = prepare("SELECT `id` FROM `protections` WHERE `owner` = ?");
+			statement.setString(1, user);
+
+			final ResultSet set = statement.executeQuery();
 
 			while (set.next()) {
-				count++;
+				amount++;
 			}
 
-			statement.close();
+			set.close();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
 			e.printStackTrace();
 		}
 
-		return count;
+		return amount;
 	}
 
 	/**
-	 * Pushed an LWC pre-1.5 tables with a mis-spelled column name. Damn me
+	 * @return the number of limits
 	 */
-	private void fixJobsTable() {
-		try {
-			Statement statement = connection.createStatement();
-			statement.executeQuery("SELECT payload FROM jobs");
-			statement.executeQuery("SELECT timestamp FROM jobs");
-			statement.close();
-		} catch (SQLException e) {
-			logger.log("Fixing jobs table", Level.CONFIG);
-
-			try {
-				Statement statement = connection.createStatement();
-				statement.executeUpdate("DROP TABLE jobs");
-				statement.close();
-			} catch (SQLException ex) {
-			}
-		}
-	}
-
-	/**
-	 * Rename users table
-	 */
-	private void fixPlayerTable() {
-		try {
-			Statement statement = connection.createStatement();
-			statement.executeQuery("SELECT * from players");
-			statement.close();
-		} catch (SQLException e) {
-			logger.log("Fixing players table", Level.CONFIG);
-
-			try {
-				Statement statement = connection.createStatement();
-				statement.executeUpdate("DROP TABLE users");
-				statement.close();
-			} catch (SQLException ex) {
-			}
-		}
-
-		try {
-			Statement statement = connection.createStatement();
-			statement.executeQuery("SELECT mcusername from players");
-			statement.close();
-		} catch (SQLException e) {
-			logger.log("Fixing players table", Level.CONFIG);
-
-			try {
-				Statement statement = connection.createStatement();
-				statement.executeUpdate("DROP TABLE players");
-				statement.close();
-			} catch (SQLException ex) {
-			}
-		}
+	public int getRightsCount() {
+		return Integer.decode(fetch("SELECT COUNT(*) AS count FROM rights", "count") + "");
 	}
 
 	/**
@@ -584,6 +386,7 @@ public class PhysDB extends Database {
 		 */
 		doUpdate140();
 		doUpdate150();
+		doUpdate170();
 
 		fixJobsTable();
 		fixPlayerTable();
@@ -605,12 +408,20 @@ public class PhysDB extends Database {
 				column.setType("INTEGER");
 				protections.addColumn(column);
 
+				column = new Column("blockId");
+				column.setType("INTEGER");
+				protections.addColumn(column);
+
+				column = new Column("world");
+				column.setType("VARCHAR(255)");
+				protections.addColumn(column);
+
 				column = new Column("owner");
-				column.setType("TEXT");
+				column.setType("VARCHAR(255)");
 				protections.addColumn(column);
 
 				column = new Column("password");
-				column.setType("TEXT");
+				column.setType("VARCHAR(255)");
 				protections.addColumn(column);
 
 				column = new Column("x");
@@ -626,7 +437,7 @@ public class PhysDB extends Database {
 				protections.addColumn(column);
 
 				column = new Column("date");
-				column.setType("TEXT");
+				column.setType("VARCHAR(255)");
 				protections.addColumn(column);
 			}
 
@@ -647,7 +458,7 @@ public class PhysDB extends Database {
 				limits.addColumn(column);
 
 				column = new Column("entity");
-				column.setType("TEXT");
+				column.setType("VARCHAR(255)");
 				limits.addColumn(column);
 			}
 
@@ -685,15 +496,15 @@ public class PhysDB extends Database {
 				players.addColumn(column);
 
 				column = new Column("username");
-				column.setType("TEXT");
+				column.setType("VARCHAR(255)");
 				players.addColumn(column);
 
 				column = new Column("password");
-				column.setType("TEXT");
+				column.setType("VARCHAR(255)");
 				players.addColumn(column);
 
 				column = new Column("mcusername");
-				column.setType("TEXT");
+				column.setType("VARCHAR(255)");
 				players.addColumn(column);
 
 				column = new Column("rights");
@@ -701,11 +512,11 @@ public class PhysDB extends Database {
 				players.addColumn(column);
 
 				column = new Column("timestamp");
-				column.setType("TEXT");
+				column.setType("VARCHAR(255)");
 				players.addColumn(column);
 
 				column = new Column("salt");
-				column.setType("TEXT");
+				column.setType("VARCHAR(255)");
 				players.addColumn(column);
 			}
 
@@ -715,6 +526,7 @@ public class PhysDB extends Database {
 				column = new Column("protectionId");
 				column.setType("INTEGER");
 				column.setPrimary(true);
+				column.setAutoIncrement(false);
 				inventory.addColumn(column);
 
 				column = new Column("blockId");
@@ -726,23 +538,23 @@ public class PhysDB extends Database {
 				inventory.addColumn(column);
 
 				column = new Column("stacks");
-				column.setType("TEXT");
+				column.setType("VARCHAR(255)");
 				inventory.addColumn(column);
 
 				column = new Column("items");
-				column.setType("TEXT");
+				column.setType("VARCHAR(255)");
 				inventory.addColumn(column);
 
 				column = new Column("durability");
-				column.setType("TEXT");
+				column.setType("VARCHAR(255)");
 				inventory.addColumn(column);
 
 				column = new Column("last_transaction");
-				column.setType("TEXT");
+				column.setType("VARCHAR(255)");
 				inventory.addColumn(column);
 
 				column = new Column("last_update");
-				column.setType("TEXT");
+				column.setType("VARCHAR(255)");
 				inventory.addColumn(column);
 			}
 
@@ -759,16 +571,30 @@ public class PhysDB extends Database {
 				jobs.addColumn(column);
 
 				column = new Column("owner");
-				column.setType("TEXT");
+				column.setType("VARCHAR(255)");
 				jobs.addColumn(column);
 
 				column = new Column("payload");
-				column.setType("TEXT");
+				column.setType("VARCHAR(255)");
 				jobs.addColumn(column);
 
 				column = new Column("timestamp");
-				column.setType("TEXT");
+				column.setType("VARCHAR(255)");
 				jobs.addColumn(column);
+			}
+
+			Table menuStyles = new Table(this, "menu_styles");
+
+			{
+				column = new Column("player");
+				column.setType("VARCHAR(255)");
+				column.setPrimary(true);
+				column.setAutoIncrement(false);
+				menuStyles.addColumn(column);
+
+				column = new Column("menu");
+				column.setType("VARCHAR(255)");
+				menuStyles.addColumn(column);
 			}
 
 			protections.execute();
@@ -777,13 +603,18 @@ public class PhysDB extends Database {
 			players.execute();
 			inventory.execute();
 			jobs.execute();
+			menuStyles.execute();
 
 			connection.commit();
-			connection.setAutoCommit(true);
 
-			loadIndexes();
+			doIndexes();
 		} catch (final SQLException e) {
 			e.printStackTrace();
+		}
+
+		try {
+			connection.setAutoCommit(true);
+		} catch (Exception e) {
 		}
 
 		doUpdate100();
@@ -792,66 +623,231 @@ public class PhysDB extends Database {
 	}
 
 	/**
-	 * Insert or update an inventory in the database
+	 * Get the rights for a protection id ranging from start-max
 	 * 
 	 * @param protectionId
-	 * @param slots
-	 * @param stacks
-	 * @param items
-	 * @param durability
-	 * @param last_transaction
-	 * @param last_update
+	 * @param start
+	 * @param max
+	 * @return
 	 */
-	public void createInventory(int protectionId, int slots, String stacks, String items, String durability, String last_transaction, String last_update) {
-		try {
-			PreparedStatement statement = prepare("REPLACE INTO inventory (protectionId, slots, stacks, items, durability, last_transaction, last_update) VALUES (?, ?, ?, ?, ?, ?, ?)");
-			statement.setInt(1, protectionId);
-			statement.setInt(2, slots);
-			statement.setString(3, stacks);
-			statement.setString(4, items);
-			statement.setString(5, durability);
-			statement.setString(6, last_transaction);
-			statement.setString(7, last_update);
+	public List<AccessRight> loadAccessRights(int protectionId, int start, int max) {
+		List<AccessRight> accessRights = new ArrayList<AccessRight>();
 
-			statement.executeUpdate();
+		try {
+			PreparedStatement statement = prepare("SELECT * FROM rights WHERE chest = ? ORDER BY rights DESC LIMIT ?,?");
+			statement.setInt(1, protectionId);
+			statement.setInt(2, start);
+			statement.setInt(3, max);
+
+			ResultSet set = statement.executeQuery();
+
+			while (set.next()) {
+				AccessRight accessRight = new AccessRight();
+
+				accessRight.setId(set.getInt("id"));
+				accessRight.setProtectionId(protectionId);
+				accessRight.setEntity(set.getString("entity"));
+				accessRight.setRights(set.getInt("rights"));
+				accessRight.setType(set.getInt("type"));
+
+				accessRights.add(accessRight);
+			}
+
+			set.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
+		return accessRights;
 	}
 
 	/**
-	 * Instead of "updating indexes", let's just use IF NOT EXISTS each time
+	 * Get all limits
+	 * 
+	 * @return
 	 */
-	private void loadIndexes() {
+	public List<Limit> loadLimits() {
+		List<Limit> limits = new ArrayList<Limit>();
+
 		try {
-			connection.setAutoCommit(false);
-			Statement statement = connection.createStatement();
+			PreparedStatement statement = prepare("SELECT * FROM limits");
 
-			if (currentType == Type.SQLite) {
-				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in1 ON protections (owner, x, y, z)");
-				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in2 ON limits (type, entity)");
-				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in3 ON rights (chest, entity)");
+			ResultSet set = statement.executeQuery();
 
-				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in4 ON players (username)");
-				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in5 ON jobs (type, owner)");
-				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in6 ON inventory (protectionId, slots)");
-			} else {
-				statement.executeUpdate("CREATE INDEX in1 ON protections (x, y, z)");
-				statement.executeUpdate("CREATE INDEX in2 ON limits (type)");
-				statement.executeUpdate("CREATE INDEX in3 ON rights (chest)");
+			while (set.next()) {
+				Limit limit = new Limit();
 
-				// statement.executeUpdate("CREATE INDEX in4 ON players (username)");
-				statement.executeUpdate("CREATE INDEX in5 ON jobs (type)");
-				statement.executeUpdate("CREATE INDEX in6 ON inventory (protectionId, slots)");
+				limit.setId(set.getInt("id"));
+				limit.setType(set.getInt("type"));
+				limit.setAmount(set.getInt("amount"));
+				limit.setEntity(set.getString("entity"));
+
+				limits.add(limit);
 			}
 
-			connection.commit();
-			connection.setAutoCommit(true);
+			set.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
+		return limits;
+	}
+
+	/**
+	 * Load a chest at a given tile
+	 * 
+	 * @param chestID
+	 *            the chest's ID
+	 * @return the Chest object
+	 */
+	public Protection loadProtection(int chestID) {
+		try {
+			PreparedStatement statement = prepare("SELECT * FROM `protections` WHERE `id` = ?");
+			statement.setInt(1, chestID);
+
+			final ResultSet set = statement.executeQuery();
+
+			while (set.next()) {
+				int id = set.getInt("id");
+				int blockId = set.getInt("blockId");
+				int type = set.getInt("type");
+				String world = set.getString("world");
+				String owner = set.getString("owner");
+				String password = set.getString("password");
+				int x = set.getInt("x");
+				int y = set.getInt("y");
+				int z = set.getInt("z");
+				String date = set.getString("date");
+
+				Protection protection = new Protection();
+				protection.setId(id);
+				protection.setBlockId(blockId);
+				protection.setType(type);
+				protection.setWorld(world);
+				protection.setOwner(owner);
+				protection.setData(password);
+				protection.setX(x);
+				protection.setY(y);
+				protection.setZ(z);
+				protection.setDate(date);
+
+				set.close();
+				Performance.addPhysDBQuery();
+
+				return protection;
+			}
+
+			set.close();
+			Performance.addPhysDBQuery();
+		} catch (final SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * Load a chest at a given tile
+	 * 
+	 * @param x
+	 *            the x tile
+	 * @param y
+	 *            the y tile
+	 * @param z
+	 *            the z tile
+	 * @return the Chest object
+	 */
+	public Protection loadProtection(String worldName, int x, int y, int z) {
+		try {
+			PreparedStatement statement = prepare("SELECT * FROM `protections` WHERE `x` = ? AND `y` = ? AND `z` = ? AND (world = ? OR world IS NULL)");
+			statement.setInt(1, x);
+			statement.setInt(2, y);
+			statement.setInt(3, z);
+			statement.setString(4, worldName);
+
+			final ResultSet set = statement.executeQuery();
+
+			while (set.next()) {
+				int id = set.getInt("id");
+				int blockId = set.getInt("blockId");
+				int type = set.getInt("type");
+				String world = set.getString("world");
+				String owner = set.getString("owner");
+				String password = set.getString("password");
+				String date = set.getString("date");
+
+				Protection protection = new Protection();
+				protection.setId(id);
+				protection.setBlockId(blockId);
+				protection.setType(type);
+				protection.setWorld(world);
+				protection.setOwner(owner);
+				protection.setData(password);
+				protection.setX(x);
+				protection.setY(y);
+				protection.setZ(z);
+				protection.setDate(date);
+
+				set.close();
+				Performance.addPhysDBQuery();
+				return protection;
+			}
+
+			set.close();
+			Performance.addPhysDBQuery();
+		} catch (final SQLException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	/**
+	 * Load every protection, use sparingly!
+	 * 
+	 * @return
+	 */
+	public List<Protection> loadProtections() {
+		List<Protection> protections = new ArrayList<Protection>();
+
+		try {
+			Statement statement = connection.createStatement();
+
+			ResultSet set = statement.executeQuery("SELECT * FROM protections");
+
+			while (set.next()) {
+				int id = set.getInt("id");
+				int blockId = set.getInt("blockId");
+				int type = set.getInt("type");
+				String world = set.getString("world");
+				String owner = set.getString("owner");
+				String password = set.getString("password");
+				int x = set.getInt("x");
+				int y = set.getInt("y");
+				int z = set.getInt("z");
+				String date = set.getString("date");
+
+				Protection protection = new Protection();
+				protection.setId(id);
+				protection.setBlockId(blockId);
+				protection.setType(type);
+				protection.setWorld(world);
+				protection.setOwner(owner);
+				protection.setData(password);
+				protection.setX(x);
+				protection.setY(y);
+				protection.setZ(z);
+				protection.setDate(date);
+
+				protections.add(protection);
+			}
+
+			set.close();
 			statement.close();
 		} catch (SQLException e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 		}
+
+		return protections;
 	}
 
 	/**
@@ -867,7 +863,7 @@ public class PhysDB extends Database {
 	 *            the radius to search
 	 * @return the Chest found , null otherwise
 	 */
-	public List<Protection> loadProtectedEntities(int _x, int _y, int _z, int radius) {
+	public List<Protection> loadProtections(int _x, int _y, int _z, int radius) {
 		List<Protection> chests = new ArrayList<Protection>();
 
 		try {
@@ -883,20 +879,22 @@ public class PhysDB extends Database {
 			final ResultSet set = statement.executeQuery();
 
 			while (set.next()) {
-				final int id = set.getInt("id");
+				int id = set.getInt("id");
 				int blockId = set.getInt("blockId");
-				final int type = set.getInt("type");
-				final String owner = set.getString("owner");
-				final String password = set.getString("password");
+				int type = set.getInt("type");
+				String world = set.getString("world");
+				String owner = set.getString("owner");
+				String password = set.getString("password");
 				int x = set.getInt("x");
 				int y = set.getInt("y");
 				int z = set.getInt("z");
-				final String date = set.getString("date");
+				String date = set.getString("date");
 
-				final Protection protection = new Protection();
+				Protection protection = new Protection();
 				protection.setId(id);
 				protection.setBlockId(blockId);
 				protection.setType(type);
+				protection.setWorld(world);
 				protection.setOwner(owner);
 				protection.setData(password);
 				protection.setX(x);
@@ -917,34 +915,41 @@ public class PhysDB extends Database {
 	}
 
 	/**
-	 * Load a chest at a given tile
+	 * Load protections by a player, utilizing limits
 	 * 
-	 * @param chestID
-	 *            the chest's ID
-	 * @return the Chest object
+	 * @param player
+	 * @param start
+	 * @param max
+	 * @return
 	 */
-	public Protection loadProtectedEntity(int chestID) {
-		try {
-			PreparedStatement statement = prepare("SELECT * FROM `protections` WHERE `id` = ?");
-			statement.setInt(1, chestID);
+	public List<Protection> loadProtectionsByPlayer(String player, int start, int count) {
+		List<Protection> protections = new ArrayList<Protection>();
 
-			final ResultSet set = statement.executeQuery();
+		try {
+			PreparedStatement statement = prepare("SELECT * FROM protections WHERE owner = ? ORDER BY id DESC limit ?,?");
+			statement.setString(1, player);
+			statement.setInt(2, start);
+			statement.setInt(3, count);
+
+			ResultSet set = statement.executeQuery();
 
 			while (set.next()) {
-				final int id = set.getInt("id");
-				final int blockId = set.getInt("blockId");
-				final int type = set.getInt("type");
-				final String owner = set.getString("owner");
-				final String password = set.getString("password");
-				final int x = set.getInt("x");
-				final int y = set.getInt("y");
-				final int z = set.getInt("z");
-				final String date = set.getString("date");
+				int id = set.getInt("id");
+				int blockId = set.getInt("blockId");
+				int type = set.getInt("type");
+				String world = set.getString("world");
+				String owner = set.getString("owner");
+				String password = set.getString("password");
+				int x = set.getInt("x");
+				int y = set.getInt("y");
+				int z = set.getInt("z");
+				String date = set.getString("date");
 
-				final Protection protection = new Protection();
+				Protection protection = new Protection();
 				protection.setId(id);
 				protection.setBlockId(blockId);
 				protection.setType(type);
+				protection.setWorld(world);
 				protection.setOwner(owner);
 				protection.setData(password);
 				protection.setX(x);
@@ -952,90 +957,49 @@ public class PhysDB extends Database {
 				protection.setZ(z);
 				protection.setDate(date);
 
-				set.close();
-				Performance.addPhysDBQuery();
-
-				return protection;
+				protections.add(protection);
 			}
 
 			set.close();
-			Performance.addPhysDBQuery();
-		} catch (final SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 
-	/**
-	 * Update a protection's block id
-	 * 
-	 * @param protectionId
-	 * @param blockId
-	 */
-	public void updateProtectionBlockId(int protectionId, int blockId) {
-		try {
-			PreparedStatement statement = prepare("UPDATE protections SET blockId = ? WHERE id = ?");
-
-			statement.setInt(1, blockId);
-			statement.setInt(2, protectionId);
-
-			statement.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
+		return protections;
 	}
 
 	/**
-	 * Load a chest at a given tile
+	 * Get all access rights
 	 * 
-	 * @param x
-	 *            the x tile
-	 * @param y
-	 *            the y tile
-	 * @param z
-	 *            the z tile
-	 * @return the Chest object
+	 * @return
 	 */
-	public Protection loadProtectedEntity(int x, int y, int z) {
-		try {
-			PreparedStatement statement = prepare("SELECT * FROM `protections` WHERE `x` = ? AND `y` = ? AND `z` = ?");
-			statement.setInt(1, x);
-			statement.setInt(2, y);
-			statement.setInt(3, z);
+	public List<AccessRight> loadRights() {
+		List<AccessRight> accessRights = new ArrayList<AccessRight>();
 
-			final ResultSet set = statement.executeQuery();
+		try {
+			PreparedStatement statement = prepare("SELECT * FROM rights");
+
+			ResultSet set = statement.executeQuery();
 
 			while (set.next()) {
-				final int id = set.getInt("id");
-				final int blockId = set.getInt("blockId");
-				final int type = set.getInt("type");
-				final String owner = set.getString("owner");
-				final String password = set.getString("password");
-				final String date = set.getString("date");
+				AccessRight accessRight = new AccessRight();
 
-				final Protection protection = new Protection();
-				protection.setId(id);
-				protection.setBlockId(blockId);
-				protection.setType(type);
-				protection.setOwner(owner);
-				protection.setData(password);
-				protection.setX(x);
-				protection.setY(y);
-				protection.setZ(z);
-				protection.setDate(date);
+				accessRight.setId(set.getInt("id"));
+				accessRight.setProtectionId(set.getInt("chest"));
+				accessRight.setEntity(set.getString("entity"));
+				accessRight.setRights(set.getInt("rights"));
+				accessRight.setType(set.getInt("type"));
 
-				set.close();
-				Performance.addPhysDBQuery();
-				return protection;
+				accessRights.add(accessRight);
 			}
 
 			set.close();
-			Performance.addPhysDBQuery();
-		} catch (final SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
-		return null;
+		return accessRights;
 	}
 
 	/**
@@ -1052,18 +1016,19 @@ public class PhysDB extends Database {
 	 * @param z
 	 *            the z coordinate of the chest
 	 */
-	public void registerProtectedEntity(int blockId, int type, String player, String password, int x, int y, int z) {
+	public void registerProtection(int blockId, int type, String world, String player, String password, int x, int y, int z) {
 		try {
-			PreparedStatement statement = prepare("INSERT INTO `protections` (blockId, type, owner, password, x, y, z, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
+			PreparedStatement statement = prepare("INSERT INTO `protections` (blockId, type, world, owner, password, x, y, z, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 			statement.setInt(1, blockId);
 			statement.setInt(2, type);
-			statement.setString(3, player);
-			statement.setString(4, password);
-			statement.setInt(5, x);
-			statement.setInt(6, y);
-			statement.setInt(7, z);
-			statement.setString(8, new Timestamp(new Date().getTime()).toString());
+			statement.setString(3, world);
+			statement.setString(4, player);
+			statement.setString(5, password);
+			statement.setInt(6, x);
+			statement.setInt(7, y);
+			statement.setInt(8, z);
+			statement.setString(9, new Timestamp(new Date().getTime()).toString());
 
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
@@ -1100,8 +1065,8 @@ public class PhysDB extends Database {
 	/**
 	 * Register rights to a chest
 	 * 
-	 * @param chestID
-	 *            the chest ID to register
+	 * @param protectionId
+	 *            the protectionId to add to
 	 * @param entity
 	 *            the entity to register
 	 * @param rights
@@ -1109,11 +1074,11 @@ public class PhysDB extends Database {
 	 * @param type
 	 *            the type to register
 	 */
-	public void registerProtectionRights(int chestID, String entity, int rights, int type) {
+	public void registerProtectionRights(int protectionId, String entity, int rights, int type) {
 		try {
 			PreparedStatement statement = prepare("INSERT INTO `rights` (chest, entity, rights, type) VALUES (?, ?, ?, ?)");
 
-			statement.setInt(1, chestID);
+			statement.setInt(1, protectionId);
 			statement.setString(2, entity.toLowerCase());
 			statement.setInt(3, rights);
 			statement.setInt(4, type);
@@ -1126,16 +1091,52 @@ public class PhysDB extends Database {
 	}
 
 	/**
+	 * Remove a scheduled job
+	 * 
+	 * @param id
+	 */
+	public void removeJob(int id) {
+		try {
+			PreparedStatement statement = prepare("DELETE FROM jobs WHERE id = ?");
+
+			statement.setInt(1, id);
+
+			statement.executeUpdate();
+			Performance.addPhysDBQuery();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Set the menu style for a place
+	 * 
+	 * @param player
+	 * @param menu
+	 */
+	public void setMenuStyle(String player, String menu) {
+		try {
+			PreparedStatement statement = prepare("REPLACE INTO menu_styles (player, menu) VALUES (?,?)");
+			statement.setString(1, player);
+			statement.setString(2, menu);
+
+			statement.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * Free a chest from protection
 	 * 
-	 * @param chestID
-	 *            the chest ID
+	 * @param protectionId
+	 *            the protection Id
 	 */
-	public void unregisterProtection(int chestID) {
+	public void unregisterProtection(int protectionId) {
 		try {
 			PreparedStatement statement = prepare("DELETE FROM `protections` WHERE `id` = ?");
 
-			statement.setInt(1, chestID);
+			statement.setInt(1, protectionId);
 
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
@@ -1143,7 +1144,7 @@ public class PhysDB extends Database {
 			e.printStackTrace();
 		}
 
-		unregisterProtectionRights(chestID);
+		unregisterProtectionRights(protectionId);
 	}
 
 	/**
@@ -1151,7 +1152,7 @@ public class PhysDB extends Database {
 	 * 
 	 * @param player
 	 */
-	public void removeProtectionByPlayer(String player) {
+	public void unregisterProtectionByPlayer(String player) {
 		try {
 			PreparedStatement statement = prepare("DELETE FROM `protections` WHERE `owner` = ?");
 
@@ -1163,60 +1164,7 @@ public class PhysDB extends Database {
 			e.printStackTrace();
 		}
 
-		removeProtectionRightsByPlayer(player);
-	}
-
-	/**
-	 * Remove all protection rights for a player
-	 * 
-	 * @param player
-	 */
-	public void removeProtectionRightsByPlayer(String player) {
-		try {
-			PreparedStatement statement = prepare("DELETE FROM `rights` WHERE `entity` = ?");
-
-			statement.setString(1, player);
-
-			statement.executeUpdate();
-			Performance.addPhysDBQuery();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Free a chest from protection
-	 * 
-	 * @param chestID
-	 *            the chest ID
-	 */
-	public void unregisterProtectedEntity(int x, int y, int z) {
-		try {
-			PreparedStatement statement = prepare("DELETE FROM `protections` WHERE `x` = ? AND `y` = ? AND `z` = ?");
-
-			statement.setInt(1, x);
-			statement.setInt(2, y);
-			statement.setInt(3, z);
-
-			statement.executeUpdate();
-			Performance.addPhysDBQuery();
-		} catch (final SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Remove all of the registered chests
-	 */
-	public void unregisterProtectionEntities() {
-		try {
-			final Statement statement = connection.createStatement();
-			statement.executeUpdate("DELETE FROM `protections`");
-			statement.close();
-			Performance.addPhysDBQuery();
-		} catch (final SQLException e) {
-			e.printStackTrace();
-		}
+		unregisterProtectionRightsByPlayer(player);
 	}
 
 	/**
@@ -1308,6 +1256,203 @@ public class PhysDB extends Database {
 	}
 
 	/**
+	 * Remove all protection rights for a player
+	 * 
+	 * @param player
+	 */
+	public void unregisterProtectionRightsByPlayer(String player) {
+		try {
+			PreparedStatement statement = prepare("DELETE FROM `rights` WHERE `entity` = ?");
+
+			statement.setString(1, player);
+
+			statement.executeUpdate();
+			Performance.addPhysDBQuery();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Remove all of the registered chests
+	 */
+	public void unregisterProtections() {
+		try {
+			final Statement statement = connection.createStatement();
+			statement.executeUpdate("DELETE FROM `protections`");
+			statement.close();
+			Performance.addPhysDBQuery();
+		} catch (final SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Update the inventories in lwc.db
+	 * 
+	 * @param id
+	 */
+	public void updateInventory(int id) {
+		try {
+			throw new SQLException("Not supported");
+			// _insert_inventories_id_protectionid.setInt(1, 1);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Change the owner set on a protection
+	 * 
+	 * @param protectionId
+	 * @param owner
+	 */
+	public void updateOwner(int protectionId, String owner) {
+		try {
+			PreparedStatement statement = prepare("UPDATE protections SET owner = ? WHERE id = ?");
+
+			statement.setString(1, owner);
+			statement.setInt(2, protectionId);
+
+			statement.executeUpdate();
+			Performance.addPhysDBQuery();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Update a protection's block id
+	 * 
+	 * @param protectionId
+	 * @param blockId
+	 */
+	public void updateProtectionBlockId(int protectionId, int blockId) {
+		try {
+			PreparedStatement statement = prepare("UPDATE protections SET blockId = ? WHERE id = ?");
+
+			statement.setInt(1, blockId);
+			statement.setInt(2, protectionId);
+
+			statement.executeUpdate();
+			Performance.addPhysDBQuery();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Change the protection type set on a protection
+	 * 
+	 * @param protectionId
+	 * @param type
+	 */
+	public void updateType(int protectionId, int type) {
+		try {
+			PreparedStatement statement = prepare("UPDATE protections SET type = ? WHERE id = ?");
+
+			statement.setInt(1, type);
+			statement.setInt(2, protectionId);
+
+			statement.executeUpdate();
+			Performance.addPhysDBQuery();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Change the world set on a protection
+	 * 
+	 * @param protectionId
+	 * @param world
+	 */
+	public void updateWorld(int protectionId, String world) {
+		try {
+			PreparedStatement statement = prepare("UPDATE protections SET world = ? WHERE id = ?");
+
+			statement.setString(1, world);
+			statement.setInt(2, protectionId);
+
+			statement.executeUpdate();
+			Performance.addPhysDBQuery();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Instead of "updating indexes", let's just use IF NOT EXISTS each time
+	 */
+	private void doIndexes() {
+		try {
+			connection.setAutoCommit(false);
+			Statement statement = connection.createStatement();
+
+			if (currentType == Type.SQLite) {
+				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in1 ON protections (owner, x, y, z)");
+				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in2 ON limits (type, entity)");
+				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in3 ON rights (chest, entity)");
+
+				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in4 ON players (username)");
+				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in5 ON jobs (type, owner)");
+				statement.executeUpdate("CREATE INDEX IF NOT EXISTS in6 ON inventory (protectionId, slots)");
+			} else {
+				statement.executeUpdate("CREATE INDEX in1 ON protections (x, y, z)");
+				statement.executeUpdate("CREATE INDEX in2 ON limits (type)");
+				statement.executeUpdate("CREATE INDEX in3 ON rights (chest)");
+
+				// statement.executeUpdate("CREATE INDEX in4 ON players (username)");
+				statement.executeUpdate("CREATE INDEX in5 ON jobs (type)");
+				statement.executeUpdate("CREATE INDEX in6 ON inventory (protectionId, slots)");
+			}
+
+			connection.commit();
+
+			statement.close();
+		} catch (SQLException e) {
+			// e.printStackTrace();
+		}
+
+		try {
+			connection.setAutoCommit(true);
+		} catch (Exception e) {
+		}
+	}
+
+	/**
+	 * Update process from 1.00 -> 1.10
+	 */
+	private void doUpdate100() {
+		try {
+			final Statement statement = connection.createStatement();
+			statement.executeQuery("SELECT `type` FROM `protections`");
+			statement.close();
+			Performance.addPhysDBQuery();
+		} catch (final SQLException e) {
+			logger.log("Outdated database!", Level.CONFIG);
+			logger.log("UPGRADING FROM 1.00 TO 1.10", Level.CONFIG);
+			logger.log("ALTERING TABLE `protections` AND FILLING WITH DEFAULT DATA", Level.CONFIG);
+
+			try {
+				final Statement statement = connection.createStatement();
+				statement.addBatch("ALTER TABLE `protections` ADD `type` INTEGER");
+				statement.addBatch("UPDATE `protections` SET `type`='1'");
+				statement.executeBatch();
+				statement.close();
+				Performance.addPhysDBQuery();
+			} catch (final SQLException ex) {
+				log("Oops! Something went wrong: ");
+				ex.printStackTrace();
+				System.exit(0);
+			}
+
+			log("Update completed!");
+		}
+	}
+
+	/**
 	 * Upgrade process for 1.40, rename table `protections` to `protections`
 	 */
 	private void doUpdate140() {
@@ -1333,17 +1478,98 @@ public class PhysDB extends Database {
 	}
 
 	/**
-	 * Update the inventories in lwc.db
-	 * 
-	 * @param id
+	 * Update to 150, altered a table
 	 */
-	public void updateInventory(int id) {
+	private void doUpdate150() {
 		try {
-			throw new SQLException("Not supported");
-			// _insert_inventories_id_protectionid.setInt(1, 1);
-
+			Statement statement = connection.createStatement();
+			statement.executeQuery("SELECT blockId FROM protections");
+			statement.close();
+			Performance.addPhysDBQuery();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			try {
+				Statement statement = connection.createStatement();
+				statement.executeUpdate("ALTER TABLE `protections` ADD `blockId` INTEGER");
+				statement.close();
+				Performance.addPhysDBQuery();
+			} catch (SQLException ex) {
+			}
+		}
+	}
+
+	/**
+	 * Update to 1.70, altered a table
+	 */
+	private void doUpdate170() {
+		try {
+			Statement statement = connection.createStatement();
+			statement.executeQuery("SELECT world FROM protections");
+			statement.close();
+			Performance.addPhysDBQuery();
+		} catch (SQLException e) {
+			try {
+				Statement statement = connection.createStatement();
+				statement.executeUpdate("ALTER TABLE `protections` ADD `world` TEXT");
+				statement.close();
+				Performance.addPhysDBQuery();
+			} catch (SQLException ex) {
+			}
+		}
+	}
+
+	/**
+	 * Pushed an LWC pre-1.5 tables with a mis-spelled column name. Damn me
+	 */
+	private void fixJobsTable() {
+		try {
+			Statement statement = connection.createStatement();
+			statement.executeQuery("SELECT payload FROM jobs");
+			statement.executeQuery("SELECT timestamp FROM jobs");
+			statement.close();
+		} catch (SQLException e) {
+			logger.log("Fixing jobs table", Level.CONFIG);
+
+			try {
+				Statement statement = connection.createStatement();
+				statement.executeUpdate("DROP TABLE jobs");
+				statement.close();
+			} catch (SQLException ex) {
+			}
+		}
+	}
+
+	/**
+	 * Rename users table
+	 */
+	private void fixPlayerTable() {
+		try {
+			Statement statement = connection.createStatement();
+			statement.executeQuery("SELECT * from players");
+			statement.close();
+		} catch (SQLException e) {
+			logger.log("Fixing players table", Level.CONFIG);
+
+			try {
+				Statement statement = connection.createStatement();
+				statement.executeUpdate("DROP TABLE users");
+				statement.close();
+			} catch (SQLException ex) {
+			}
+		}
+
+		try {
+			Statement statement = connection.createStatement();
+			statement.executeQuery("SELECT mcusername from players");
+			statement.close();
+		} catch (SQLException e) {
+			logger.log("Fixing players table", Level.CONFIG);
+
+			try {
+				Statement statement = connection.createStatement();
+				statement.executeUpdate("DROP TABLE players");
+				statement.close();
+			} catch (SQLException ex) {
+			}
 		}
 	}
 
