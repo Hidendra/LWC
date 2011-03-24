@@ -31,19 +31,9 @@ import com.griefcraft.util.Colors;
 public class Create implements ICommand {
 
 	@Override
-	public String getName() {
-		return "creation";
-	}
-	
-	@Override
-	public boolean supportsConsole() {
-		return false;
-	}
-
-	@Override
 	public void execute(LWC lwc, CommandSender sender, String[] args) {
 		if (args.length == 1) {
-			sendHelp(sender);
+			lwc.sendLocale(sender, "help.creation");
 			return;
 		}
 
@@ -72,49 +62,33 @@ public class Create implements ICommand {
 			String password = join(args, 2);
 			String hiddenPass = transform(password, '*');
 
-			sender.sendMessage(Colors.Blue + "Using password: " + Colors.Yellow + hiddenPass);
+			lwc.sendLocale(sender, "protection.create.password", "password", hiddenPass);
 		}
 
 		else if (!type.equals("public") && !type.equals("private")) {
-			sendHelp(sender);
+			lwc.sendLocale(sender, "help.creation");
 			return;
 		}
 
 		lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 		lwc.getMemoryDatabase().registerAction("create", player.getName(), full);
 
-		sender.sendMessage(Colors.Blue + "Lock type: " + Colors.Green + capitalizeFirstLetter(type));
-		sender.sendMessage(Colors.Green + "Please left click your block to lock it.");
+		lwc.sendLocale(sender, "protection.create.finalize", "type", capitalizeFirstLetter(type));
+	}
+
+	@Override
+	public String getName() {
+		return "creation";
+	}
+
+	@Override
+	public boolean supportsConsole() {
+		return false;
 	}
 
 	@Override
 	public boolean validate(LWC lwc, CommandSender player, String[] args) {
 		return hasFlag(args, "c") || hasFlag(args, "create");
-	}
-
-	public void sendHelp(CommandSender player) {
-		player.sendMessage(" ");
-		player.sendMessage(Colors.Green + "LWC Protection");
-		player.sendMessage(" ");
-
-		player.sendMessage("/lwc -c public " + Colors.Gold + "Create a public protection");
-		player.sendMessage(Colors.Blue + "Anyone can use a Public protection, but no one can protect it");
-		player.sendMessage(" ");
-
-		player.sendMessage("/lwc -c password <password> " + Colors.Gold + "Create a passworded protection");
-		player.sendMessage(Colors.Blue + "Each time you login you need to enter the password to access");
-		player.sendMessage(Colors.Blue + "it (if someone knows the pass, they can use it too!)");
-		player.sendMessage(" ");
-
-		player.sendMessage("/lwc -c private " + Colors.Gold + "Create a private protection");
-		player.sendMessage(Colors.Blue + "Private means private. You can also allow other users or");
-		player.sendMessage(Colors.Blue + "groups to access the chest or furnace. This is done by");
-		player.sendMessage(Colors.Blue + "adding them after \"private\".");
-		player.sendMessage(" ");
-		player.sendMessage("Example:");
-		player.sendMessage(Colors.Blue + "/lwc -c private UserName g:GroupName OtherGuy");
-		player.sendMessage(" ");
-		player.sendMessage(Colors.Blue + "You can specify more than 1 group and/or user per command!");
 	}
 
 }

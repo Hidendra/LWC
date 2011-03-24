@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
 import com.griefcraft.model.Action;
 import com.griefcraft.model.Protection;
 import com.griefcraft.util.Performance;
@@ -273,23 +274,6 @@ public class MemDB extends Database {
 	 * 
 	 * @param player
 	 *            the player to check
-	 * @param chest
-	 *            the chest to check
-	 * @return true if the player has access
-	 */
-	public boolean hasAccess(String player, Protection chest) {
-		if (chest == null) {
-			return true;
-		}
-
-		return hasAccess(player, chest.getId());
-	}
-
-	/**
-	 * Check if a player has an active chest session
-	 * 
-	 * @param player
-	 *            the player to check
 	 * @param chestID
 	 *            the chest ID to check
 	 * @return true if the player has access
@@ -317,6 +301,23 @@ public class MemDB extends Database {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Check if a player has an active chest session
+	 * 
+	 * @param player
+	 *            the player to check
+	 * @param chest
+	 *            the chest to check
+	 * @return true if the player has access
+	 */
+	public boolean hasAccess(String player, Protection chest) {
+		if (chest == null) {
+			return true;
+		}
+
+		return hasAccess(player, chest.getId());
 	}
 
 	/**
@@ -598,28 +599,6 @@ public class MemDB extends Database {
 	}
 
 	/**
-	 * Register a pending chest request to a player
-	 * 
-	 * @param player
-	 *            the player to assign the chest to
-	 * @param password
-	 *            the password to register with
-	 */
-	public void registerChest(String player, String password) {
-		try {
-			PreparedStatement statement = prepare("INSERT INTO `locks` (player, password) VALUES (?, ?)");
-			statement.setString(1, player);
-			statement.setString(2, password);
-
-			statement.executeUpdate();
-
-			Performance.addMemDBQuery();
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
 	 * Register a mode to a player (temporary)
 	 * 
 	 * @param player
@@ -657,6 +636,28 @@ public class MemDB extends Database {
 			statement.setString(1, player);
 			statement.setString(2, mode);
 			statement.setString(3, data);
+
+			statement.executeUpdate();
+
+			Performance.addMemDBQuery();
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Register a pending lock request to a player
+	 * 
+	 * @param player
+	 *            the player to assign the chest to
+	 * @param password
+	 *            the password to register with
+	 */
+	public void registerPendingLock(String player, String password) {
+		try {
+			PreparedStatement statement = prepare("INSERT INTO `locks` (player, password) VALUES (?, ?)");
+			statement.setString(1, player);
+			statement.setString(2, password);
 
 			statement.executeUpdate();
 
@@ -797,25 +798,6 @@ public class MemDB extends Database {
 	}
 
 	/**
-	 * Remove a pending chest request from a player
-	 * 
-	 * @param player
-	 *            the player to remove
-	 */
-	public void unregisterChest(String player) {
-		try {
-			PreparedStatement statement = prepare("DELETE FROM `locks` WHERE `player` = ?");
-			statement.setString(1, player);
-
-			statement.executeUpdate();
-
-			Performance.addMemDBQuery();
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
 	 * Unregister a mode from a player
 	 * 
 	 * @param player
@@ -828,6 +810,25 @@ public class MemDB extends Database {
 			PreparedStatement statement = prepare("DELETE FROM `modes` WHERE `player` = ? AND `mode` = ?");
 			statement.setString(1, player);
 			statement.setString(2, mode);
+
+			statement.executeUpdate();
+
+			Performance.addMemDBQuery();
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Remove a pending lock request from a player
+	 * 
+	 * @param player
+	 *            the player to remove
+	 */
+	public void unregisterPendingLock(String player) {
+		try {
+			PreparedStatement statement = prepare("DELETE FROM `locks` WHERE `player` = ?");
+			statement.setString(1, player);
 
 			statement.executeUpdate();
 

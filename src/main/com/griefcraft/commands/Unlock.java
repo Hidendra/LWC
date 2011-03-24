@@ -32,18 +32,8 @@ import com.griefcraft.util.Colors;
 public class Unlock implements ICommand {
 
 	@Override
-	public String getName() {
-		return "unlock";
-	}
-	
-	@Override
-	public boolean supportsConsole() {
-		return false;
-	}
-
-	@Override
 	public void execute(LWC lwc, CommandSender sender, String[] args) {
-		if (args.length < 1) {
+		if (args.length < 2) {
 			lwc.sendSimpleUsage(sender, "/lwc -u <Password>");
 			return;
 		}
@@ -63,7 +53,7 @@ public class Unlock implements ICommand {
 				return;
 			}
 
-			Protection entity = lwc.getPhysicalDatabase().loadProtectedEntity(chestID);
+			Protection entity = lwc.getPhysicalDatabase().loadProtection(chestID);
 
 			if (entity.getType() != ProtectionTypes.PASSWORD) {
 				player.sendMessage(Colors.Red + "That is not password protected!");
@@ -78,6 +68,16 @@ public class Unlock implements ICommand {
 				player.sendMessage(Colors.Red + "Invalid password.");
 			}
 		}
+	}
+
+	@Override
+	public String getName() {
+		return "unlock";
+	}
+
+	@Override
+	public boolean supportsConsole() {
+		return false;
 	}
 
 	@Override

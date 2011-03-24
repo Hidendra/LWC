@@ -17,11 +17,24 @@
 
 package com.griefcraft.listeners;
 
+import java.util.Map;
+
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.ContainerBlock;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerListener;
+import org.bukkit.inventory.ItemStack;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
+import com.griefcraft.model.Protection;
+import com.griefcraft.util.Colors;
 
 public class LWCPlayerListener extends PlayerListener {
 
@@ -34,6 +47,77 @@ public class LWCPlayerListener extends PlayerListener {
 		this.plugin = plugin;
 	}
 
+	@Override
+	public void onPlayerDropItem(PlayerDropItemEvent event) {
+		LWC lwc = plugin.getLWC();
+		Player player = event.getPlayer();
+		Item droppedItem = event.getItemDrop();
+		ItemStack itemStack = droppedItem.getItemStack();
+
+		int protectionId = lwc.getPlayerDropTransferTarget(player.getName());
+
+		if (protectionId == -1) {
+			return;
+		}
+
+		if (!lwc.isPlayerDropTransferring(player.getName())) {
+			return;
+		}
+
+		Protection protection = lwc.getPhysicalDatabase().loadProtection(protectionId);
+
+		if (protection == null) {
+			player.sendMessage(Colors.Red + "Protection no longer exists");
+			lwc.getMemoryDatabase().unregisterMode(player.getName(), "dropTransfer");
+			return;
+		}
+
+		// load the world and the inventory
+		World world = player.getServer().getWorld(protection.getWorld());
+
+		if (world == null) {
+			player.sendMessage(Colors.Red + "Invalid world!");
+			lwc.getMemoryDatabase().unregisterMode(player.getName(), "dropTransfer");
+			return;
+		}
+
+		Block block = world.getBlockAt(protection.getX(), protection.getY(), protection.getZ());
+		BlockState blockState = null;
+
+		if ((blockState = block.getState()) != null && (blockState instanceof ContainerBlock)) {
+			Block doubleChestBlock = lwc.findAdjacentBlock(block, Material.CHEST);
+			ContainerBlock containerBlock = (ContainerBlock) blockState;
+
+			Map<Integer, ItemStack> remaining = containerBlock.getInventory().addItem(itemStack);
+
+			// we have remainders, deal with it
+			if (remaining.size() > 0) {
+				int key = remaining.keySet().iterator().next();
+				ItemStack remainingItemStack = remaining.get(key);
+
+				// is it a double chest ?????
+				if (doubleChestBlock != null) {
+					ContainerBlock containerBlock2 = (ContainerBlock) doubleChestBlock.getState();
+					remaining = containerBlock2.getInventory().addItem(remainingItemStack);
+				}
+
+				// recheck remaining in the event of double chest being used
+				if (remaining.size() > 0) {
+					key = remaining.keySet().iterator().next();
+					remainingItemStack = remaining.get(key);
+
+					player.sendMessage(Colors.Red + "Oh no! " + Colors.White + "Your chest is full! Have your items back.");
+					player.getInventory().addItem(remainingItemStack);
+				}
+			}
+
+			player.updateInventory(); // if they're in the chest and dropping
+										// items, this is required
+			droppedItem.remove();
+		}
+
+	}
+
 	/**
 	 * Player dcd, clear them from memory if they're in it
 	 */
@@ -44,8 +128,9 @@ public class LWCPlayerListener extends PlayerListener {
 
 		lwc.getMemoryDatabase().unregisterPlayer(player);
 		lwc.getMemoryDatabase().unregisterUnlock(player);
-		lwc.getMemoryDatabase().unregisterChest(player);
+		lwc.getMemoryDatabase().unregisterPendingLock(player);
 		lwc.getMemoryDatabase().unregisterAllActions(player);
+		lwc.getMemoryDatabase().unregisterAllModes(player);
 	}
 
 }

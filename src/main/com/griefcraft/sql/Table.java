@@ -29,24 +29,24 @@ import com.griefcraft.util.Performance;
 public class Table {
 
 	/**
-	 * The database object associated with this table
-	 */
-	private Database database;
-
-	/**
 	 * The columns in the table
 	 */
 	private List<Column> columns;
 
 	/**
-	 * The table's name
+	 * The database object associated with this table
 	 */
-	private String name;
+	private Database database;
 
 	/**
 	 * If this table is to be stored in memory
 	 */
 	private boolean memory;
+
+	/**
+	 * The table's name
+	 */
+	private String name;
 
 	public Table(Database database, String name) {
 		this.database = database;

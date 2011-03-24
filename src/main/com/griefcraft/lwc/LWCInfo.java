@@ -23,23 +23,27 @@ package com.griefcraft.lwc;
 public class LWCInfo {
 
 	/**
+	 * Location of the properties file relative to the root Minecraft directory
+	 */
+	public static final String CONF_FILE = "plugins/LWC/lwc.properties";
+
+	/**
 	 * Dev mode flag
 	 */
 	public static final boolean DEVELOPMENT = false;
 
 	/**
-	 * LWC's version
-	 */
-	public static final double VERSION = 1.66;
-
-	/**
 	 * Full LWC version
 	 */
-	public static final String FULL_VERSION = String.format("v%.2f", VERSION);
+	public static final String FULL_VERSION;
 
 	/**
-	 * Location of the properties file relative to the root Minecraft directory
+	 * LWC's version
 	 */
-	public static final String CONF_FILE = "plugins/LWC/lwc.properties";
+	public static final double VERSION = 2.00;
+
+	static {
+		FULL_VERSION = String.format("v%.2f", VERSION);
+	}
 
 }

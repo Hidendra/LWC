@@ -26,8 +26,8 @@ import java.io.IOException;
 import org.bukkit.command.CommandSender;
 
 import com.griefcraft.lwc.LWCPlugin;
-import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.model.AccessRight;
+import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Config;
 
@@ -35,10 +35,6 @@ import com.griefcraft.util.Config;
  * Convert Chest Protect chests to LWC
  */
 public class ChestProtect implements Runnable {
-
-	public static void main(String[] args) throws Exception {
-		new ChestProtect();
-	}
 
 	/**
 	 * File where Chest Protect saves chests
@@ -51,14 +47,14 @@ public class ChestProtect implements Runnable {
 	private int converted = 0;
 
 	/**
-	 * The player that issued the command ingame (if any)
-	 */
-	private CommandSender player;
-
-	/**
 	 * Physical database object
 	 */
 	private PhysDB physicalDatabase;
+
+	/**
+	 * The player that issued the command ingame (if any)
+	 */
+	private CommandSender player;
 
 	public ChestProtect() {
 		new Thread(this).start();
@@ -137,7 +133,7 @@ public class ChestProtect implements Runnable {
 			/*
 			 * Register the chest
 			 */
-			physicalDatabase.registerProtectedEntity(0, type, owner, "", x, y, z);
+			physicalDatabase.registerProtection(0, type, "", owner, "", x, y, z);
 
 			converted++;
 
@@ -151,7 +147,7 @@ public class ChestProtect implements Runnable {
 			/**
 			 * The id of the chest we just registered
 			 */
-			int chestID = physicalDatabase.loadProtectedEntity(x, y, z).getId();
+			int chestID = physicalDatabase.loadProtection("", x, y, z).getId();
 
 			/**
 			 * Now register the extra users
@@ -178,9 +174,9 @@ public class ChestProtect implements Runnable {
 		try {
 			log("LWC Conversion tool for Chest Protect chests");
 			log("");
-			
+
 			Config.init();
-			
+
 			LWCPlugin plugin = new LWCPlugin();
 			plugin.loadDatabase();
 			physicalDatabase = new PhysDB();
@@ -196,6 +192,10 @@ public class ChestProtect implements Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void main(String[] args) throws Exception {
+		new ChestProtect();
 	}
 
 }

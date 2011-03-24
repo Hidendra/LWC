@@ -37,7 +37,9 @@ import com.griefcraft.util.Updater;
 public abstract class Database {
 
 	public enum Type {
-		SQLite("sqlite.jar"), MySQL("mysql.jar"), NONE("nil");
+		MySQL("mysql.jar"), //
+		SQLite("sqlite.jar"), //
+		NONE("nil"); //
 
 		private String driver;
 
@@ -52,23 +54,9 @@ public abstract class Database {
 	}
 
 	/**
-	 * @return true if connected to sqlite
+	 * The database engine being used for this connection
 	 */
-	public static boolean isConnected() {
-		return connected;
-	}
-
-	/**
-	 * The default database engine being used. This is set via config
-	 * 
-	 * @default SQLite
-	 */
-	public static Type DefaultType = Type.NONE;
-
-	/**
-	 * Logging object
-	 */
-	protected Logger logger = Logger.getLogger(getClass().getSimpleName());
+	public Type currentType;
 
 	/**
 	 * Store cached prepared statements.
@@ -83,14 +71,31 @@ public abstract class Database {
 	protected Connection connection = null;
 
 	/**
-	 * The database engine being used for this connection
+	 * Logging object
 	 */
-	public Type currentType;
+	protected Logger logger = Logger.getLogger(getClass().getSimpleName());
+
+	/**
+	 * The default database engine being used. This is set via config
+	 * 
+	 * @default SQLite
+	 */
+	public static Type DefaultType = Type.NONE;
 
 	/**
 	 * If we are connected to sqlite
 	 */
 	private static boolean connected = false;
+
+	/**
+	 * The Database driver used
+	 */
+	private static Driver driver;
+
+	/**
+	 * The Database driver class
+	 */
+	private static Class<?> driverClass;
 
 	public Database() {
 		currentType = DefaultType;
@@ -101,10 +106,65 @@ public abstract class Database {
 	}
 
 	/**
-	 * @return the database engine type
+	 * Connect to MySQL
+	 * 
+	 * @return if the connection was succesful
 	 */
-	public Type getType() {
-		return currentType;
+	public boolean connect() throws Exception {
+		if (connection != null) {
+			return true;
+		}
+		
+		if(currentType == null || currentType == Type.NONE) {
+			log("Invalid database engine");
+			return false;
+		}
+
+		// load the database jar
+		URLClassLoader classLoader = new URLClassLoader(new URL[] { new URL("jar:file:" + new File(Updater.DEST_LIBRARY_FOLDER + "lib/" + currentType.getDriver()).getAbsolutePath() + "!/") });
+		// DatabaseClassLoader classLoader = DatabaseClassLoader.getInstance(new URL("jar:file:" + new File(Updater.DEST_LIBRARY_FOLDER + "lib/" + currentType.getDriver()).getAbsolutePath() + "!/"));
+		
+		String className = "";
+		if (currentType == Type.MySQL) {
+			className = "com.mysql.jdbc.Driver";
+		} else {
+			className = "org.sqlite.JDBC";
+		}
+
+		Driver driver = (Driver) classLoader.loadClass(className).newInstance();
+		DriverManager.registerDriver(new DriverStub(driver));
+
+		Properties properties = new Properties();
+
+		// if we're using mysql, append the database info
+		if (currentType == Type.MySQL) {
+			properties.put("autoReconnect", "true");
+			properties.put("user", ConfigValues.MYSQL_USER.getString());
+			properties.put("password", ConfigValues.MYSQL_PASS.getString());
+		}
+
+		connection = DriverManager.getConnection("jdbc:" + currentType.toString().toLowerCase() + ":" + getDatabasePath(), properties);
+		connected = true;
+
+		return true;
+	}
+
+	public void dispose() {
+		statementCache.clear();
+
+		try {
+			if (connection != null) {
+				connection.close();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		driverClass = null;
+		driver = null;
+		connection = null;
+		
+		System.gc();
 	}
 
 	/**
@@ -112,6 +172,40 @@ public abstract class Database {
 	 */
 	public Connection getConnection() {
 		return connection;
+	}
+
+	/**
+	 * @return the path where the database file should be saved
+	 */
+	public String getDatabasePath() {
+		if (currentType == Type.MySQL) {
+			return "//" + ConfigValues.MYSQL_HOST.getString() + ":" + ConfigValues.MYSQL_PORT.getString() + "/" + ConfigValues.MYSQL_DATABASE.getString();
+		}
+
+		return ConfigValues.DB_PATH.getString();
+	}
+
+	/**
+	 * @return the database engine type
+	 */
+	public Type getType() {
+		return currentType;
+	}
+
+	public abstract void load();
+
+	/**
+	 * Log a string to stdout
+	 * 
+	 * @param str
+	 *            The string to log
+	 */
+	public void log(String str) {
+		logger.log(str);
+	}
+
+	public void log(String str, Level level) {
+		logger.log(str, level);
 	}
 
 	/**
@@ -142,73 +236,10 @@ public abstract class Database {
 	}
 
 	/**
-	 * Connect to MySQL
-	 * 
-	 * @return if the connection was succesful
+	 * @return true if connected to sqlite
 	 */
-	public boolean connect() throws Exception {
-		if (connection != null) {
-			return true;
-		}
-
-		// load the database jar
-		URLClassLoader classLoader = new URLClassLoader(new URL[] { new URL("jar:file:" + new File(Updater.DEST_LIBRARY_FOLDER + "lib/" + currentType.getDriver()).getAbsolutePath() + "!/") });
-
-		// log(classLoader.getURLs()[0].getPath());
-
-		// load and register the driver
-		// Driver driver = (Driver) Class.forName("org.sqlite.JDBC", true, classLoader).newInstance();
-		String className = "";
-
-		if (currentType == Type.MySQL) {
-			className = "com.mysql.jdbc.Driver";
-		} else {
-			className = "org.sqlite.JDBC";
-		}
-
-		Driver driver = (Driver) classLoader.loadClass(className).newInstance();
-		DriverManager.registerDriver(new DriverStub(driver));
-
-		Properties properties = new Properties();
-
-		// if we're using mysql, append the database info
-		if (currentType == Type.MySQL) {
-			properties.put("autoReconnect", "true");
-			properties.put("user", ConfigValues.MYSQL_USER.getString());
-			properties.put("password", ConfigValues.MYSQL_PASS.getString());
-		}
-
-		connection = DriverManager.getConnection("jdbc:" + currentType.toString().toLowerCase() + ":" + getDatabasePath(), properties);
-		connected = true;
-
-		return true;
-	}
-
-	/**
-	 * @return the path where the database file should be saved
-	 */
-	public String getDatabasePath() {
-		if (currentType == Type.MySQL) {
-			return "//" + ConfigValues.MYSQL_HOST.getString() + ":" + ConfigValues.MYSQL_PORT.getString() + "/" + ConfigValues.MYSQL_DATABASE.getString();
-		}
-
-		return ConfigValues.DB_PATH.getString();
-	}
-
-	public abstract void load();
-
-	/**
-	 * Log a string to stdout
-	 * 
-	 * @param str
-	 *            The string to log
-	 */
-	public void log(String str) {
-		logger.log(str);
-	}
-
-	public void log(String str, Level level) {
-		logger.log(str, level);
+	public static boolean isConnected() {
+		return connected;
 	}
 
 }

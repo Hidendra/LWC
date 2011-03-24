@@ -35,10 +35,6 @@ import com.griefcraft.util.Config;
  */
 public class ChastityChest implements Runnable {
 
-	public static void main(String[] args) throws Exception {
-		new ChastityChest();
-	}
-
 	/**
 	 * File where potential chest dbs are
 	 */
@@ -50,14 +46,14 @@ public class ChastityChest implements Runnable {
 	private int converted = 0;
 
 	/**
-	 * The player that issued the command ingame (if any)
-	 */
-	private CommandSender player;
-
-	/**
 	 * Physical database object
 	 */
 	private PhysDB physicalDatabase;
+
+	/**
+	 * The player that issued the command ingame (if any)
+	 */
+	private CommandSender player;
 
 	public ChastityChest() {
 		new Thread(this).start();
@@ -121,9 +117,42 @@ public class ChastityChest implements Runnable {
 			/*
 			 * Register the chest
 			 */
-			physicalDatabase.registerProtectedEntity(0, type, owner, "", x, y, z);
+			physicalDatabase.registerProtection(0, type, "", owner, "", x, y, z);
 
 			converted++;
+		}
+	}
+
+	public void log(String str) {
+		System.out.println(str);
+
+		if (player != null) {
+			player.sendMessage(str);
+		}
+	}
+
+	@Override
+	public void run() {
+		try {
+			log("LWC Conversion tool for Chastity Chest chests");
+			log("");
+
+			Config.init();
+
+			LWCPlugin plugin = new LWCPlugin();
+			plugin.loadDatabase();
+			physicalDatabase = new PhysDB();
+			physicalDatabase.connect();
+			physicalDatabase.load();
+
+			convertChests();
+
+			log("Done.");
+			log("");
+			log("Converted >" + converted + "< Chest Protect chests to LWC");
+			log("LWC database now holds " + physicalDatabase.getProtectionCount() + " protected chests!");
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -153,37 +182,8 @@ public class ChastityChest implements Runnable {
 		return coords;
 	}
 
-	public void log(String str) {
-		System.out.println(str);
-
-		if (player != null) {
-			player.sendMessage(str);
-		}
-	}
-
-	@Override
-	public void run() {
-		try {
-			log("LWC Conversion tool for Chastity Chest chests");
-			log("");
-			
-			Config.init();
-			
-			LWCPlugin plugin = new LWCPlugin();
-			plugin.loadDatabase();
-			physicalDatabase = new PhysDB();
-			physicalDatabase.connect();
-			physicalDatabase.load();
-
-			convertChests();
-
-			log("Done.");
-			log("");
-			log("Converted >" + converted + "< Chest Protect chests to LWC");
-			log("LWC database now holds " + physicalDatabase.getProtectionCount() + " protected chests!");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public static void main(String[] args) throws Exception {
+		new ChastityChest();
 	}
 
 }
