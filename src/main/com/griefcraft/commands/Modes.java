@@ -36,33 +36,22 @@ public class Modes implements ICommand {
 
 		String mode = args[1].toLowerCase();
 		Player player = (Player) sender;
+		
+		if (!lwc.isAdmin(sender) && lwc.isModeBlacklisted(mode)) {
+			lwc.sendLocale(player, "protection.modes.disabled");
+			return;
+		}
 
 		if (mode.equals("persist")) {
-			if (!lwc.isAdmin(sender) && lwc.isModeBlacklisted(mode)) {
-				sender.sendMessage(Colors.Red + "That mode is currently disabled");
-				return;
-			}
-
 			lwc.getMemoryDatabase().registerMode(player.getName(), mode);
-			sender.sendMessage(Colors.Green + "Your commands will now persist");
-			sender.sendMessage(Colors.Green + "Type " + Colors.Gold + "/lwc remove modes" + Colors.Green + " to undo (or logout)");
+			lwc.sendLocale(player, "protection.modes.persist.finalize");
 		}
 
 		else if (mode.equals("droptransfer")) {
 			mode = "dropTransfer";
 
-			if (!lwc.isAdmin(sender) && lwc.isModeBlacklisted(mode)) {
-				sender.sendMessage(Colors.Red + "That mode is currently disabled");
-				return;
-			}
-
 			if (args.length < 3) {
-				sender.sendMessage(Colors.Green + "LWC Drop Transfer");
-				sender.sendMessage("");
-				sender.sendMessage("/lwc mode droptransfer " + Colors.Blue + "select" + Colors.White + " - Select a chest to drop transfer to");
-				sender.sendMessage("/lwc mode droptransfer " + Colors.Blue + "on" + Colors.White + " - Turn on drop transferring");
-				sender.sendMessage("/lwc mode droptransfer " + Colors.Blue + "off" + Colors.White + " - Turn off drop transferring");
-				sender.sendMessage("/lwc mode droptransfer " + Colors.Blue + "status" + Colors.White + " - Check the status of drop transferring");
+				lwc.sendLocale(player, "protection.modes.dropxfer.help");
 				return;
 			}
 
@@ -71,44 +60,42 @@ public class Modes implements ICommand {
 
 			if (action.equals("select")) {
 				if (lwc.isPlayerDropTransferring(playerName)) {
-					sender.sendMessage(Colors.Red + "Please turn off drop transfer before reselecting a chest.");
+					lwc.sendLocale(player, "protection.modes.dropxfer.select.error");
 					return;
 				}
 
 				lwc.getMemoryDatabase().unregisterMode(playerName, mode);
 				lwc.getMemoryDatabase().registerAction("dropTransferSelect", playerName, "");
 
-				sender.sendMessage(Colors.Blue + "Please left click a registered chest to set it as your transfer target.");
+				lwc.sendLocale(player, "protection.modes.dropxfer.select.finalize");
 			} else if (action.equals("on")) {
 				int target = lwc.getPlayerDropTransferTarget(playerName);
 
 				if (target == -1) {
-					sender.sendMessage(Colors.Red + "Please register a chest before turning drop transfer on.");
+					lwc.sendLocale(player, "protection.modes.dropxfer.selectchest");
 					return;
 				}
 
 				lwc.getMemoryDatabase().registerMode(playerName, "+dropTransfer");
-				sender.sendMessage(Colors.Blue + "Drop transfer is now on.");
-				sender.sendMessage(Colors.Blue + "Any items dropped will be transferred to your chest.");
+				lwc.sendLocale(player, "protection.modes.dropxfer.on.finalize");
 			} else if (action.equals("off")) {
 				int target = lwc.getPlayerDropTransferTarget(playerName);
 
 				if (target == -1) {
-					sender.sendMessage(Colors.Red + "Please register a chest before turning drop transfer off.");
+					lwc.sendLocale(player, "protection.modes.dropxfer.selectchest");
 					return;
 				}
 
 				lwc.getMemoryDatabase().unregisterMode(playerName, "+dropTransfer");
-
-				sender.sendMessage(Colors.Blue + "Drop transfer is now off.");
+				lwc.sendLocale(player, "protection.modes.dropxfer.off.finalize");
 			} else if (action.equals("status")) {
 				if (lwc.getPlayerDropTransferTarget(playerName) == -1) {
-					sender.sendMessage(Colors.Blue + "You have not registered a drop transfer target.");
+					lwc.sendLocale(player, "protection.modes.dropxfer.status.off");
 				} else {
 					if (lwc.isPlayerDropTransferring(playerName)) {
-						sender.sendMessage(Colors.Blue + "Drop transfer is currently active.");
+						lwc.sendLocale(player, "protection.modes.dropxfer.status.active");
 					} else {
-						sender.sendMessage(Colors.Blue + "Drop transfer is currently inactive.");
+						lwc.sendLocale(player, "protection.modes.dropxfer.status.inactive");
 					}
 				}
 			}

@@ -331,7 +331,7 @@ public class LWC {
 		}
 
 		if (ConfigValues.SHOW_PROTECTION_NOTICES.getBool() && (isAdmin(player) || isMod(player))) {
-			sendLocale(player, "protection.general.notice.protected", "type", protection.typeToString(), "block", materialToString(block), "owner", protection.getOwner());
+			sendLocale(player, "protection.general.notice.protected", "type", getLocale(protection.typeToString().toLowerCase()), "block", materialToString(block), "owner", protection.getOwner());
 		}
 
 		switch (protection.getType()) {
@@ -654,8 +654,10 @@ public class LWC {
 	 * @return
 	 */
 	public String getLocale(String key, Object... args) {
+		key = key.replaceAll(" ", "_");
+		
 		if (!plugin.getLocale().containsKey(key)) {
-			return null;
+			return "UNKNOWN_LOCALE_" + key;
 		}
 
 		Map<String, Object> bind = parseBinds(args);
