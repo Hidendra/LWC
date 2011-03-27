@@ -388,9 +388,6 @@ public class PhysDB extends Database {
 		doUpdate150();
 		doUpdate170();
 
-		fixJobsTable();
-		fixPlayerTable();
-
 		try {
 			connection.setAutoCommit(false);
 
@@ -1003,6 +1000,40 @@ public class PhysDB extends Database {
 	}
 
 	/**
+	 * Get all access rights for a protection
+	 * 
+	 * @return
+	 */
+	public List<AccessRight> loadRights(int protectionId) {
+		List<AccessRight> accessRights = new ArrayList<AccessRight>();
+
+		try {
+			PreparedStatement statement = prepare("SELECT * FROM rights WHERE chest = ?");
+			statement.setInt(1, protectionId);
+			
+			ResultSet set = statement.executeQuery();
+
+			while (set.next()) {
+				AccessRight accessRight = new AccessRight();
+
+				accessRight.setId(set.getInt("id"));
+				accessRight.setProtectionId(set.getInt("chest"));
+				accessRight.setEntity(set.getString("entity"));
+				accessRight.setRights(set.getInt("rights"));
+				accessRight.setType(set.getInt("type"));
+
+				accessRights.add(accessRight);
+			}
+
+			set.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return accessRights;
+	}
+
+	/**
 	 * Add a chest to the protected chests
 	 * 
 	 * @param player
@@ -1516,61 +1547,4 @@ public class PhysDB extends Database {
 			}
 		}
 	}
-
-	/**
-	 * Pushed an LWC pre-1.5 tables with a mis-spelled column name. Damn me
-	 */
-	private void fixJobsTable() {
-		try {
-			Statement statement = connection.createStatement();
-			statement.executeQuery("SELECT payload FROM jobs");
-			statement.executeQuery("SELECT timestamp FROM jobs");
-			statement.close();
-		} catch (SQLException e) {
-			logger.log("Fixing jobs table", Level.CONFIG);
-
-			try {
-				Statement statement = connection.createStatement();
-				statement.executeUpdate("DROP TABLE jobs");
-				statement.close();
-			} catch (SQLException ex) {
-			}
-		}
-	}
-
-	/**
-	 * Rename users table
-	 */
-	private void fixPlayerTable() {
-		try {
-			Statement statement = connection.createStatement();
-			statement.executeQuery("SELECT * from players");
-			statement.close();
-		} catch (SQLException e) {
-			logger.log("Fixing players table", Level.CONFIG);
-
-			try {
-				Statement statement = connection.createStatement();
-				statement.executeUpdate("DROP TABLE users");
-				statement.close();
-			} catch (SQLException ex) {
-			}
-		}
-
-		try {
-			Statement statement = connection.createStatement();
-			statement.executeQuery("SELECT mcusername from players");
-			statement.close();
-		} catch (SQLException e) {
-			logger.log("Fixing players table", Level.CONFIG);
-
-			try {
-				Statement statement = connection.createStatement();
-				statement.executeUpdate("DROP TABLE players");
-				statement.close();
-			} catch (SQLException ex) {
-			}
-		}
-	}
-
 }

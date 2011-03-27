@@ -73,7 +73,7 @@ public class Create implements ICommand {
 		lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 		lwc.getMemoryDatabase().registerAction("create", player.getName(), full);
 
-		lwc.sendLocale(sender, "protection.create.finalize", "type", capitalizeFirstLetter(type));
+		lwc.sendLocale(sender, "protection.create.finalize", "type", lwc.getLocale(type.toLowerCase()));
 	}
 
 	@Override

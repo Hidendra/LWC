@@ -39,7 +39,7 @@ public class Remove implements ICommand {
 
 		if (type.equals("protection") || type.equals("chest") || type.equals("furnace") || type.equals("dispenser")) {
 			if (lwc.getMemoryDatabase().hasPendingChest(player.getName())) {
-				player.sendMessage(Colors.Red + "You already have a pending action.");
+				lwc.sendLocale(sender, "protection.general.pending");
 				return;
 			}
 

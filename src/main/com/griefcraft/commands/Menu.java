@@ -25,7 +25,7 @@ public class Menu implements ICommand {
 		Player player = (Player) sender;
 
 		lwc.getPhysicalDatabase().setMenuStyle(player.getName(), newStyle);
-		sender.sendMessage(Colors.Red + "Done. " + Colors.White + "Your menu style has been set to " + Colors.Blue + newStyle);
+		lwc.sendLocale(player, "protection.menu.finalize", "style", newStyle);
 	}
 
 	@Override

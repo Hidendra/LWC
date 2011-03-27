@@ -49,23 +49,23 @@ public class Unlock implements ICommand {
 			int chestID = lwc.getMemoryDatabase().getUnlockID(player.getName());
 
 			if (chestID == -1) {
-				player.sendMessage(Colors.Red + "[lwc] Internal error. [ulock]");
+				lwc.sendLocale(player, "protection.internalerror", "id", "ulock");
 				return;
 			}
 
 			Protection entity = lwc.getPhysicalDatabase().loadProtection(chestID);
 
 			if (entity.getType() != ProtectionTypes.PASSWORD) {
-				player.sendMessage(Colors.Red + "That is not password protected!");
+				lwc.sendLocale(player, "protection.unlock.notpassword");
 				return;
 			}
 
 			if (entity.getData().equals(password)) {
-				player.sendMessage(Colors.Green + "Password accepted.");
 				lwc.getMemoryDatabase().unregisterUnlock(player.getName());
 				lwc.getMemoryDatabase().registerPlayer(player.getName(), chestID);
+				lwc.sendLocale(player, "protection.unlock.password.valid");
 			} else {
-				player.sendMessage(Colors.Red + "Invalid password.");
+				lwc.sendLocale(player, "protection.unlock.password.invalid");
 			}
 		}
 	}

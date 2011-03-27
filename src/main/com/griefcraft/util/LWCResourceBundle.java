@@ -40,6 +40,10 @@ public class LWCResourceBundle extends ResourceBundle {
 	 * @param bundle
 	 */
 	public void addExtensionBundle(ResourceBundle bundle) {
+		if(bundle == null) {
+			return;
+		}
+		
 		extensionBundles.add(bundle);
 	}
 

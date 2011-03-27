@@ -121,7 +121,7 @@ public abstract class Database {
 		}
 
 		// load the database jar
-		URLClassLoader classLoader = new URLClassLoader(new URL[] { new URL("jar:file:" + new File(Updater.DEST_LIBRARY_FOLDER + "lib/" + currentType.getDriver()).getAbsolutePath() + "!/") });
+		URLClassLoader classLoader = new URLClassLoader(new URL[] { new URL("jar:file:" + new File(Updater.DEST_LIBRARY_FOLDER + "lib/" + currentType.getDriver()).getPath() + "!/") });
 		// DatabaseClassLoader classLoader = DatabaseClassLoader.getInstance(new URL("jar:file:" + new File(Updater.DEST_LIBRARY_FOLDER + "lib/" + currentType.getDriver()).getAbsolutePath() + "!/"));
 		
 		String className = "";
