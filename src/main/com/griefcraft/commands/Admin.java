@@ -92,7 +92,7 @@ public class Admin implements ICommand {
 					World world = (worldName == null || worldName.isEmpty()) ? server.getWorlds().get(0) : server.getWorld(worldName);
 
 					if (world == null) {
-						sender.sendMessage(Colors.Red + "Error: " + Colors.White + "The world \"" + worldName + "\" does not exist !");
+						lwc.sendLocale(sender, "protection.admin.cleanup.noworld", "world", worldName);
 						continue;
 					}
 
@@ -105,7 +105,7 @@ public class Admin implements ICommand {
 					if (block == null || !lwc.isProtectable(block)) {
 						lwc.getPhysicalDatabase().unregisterProtection(protection.getId());
 						// sender.sendMessage(Colors.Green + "Found:" + block.getType() + ". Removed protection #" + protection.getId() + " located in the world " + worldName);
-						sender.sendMessage("Removed (noexist): " + protection.toString());
+						lwc.sendLocale(sender, "protection.admin.cleanup.removednoexist", "protection", protection.toString());
 						completed++;
 					}
 
@@ -132,7 +132,7 @@ public class Admin implements ICommand {
 								Protection remove = tmpProtections.get(i);
 
 								lwc.getPhysicalDatabase().unregisterProtection(remove.getId());
-								sender.sendMessage("Removed (dupe): " + remove.toString());
+								lwc.sendLocale(sender, "protection.admin.cleanup.removeddupe", "protection", remove.toString());
 								completed++;
 
 								ignore.add(remove.getId());
@@ -144,15 +144,15 @@ public class Admin implements ICommand {
 				}
 			} catch (Exception e) {
 				sender.sendMessage("Uh-oh, something bad happened while cleaning up the LWC database!");
+				lwc.sendLocale(sender, "protection.internalerror", "id", "cleanup");
 				e.printStackTrace();
 			}
 
 			long finish = System.currentTimeMillis();
 			float timeInSeconds = (finish - start) / 1000.0f;
 
-			sender.sendMessage(Colors.Red + "Done!");
-			sender.sendMessage(String.format("LWC was successfully able to cleanup %s%d%s protections in %s%.2f%s seconds", Colors.Green, completed, Colors.White, Colors.Green, timeInSeconds, Colors.White));
-
+			lwc.sendLocale(sender, "protection.admin.cleanup.complete", completed, timeInSeconds);
+			
 			// commit the updates
 			try {
 				lwc.getPhysicalDatabase().getConnection().commit();
@@ -213,7 +213,7 @@ public class Admin implements ICommand {
 				try {
 					page = Integer.parseInt(args[3]);
 				} catch (Exception e) {
-					sender.sendMessage(Colors.Red + "Invalid page");
+					lwc.sendLocale(sender, "protection.find.invalidpage");
 					return;
 				}
 			}
@@ -225,14 +225,13 @@ public class Admin implements ICommand {
 			int max = protections.size(); // may not be the full perPage
 			int ceil = start + max;
 
-			sender.sendMessage(Colors.Red + "Page: " + Colors.White + page);
+			lwc.sendLocale(sender, "protection.find.currentpage", "page", page);
 
 			if (results != max) {
-				sender.sendMessage("Next page: " + Colors.Red + "/lwc admin find " + player + " " + (page + 1));
+				lwc.sendLocale(sender, "protection.find.nextpage", "player", player, "page", page + 1);
 			}
 
-			sender.sendMessage(Colors.Blue + "Showing " + Colors.Red + start + Colors.White + "-" + Colors.Red + ceil + Colors.White + " (total: " + Colors.Red + results + Colors.White + ")");
-			sender.sendMessage("-----------------------------------------------------");
+			lwc.sendLocale(sender, "protection.find.showing", "start", start, "ceil", ceil, "results", results);
 
 			for (Protection protection : protections) {
 				sender.sendMessage(protection.toString());
@@ -246,7 +245,7 @@ public class Admin implements ICommand {
 			}
 
 			if (!(sender instanceof Player)) {
-				sender.sendMessage(Colors.Red + "Only supported in-game!");
+				lwc.sendLocale(sender, "protection.admin.noconsole");
 				return;
 			}
 
@@ -254,7 +253,7 @@ public class Admin implements ICommand {
 			String newOwner = args[2];
 
 			lwc.getMemoryDatabase().registerAction("forceowner", player.getName(), newOwner);
-			player.sendMessage(Colors.Blue + "Left click the protection to change the owner to: " + Colors.White + newOwner);
+			lwc.sendLocale(sender, "protection.admin.forceowner.finalize", "player", newOwner);
 		}
 
 		else if (action.equals("remove")) {
@@ -268,13 +267,13 @@ public class Admin implements ICommand {
 			try {
 				protectionId = Integer.parseInt(args[2]);
 			} catch (Exception e) {
-				sender.sendMessage(Colors.Red + "Invalid id");
+				lwc.sendLocale(sender, "protection.admin.remove.invalidid");
 				return;
 			}
 
 			// FIXME: when this returns bool, have it send appropriate message
 			lwc.getPhysicalDatabase().unregisterProtection(protectionId);
-			sender.sendMessage(Colors.Green + "Success");
+			lwc.sendLocale(sender, "protection.admin.remove.finalize");
 		}
 
 		else if (action.equals("view")) {
@@ -282,7 +281,7 @@ public class Admin implements ICommand {
 			// USES DIRECT CRAFTBUKKIT CODE!
 
 			if (!(sender instanceof Player)) {
-				sender.sendMessage(Colors.Red + "Only supported in-game!");
+				lwc.sendLocale(sender, "protection.admin.noconsole");
 				return;
 			}
 
@@ -298,14 +297,14 @@ public class Admin implements ICommand {
 			Protection protection = lwc.getPhysicalDatabase().loadProtection(protectionId);
 
 			if (protection == null) {
-				player.sendMessage("Does not exist !");
+				lwc.sendLocale(sender, "protection.admin.view.noexist");
 				return;
 			}
 
 			Block block = world.getBlockAt(protection.getX(), protection.getY(), protection.getZ());
 
 			if (!(block.getState() instanceof ContainerBlock)) {
-				player.sendMessage(Colors.Red + "That block doesn't have an inventory!");
+				lwc.sendLocale(sender, "protection.admin.view.noinventory");
 				return;
 			}
 
@@ -351,7 +350,7 @@ public class Admin implements ICommand {
 			 * case 3: entityPlayer.a((net.minecraft.server.TileEntityDispenser) getInternalField(containerBlock, "dispenser")); break; }
 			 */
 
-			player.sendMessage(Colors.Red + "Viewing inventory #" + Colors.Blue + protectionId);
+			lwc.sendLocale(sender, "protection.admin.view.viewing", "id", protectionId);
 		}
 
 		else if (action.equals("locale")) {
@@ -384,49 +383,40 @@ public class Admin implements ICommand {
 
 			for (String toRemove : players.split(" ")) {
 				lwc.getPhysicalDatabase().unregisterProtectionByPlayer(toRemove);
-				sender.sendMessage(Colors.Green + "Removed all protections created by " + Colors.Blue + toRemove);
+				lwc.sendLocale(sender, "protection.admin.purge.finalize", "player", toRemove);
 			}
 		}
 
+		// FIXME: reload locales
 		else if (action.equals("reload")) {
 			Config.init();
-			sender.sendMessage(Colors.Green + "Reloaded LWC config!");
+			lwc.sendLocale(sender, "protection.admin.reload.finalize");
 		}
 
 		else if (action.equals("version")) {
-			sender.sendMessage("");
-			sender.sendMessage(Colors.Red + "LWC version");
-			sender.sendMessage("http://griefcraft.com");
-			sender.sendMessage("");
-
 			Updater updater = lwc.getPlugin().getUpdater();
 
 			String pluginColor = Colors.Green;
 			String updaterColor = Colors.Green;
 
 			double currPluginVersion = LWCInfo.VERSION;
-			double currSqlVersion = updater.getCurrentSQLiteVersion();
+			double currInternalVersion = updater.getCurrentSQLiteVersion();
 
 			// force a reload of the latest versions
 			updater.loadVersions(false);
 			
 			double latestPluginVersion = updater.getLatestPluginVersion();
-			double latestSqlVersion = updater.getLatestInternalVersion();
+			double latestInternalVersion = updater.getLatestInternalVersion();
 
 			if (latestPluginVersion > currPluginVersion) {
 				pluginColor = Colors.Red;
 			}
 
-			if (latestSqlVersion > currSqlVersion) {
-				pluginColor = Colors.Red;
+			if (latestInternalVersion > currInternalVersion) {
+				updaterColor = Colors.Red;
 			}
-
-			sender.sendMessage(Colors.Blue + "Main plugin: " + pluginColor + LWCInfo.FULL_VERSION + Colors.Yellow + "/" + Colors.Green + latestPluginVersion);
-			sender.sendMessage(Colors.Blue + "Internal: " + updaterColor + currSqlVersion + Colors.Yellow + "/" + Colors.Green + latestSqlVersion);
-
-			sender.sendMessage("");
-			sender.sendMessage(Colors.Green + "Green: Up to date");
-			sender.sendMessage(Colors.Red + "Red: Out of date");
+			
+			lwc.sendLocale(sender, "protection.admin.version.finalize", "plugin_color", pluginColor, "internal_color", updaterColor, "plugin_version", LWCInfo.FULL_VERSION, "latest_plugin", latestPluginVersion, "internal_version", currInternalVersion, "latest_internal", latestInternalVersion);
 		}
 
 		else if (action.equals("createjob")) {
@@ -456,11 +446,9 @@ public class Admin implements ICommand {
 		}
 
 		else if (action.equals("cleanup")) {
-			sender.sendMessage("You have: " + Colors.Green + lwc.getPhysicalDatabase().getProtectionCount() + Colors.White + " protections");
-			sender.sendMessage(Colors.Red + "This may take a while depending on how many protections you have");
-
-			// do the work in a seperate thread so we don't fully lock the
-			// server
+			lwc.sendLocale(sender, "protection.admin.cleanup.start", "count", lwc.getPhysicalDatabase().getProtectionCount());
+			
+			// do the work in a seperate thread so we don't fully lock the server
 			new Thread(new Admin_Cleanup_Thread(lwc, sender)).start();
 		}
 
@@ -468,10 +456,9 @@ public class Admin implements ICommand {
 			Updater updater = lwc.getPlugin().getUpdater();
 
 			if (updater.checkDist()) {
-				sender.sendMessage(Colors.Green + "Updated LWC successfully to version: " + updater.getLatestPluginVersion());
-				sender.sendMessage(Colors.Green + "Please reload LWC to complete the update");
+				lwc.sendLocale(sender, "protection.admin.update.updated", "version", updater.getLatestPluginVersion());
 			} else {
-				sender.sendMessage(Colors.Red + "No update found.");
+				lwc.sendLocale(sender, "protection.admin.update.noupdate");
 			}
 		}
 
@@ -500,13 +487,16 @@ public class Admin implements ICommand {
 
 				if (type == Limit.GLOBAL) {
 					lwc.getPhysicalDatabase().registerProtectionLimit(type, limit, "");
+					lwc.sendLocale(sender, "protection.admin.limit.global", "limit", limit);
 					sender.sendMessage(Colors.Green + "Registered global limit of " + Colors.Gold + limit + Colors.Green + " protections");
 				} else if (limit != -2) {
+					String localeChild = isGroup ? "group" : "player";
+					
 					lwc.getPhysicalDatabase().registerProtectionLimit(type, limit, entity);
-					sender.sendMessage(Colors.Green + "Registered limit of " + Colors.Gold + limit + Colors.Green + " protections to the " + (isGroup ? "group" : "user") + " " + Colors.Gold + entity);
+					lwc.sendLocale(sender, "protection.admin.limit." + localeChild, "limit", limit, "name", entity);
 				} else {
 					lwc.getPhysicalDatabase().unregisterProtectionLimit(type, entity);
-					sender.sendMessage(Colors.Green + "Unregistered limit for " + Colors.Gold + entity);
+					lwc.sendLocale(sender, "protection.admin.limit.remove", "name", entity);
 				}
 			}
 		}
@@ -537,17 +527,13 @@ public class Admin implements ICommand {
 			if (toClear.equals("protections")) {
 				lwc.getPhysicalDatabase().unregisterProtections();
 				lwc.getPhysicalDatabase().unregisterProtectionRights();
-
-				sender.sendMessage(Colors.Green + "Removed all protections + rights");
 			} else if (toClear.equals("rights")) {
 				lwc.getPhysicalDatabase().unregisterProtectionRights();
-
-				sender.sendMessage(Colors.Green + "Removed all protection rights");
 			} else if (toClear.equals("limits")) {
 				lwc.getPhysicalDatabase().unregisterProtectionLimits();
-
-				sender.sendMessage(Colors.Green + "Removed all protection limits");
 			}
+			
+			lwc.sendLocale(sender, "protection.admin.clear." + toClear);
 		}
 	}
 

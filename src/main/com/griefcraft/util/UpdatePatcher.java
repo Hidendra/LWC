@@ -76,7 +76,6 @@ public class UpdatePatcher {
 
 			logger.log("Preliminary scan...............");
 			int startProtections = physicalDatabase.getProtectionCount();
-			int startRights = physicalDatabase.getRightsCount();
 			int startLimits = physicalDatabase.getLimitCount();
 
 			int protections = sqliteDatabase.getProtectionCount();
@@ -84,7 +83,6 @@ public class UpdatePatcher {
 			int limits = sqliteDatabase.getLimitCount();
 
 			int expectedProtections = protections + startProtections;
-			int expectedRights = rights + startRights;
 			int expectedLimits = limits + startLimits;
 
 			logger.log("TO CONVERT:");
@@ -99,7 +97,24 @@ public class UpdatePatcher {
 				List<Protection> tmp = sqliteDatabase.loadProtections();
 
 				for (Protection protection : tmp) {
-					physicalDatabase.registerProtection(protection.getBlockId(), protection.getType(), protection.getWorld(), protection.getOwner(), protection.getData(), protection.getX(), protection.getY(), protection.getZ());
+					int x = protection.getX();
+					int y = protection.getY();
+					int z = protection.getZ();
+					
+					// register it
+					physicalDatabase.registerProtection(protection.getBlockId(), protection.getType(), protection.getWorld(), protection.getOwner(), protection.getData(), x, y, z);
+				
+					// get the new protection, to retrieve the id
+					Protection registered = physicalDatabase.loadProtection(protection.getWorld(), x, y, z);
+					
+					// get the rights in the world
+					List<AccessRight> tmpRights = sqliteDatabase.loadRights(protection.getId());
+
+					// register the new rights using the newly registered protection
+					for (AccessRight right : tmpRights) {
+						physicalDatabase.registerProtectionRights(registered.getId(), right.getEntity(), right.getRights(), right.getType());
+					}
+				
 				}
 
 				logger.log("COMMITTING");
@@ -112,26 +127,7 @@ public class UpdatePatcher {
 				}
 			}
 
-			if (expectedRights > 0) {
-				logger.log("Converting: RIGHTS");
-
-				List<AccessRight> tmp = sqliteDatabase.loadRights();
-
-				for (AccessRight right : tmp) {
-					physicalDatabase.registerProtectionRights(right.getprotectionId(), right.getEntity(), right.getRights(), right.getType());
-				}
-
-				logger.log("COMMITTING");
-				physicalDatabase.getConnection().commit();
-				logger.log("OK , expecting: " + expectedRights);
-				if (expectedRights == (rights = physicalDatabase.getRightsCount())) {
-					logger.log("OK.");
-				} else {
-					logger.log("Weird, only " + rights + " rights are in the database? Continuing...");
-				}
-			}
-
-			if (expectedRights > 0) {
+			if (expectedLimits > 0) {
 				logger.log("Converting: LIMITS");
 
 				List<Limit> tmp = sqliteDatabase.loadLimits();
