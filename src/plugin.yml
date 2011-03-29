@@ -1,6 +1,6 @@
 name: LWC
 main: com.griefcraft.lwc.LWCPlugin
-version: 2.00
+version: 2.10
 website: http://griefcraft.com
 author: Hidendra
 description: >
@@ -30,4 +30,7 @@ commands:
     usage: /<command>
   cremove:
     description: Alias command for /lwc -r protection
+    usage: /<command>
+  climits:
+    description: Alias command for /lwc -i limits
     usage: /<command>
