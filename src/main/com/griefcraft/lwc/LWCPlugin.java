@@ -162,6 +162,8 @@ public class LWCPlugin extends JavaPlugin {
 			return true;
 		} else if (name.equals("cremove")) {
 			return true;
+		} else if (name.equals("climits")) {
+			return true;
 		} else {
 			return false;
 		}
@@ -223,6 +225,9 @@ public class LWCPlugin extends JavaPlugin {
 			} else if (commandName.equals("cremove")) {
 				lwc.getCommand(Remove.class).execute(lwc, sender, "-remove protection".split(" "));
 				return true;
+			} else if (commandName.equals("climits")) {
+				lwc.getCommand(Info.class).execute(lwc, sender, "-info limits".split(" "));
+				return true;
 			}
 		}
 
@@ -267,9 +272,6 @@ public class LWCPlugin extends JavaPlugin {
 		if (lwc != null) {
 			lwc.destruct();
 		}
-
-		System.gc();
-		System.gc();
 	}
 
 	@Override

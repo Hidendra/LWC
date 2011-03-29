@@ -449,7 +449,8 @@ public class Admin implements ICommand {
 			lwc.sendLocale(sender, "protection.admin.cleanup.start", "count", lwc.getPhysicalDatabase().getProtectionCount());
 			
 			// do the work in a seperate thread so we don't fully lock the server
-			new Thread(new Admin_Cleanup_Thread(lwc, sender)).start();
+			// new Thread(new Admin_Cleanup_Thread(lwc, sender)).start();
+			new Admin_Cleanup_Thread(lwc, sender).run();
 		}
 
 		else if (action.equals("update")) {
@@ -534,6 +535,43 @@ public class Admin implements ICommand {
 			}
 			
 			lwc.sendLocale(sender, "protection.admin.clear." + toClear);
+		}
+		
+		else if (action.equalsIgnoreCase("getlimits")) {
+			if (args.length < 3) {
+				lwc.sendSimpleUsage(sender, "/lwc -admin getlimits <Groups/Users>");
+				return;
+			} 
+			
+			for (int i = 2; i < args.length; i++) {
+				String entity = args[i];
+				int type = Limit.PLAYER;
+				int used = -1;
+				boolean isGroup = entity.startsWith("g:");
+				String displayQuota = "Unlimited";
+				
+				if (isGroup) {
+					entity = entity.substring(2);
+					type = Limit.GROUP;
+				}
+
+				int quota = lwc.getPhysicalDatabase().getLimit(type, entity);
+				
+				if(!isGroup) {
+					used = lwc.getPhysicalDatabase().getProtectionCount(entity);
+					quota = lwc.getProtectionLimits(entity);
+				}
+				
+				if(quota != -1) {
+					displayQuota = quota + "";
+				}
+				
+				if(isGroup) {
+					lwc.sendLocale(sender, "protection.getlimits.group", "name", entity, "quota", displayQuota);
+				} else {
+					lwc.sendLocale(sender, "protection.getlimits.player", "name", entity, "used", used, "quota", displayQuota);
+				}
+			}
 		}
 	}
 

@@ -391,24 +391,7 @@ public class LWC {
 	 * @return true if they are limited
 	 */
 	public boolean enforceProtectionLimits(Player player) {
-		int limit;
-
-		/*
-		 * Apply player limits
-		 */
-		limit = physicalDatabase.getPlayerLimit(player.getName());
-
-		/*
-		 * Apply group limits.. can't be one line however
-		 */
-		if (limit == -1 && permissions != null) {
-			limit = physicalDatabase.getGroupLimit(Permissions.Security.getGroup(player.getName()));
-		}
-
-		/*
-		 * Apply global limits if need be
-		 */
-		limit = limit != -1 ? limit : physicalDatabase.getGlobalLimit();
+		int limit = getProtectionLimits(player.getName());
 
 		/*
 		 * Alert the player if they're above or at the limit
@@ -423,6 +406,35 @@ public class LWC {
 		}
 
 		return false;
+	}
+	
+	/**
+	 * Get the limits for a player. This scans group and global limits, as well
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public int getProtectionLimits(String player) {
+		int limit = -1;
+		
+		/*
+		 * Apply player limits
+		 */
+		limit = physicalDatabase.getPlayerLimit(player);
+
+		/*
+		 * Apply group limits.. can't be one line however
+		 */
+		if (limit == -1 && permissions != null) {
+			limit = physicalDatabase.getGroupLimit(Permissions.Security.getGroup(player));
+		}
+
+		/*
+		 * Apply global limits if need be
+		 */
+		limit = limit != -1 ? limit : physicalDatabase.getGlobalLimit();
+		
+		return limit;
 	}
 
 	/**
@@ -867,7 +879,7 @@ public class LWC {
 	}
 
 	/**
-	 * Check if a mode is disabled
+	 * Check if a mode is blacklisted
 	 * 
 	 * @param mode
 	 * @return
@@ -888,6 +900,20 @@ public class LWC {
 		}
 
 		return false;
+	}
+	
+	/**
+	 * Check if a mode is whitelisted for a player
+	 * 
+	 * @param mode
+	 * @return
+	 */
+	public boolean isModeWhitelisted(Player player, String mode) {
+		if(permissions == null) {
+			return false;
+		}
+		
+		return Permissions.Security.permission(player, "lwc.mode." + mode);
 	}
 
 	/**
