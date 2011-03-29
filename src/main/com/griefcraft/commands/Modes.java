@@ -37,9 +37,11 @@ public class Modes implements ICommand {
 		String mode = args[1].toLowerCase();
 		Player player = (Player) sender;
 		
-		if (!lwc.isAdmin(sender) && lwc.isModeBlacklisted(mode)) {
-			lwc.sendLocale(player, "protection.modes.disabled");
-			return;
+		if(!lwc.isModeWhitelisted(player, mode)) {
+			if (!lwc.isAdmin(sender) && lwc.isModeBlacklisted(mode)) {
+				lwc.sendLocale(player, "protection.modes.disabled");
+				return;
+			}
 		}
 
 		if (mode.equals("persist")) {

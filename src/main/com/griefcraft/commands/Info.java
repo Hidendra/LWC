@@ -29,10 +29,27 @@ public class Info implements ICommand {
 	@Override
 	public void execute(LWC lwc, CommandSender sender, String[] args) {
 		Player player = (Player) sender;
+		String type = "info";
+		
+		if(args.length > 1) {
+			type = args[1].toLowerCase();
+		}
 
-		lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-		lwc.getMemoryDatabase().registerAction("info", player.getName());
-		lwc.sendLocale(sender, "protection.info.finalize");
+		if(type.equals("limits")) {
+			int used = lwc.getPhysicalDatabase().getProtectionCount(player.getName());
+			int quota = lwc.getProtectionLimits(player.getName());
+			String displayQuota = "Unlimited";
+			
+			if(quota != -1) {
+				displayQuota = quota + "";
+			}
+			
+			lwc.sendLocale(sender, "protection.info.limits", "used", used, "quota", displayQuota);
+		} else if(type.equals("info")) {
+			lwc.getMemoryDatabase().unregisterAllActions(player.getName());
+			lwc.getMemoryDatabase().registerAction("info", player.getName());
+			lwc.sendLocale(sender, "protection.info.finalize");
+		}
 	}
 
 	@Override
