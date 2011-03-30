@@ -21,10 +21,10 @@ import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockDamageLevel;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockInteractEvent;
@@ -94,45 +94,8 @@ public class LWCBlockListener extends BlockListener {
 		if (event.isCancelled()) {
 			return;
 		}
-
-		BlockDamageLevel level = event.getDamageLevel();
-
-		if (level == BlockDamageLevel.STARTED) {
-			blockTouched(event);
-		}
-
-	}
-
-	/**
-	 * Prevent player from interacting with a protected block
-	 */
-	@Override
-	public void onBlockInteract(BlockInteractEvent event) {
-		if (!(event.getEntity() instanceof Player)) {
-			return;
-		}
-
-		Player player = (Player) event.getEntity();
-		LWC lwc = plugin.getLWC();
-
-		Block block = event.getBlock();
-
-		/*
-		 * Prevent players with lwc.blockinventories from opening inventories
-		 */
-		if (lwc.getPermissions() != null && !Permissions.Security.permission(player, "lwc.protect") && Permissions.Security.permission(player, "lwc.blockinventory") && !lwc.isAdmin(player) && !lwc.isMod(player)) {
-			if (block.getState() instanceof ContainerBlock) {
-				lwc.sendLocale(player, "protection.interact.error.blocked");
-				event.setCancelled(true);
-				return;
-			}
-		}
-
-		boolean access = lwc.enforceAccess(player, block);
-
-		if (!access) {
-			event.setCancelled(true);
-		}
+		
+		blockTouched(event);
 	}
 
 	/**
@@ -219,27 +182,6 @@ public class LWCBlockListener extends BlockListener {
 		 * Tell them
 		 */
 		lwc.sendLocale(player, "protection.onplace.create.finalize", "type", lwc.getLocale(autoRegisterType.toLowerCase()), "block", LWC.materialToString(block));
-	}
-
-	public void onBlockRedstoneChange(BlockRedstoneEvent event) {
-		if (!LWCInfo.DEVELOPMENT) {
-			// return; // wip
-		}
-
-		LWC lwc = plugin.getLWC();
-		Block poweredBlock = event.getBlock();
-
-		// System.out.println(poweredBlock.getType().toString() + ": " + event.getOldCurrent() + "->" + event.getNewCurrent());
-
-		if (!lwc.isProtectable(poweredBlock)) {
-			return;
-		}
-
-		Protection protection = lwc.findProtection(poweredBlock);
-
-		if (protection != null) {
-			event.setNewCurrent(event.getOldCurrent());
-		}
 	}
 
 	/**

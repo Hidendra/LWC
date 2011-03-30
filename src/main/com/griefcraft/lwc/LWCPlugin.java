@@ -406,16 +406,17 @@ public class LWCPlugin extends JavaPlugin {
 		/* Player events */
 		registerEvent(playerListener, Type.PLAYER_QUIT, Priority.Monitor);
 		registerEvent(playerListener, Type.PLAYER_DROP_ITEM);
+		registerEvent(playerListener, Type.PLAYER_INTERACT);
 
 		/* Entity events */
 		registerEvent(entityListener, Type.ENTITY_EXPLODE);
 
 		/* Block events */
-		registerEvent(blockListener, Type.BLOCK_INTERACT);
-		registerEvent(blockListener, Type.BLOCK_DAMAGED);
+		// registerEvent(blockListener, Type.BLOCK_INTERACT);
+		registerEvent(blockListener, Type.BLOCK_DAMAGE);
 		registerEvent(blockListener, Type.BLOCK_BREAK);
-		registerEvent(blockListener, Type.BLOCK_PLACED);
-		registerEvent(blockListener, Type.REDSTONE_CHANGE);
+		// registerEvent(blockListener, Type.BLOCK_PLACED);
+		// registerEvent(blockListener, Type.REDSTONE_CHANGE);
 	}
 
 	/**

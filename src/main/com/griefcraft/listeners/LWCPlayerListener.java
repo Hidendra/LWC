@@ -26,15 +26,20 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
 import com.griefcraft.util.Colors;
+import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class LWCPlayerListener extends PlayerListener {
 
@@ -118,11 +123,37 @@ public class LWCPlayerListener extends PlayerListener {
 
 	}
 
-	/**
-	 * Player dcd, clear them from memory if they're in it
-	 */
 	@Override
-	public void onPlayerQuit(PlayerEvent event) {
+	public void onPlayerInteract(PlayerInteractEvent event) {
+		if(event.getAction() != Action.LEFT_CLICK_BLOCK && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+			return;
+		}
+
+		LWC lwc = plugin.getLWC();
+		Player player = event.getPlayer();
+		Block block = event.getClickedBlock();
+
+		/*
+		 * Prevent players with lwc.blockinventories from opening inventories
+		 */
+		if (lwc.getPermissions() != null && !Permissions.Security.permission(player, "lwc.protect") && Permissions.Security.permission(player, "lwc.blockinventory") && !lwc.isAdmin(player) && !lwc.isMod(player)) {
+			if (block.getState() instanceof ContainerBlock) {
+				lwc.sendLocale(player, "protection.interact.error.blocked");
+				event.setCancelled(true);
+				return;
+			}
+		}
+
+		boolean canAccess = lwc.enforceAccess(player, block);
+
+		if (!canAccess) {
+			event.setCancelled(true);
+			event.setUseInteractedBlock(Result.DENY);
+		}
+	}
+
+	@Override
+	public void onPlayerQuit(PlayerQuitEvent event) {
 		LWC lwc = plugin.getLWC();
 		String player = event.getPlayer().getName();
 

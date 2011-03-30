@@ -82,8 +82,8 @@ public class PhysDB extends Database {
 			statement.setString(7, last_update);
 
 			statement.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			printException(e);
 		}
 	}
 
@@ -106,7 +106,7 @@ public class PhysDB extends Database {
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
 		} catch (Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -136,8 +136,8 @@ public class PhysDB extends Database {
 			}
 
 			set.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			printException(e);
 		}
 
 		return null;
@@ -206,8 +206,8 @@ public class PhysDB extends Database {
 
 			set.close();
 			Performance.addPhysDBQuery();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			printException(e);
 		}
 
 		return jobs;
@@ -239,7 +239,7 @@ public class PhysDB extends Database {
 			set.close();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
-			e.printStackTrace();
+			printException(e);
 		}
 
 		return limit;
@@ -272,8 +272,8 @@ public class PhysDB extends Database {
 			}
 
 			set.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			printException(e);
 		}
 
 		return ConfigValues.DEFAULT_MENU_STYLE.getString();
@@ -323,7 +323,7 @@ public class PhysDB extends Database {
 			set.close();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
-			e.printStackTrace();
+			printException(e);
 		}
 
 		return access;
@@ -359,7 +359,7 @@ public class PhysDB extends Database {
 			set.close();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
-			e.printStackTrace();
+			printException(e);
 		}
 
 		return amount;
@@ -606,7 +606,7 @@ public class PhysDB extends Database {
 
 			doIndexes();
 		} catch (final SQLException e) {
-			e.printStackTrace();
+			printException(e);
 		}
 
 		try {
@@ -651,8 +651,8 @@ public class PhysDB extends Database {
 			}
 
 			set.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			printException(e);
 		}
 
 		return accessRights;
@@ -683,8 +683,8 @@ public class PhysDB extends Database {
 			}
 
 			set.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			printException(e);
 		}
 
 		return limits;
@@ -737,7 +737,7 @@ public class PhysDB extends Database {
 			set.close();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
-			e.printStackTrace();
+			printException(e);
 		}
 		return null;
 	}
@@ -792,7 +792,7 @@ public class PhysDB extends Database {
 			set.close();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
-			e.printStackTrace();
+			printException(e);
 		}
 
 		return null;
@@ -840,8 +840,8 @@ public class PhysDB extends Database {
 
 			set.close();
 			statement.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			printException(e);
 		}
 
 		return protections;
@@ -904,8 +904,8 @@ public class PhysDB extends Database {
 
 			set.close();
 			Performance.addPhysDBQuery();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			printException(e);
 		}
 
 		return chests;
@@ -959,8 +959,8 @@ public class PhysDB extends Database {
 
 			set.close();
 
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			printException(e);
 		}
 
 		return protections;
@@ -992,8 +992,8 @@ public class PhysDB extends Database {
 			}
 
 			set.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			printException(e);
 		}
 
 		return accessRights;
@@ -1026,8 +1026,8 @@ public class PhysDB extends Database {
 			}
 
 			set.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			printException(e);
 		}
 
 		return accessRights;
@@ -1064,7 +1064,7 @@ public class PhysDB extends Database {
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -1089,7 +1089,7 @@ public class PhysDB extends Database {
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -1117,7 +1117,7 @@ public class PhysDB extends Database {
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -1135,7 +1135,7 @@ public class PhysDB extends Database {
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
 		} catch (Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -1152,8 +1152,8 @@ public class PhysDB extends Database {
 			statement.setString(2, menu);
 
 			statement.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			printException(e);
 		}
 	}
 
@@ -1172,7 +1172,7 @@ public class PhysDB extends Database {
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
-			e.printStackTrace();
+			printException(e);
 		}
 
 		unregisterProtectionRights(protectionId);
@@ -1191,8 +1191,8 @@ public class PhysDB extends Database {
 
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			printException(e);
 		}
 
 		unregisterProtectionRightsByPlayer(player);
@@ -1216,7 +1216,7 @@ public class PhysDB extends Database {
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -1231,7 +1231,7 @@ public class PhysDB extends Database {
 			statement.close();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -1243,8 +1243,8 @@ public class PhysDB extends Database {
 			Statement statement = connection.createStatement();
 			statement.executeUpdate("DELETE FROM `rights`");
 			statement.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			printException(e);
 		}
 	}
 
@@ -1262,7 +1262,7 @@ public class PhysDB extends Database {
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -1282,7 +1282,7 @@ public class PhysDB extends Database {
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -1299,8 +1299,8 @@ public class PhysDB extends Database {
 
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			printException(e);
 		}
 	}
 
@@ -1314,7 +1314,7 @@ public class PhysDB extends Database {
 			statement.close();
 			Performance.addPhysDBQuery();
 		} catch (final SQLException e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -1328,8 +1328,8 @@ public class PhysDB extends Database {
 			throw new SQLException("Not supported");
 			// _insert_inventories_id_protectionid.setInt(1, 1);
 
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			printException(e);
 		}
 	}
 
@@ -1348,8 +1348,8 @@ public class PhysDB extends Database {
 
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			printException(e);
 		}
 	}
 
@@ -1368,8 +1368,8 @@ public class PhysDB extends Database {
 
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			printException(e);
 		}
 	}
 
@@ -1388,8 +1388,8 @@ public class PhysDB extends Database {
 
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			printException(e);
 		}
 	}
 
@@ -1408,8 +1408,8 @@ public class PhysDB extends Database {
 
 			statement.executeUpdate();
 			Performance.addPhysDBQuery();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			printException(e);
 		}
 	}
 
@@ -1442,8 +1442,8 @@ public class PhysDB extends Database {
 			connection.commit();
 
 			statement.close();
-		} catch (SQLException e) {
-			// e.printStackTrace();
+		} catch (Exception e) {
+			// printException(e);
 		}
 
 		try {
@@ -1492,7 +1492,7 @@ public class PhysDB extends Database {
 			statement.executeQuery("SELECT `id` FROM `protections`");
 			statement.close();
 			Performance.addPhysDBQuery();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			logger.log("Outdated database!", Level.CONFIG);
 			logger.log("UPGRADING FROM 1.30 TO 1.40", Level.CONFIG);
 
@@ -1503,7 +1503,7 @@ public class PhysDB extends Database {
 				statement.executeUpdate("ALTER TABLE `chests` RENAME TO `protections`");
 				statement.close();
 				Performance.addPhysDBQuery();
-			} catch (SQLException e_) {
+			} catch (Exception e_) {
 			}
 		}
 	}
@@ -1517,13 +1517,13 @@ public class PhysDB extends Database {
 			statement.executeQuery("SELECT blockId FROM protections");
 			statement.close();
 			Performance.addPhysDBQuery();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			try {
 				Statement statement = connection.createStatement();
 				statement.executeUpdate("ALTER TABLE `protections` ADD `blockId` INTEGER");
 				statement.close();
 				Performance.addPhysDBQuery();
-			} catch (SQLException ex) {
+			} catch (Exception ex) {
 			}
 		}
 	}
@@ -1537,13 +1537,13 @@ public class PhysDB extends Database {
 			statement.executeQuery("SELECT world FROM protections");
 			statement.close();
 			Performance.addPhysDBQuery();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			try {
 				Statement statement = connection.createStatement();
 				statement.executeUpdate("ALTER TABLE `protections` ADD `world` TEXT");
 				statement.close();
 				Performance.addPhysDBQuery();
-			} catch (SQLException ex) {
+			} catch (Exception ex) {
 			}
 		}
 	}
