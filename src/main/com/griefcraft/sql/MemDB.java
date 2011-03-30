@@ -64,7 +64,7 @@ public class MemDB extends Database {
 
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 
 		return null;
@@ -95,7 +95,7 @@ public class MemDB extends Database {
 
 			return chestID;
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 
 		return -1;
@@ -124,7 +124,7 @@ public class MemDB extends Database {
 			}
 
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 
 		return actions;
@@ -167,7 +167,7 @@ public class MemDB extends Database {
 
 			return password;
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 
 		return null;
@@ -194,7 +194,7 @@ public class MemDB extends Database {
 
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 		return ret;
 	}
@@ -223,7 +223,7 @@ public class MemDB extends Database {
 
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 
 		return modes;
@@ -252,7 +252,7 @@ public class MemDB extends Database {
 			}
 
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 
 		return sessionUsers;
@@ -297,7 +297,7 @@ public class MemDB extends Database {
 
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 
 		return false;
@@ -369,7 +369,7 @@ public class MemDB extends Database {
 
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 
 		return false;
@@ -487,7 +487,7 @@ public class MemDB extends Database {
 
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -508,7 +508,7 @@ public class MemDB extends Database {
 			statement.close();
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 
 		return count;
@@ -538,7 +538,7 @@ public class MemDB extends Database {
 
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -566,7 +566,7 @@ public class MemDB extends Database {
 
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -594,7 +594,7 @@ public class MemDB extends Database {
 
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -616,7 +616,7 @@ public class MemDB extends Database {
 
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -641,7 +641,7 @@ public class MemDB extends Database {
 
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -663,7 +663,7 @@ public class MemDB extends Database {
 
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -685,7 +685,7 @@ public class MemDB extends Database {
 
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -718,7 +718,7 @@ public class MemDB extends Database {
 			statement.close();
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 
 		return count;
@@ -740,7 +740,7 @@ public class MemDB extends Database {
 
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -759,7 +759,7 @@ public class MemDB extends Database {
 
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -774,7 +774,7 @@ public class MemDB extends Database {
 			statement.close();
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -793,7 +793,7 @@ public class MemDB extends Database {
 
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -815,7 +815,7 @@ public class MemDB extends Database {
 
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -834,7 +834,7 @@ public class MemDB extends Database {
 
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 
@@ -852,7 +852,7 @@ public class MemDB extends Database {
 			statement.executeUpdate();
 			Performance.addMemDBQuery();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			printException(e);
 		}
 	}
 

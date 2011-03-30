@@ -280,7 +280,9 @@ public class UpdateThread implements Runnable {
 			}
 		}
 
-		doJobs();
+		if(LWCInfo.DEVELOPMENT) {
+			doJobs();
+		}
 
 		flush = false;
 		lastUpdate = System.currentTimeMillis();

@@ -104,6 +104,15 @@ public abstract class Database {
 	public Database(Type currentType) {
 		this.currentType = currentType;
 	}
+	
+	/**
+	 * Print an exception to stdout
+	 * 
+	 * @param exception
+	 */
+	protected void printException(Exception exception) {
+		
+	}
 
 	/**
 	 * Connect to MySQL
