@@ -40,7 +40,7 @@ import com.griefcraft.util.UpdatePatcher;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.RegionManager;
+import com.sk89q.worldguard.protection.managers.RegionManager;
 
 public class LWC {
 
@@ -155,12 +155,7 @@ public class LWC {
 			return memoryDatabase.hasAccess(player.getName(), protection);
 
 		case ProtectionTypes.PRIVATE:
-			return player.getName().equalsIgnoreCase(protection.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, protection.getId(), player.getName()) >= 0 || (permissions != null && physicalDatabase.getPrivateAccess(AccessRight.GROUP, protection.getId(), Permissions.Security.getGroup(player.getName())) >= 0);
-			// return player.getName().equalsIgnoreCase(chest.getOwner()) ||
-			// physicalDatabase.getPrivateAccess(RightTypes.PLAYER,
-			// chest.getID(), player.getName()) >= 0 ||
-			// physicalDatabase.getPrivateAccess(RightTypes.GROUP,
-			// chest.getID(), player.getGroups()) >= 0;
+			return player.getName().equalsIgnoreCase(protection.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, protection.getId(), player.getName()) >= 0 || (permissions != null && physicalDatabase.getPrivateAccess(AccessRight.GROUP, protection.getId(), Permissions.Security.getGroup(player.getWorld().getName(), player.getName())) >= 0);
 
 		default:
 			return false;
@@ -208,12 +203,7 @@ public class LWC {
 			return player.getName().equalsIgnoreCase(protection.getOwner()) && memoryDatabase.hasAccess(player.getName(), protection);
 
 		case ProtectionTypes.PRIVATE:
-			return player.getName().equalsIgnoreCase(protection.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, protection.getId(), player.getName()) == 1 || (permissions != null && physicalDatabase.getPrivateAccess(AccessRight.GROUP, protection.getId(), Permissions.Security.getGroup(player.getName())) == 1);
-			// return player.getName().equalsIgnoreCase(chest.getOwner()) ||
-			// physicalDatabase.getPrivateAccess(RightTypes.PLAYER,
-			// chest.getID(), player.getName()) == 1 ||
-			// physicalDatabase.getPrivateAccess(RightTypes.GROUP,
-			// chest.getID(), player.getGroups()) == 1;
+			return player.getName().equalsIgnoreCase(protection.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, protection.getId(), player.getName()) == 1 || (permissions != null && physicalDatabase.getPrivateAccess(AccessRight.GROUP, protection.getId(), Permissions.Security.getGroup(player.getWorld().getName(), player.getName())) == 1);
 
 		default:
 			return false;
@@ -391,7 +381,7 @@ public class LWC {
 	 * @return true if they are limited
 	 */
 	public boolean enforceProtectionLimits(Player player) {
-		int limit = getProtectionLimits(player.getName());
+		int limit = getProtectionLimits(player.getWorld().getName(), player.getName());
 
 		/*
 		 * Alert the player if they're above or at the limit
@@ -414,8 +404,12 @@ public class LWC {
 	 * @param player
 	 * @return
 	 */
-	public int getProtectionLimits(String player) {
+	public int getProtectionLimits(String world, String player) {
 		int limit = -1;
+		
+		if(world.isEmpty()) {
+			world = plugin.getServer().getWorlds().get(0).getName();
+		}
 		
 		/*
 		 * Apply player limits
@@ -426,7 +420,7 @@ public class LWC {
 		 * Apply group limits.. can't be one line however
 		 */
 		if (limit == -1 && permissions != null) {
-			limit = physicalDatabase.getGroupLimit(Permissions.Security.getGroup(player));
+			limit = physicalDatabase.getGroupLimit(Permissions.Security.getGroup(world, player));
 		}
 
 		/*
