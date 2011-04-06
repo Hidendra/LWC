@@ -22,6 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.griefcraft.commands.Admin;
 import com.griefcraft.commands.Create;
+import com.griefcraft.commands.Flag;
 import com.griefcraft.commands.ICommand;
 import com.griefcraft.commands.Info;
 import com.griefcraft.commands.Menu;
@@ -370,6 +371,7 @@ public class LWCPlugin extends JavaPlugin {
 		registerCommand(Unlock.class);
 		registerCommand(Owners.class);
 		registerCommand(Menu.class);
+		registerCommand(Flag.class);
 	}
 
 	/**
@@ -412,11 +414,10 @@ public class LWCPlugin extends JavaPlugin {
 		registerEvent(entityListener, Type.ENTITY_EXPLODE);
 
 		/* Block events */
-		// registerEvent(blockListener, Type.BLOCK_INTERACT);
 		registerEvent(blockListener, Type.BLOCK_DAMAGE);
 		registerEvent(blockListener, Type.BLOCK_BREAK);
-		// registerEvent(blockListener, Type.BLOCK_PLACED);
-		// registerEvent(blockListener, Type.REDSTONE_CHANGE);
+		registerEvent(blockListener, Type.BLOCK_PLACE);
+		registerEvent(blockListener, Type.REDSTONE_CHANGE);
 	}
 
 	/**

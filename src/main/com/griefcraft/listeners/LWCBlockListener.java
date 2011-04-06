@@ -22,9 +22,7 @@ import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockListener;
@@ -32,7 +30,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Action;
@@ -41,7 +38,6 @@ import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.StringUtils;
-import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class LWCBlockListener extends BlockListener {
 
@@ -52,6 +48,26 @@ public class LWCBlockListener extends BlockListener {
 
 	public LWCBlockListener(LWCPlugin plugin) {
 		this.plugin = plugin;
+	}
+	
+	@Override
+	public void onBlockRedstoneChange(BlockRedstoneEvent event) {
+		LWC lwc = plugin.getLWC();
+		Block block = event.getBlock();
+		
+		if(block == null) {
+			return;
+		}
+
+		Protection protection = lwc.findProtection(block);
+		
+		if(protection == null) {
+			return;
+		}
+		
+		if(!protection.hasFlag(Protection.Flag.REDSTONE)) {
+			event.setNewCurrent(event.getOldCurrent());
+		}
 	}
 
 	@Override
@@ -205,6 +221,7 @@ public class LWCBlockListener extends BlockListener {
 		boolean dropTransferReg = actions.contains("dropTransferSelect");
 		boolean showAccessList = actions.contains("owners");
 		boolean forceOwner = actions.contains("forceowner");
+		boolean changeFlag = actions.contains("flag");
 
 		if (protection != null) {
 			if (requestInfo) {
@@ -402,14 +419,53 @@ public class LWCBlockListener extends BlockListener {
 				Action action = lwc.getMemoryDatabase().getAction("forceowner", player.getName());
 				String newOwner = action.getData();
 
-				lwc.getPhysicalDatabase().updateOwner(protection.getId(), newOwner);
+				protection.setOwner(newOwner);
+				lwc.getPhysicalDatabase().saveProtection(protection);
+				
 				lwc.sendLocale(player, "protection.interact.forceowner.finalize", "player", newOwner);
 				
-
 				if (lwc.notInPersistentMode(player.getName())) {
 					lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 				}
 
+				return;
+			}
+			
+			else if (changeFlag) {
+				Action action = lwc.getMemoryDatabase().getAction("flag", player.getName());
+				String data = action.getData();
+				
+				boolean shouldAdd = data.substring(0, 1).equals("+");
+				String flagName = data.substring(1);
+				
+				Protection.Flag flag = null;
+				
+				for(Protection.Flag tmp : Protection.Flag.values()) {
+					if(tmp.toString().equalsIgnoreCase(flagName)) {
+						flag = tmp;
+						break;
+					}
+				}
+				
+				if(flag == null) {
+					lwc.sendLocale(player, "protection.internalerror", "id", "flg");
+					return;
+				}
+				
+				if(shouldAdd) {
+					protection.addFlag(flag);
+					lwc.sendLocale(player, "protection.interact.flag.add", "flag", StringUtils.capitalizeFirstLetter(flagName));
+				} else {
+					protection.removeFlag(flag);
+					lwc.sendLocale(player, "protection.interact.flag.remove", "flag", StringUtils.capitalizeFirstLetter(flagName));
+				}
+				
+				lwc.getPhysicalDatabase().saveProtection(protection);
+
+				if (lwc.notInPersistentMode(player.getName())) {
+					lwc.getMemoryDatabase().unregisterAllActions(player.getName());
+				}
+				
 				return;
 			}
 		}
