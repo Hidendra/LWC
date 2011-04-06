@@ -26,8 +26,8 @@ import com.firestar.mcbans.mcbans;
 import com.griefcraft.commands.ICommand;
 import com.griefcraft.logging.Logger;
 import com.griefcraft.model.AccessRight;
-import com.griefcraft.model.ProtectionInventory;
 import com.griefcraft.model.Protection;
+import com.griefcraft.model.ProtectionInventory;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.sql.Database;
 import com.griefcraft.sql.MemDB;
@@ -281,13 +281,13 @@ public class LWC {
 		 */
 		if (protection.getBlockId() == 0) {
 			protection.setBlockId(block.getTypeId());
-			updateThread.queueProtectionBlockIdUpdate(protection);
+			updateThread.queueProtectionUpdate(protection);
 		}
 
 		// multi-world, update old protections
 		if (protection.getWorld() == null || protection.getWorld().isEmpty()) {
 			protection.setWorld(block.getWorld().getName());
-			updateThread.queueWorldUpdate(protection);
+			updateThread.queueProtectionUpdate(protection);
 		}
 
 		/*

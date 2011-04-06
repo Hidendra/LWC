@@ -17,7 +17,6 @@
 
 package com.griefcraft.commands;
 
-import static com.griefcraft.util.StringUtils.capitalizeFirstLetter;
 import static com.griefcraft.util.StringUtils.hasFlag;
 import static com.griefcraft.util.StringUtils.join;
 import static com.griefcraft.util.StringUtils.transform;

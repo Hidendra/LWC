@@ -33,17 +33,17 @@ import org.bukkit.inventory.ItemStack;
 
 import com.griefcraft.logging.Logger;
 import com.griefcraft.model.Job;
-import com.griefcraft.model.ProtectionInventory;
 import com.griefcraft.model.Protection;
+import com.griefcraft.model.ProtectionInventory;
 import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.StringUtils;
 
 public class UpdateThread implements Runnable {
 
 	/**
-	 * Temporary for 1.5 while ALL protection block ids need to be fully populated
+	 * Queue that protections can be added to to update them in the database periodically in a seperate thread
 	 */
-	private ConcurrentLinkedQueue<Protection> blockIdUpdateQueue = new ConcurrentLinkedQueue<Protection>();
+	private ConcurrentLinkedQueue<Protection> protectionUpdateQueue = new ConcurrentLinkedQueue<Protection>();
 
 	/**
 	 * True begins the flush
@@ -72,11 +72,6 @@ public class UpdateThread implements Runnable {
 	 */
 	private Thread thread;
 
-	/**
-	 * Pre-1.70, the world the protection was in was not stored in the database, this remedies just that
-	 */
-	private ConcurrentLinkedQueue<Protection> worldUpdateQueue = new ConcurrentLinkedQueue<Protection>();
-
 	public UpdateThread(LWC lwc) {
 		this.lwc = lwc;
 
@@ -99,17 +94,8 @@ public class UpdateThread implements Runnable {
 	 * 
 	 * @param protection
 	 */
-	public void queueProtectionBlockIdUpdate(Protection protection) {
-		blockIdUpdateQueue.offer(protection);
-	}
-
-	/**
-	 * Add a protection to the top of the world update queue
-	 * 
-	 * @param protection
-	 */
-	public void queueWorldUpdate(Protection protection) {
-		worldUpdateQueue.offer(protection);
+	public void queueProtectionUpdate(Protection protection) {
+		protectionUpdateQueue.offer(protection);
 	}
 
 	@Override
@@ -149,10 +135,8 @@ public class UpdateThread implements Runnable {
 	 * Flush any caches to the database TODO
 	 */
 	private void _flush() {
-		/*
-		 * TODO: Remove at some point
-		 */
-		if (blockIdUpdateQueue.size() > 0) {
+		// periodically update protections in the database if a non-critical change was made
+		if (protectionUpdateQueue.size() > 0) {
 			Connection connection = lwc.getPhysicalDatabase().getConnection();
 			Protection protection = null;
 
@@ -165,41 +149,13 @@ public class UpdateThread implements Runnable {
 			/*
 			 * Loop through
 			 */
-			while ((protection = blockIdUpdateQueue.poll()) != null) {
-				lwc.getPhysicalDatabase().updateProtectionBlockId(protection.getId(), protection.getBlockId());
+			while ((protection = protectionUpdateQueue.poll()) != null) {
+				lwc.getPhysicalDatabase().saveProtection(protection);
 			}
 
 			/*
 			 * Commit
 			 */
-			try {
-				connection.commit();
-				connection.setAutoCommit(true);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
-		/*
-		 * FIXME
-		 */
-		if (worldUpdateQueue.size() > 0) {
-			Connection connection = lwc.getPhysicalDatabase().getConnection();
-			Protection protection = null;
-
-			try {
-				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-
-			/*
-			 * Loop through
-			 */
-			while ((protection = worldUpdateQueue.poll()) != null) {
-				lwc.getPhysicalDatabase().updateWorld(protection.getId(), protection.getWorld());
-			}
-
 			try {
 				connection.commit();
 				connection.setAutoCommit(true);

@@ -23,7 +23,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.util.Colors;
 
 public class Remove implements ICommand {
 

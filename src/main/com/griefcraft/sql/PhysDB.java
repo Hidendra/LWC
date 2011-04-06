@@ -387,6 +387,7 @@ public class PhysDB extends Database {
 		doUpdate140();
 		doUpdate150();
 		doUpdate170();
+		doUpdate220();
 
 		try {
 			connection.setAutoCommit(false);
@@ -402,6 +403,10 @@ public class PhysDB extends Database {
 				protections.addColumn(column);
 
 				column = new Column("type");
+				column.setType("INTEGER");
+				protections.addColumn(column);
+				
+				column = new Column("flags");
 				column.setType("INTEGER");
 				protections.addColumn(column);
 
@@ -706,6 +711,7 @@ public class PhysDB extends Database {
 
 			while (set.next()) {
 				int id = set.getInt("id");
+				int flags = set.getInt("flags");
 				int blockId = set.getInt("blockId");
 				int type = set.getInt("type");
 				String world = set.getString("world");
@@ -718,6 +724,7 @@ public class PhysDB extends Database {
 
 				Protection protection = new Protection();
 				protection.setId(id);
+				protection.setFlags(flags);
 				protection.setBlockId(blockId);
 				protection.setType(type);
 				protection.setWorld(world);
@@ -765,6 +772,7 @@ public class PhysDB extends Database {
 
 			while (set.next()) {
 				int id = set.getInt("id");
+				int flags = set.getInt("flags");
 				int blockId = set.getInt("blockId");
 				int type = set.getInt("type");
 				String world = set.getString("world");
@@ -774,6 +782,7 @@ public class PhysDB extends Database {
 
 				Protection protection = new Protection();
 				protection.setId(id);
+				protection.setFlags(flags);
 				protection.setBlockId(blockId);
 				protection.setType(type);
 				protection.setWorld(world);
@@ -1120,6 +1129,34 @@ public class PhysDB extends Database {
 			printException(e);
 		}
 	}
+	
+	/**
+	 * Save a protection to the database
+	 * 
+	 * @param protection
+	 */
+	public void saveProtection(Protection protection) {
+		try {
+			PreparedStatement statement = prepare("REPLACE INTO protections (id, type, blockId, world, flags, owner, password, x, y, z, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			
+			statement.setInt(1, protection.getId());
+			statement.setInt(2, protection.getType());
+			statement.setInt(3, protection.getBlockId());
+			statement.setString(4, protection.getWorld());
+			statement.setInt(5, protection.getFlags());
+			statement.setString(6, protection.getOwner());
+			statement.setString(7, protection.getData());
+			statement.setInt(8, protection.getX());
+			statement.setInt(9, protection.getY());
+			statement.setInt(10, protection.getZ());
+			statement.setString(11, protection.getDate());
+			
+			statement.executeUpdate();
+			Performance.addPhysDBQuery();
+		} catch(SQLException e) {
+			printException(e);
+		}
+	}
 
 	/**
 	 * Remove a scheduled job
@@ -1334,86 +1371,6 @@ public class PhysDB extends Database {
 	}
 
 	/**
-	 * Change the owner set on a protection
-	 * 
-	 * @param protectionId
-	 * @param owner
-	 */
-	public void updateOwner(int protectionId, String owner) {
-		try {
-			PreparedStatement statement = prepare("UPDATE protections SET owner = ? WHERE id = ?");
-
-			statement.setString(1, owner);
-			statement.setInt(2, protectionId);
-
-			statement.executeUpdate();
-			Performance.addPhysDBQuery();
-		} catch (Exception e) {
-			printException(e);
-		}
-	}
-
-	/**
-	 * Update a protection's block id
-	 * 
-	 * @param protectionId
-	 * @param blockId
-	 */
-	public void updateProtectionBlockId(int protectionId, int blockId) {
-		try {
-			PreparedStatement statement = prepare("UPDATE protections SET blockId = ? WHERE id = ?");
-
-			statement.setInt(1, blockId);
-			statement.setInt(2, protectionId);
-
-			statement.executeUpdate();
-			Performance.addPhysDBQuery();
-		} catch (Exception e) {
-			printException(e);
-		}
-	}
-
-	/**
-	 * Change the protection type set on a protection
-	 * 
-	 * @param protectionId
-	 * @param type
-	 */
-	public void updateType(int protectionId, int type) {
-		try {
-			PreparedStatement statement = prepare("UPDATE protections SET type = ? WHERE id = ?");
-
-			statement.setInt(1, type);
-			statement.setInt(2, protectionId);
-
-			statement.executeUpdate();
-			Performance.addPhysDBQuery();
-		} catch (Exception e) {
-			printException(e);
-		}
-	}
-
-	/**
-	 * Change the world set on a protection
-	 * 
-	 * @param protectionId
-	 * @param world
-	 */
-	public void updateWorld(int protectionId, String world) {
-		try {
-			PreparedStatement statement = prepare("UPDATE protections SET world = ? WHERE id = ?");
-
-			statement.setString(1, world);
-			statement.setInt(2, protectionId);
-
-			statement.executeUpdate();
-			Performance.addPhysDBQuery();
-		} catch (Exception e) {
-			printException(e);
-		}
-	}
-
-	/**
 	 * Instead of "updating indexes", let's just use IF NOT EXISTS each time
 	 */
 	private void doIndexes() {
@@ -1541,6 +1498,26 @@ public class PhysDB extends Database {
 			try {
 				Statement statement = connection.createStatement();
 				statement.executeUpdate("ALTER TABLE `protections` ADD `world` TEXT");
+				statement.close();
+				Performance.addPhysDBQuery();
+			} catch (Exception ex) {
+			}
+		}
+	}
+
+	/**
+	 * Update to 2.20, altered a table
+	 */
+	private void doUpdate220() {
+		try {
+			Statement statement = connection.createStatement();
+			statement.executeQuery("SELECT flags FROM protections");
+			statement.close();
+			Performance.addPhysDBQuery();
+		} catch (Exception e) {
+			try {
+				Statement statement = connection.createStatement();
+				statement.executeUpdate("ALTER TABLE `protections` ADD `flags` INTEGER");
 				statement.close();
 				Performance.addPhysDBQuery();
 			} catch (Exception ex) {

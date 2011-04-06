@@ -22,6 +22,28 @@ import com.griefcraft.util.Colors;
 
 public class Protection {
 
+	// just a footnote, if a flag is "on", it is SET in the database, however if it's set to "off"
+	// it is REMOVED from the database if it is in it!
+	public enum Flag {
+		REDSTONE(0x01, "If set to \"on\", redstone will be able to interact with the protection (ex. open a door)"); // if set, redstone use is DISABLED!
+		
+		Flag(int bit, String description) {
+			this.bit = bit;
+			this.description = description;
+		}
+		
+		private int bit;
+		private String description;
+		
+		public int getBit() {
+			return bit;
+		}
+		
+		public String getDescription() {
+			return description;
+		}
+	};
+	
 	/**
 	 * The block id
 	 */
@@ -41,6 +63,11 @@ public class Protection {
 	 * Unique id (in sql)
 	 */
 	private int id;
+	
+	/**
+	 * Bit-packed flags
+	 */
+	private int flags;
 
 	/**
 	 * The owner of the chest
@@ -71,6 +98,56 @@ public class Protection {
 	 * The z coordinate
 	 */
 	private int z;
+	
+	/**
+	 * Check if a flag is toggled
+	 * 
+	 * @param flag
+	 * @return
+	 */
+	public boolean hasFlag(Flag flag) {
+		return (flags & flag.getBit()) == flag.getBit();
+	}
+	
+	/**
+	 * Add a flag to the protection
+	 * 
+	 * @param flag
+	 * @return
+	 */
+	public boolean addFlag(Flag flag) {
+		if(!hasFlag(flag)) {
+			flags |= flag.getBit();
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Remove a flag from the protection
+	 * TODO: redo? :s
+	 * 
+	 * @param flag
+	 * @return
+	 */
+	public void removeFlag(Flag flag) {
+		if(!hasFlag(flag)) {
+			return;
+		}
+		
+		flags = 0;
+		
+		for(Flag tmp : Flag.values()) {
+			if(flag != tmp) {
+				addFlag(tmp);
+			}
+		}
+	}
+	
+	public int getFlags() {
+		return flags;
+	}
 
 	public int getBlockId() {
 		return blockId;
@@ -87,6 +164,8 @@ public class Protection {
 	public int getId() {
 		return id;
 	}
+	
+	
 
 	public String getOwner() {
 		return owner;
@@ -128,6 +207,10 @@ public class Protection {
 		this.id = id;
 	}
 
+	public void setFlags(int flags) {
+		this.flags = flags;
+	}
+	
 	public void setOwner(String owner) {
 		this.owner = owner;
 	}
@@ -157,7 +240,7 @@ public class Protection {
 	 */
 	@Override
 	public String toString() {
-		return String.format("%s %s" + Colors.White + " {" + Colors.Green + "Id=%d Owner=%s Location=[@%s %d,%d,%d] Created=%s" + Colors.White + "}", typeToString(), (blockId > 0 ? (LWC.materialToString(blockId)) : "Not yet cached"), id, owner, world, x, y, z, date);
+		return String.format("%s %s" + Colors.White + " {" + Colors.Green + "Id=%d Owner=%s Location=[@%s %d,%d,%d] Created=%s Flags=%d" + Colors.White + "}", typeToString(), (blockId > 0 ? (LWC.materialToString(blockId)) : "Not yet cached"), id, owner, world, x, y, z, date, flags);
 	}
 
 	/**
