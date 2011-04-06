@@ -37,6 +37,7 @@ import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.Performance;
 import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.UpdatePatcher;
+import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -67,7 +68,7 @@ public class LWC {
 	/**
 	 * Permissions plugin
 	 */
-	private Permissions permissions;
+	private PermissionHandler permissions;
 
 	/**
 	 * Physical database instance
@@ -155,7 +156,7 @@ public class LWC {
 			return memoryDatabase.hasAccess(player.getName(), protection);
 
 		case ProtectionTypes.PRIVATE:
-			return player.getName().equalsIgnoreCase(protection.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, protection.getId(), player.getName()) >= 0 || (permissions != null && physicalDatabase.getPrivateAccess(AccessRight.GROUP, protection.getId(), Permissions.Security.getGroup(player.getWorld().getName(), player.getName())) >= 0);
+			return player.getName().equalsIgnoreCase(protection.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, protection.getId(), player.getName()) >= 0 || (permissions != null && physicalDatabase.getPrivateAccess(AccessRight.GROUP, protection.getId(), permissions.getGroup(player.getWorld().getName(), player.getName())) >= 0);
 
 		default:
 			return false;
@@ -203,7 +204,7 @@ public class LWC {
 			return player.getName().equalsIgnoreCase(protection.getOwner()) && memoryDatabase.hasAccess(player.getName(), protection);
 
 		case ProtectionTypes.PRIVATE:
-			return player.getName().equalsIgnoreCase(protection.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, protection.getId(), player.getName()) == 1 || (permissions != null && physicalDatabase.getPrivateAccess(AccessRight.GROUP, protection.getId(), Permissions.Security.getGroup(player.getWorld().getName(), player.getName())) == 1);
+			return player.getName().equalsIgnoreCase(protection.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, protection.getId(), player.getName()) == 1 || (permissions != null && physicalDatabase.getPrivateAccess(AccessRight.GROUP, protection.getId(), permissions.getGroup(player.getWorld().getName(), player.getName())) == 1);
 
 		default:
 			return false;
@@ -420,7 +421,7 @@ public class LWC {
 		 * Apply group limits.. can't be one line however
 		 */
 		if (limit == -1 && permissions != null) {
-			limit = physicalDatabase.getGroupLimit(Permissions.Security.getGroup(world, player));
+			limit = physicalDatabase.getGroupLimit(permissions.getGroup(world, player));
 		}
 
 		/*
@@ -698,7 +699,7 @@ public class LWC {
 	/**
 	 * @return the permissions
 	 */
-	public Permissions getPermissions() {
+	public PermissionHandler getPermissions() {
 		return permissions;
 	}
 
@@ -814,7 +815,7 @@ public class LWC {
 	 * @return true if the player is an LWC admin
 	 */
 	public boolean isAdmin(Player player) {
-		return (ConfigValues.OP_IS_LWCADMIN.getBool() && player.isOp()) || (permissions != null && Permissions.Security.permission(player, "lwc.admin"));
+		return (ConfigValues.OP_IS_LWCADMIN.getBool() && player.isOp()) || (permissions != null && permissions.permission(player, "lwc.admin"));
 		// return player.canUseCommand("/lwcadmin");
 	}
 
@@ -868,7 +869,7 @@ public class LWC {
 	 * @return true if the player is an LWC mod
 	 */
 	public boolean isMod(Player player) {
-		return (permissions != null && Permissions.Security.permission(player, "lwc.mod"));
+		return (permissions != null && permissions.permission(player, "lwc.mod"));
 		// return player.canUseCommand("/lwcmod");
 	}
 
@@ -907,7 +908,7 @@ public class LWC {
 			return false;
 		}
 		
-		return Permissions.Security.permission(player, "lwc.mode." + mode);
+		return permissions.permission(player, "lwc.mode." + mode);
 	}
 
 	/**
@@ -1002,7 +1003,7 @@ public class LWC {
 				plugin.getServer().getPluginManager().enablePlugin(permissionsPlugin);
 			}
 
-			permissions = (Permissions) permissionsPlugin;
+			permissions = ((Permissions) permissionsPlugin).getHandler();
 		}
 
 		if (ConfigValues.ENFORCE_WORLDGUARD_REGIONS.getBool() && plugin.getServer().getPluginManager().getPlugin("WorldGuard") != null) {
