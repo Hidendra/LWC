@@ -37,7 +37,7 @@ public class Info implements ICommand {
 
 		if(type.equals("limits")) {
 			int used = lwc.getPhysicalDatabase().getProtectionCount(player.getName());
-			int quota = lwc.getProtectionLimits(player.getName());
+			int quota = lwc.getProtectionLimits(player.getWorld().getName(), player.getName());
 			String displayQuota = "Unlimited";
 			
 			if(quota != -1) {

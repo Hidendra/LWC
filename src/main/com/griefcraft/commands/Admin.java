@@ -559,7 +559,7 @@ public class Admin implements ICommand {
 				
 				if(!isGroup) {
 					used = lwc.getPhysicalDatabase().getProtectionCount(entity);
-					quota = lwc.getProtectionLimits(entity);
+					quota = lwc.getProtectionLimits("", entity);
 				}
 				
 				if(quota != -1) {
