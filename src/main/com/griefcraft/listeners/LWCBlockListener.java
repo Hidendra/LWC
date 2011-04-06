@@ -435,6 +435,11 @@ public class LWCBlockListener extends BlockListener {
 				Action action = lwc.getMemoryDatabase().getAction("flag", player.getName());
 				String data = action.getData();
 				
+				if(!lwc.canAdminProtection(player, protection)) {
+					lwc.sendLocale(player, "protection.accessdenied");
+					return;
+				}
+				
 				boolean shouldAdd = data.substring(0, 1).equals("+");
 				String flagName = data.substring(1);
 				
