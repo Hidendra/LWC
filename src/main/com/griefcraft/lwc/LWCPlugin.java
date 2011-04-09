@@ -44,7 +44,6 @@ import com.griefcraft.util.LocaleClassLoader;
 import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.UTF8Control;
 import com.griefcraft.util.Updater;
-import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class LWCPlugin extends JavaPlugin {
 
