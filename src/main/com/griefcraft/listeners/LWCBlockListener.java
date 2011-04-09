@@ -65,7 +65,12 @@ public class LWCBlockListener extends BlockListener {
 			return;
 		}
 		
-		if(!protection.hasFlag(Protection.Flag.REDSTONE)) {
+		boolean hasFlag = protection.hasFlag(Protection.Flag.REDSTONE);
+		boolean denyRedstone = ConfigValues.DENY_REDSTONE.getBool();
+		
+		if(!hasFlag && denyRedstone) {
+			event.setNewCurrent(event.getOldCurrent());
+		} else if(hasFlag && !denyRedstone) {
 			event.setNewCurrent(event.getOldCurrent());
 		}
 	}

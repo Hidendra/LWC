@@ -38,7 +38,6 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
 import com.griefcraft.util.Colors;
-import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class LWCPlayerListener extends PlayerListener {
 

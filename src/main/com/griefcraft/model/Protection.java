@@ -25,22 +25,16 @@ public class Protection {
 	// just a footnote, if a flag is "on", it is SET in the database, however if it's set to "off"
 	// it is REMOVED from the database if it is in it!
 	public enum Flag {
-		REDSTONE(0x01, "If set to \"on\", redstone will be able to interact with the protection (ex. open a door)"); // if set, redstone use is DISABLED!
+		REDSTONE(0x02); // if set, redstone use is DISABLED!
 		
-		Flag(int bit, String description) {
+		Flag(int bit) {
 			this.bit = bit;
-			this.description = description;
 		}
 		
 		private int bit;
-		private String description;
 		
 		public int getBit() {
 			return bit;
-		}
-		
-		public String getDescription() {
-			return description;
 		}
 	};
 	
