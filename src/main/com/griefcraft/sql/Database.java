@@ -85,7 +85,7 @@ public abstract class Database {
 	/**
 	 * If we are connected to sqlite
 	 */
-	private static boolean connected = false;
+	private boolean connected = false;
 
 	/**
 	 * The Database driver used
@@ -245,9 +245,9 @@ public abstract class Database {
 	}
 
 	/**
-	 * @return true if connected to sqlite
+	 * @return true if connected to the database
 	 */
-	public static boolean isConnected() {
+	public boolean isConnected() {
 		return connected;
 	}
 
