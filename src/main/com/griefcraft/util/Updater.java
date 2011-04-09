@@ -216,6 +216,7 @@ public class Updater {
 	 */
 	public void loadVersions(boolean background) {
 		class Background_Check_Thread implements Runnable {
+			@Override
 			public void run() {
 				try {
 					URL url = new URL(UPDATE_SITE + VERSION_FILE);

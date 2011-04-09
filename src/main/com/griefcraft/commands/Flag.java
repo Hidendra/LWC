@@ -24,8 +24,7 @@ import org.bukkit.entity.Player;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
-import com.griefcraft.util.Colors;
-import com.griefcraft.util.StringUtils;
+import com.griefcraft.util.ConfigValues;
 
 public class Flag implements ICommand {
 
@@ -33,12 +32,9 @@ public class Flag implements ICommand {
 	public void execute(LWC lwc, CommandSender sender, String[] args) {
 		if(args.length < 3) {
 			lwc.sendSimpleUsage(sender, "/lwc flag <flag> <on/off>");
-			sender.sendMessage("");
-			sender.sendMessage("Usable flags:");
 			
-			for(Protection.Flag flag : Protection.Flag.values()) {
-				sender.sendMessage("  " + Colors.Blue + StringUtils.capitalizeFirstLetter(flag.toString()) + Colors.White + ":  " + flag.getDescription());
-			}
+			String redstone = ConfigValues.DENY_REDSTONE.getBool() ? lwc.getLocale("help.flags.redstone.allow") : lwc.getLocale("help.flags.redstone.deny");
+			lwc.sendLocale(sender, "help.flags", "redstone", redstone);
 			
 			return;
 		}

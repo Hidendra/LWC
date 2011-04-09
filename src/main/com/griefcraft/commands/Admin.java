@@ -151,7 +151,7 @@ public class Admin implements ICommand {
 			long finish = System.currentTimeMillis();
 			float timeInSeconds = (finish - start) / 1000.0f;
 
-			lwc.sendLocale(sender, "protection.admin.cleanup.complete", completed, timeInSeconds);
+			lwc.sendLocale(sender, "protection.admin.cleanup.complete", "count", completed, "seconds", timeInSeconds);
 			
 			// commit the updates
 			try {
@@ -572,6 +572,19 @@ public class Admin implements ICommand {
 					lwc.sendLocale(sender, "protection.getlimits.player", "name", entity, "used", used, "quota", displayQuota);
 				}
 			}
+		}
+		
+		else if (action.equalsIgnoreCase("config")) {
+			if (args.length < 4) {
+				lwc.sendSimpleUsage(sender, "/lwc admin config <key> <value>");
+				return;
+			}
+			
+			String key = args[2];
+			String value = args[3];
+			
+			Config.getInstance().setProperty(key, value);
+			sender.sendMessage(key + "->" + value);
 		}
 	}
 

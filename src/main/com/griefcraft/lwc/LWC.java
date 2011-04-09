@@ -41,6 +41,7 @@ import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.GlobalRegionManager;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 
 public class LWC {
@@ -456,30 +457,10 @@ public class LWC {
 				WorldGuardPlugin worldGuard = (WorldGuardPlugin) plugin;
 
 				/*
-				 * Reflect our way in. The values we want are.. protected
-				 */
-				Field useRegions = worldGuard.getClass().getDeclaredField("useRegions");
-				Field regionManager = worldGuard.getClass().getDeclaredField("regionManager");
-
-				/*
-				 * Make the fields/methods we want accessible
-				 */
-				useRegions.setAccessible(true);
-				regionManager.setAccessible(true);
-
-				/*
-				 * Now check if we're using regions
-				 */
-				boolean isUsingRegions = useRegions.getBoolean(worldGuard);
-
-				if (!isUsingRegions) {
-					return false;
-				}
-
-				/*
 				 * Now get the region manager
 				 */
-				RegionManager regions = (RegionManager) regionManager.get(worldGuard);
+				GlobalRegionManager regions = worldGuard.getGlobalRegionManager();
+				RegionManager regionManager = regions.get(player.getWorld());
 
 				/*
 				 * We need to reflect into BukkitUtil.toVector
@@ -491,7 +472,7 @@ public class LWC {
 				/*
 				 * Now let's get the list of regions at the block we're clicking
 				 */
-				List<String> regionSet = regions.getApplicableRegionsIDs(blockVector);
+				List<String> regionSet = regionManager.getApplicableRegionsIDs(blockVector);
 				List<String> allowedRegions = Arrays.asList(ConfigValues.WORLDGUARD_ALLOWED_REGIONS.getString().split(","));
 
 				boolean deny = true;
@@ -517,7 +498,6 @@ public class LWC {
 
 				if (deny) {
 					player.sendMessage(Colors.Red + "You cannot protect that " + materialToString(block) + " outside of WorldGuard regions");
-
 					return true;
 				}
 
