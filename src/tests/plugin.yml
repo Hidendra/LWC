@@ -1,0 +1,7 @@
+name: LWCTests
+main: com.griefcraft.BukkitPlugin
+version: 1.00
+website: http://griefcraft.com
+author: Hidendra
+description: >
+             Test suite for LWC
