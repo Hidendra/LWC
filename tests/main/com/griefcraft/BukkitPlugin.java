@@ -17,6 +17,11 @@
 
 package com.griefcraft;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.command.ColouredConsoleSender;
@@ -25,6 +30,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
+import com.griefcraft.tests.TestSuite;
 import com.griefcraft.util.Colors;
 
 public class BukkitPlugin extends JavaPlugin {
@@ -35,6 +41,11 @@ public class BukkitPlugin extends JavaPlugin {
 	private LWCPlugin lwcPlugin;
 	
 	/**
+	 * Store the test suites
+	 */
+	private Map<String, Class<?>> testSuites = new HashMap<String, Class<?>>();
+	
+	/**
 	 * The LWC instance
 	 */
 	private LWC lwc;
@@ -43,6 +54,37 @@ public class BukkitPlugin extends JavaPlugin {
 	 * The sender to send messages to
 	 */
 	private CommandSender sender;
+	
+	/**
+	 * Create a new test suite
+	 * 
+	 * @param name
+	 * @param sender
+	 * @return
+	 */
+	public TestSuite createTestSuite(String name, CommandSender sender) {
+		if(!testSuites.containsKey(name)) {
+			return null;
+		}
+		
+		Class<?> clazz = testSuites.get(name);
+		
+		try {
+			Constructor<?> constructor = clazz.getConstructor(CommandSender.class);
+		
+			return (TestSuite) constructor.newInstance(sender);
+		} catch(NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch(InvocationTargetException e) {
+			e.printStackTrace();
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		} catch(InstantiationException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
 	
 	@Override
 	public void onEnable() {

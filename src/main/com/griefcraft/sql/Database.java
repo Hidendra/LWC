@@ -172,8 +172,6 @@ public abstract class Database {
 		driverClass = null;
 		driver = null;
 		connection = null;
-		
-		System.gc();
 	}
 
 	/**
