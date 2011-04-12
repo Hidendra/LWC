@@ -5,3 +5,7 @@ website: http://griefcraft.com
 author: Hidendra
 description: >
              Test suite for LWC
+commands:
+  suite:
+    description: Run a test suite
+    usage: /<command> run <name>
