@@ -541,7 +541,7 @@ public class LWC {
 	public Block findAdjacentDoubleChest(Block block) {
 		Block adjacentBlock;
 		List<Block> attempts = new ArrayList<Block>(5);
-		attempts.add(block);
+		// attempts.add(block);
 
 		for (int attempt = 0; attempt < 4; attempt++) {
 			Block[] attemptsArray = attempts.toArray(new Block[attempts.size()]);
