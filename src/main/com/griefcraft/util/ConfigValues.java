@@ -24,6 +24,7 @@ public enum ConfigValues {
 	AUTO_REGISTER("auto-register-as", "none"), // public, private
 	AUTO_UPDATE("auto-update", "false"), //
 	BLACKLISTED_MODES("blacklisted-modes", ""), //
+	CACHE_SIZE("cache-size", "10000"), //
 	DATABASE("database", "sqlite"), //
 	DB_PATH("db-path", "plugins/LWC/lwc.db"), //
 	DEFAULT_MENU_STYLE("default-menu-style", "basic"), //

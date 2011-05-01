@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.Locale;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -35,6 +36,8 @@ import com.griefcraft.listeners.LWCBlockListener;
 import com.griefcraft.listeners.LWCEntityListener;
 import com.griefcraft.listeners.LWCPlayerListener;
 import com.griefcraft.logging.Logger;
+import com.griefcraft.scripting.Module.Result;
+import com.griefcraft.scripting.ModuleLoader.Event;
 import com.griefcraft.sql.Database;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.Config;
@@ -180,8 +183,6 @@ public class LWCPlugin extends JavaPlugin {
 		} else {
 			Database.DefaultType = Database.Type.SQLite;
 		}
-		
-		updater.loadVersions(false);
 	}
 
 	@Override
@@ -235,6 +236,12 @@ public class LWCPlugin extends JavaPlugin {
 			lwc.sendFullHelp(sender);
 			return true;
 		}
+		
+		///// Dispatch command to modules
+		if(lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, args[0].toLowerCase(), args.length > 1 ? StringUtils.join(args, 1).split(" ") : new String[0]) == Result.CANCEL) {
+			sender.sendMessage("(MODULE)");
+			return true;
+		}
 
 		for (ICommand cmd : lwc.getCommands()) {
 			if (!cmd.validate(lwc, sender, args)) {
@@ -265,10 +272,6 @@ public class LWCPlugin extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		if (updater != null) {
-			updater.saveInternal();
-		}
-
 		if (lwc != null) {
 			lwc.destruct();
 		}
@@ -283,12 +286,17 @@ public class LWCPlugin extends JavaPlugin {
 			ResourceBundle optionalBundle = null;
 
 			// load the default locale first
-			defaultBundle = ResourceBundle.getBundle("lang.lwc", new Locale("default"), new UTF8Control());
+			defaultBundle = ResourceBundle.getBundle("lang.lwc", new Locale("en"), new UTF8Control());
 
 			// and now check if a bundled locale the same as the server's locale exists
 			try {
 				optionalBundle = ResourceBundle.getBundle("lang.lwc", new Locale(ConfigValues.LOCALE.getString()), new UTF8Control());
 			} catch (MissingResourceException e) {
+			}
+			
+			// ensure both bundles arent the same
+			if(defaultBundle == optionalBundle) {
+				optionalBundle = null;
 			}
 
 			locale = new LWCResourceBundle(defaultBundle);
@@ -325,6 +333,7 @@ public class LWCPlugin extends JavaPlugin {
 		loadDatabase();
 		registerCommands();
 		registerEvents();
+		updater.loadVersions(false);
 
 		lwc.load();
 
@@ -417,6 +426,7 @@ public class LWCPlugin extends JavaPlugin {
 		registerEvent(blockListener, Type.BLOCK_BREAK);
 		registerEvent(blockListener, Type.BLOCK_PLACE);
 		registerEvent(blockListener, Type.REDSTONE_CHANGE);
+		registerEvent(blockListener, Type.SIGN_CHANGE);
 	}
 
 	/**
@@ -483,8 +493,8 @@ public class LWCPlugin extends JavaPlugin {
 		log(" - moving the old lwc.properties");
 
 		// Copy
-		for (Object key : config.keySet()) {
-			Config.getInstance().put(key, config.get(key));
+		for(Map.Entry<Object, Object> entry : config.entrySet()) {
+			Config.getInstance().put(entry.getKey(), entry.getValue());
 		}
 
 		Config.getInstance().save();

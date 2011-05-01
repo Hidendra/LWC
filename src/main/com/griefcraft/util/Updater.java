@@ -40,18 +40,6 @@ import com.griefcraft.sql.Database;
 public class Updater {
 
 	/**
-	 * Internal config
-	 */
-	private HashMap<String, String> config = new HashMap<String, String>();
-
-	private double latestInternalVersion = 0.00;
-
-	/**
-	 * The latest LWC version
-	 */
-	private double latestPluginVersion = 0.00;
-
-	/**
 	 * The logging object for this class
 	 */
 	private Logger logger = Logger.getLogger(getClass().getSimpleName());
@@ -81,17 +69,10 @@ public class Updater {
 	 */
 	public final static String VERSION_FILE = "lwc/VERSION";
 
-	public Updater() {
-		/*
-		 * Default config values
-		 */
-		config.put("sqlite", "1.00");
-
-		/*
-		 * Parse the internal config
-		 */
-		parseInternalConfig();
-	}
+	/**
+	 * The latest LWC version
+	 */
+	private double latestPluginVersion = 0.00;
 
 	/**
 	 * Check for dependencies
@@ -99,9 +80,10 @@ public class Updater {
 	 * @return true if LWC should be reloaded
 	 */
 	public void check() {
-		String[] paths = new String[] { DEST_LIBRARY_FOLDER + "lib/" + Database.DefaultType.getDriver(), getFullNativeLibraryPath() };
+		String[] shared = new String[] { DEST_LIBRARY_FOLDER + "lib/" + Database.DefaultType.getDriver(), getFullNativeLibraryPath() };
+		String[] required = new String[] { "plugins/LWC/lwc.yml" };
 
-		for (String path : paths) {
+		for (String path : shared) {
 			File file = new File(path);
 
 			if (file != null && !file.exists() && !file.isDirectory()) {
@@ -110,6 +92,23 @@ public class Updater {
 
 				if (!needsUpdating.contains(updaterFile)) {
 					needsUpdating.add(updaterFile);
+				}
+			}
+		}
+
+		for (String path : required) {
+			File file = new File(path);
+
+			if (file != null && !file.exists() && !file.isDirectory()) {
+				String fileName = path.substring(path.lastIndexOf("/") + 1);
+				
+				UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "lwc/" + fileName);
+				updaterFile.setLocalLocation(path);
+				
+				logger.log(updaterFile.getRemoteLocation() + "->" + updaterFile.getLocalLocation());
+
+				if (!needsUpdating.contains(updaterFile)) {
+					// FIXME needsUpdating.add(updaterFile);
 				}
 			}
 		}
@@ -150,24 +149,10 @@ public class Updater {
 	}
 
 	/**
-	 * @return the current sqlite version
-	 */
-	public double getCurrentSQLiteVersion() {
-		return Double.parseDouble(config.get("sqlite"));
-	}
-
-	/**
 	 * @return the full path to the native library for sqlite
 	 */
 	public String getFullNativeLibraryPath() {
 		return getOSSpecificFolder() + getOSSpecificFileName();
-	}
-
-	/**
-	 * @return the latest internal version
-	 */
-	public double getLatestInternalVersion() {
-		return latestInternalVersion;
 	}
 
 	/**
@@ -225,9 +210,7 @@ public class Updater {
 					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
 					// load up them versions!
-					// expected: PLUGINVERSION\nINTERNALVERSION
 					latestPluginVersion = Double.parseDouble(bufferedReader.readLine());
-					latestInternalVersion = Double.parseDouble(bufferedReader.readLine());
 
 					bufferedReader.close();
 				} catch (Exception e) {
@@ -257,44 +240,6 @@ public class Updater {
 	}
 
 	/**
-	 * Create the internal updater config file
-	 */
-	public void saveInternal() {
-		try {
-			File file = getInternalFile();
-
-			if (file.exists()) {
-				file.delete();
-			}
-
-			file.createNewFile();
-
-			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-
-			writer.write("# LWC Internal Config\n");
-			writer.write("###############################\n");
-			writer.write("### DO NOT MODIFY THIS FILE ###\n");
-			writer.write("### THIS DOES NOT CHANGE    ###\n");
-			writer.write("### LWC'S VISIBLE BEHAVIOUR ###\n");
-			writer.write("###############################\n\n");
-			writer.write("###############################\n");
-			writer.write("###        THANK YOU!       ###\n");
-			writer.write("###############################\n\n");
-
-			for (String key : config.keySet()) {
-				String value = config.get(key);
-
-				writer.write(key + ":" + value + "\n");
-			}
-
-			writer.flush();
-			writer.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
 	 * Ensure we have all of the required files (if not, download them)
 	 */
 	public void update() throws Exception {
@@ -309,6 +254,8 @@ public class Updater {
 		folder.mkdirs();
 		folder = new File(DEST_LIBRARY_FOLDER + "lib/");
 		folder.mkdirs();
+		folder = new File(DEST_LIBRARY_FOLDER + "modules/");
+		folder.mkdir();
 
 		logger.log("Need to download " + needsUpdating.size() + " file(s)");
 
@@ -340,97 +287,6 @@ public class Updater {
 			logger.log("  + Download complete");
 			iterator.remove();
 		}
-
-		/*
-		 * In the event we updated binaries, we should force an ini save!
-		 */
-		saveInternal();
-	}
-
-	/**
-	 * Check the internal LWC version
-	 */
-	private void checkInternal() {
-		if (latestInternalVersion > getCurrentSQLiteVersion()) {
-			requireBinaryUpdate();
-			logger.log("Binary update required");
-			config.put("sqlite", latestInternalVersion + "");
-		}
-	}
-
-	/**
-	 * @return the internal config file
-	 */
-	private File getInternalFile() {
-		return new File(DEST_LIBRARY_FOLDER + "internal.ini");
-	}
-
-	/**
-	 * Parse the internal config file
-	 */
-	private void parseInternalConfig() {
-		try {
-			File file = getInternalFile();
-
-			if (!file.exists()) {
-				saveInternal();
-				return;
-			}
-
-			BufferedReader reader = new BufferedReader(new FileReader(file));
-			String line;
-
-			while ((line = reader.readLine()) != null) {
-				if (line.trim().startsWith("#")) {
-					continue;
-				}
-
-				if (!line.contains(":")) {
-					continue;
-				}
-
-				/*
-				 * Split the array
-				 */
-				String[] arr = line.split(":");
-
-				if (arr.length < 2) {
-					continue;
-				}
-
-				/*
-				 * Get the key/value
-				 */
-				String key = arr[0];
-				String value = StringUtils.join(arr, 1, ":");
-				value = value.substring(0, value.length() - 1);
-
-				/*
-				 * Set the config value
-				 */
-				config.put(key, value);
-			}
-
-			reader.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Force update of binaries
-	 */
-	private void requireBinaryUpdate() {
-		String[] paths = new String[] { DEST_LIBRARY_FOLDER + "lib/" + Database.DefaultType.getDriver(), getFullNativeLibraryPath() };
-
-		for (String path : paths) {
-			UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "shared/" + path.replaceAll(DEST_LIBRARY_FOLDER, ""));
-			updaterFile.setLocalLocation(path);
-
-			if (!needsUpdating.contains(updaterFile)) {
-				needsUpdating.add(updaterFile);
-			}
-		}
 	}
 
 	/**
@@ -439,7 +295,7 @@ public class Updater {
 	 * @param inputStream
 	 * @param outputStream
 	 */
-	private void saveTo(InputStream inputStream, OutputStream outputStream) throws IOException {
+	public static void saveTo(InputStream inputStream, OutputStream outputStream) throws IOException {
 		byte[] buffer = new byte[1024];
 		int len = 0;
 

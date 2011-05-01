@@ -21,20 +21,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.griefcraft.cache.CacheSet;
 import com.griefcraft.logging.Logger;
+import com.griefcraft.lwc.LWC;
 import com.griefcraft.sql.Database;
 
 public class Performance {
-
-	/**
-	 * Chest count
-	 */
-	private static int chestCount = 0;
-
-	/**
-	 * Generated report to send to the player
-	 */
-	private static List<String> generatedReport = new ArrayList<String>();
 
 	private static Logger logger = Logger.getLogger("Performance");
 
@@ -49,24 +41,9 @@ public class Performance {
 	private static int physDBQueries = 0;
 
 	/**
-	 * Amount of players online
-	 */
-	private static int playersOnline = 0;
-
-	/**
 	 * Time when LWC was started
 	 */
 	private static long startTime = 0L;
-
-	/**
-	 * Add a line to the report and print it the the console as well
-	 * 
-	 * @param str
-	 */
-	public static void add(String str) {
-		logger.log(str);
-		generatedReport.add(str);
-	}
 
 	/**
 	 * Add a query
@@ -83,30 +60,45 @@ public class Performance {
 	}
 
 	/**
-	 * Clear the report
-	 */
-	public static void clear() {
-		generatedReport.clear();
-	}
-
-	/**
 	 * @return the average amount of queries per second
 	 */
-	public static double getAverageQueriesSecond(int queries) {
+	public static double getAverage(int queries) {
 		return (double) queries / getTimeRunningSeconds();
 	}
 
 	/**
-	 * @return the generated report
+	 * Generate a new report
+	 * 
+	 * @return
 	 */
-	public static List<String> getGeneratedReport() {
-		if (generatedReport.size() == 0) {
-			report();
-		}
+	public static List<String> generateReport() {
+		List<String> report = new ArrayList<String>();
+		LWC lwc = LWC.getInstance();
+		CacheSet caches = lwc.getCaches();
+		
+		report.add(" ");
 
-		return generatedReport;
+		report.add(" + Engine:\t" + Colors.Gray + lwc.getPhysicalDatabase().getType());
+		report.add(" + Date:\t" + Colors.Gray + new Date());
+		report.add(" + Time:\t" + Colors.Gray + getTimeRunningSeconds() + " seconds");
+		report.add(" + Players:\t" + Colors.Gray + lwc.getPlugin().getServer().getOnlinePlayers().length);
+		report.add(" + Protections:\t" + Colors.Gray + lwc.getPhysicalDatabase().getProtectionCount());
+		report.add(" + Cache:\t" + Colors.Gray + caches.getProtections().size() + Colors.Yellow + "/" + Colors.Gray + ConfigValues.CACHE_SIZE.getInt());
+
+		report.add(" ");
+		report.add(" - Physical database");
+		report.add("  + Queries:\t" + Colors.Gray + physDBQueries);
+		report.add("  + Average:\t" + Colors.Gray + getAverage(physDBQueries) + Colors.Yellow + " /second");
+		report.add(" ");
+		report.add(" - Memory database");
+		report.add("  + Queries:\t" + Colors.Gray + memDBQueries);
+		report.add("  + Average:\t" + Colors.Gray + getAverage(memDBQueries) + Colors.Yellow + " /second");
+
+		report.add(" ");
+		
+		return report;
 	}
-
+	
 	/**
 	 * @return time in seconds it was being ran
 	 */
@@ -119,49 +111,6 @@ public class Performance {
 	 */
 	public static void init() {
 		startTime = System.currentTimeMillis();
-	}
-
-	/**
-	 * Issue a report
-	 */
-	public static void report() {
-		add(" ************ Start Report ************ ");
-		add(" ");
-
-		add(" + Engine:\t" + Database.DefaultType);
-		add(" + Date:\t" + new Date());
-		add(" + Time:\t" + getTimeRunningSeconds() + " seconds");
-		add(" + Players:\t" + playersOnline);
-		add(" + Protections:\t" + chestCount);
-		add(" ");
-		add(" - Physical database");
-		add("  + Queries:\t" + physDBQueries);
-		add("  + Average:\t" + getAverageQueriesSecond(physDBQueries) + " /second");
-		add(" ");
-		add(" - Memory database");
-		add("  + Queries:\t" + memDBQueries);
-		add("  + Average:\t" + getAverageQueriesSecond(memDBQueries) + " /second");
-
-		add(" ");
-		add(" ************  End Report  ************ ");
-	}
-
-	/**
-	 * Set the chest count
-	 * 
-	 * @param chestCount
-	 */
-	public static void setChestCount(int chestCount) {
-		Performance.chestCount = chestCount;
-	}
-
-	/**
-	 * Set how many players are currently online
-	 * 
-	 * @param playersOnline
-	 */
-	public static void setPlayersOnline(int playersOnline) {
-		Performance.playersOnline = playersOnline;
 	}
 
 }

@@ -95,6 +95,17 @@ public class StringUtils {
 	}
 
 	/**
+	 * Check if the command has the correct flag
+	 * 
+	 * @param command
+	 * @param checkFlag
+	 * @return
+	 */
+	public static boolean hasFlag(String command, String checkFlag) {
+		return command.equals(checkFlag) || command.equals("-" + checkFlag);
+	}
+
+	/**
 	 * Join an array command into a String
 	 * 
 	 * @param arr

@@ -15,41 +15,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.griefcraft.model;
+package com.griefcraft.cache;
+import java.util.LinkedHashMap;
 
-public class StopWatch {
-
-	private boolean running = false;
-	private long startTime = 0;
-	private long stopTime = 0;
-
-	public long getElapsedTime() {
-		long elapsed;
-		if (running) {
-			elapsed = System.currentTimeMillis() - startTime;
-		} else {
-			elapsed = stopTime - startTime;
-		}
-		return elapsed;
+public class LRUCache<K, V> extends LinkedHashMap<K, V> {
+	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * The max number of entries allowed
+	 */
+	private int maxCapacity;
+	
+	public LRUCache(int maxCapacity) {
+		super(maxCapacity, 0.75f, true);
+		this.maxCapacity = maxCapacity;
 	}
-
-	public long getElapsedTimeSecs() {
-		long elapsed;
-		if (running) {
-			elapsed = (System.currentTimeMillis() - startTime) / 1000;
-		} else {
-			elapsed = (stopTime - startTime) / 1000;
-		}
-		return elapsed;
+	
+	/**
+	 * FIXME: debugging purposes :-)
+	 */
+	@Override
+	public V get(Object key) {
+		// System.out.println("Cache\t" + key);
+		
+		return super.get(key);
 	}
-
-	public void start() {
-		startTime = System.currentTimeMillis();
-		running = true;
+	
+	@Override
+	protected boolean removeEldestEntry(java.util.Map.Entry<K, V> eldest) {
+		return size() > maxCapacity;
 	}
-
-	public void stop() {
-		stopTime = System.currentTimeMillis();
-		running = false;
-	}
+	
 }
