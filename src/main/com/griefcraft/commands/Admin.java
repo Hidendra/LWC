@@ -28,23 +28,29 @@ import java.util.List;
 
 import net.minecraft.server.EntityHuman;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.command.ColouredConsoleSender;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import com.griefcraft.converters.ChastityChest;
 import com.griefcraft.converters.ChestProtect;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
+import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Limit;
 import com.griefcraft.model.Protection;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.Config;
+import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.Performance;
 import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.Updater;
@@ -54,7 +60,7 @@ public class Admin implements ICommand {
 	/**
 	 * Class that handles cleaning up the LWC database usage: /lwc admin cleanup
 	 */
-	private class Admin_Cleanup_Thread implements Runnable {
+	private static class Admin_Cleanup_Thread implements Runnable {
 
 		private LWC lwc;
 		private CommandSender sender;
@@ -103,7 +109,7 @@ public class Admin implements ICommand {
 
 					// remove protections not found in the world
 					if (block == null || !lwc.isProtectable(block)) {
-						lwc.getPhysicalDatabase().unregisterProtection(protection.getId());
+						protection.remove();
 						// sender.sendMessage(Colors.Green + "Found:" + block.getType() + ". Removed protection #" + protection.getId() + " located in the world " + worldName);
 						lwc.sendLocale(sender, "protection.admin.cleanup.removednoexist", "protection", protection.toString());
 						completed++;
@@ -131,7 +137,7 @@ public class Admin implements ICommand {
 							for (int i = 0; i < toRemove; i++) {
 								Protection remove = tmpProtections.get(i);
 
-								lwc.getPhysicalDatabase().unregisterProtection(remove.getId());
+								protection.remove();
 								lwc.sendLocale(sender, "protection.admin.cleanup.removeddupe", "protection", remove.toString());
 								completed++;
 
@@ -188,14 +194,23 @@ public class Admin implements ICommand {
 		String action = args[1].toLowerCase();
 
 		if (action.equals("report")) {
-			Performance.setChestCount(lwc.getPhysicalDatabase().getProtectionCount());
-			Performance.setPlayersOnline(lwc.getPlugin().getServer().getOnlinePlayers().length);
-
-			for (String line : Performance.getGeneratedReport()) {
-				sender.sendMessage(Colors.Green + line);
+			ColouredConsoleSender console = null;
+			boolean replaceTabs = false;
+			
+			if(sender instanceof Player) {
+				console = new ColouredConsoleSender((CraftServer) Bukkit.getServer());
+				replaceTabs = true;
 			}
-
-			Performance.clear();
+			
+			for (String line : Performance.generateReport()) {
+				line = Colors.Green + line;
+				
+				sender.sendMessage(replaceTabs ? line.replaceAll("\\t", " ") : line);
+				
+				if(console != null) {
+					console.sendMessage(line);
+				}
+			}
 		}
 
 		else if (action.equals("find")) {
@@ -389,7 +404,10 @@ public class Admin implements ICommand {
 
 		// FIXME: reload locales
 		else if (action.equals("reload")) {
-			Config.init();
+			Plugin plugin = lwc.getPlugin();
+			plugin.getPluginLoader().disablePlugin(plugin);
+			plugin.getPluginLoader().enablePlugin(plugin);
+
 			lwc.sendLocale(sender, "protection.admin.reload.finalize");
 		}
 
@@ -397,26 +415,19 @@ public class Admin implements ICommand {
 			Updater updater = lwc.getPlugin().getUpdater();
 
 			String pluginColor = Colors.Green;
-			String updaterColor = Colors.Green;
 
 			double currPluginVersion = LWCInfo.VERSION;
-			double currInternalVersion = updater.getCurrentSQLiteVersion();
 
 			// force a reload of the latest versions
 			updater.loadVersions(false);
 			
 			double latestPluginVersion = updater.getLatestPluginVersion();
-			double latestInternalVersion = updater.getLatestInternalVersion();
 
 			if (latestPluginVersion > currPluginVersion) {
 				pluginColor = Colors.Red;
 			}
-
-			if (latestInternalVersion > currInternalVersion) {
-				updaterColor = Colors.Red;
-			}
 			
-			lwc.sendLocale(sender, "protection.admin.version.finalize", "plugin_color", pluginColor, "internal_color", updaterColor, "plugin_version", LWCInfo.FULL_VERSION, "latest_plugin", latestPluginVersion, "internal_version", currInternalVersion, "latest_internal", latestInternalVersion);
+			lwc.sendLocale(sender, "protection.admin.version.finalize", "plugin_color", pluginColor, "plugin_version", LWCInfo.FULL_VERSION, "latest_plugin", latestPluginVersion);
 		}
 
 		else if (action.equals("createjob")) {
@@ -585,6 +596,24 @@ public class Admin implements ICommand {
 			
 			Config.getInstance().setProperty(key, value);
 			sender.sendMessage(key + "->" + value);
+		}
+		
+		else if (action.equalsIgnoreCase("cache")) {
+			if(args.length > 2) {
+				String cmd = args[2].toLowerCase();
+				
+				if(cmd.equals("clear")) {
+					lwc.getCaches().getProtections().clear();
+					sender.sendMessage(Colors.Green + "Caches cleared.");
+				}
+				
+				return;
+			}
+
+			int size = lwc.getCaches().getProtections().size();
+			int max = ConfigValues.CACHE_SIZE.getInt();
+			
+			sender.sendMessage(Colors.Green + size + Colors.Yellow + "/" + Colors.Green + max);
 		}
 	}
 

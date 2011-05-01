@@ -17,6 +17,7 @@
 
 package com.griefcraft.listeners;
 
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Material;
@@ -37,6 +38,8 @@ import org.bukkit.inventory.ItemStack;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
+import com.griefcraft.scripting.Module;
+import com.griefcraft.scripting.ModuleLoader.Event;
 import com.griefcraft.util.Colors;
 
 public class LWCPlayerListener extends PlayerListener {
@@ -142,8 +145,28 @@ public class LWCPlayerListener extends PlayerListener {
 			}
 		}
 
-		boolean canAccess = lwc.enforceAccess(player, block);
-
+		List<String> actions = lwc.getMemoryDatabase().getActions(player.getName());
+		Protection protection = lwc.findProtection(block);
+		Module.Result result = Module.Result.CANCEL;
+		boolean canAccess = lwc.canAccessProtection(player, protection);
+		boolean canAdmin = lwc.canAdminProtection(player, protection);
+		
+		if(protection != null) {
+			result = lwc.getModuleLoader().dispatchEvent(Event.INTERACT_PROTECTION, player, protection, actions, canAccess, canAdmin);
+		} else {
+			result = lwc.getModuleLoader().dispatchEvent(Event.INTERACT_BLOCK, player, block, actions);
+		}
+		
+		if(result == Module.Result.ALLOW) {
+			return;
+		}
+		
+		if(result == Module.Result.DEFAULT) {
+			lwc.enforceAccess(player, block);
+		} else {
+			player.sendMessage("(MODULE)");
+		}
+		
 		if (!canAccess) {
 			event.setCancelled(true);
 			event.setUseInteractedBlock(Result.DENY);

@@ -15,35 +15,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.griefcraft.lwc;
+package com.griefcraft.scripting;
 
 /**
- * Temporary, just need to get version info, etc into a packaged class
+ * Used by modules to register all included modules
  */
-public class LWCInfo {
-
+public abstract class Package {
+	
 	/**
-	 * Location of the properties file relative to the root Minecraft directory
+	 * Register any modules used by the package
+	 * 
+	 * @param moduleLoader
 	 */
-	public static final String CONF_FILE = "plugins/LWC/lwc.properties";
-
+	public abstract void registerModules(ModuleLoader moduleLoader);
+	
 	/**
-	 * Dev mode flag
+	 * @return the name of the package
 	 */
-	public static final boolean DEVELOPMENT = false;
-
+	public abstract String getName();
+	
 	/**
-	 * Full LWC version
+	 * @return the package version
 	 */
-	public static final String FULL_VERSION;
-
+	public abstract double getVersion();
+	
 	/**
-	 * LWC's version
+	 * Creates meta data for a standard module (usually java)
+	 * 
+	 * @param module
+	 * @return
 	 */
-	public static final double VERSION = 2.49;
-
-	static {
-		FULL_VERSION = String.format("v%.2f", VERSION);
+	public MetaData createMetaData(Module module) {
+		return new MetaData(module.getName(), module);
 	}
-
+	
 }

@@ -87,16 +87,6 @@ public abstract class Database {
 	 */
 	private boolean connected = false;
 
-	/**
-	 * The Database driver used
-	 */
-	private static Driver driver;
-
-	/**
-	 * The Database driver class
-	 */
-	private static Class<?> driverClass;
-
 	public Database() {
 		currentType = DefaultType;
 	}
@@ -168,9 +158,7 @@ public abstract class Database {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
-		driverClass = null;
-		driver = null;
+		
 		connection = null;
 	}
 
@@ -214,6 +202,13 @@ public abstract class Database {
 	public void log(String str, Level level) {
 		logger.log(str, level);
 	}
+	
+	/**
+	 * Called after a statement is prepared
+	 */
+	protected void postPrepare() {
+		
+	}
 
 	/**
 	 * Prepare a statement unless it's already cached (and if so, just return it)
@@ -227,12 +222,14 @@ public abstract class Database {
 		}
 
 		if (statementCache.containsKey(sql)) {
+			postPrepare();
 			return statementCache.get(sql);
 		}
 
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			statementCache.put(sql, preparedStatement);
+			postPrepare();
 
 			return preparedStatement;
 		} catch (SQLException e) {

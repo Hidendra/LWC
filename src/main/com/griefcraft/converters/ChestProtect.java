@@ -159,6 +159,8 @@ public class ChestProtect implements Runnable {
 				log(String.format("  -> Registering rights to %s on chest %d", entity, chestID));
 			}
 		}
+		
+		reader.close();
 	}
 
 	public void log(String str) {

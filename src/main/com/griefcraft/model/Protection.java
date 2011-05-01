@@ -17,6 +17,10 @@
 
 package com.griefcraft.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.griefcraft.cache.CacheSet;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.util.Colors;
 
@@ -37,6 +41,11 @@ public class Protection {
 			return bit;
 		}
 	};
+	
+	/**
+	 * List of the access rights for the protection
+	 */
+	private List<AccessRight> access = new ArrayList<AccessRight>();
 	
 	/**
 	 * The block id
@@ -139,6 +148,39 @@ public class Protection {
 		}
 	}
 	
+	/**
+	 * Check if the entity + access type exists, and if so return the rights (-1 if it does not exist)
+	 * 
+	 * @param type
+	 * @param name
+	 * @return
+	 */
+	public int getAccess(int type, String name) {
+		for(AccessRight right : access) {
+			if(right.getType() == type && right.getName().equalsIgnoreCase(name)) {
+				return right.getRights();
+			}
+		}
+		
+		return -1;
+	}
+	
+	/**
+	 * @return the list of access rights
+	 */
+	public List<AccessRight> getAccessRights() {
+		return access;
+	}
+	
+	/**
+	 * Add an access right to the stored list
+	 * 
+	 * @param right
+	 */
+	public void addAccessRight(AccessRight right) {
+		access.add(right);
+	}
+	
 	public int getFlags() {
 		return flags;
 	}
@@ -228,9 +270,63 @@ public class Protection {
 	public void setZ(int z) {
 		this.z = z;
 	}
+	
+	/**
+	 * Remove the protection from the database
+	 */
+	public void remove() {
+		LWC lwc = LWC.getInstance();
+		lwc.getPhysicalDatabase().unregisterProtection(id);
+		removeCache();
+	}
+	
+	/**
+	 * Remove the protection from cache
+	 */
+	public void removeCache() {
+		LWC.getInstance().getCaches().getProtections().remove(getCacheKey());
+	}
+	
+	/**
+	 * Updates the protection in the protection cache
+	 * Note that save() and saveNow() call this
+	 */
+	public void update() {
+		CacheSet caches = LWC.getInstance().getCaches();
+		removeCache();
+		
+		Protection temp = LWC.getInstance().getPhysicalDatabase().loadProtection(id);
+		
+		if(temp != null) {
+			caches.getProtections().put(getCacheKey(), temp);
+		}
+	}
+	
+	/**
+	 * Queue the protection to be saved
+	 */
+	public void save() {
+		LWC.getInstance().getUpdateThread().queueProtectionUpdate(this);
+		update();
+	}
+	
+	/**
+	 * Force a protection update in the live database
+	 */
+	public void saveNow() {
+		LWC.getInstance().getPhysicalDatabase().saveProtection(this);
+		update();
+	}
+	
+	/**
+	 * @return the key used for the protection cache
+	 */
+	public String getCacheKey() {
+		return world + ":" + x + ":" + y + ":" + z;
+	}
 
 	/**
-	 * @return id:owner->[x,y,z]
+	 * @return
 	 */
 	@Override
 	public String toString() {

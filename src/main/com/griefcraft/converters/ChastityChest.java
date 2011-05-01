@@ -121,6 +121,8 @@ public class ChastityChest implements Runnable {
 
 			converted++;
 		}
+		
+		reader.close();
 	}
 
 	public void log(String str) {

@@ -112,7 +112,7 @@ public class UpdatePatcher {
 
 					// register the new rights using the newly registered protection
 					for (AccessRight right : tmpRights) {
-						physicalDatabase.registerProtectionRights(registered.getId(), right.getEntity(), right.getRights(), right.getType());
+						physicalDatabase.registerProtectionRights(registered.getId(), right.getName(), right.getRights(), right.getType());
 					}
 				
 				}

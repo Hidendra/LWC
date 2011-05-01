@@ -18,33 +18,48 @@
 package com.griefcraft.model;
 
 public class AccessRight {
-
-	private String entity;
-	private int id;
-
-	private int protectionId;
-
-	private int rights;
-	private int type;
-
+	
+	/**
+	 * Access right is for a group
+	 */
 	public static final int GROUP = 0;
-
+	
+	/**
+	 * Access right is for a player
+	 */
 	public static final int PLAYER = 1;
+	
+	/**
+	 * Used in conjuction with HeroList
+	 */
+	public static final int LIST = 2;
 
 	/**
 	 * Used in conjunction with /lwc -O
 	 */
 	public static final int RESULTS_PER_PAGE = 15;
 
-	public String getEntity() {
-		return entity;
+	private String name;
+	private int id;
+
+	private int protectionId;
+
+	private int rights;
+	private int type;
+	
+	public String toString() {
+		return String.format("AccessRight = %d { protection=%d name=%s rights=%d type=%s", id, protectionId, name, rights, typeToString(rights));
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public int getId() {
 		return id;
 	}
 
-	public int getprotectionId() {
+	public int getProtectionId() {
 		return protectionId;
 	}
 
@@ -56,8 +71,8 @@ public class AccessRight {
 		return type;
 	}
 
-	public void setEntity(String entity) {
-		this.entity = entity;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public void setId(int id) {
@@ -76,11 +91,13 @@ public class AccessRight {
 		this.type = type;
 	}
 
-	public static String typeToString(int rights) {
-		if (rights == GROUP) {
+	public static String typeToString(int type) {
+		if (type == GROUP) {
 			return "Group";
-		} else if (rights == PLAYER) {
+		} else if (type == PLAYER) {
 			return "Player";
+		} else if (type == LIST) {
+			return "List";
 		}
 
 		return "Unknown";

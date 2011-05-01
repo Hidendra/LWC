@@ -15,35 +15,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.griefcraft.lwc;
+package com.griefcraft.cache;
 
-/**
- * Temporary, just need to get version info, etc into a packaged class
- */
-public class LWCInfo {
+import com.griefcraft.logging.Logger;
+import com.griefcraft.model.Protection;
+import com.griefcraft.util.ConfigValues;
 
-	/**
-	 * Location of the properties file relative to the root Minecraft directory
-	 */
-	public static final String CONF_FILE = "plugins/LWC/lwc.properties";
+public class CacheSet {
 
 	/**
-	 * Dev mode flag
+	 * Logging instance
 	 */
-	public static final boolean DEVELOPMENT = false;
+	private Logger logger = Logger.getLogger("Cache");
 
 	/**
-	 * Full LWC version
+	 * Caches protections to prevent abusing the database
 	 */
-	public static final String FULL_VERSION;
-
-	/**
-	 * LWC's version
-	 */
-	public static final double VERSION = 2.49;
-
-	static {
-		FULL_VERSION = String.format("v%.2f", VERSION);
+	private LRUCache<String, Protection> protectionCache;
+	
+	public CacheSet() {
+		int maxCapacity = ConfigValues.CACHE_SIZE.getInt();
+		
+		protectionCache = new LRUCache<String, Protection>(maxCapacity);
+		logger.log("Protection cache: 0/" + maxCapacity);
 	}
-
+	
+	/**
+	 * get the cache representing protections
+	 * 
+	 * @return
+	 */
+	public LRUCache<String, Protection> getProtections() {
+		return protectionCache;
+	}
+	
 }
