@@ -34,7 +34,6 @@ import org.bukkit.inventory.ItemStack;
 import com.griefcraft.logging.Logger;
 import com.griefcraft.model.Job;
 import com.griefcraft.model.Protection;
-import com.griefcraft.model.ProtectionInventory;
 import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.StringUtils;
 
@@ -150,83 +149,11 @@ public class UpdateThread implements Runnable {
 			 * Loop through
 			 */
 			while ((protection = protectionUpdateQueue.poll()) != null) {
-				lwc.getPhysicalDatabase().saveProtection(protection);
+				protection.saveNow();
 			}
 
 			/*
 			 * Commit
-			 */
-			try {
-				connection.commit();
-				connection.setAutoCommit(true);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
-		/*
-		 * Inventory caching
-		 */
-		if (lwc.getInventoryQueue().size() > 0) {
-			ConcurrentLinkedQueue<ProtectionInventory> queue = lwc.getInventoryQueue();
-			Connection connection = lwc.getPhysicalDatabase().getConnection();
-			ProtectionInventory pInventory = null;
-			int count = 0;
-
-			/*
-			 * Turn off auto commit
-			 */
-			try {
-				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-
-			/*
-			 * Peeeek and remove
-			 */
-			while ((pInventory = queue.poll()) != null) {
-				ItemStack[] itemStacks = pInventory.getItemStacks();
-				int protectionId = pInventory.getProtectionId();
-
-				int slots = itemStacks.length;
-				String stacks = "";
-				String items = "";
-				String durability = "";
-				String last_transaction = ""; // TODO: implement
-				String last_update = (System.currentTimeMillis() / 1000) + "";
-
-				/*
-				 * Populate the strings
-				 */
-				for (ItemStack itemStack : itemStacks) {
-					if (itemStack == null) {
-						System.out.println("null");
-						continue;
-					}
-
-					stacks += itemStack.getAmount() + ",";
-					items += itemStack.getTypeId() + ",";
-					durability += itemStack.getDurability() + ",";
-				}
-
-				/*
-				 * Trim that comma!
-				 */
-				stacks = stacks.substring(0, stacks.length() - 1);
-				items = items.substring(0, items.length() - 1);
-				durability = durability.substring(0, durability.length() - 1);
-
-				/*
-				 * Update the database
-				 */
-				lwc.getPhysicalDatabase().createInventory(protectionId, slots, stacks, items, durability, last_transaction, last_update);
-
-				count++;
-			}
-
-			/*
-			 * Good, good. Let's commit!
 			 */
 			try {
 				connection.commit();

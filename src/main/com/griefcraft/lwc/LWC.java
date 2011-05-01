@@ -1,6 +1,6 @@
 package com.griefcraft.lwc;
 
-import java.lang.reflect.Field;
+import java.io.File;
 import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.util.ArrayList;
@@ -9,7 +9,6 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -21,14 +20,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.config.Configuration;
 
 import com.firestar.mcbans.mcbans;
+import com.griefcraft.cache.CacheSet;
 import com.griefcraft.commands.ICommand;
 import com.griefcraft.logging.Logger;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Protection;
-import com.griefcraft.model.ProtectionInventory;
 import com.griefcraft.model.ProtectionTypes;
+import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.sql.Database;
 import com.griefcraft.sql.MemDB;
 import com.griefcraft.sql.PhysDB;
@@ -37,6 +38,9 @@ import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.Performance;
 import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.UpdatePatcher;
+import com.herocraftonline.dthielke.lists.Lists;
+import com.herocraftonline.dthielke.lists.PrivilegedList;
+import com.herocraftonline.dthielke.lists.PrivilegedList.PrivilegeLevel;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.sk89q.worldedit.Vector;
@@ -47,29 +51,39 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 public class LWC {
 
 	/**
+	 * The current instance of LWC (( should only be one ! if 2 are someone made, the first takes precedence ))
+	 */
+	private static LWC instance;
+	
+	/**
+	 * The module loader
+	 */
+	private ModuleLoader moduleLoader;
+
+	/**
+	 * LWC's configuration
+	 */
+	private Configuration configuration;
+	
+	/**
 	 * List of commands
 	 */
 	private List<ICommand> commands;
 
 	/**
-	 * The inventory queue
-	 */
-	private ConcurrentLinkedQueue<ProtectionInventory> inventoryQueue;
-
-	/**
 	 * Logging instance
 	 */
 	private Logger logger = Logger.getLogger("LWC");
+	
+	/**
+	 * The set of caches
+	 */
+	private CacheSet caches;
 
 	/**
 	 * Memory database instance
 	 */
 	private MemDB memoryDatabase;
-
-	/**
-	 * Permissions plugin
-	 */
-	private PermissionHandler permissions;
 
 	/**
 	 * Physical database instance
@@ -86,9 +100,58 @@ public class LWC {
 	 */
 	private UpdateThread updateThread;
 
+	/**
+	 * Permissions plugin
+	 */
+	private PermissionHandler permissions;
+	
+	/**
+	 * Lists plugin
+	 */
+	private Lists lists;
+
 	public LWC(LWCPlugin plugin) {
 		this.plugin = plugin;
 		commands = new ArrayList<ICommand>();
+		caches = new CacheSet();
+		
+		if(instance == null) {
+			instance = this;
+		}
+	}
+	
+	/**
+	 * Get the currently loaded LWC instance
+	 * 
+	 * @return
+	 */
+	public static LWC getInstance() {
+		return instance;
+	}
+	
+	/**
+	 * @return the module loader
+	 */
+	public ModuleLoader getModuleLoader() {
+		return moduleLoader;
+	}
+	
+	/**
+	 * @return the caches
+	 */
+	public CacheSet getCaches() {
+		return caches;
+	}
+	
+	/**
+	 * Remove all modes if the player is not in persistent mode
+	 * 
+	 * @param player
+	 */
+	public void removeModes(Player player) {
+		if (notInPersistentMode(player.getName())) {
+			memoryDatabase.unregisterAllActions(player.getName());
+		}
 	}
 
 	/**
@@ -148,6 +211,8 @@ public class LWC {
 				return true;
 			}
 		}
+		
+		String playerName = player.getName();
 
 		switch (protection.getType()) {
 		case ProtectionTypes.PUBLIC:
@@ -157,7 +222,29 @@ public class LWC {
 			return memoryDatabase.hasAccess(player.getName(), protection);
 
 		case ProtectionTypes.PRIVATE:
-			return player.getName().equalsIgnoreCase(protection.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, protection.getId(), player.getName()) >= 0 || (permissions != null && physicalDatabase.getPrivateAccess(AccessRight.GROUP, protection.getId(), permissions.getGroup(player.getWorld().getName(), player.getName())) >= 0);
+			if(lists != null) {
+				for(AccessRight right : protection.getAccessRights()) {
+					if(right.getType() != AccessRight.LIST) {
+						continue;
+					}
+					
+					String listName = right.getName();
+					
+					// load the list
+					PrivilegedList privilegedList = lists.getList(listName);
+					
+					if(privilegedList != null) {
+						PrivilegeLevel privilegeLevel = privilegedList.get(playerName);
+						
+						// they have access in some way or another, let's allow them in
+						if(privilegeLevel != null) {
+							return true;
+						}
+					}
+				}
+			}
+			
+			return playerName.equalsIgnoreCase(protection.getOwner()) || protection.getAccess(AccessRight.PLAYER, playerName) >= 0 || (permissions != null && protection.getAccess(AccessRight.GROUP, permissions.getGroup(player.getWorld().getName(), player.getName())) >= 0);
 
 		default:
 			return false;
@@ -196,6 +283,8 @@ public class LWC {
 		if (isAdmin(player)) {
 			return true;
 		}
+		
+		String playerName = player.getName();
 
 		switch (protection.getType()) {
 		case ProtectionTypes.PUBLIC:
@@ -205,7 +294,7 @@ public class LWC {
 			return player.getName().equalsIgnoreCase(protection.getOwner()) && memoryDatabase.hasAccess(player.getName(), protection);
 
 		case ProtectionTypes.PRIVATE:
-			return player.getName().equalsIgnoreCase(protection.getOwner()) || physicalDatabase.getPrivateAccess(AccessRight.PLAYER, protection.getId(), player.getName()) == 1 || (permissions != null && physicalDatabase.getPrivateAccess(AccessRight.GROUP, protection.getId(), permissions.getGroup(player.getWorld().getName(), player.getName())) == 1);
+			return playerName.equalsIgnoreCase(protection.getOwner()) || protection.getAccess(AccessRight.PLAYER, playerName) == 1 || (permissions != null && protection.getAccess(AccessRight.GROUP, permissions.getGroup(player.getWorld().getName(), player.getName())) == 1);
 
 		default:
 			return false;
@@ -231,7 +320,6 @@ public class LWC {
 			updateThread = null;
 		}
 
-		inventoryQueue = null;
 		physicalDatabase = null;
 		memoryDatabase = null;
 	}
@@ -272,7 +360,7 @@ public class LWC {
 
 		Protection protection = findProtection(block);
 		boolean hasAccess = canAccessProtection(player, protection);
-		boolean canAdmin = canAdmin = canAdminProtection(player, protection);
+		// boolean canAdmin = canAdminProtection(player, protection);
 
 		if (protection == null) {
 			return true;
@@ -290,36 +378,6 @@ public class LWC {
 		if (protection.getWorld() == null || protection.getWorld().isEmpty()) {
 			protection.setWorld(block.getWorld().getName());
 			updateThread.queueProtectionUpdate(protection);
-		}
-
-		/*
-		 * Queue the block if it's an inventory FIXME
-		 */
-		if ((block.getState() instanceof ContainerBlock) && false) {
-			Inventory inventory = ((ContainerBlock) block.getState()).getInventory();
-			ProtectionInventory pInventory = new ProtectionInventory();
-
-			ItemStack[] stacks = inventory.getContents();
-
-			/*
-			 * Merge the inventory if it's a double chest
-			 */
-			// if (protectionSet.size() == 2) {
-			// stacks = mergeInventories(protectionSet);
-			// }
-
-			pInventory.setProtectionId(protection.getId());
-			pInventory.setItemStacks(stacks);
-
-			/*
-			 * Check if the inventory is already in the inventory queue
-			 */
-			if (!pInventory.isIn(inventoryQueue)) {
-				/*
-				 * Push it into the queue
-				 */
-				inventoryQueue.offer(pInventory);
-			}
 		}
 
 		if (ConfigValues.SHOW_PROTECTION_NOTICES.getBool() && (isAdmin(player) || isMod(player))) {
@@ -539,21 +597,29 @@ public class LWC {
 	 * @return
 	 */
 	public Block findAdjacentDoubleChest(Block block) {
-		Block adjacentBlock;
+		Block adjacentBlock = null;
+		Block lastBlock = null;
 		List<Block> attempts = new ArrayList<Block>(5);
 		attempts.add(block);
+		
+		int found = 0;
 
 		for (int attempt = 0; attempt < 4; attempt++) {
 			Block[] attemptsArray = attempts.toArray(new Block[attempts.size()]);
-
-			if ((adjacentBlock = findAdjacentBlock(block, Material.CHEST, attemptsArray)) != null) {
-				// see: water placement exploit
-				if ((adjacentBlock = findAdjacentBlock(adjacentBlock, Material.CHEST, attemptsArray)) != null) {
+			
+			if((adjacentBlock = findAdjacentBlock(block, Material.CHEST, attemptsArray)) != null) {
+				if(findAdjacentBlock(adjacentBlock, Material.CHEST, block) != null) {
 					return adjacentBlock;
 				}
-
+				
+				found ++;
+				lastBlock = adjacentBlock;
 				attempts.add(adjacentBlock);
 			}
+		}
+		
+		if(found > 1) {
+			return lastBlock;
 		}
 
 		return null;
@@ -624,13 +690,6 @@ public class LWC {
 	 */
 	public List<ICommand> getCommands() {
 		return commands;
-	}
-
-	/**
-	 * @return the inventory query
-	 */
-	public ConcurrentLinkedQueue<ProtectionInventory> getInventoryQueue() {
-		return inventoryQueue;
 	}
 
 	/**
@@ -931,7 +990,6 @@ public class LWC {
 			 */
 		case 61:
 		case 62:
-
 			return true;
 
 			/*
@@ -948,12 +1006,6 @@ public class LWC {
 		case 68:
 			return true;
 
-			/*
-			 * Jukebox
-			 */
-		case 84:
-			return true;
-
 		}
 
 		return false;
@@ -963,31 +1015,39 @@ public class LWC {
 	 * Load sqlite (done only when LWC is loaded so memory isn't used unnecessarily)
 	 */
 	public void load() {
+		moduleLoader = new ModuleLoader();
+		moduleLoader.init();
 		Performance.init();
 
+		// Load configuration
+		File file = new File("plugins/LWC/lwc.yml");
+		// configuration = new Configuration(file);
+		// configuration.load();
+		
 		if (LWCInfo.DEVELOPMENT) {
 			log("Development mode is ON");
 		}
 
-		inventoryQueue = new ConcurrentLinkedQueue<ProtectionInventory>();
 		physicalDatabase = new PhysDB();
 		memoryDatabase = new MemDB();
 		updateThread = new UpdateThread(this);
 
-		Plugin permissionsPlugin = plugin.getServer().getPluginManager().getPlugin("Permissions");
+		Plugin permissionsPlugin = resolvePlugin("Permissions");
 
 		if (permissionsPlugin != null) {
-			logger.log("Using Nijikokun's permissions plugin for permissions");
-
-			if (!permissionsPlugin.isEnabled()) {
-				plugin.getServer().getPluginManager().enablePlugin(permissionsPlugin);
-			}
-
 			permissions = ((Permissions) permissionsPlugin).getHandler();
+			logger.log("Using Permissions API...");
+		}
+		
+		Plugin listsPlugin = resolvePlugin("Lists");
+		
+		if(listsPlugin != null) {
+			lists = (Lists) listsPlugin;
+			logger.log("Breaking Lists API...");
 		}
 
 		if (ConfigValues.ENFORCE_WORLDGUARD_REGIONS.getBool() && plugin.getServer().getPluginManager().getPlugin("WorldGuard") != null) {
-			logger.log("Using WorldGuard protected regions");
+			logger.log("Using WorldGuard regions...");
 		}
 
 		log("Loading " + Database.DefaultType);
@@ -1005,6 +1065,26 @@ public class LWC {
 
 		// check mysql
 		UpdatePatcher.checkDatabaseConversion(this);
+	}
+	
+	/**
+	 * Get a plugin by the name and if it is disabled, enable the plugin
+	 * 
+	 * @param name
+	 * @return
+	 */
+	private Plugin resolvePlugin(String name) {
+		Plugin temp = plugin.getServer().getPluginManager().getPlugin(name);
+		
+		if(temp == null) {
+			return null;
+		}
+		
+		if(!temp.isEnabled()) {
+			plugin.getServer().getPluginManager().enablePlugin(temp);
+		}
+		
+		return temp;
 	}
 
 	/**
@@ -1072,12 +1152,6 @@ public class LWC {
 			sendLocale(sender, "help.basic");
 		}
 
-		/*
-		 * sender.sendMessage(" "); sender.sendMessage(Colors.Green + "Welcome to LWC, a Protection mod"); sender.sendMessage(" "); sender.sendMessage("/lwc -c  " + Colors.Blue + "View creation help"); sender.sendMessage("/lwc -c " + Colors.LightBlue + "<public|private|password>"); sender.sendMessage("/lwc -m  " + Colors.Blue + "Modify an existing private protection"); sender.sendMessage("/lwc -u  " + Colors.Blue + "Unlock a passworded protection"); sender.sendMessage("/lwc -i   " + Colors.Blue + "View information on a protected Chest or Furnace"); sender.sendMessage("/lwc -r " + Colors.LightBlue + "<protection|modes>");
-		 * 
-		 * sender.sendMessage("/lwc -p " + Colors.LightBlue + "<persist|" + Colors.Black + "droptransfer" + Colors.LightBlue + ">");
-		 */
-
 		if (isAdmin(sender)) {
 			sender.sendMessage("");
 			sender.sendMessage(Colors.Red + "/lwc admin - Administration");
@@ -1120,6 +1194,10 @@ public class LWC {
 		}
 		// split the lines
 		for (String line : message.split("\\n")) {
+			if(line.isEmpty()) {
+				line = " ";
+			}
+			
 			sender.sendMessage(line);
 		}
 	}

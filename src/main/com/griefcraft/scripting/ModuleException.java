@@ -15,35 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.griefcraft.lwc;
+package com.griefcraft.scripting;
 
-/**
- * Temporary, just need to get version info, etc into a packaged class
- */
-public class LWCInfo {
-
-	/**
-	 * Location of the properties file relative to the root Minecraft directory
-	 */
-	public static final String CONF_FILE = "plugins/LWC/lwc.properties";
-
-	/**
-	 * Dev mode flag
-	 */
-	public static final boolean DEVELOPMENT = false;
-
-	/**
-	 * Full LWC version
-	 */
-	public static final String FULL_VERSION;
-
-	/**
-	 * LWC's version
-	 */
-	public static final double VERSION = 2.49;
-
-	static {
-		FULL_VERSION = String.format("v%.2f", VERSION);
+public class ModuleException extends RuntimeException {
+	private static final long serialVersionUID = 1L;
+	
+	public ModuleException() {
+		super();
 	}
-
+	
+	public ModuleException(String message) {
+		super(message);
+	}
+	
+	public ModuleException(Throwable cause) {
+		super(cause);
+	}
+	
+	public ModuleException(String message, Throwable cause) {
+		super(message, cause);
+	}
+	
 }

@@ -36,6 +36,11 @@ public class MemDB extends Database {
 	public MemDB(Type currentType) {
 		super(currentType);
 	}
+	
+	@Override
+	protected void postPrepare() {
+		Performance.addMemDBQuery();
+	}
 
 	public Action getAction(String action, String player) {
 		try {
@@ -62,7 +67,7 @@ public class MemDB extends Database {
 				return act;
 			}
 
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -91,7 +96,7 @@ public class MemDB extends Database {
 				chestID = set.getInt("chest");
 			}
 
-			Performance.addMemDBQuery();
+			
 
 			return chestID;
 		} catch (final Exception e) {
@@ -163,7 +168,7 @@ public class MemDB extends Database {
 				password = set.getString("password");
 			}
 
-			Performance.addMemDBQuery();
+			
 
 			return password;
 		} catch (final Exception e) {
@@ -192,7 +197,7 @@ public class MemDB extends Database {
 				ret = set.getString("data");
 			}
 
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -221,7 +226,7 @@ public class MemDB extends Database {
 				modes.add(mode);
 			}
 
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -290,12 +295,12 @@ public class MemDB extends Database {
 
 				if (player.equals(player2)) {
 
-					Performance.addMemDBQuery();
+					
 					return true;
 				}
 			}
 
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -363,11 +368,11 @@ public class MemDB extends Database {
 
 			while (set.next()) {
 
-				Performance.addMemDBQuery();
+				
 				return true;
 			}
 
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -485,7 +490,7 @@ public class MemDB extends Database {
 			actions.execute();
 			modes.execute();
 
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -506,7 +511,7 @@ public class MemDB extends Database {
 			}
 
 			statement.close();
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -536,7 +541,7 @@ public class MemDB extends Database {
 
 			statement.executeUpdate();
 
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -564,7 +569,7 @@ public class MemDB extends Database {
 
 			statement.executeUpdate();
 
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -592,7 +597,7 @@ public class MemDB extends Database {
 
 			statement.executeUpdate();
 
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -614,7 +619,7 @@ public class MemDB extends Database {
 
 			statement.executeUpdate();
 
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -639,7 +644,7 @@ public class MemDB extends Database {
 
 			statement.executeUpdate();
 
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -661,7 +666,7 @@ public class MemDB extends Database {
 
 			statement.executeUpdate();
 
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -683,7 +688,7 @@ public class MemDB extends Database {
 
 			statement.executeUpdate();
 
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -716,7 +721,7 @@ public class MemDB extends Database {
 			}
 
 			statement.close();
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -738,7 +743,7 @@ public class MemDB extends Database {
 
 			statement.executeUpdate();
 
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -757,7 +762,7 @@ public class MemDB extends Database {
 
 			statement.executeUpdate();
 
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -772,7 +777,7 @@ public class MemDB extends Database {
 			statement.executeUpdate("DELETE FROM `locks`");
 
 			statement.close();
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -791,7 +796,7 @@ public class MemDB extends Database {
 
 			statement.executeUpdate();
 
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -813,7 +818,7 @@ public class MemDB extends Database {
 
 			statement.executeUpdate();
 
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -832,7 +837,7 @@ public class MemDB extends Database {
 
 			statement.executeUpdate();
 
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
@@ -850,7 +855,7 @@ public class MemDB extends Database {
 			statement.setString(1, player);
 
 			statement.executeUpdate();
-			Performance.addMemDBQuery();
+			
 		} catch (final Exception e) {
 			printException(e);
 		}
