@@ -59,11 +59,6 @@ public class LWC {
 	 * The module loader
 	 */
 	private ModuleLoader moduleLoader;
-
-	/**
-	 * LWC's configuration
-	 */
-	private Configuration configuration;
 	
 	/**
 	 * List of commands
@@ -1018,11 +1013,6 @@ public class LWC {
 		moduleLoader = new ModuleLoader();
 		moduleLoader.init();
 		Performance.init();
-
-		// Load configuration
-		File file = new File("plugins/LWC/lwc.yml");
-		// configuration = new Configuration(file);
-		// configuration.load();
 		
 		if (LWCInfo.DEVELOPMENT) {
 			log("Development mode is ON");

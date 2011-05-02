@@ -47,7 +47,12 @@ public class PackageData {
 	/**
 	 * True if the module is required by LWC
 	 */
-	private boolean required;
+	private boolean required = false;
+	
+	/**
+	 * True if the module uses config
+	 */
+	private boolean config = false;
 
 	public Package getPackage() {
 		return packageObject;
@@ -72,6 +77,10 @@ public class PackageData {
 	public boolean isRequired() {
 		return required;
 	}
+	
+	public boolean usesConfig() {
+		return config;
+	}
 
 	public void setPackage(Package packageObject) {
 		this.packageObject = packageObject;
@@ -95,6 +104,10 @@ public class PackageData {
 
 	public void setRequired(boolean required) {
 		this.required = required;
+	}
+	
+	public void setConfig(boolean config) {
+		this.config = config;
 	}
 	
 }

@@ -17,6 +17,7 @@
 
 package com.griefcraft.scripting;
 
+import java.io.File;
 import java.util.List;
 
 import org.bukkit.block.Block;
@@ -25,6 +26,7 @@ import org.bukkit.entity.Player;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
+import com.griefcraft.util.config.Configuration;
 
 public abstract class JavaModule implements Module {
 	
@@ -43,7 +45,36 @@ public abstract class JavaModule implements Module {
 	 */
 	public final static Result DEFAULT = Result.DEFAULT;
 	
+	/**
+	 * The module configuration
+	 */
+	private Configuration configuration;
+	
+	private MetaData metaData;
+	private PackageData packageData;
+	private boolean initialized = false;
+	
 	public abstract String getName();
+	
+	/**
+	 * @return the module's configuration object
+	 */
+	public Configuration getConfiguration() {
+		return configuration;
+	}
+
+	public void load(LWC lwc) {
+		if(!initialized) {
+			metaData = lwc.getModuleLoader().getMetaData(getName());
+			packageData = metaData.getPackageData();
+			
+			if(packageData != null && packageData.usesConfig()) {
+				System.out.println("Loaded config");
+				configuration = new Configuration(new File(ModuleLoader.ROOT_PATH + packageData.getName() + ".yml"));
+				configuration.load();
+			}
+		}
+	}
 	
 	public int getVersion() {
 		return 0;
@@ -55,12 +86,6 @@ public abstract class JavaModule implements Module {
 
 	public String getDescription() {
 		return "";
-	}
-
-	public void load() {
-	}
-
-	public void unload() {
 	}
 
 	public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
