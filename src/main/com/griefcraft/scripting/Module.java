@@ -62,13 +62,7 @@ public interface Module {
 	/**
 	 * Called when the module is loaded
 	 */
-	public void load();
-	
-	/**
-	 * Called when the module is unloaded
-	 * Includes being called when being reloaded, or a server stop
-	 */
-	// public void unload();
+	public void load(LWC lwc);
 	
 	/**
 	 * Player or console command

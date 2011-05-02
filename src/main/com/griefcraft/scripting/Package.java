@@ -45,7 +45,7 @@ public abstract class Package {
 	 * @param module
 	 * @return
 	 */
-	public MetaData createMetaData(Module module) {
+	public static MetaData createMetaData(Module module) {
 		return new MetaData(module.getName(), module);
 	}
 	
