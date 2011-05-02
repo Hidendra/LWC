@@ -29,8 +29,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import com.griefcraft.logging.Logger;
 import com.griefcraft.model.Job;
 import com.griefcraft.model.Protection;

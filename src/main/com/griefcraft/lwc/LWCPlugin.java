@@ -22,15 +22,12 @@ import org.bukkit.event.player.PlayerListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.griefcraft.commands.Admin;
-import com.griefcraft.commands.Create;
 import com.griefcraft.commands.Flag;
 import com.griefcraft.commands.ICommand;
-import com.griefcraft.commands.Info;
 import com.griefcraft.commands.Menu;
 import com.griefcraft.commands.Modes;
 import com.griefcraft.commands.Modify;
 import com.griefcraft.commands.Owners;
-import com.griefcraft.commands.Remove;
 import com.griefcraft.commands.Unlock;
 import com.griefcraft.listeners.LWCBlockListener;
 import com.griefcraft.listeners.LWCEntityListener;
@@ -206,28 +203,28 @@ public class LWCPlugin extends JavaPlugin {
 			 * Aliases
 			 */
 			if (commandName.equals("cpublic")) {
-				lwc.getCommand(Create.class).execute(lwc, sender, "-create public".split(" "));
+				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", "public".split(" "));
 				return true;
 			} else if (commandName.equals("cpassword")) {
-				lwc.getCommand(Create.class).execute(lwc, sender, ("-create password " + argString).split(" "));
+				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", ("password" + argString).split(" "));
 				return true;
 			} else if (commandName.equals("cprivate")) {
-				lwc.getCommand(Create.class).execute(lwc, sender, ("-create private " + argString).split(" "));
+				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", ("private" + argString).split(" "));
 				return true;
 			} else if (commandName.equals("cmodify")) {
-				lwc.getCommand(Modify.class).execute(lwc, sender, ("-modify " + argString).split(" "));
+				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "modify", argString.split(" "));
 				return true;
 			} else if (commandName.equals("cinfo")) {
-				lwc.getCommand(Info.class).execute(lwc, sender, "-info".split(" "));
+				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "info", "".split(" "));
 				return true;
 			} else if (commandName.equals("cunlock")) {
-				lwc.getCommand(Unlock.class).execute(lwc, sender, ("-unlock " + argString).split(" "));
+				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "unlock", argString.split(" "));
 				return true;
 			} else if (commandName.equals("cremove")) {
-				lwc.getCommand(Remove.class).execute(lwc, sender, "-remove protection".split(" "));
+				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "remote", "protection".split(" "));
 				return true;
 			} else if (commandName.equals("climits")) {
-				lwc.getCommand(Info.class).execute(lwc, sender, "-info limits".split(" "));
+				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "info", "limits".split(" "));
 				return true;
 			}
 		}
@@ -371,9 +368,6 @@ public class LWCPlugin extends JavaPlugin {
 	 */
 	private void registerCommands() {
 		registerCommand(Admin.class);
-		registerCommand(Create.class);
-		registerCommand(Remove.class);
-		registerCommand(Info.class);
 		registerCommand(Modes.class);
 		registerCommand(Modify.class);
 		registerCommand(Unlock.class);

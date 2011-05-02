@@ -148,6 +148,7 @@ public class LWCBlockListener extends BlockListener {
 	/**
 	 * Redirect certain events (to more seperate the two distinct functions they are used for)
 	 */
+	@Override
 	public void onBlockDamage(BlockDamageEvent event) {
 		if (event.isCancelled()) {
 			return;
@@ -159,6 +160,7 @@ public class LWCBlockListener extends BlockListener {
 	/**
 	 * Used for auto registering placed protections
 	 */
+	@Override
 	public void onBlockPlace(BlockPlaceEvent event) {
 		if (event.isCancelled()) {
 			return;

@@ -47,6 +47,7 @@ public class AccessRight {
 	private int rights;
 	private int type;
 	
+	@Override
 	public String toString() {
 		return String.format("AccessRight = %d { protection=%d name=%s rights=%d type=%s", id, protectionId, name, rights, typeToString(rights));
 	}

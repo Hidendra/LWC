@@ -43,46 +43,57 @@ public abstract class JavaModule implements Module {
 	 */
 	public final static Result DEFAULT = Result.DEFAULT;
 	
+	@Override
 	public abstract String getName();
 	
+	@Override
 	public int getVersion() {
 		return 0;
 	}
 
+	@Override
 	public String getAuthor() {
 		return "";
 	}
 
+	@Override
 	public String getDescription() {
 		return "";
 	}
 
+	@Override
 	public void load() {
 	}
 
 	public void unload() {
 	}
 
+	@Override
 	public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
 		return DEFAULT;
 	}
 
+	@Override
 	public Result onRedstone(LWC lwc, Protection protection, Block block, int current) {
 		return DEFAULT;
 	}
 
+	@Override
 	public Result onDestroyProtection(LWC lwc, Player player, Protection protection, Block block, boolean canAccess, boolean canAdmin) {
 		return DEFAULT;
 	}
 
+	@Override
 	public Result onProtectionInteract(LWC lwc, Player player, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin) {
 		return DEFAULT;
 	}
 
+	@Override
 	public Result onBlockInteract(LWC lwc, Player player, Block block, List<String> actions) {
 		return DEFAULT;
 	}
 
+	@Override
 	public Result onRegisterProtection(LWC lwc, Player player, Block block) {
 		return DEFAULT;
 	}
