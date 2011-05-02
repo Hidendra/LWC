@@ -182,19 +182,32 @@ public class ModuleLoader {
 	/**
 	 * Register a module for a service
 	 * 
-	 * @param service
+	 * @param pkg
 	 * @param module
 	 */
-	public void registerModule(Package service, Module module) {
-		Map<String, MetaData> modules = packageModules.get(service.getName());
+	public void registerModule(Package pkg, Module module) {
+		Map<String, MetaData> modules = null;
+		
+		if(pkg != null) {
+			modules = packageModules.get(pkg.getName());
+		}
 		
 		if(modules == null) {
 			modules = new HashMap<String, MetaData>();
 		}
 		
-		modules.put(module.getName(), service.createMetaData(module));
-		packageModules.put(service.getName(), modules);
-		logger.log("Registered: " + module.getName() + " to " + service.getName());
+		MetaData metaData = Package.createMetaData(module);
+		
+		if(pkg != null) {
+			metaData.setPackageData(engine.getPackageData(pkg.getName()));
+		}
+		
+		String packageName = pkg == null ? null : pkg.getName();
+		
+		modules.put(module.getName(), metaData);
+		packageModules.put(packageName, modules);
+		logger.log("Registered: " + module.getName() + " to " + packageName);
+		module.load(LWC.getInstance());
 	}
 	
 	/**

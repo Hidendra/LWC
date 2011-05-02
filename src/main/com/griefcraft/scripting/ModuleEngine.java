@@ -318,6 +318,7 @@ public class ModuleEngine {
 				double version = configuration.getDouble(packageName + ".version", 0.00);
 				String fileName = configuration.getString(packageName + ".file", packageName + ".jar");
 				boolean required = configuration.getBoolean(packageName + ".required", false);
+				boolean config = configuration.getBoolean(packageName + ".config", false);
 				
 				PackageData packageData = getPackageData(packageName);
 				
@@ -331,6 +332,7 @@ public class ModuleEngine {
 				packageData.setLatestVersion(version);
 				packageData.setFileName(fileName);
 				packageData.setRequired(required);
+				packageData.setConfig(config);
 				
 				// reupdate (or place) it into the list
 				packages.put(packageName, packageData);
