@@ -45,7 +45,6 @@ import com.griefcraft.converters.ChastityChest;
 import com.griefcraft.converters.ChestProtect;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
-import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Limit;
 import com.griefcraft.model.Protection;
 import com.griefcraft.util.Colors;

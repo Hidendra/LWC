@@ -24,7 +24,6 @@ import java.util.List;
 import com.griefcraft.cache.CacheSet;
 import com.griefcraft.logging.Logger;
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.sql.Database;
 
 public class Performance {
 
