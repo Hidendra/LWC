@@ -284,51 +284,7 @@ public class LWCBlockListener extends BlockListener {
 		}
 
 		if (protection != null) {
-			/*if (requestInfo) {
-				String players = "";
-
-				List<String> sessionUsers;
-
-				if (protection.getType() == ProtectionTypes.PASSWORD) {
-					sessionUsers = lwc.getMemoryDatabase().getSessionUsers(protection.getId());
-
-					
-					 * Players authed to the chest are still in the game-- let's colour them their prefix!:D
-					 
-					for (String plr : sessionUsers) {
-						Player player_ = plugin.getServer().getPlayer(plr);
-
-						if (player_ == null) {
-							continue;
-						}
-
-						players += player_.getDisplayName() + ", ";
-					}
-
-					if (sessionUsers.size() > 0) {
-						players = players.substring(0, players.length() - 4);
-					}
-				}
-
-				boolean canAdmin = lwc.canAdminProtection(player, protection);
-				boolean canAccess = lwc.canAccessProtection(player, protection);
-
-				lwc.sendLocale(player, "protection.interact.info.finalize", "type", lwc.getLocale(protection.typeToString().toLowerCase()), "owner", protection.getOwner(), "access", lwc.getLocale((canAccess ? "yes" : "no")));
-				if (protection.getType() == ProtectionTypes.PASSWORD && canAdmin) {
-					lwc.sendLocale(player, "protection.interact.info.authedplayers", "players", players);
-				}
-
-				if (lwc.isAdmin(player)) {
-					lwc.sendLocale(player, "protection.interact.info.raw", "raw", protection.toString());
-				}
-
-				if (lwc.notInPersistentMode(player.getName())) {
-					lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-				}
-				return;
-			}*/
-
-			/*else*/ if (dropTransferReg) {
+			if (dropTransferReg) {
 				if (!canAccess) {
 					lwc.sendLocale(player, "protection.interact.dropxfer.noaccess");
 				} else {
@@ -346,25 +302,6 @@ public class LWCBlockListener extends BlockListener {
 				lwc.getMemoryDatabase().unregisterAllActions(player.getName()); // ignore persist
 				return;
 			}
-
-			/*else if (hasFreeRequest) {
-				if (lwc.isAdmin(player) || protection.getOwner().equals(player.getName())) {
-					lwc.sendLocale(player, "protection.interact.remove.finalize", "block", LWC.materialToString(protection.getBlockId()));
-					protection.remove();
-					if (lwc.notInPersistentMode(player.getName())) {
-						lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-					}
-
-					return;
-				} else {
-					lwc.sendLocale(player, "protection.interact.error.notowner", "block", LWC.materialToString(protection.getBlockId()));
-					if (lwc.notInPersistentMode(player.getName())) {
-						lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-					}
-
-					return;
-				}
-			}*/
 
 			else if (modifyChest) {
 				if (lwc.canAdminProtection(player, protection)) {
@@ -551,7 +488,7 @@ public class LWCBlockListener extends BlockListener {
 			return;
 		}
 
-		if (/*requestInfo || hasFreeRequest ||*/ showAccessList) {
+		if (showAccessList) {
 			lwc.sendLocale(player, "protection.interact.error.notregistered", "block", LWC.materialToString(block));
 			if (lwc.notInPersistentMode(player.getName())) {
 				lwc.getMemoryDatabase().unregisterAllActions(player.getName());
@@ -559,7 +496,7 @@ public class LWCBlockListener extends BlockListener {
 			return;
 		}
 
-		if ((/*createProtection ||*/ modifyChest) && !hasNoOwner) {
+		if ((modifyChest) && !hasNoOwner) {
 			if (!lwc.canAdminProtection(player, protection)) {
 				lwc.sendLocale(player, "protection.interact.error.notowner", "block", LWC.materialToString(protection.getBlockId()));
 			} else {
@@ -572,123 +509,6 @@ public class LWCBlockListener extends BlockListener {
 
 			return;
 		}
-
-		/*if (hasNoOwner && createProtection) {
-			final Action action = lwc.getMemoryDatabase().getAction("create", player.getName());
-
-			final String data = action.getData();
-			final String[] chop = data.split(" ");
-			final String type = chop[0].toLowerCase();
-			String subset = "";
-
-			if (chop.length > 1) {
-				for (int i = 1; i < chop.length; i++) {
-					subset += chop[i] + " ";
-				}
-			}
-
-			
-			 * Make sure it's protectable Even though it would work fine (ie using block UNDER the sign instead), I would rather all protections being tagged on the real block itself instead of fucking myself in the future.
-			 
-			if (!lwc.isProtectable(block)) {
-				return;
-			}
-
-			
-			 * Enforce anything preventing us from creating a protection
-			 
-			if (!lwc.isAdmin(player)) {
-				if (lwc.enforceProtectionLimits(player) || lwc.enforceWorldGuard(player, block)) {
-					if (lwc.notInPersistentMode(player.getName())) {
-						lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-					}
-
-					return;
-				}
-			}
-
-			if (type.equals("public")) {
-				lwc.getPhysicalDatabase().registerProtection(block.getTypeId(), ProtectionTypes.PUBLIC, block.getWorld().getName(), player.getName(), "", block.getX(), block.getY(), block.getZ());
-				lwc.sendLocale(player, "protection.interact.create.finalize"); 
-			} else if (type.equals("password")) {
-				String password = data.substring("password ".length());
-				password = lwc.encrypt(password);
-
-				lwc.getPhysicalDatabase().registerProtection(block.getTypeId(), ProtectionTypes.PASSWORD, block.getWorld().getName(), player.getName(), password, block.getX(), block.getY(), block.getZ());
-				lwc.getMemoryDatabase().registerPlayer(player.getName(), lwc.getPhysicalDatabase().loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ()).getId());
-				lwc.sendLocale(player, "protection.interact.create.finalize");
-				lwc.sendLocale(player, "protection.interact.create.password");
-
-			} else if (type.equals("private")) {
-				String defaultEntities = action.getData();
-				String[] entities = new String[0];
-
-				if (defaultEntities.length() > "private ".length()) {
-					defaultEntities = defaultEntities.substring("private ".length());
-					entities = defaultEntities.split(" ");
-				}
-
-				lwc.getPhysicalDatabase().registerProtection(block.getTypeId(), ProtectionTypes.PRIVATE, block.getWorld().getName(), player.getName(), "", block.getX(), block.getY(), block.getZ());
-				lwc.sendLocale(player, "protection.interact.create.finalize");
-
-				for (String rightsName : entities) {
-					boolean isAdmin = false;
-					int chestType = AccessRight.PLAYER;
-
-					if (rightsName.startsWith("@")) {
-						isAdmin = true;
-						rightsName = rightsName.substring(1);
-					}
-
-					if (rightsName.toLowerCase().startsWith("g:")) {
-						chestType = AccessRight.GROUP;
-						rightsName = rightsName.substring(2);
-					}
-
-					if (rightsName.toLowerCase().startsWith("l:")) {
-						chestType = AccessRight.LIST;
-						rightsName = rightsName.substring(2);
-					}
-
-					if (rightsName.toLowerCase().startsWith("list:")) {
-						chestType = AccessRight.LIST;
-						rightsName = rightsName.substring(5);
-					}
-
-					String localeChild = AccessRight.typeToString(chestType).toLowerCase();
-					
-					// load the protection that was created
-					Protection temp = lwc.getPhysicalDatabase().loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
-					lwc.getPhysicalDatabase().registerProtectionRights(temp.getId(), rightsName, isAdmin ? 1 : 0, chestType);
-					lwc.sendLocale(player, "protection.interact.rights.register." + localeChild, "name", rightsName, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
-					
-					temp.removeCache();
-				}
-			} else if (type.equals("trap")) {
-				String trapType = chop[1].toLowerCase();
-				String reason = "";
-				int protectionType = ProtectionTypes.TRAP_KICK; // default to
-																// kick
-
-				if (chop.length > 3) {
-					reason = StringUtils.join(chop, 2);
-				}
-
-				if (trapType.equals("ban")) {
-					protectionType = ProtectionTypes.TRAP_BAN;
-				}
-
-				
-				 * This.. is the definition of hackish. TODO: Let's rename "password" to "data", T_T
-				 
-				lwc.getPhysicalDatabase().registerProtection(block.getTypeId(), protectionType, block.getWorld().getName(), player.getName(), reason, block.getX(), block.getY(), block.getZ());
-				lwc.sendLocale(player, "protection.interact.create.finalize");
-			}
-
-			if (lwc.notInPersistentMode(player.getName())) {
-				lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-			}
-		}*/
 	}
 
 }
