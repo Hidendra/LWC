@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
-import com.griefcraft.cache.CacheSet;
 import com.griefcraft.cache.LRUCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
