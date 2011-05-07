@@ -15,35 +15,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.griefcraft.modules.destroy;
+package com.griefcraft.modules.menu;
 
-import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.util.Colors;
+import com.griefcraft.util.StringUtils;
 
-public class DestroyModule extends JavaModule {
-
-	@Override
-	public String getName() {
-		return "com.griefcraft.modules.destroy";
-	}
+public class MenuModule extends JavaModule {
 	
 	@Override
-	public Result onDestroyProtection(LWC lwc, Player player, Protection protection, Block block, boolean canAccess, boolean canAdmin) {
-		if(canAdmin) {
-			protection.remove();
-            lwc.sendLocale(player, "protection.unregistered", "block", LWC.materialToString(protection.getBlockId()));
-            return CANCEL;
+	public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
+		if(!StringUtils.hasFlag(command, "menu")) {
+			return DEFAULT;
 		}
 		
-		if(!canAccess) {
+		if (args.length < 2) {
+			lwc.sendSimpleUsage(sender, "/lwc menu <basic|advanced>");
 			return CANCEL;
 		}
-		
-		return DEFAULT;
+
+		String newStyle = args[1].toLowerCase();
+
+		if (!newStyle.equals("basic") && !newStyle.equals("advanced")) {
+			sender.sendMessage(Colors.Red + "Invalid style.");
+			return CANCEL;
+		}
+
+		Player player = (Player) sender;
+
+		lwc.getPhysicalDatabase().setMenuStyle(player.getName(), newStyle);
+		lwc.sendLocale(player, "protection.menu.finalize", "style", newStyle);
+		return CANCEL;
 	}
 
 }

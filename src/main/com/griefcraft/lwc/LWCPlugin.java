@@ -22,9 +22,7 @@ import org.bukkit.event.player.PlayerListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.griefcraft.commands.Admin;
-import com.griefcraft.commands.Flag;
 import com.griefcraft.commands.ICommand;
-import com.griefcraft.commands.Menu;
 import com.griefcraft.commands.Modes;
 import com.griefcraft.commands.Modify;
 import com.griefcraft.commands.Owners;
@@ -33,6 +31,13 @@ import com.griefcraft.listeners.LWCBlockListener;
 import com.griefcraft.listeners.LWCEntityListener;
 import com.griefcraft.listeners.LWCPlayerListener;
 import com.griefcraft.logging.Logger;
+import com.griefcraft.modules.create.CreateModule;
+import com.griefcraft.modules.destroy.DestroyModule;
+import com.griefcraft.modules.flag.FlagModule;
+import com.griefcraft.modules.free.FreeModule;
+import com.griefcraft.modules.info.InfoModule;
+import com.griefcraft.modules.menu.MenuModule;
+import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.ModuleLoader.Event;
 import com.griefcraft.sql.Database;
@@ -333,8 +338,23 @@ public class LWCPlugin extends JavaPlugin {
 		updater.loadVersions(false);
 
 		lwc.load();
+		registerCoreModules();
 
 		log("At version: " + LWCInfo.FULL_VERSION);
+	}
+	
+	/**
+	 * Register the core modules for LWC
+	 */
+	private void registerCoreModules() {
+		ModuleLoader moduleLoader = lwc.getModuleLoader();
+
+		moduleLoader.registerModule(this, new CreateModule());
+		moduleLoader.registerModule(this, new DestroyModule());
+		moduleLoader.registerModule(this, new FlagModule());
+		moduleLoader.registerModule(this, new FreeModule());
+		moduleLoader.registerModule(this, new InfoModule());
+		moduleLoader.registerModule(this, new MenuModule());
 	}
 
 	/**
@@ -372,8 +392,6 @@ public class LWCPlugin extends JavaPlugin {
 		registerCommand(Modify.class);
 		registerCommand(Unlock.class);
 		registerCommand(Owners.class);
-		registerCommand(Menu.class);
-		registerCommand(Flag.class);
 	}
 
 	/**
