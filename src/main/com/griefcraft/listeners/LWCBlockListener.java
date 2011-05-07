@@ -266,7 +266,7 @@ public class LWCBlockListener extends BlockListener {
 		boolean dropTransferReg = actions.contains("dropTransferSelect");
 		boolean showAccessList = actions.contains("owners");
 		boolean forceOwner = actions.contains("forceowner");
-		boolean changeFlag = actions.contains("flag");
+		// boolean changeFlag = actions.contains("flag");
 		
 		Result result;
 		boolean canAccess = lwc.canAccessProtection(player, protection);
@@ -435,49 +435,6 @@ public class LWCBlockListener extends BlockListener {
 					lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 				}
 
-				return;
-			}
-			
-			else if (changeFlag) {
-				Action action = lwc.getMemoryDatabase().getAction("flag", player.getName());
-				String data = action.getData();
-				
-				if(!lwc.canAdminProtection(player, protection)) {
-					lwc.sendLocale(player, "protection.accessdenied");
-					return;
-				}
-				
-				boolean shouldAdd = data.substring(0, 1).equals("+");
-				String flagName = data.substring(1);
-				
-				Protection.Flag flag = null;
-				
-				for(Protection.Flag tmp : Protection.Flag.values()) {
-					if(tmp.toString().equalsIgnoreCase(flagName)) {
-						flag = tmp;
-						break;
-					}
-				}
-				
-				if(flag == null) {
-					lwc.sendLocale(player, "protection.internalerror", "id", "flg");
-					return;
-				}
-				
-				if(shouldAdd) {
-					protection.addFlag(flag);
-					lwc.sendLocale(player, "protection.interact.flag.add", "flag", StringUtils.capitalizeFirstLetter(flagName));
-				} else {
-					protection.removeFlag(flag);
-					lwc.sendLocale(player, "protection.interact.flag.remove", "flag", StringUtils.capitalizeFirstLetter(flagName));
-				}
-				
-				protection.saveNow();
-
-				if (lwc.notInPersistentMode(player.getName())) {
-					lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-				}
-				
 				return;
 			}
 		}

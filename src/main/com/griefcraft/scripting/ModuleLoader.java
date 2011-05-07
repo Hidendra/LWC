@@ -17,6 +17,7 @@
 
 package com.griefcraft.scripting;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import java.util.Map;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import com.griefcraft.logging.Logger;
 import com.griefcraft.lwc.LWC;
@@ -97,30 +99,8 @@ public class ModuleLoader {
 	/**
 	 * Map of loaded modules
 	 */
-	private Map<String, Map<String, MetaData>> packageModules = new HashMap<String, Map<String, MetaData>>();
-
-	/**
-	 * The engine instance
-	 */
-	private ModuleEngine engine;
-
-	public ModuleLoader() {
-		engine = new ModuleEngine();
-	}
-	
-	/**
-	 * @return the map of service:package modules
-	 */
-	public Map<String, Map<String, MetaData>> getPackageModules() {
-		return packageModules;
-	}
-
-	/**
-	 * Initialize the Module Loader
-	 */
-	public void init() {
-		engine.init();
-	}
+	// private Map<String, Map<String, MetaData>> packageModules = new HashMap<String, Map<String, MetaData>>();
+	private Map<Plugin, List<MetaData>> pluginModules = new HashMap<Plugin, List<MetaData>>();
 
 	/**
 	 * Dispatch an event
@@ -137,136 +117,80 @@ public class ModuleLoader {
 		Result result = Result.DEFAULT;
 		logger.log("dispatching " + event + " with arguments: " + args.length);
 
-		for(Map<String, MetaData> modules : packageModules.values()) {
-			for(MetaData metaData : modules.values()) {
-				String moduleName = metaData.getName();
-				Module module = metaData.getModule();
-				Result temp = Result.DEFAULT;
+		try {
+			for(List<MetaData> modules : pluginModules.values()) {
+				for(MetaData metaData : modules) {
+					Module module = metaData.getModule();
+					Result temp = Result.DEFAULT;
 
-				switch(event) {
+					switch(event) {
 
-				case COMMAND:
-					temp = module.onCommand(lwc, (CommandSender) args[0], (String) args[1], (String[]) args[2]);
-					break;
+					case COMMAND:
+						temp = module.onCommand(lwc, (CommandSender) args[0], (String) args[1], (String[]) args[2]);
+						break;
 
-				case REDSTONE:
-					temp = module.onRedstone(lwc, (Protection) args[0], (Block) args[1], (Integer) args[2]);
-					break;
+					case REDSTONE:
+						temp = module.onRedstone(lwc, (Protection) args[0], (Block) args[1], (Integer) args[2]);
+						break;
 
-				case DESTROY_PROTECTION:
-					temp = module.onDestroyProtection(lwc, (Player) args[0], (Protection) args[1], (Block) args[2], (Boolean) args[3], (Boolean) args[4]);
-					break;
+					case DESTROY_PROTECTION:
+						temp = module.onDestroyProtection(lwc, (Player) args[0], (Protection) args[1], (Block) args[2], (Boolean) args[3], (Boolean) args[4]);
+						break;
 
-				case INTERACT_PROTECTION:
-					temp = module.onProtectionInteract(lwc, (Player) args[0], (Protection) args[1], (List<String>) args[2], (Boolean) args[3], (Boolean) args[4]);
-					break;
+					case INTERACT_PROTECTION:
+						temp = module.onProtectionInteract(lwc, (Player) args[0], (Protection) args[1], (List<String>) args[2], (Boolean) args[3], (Boolean) args[4]);
+						break;
 
-				case INTERACT_BLOCK:
-					temp = module.onBlockInteract(lwc, (Player) args[0], (Block) args[1], (List<String>) args[2]);
-					break;
-				}
+					case INTERACT_BLOCK:
+						temp = module.onBlockInteract(lwc, (Player) args[0], (Block) args[1], (List<String>) args[2]);
+						break;
+					}
 
-				if(temp != Result.DEFAULT) {
-					result = temp;
-				}
-				
-				if(result == Result.CANCEL) {
-					return result;
+					if(temp != Result.DEFAULT) {
+						result = temp;
+					}
+
+					if(result == Result.CANCEL) {
+						return result;
+					}
 				}
 			}
+		} catch(Throwable throwable) {
+			throw new ModuleException("LWC Module threw an uncaught exception!", throwable);
 		}
 
 		return result;
 	}
-	
+
 	/**
-	 * Register a module for a service
+	 * Register a module for a plugin
 	 * 
-	 * @param pkg
+	 * @param plugin
 	 * @param module
 	 */
-	public void registerModule(Package pkg, Module module) {
-		Map<String, MetaData> modules = null;
-		
-		if(pkg != null) {
-			modules = packageModules.get(pkg.getName());
+	public void registerModule(Plugin plugin, Module module) {
+		List<MetaData> modules = null;
+
+		if(plugin != null) {
+			modules = pluginModules.get(plugin);
 		}
-		
+
 		if(modules == null) {
-			modules = new HashMap<String, MetaData>();
+			modules = new ArrayList<MetaData>();
 		}
-		
-		MetaData metaData = Package.createMetaData(module);
-		
-		if(pkg != null) {
-			metaData.setPackageData(engine.getPackageData(pkg.getName()));
-		}
-		
-		String packageName = pkg == null ? null : pkg.getName();
-		
-		modules.put(module.getName(), metaData);
-		packageModules.put(packageName, modules);
-		logger.log("Registered: " + module.getName() + " to " + packageName);
-		module.load(LWC.getInstance());
-	}
-	
-	/**
-	 * Register a module not assigned to a service
-	 * 
-	 * @param module
-	 */
-	public void registerCustomModule(Module module) {
-		registerModule(null, module);
+
+		MetaData metaData = new MetaData(module);
+		modules.add(metaData);
+		pluginModules.put(plugin, modules);
 	}
 
 	/**
-	 * Remove the modules for a service
+	 * Remove the modules for a plugin
 	 * 
 	 * @param service
 	 */
-	public void removeModules(Package service) {
-		packageModules.remove(service);
-	}
-	
-	/**
-	 * Get the module engine
-	 * 
-	 * @return
-	 */
-	public ModuleEngine getModuleEngine() {
-		return engine;
-	}
-	
-	/**
-	 * Get the meta data for a module
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public MetaData getMetaData(String name) {
-		for(Map<String, MetaData> modules : packageModules.values()) {
-			if(modules.containsKey(name)) {
-				return modules.get(name);
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * Get a module
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public Module getModule(String name) {
-		for(Map<String, MetaData> modules : packageModules.values()) {
-			if(modules.containsKey(name)) {
-				return modules.get(name).getModule();
-			}
-		}
-
-		return null;
+	public void removeModules(Plugin plugin) {
+		pluginModules.remove(plugin);
 	}
 
 }

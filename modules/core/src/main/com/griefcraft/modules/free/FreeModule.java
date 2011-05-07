@@ -29,11 +29,6 @@ import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.StringUtils;
 
 public class FreeModule extends JavaModule {
-
-	@Override
-	public String getName() {
-		return "com.griefcraft.modules.free";
-	}
 	
 	@Override
 	public Result onProtectionInteract(LWC lwc, Player player, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin) {

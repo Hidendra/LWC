@@ -15,24 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.griefcraft.scripting;
+package com.griefcraft.modules.destroy;
 
-public class PackageException extends RuntimeException {
-	private static final long serialVersionUID = 1L;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Protection;
+import com.griefcraft.scripting.JavaModule;
+
+public class DestroyModule extends JavaModule {
 	
-	public PackageException() {
-		super();
+	@Override
+	public Result onDestroyProtection(LWC lwc, Player player, Protection protection, Block block, boolean canAccess, boolean canAdmin) {
+		if(canAdmin) {
+			protection.remove();
+            lwc.sendLocale(player, "protection.unregistered", "block", LWC.materialToString(protection.getBlockId()));
+            return CANCEL;
+		}
+		
+		if(!canAccess) {
+			return CANCEL;
+		}
+		
+		return DEFAULT;
 	}
-	
-	public PackageException(String message) {
-		super(message);
-	}
-	
-	public PackageException(Throwable cause) {
-		super(cause);
-	}
-	
-	public PackageException(String message, Throwable cause) {
-		super(message, cause);
-	}
+
 }

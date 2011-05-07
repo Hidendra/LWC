@@ -15,38 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.griefcraft.scripting;
+package com.griefcraft.util.config;
 
-/**
- * Used by modules to register all included modules
- */
-public abstract class Package {
-	
-	/**
-	 * Register any modules used by the package
-	 * 
-	 * @param moduleLoader
-	 */
-	public abstract void registerModules(ModuleLoader moduleLoader);
-	
-	/**
-	 * @return the name of the package
-	 */
-	public abstract String getName();
-	
-	/**
-	 * @return the package version
-	 */
-	public abstract double getVersion();
-	
-	/**
-	 * Creates meta data for a standard module (usually java)
-	 * 
-	 * @param module
-	 * @return
-	 */
-	public static MetaData createMetaData(Module module) {
-		return new MetaData(module.getName(), module);
-	}
-	
+public class ConfigurationException extends Exception {
+    private static final long serialVersionUID = -2442886939908724203L;
+    
+    public ConfigurationException() {
+        super();
+    }
+    
+    public ConfigurationException(String msg) {
+        super(msg);
+    }
 }
