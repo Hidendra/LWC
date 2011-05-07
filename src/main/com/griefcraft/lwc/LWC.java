@@ -1011,7 +1011,6 @@ public class LWC {
 	 */
 	public void load() {
 		moduleLoader = new ModuleLoader();
-		moduleLoader.init();
 		Performance.init();
 		
 		if (LWCInfo.DEVELOPMENT) {

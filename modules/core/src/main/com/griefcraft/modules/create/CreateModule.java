@@ -35,11 +35,6 @@ import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
 
 public class CreateModule extends JavaModule {
-
-	@Override
-	public String getName() {
-		return "com.griefcraft.modules.create";
-	}
 	
 	@Override
 	public Result onProtectionInteract(LWC lwc, Player player, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin) {

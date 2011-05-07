@@ -20,41 +20,16 @@ package com.griefcraft.scripting;
 public class MetaData {
 	
 	/**
-	 * The module's name
-	 */
-	private String name;
-	
-	/**
 	 * The module object
 	 */
 	private Module module;
 	
-	/**
-	 * Package data for the module
-	 */
-	private PackageData packageData;
-	
-	public MetaData(String name, Module module) {
-		this.name = name;
+	public MetaData(Module module) {
 		this.module = module;
-	}
-	
-	public String getName() {
-		return name;
 	}
 	
 	public Module getModule() {
 		return module;
-	}
-	
-	public PackageData getPackageData() {
-		return packageData;
-	}
-	
-	public void setPackageData(PackageData packageData) {
-		if(this.packageData == null) {
-			this.packageData = packageData;
-		}
 	}
 	
 }

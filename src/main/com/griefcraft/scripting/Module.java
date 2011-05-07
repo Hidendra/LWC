@@ -38,26 +38,6 @@ public interface Module {
 	public enum Result {
 		ALLOW, CANCEL, DEFAULT;
 	}
-
-	/**
-	 * @return the canonical name from the module (eg. the package, for example com.griefcraft.modules.YOURMODULE)
-	 */
-	public String getName();
-	
-	/**
-	 * @return
-	 */
-	public int getVersion();
-	
-	/**
-	 * @return the author of the module
-	 */
-	public String getAuthor();
-	
-	/**
-	 * @return the module's descriptiopn
-	 */
-	public String getDescription();
 	
 	/**
 	 * Called when the module is loaded
