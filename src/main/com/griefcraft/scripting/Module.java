@@ -68,7 +68,7 @@ public interface Module {
 	 * @param sender
 	 * @param command does not include "lwc", eg. /lwc info = "info"
 	 * @param args
-	 * @return true to mark the command as "used"
+	 * @return
 	 */
 	public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args);
 	
@@ -79,7 +79,7 @@ public interface Module {
 	 * @param protection
 	 * @param block
 	 * @param current the old current
-	 * @return true to revert the current
+	 * @return
 	 */
 	public Result onRedstone(LWC lwc, Protection protection, Block block, int current);
 	
@@ -89,7 +89,7 @@ public interface Module {
 	 * @param lwc
 	 * @param protection
 	 * @param block
-	 * @return true to prevent destruction
+	 * @return
 	 */
 	public Result onDestroyProtection(LWC lwc, Player player, Protection protection, Block block, boolean canAccess, boolean canAdmin);
 	
@@ -100,7 +100,7 @@ public interface Module {
 	 * @param player
 	 * @param protection
 	 * @param canAccess
-	 * @return true to cancel the interaction with the protection (eg. opening a chest)
+	 * @return
 	 */
 	public Result onProtectionInteract(LWC lwc, Player player, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin);
 	
@@ -111,7 +111,7 @@ public interface Module {
 	 * @param player
 	 * @param protection
 	 * @param canAccess
-	 * @return true to cancel the interaction with the block (eg. opening a chest)
+	 * @return
 	 */
 	public Result onBlockInteract(LWC lwc, Player player, Block block, List<String> actions);
 	
@@ -121,7 +121,7 @@ public interface Module {
 	 * @param lwc
 	 * @param player
 	 * @param block
-	 * @return true to cancel the registration
+	 * @return
 	 */
 	public Result onRegisterProtection(LWC lwc, Player player, Block block);
 	
