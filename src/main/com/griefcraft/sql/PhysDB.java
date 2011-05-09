@@ -30,7 +30,6 @@ import java.util.logging.Level;
 import com.griefcraft.cache.LRUCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
-import com.griefcraft.model.Job;
 import com.griefcraft.model.Limit;
 import com.griefcraft.model.Protection;
 import com.griefcraft.util.Performance;
@@ -165,58 +164,6 @@ public class PhysDB extends Database {
 	 */
 	public int getGroupLimit(String group) {
 		return getLimit(Limit.GROUP, group);
-	}
-
-	/**
-	 * Load the whole job queue
-	 * 
-	 * @return
-	 */
-	public List<Job> getJobQueue() {
-		return getJobQueue(0);
-	}
-
-	/**
-	 * Load a job queue of size n. if size is 0, will return all jobs
-	 * 
-	 * @param size
-	 * @return
-	 */
-	public List<Job> getJobQueue(int size) {
-		List<Job> jobs = new ArrayList<Job>();
-
-		try {
-			String where = size > 0 ? (" LIMIT " + size) : "";
-
-			PreparedStatement statement = prepare("SELECT * FROM jobs" + where);
-
-			ResultSet set = statement.executeQuery();
-
-			while (set.next()) {
-				Job job = new Job();
-
-				int id = set.getInt("id");
-				int type = set.getInt("type");
-				String owner = set.getString("owner");
-				String payload = set.getString("payload");
-				long timestamp = set.getLong("timestamp");
-
-				job.setId(id);
-				job.setType(type);
-				job.setOwner(owner);
-				job.setPayload(payload);
-				job.setTimestamp(timestamp);
-
-				jobs.add(job);
-			}
-
-			set.close();
-			
-		} catch (Exception e) {
-			printException(e);
-		}
-
-		return jobs;
 	}
 
 	/**
@@ -904,18 +851,19 @@ public class PhysDB extends Database {
 	 *            the radius to search
 	 * @return the Chest found , null otherwise
 	 */
-	public List<Protection> loadProtections(int _x, int _y, int _z, int radius) {
+	public List<Protection> loadProtections(String world, int _x, int _y, int _z, int radius) {
 		List<Protection> chests = new ArrayList<Protection>();
 
 		try {
-			PreparedStatement statement = prepare("SELECT protections.id AS protectionId, rights.id AS rightsId, protections.type AS protectionType, rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights FROM protections LEFT OUTER JOIN rights ON protections.id = rights.chest WHERE protections.x >= ? AND protections.x <= ? AND protections.y >= ? AND protections.y <= ? AND protections.z >= ? AND protections.z <= ?");
+			PreparedStatement statement = prepare("SELECT protections.id AS protectionId, rights.id AS rightsId, protections.type AS protectionType, rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights FROM protections LEFT OUTER JOIN rights ON protections.id = rights.chest WHERE protections.world = ? AND protections.x >= ? AND protections.x <= ? AND protections.y >= ? AND protections.y <= ? AND protections.z >= ? AND protections.z <= ?");
 
-			statement.setInt(1, _x - radius);
-			statement.setInt(2, _x + radius);
-			statement.setInt(3, _y - radius);
-			statement.setInt(4, _y + radius);
-			statement.setInt(5, _z - radius);
-			statement.setInt(6, _z + radius);
+			statement.setString(1, world);
+			statement.setInt(2, _x - radius);
+			statement.setInt(3, _x + radius);
+			statement.setInt(4, _y - radius);
+			statement.setInt(5, _y + radius);
+			statement.setInt(6, _z - radius);
+			statement.setInt(7, _z + radius);
 
 			return resolveProtections(statement);
 		} catch (Exception e) {

@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -45,6 +46,11 @@ public class LWC {
 	 * The current instance of LWC (( should only be one ! if 2 are someone made, the first takes precedence ))
 	 */
 	private static LWC instance;
+	
+	/**
+	 * If LWC is currently enabled
+	 */
+	public static boolean ENABLED = false;
 	
 	/**
 	 * Core LWC configuration
@@ -134,6 +140,44 @@ public class LWC {
 		if (notInPersistentMode(player.getName())) {
 			memoryDatabase.unregisterAllActions(player.getName());
 		}
+	}
+	
+	/**
+	 * Deposit items into an inventory chest
+	 * Works with double chests.
+	 * 
+	 * @param block
+	 * @param itemStack
+	 * @return remaining items (if any)
+	 */
+	public Map<Integer, ItemStack> depositItems(Block block, ItemStack itemStack) {
+		BlockState blockState = null;
+
+		if ((blockState = block.getState()) != null && (blockState instanceof ContainerBlock)) {
+			Block doubleChestBlock = findAdjacentBlock(block, Material.CHEST);
+			ContainerBlock containerBlock = (ContainerBlock) blockState;
+
+			Map<Integer, ItemStack> remaining = containerBlock.getInventory().addItem(itemStack);
+
+			// we have remainders, deal with it
+			if (remaining.size() > 0) {
+				int key = remaining.keySet().iterator().next();
+				ItemStack remainingItemStack = remaining.get(key);
+
+				// is it a double chest ?????
+				if (doubleChestBlock != null) {
+					ContainerBlock containerBlock2 = (ContainerBlock) doubleChestBlock.getState();
+					remaining = containerBlock2.getInventory().addItem(remainingItemStack);
+				}
+
+				// recheck remaining in the event of double chest being used
+				if (remaining.size() > 0) {
+					return remaining;
+				}
+			}
+		}
+		
+		return new HashMap<Integer, ItemStack>();
 	}
 
 	/**
