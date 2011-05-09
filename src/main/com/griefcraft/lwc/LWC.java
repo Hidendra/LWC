@@ -1,7 +1,5 @@
 package com.griefcraft.lwc;
 
-import java.io.File;
-import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,33 +18,27 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.util.config.Configuration;
 
 import com.firestar.mcbans.mcbans;
 import com.griefcraft.cache.CacheSet;
 import com.griefcraft.commands.ICommand;
+import com.griefcraft.converters.MySQLConverter;
 import com.griefcraft.logging.Logger;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
+import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.ModuleLoader;
+import com.griefcraft.scripting.ModuleLoader.Event;
 import com.griefcraft.sql.Database;
 import com.griefcraft.sql.MemDB;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
-import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.Performance;
 import com.griefcraft.util.StringUtils;
-import com.griefcraft.util.UpdatePatcher;
-import com.herocraftonline.dthielke.lists.Lists;
-import com.herocraftonline.dthielke.lists.PrivilegedList;
-import com.herocraftonline.dthielke.lists.PrivilegedList.PrivilegeLevel;
+import com.griefcraft.util.config.Configuration;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.GlobalRegionManager;
-import com.sk89q.worldguard.protection.managers.RegionManager;
 
 public class LWC {
 
@@ -54,6 +46,11 @@ public class LWC {
 	 * The current instance of LWC (( should only be one ! if 2 are someone made, the first takes precedence ))
 	 */
 	private static LWC instance;
+	
+	/**
+	 * Core LWC configuration
+	 */
+	private Configuration configuration;
 	
 	/**
 	 * The module loader
@@ -99,20 +96,17 @@ public class LWC {
 	 * Permissions plugin
 	 */
 	private PermissionHandler permissions;
-	
-	/**
-	 * Lists plugin
-	 */
-	private Lists lists;
 
 	public LWC(LWCPlugin plugin) {
 		this.plugin = plugin;
-		commands = new ArrayList<ICommand>();
-		caches = new CacheSet();
 		
 		if(instance == null) {
 			instance = this;
 		}
+		
+		configuration = Configuration.load("core.yml");
+		commands = new ArrayList<ICommand>();
+		caches = new CacheSet();
 	}
 	
 	/**
@@ -191,6 +185,13 @@ public class LWC {
 			return true;
 		}
 
+		// call the canAccessProtection hook
+		Result canAccess = moduleLoader.dispatchEvent(Event.ACCESS_PROTECTION, player, protection);
+		
+		if(canAccess != Result.DEFAULT) {
+			return canAccess == Result.ALLOW;
+		}
+		
 		if (isAdmin(player)) {
 			return true;
 		}
@@ -217,28 +218,6 @@ public class LWC {
 			return memoryDatabase.hasAccess(player.getName(), protection);
 
 		case ProtectionTypes.PRIVATE:
-			if(lists != null) {
-				for(AccessRight right : protection.getAccessRights()) {
-					if(right.getType() != AccessRight.LIST) {
-						continue;
-					}
-					
-					String listName = right.getName();
-					
-					// load the list
-					PrivilegedList privilegedList = lists.getList(listName);
-					
-					if(privilegedList != null) {
-						PrivilegeLevel privilegeLevel = privilegedList.get(playerName);
-						
-						// they have access in some way or another, let's allow them in
-						if(privilegeLevel != null) {
-							return true;
-						}
-					}
-				}
-			}
-			
 			return playerName.equalsIgnoreCase(protection.getOwner()) || protection.getAccess(AccessRight.PLAYER, playerName) >= 0 || (permissions != null && protection.getAccess(AccessRight.GROUP, permissions.getGroup(player.getWorld().getName(), player.getName())) >= 0);
 
 		default:
@@ -273,6 +252,13 @@ public class LWC {
 	public boolean canAdminProtection(Player player, Protection protection) {
 		if (protection == null || player == null) {
 			return true;
+		}
+
+		// call the canAccessProtection hook
+		Result canAdmin = moduleLoader.dispatchEvent(Event.ADMIN_PROTECTION, player, protection);
+		
+		if(canAdmin != Result.DEFAULT) {
+			return canAdmin == Result.ALLOW;
 		}
 
 		if (isAdmin(player)) {
@@ -375,7 +361,7 @@ public class LWC {
 			updateThread.queueProtectionUpdate(protection);
 		}
 
-		if (ConfigValues.SHOW_PROTECTION_NOTICES.getBool() && (isAdmin(player) || isMod(player))) {
+		if (configuration.getBoolean("core.showNotices", true) && (isAdmin(player) || isMod(player))) {
 			sendLocale(player, "protection.general.notice.protected", "type", getLocale(protection.typeToString().toLowerCase()), "block", materialToString(block), "owner", protection.getOwner());
 		}
 
@@ -484,82 +470,6 @@ public class LWC {
 		limit = limit != -1 ? limit : physicalDatabase.getGlobalLimit();
 		
 		return limit;
-	}
-
-	/**
-	 * Enforce world guard regions
-	 * 
-	 * @param player
-	 * @return true if a protection should be stopped
-	 */
-	public boolean enforceWorldGuard(Player player, Block block) {
-		/*
-		 * Check the configuration
-		 */
-		if (!ConfigValues.ENFORCE_WORLDGUARD_REGIONS.getBool()) {
-			return false;
-		}
-
-		Plugin plugin = this.plugin.getServer().getPluginManager().getPlugin("WorldGuard");
-
-		try {
-			if (plugin != null) {
-				/*
-				 * World guard is enabled.. let's boogie
-				 */
-				WorldGuardPlugin worldGuard = (WorldGuardPlugin) plugin;
-
-				/*
-				 * Now get the region manager
-				 */
-				GlobalRegionManager regions = worldGuard.getGlobalRegionManager();
-				RegionManager regionManager = regions.get(player.getWorld());
-
-				/*
-				 * We need to reflect into BukkitUtil.toVector
-				 */
-				Class<?> bukkitUtil = worldGuard.getClass().getClassLoader().loadClass("com.sk89q.worldguard.bukkit.BukkitUtil");
-				Method toVector = bukkitUtil.getMethod("toVector", Block.class);
-				Vector blockVector = (Vector) toVector.invoke(null, block);
-
-				/*
-				 * Now let's get the list of regions at the block we're clicking
-				 */
-				List<String> regionSet = regionManager.getApplicableRegionsIDs(blockVector);
-				List<String> allowedRegions = Arrays.asList(ConfigValues.WORLDGUARD_ALLOWED_REGIONS.getString().split(","));
-
-				boolean deny = true;
-
-				/*
-				 * Check for *
-				 */
-				if (ConfigValues.WORLDGUARD_ALLOWED_REGIONS.getString().equals("*")) {
-					if (regionSet.size() > 0) {
-						return false;
-					}
-				}
-
-				/*
-				 * If there are no regions, we need to deny them
-				 */
-				for (String region : regionSet) {
-					if (allowedRegions.contains(region)) {
-						deny = false;
-						break;
-					}
-				}
-
-				if (deny) {
-					player.sendMessage(Colors.Red + "You cannot protect that " + materialToString(block) + " outside of WorldGuard regions");
-					return true;
-				}
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return false;
 	}
 
 	/**
@@ -842,6 +752,13 @@ public class LWC {
 	}
 
 	/**
+	 * @return the configuration object
+	 */
+	public Configuration getConfiguration() {
+		return configuration;
+	}
+	
+	/**
 	 * Check if a player can do admin functions on LWC
 	 * 
 	 * @param player
@@ -849,8 +766,19 @@ public class LWC {
 	 * @return true if the player is an LWC admin
 	 */
 	public boolean isAdmin(Player player) {
-		return (ConfigValues.OP_IS_LWCADMIN.getBool() && player.isOp()) || (permissions != null && permissions.permission(player, "lwc.admin"));
-		// return player.canUseCommand("/lwcadmin");
+		if(player.isOp()) {
+			if(configuration.getBoolean("permissions.op.enabled", true)) {
+				return true;
+			}
+		}
+		
+		if(permissions != null) {
+			if(permissions.has(player, "lwc.admin")) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	/**
@@ -860,39 +788,7 @@ public class LWC {
 	 * @return
 	 */
 	public boolean isBlockBlacklisted(Block block) {
-		String blacklist = ConfigValues.PROTECTION_BLACKLIST.getString();
-
-		if (blacklist.isEmpty()) {
-			return false;
-		}
-
-		String[] values = blacklist.split(",");
-
-		if (values == null || values.length == 0) {
-			return false;
-		}
-
-		String blockName = materialToString(block).replaceAll(" ", "");
-		blockName = blockName.replaceAll("Block", "").trim();
-
-		for (String value : values) {
-			String noSpaces = value.replaceAll(" ", "");
-
-			try {
-				int id = Integer.parseInt(value);
-
-				if (id == block.getTypeId()) {
-					return true;
-				}
-			} catch (Exception e) {
-			}
-
-			if (value.equalsIgnoreCase(blockName) || noSpaces.equalsIgnoreCase(blockName)) {
-				return true;
-			}
-		}
-
-		return false;
+		return !Boolean.parseBoolean(resolveProtectionConfiguration(block, "enabled"));
 	}
 
 	/**
@@ -903,32 +799,23 @@ public class LWC {
 	 * @return true if the player is an LWC mod
 	 */
 	public boolean isMod(Player player) {
-		return (permissions != null && permissions.permission(player, "lwc.mod"));
-		// return player.canUseCommand("/lwcmod");
+		if(permissions != null) {
+			if(permissions.has(player, "lwc.mod")) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	/**
-	 * Check if a mode is blacklisted
+	 * Check if a mode is enabled
 	 * 
 	 * @param mode
 	 * @return
 	 */
-	public boolean isModeBlacklisted(String mode) {
-		String blacklistedModes = ConfigValues.BLACKLISTED_MODES.getString();
-
-		if (blacklistedModes.isEmpty()) {
-			return false;
-		}
-
-		String[] modes = blacklistedModes.split(",");
-
-		for (String _mode : modes) {
-			if (mode.equalsIgnoreCase(_mode)) {
-				return true;
-			}
-		}
-
-		return false;
+	public boolean isModeEnabled(String mode) {
+		return configuration.getBoolean("modes." + mode + ".enabled", true);
 	}
 	
 	/**
@@ -1010,6 +897,7 @@ public class LWC {
 	 * Load sqlite (done only when LWC is loaded so memory isn't used unnecessarily)
 	 */
 	public void load() {
+		configuration = Configuration.load("core.yml");
 		moduleLoader = new ModuleLoader();
 		Performance.init();
 		
@@ -1027,17 +915,6 @@ public class LWC {
 			permissions = ((Permissions) permissionsPlugin).getHandler();
 			logger.log("Using Permissions API...");
 		}
-		
-		Plugin listsPlugin = resolvePlugin("Lists");
-		
-		if(listsPlugin != null) {
-			lists = (Lists) listsPlugin;
-			logger.log("Breaking Lists API...");
-		}
-
-		if (ConfigValues.ENFORCE_WORLDGUARD_REGIONS.getBool() && plugin.getServer().getPluginManager().getPlugin("WorldGuard") != null) {
-			logger.log("Using WorldGuard regions...");
-		}
 
 		log("Loading " + Database.DefaultType);
 		try {
@@ -1053,7 +930,7 @@ public class LWC {
 		}
 
 		// check mysql
-		UpdatePatcher.checkDatabaseConversion(this);
+		MySQLConverter.checkDatabaseConversion(this);
 	}
 	
 	/**
@@ -1497,6 +1374,30 @@ public class LWC {
 		}
 
 		return "";
+	}
+
+	/**
+	 * Get the appropriate config value for the block (protections.block.node)
+	 * 
+	 * @param block
+	 * @param node
+	 * @return
+	 */
+	public String resolveProtectionConfiguration(Block block, String node) {
+		String value = configuration.getString("protections." + node);
+		String temp = configuration.getString("protections.blocks." + block.getType().toString().toLowerCase() + "." + node);
+		
+		if(temp != null && !temp.isEmpty()) {
+			value = temp;
+		} else {
+			temp = configuration.getString("protections.blocks." + block.getTypeId() + "." + node);
+			
+			if(temp != null && !temp.isEmpty()) {
+				value = temp;
+			}
+		}
+		
+		return value;
 	}
 
 }

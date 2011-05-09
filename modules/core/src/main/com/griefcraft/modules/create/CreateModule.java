@@ -29,6 +29,7 @@ import com.griefcraft.model.Action;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.ModuleLoader.Event;
 import com.griefcraft.sql.MemDB;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
@@ -73,8 +74,14 @@ public class CreateModule extends JavaModule {
         int blockY = block.getY();
         int blockZ = block.getZ();
         
-        // TODO: CALL PRE-REGISTER EVENT HERE !!!!
-        // AND THEN CREATE MODULES: limits, worldguard
+        // TODO: limits, worldguard
+        lwc.removeModes(player);
+        Result registerProtection = lwc.getModuleLoader().dispatchEvent(Event.REGISTER_PROTECTION, player, block);
+        
+        // another plugin cancelled the registration
+        if(registerProtection == Result.CANCEL) {
+        	return ALLOW;
+        }
         
         if(protectionType.equals("public")) {
             physDb.registerProtection(block.getTypeId(), ProtectionTypes.PUBLIC, worldName, playerName, "", blockX, blockY, blockZ);
@@ -158,8 +165,7 @@ public class CreateModule extends JavaModule {
             physDb.registerProtection(block.getTypeId(), tmpType, worldName, playerName, reason, blockX, blockY, blockZ);
             lwc.sendLocale(player, "protection.interact.create.finalize");
         }
-            
-        lwc.removeModes(player);
+        
         return CANCEL;
 	}
 	

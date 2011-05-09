@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.griefcraft.logging.Logger;
+import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.sql.Database;
 
@@ -109,7 +110,7 @@ public class Updater {
 			}
 		}
 
-		if (ConfigValues.AUTO_UPDATE.getBool()) {
+		if (LWC.getInstance().getConfiguration().getBoolean("core.autoUpdate", false)) {
 			if (latestPluginVersion > LWCInfo.VERSION) {
 				logger.log("Update detected for LWC");
 				logger.log("Latest version: " + latestPluginVersion);
@@ -213,7 +214,7 @@ public class Updater {
 				}
 
 				try {
-					if (ConfigValues.AUTO_UPDATE.getBool()) {
+					if (LWC.getInstance().getConfiguration().getBoolean("core.autoUpdate", false)) {
 						checkDist();
 					} else {
 						check();

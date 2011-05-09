@@ -21,6 +21,8 @@ import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import sun.security.krb5.Config;
+
 import com.griefcraft.commands.Admin;
 import com.griefcraft.commands.ICommand;
 import com.griefcraft.commands.Modes;
@@ -36,14 +38,14 @@ import com.griefcraft.modules.destroy.DestroyModule;
 import com.griefcraft.modules.flag.FlagModule;
 import com.griefcraft.modules.free.FreeModule;
 import com.griefcraft.modules.info.InfoModule;
+import com.griefcraft.modules.lists.ListsModule;
 import com.griefcraft.modules.menu.MenuModule;
-import com.griefcraft.scripting.ModuleLoader;
+import com.griefcraft.modules.worldguard.WorldGuardModule;
 import com.griefcraft.scripting.Module.Result;
+import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.scripting.ModuleLoader.Event;
 import com.griefcraft.sql.Database;
 import com.griefcraft.util.Colors;
-import com.griefcraft.util.Config;
-import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.LWCResourceBundle;
 import com.griefcraft.util.LocaleClassLoader;
 import com.griefcraft.util.StringUtils;
@@ -90,11 +92,7 @@ public class LWCPlugin extends JavaPlugin {
 	private Updater updater;
 
 	public LWCPlugin() {
-		update147();
-
 		log("Loading shared objects");
-
-		Config.init();
 
 		lwc = new LWC(this);
 		playerListener = new LWCPlayerListener(this);
@@ -178,7 +176,7 @@ public class LWCPlugin extends JavaPlugin {
 	 * Load the database
 	 */
 	public void loadDatabase() {
-		String database = ConfigValues.DATABASE.getString().toLowerCase();
+		String database = lwc.getConfiguration().getString("database.adapter");
 
 		if (database.equals("mysql")) {
 			Database.DefaultType = Database.Type.MySQL;
@@ -281,7 +279,7 @@ public class LWCPlugin extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		Config.init();
+		String localization = lwc.getConfiguration().getString("core.locale");
 
 		try {
 			ResourceBundle defaultBundle = null;
@@ -292,7 +290,7 @@ public class LWCPlugin extends JavaPlugin {
 
 			// and now check if a bundled locale the same as the server's locale exists
 			try {
-				optionalBundle = ResourceBundle.getBundle("lang.lwc", new Locale(ConfigValues.LOCALE.getString()), new UTF8Control());
+				optionalBundle = ResourceBundle.getBundle("lang.lwc", new Locale(localization), new UTF8Control());
 			} catch (MissingResourceException e) {
 			}
 			
@@ -319,7 +317,7 @@ public class LWCPlugin extends JavaPlugin {
 		ResourceBundle optionalBundle = null;
 
 		try {
-			optionalBundle = ResourceBundle.getBundle("lwc", new Locale(ConfigValues.LOCALE.getString()), new LocaleClassLoader(), new UTF8Control());
+			optionalBundle = ResourceBundle.getBundle("lwc", new Locale(localization), new LocaleClassLoader(), new UTF8Control());
 		} catch (MissingResourceException e) {
 		}
 
@@ -355,6 +353,10 @@ public class LWCPlugin extends JavaPlugin {
 		moduleLoader.registerModule(this, new FreeModule());
 		moduleLoader.registerModule(this, new InfoModule());
 		moduleLoader.registerModule(this, new MenuModule());
+		
+		// non-core modules but are included with LWC anyway
+		moduleLoader.registerModule(this, new ListsModule());
+		moduleLoader.registerModule(this, new WorldGuardModule());
 	}
 
 	/**
@@ -439,83 +441,6 @@ public class LWCPlugin extends JavaPlugin {
 		registerEvent(blockListener, Type.BLOCK_PLACE);
 		registerEvent(blockListener, Type.REDSTONE_CHANGE);
 		registerEvent(blockListener, Type.SIGN_CHANGE);
-	}
-
-	/**
-	 * Check if an update is needed for 1.xx->1.47
-	 */
-	private void update147() {
-		File folder = new File("plugins/LWC");
-
-		/*
-		 * Appears to already be updated
-		 */
-		if (folder.isDirectory()) {
-			return;
-		}
-
-		// check for existing file
-		File configFile = new File("lwc.properties");
-
-		if (!configFile.exists()) {
-			return;
-		}
-
-		log("Migration required");
-
-		log(" + creating folder plugins/LWC");
-		folder.mkdir();
-
-		log(" - loading old lwc.properties");
-		Config config = Config.getInstance("lwc.properties");
-
-		// People's initial flush-db was 60 seconds.. then i lowered to 30..
-		// which both is too high let's take this opportunity to change that,
-		// shall we?
-		if (Integer.parseInt((String) config.get("flush-db-interval")) > 20) {
-			config.setProperty("flush-db-interval", "10");
-		}
-
-		log(" - inspecting lwc.db");
-		File databaseFile = new File("lwc.db");
-
-		if (databaseFile.exists()) {
-			try {
-				FileChannel inChannel = new FileInputStream(databaseFile).getChannel();
-				FileChannel outChannel = new FileOutputStream("plugins/LWC/lwc.db").getChannel();
-
-				outChannel.transferFrom(inChannel, 0, inChannel.size());
-
-				log(" ++ lwc.db moved");
-
-				config.setProperty("db-path", "plugins/LWC/lwc.db");
-
-				inChannel.close();
-				outChannel.close();
-			} catch (Exception e) {
-				log(" -- move failed, reason: " + e.getMessage());
-			}
-		} else {
-			log(" -- lwc.db not found, ignoring");
-		}
-
-		// Now initialize the regular config so we can copy the loaded values
-		Config.init();
-
-		log(" - moving the old lwc.properties");
-
-		// Copy
-		for(Map.Entry<Object, Object> entry : config.entrySet()) {
-			Config.getInstance().put(entry.getKey(), entry.getValue());
-		}
-
-		Config.getInstance().save();
-		log(" ++ saved " + config.size() + " config values");
-
-		log(" - cleaning up");
-		databaseFile.delete();
-		new File("lwc.properties").delete();
-		log(" +++ migration complete");
 	}
 
 }

@@ -28,9 +28,6 @@ import com.griefcraft.model.Protection;
 
 /**
  * This interface defines methods that modules may implement
- * 
- * Please note that for python modules that subclass this, you don't have to
- * implement every method!! Just the methods you want.
  */
 public interface Module {
 
@@ -43,6 +40,26 @@ public interface Module {
 	 * Called when the module is loaded
 	 */
 	public void load(LWC lwc);
+	
+	/**
+	 * See if a player can access a protection
+	 * 
+	 * @param lwc
+	 * @param player
+	 * @param protection
+	 * @return
+	 */
+	public Result canAccessProtection(LWC lwc, Player player, Protection protection);
+	
+	/**
+	 * See if a player can administrate a protection (i.e modify it)
+	 * 
+	 * @param lwc
+	 * @param player
+	 * @param protection
+	 * @return
+	 */
+	public Result canAdminProtection(LWC lwc, Player player, Protection protection);
 	
 	/**
 	 * Player or console command
@@ -105,7 +122,6 @@ public interface Module {
 	 * @param player
 	 * @param block
 	 * @return true to cancel the registration
-	 * TODO
 	 */
 	public Result onRegisterProtection(LWC lwc, Player player, Block block);
 	

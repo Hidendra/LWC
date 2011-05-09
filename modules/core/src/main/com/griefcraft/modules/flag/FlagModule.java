@@ -27,24 +27,9 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Action;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
-import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.StringUtils;
 
 public class FlagModule  extends JavaModule {
-	
-	@Override
-	public Result onRedstone(LWC lwc, Protection protection, Block block, int current) {
-		boolean hasFlag = protection.hasFlag(Protection.Flag.REDSTONE);
-		boolean denyRedstone = ConfigValues.DENY_REDSTONE.getBool();
-		
-		if(!hasFlag && denyRedstone) {
-			return CANCEL;
-		} else if(hasFlag && !denyRedstone) {
-			return CANCEL;
-		}
-		
-		return DEFAULT;
-	}
 	
 	@Override
 	public Result onProtectionInteract(LWC lwc, Player player, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin) {
@@ -98,8 +83,9 @@ public class FlagModule  extends JavaModule {
 		
 		if(args.length < 2) {
 			lwc.sendSimpleUsage(sender, "/lwc flag <flag> <on/off>");
-			
-			String redstone = ConfigValues.DENY_REDSTONE.getBool() ? lwc.getLocale("help.flags.redstone.allow") : lwc.getLocale("help.flags.redstone.deny");
+
+			boolean denyRedstone = lwc.getConfiguration().getBoolean("protections.denyRedstone", false);
+			String redstone = denyRedstone ? lwc.getLocale("help.flags.redstone.allow") : lwc.getLocale("help.flags.redstone.deny");
 			lwc.sendLocale(sender, "help.flags", "redstone", redstone);
 			
 			return CANCEL;

@@ -31,7 +31,7 @@ public class DestroyModule extends JavaModule {
 		if(canAdmin) {
 			protection.remove();
             lwc.sendLocale(player, "protection.unregistered", "block", LWC.materialToString(protection.getBlockId()));
-            return CANCEL;
+            return ALLOW;
 		}
 		
 		if(!canAccess) {

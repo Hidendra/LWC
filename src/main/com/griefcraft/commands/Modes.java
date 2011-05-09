@@ -37,7 +37,7 @@ public class Modes implements ICommand {
 		Player player = (Player) sender;
 		
 		if(!lwc.isModeWhitelisted(player, mode)) {
-			if (!lwc.isAdmin(sender) && lwc.isModeBlacklisted(mode)) {
+			if (!lwc.isAdmin(sender) && lwc.isModeEnabled(mode)) {
 				lwc.sendLocale(player, "protection.modes.disabled");
 				return;
 			}
