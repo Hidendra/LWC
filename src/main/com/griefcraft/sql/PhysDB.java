@@ -33,7 +33,6 @@ import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Job;
 import com.griefcraft.model.Limit;
 import com.griefcraft.model.Protection;
-import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.Performance;
 
 public class PhysDB extends Database {
@@ -283,7 +282,7 @@ public class PhysDB extends Database {
 			printException(e);
 		}
 
-		return ConfigValues.DEFAULT_MENU_STYLE.getString();
+		return LWC.getInstance().getConfiguration().getString("core.defaultMenuStyle");
 	}
 
 	/**

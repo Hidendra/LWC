@@ -25,10 +25,11 @@ import java.io.IOException;
 
 import org.bukkit.command.CommandSender;
 
+import sun.security.krb5.Config;
+
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.sql.PhysDB;
-import com.griefcraft.util.Config;
 
 /**
  * Convert Chastity chests to LWC
@@ -138,8 +139,6 @@ public class ChastityChest implements Runnable {
 		try {
 			log("LWC Conversion tool for Chastity Chest chests");
 			log("");
-
-			Config.init();
 
 			LWCPlugin plugin = new LWCPlugin();
 			plugin.loadDatabase();

@@ -19,7 +19,7 @@ package com.griefcraft.logging;
 
 import java.util.logging.Level;
 
-import com.griefcraft.util.ConfigValues;
+import com.griefcraft.lwc.LWC;
 
 public class Logger {
 
@@ -37,7 +37,7 @@ public class Logger {
 	}
 
 	public void log(String str, Level level) {
-		if (level == Level.CONFIG && !ConfigValues.VERBOSE.getBool()) {
+		if (level == Level.CONFIG && !LWC.getInstance().getConfiguration().getBoolean("core.verbose", false)) {
 			return;
 		}
 

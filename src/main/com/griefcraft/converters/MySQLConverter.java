@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.griefcraft.util;
+package com.griefcraft.converters;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -30,7 +30,7 @@ import com.griefcraft.sql.Database.Type;
 import com.griefcraft.sql.PhysDB;
 
 // Sort of just a convenience class, so as to not make the LWC class more cluttered than it is right now
-public class UpdatePatcher {
+public class MySQLConverter {
 
 	private static Logger logger = Logger.getLogger("Patcher");
 
@@ -50,7 +50,7 @@ public class UpdatePatcher {
 
 		// this patcher only does something exciting if the old SQLite database
 		// still exists :-)
-		String database = ConfigValues.DB_PATH.getString();
+		String database = lwc.getConfiguration().getString("core.database");
 
 		File file = new File(database);
 		if (!file.exists()) {

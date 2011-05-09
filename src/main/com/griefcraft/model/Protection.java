@@ -29,7 +29,7 @@ public class Protection {
 	// just a footnote, if a flag is "on", it is SET in the database, however if it's set to "off"
 	// it is REMOVED from the database if it is in it!
 	public enum Flag {
-		REDSTONE(0x02); // if set, redstone use is DISABLED!
+		REDSTONE(0x02); // if set, redstone use is DISABLED (assuming protections.denyRedstone = FALSE)
 		
 		Flag(int bit) {
 			this.bit = bit;
