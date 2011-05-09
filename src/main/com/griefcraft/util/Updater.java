@@ -70,6 +70,19 @@ public class Updater {
 	 * The latest LWC version
 	 */
 	private double latestPluginVersion = 0.00;
+	
+	/**
+	 * Download a file
+	 * 
+	 * @param updaterFile
+	 */
+	public void download(UpdaterFile updaterFile) {
+		needsUpdating.add(updaterFile);
+		
+		try {
+			update();
+		} catch(Exception e) { }
+	}
 
 	/**
 	 * Check for dependencies
@@ -78,7 +91,6 @@ public class Updater {
 	 */
 	public void check() {
 		String[] shared = new String[] { DEST_LIBRARY_FOLDER + "lib/" + Database.DefaultType.getDriver(), getFullNativeLibraryPath() };
-		String[] required = new String[] { "plugins/LWC/lwc.yml" };
 
 		for (String path : shared) {
 			File file = new File(path);
@@ -89,23 +101,6 @@ public class Updater {
 
 				if (!needsUpdating.contains(updaterFile)) {
 					needsUpdating.add(updaterFile);
-				}
-			}
-		}
-
-		for (String path : required) {
-			File file = new File(path);
-
-			if (file != null && !file.exists() && !file.isDirectory()) {
-				String fileName = path.substring(path.lastIndexOf("/") + 1);
-				
-				UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "lwc/" + fileName);
-				updaterFile.setLocalLocation(path);
-				
-				logger.log(updaterFile.getRemoteLocation() + "->" + updaterFile.getLocalLocation());
-
-				if (!needsUpdating.contains(updaterFile)) {
-					// FIXME needsUpdating.add(updaterFile);
 				}
 			}
 		}

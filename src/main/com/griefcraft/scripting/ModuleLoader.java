@@ -218,6 +218,7 @@ public class ModuleLoader {
 		MetaData metaData = new MetaData(module);
 		modules.add(metaData);
 		pluginModules.put(plugin, modules);
+		module.load(LWC.getInstance());
 	}
 
 	/**

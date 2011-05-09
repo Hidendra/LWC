@@ -1275,8 +1275,14 @@ public class LWC {
 	 * @return
 	 */
 	public String resolveProtectionConfiguration(Block block, String node) {
+		String material = block.getType().toString().toLowerCase().replaceAll("block", "");
+		
+		if(material.endsWith("_")) {
+			material = material.substring(0, material.length() - 1);
+		}
+		
 		String value = configuration.getString("protections." + node);
-		String temp = configuration.getString("protections.blocks." + block.getType().toString().toLowerCase() + "." + node);
+		String temp = configuration.getString("protections.blocks." + material + "." + node);
 		
 		if(temp != null && !temp.isEmpty()) {
 			value = temp;
