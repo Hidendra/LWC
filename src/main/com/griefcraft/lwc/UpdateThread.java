@@ -29,10 +29,10 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+
 import com.griefcraft.logging.Logger;
 import com.griefcraft.model.Job;
 import com.griefcraft.model.Protection;
-import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.StringUtils;
 
 public class UpdateThread implements Runnable {
@@ -103,8 +103,9 @@ public class UpdateThread implements Runnable {
 				continue;
 			}
 
+			int flushInterval = lwc.getConfiguration().getInt("core.flushInterval", 5);
 			long curr = System.currentTimeMillis();
-			long interval = ConfigValues.FLUSH_DB_INTERVAL.getInt() * 1000L;
+			long interval = flushInterval * 1000L;
 
 			if (curr - lastUpdate > interval) {
 				flush = true;
@@ -161,19 +162,16 @@ public class UpdateThread implements Runnable {
 			}
 		}
 
-		if(LWCInfo.DEVELOPMENT) {
-			doJobs();
-		}
-
 		flush = false;
 		lastUpdate = System.currentTimeMillis();
 	}
 
 	/**
-	 * Just keep this seperate
+	 * @deprecated
 	 */
 	private void doJobs() {
-		List<Job> jobs = lwc.getPhysicalDatabase().getJobQueue(ConfigValues.MAX_JOBS.getInt());
+		int maxJobs = 0;
+		List<Job> jobs = lwc.getPhysicalDatabase().getJobQueue(maxJobs);
 
 		if (jobs.size() > 0) {
 			logger.log("Loaded " + jobs.size() + " Jobs");

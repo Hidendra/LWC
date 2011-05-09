@@ -31,8 +31,9 @@ import java.util.Properties;
 import java.util.logging.Level;
 
 import com.griefcraft.logging.Logger;
-import com.griefcraft.util.ConfigValues;
+import com.griefcraft.lwc.LWC;
 import com.griefcraft.util.Updater;
+import com.griefcraft.util.config.Configuration;
 
 public abstract class Database {
 
@@ -137,9 +138,10 @@ public abstract class Database {
 
 		// if we're using mysql, append the database info
 		if (currentType == Type.MySQL) {
+			LWC lwc = LWC.getInstance();
 			properties.put("autoReconnect", "true");
-			properties.put("user", ConfigValues.MYSQL_USER.getString());
-			properties.put("password", ConfigValues.MYSQL_PASS.getString());
+			properties.put("user", lwc.getConfiguration().getString("database.username"));
+			properties.put("password", lwc.getConfiguration().getString("database.password"));
 		}
 
 		connection = DriverManager.getConnection("jdbc:" + currentType.toString().toLowerCase() + ":" + getDatabasePath(), properties);
@@ -173,11 +175,13 @@ public abstract class Database {
 	 * @return the path where the database file should be saved
 	 */
 	public String getDatabasePath() {
+		Configuration lwcConfiguration = LWC.getInstance().getConfiguration();
+		
 		if (currentType == Type.MySQL) {
-			return "//" + ConfigValues.MYSQL_HOST.getString() + ":" + ConfigValues.MYSQL_PORT.getString() + "/" + ConfigValues.MYSQL_DATABASE.getString();
+			return "//" + lwcConfiguration.getString("database.host") + "/" + lwcConfiguration.getString("database.database");
 		}
 
-		return ConfigValues.DB_PATH.getString();
+		return lwcConfiguration.getString("database.path");
 	}
 
 	/**

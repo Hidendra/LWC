@@ -39,8 +39,6 @@ import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.ModuleLoader.Event;
 import com.griefcraft.util.Colors;
-import com.griefcraft.util.ConfigValues;
-import com.griefcraft.util.StringUtils;
 
 public class LWCBlockListener extends BlockListener {
 
@@ -113,7 +111,7 @@ public class LWCBlockListener extends BlockListener {
 			return;
 		}
 
-		if (ConfigValues.ALLOW_BLOCK_DESTRUCTION.getBool()) {
+		if (plugin.getLWC().getConfiguration().getBoolean("protections.blockDestruction", false)) {
 			return;
 		}
 
@@ -178,7 +176,7 @@ public class LWCBlockListener extends BlockListener {
 			}
 		}
 
-		String autoRegisterType = ConfigValues.AUTO_REGISTER.getString();
+		String autoRegisterType = plugin.getLWC().resolveProtectionConfiguration(block, "autoRegister");
 
 		/*
 		 * Check if it's enabled
@@ -228,7 +226,7 @@ public class LWCBlockListener extends BlockListener {
 		 * Enforce anything preventing us from creating a protection
 		 */
 		if (!lwc.isAdmin(player)) {
-			if (lwc.enforceProtectionLimits(player) || lwc.enforceWorldGuard(player, block)) {
+			if (lwc.enforceProtectionLimits(player)) {
 				return;
 			}
 		}

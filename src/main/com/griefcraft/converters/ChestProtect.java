@@ -25,11 +25,12 @@ import java.io.IOException;
 
 import org.bukkit.command.CommandSender;
 
+import sun.security.krb5.Config;
+
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.sql.PhysDB;
-import com.griefcraft.util.Config;
 
 /**
  * Convert Chest Protect chests to LWC
@@ -176,8 +177,6 @@ public class ChestProtect implements Runnable {
 		try {
 			log("LWC Conversion tool for Chest Protect chests");
 			log("");
-
-			Config.init();
 
 			LWCPlugin plugin = new LWCPlugin();
 			plugin.loadDatabase();

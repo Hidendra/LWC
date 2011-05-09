@@ -55,7 +55,7 @@ public class Configuration extends ConfigurationNode {
      * @param config
      * @return
      */
-    public static Configuration create(String config) {
+    public static Configuration load(String config) {
     	Configuration configuration = new Configuration(new File(ModuleLoader.ROOT_PATH + config));
 		configuration.load();
 		return configuration;

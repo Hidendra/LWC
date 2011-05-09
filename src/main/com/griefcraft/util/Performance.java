@@ -82,7 +82,7 @@ public class Performance {
 		report.add(" + Time:\t" + Colors.Gray + getTimeRunningSeconds() + " seconds");
 		report.add(" + Players:\t" + Colors.Gray + lwc.getPlugin().getServer().getOnlinePlayers().length);
 		report.add(" + Protections:\t" + Colors.Gray + lwc.getPhysicalDatabase().getProtectionCount());
-		report.add(" + Cache:\t" + Colors.Gray + caches.getProtections().size() + Colors.Yellow + "/" + Colors.Gray + ConfigValues.CACHE_SIZE.getInt());
+		report.add(" + Cache:\t" + Colors.Gray + caches.getProtections().size() + Colors.Yellow + "/" + Colors.Gray + lwc.getConfiguration().getInt("core.cacheSize", 10000));
 
 		report.add(" ");
 		report.add(" - Physical database");

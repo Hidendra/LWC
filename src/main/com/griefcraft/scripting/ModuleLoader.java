@@ -68,7 +68,22 @@ public class ModuleLoader {
 		/**
 		 * Called when a block is left clicked
 		 */
-		INTERACT_BLOCK(3);
+		INTERACT_BLOCK(3),
+		
+		/**
+		 * Called before a protection is registered
+		 */
+		REGISTER_PROTECTION(2),
+		
+		/**
+		 * Called when a protection needs to be checked if a player can access it
+		 */
+		ACCESS_PROTECTION(2),
+		
+		/**
+		 * Called when a protection needs to be checked if a player can admin it
+		 */
+		ADMIN_PROTECTION(2);
 
 		Event(int arguments) {
 			this.arguments = arguments;
@@ -92,11 +107,6 @@ public class ModuleLoader {
 	public final static String ROOT_PATH = "plugins/LWC/";
 
 	/**
-	 * Path to where modules are located
-	 */
-	public final static String MODULE_PATH = "plugins/LWC/modules/";
-
-	/**
 	 * Map of loaded modules
 	 */
 	// private Map<String, Map<String, MetaData>> packageModules = new HashMap<String, Map<String, MetaData>>();
@@ -115,7 +125,6 @@ public class ModuleLoader {
 
 		LWC lwc = LWC.getInstance();
 		Result result = Result.DEFAULT;
-		logger.log("dispatching " + event + " with arguments: " + args.length);
 
 		try {
 			for(List<MetaData> modules : pluginModules.values()) {
@@ -143,6 +152,18 @@ public class ModuleLoader {
 
 					case INTERACT_BLOCK:
 						temp = module.onBlockInteract(lwc, (Player) args[0], (Block) args[1], (List<String>) args[2]);
+						break;
+						
+					case REGISTER_PROTECTION:
+						temp = module.onRegisterProtection(lwc, (Player) args[0], (Block) args[1]);
+						break;
+						
+					case ACCESS_PROTECTION:
+						temp = module.canAccessProtection(lwc, (Player) args[0], (Protection) args[1]);
+						break;
+						
+					case ADMIN_PROTECTION:
+						temp = module.canAdminProtection(lwc, (Player) args[0], (Protection) args[1]);
 						break;
 					}
 

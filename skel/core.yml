@@ -2,17 +2,18 @@
 # locale: The language LWC will use
 # auto_update: if true, LWC will auto update on server restarts if one is available
 # op_is_lwcadmin: if true, OPs will be lwc admins
-# flush_interval: database flush interval, recommended: 5-10
-# cache_size: Cache size for protections and other items, recommended: 1000+
-# default_menu_style: The default menu style to use for LWC commands, recommended: basic
+# flushInterval: database flush interval, recommended: 5-10
+# cacheSize: Cache size for protections and other items, recommended: 1000+
+# defaultMenuStyle: The default menu style to use for LWC commands, recommended: basic
 # verbose: if true, LWC will log more info to the console
 ##
 core:
     locale: en
-    auto_update: false
-    flush_interval: 10
-    cache_size: 10000
-    default_menu_style: basic
+    autoUpdate: false
+    flushInterval: 10
+    cacheSize: 10000
+    defaultMenuStyle: basic
+    showNotices: true
     verbose: false
 
 ## Database configuration
@@ -84,26 +85,27 @@ permissions:
 #             auto_register: off
 ##
 protections:
-    deny_redstone: false
+    denyRedstone: false
+    autoRegister: off
     blocks:
         chest:
             enabled: true
-            auto_register: private
+            autoRegister: private
         furnace:
             enabled: true
-            auto_register: private
+            autoRegister: private
         dispenser:
             enabled: true
-            auto_register: private
+            autoRegister: private
         sign:
             enabled: true
-            auto_register: private
+            autoRegister: private
         wooden_door:
             enabled: true
-            auto_register: off
+            autoRegister: off
         iron_door:
             enabled: true
-            auto_register: off
+            autoRegister: off
 
 ## External plugins LWC may use if they are available
 # worldguard: only explicitly allows protections in the named regions

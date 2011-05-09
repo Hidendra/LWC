@@ -17,7 +17,6 @@
 
 package com.griefcraft.scripting;
 
-import java.io.File;
 import java.util.List;
 
 import org.bukkit.block.Block;
@@ -26,7 +25,6 @@ import org.bukkit.entity.Player;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
-import com.griefcraft.util.config.Configuration;
 
 public abstract class JavaModule implements Module {
 	
@@ -45,10 +43,17 @@ public abstract class JavaModule implements Module {
 	 */
 	public final static Result DEFAULT = Result.DEFAULT;
 	
-	@Override
 	public void load(LWC lwc) {
 	}
 
+	public Result canAccessProtection(LWC lwc, Player player, Protection protection) {
+		return DEFAULT;
+	}
+	
+	public Result canAdminProtection(LWC lwc, Player player, Protection protection) {
+		return DEFAULT;
+	}
+	
 	public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
 		return DEFAULT;
 	}

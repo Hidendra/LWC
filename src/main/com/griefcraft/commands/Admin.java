@@ -41,6 +41,8 @@ import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import sun.security.krb5.Config;
+
 import com.griefcraft.converters.ChastityChest;
 import com.griefcraft.converters.ChestProtect;
 import com.griefcraft.lwc.LWC;
@@ -48,8 +50,6 @@ import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.model.Limit;
 import com.griefcraft.model.Protection;
 import com.griefcraft.util.Colors;
-import com.griefcraft.util.Config;
-import com.griefcraft.util.ConfigValues;
 import com.griefcraft.util.Performance;
 import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.Updater;
@@ -586,15 +586,14 @@ public class Admin implements ICommand {
 		
 		else if (action.equalsIgnoreCase("config")) {
 			if (args.length < 4) {
-				lwc.sendSimpleUsage(sender, "/lwc admin config <key> <value>");
+				lwc.sendSimpleUsage(sender, "/lwc admin config <path> <value>");
 				return;
 			}
 			
-			String key = args[2];
+			String path = args[2];
 			String value = args[3];
 			
-			Config.getInstance().setProperty(key, value);
-			sender.sendMessage(key + "->" + value);
+			lwc.getConfiguration().setProperty(path, value);
 		}
 		
 		else if (action.equalsIgnoreCase("cache")) {
@@ -610,7 +609,7 @@ public class Admin implements ICommand {
 			}
 
 			int size = lwc.getCaches().getProtections().size();
-			int max = ConfigValues.CACHE_SIZE.getInt();
+			int max = lwc.getConfiguration().getInt("core.cacheSize", 10000);
 			
 			sender.sendMessage(Colors.Green + size + Colors.Yellow + "/" + Colors.Green + max);
 		}
