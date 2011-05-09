@@ -21,7 +21,9 @@ import java.util.List;
 
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
@@ -51,6 +53,10 @@ public abstract class JavaModule implements Module {
 	}
 	
 	public Result canAdminProtection(LWC lwc, Player player, Protection protection) {
+		return DEFAULT;
+	}
+	
+	public Result onDropItem(LWC lwc, Player player, Item item, ItemStack itemStack) {
 		return DEFAULT;
 	}
 	

@@ -782,16 +782,6 @@ public class LWC {
 	}
 
 	/**
-	 * Check if a block is blacklisted
-	 * 
-	 * @param block
-	 * @return
-	 */
-	public boolean isBlockBlacklisted(Block block) {
-		return !Boolean.parseBoolean(resolveProtectionConfiguration(block, "enabled"));
-	}
-
-	/**
 	 * Check if a player can do mod functions on LWC
 	 * 
 	 * @param player
@@ -833,64 +823,13 @@ public class LWC {
 	}
 
 	/**
-	 * Check if the player is currently drop transferring
-	 * 
-	 * @param player
-	 * @return
-	 */
-	public boolean isPlayerDropTransferring(String player) {
-		return memoryDatabase.hasMode(player, "+dropTransfer");
-	}
-
-	/**
 	 * Check a block to see if it is protectable
 	 * 
 	 * @param block
 	 * @return
 	 */
 	public boolean isProtectable(Block block) {
-		if (isBlockBlacklisted(block)) {
-			return false;
-		}
-
-		switch (block.getTypeId()) {
-
-		/*
-		 * Chest
-		 */
-		case 54:
-			return true;
-
-			/*
-			 * Dispenser
-			 */
-		case 23:
-			return true;
-
-			/*
-			 * Furnaces
-			 */
-		case 61:
-		case 62:
-			return true;
-
-			/*
-			 * Doors
-			 */
-		case 64:
-		case 71:
-			return true;
-
-			/*
-			 * Sign
-			 */
-		case 63:
-		case 68:
-			return true;
-
-		}
-
-		return false;
+		return !Boolean.parseBoolean(resolveProtectionConfiguration(block, "enabled"));
 	}
 
 	/**

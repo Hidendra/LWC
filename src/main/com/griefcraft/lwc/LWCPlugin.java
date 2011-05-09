@@ -1,11 +1,6 @@
 package com.griefcraft.lwc;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.nio.channels.FileChannel;
 import java.util.Locale;
-import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -21,14 +16,10 @@ import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import sun.security.krb5.Config;
-
 import com.griefcraft.commands.Admin;
 import com.griefcraft.commands.ICommand;
-import com.griefcraft.commands.Modes;
 import com.griefcraft.commands.Modify;
 import com.griefcraft.commands.Owners;
-import com.griefcraft.commands.Unlock;
 import com.griefcraft.listeners.LWCBlockListener;
 import com.griefcraft.listeners.LWCEntityListener;
 import com.griefcraft.listeners.LWCPlayerListener;
@@ -40,6 +31,10 @@ import com.griefcraft.modules.free.FreeModule;
 import com.griefcraft.modules.info.InfoModule;
 import com.griefcraft.modules.lists.ListsModule;
 import com.griefcraft.modules.menu.MenuModule;
+import com.griefcraft.modules.modes.DroptransferModule;
+import com.griefcraft.modules.modes.PersistModule;
+import com.griefcraft.modules.redstone.RedstoneModule;
+import com.griefcraft.modules.unlock.UnlockModule;
 import com.griefcraft.modules.worldguard.WorldGuardModule;
 import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.ModuleLoader;
@@ -347,12 +342,21 @@ public class LWCPlugin extends JavaPlugin {
 	private void registerCoreModules() {
 		ModuleLoader moduleLoader = lwc.getModuleLoader();
 
+		// core
 		moduleLoader.registerModule(this, new CreateModule());
 		moduleLoader.registerModule(this, new DestroyModule());
-		moduleLoader.registerModule(this, new FlagModule());
 		moduleLoader.registerModule(this, new FreeModule());
 		moduleLoader.registerModule(this, new InfoModule());
 		moduleLoader.registerModule(this, new MenuModule());
+		moduleLoader.registerModule(this, new UnlockModule());
+		
+		// flags
+		moduleLoader.registerModule(this, new FlagModule());
+		moduleLoader.registerModule(this, new RedstoneModule());
+		
+		// modes
+		moduleLoader.registerModule(this, new PersistModule());
+		moduleLoader.registerModule(this, new DroptransferModule());
 		
 		// non-core modules but are included with LWC anyway
 		moduleLoader.registerModule(this, new ListsModule());
@@ -390,9 +394,7 @@ public class LWCPlugin extends JavaPlugin {
 	 */
 	private void registerCommands() {
 		registerCommand(Admin.class);
-		registerCommand(Modes.class);
 		registerCommand(Modify.class);
-		registerCommand(Unlock.class);
 		registerCommand(Owners.class);
 	}
 
