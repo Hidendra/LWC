@@ -53,6 +53,10 @@ public class LWCBlockListener extends BlockListener {
 	
 	@Override
 	public void onBlockRedstoneChange(BlockRedstoneEvent event) {
+		if(!LWC.ENABLED) {
+			return;
+		}
+		
 		LWC lwc = plugin.getLWC();
 		Block block = event.getBlock();
 		
@@ -75,6 +79,10 @@ public class LWCBlockListener extends BlockListener {
 	
 	@Override
 	public void onSignChange(SignChangeEvent event) {
+		if(!LWC.ENABLED) {
+			return;
+		}
+		
 		LWC lwc = plugin.getLWC();
 		Block block = event.getBlock();
 		Player player = event.getPlayer();
@@ -99,6 +107,10 @@ public class LWCBlockListener extends BlockListener {
 	@Override
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (event.isCancelled()) {
+			return;
+		}
+
+		if(!LWC.ENABLED) {
 			return;
 		}
 
@@ -133,6 +145,10 @@ public class LWCBlockListener extends BlockListener {
 		if (event.isCancelled()) {
 			return;
 		}
+
+		if(!LWC.ENABLED) {
+			return;
+		}
 		
 		blockTouched(event);
 	}
@@ -143,6 +159,10 @@ public class LWCBlockListener extends BlockListener {
 	@Override
 	public void onBlockPlace(BlockPlaceEvent event) {
 		if (event.isCancelled()) {
+			return;
+		}
+
+		if(!LWC.ENABLED) {
 			return;
 		}
 

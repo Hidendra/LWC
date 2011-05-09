@@ -77,7 +77,7 @@ public class FlagModule  extends JavaModule {
 	
 	@Override
 	public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
-		if(!StringUtils.hasFlag(command, "f") && !StringUtils.hasFlag(command, "force")) {
+		if(!StringUtils.hasFlag(command, "f") && !StringUtils.hasFlag(command, "flag")) {
 			return DEFAULT;
 		}
 		
