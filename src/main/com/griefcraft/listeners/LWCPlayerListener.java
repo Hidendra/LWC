@@ -50,6 +50,10 @@ public class LWCPlayerListener extends PlayerListener {
 
 	@Override
 	public void onPlayerDropItem(PlayerDropItemEvent event) {
+		if(!LWC.ENABLED) {
+			return;
+		}
+		
 		Player player = event.getPlayer();
 		Item item = event.getItemDrop();
 		ItemStack itemStack = item.getItemStack();
@@ -64,6 +68,10 @@ public class LWCPlayerListener extends PlayerListener {
 	@Override
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if(event.getAction() != Action.LEFT_CLICK_BLOCK && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+			return;
+		}
+		
+		if(!LWC.ENABLED) {
 			return;
 		}
 
@@ -112,6 +120,10 @@ public class LWCPlayerListener extends PlayerListener {
 
 	@Override
 	public void onPlayerQuit(PlayerQuitEvent event) {
+		if(!LWC.ENABLED) {
+			return;
+		}
+		
 		LWC lwc = plugin.getLWC();
 		String player = event.getPlayer().getName();
 

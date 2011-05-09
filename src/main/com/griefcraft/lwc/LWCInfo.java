@@ -43,7 +43,7 @@ public class LWCInfo {
 	public static final double VERSION = 3.00;
 
 	static {
-		FULL_VERSION = String.format("v%.2f-alpha1", VERSION);
+		FULL_VERSION = String.format("v%.2f-alpha2", VERSION);
 	}
 
 }

@@ -102,39 +102,17 @@ public class DropTransferModule extends JavaModule {
 		}
 
 		Block block = world.getBlockAt(protection.getX(), protection.getY(), protection.getZ());
-		BlockState blockState = null;
-
-		if ((blockState = block.getState()) != null && (blockState instanceof ContainerBlock)) {
-			Block doubleChestBlock = lwc.findAdjacentBlock(block, Material.CHEST);
-			ContainerBlock containerBlock = (ContainerBlock) blockState;
-
-			Map<Integer, ItemStack> remaining = containerBlock.getInventory().addItem(itemStack);
-
-			// we have remainders, deal with it
-			if (remaining.size() > 0) {
-				int key = remaining.keySet().iterator().next();
-				ItemStack remainingItemStack = remaining.get(key);
-
-				// is it a double chest ?????
-				if (doubleChestBlock != null) {
-					ContainerBlock containerBlock2 = (ContainerBlock) doubleChestBlock.getState();
-					remaining = containerBlock2.getInventory().addItem(remainingItemStack);
-				}
-
-				// recheck remaining in the event of double chest being used
-				if (remaining.size() > 0) {
-					key = remaining.keySet().iterator().next();
-					remainingItemStack = remaining.get(key);
-
-					player.sendMessage(Colors.Red + "Oh no! " + Colors.White + "Your chest is full! Have your items back.");
-					player.getInventory().addItem(remainingItemStack);
-				}
+		Map<Integer, ItemStack> remaining = lwc.depositItems(block, itemStack);
+		
+		if(remaining.size() > 0) {
+			player.sendMessage("Chest could not hold all the items! Have the remaining items back.");
+			
+			for(ItemStack temp : remaining.values()) {
+				player.getInventory().addItem(temp);
 			}
-
-			player.updateInventory(); // if they're in the chest and dropping
-										// items, this is required
-			item.remove();
 		}
+		player.updateInventory(); // if they're in the chest and dropping items, this is required
+		item.remove();
 		
 		return DEFAULT;
 	}

@@ -1,12 +1,21 @@
 package com.griefcraft.lwc;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.ContainerBlock;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
@@ -14,12 +23,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.player.PlayerListener;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.griefcraft.listeners.LWCBlockListener;
 import com.griefcraft.listeners.LWCEntityListener;
 import com.griefcraft.listeners.LWCPlayerListener;
 import com.griefcraft.logging.Logger;
+import com.griefcraft.model.Protection;
 import com.griefcraft.modules.admin.AdminCache;
 import com.griefcraft.modules.admin.AdminCleanup;
 import com.griefcraft.modules.admin.AdminClear;
@@ -267,6 +278,7 @@ public class LWCPlugin extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		if (lwc != null) {
+			LWC.ENABLED = false;
 			lwc.destruct();
 		}
 	}
@@ -331,7 +343,74 @@ public class LWCPlugin extends JavaPlugin {
 		lwc.load();
 		registerCoreModules();
 
+		LWC.ENABLED = true;
 		log("At version: " + LWCInfo.FULL_VERSION);
+		
+		Runnable runnable = new Runnable() {
+			public void run() {
+				for(World world : getServer().getWorlds()) {
+					String worldName = world.getName();
+					List<Entity> entities = world.getEntities();
+					Iterator<Entity> iterator = entities.iterator();
+					
+					while(iterator.hasNext()) {
+						Entity entity = iterator.next();
+						if(!(entity instanceof Item)) {
+							continue;
+						}
+						
+						Item item = (Item) entity;
+						ItemStack itemStack = item.getItemStack();
+						Location location = item.getLocation();
+						int x = location.getBlockX();
+						int y = location.getBlockY();
+						int z = location.getBlockZ();
+						
+						List<Protection> protections = lwc.getPhysicalDatabase().loadProtections(worldName, x, y, z, 3);
+						Block block = null;
+						Protection protection = null;
+						
+						for(Protection temp : protections) {
+							protection = temp;
+							block = world.getBlockAt(protection.getX(), protection.getY(), protection.getZ());
+							
+							if(!(block.getState() instanceof ContainerBlock)) {
+								continue;
+							}
+							
+							if(!protection.hasFlag(Protection.Flag.MAGNET)) {
+								continue;
+							}
+							
+							// Remove the items and suck them up :3
+							Map<Integer, ItemStack> remaining = lwc.depositItems(block, itemStack);
+							
+							if(remaining.size() == 1) {
+								ItemStack other = remaining.values().iterator().next();
+								
+								if(itemStack.getTypeId() == other.getTypeId() && itemStack.getAmount() == other.getAmount() && itemStack.getData() == other.getData() && itemStack.getDurability() == other.getDurability()) {
+									break;
+								}
+							}
+							
+							// remove the item on the ground
+							item.remove();
+							
+							// if we have a remainder, we need to drop them
+							if(remaining.size() > 0) {
+								for(ItemStack stack : remaining.values()) {
+									world.dropItemNaturally(location, stack);
+								}
+							}
+							
+							break;
+						}
+					}
+				}
+			}
+		};
+		
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, runnable, 50, 50);
 	}
 	
 	/**
