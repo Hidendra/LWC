@@ -107,11 +107,11 @@ public class LWCPlugin extends JavaPlugin {
 	public LWCPlugin() {
 		log("Loading shared objects");
 
+		updater = new Updater();
 		lwc = new LWC(this);
 		playerListener = new LWCPlayerListener(this);
 		blockListener = new LWCBlockListener(this);
 		entityListener = new LWCEntityListener(this);
-		updater = new Updater();
 
 		/*
 		 * Set the SQLite native library path

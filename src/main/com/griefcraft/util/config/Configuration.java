@@ -31,7 +31,10 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.reader.UnicodeReader;
 import org.yaml.snakeyaml.representer.Representer;
 
+import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.ModuleLoader;
+import com.griefcraft.util.Updater;
+import com.griefcraft.util.UpdaterFile;
 
 public class Configuration extends ConfigurationNode {
     private Yaml yaml;
@@ -56,7 +59,17 @@ public class Configuration extends ConfigurationNode {
      * @return
      */
     public static Configuration load(String config) {
-    	Configuration configuration = new Configuration(new File(ModuleLoader.ROOT_PATH + config));
+    	File file = new File(ModuleLoader.ROOT_PATH + config);
+    	
+    	// if it does not exist, attempt to download it if possible :-)
+    	if(!file.exists()) {
+    		Updater updater = LWC.getInstance().getPlugin().getUpdater();
+    		UpdaterFile updaterFile = new UpdaterFile(Updater.UPDATE_SITE + "lwc/skel/" + config);
+    		updaterFile.setLocalLocation(file.getPath());
+    		updater.download(updaterFile);
+    	}
+    	
+    	Configuration configuration = new Configuration(file);
 		configuration.load();
 		return configuration;
     }
