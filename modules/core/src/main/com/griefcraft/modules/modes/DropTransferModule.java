@@ -62,11 +62,10 @@ public class DropTransferModule extends JavaModule {
 	 * @return
 	 */
 	public int getPlayerDropTransferTarget(String player) {
-		String rawTarget = lwc.getMemoryDatabase().getModeData(player, "dropTransfer");
+		String target = lwc.getMemoryDatabase().getModeData(player, "dropTransfer");
 
 		try {
-			int ret = Integer.parseInt(rawTarget);
-			return ret;
+			return Integer.parseInt(target);
 		} catch (NumberFormatException e) {
 		}
 
