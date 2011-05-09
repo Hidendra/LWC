@@ -16,9 +16,6 @@ import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.griefcraft.commands.ICommand;
-import com.griefcraft.commands.Modify;
-import com.griefcraft.commands.Owners;
 import com.griefcraft.listeners.LWCBlockListener;
 import com.griefcraft.listeners.LWCEntityListener;
 import com.griefcraft.listeners.LWCPlayerListener;
@@ -51,6 +48,8 @@ import com.griefcraft.modules.lists.ListsModule;
 import com.griefcraft.modules.menu.MenuModule;
 import com.griefcraft.modules.modes.DropTransferModule;
 import com.griefcraft.modules.modes.PersistModule;
+import com.griefcraft.modules.modify.ModifyModule;
+import com.griefcraft.modules.owners.OwnersModule;
 import com.griefcraft.modules.redstone.RedstoneModule;
 import com.griefcraft.modules.unlock.UnlockModule;
 import com.griefcraft.modules.worldguard.WorldGuardModule;
@@ -238,7 +237,7 @@ public class LWCPlugin extends JavaPlugin {
 				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "unlock", argString.split(" "));
 				return true;
 			} else if (commandName.equals("cremove")) {
-				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "remote", "protection".split(" "));
+				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "remove", "protection".split(" "));
 				return true;
 			} else if (commandName.equals("climits")) {
 				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "info", "limits".split(" "));
@@ -254,25 +253,6 @@ public class LWCPlugin extends JavaPlugin {
 		///// Dispatch command to modules
 		if(lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, args[0].toLowerCase(), args.length > 1 ? StringUtils.join(args, 1).split(" ") : new String[0]) == Result.CANCEL) {
 			sender.sendMessage("(MODULE)");
-			return true;
-		}
-
-		for (ICommand cmd : lwc.getCommands()) {
-			if (!cmd.validate(lwc, sender, args)) {
-				continue;
-			}
-
-			if (!isPlayer && !cmd.supportsConsole()) {
-				continue;
-			}
-
-			try {
-				cmd.execute(lwc, sender, args);
-			} catch (Exception e) {
-				log("Oh no! An LWC command threw an exception!");
-				e.printStackTrace();
-			}
-
 			return true;
 		}
 
@@ -345,7 +325,6 @@ public class LWCPlugin extends JavaPlugin {
 		log("Loaded " + locale.keySet().size() + " locale strings (" + overrides + " overrides)");
 
 		loadDatabase();
-		registerCommands();
 		registerEvents();
 		updater.loadVersions(false);
 
@@ -361,11 +340,13 @@ public class LWCPlugin extends JavaPlugin {
 	private void registerCoreModules() {
 		// core
 		registerModule(new CreateModule());
+		registerModule(new ModifyModule());
 		registerModule(new DestroyModule());
 		registerModule(new FreeModule());
 		registerModule(new InfoModule());
 		registerModule(new MenuModule());
 		registerModule(new UnlockModule());
+		registerModule(new OwnersModule());
 		
 		// admin commands
 		registerModule(new BaseAdminModule());
@@ -417,31 +398,6 @@ public class LWCPlugin extends JavaPlugin {
 	 */
 	private void log(String str) {
 		logger.log(str);
-	}
-
-	/**
-	 * Register a command
-	 * 
-	 * @param command
-	 */
-	private void registerCommand(Class<?> clazz) {
-		try {
-			ICommand command = (ICommand) clazz.newInstance();
-			lwc.getCommands().add(command);
-			logger.log("Loaded command: " + command.getName(), Level.CONFIG);
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/***
-	 * Load all of the commands
-	 */
-	private void registerCommands() {
-		registerCommand(Modify.class);
-		registerCommand(Owners.class);
 	}
 
 	/**

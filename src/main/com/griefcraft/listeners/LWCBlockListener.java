@@ -71,15 +71,6 @@ public class LWCBlockListener extends BlockListener {
 		if(result == Result.CANCEL) {
 			event.setNewCurrent(event.getOldCurrent());
 		}
-		
-		/*boolean hasFlag = protection.hasFlag(Protection.Flag.REDSTONE);
-		boolean denyRedstone = ConfigValues.DENY_REDSTONE.getBool();
-		
-		if(!hasFlag && denyRedstone) {
-			event.setNewCurrent(event.getOldCurrent());
-		} else if(hasFlag && !denyRedstone) {
-			event.setNewCurrent(event.getOldCurrent());
-		}*/
 	}
 	
 	@Override
@@ -242,20 +233,9 @@ public class LWCBlockListener extends BlockListener {
 		LWC lwc = plugin.getLWC();
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
-
 		Protection protection = lwc.findProtection(block);
-		boolean hasNoOwner = protection == null;
 
 		List<String> actions = lwc.getMemoryDatabase().getActions(player.getName());
-
-		// boolean hasFreeRequest = actions.contains("free");
-		// boolean requestInfo = actions.contains("info");
-		// boolean createProtection = actions.contains("create");
-		boolean modifyChest = actions.contains("modify");
-		// boolean dropTransferReg = actions.contains("dropTransferSelect");
-		boolean showAccessList = actions.contains("owners");
-		// boolean forceOwner = actions.contains("forceowner");
-		// boolean changeFlag = actions.contains("flag");
 		
 		Result result;
 		boolean canAccess = lwc.canAccessProtection(player, protection);
@@ -269,149 +249,6 @@ public class LWCBlockListener extends BlockListener {
 		
 		if(result == Result.CANCEL) {
 			player.sendMessage("(MODULE)");
-			return;
-		}
-
-		if (protection != null) {
-			if (modifyChest) {
-				if (lwc.canAdminProtection(player, protection)) {
-					Action action = lwc.getMemoryDatabase().getAction("modify", player.getName());
-
-					final String defaultEntities = action.getData();
-					String[] entities = new String[0];
-
-					if (defaultEntities.length() > 0) {
-						entities = defaultEntities.split(" ");
-					}
-
-					if (lwc.notInPersistentMode(player.getName())) {
-						lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-					}
-
-					for (String rightsName : entities) {
-						boolean remove = false;
-						boolean isAdmin = false;
-						int chestType = AccessRight.PLAYER;
-
-						if (rightsName.startsWith("-")) {
-							remove = true;
-							rightsName = rightsName.substring(1);
-						}
-
-						if (rightsName.startsWith("@")) {
-							isAdmin = true;
-							rightsName = rightsName.substring(1);
-						}
-
-						if (rightsName.toLowerCase().startsWith("g:")) {
-							chestType = AccessRight.GROUP;
-							rightsName = rightsName.substring(2);
-						}
-
-						if (rightsName.toLowerCase().startsWith("l:")) {
-							chestType = AccessRight.LIST;
-							rightsName = rightsName.substring(2);
-						}
-
-						if (rightsName.toLowerCase().startsWith("list:")) {
-							chestType = AccessRight.LIST;
-							rightsName = rightsName.substring(5);
-						}
-
-						int chestID = protection.getId();
-						String localeChild = AccessRight.typeToString(chestType).toLowerCase();
-
-						if (!remove) {
-							lwc.getPhysicalDatabase().unregisterProtectionRights(chestID, rightsName);
-							lwc.getPhysicalDatabase().registerProtectionRights(chestID, rightsName, isAdmin ? 1 : 0, chestType);
-							lwc.sendLocale(player, "protection.interact.rights.register." + localeChild, "name", rightsName, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
-						} else {
-							lwc.getPhysicalDatabase().unregisterProtectionRights(chestID, rightsName);
-							lwc.sendLocale(player, "protection.interact.rights.remove." + localeChild, "name", rightsName, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
-						}
-						
-						protection.update();
-					}
-
-					return;
-				} else {
-					lwc.sendLocale(player, "protection.interact.error.notowner", "block", LWC.materialToString(protection.getBlockId()));
-					if (lwc.notInPersistentMode(player.getName())) {
-						lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-					}
-
-					return;
-				}
-			}
-
-			else if (showAccessList) {
-				Action action = lwc.getMemoryDatabase().getAction("owners", player.getName());
-				int accessPage = Integer.parseInt(action.getData());
-
-				/*
-				 * Calculate range
-				 */
-				int start = (accessPage - 1) * AccessRight.RESULTS_PER_PAGE;
-				int max = start + AccessRight.RESULTS_PER_PAGE;
-
-				List<AccessRight> accessRights = lwc.getPhysicalDatabase().loadAccessRights(protection.getId(), start, max);
-				int numRights = lwc.getPhysicalDatabase().countRightsForProtection(protection.getId());
-
-				/*
-				 * May have only been 2 rows left, or something. Get the real max
-				 */
-				int realMax = start + accessRights.size();
-
-				player.sendMessage("");
-				player.sendMessage(Colors.Green + "   LWC Protection");
-				player.sendMessage(Colors.Blue + "Showing results " + Colors.LightBlue + start + Colors.Blue + "-" + Colors.LightBlue + realMax + Colors.Blue + ". Total: " + Colors.LightBlue + numRights);
-				player.sendMessage("");
-				player.sendMessage("");
-
-				for (AccessRight accessRight : accessRights) {
-					StringBuilder builder = new StringBuilder();
-					builder.append(Colors.LightBlue);
-					builder.append(accessRight.getName());
-					builder.append(Colors.Blue);
-					builder.append(" (");
-					builder.append(AccessRight.typeToString(accessRight.getType()));
-					builder.append(") ");
-
-					if (accessRight.getRights() == 1) {
-						builder.append(Colors.LightBlue);
-						builder.append("(");
-						builder.append(Colors.Red);
-						builder.append("ADMIN");
-						builder.append(Colors.LightBlue);
-						builder.append(")");
-					}
-
-					player.sendMessage(builder.toString());
-				}
-
-				return;
-			}
-		}
-
-		if (showAccessList) {
-			lwc.sendLocale(player, "protection.interact.error.notregistered", "block", LWC.materialToString(block));
-			if (lwc.notInPersistentMode(player.getName())) {
-				lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-			}
-			return;
-		}
-
-		if ((modifyChest) && !hasNoOwner) {
-			if (!lwc.canAdminProtection(player, protection)) {
-				lwc.sendLocale(player, "protection.interact.error.notowner", "block", LWC.materialToString(protection.getBlockId()));
-			} else {
-				lwc.sendLocale(player, "protection.interact.error.alreadyregistered", "block", LWC.materialToString(protection.getBlockId()));
-			}
-
-			if (lwc.notInPersistentMode(player.getName())) {
-				lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-			}
-
 			return;
 		}
 	}

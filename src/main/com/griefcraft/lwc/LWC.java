@@ -21,7 +21,6 @@ import org.bukkit.plugin.Plugin;
 
 import com.firestar.mcbans.mcbans;
 import com.griefcraft.cache.CacheSet;
-import com.griefcraft.commands.ICommand;
 import com.griefcraft.converters.MySQLConverter;
 import com.griefcraft.logging.Logger;
 import com.griefcraft.model.AccessRight;
@@ -56,11 +55,6 @@ public class LWC {
 	 * The module loader
 	 */
 	private ModuleLoader moduleLoader;
-	
-	/**
-	 * List of commands
-	 */
-	private List<ICommand> commands;
 
 	/**
 	 * Logging instance
@@ -105,7 +99,6 @@ public class LWC {
 		}
 		
 		configuration = Configuration.load("core.yml");
-		commands = new ArrayList<ICommand>();
 		caches = new CacheSet();
 	}
 	
@@ -572,29 +565,6 @@ public class LWC {
 		}
 
 		return null;
-	}
-
-	/**
-	 * Get a command represented by a specific class
-	 * 
-	 * @param clazz
-	 * @return
-	 */
-	public ICommand getCommand(Class<?> clazz) {
-		for (ICommand command : commands) {
-			if (command.getClass() == clazz) {
-				return command;
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * @return the list of commands
-	 */
-	public List<ICommand> getCommands() {
-		return commands;
 	}
 
 	/**
