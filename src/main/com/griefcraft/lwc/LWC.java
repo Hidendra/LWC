@@ -655,24 +655,6 @@ public class LWC {
 	}
 
 	/**
-	 * Get the drop transfer target for a player
-	 * 
-	 * @param player
-	 * @return
-	 */
-	public int getPlayerDropTransferTarget(String player) {
-		String rawTarget = memoryDatabase.getModeData(player, "dropTransfer");
-
-		try {
-			int ret = Integer.parseInt(rawTarget);
-			return ret;
-		} catch (Throwable t) {
-		}
-
-		return -1;
-	}
-
-	/**
 	 * @return the plugin class
 	 */
 	public LWCPlugin getPlugin() {
