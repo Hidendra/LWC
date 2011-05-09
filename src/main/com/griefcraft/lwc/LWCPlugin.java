@@ -31,7 +31,7 @@ import com.griefcraft.modules.free.FreeModule;
 import com.griefcraft.modules.info.InfoModule;
 import com.griefcraft.modules.lists.ListsModule;
 import com.griefcraft.modules.menu.MenuModule;
-import com.griefcraft.modules.modes.DroptransferModule;
+import com.griefcraft.modules.modes.DropTransferModule;
 import com.griefcraft.modules.modes.PersistModule;
 import com.griefcraft.modules.redstone.RedstoneModule;
 import com.griefcraft.modules.unlock.UnlockModule;
@@ -356,7 +356,7 @@ public class LWCPlugin extends JavaPlugin {
 		
 		// modes
 		moduleLoader.registerModule(this, new PersistModule());
-		moduleLoader.registerModule(this, new DroptransferModule());
+		moduleLoader.registerModule(this, new DropTransferModule());
 		
 		// non-core modules but are included with LWC anyway
 		moduleLoader.registerModule(this, new ListsModule());
