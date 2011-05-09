@@ -389,7 +389,7 @@ public class LWCPlugin extends JavaPlugin {
 								ItemStack other = remaining.values().iterator().next();
 								
 								if(itemStack.getTypeId() == other.getTypeId() && itemStack.getAmount() == other.getAmount() && itemStack.getData() == other.getData() && itemStack.getDurability() == other.getDurability()) {
-									break;
+									continue;
 								}
 							}
 							
