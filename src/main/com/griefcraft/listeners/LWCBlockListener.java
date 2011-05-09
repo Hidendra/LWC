@@ -132,15 +132,6 @@ public class LWCBlockListener extends BlockListener {
 		if(result == Result.CANCEL) {
 			event.setCancelled(true);
 		}
-		
-		/*if (canAdmin) {
-			protection.remove();
-			player.sendMessage(Colors.Red + LWC.materialToString(protection.getBlockId()) + " unregistered.");
-		}
-
-		if (!hasAccess) {
-			event.setCancelled(true);
-		}*/
 	}
 
 	/**
@@ -177,7 +168,7 @@ public class LWCBlockListener extends BlockListener {
 		}
 
 		String autoRegisterType = plugin.getLWC().resolveProtectionConfiguration(block, "autoRegister");
-
+		
 		/*
 		 * Check if it's enabled
 		 */
@@ -263,7 +254,7 @@ public class LWCBlockListener extends BlockListener {
 		boolean modifyChest = actions.contains("modify");
 		// boolean dropTransferReg = actions.contains("dropTransferSelect");
 		boolean showAccessList = actions.contains("owners");
-		boolean forceOwner = actions.contains("forceowner");
+		// boolean forceOwner = actions.contains("forceowner");
 		// boolean changeFlag = actions.contains("flag");
 		
 		Result result;
@@ -396,22 +387,6 @@ public class LWCBlockListener extends BlockListener {
 					}
 
 					player.sendMessage(builder.toString());
-				}
-
-				return;
-			}
-
-			else if (forceOwner) {
-				Action action = lwc.getMemoryDatabase().getAction("forceowner", player.getName());
-				String newOwner = action.getData();
-
-				protection.setOwner(newOwner);
-				protection.saveNow();
-				
-				lwc.sendLocale(player, "protection.interact.forceowner.finalize", "player", newOwner);
-				
-				if (lwc.notInPersistentMode(player.getName())) {
-					lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 				}
 
 				return;

@@ -16,7 +16,6 @@ import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.griefcraft.commands.Admin;
 import com.griefcraft.commands.ICommand;
 import com.griefcraft.commands.Modify;
 import com.griefcraft.commands.Owners;
@@ -24,6 +23,25 @@ import com.griefcraft.listeners.LWCBlockListener;
 import com.griefcraft.listeners.LWCEntityListener;
 import com.griefcraft.listeners.LWCPlayerListener;
 import com.griefcraft.logging.Logger;
+import com.griefcraft.modules.admin.AdminCache;
+import com.griefcraft.modules.admin.AdminCleanup;
+import com.griefcraft.modules.admin.AdminClear;
+import com.griefcraft.modules.admin.AdminConfig;
+import com.griefcraft.modules.admin.AdminConvert;
+import com.griefcraft.modules.admin.AdminFind;
+import com.griefcraft.modules.admin.AdminFlush;
+import com.griefcraft.modules.admin.AdminForceOwner;
+import com.griefcraft.modules.admin.AdminGetLimits;
+import com.griefcraft.modules.admin.AdminLimits;
+import com.griefcraft.modules.admin.AdminLocale;
+import com.griefcraft.modules.admin.AdminPurge;
+import com.griefcraft.modules.admin.AdminReload;
+import com.griefcraft.modules.admin.AdminRemove;
+import com.griefcraft.modules.admin.AdminReport;
+import com.griefcraft.modules.admin.AdminUpdate;
+import com.griefcraft.modules.admin.AdminVersion;
+import com.griefcraft.modules.admin.AdminView;
+import com.griefcraft.modules.admin.BaseAdminModule;
 import com.griefcraft.modules.create.CreateModule;
 import com.griefcraft.modules.destroy.DestroyModule;
 import com.griefcraft.modules.flag.FlagModule;
@@ -36,6 +54,7 @@ import com.griefcraft.modules.modes.PersistModule;
 import com.griefcraft.modules.redstone.RedstoneModule;
 import com.griefcraft.modules.unlock.UnlockModule;
 import com.griefcraft.modules.worldguard.WorldGuardModule;
+import com.griefcraft.scripting.Module;
 import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.scripting.ModuleLoader.Event;
@@ -340,27 +359,55 @@ public class LWCPlugin extends JavaPlugin {
 	 * Register the core modules for LWC
 	 */
 	private void registerCoreModules() {
-		ModuleLoader moduleLoader = lwc.getModuleLoader();
-
 		// core
-		moduleLoader.registerModule(this, new CreateModule());
-		moduleLoader.registerModule(this, new DestroyModule());
-		moduleLoader.registerModule(this, new FreeModule());
-		moduleLoader.registerModule(this, new InfoModule());
-		moduleLoader.registerModule(this, new MenuModule());
-		moduleLoader.registerModule(this, new UnlockModule());
+		registerModule(new CreateModule());
+		registerModule(new DestroyModule());
+		registerModule(new FreeModule());
+		registerModule(new InfoModule());
+		registerModule(new MenuModule());
+		registerModule(new UnlockModule());
+		
+		// admin commands
+		registerModule(new BaseAdminModule());
+		registerModule(new AdminCache());
+		registerModule(new AdminCleanup());
+		registerModule(new AdminClear());
+		registerModule(new AdminConfig());
+		registerModule(new AdminConvert());
+		registerModule(new AdminFind());
+		registerModule(new AdminFlush());
+		registerModule(new AdminForceOwner());
+		registerModule(new AdminGetLimits());
+		registerModule(new AdminLimits());
+		registerModule(new AdminLocale());
+		registerModule(new AdminPurge());
+		registerModule(new AdminReload());
+		registerModule(new AdminRemove());
+		registerModule(new AdminReport());
+		registerModule(new AdminUpdate());
+		registerModule(new AdminVersion());
+		registerModule(new AdminView());
 		
 		// flags
-		moduleLoader.registerModule(this, new FlagModule());
-		moduleLoader.registerModule(this, new RedstoneModule());
+		registerModule(new FlagModule());
+		registerModule(new RedstoneModule());
 		
 		// modes
-		moduleLoader.registerModule(this, new PersistModule());
-		moduleLoader.registerModule(this, new DropTransferModule());
+		registerModule(new PersistModule());
+		registerModule(new DropTransferModule());
 		
 		// non-core modules but are included with LWC anyway
-		moduleLoader.registerModule(this, new ListsModule());
-		moduleLoader.registerModule(this, new WorldGuardModule());
+		registerModule(new ListsModule());
+		registerModule(new WorldGuardModule());
+	}
+	
+	/**
+	 * Register a module
+	 * 
+	 * @param module
+	 */
+	private void registerModule(Module module) {
+		lwc.getModuleLoader().registerModule(this, module);
 	}
 
 	/**
@@ -393,7 +440,6 @@ public class LWCPlugin extends JavaPlugin {
 	 * Load all of the commands
 	 */
 	private void registerCommands() {
-		registerCommand(Admin.class);
 		registerCommand(Modify.class);
 		registerCommand(Owners.class);
 	}
