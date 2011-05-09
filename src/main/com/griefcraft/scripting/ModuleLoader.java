@@ -24,7 +24,9 @@ import java.util.Map;
 
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import com.griefcraft.logging.Logger;
@@ -83,7 +85,12 @@ public class ModuleLoader {
 		/**
 		 * Called when a protection needs to be checked if a player can admin it
 		 */
-		ADMIN_PROTECTION(2);
+		ADMIN_PROTECTION(2),
+		
+		/**
+		 * Called when a player drops an item
+		 */
+		DROP_ITEM(3);
 
 		Event(int arguments) {
 			this.arguments = arguments;
@@ -165,6 +172,10 @@ public class ModuleLoader {
 					case ADMIN_PROTECTION:
 						temp = module.canAdminProtection(lwc, (Player) args[0], (Protection) args[1]);
 						break;
+						
+					case DROP_ITEM:
+						temp = module.onDropItem(lwc, (Player) args[0], (Item) args[1], (ItemStack) args[2]);
+						break;
 					}
 
 					if(temp != Result.DEFAULT) {
@@ -180,6 +191,10 @@ public class ModuleLoader {
 			throw new ModuleException("LWC Module threw an uncaught exception!", throwable);
 		}
 
+		if(result == null) {
+			result = Result.DEFAULT;
+		}
+		
 		return result;
 	}
 

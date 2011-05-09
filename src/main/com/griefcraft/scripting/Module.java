@@ -21,7 +21,9 @@ import java.util.List;
 
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
@@ -60,6 +62,17 @@ public interface Module {
 	 * @return
 	 */
 	public Result canAdminProtection(LWC lwc, Player player, Protection protection);
+	
+	/**
+	 * Called when a player drops an item
+	 * 
+	 * @param lwc
+	 * @param player
+	 * @param item
+	 * @param itemStack
+	 * @return
+	 */
+	public Result onDropItem(LWC lwc, Player player, Item item, ItemStack itemStack);
 	
 	/**
 	 * Player or console command

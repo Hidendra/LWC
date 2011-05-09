@@ -261,7 +261,7 @@ public class LWCBlockListener extends BlockListener {
 		// boolean requestInfo = actions.contains("info");
 		// boolean createProtection = actions.contains("create");
 		boolean modifyChest = actions.contains("modify");
-		boolean dropTransferReg = actions.contains("dropTransferSelect");
+		// boolean dropTransferReg = actions.contains("dropTransferSelect");
 		boolean showAccessList = actions.contains("owners");
 		boolean forceOwner = actions.contains("forceowner");
 		// boolean changeFlag = actions.contains("flag");
@@ -282,26 +282,7 @@ public class LWCBlockListener extends BlockListener {
 		}
 
 		if (protection != null) {
-			if (dropTransferReg) {
-				if (!canAccess) {
-					lwc.sendLocale(player, "protection.interact.dropxfer.noaccess");
-				} else {
-					if (protection.getBlockId() != Material.CHEST.getId()) {
-						lwc.sendLocale(player, "protection.interact.dropxfer.notchest");
-						lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-						return;
-					}
-
-					lwc.getMemoryDatabase().registerMode(player.getName(), "dropTransfer", protection.getId() + "");
-					lwc.getMemoryDatabase().registerMode(player.getName(), "+dropTransfer");
-					lwc.sendLocale(player, "protection.interact.dropxfer.finalize");
-				}
-				
-				lwc.getMemoryDatabase().unregisterAllActions(player.getName()); // ignore persist
-				return;
-			}
-
-			else if (modifyChest) {
+			if (modifyChest) {
 				if (lwc.canAdminProtection(player, protection)) {
 					Action action = lwc.getMemoryDatabase().getAction("modify", player.getName());
 
@@ -435,12 +416,6 @@ public class LWCBlockListener extends BlockListener {
 
 				return;
 			}
-		}
-
-		if (dropTransferReg) {
-			lwc.sendLocale(player, "protection.interact.dropxfer.notprotected");
-			lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-			return;
 		}
 
 		if (showAccessList) {

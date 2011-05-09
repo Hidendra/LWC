@@ -15,10 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.griefcraft.commands;
+package com.griefcraft.modules.unlock;
 
 import static com.griefcraft.util.StringUtils.encrypt;
-import static com.griefcraft.util.StringUtils.hasFlag;
 import static com.griefcraft.util.StringUtils.join;
 
 import org.bukkit.command.CommandSender;
@@ -27,37 +26,48 @@ import org.bukkit.entity.Player;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
+import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.Colors;
+import com.griefcraft.util.StringUtils;
 
-public class Unlock implements ICommand {
+public class UnlockModule extends JavaModule {
 
 	@Override
-	public void execute(LWC lwc, CommandSender sender, String[] args) {
-		if (args.length < 2) {
+	public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
+		if(!StringUtils.hasFlag(command, "u") && !StringUtils.hasFlag(command, "unlock")) {
+			return DEFAULT;
+		}
+		
+		if(!(sender instanceof Player)) {
+			sender.sendMessage(Colors.Red + "Console is not supported.");
+			return CANCEL;
+		}
+		
+		if (args.length < 1) {
 			lwc.sendSimpleUsage(sender, "/lwc -u <Password>");
-			return;
+			return CANCEL;
 		}
 
 		Player player = (Player) sender;
-		String password = join(args, 1);
+		String password = join(args, 0);
 		password = encrypt(password);
 
 		if (!lwc.getMemoryDatabase().hasPendingUnlock(player.getName())) {
 			player.sendMessage(Colors.Red + "Nothing selected. Open a locked protection first.");
-			return;
+			return CANCEL;
 		} else {
 			int chestID = lwc.getMemoryDatabase().getUnlockID(player.getName());
 
 			if (chestID == -1) {
 				lwc.sendLocale(player, "protection.internalerror", "id", "ulock");
-				return;
+				return CANCEL;
 			}
 
 			Protection entity = lwc.getPhysicalDatabase().loadProtection(chestID);
 
 			if (entity.getType() != ProtectionTypes.PASSWORD) {
 				lwc.sendLocale(player, "protection.unlock.notpassword");
-				return;
+				return CANCEL;
 			}
 
 			if (entity.getData().equals(password)) {
@@ -68,21 +78,8 @@ public class Unlock implements ICommand {
 				lwc.sendLocale(player, "protection.unlock.password.invalid");
 			}
 		}
-	}
 
-	@Override
-	public String getName() {
-		return "unlock";
+		return CANCEL;
 	}
-
-	@Override
-	public boolean supportsConsole() {
-		return false;
-	}
-
-	@Override
-	public boolean validate(LWC lwc, CommandSender player, String[] args) {
-		return hasFlag(args, "u") || hasFlag(args, "unlock");
-	}
-
+	
 }
