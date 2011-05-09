@@ -811,7 +811,7 @@ public class LWC {
 	 * @return
 	 */
 	public boolean isProtectable(Block block) {
-		return !Boolean.parseBoolean(resolveProtectionConfiguration(block, "enabled"));
+		return Boolean.parseBoolean(resolveProtectionConfiguration(block, "enabled"));
 	}
 
 	/**
