@@ -1,0 +1,10 @@
+# WorldGuard LWC module
+# this module can be used to regulate where protections are placed.
+# For example, you can restrict protections to specific regions
+# Using * from one region is the same as setting enabled to false
+
+worldguard:
+    enabled: false
+    regions:
+        - region1
+        - region2
