@@ -40,73 +40,81 @@ public class WorldGuardModule extends JavaModule {
 	 * The WorldGuard module configuration
 	 */
 	private Configuration configuration = Configuration.load("worldguard.yml");
-	
+
+	/**
+	 * The world guard plugin if it is enabled
+	 */
+	private WorldGuardPlugin worldGuard = null;
+
+	@Override
+	public void load(LWC lwc) {
+		Plugin plugin = lwc.getPlugin().getServer().getPluginManager().getPlugin("WorldGuard");
+
+		if(plugin != null) {
+			worldGuard = (WorldGuardPlugin) plugin;
+		}
+	}
+
 	@Override
 	public Result onRegisterProtection(LWC lwc, Player player, Block block) {
+		if(worldGuard == null) {
+			return DEFAULT;
+		}
+		
 		if(!configuration.getBoolean("worldguard.enabled", false)) {
 			return DEFAULT;
 		}
 
-		Plugin plugin = lwc.getPlugin().getServer().getPluginManager().getPlugin("WorldGuard");
-
 		try {
-			if (plugin != null) {
-				/*
-				 * World guard is enabled.. let's boogie
-				 */
-				WorldGuardPlugin worldGuard = (WorldGuardPlugin) plugin;
+			/*
+			 * Now get the region manager
+			 */
+			GlobalRegionManager regions = worldGuard.getGlobalRegionManager();
+			RegionManager regionManager = regions.get(player.getWorld());
 
-				/*
-				 * Now get the region manager
-				 */
-				GlobalRegionManager regions = worldGuard.getGlobalRegionManager();
-				RegionManager regionManager = regions.get(player.getWorld());
+			/*
+			 * We need to reflect into BukkitUtil.toVector
+			 */
+			Class<?> bukkitUtil = worldGuard.getClass().getClassLoader().loadClass("com.sk89q.worldguard.bukkit.BukkitUtil");
+			Method toVector = bukkitUtil.getMethod("toVector", Block.class);
+			Vector blockVector = (Vector) toVector.invoke(null, block);
 
-				/*
-				 * We need to reflect into BukkitUtil.toVector
-				 */
-				Class<?> bukkitUtil = worldGuard.getClass().getClassLoader().loadClass("com.sk89q.worldguard.bukkit.BukkitUtil");
-				Method toVector = bukkitUtil.getMethod("toVector", Block.class);
-				Vector blockVector = (Vector) toVector.invoke(null, block);
+			/*
+			 * Now let's get the list of regions at the block we're clicking
+			 */
+			List<String> regionSet = regionManager.getApplicableRegionsIDs(blockVector);
+			List<String> allowedRegions = configuration.getStringList("worldguard.regions", new ArrayList<String>());
 
-				/*
-				 * Now let's get the list of regions at the block we're clicking
-				 */
-				List<String> regionSet = regionManager.getApplicableRegionsIDs(blockVector);
-				List<String> allowedRegions = configuration.getStringList("worldguard.regions", new ArrayList<String>());
+			boolean deny = true;
 
-				boolean deny = true;
-
-				/*
-				 * Check for *
-				 */
-				if (allowedRegions.contains("*")) {
-					if (regionSet.size() > 0) {
-						return ALLOW;
-					}
+			/*
+			 * Check for *
+			 */
+			if (allowedRegions.contains("*")) {
+				if (regionSet.size() > 0) {
+					return ALLOW;
 				}
+			}
 
-				/*
-				 * If there are no regions, we need to deny them
-				 */
-				for (String region : regionSet) {
-					if (allowedRegions.contains(region)) {
-						deny = false;
-						break;
-					}
+			/*
+			 * If there are no regions, we need to deny them
+			 */
+			for (String region : regionSet) {
+				if (allowedRegions.contains(region)) {
+					deny = false;
+					break;
 				}
+			}
 
-				if (deny) {
-					player.sendMessage(Colors.Red + "You cannot protect that " + LWC.materialToString(block) + " outside of WorldGuard regions");
-					return CANCEL;
-				}
-
+			if (deny) {
+				player.sendMessage(Colors.Red + "You cannot protect that " + LWC.materialToString(block) + " outside of WorldGuard regions");
+				return CANCEL;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return DEFAULT;
 	}
-	
+
 }
