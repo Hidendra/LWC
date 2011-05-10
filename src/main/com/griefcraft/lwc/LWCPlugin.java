@@ -23,12 +23,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.server.ServerListener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.griefcraft.listeners.LWCBlockListener;
 import com.griefcraft.listeners.LWCEntityListener;
 import com.griefcraft.listeners.LWCPlayerListener;
+import com.griefcraft.listeners.LWCServerListener;
 import com.griefcraft.logging.Logger;
 import com.griefcraft.model.Protection;
 import com.griefcraft.modules.admin.AdminCache;
@@ -89,6 +91,16 @@ public class LWCPlugin extends JavaPlugin {
 	private EntityListener entityListener;
 
 	/**
+	 * The player listener
+	 */
+	private PlayerListener playerListener;
+	
+	/**
+	 * The server listener
+	 */
+	private ServerListener serverListener;
+
+	/**
 	 * The locale for LWC
 	 */
 	private LWCResourceBundle locale;
@@ -102,11 +114,6 @@ public class LWCPlugin extends JavaPlugin {
 	 * The LWC instance
 	 */
 	private LWC lwc;
-
-	/**
-	 * The player listener
-	 */
-	private PlayerListener playerListener;
 
 	/**
 	 * LWC updater
@@ -123,6 +130,7 @@ public class LWCPlugin extends JavaPlugin {
 		playerListener = new LWCPlayerListener(this);
 		blockListener = new LWCBlockListener(this);
 		entityListener = new LWCEntityListener(this);
+		serverListener = new LWCServerListener(this);
 
 		/*
 		 * Set the SQLite native library path
@@ -524,6 +532,9 @@ public class LWCPlugin extends JavaPlugin {
 		registerEvent(blockListener, Type.BLOCK_PLACE);
 		registerEvent(blockListener, Type.REDSTONE_CHANGE);
 		registerEvent(blockListener, Type.SIGN_CHANGE);
+		
+		/* Server events */
+		registerEvent(serverListener, Type.PLUGIN_DISABLE);
 	}
 
 }
