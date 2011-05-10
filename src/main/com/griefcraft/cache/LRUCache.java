@@ -31,16 +31,6 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
 		this.maxCapacity = maxCapacity;
 	}
 	
-	/**
-	 * FIXME: debugging purposes :-)
-	 */
-	@Override
-	public V get(Object key) {
-		// System.out.println("Cache\t" + key);
-		
-		return super.get(key);
-	}
-	
 	@Override
 	protected boolean removeEldestEntry(java.util.Map.Entry<K, V> eldest) {
 		return size() > maxCapacity;
