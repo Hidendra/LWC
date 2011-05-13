@@ -25,6 +25,7 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -243,6 +244,61 @@ public abstract class Database {
 		return null;
 	}
 
+	/**
+	 * Add a column to a table
+	 * 
+	 * @param table
+	 * @param column
+	 */
+	protected boolean addColumn(String table, String column, String type) {
+		return executeQueryNoException("ALTER TABLE " + table + " ADD " + column + " " + type);
+	}
+	
+	/**
+	 * Rename a table
+	 * 
+	 * @param table
+	 * @param newName
+	 */
+	protected boolean renameTable(String table, String newName) {
+		return executeQueryNoException("ALTER TABLE " + table + " RENAME TO " + newName);
+	}
+	
+	/**
+	 * Drop a table
+	 * 
+	 * @param table
+	 */
+	protected boolean dropTable(String table) {
+		return executeQueryNoException("DROP TABLE " + table);
+	}
+
+	/**
+	 * Execute a query, ignoring any exceptions
+	 * 
+	 * @param query
+	 * @return true if an exception was thrown
+	 */
+	protected boolean executeQueryNoException(String query) {
+		Statement statement = null;
+		boolean exception = false;
+
+		try {
+			statement = connection.createStatement();
+			statement.executeQuery(query);
+		} catch (SQLException e) {
+			exception = true;
+		} finally {
+			try {
+				if(statement != null) {
+					statement.close();
+				}
+			} catch(SQLException e) { }
+		}
+		
+		return exception;
+	}
+	
 	/**
 	 * @return true if connected to the database
 	 */

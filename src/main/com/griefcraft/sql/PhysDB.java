@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.avaje.ebeaninternal.server.persist.ExeUpdateSql;
 import com.griefcraft.cache.LRUCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
@@ -48,7 +49,7 @@ public class PhysDB extends Database {
 	public PhysDB(Type currentType) {
 		super(currentType);
 	}
-	
+
 	@Override
 	protected void postPrepare() {
 		Performance.addPhysDBQuery();
@@ -109,7 +110,7 @@ public class PhysDB extends Database {
 			statement.setLong(4, System.currentTimeMillis() / 1000L);
 
 			statement.executeUpdate();
-			
+
 		} catch (Exception e) {
 			printException(e);
 		}
@@ -190,7 +191,7 @@ public class PhysDB extends Database {
 			}
 
 			set.close();
-			
+
 		} catch (SQLException e) {
 			printException(e);
 		}
@@ -274,7 +275,7 @@ public class PhysDB extends Database {
 			}
 
 			set.close();
-			
+
 		} catch (SQLException e) {
 			printException(e);
 		}
@@ -310,7 +311,7 @@ public class PhysDB extends Database {
 			}
 
 			set.close();
-			
+
 		} catch (SQLException e) {
 			printException(e);
 		}
@@ -341,6 +342,7 @@ public class PhysDB extends Database {
 		doUpdate150();
 		doUpdate170();
 		doUpdate220();
+		doUpdate301();
 
 		try {
 			connection.setAutoCommit(false);
@@ -442,102 +444,6 @@ public class PhysDB extends Database {
 				rights.addColumn(column);
 			}
 
-			Table players = new Table(this, "players");
-
-			{
-				column = new Column("id");
-				column.setType("INTEGER");
-				column.setPrimary(true);
-				players.addColumn(column);
-
-				column = new Column("username");
-				column.setType("VARCHAR(255)");
-				players.addColumn(column);
-
-				column = new Column("password");
-				column.setType("VARCHAR(255)");
-				players.addColumn(column);
-
-				column = new Column("mcusername");
-				column.setType("VARCHAR(255)");
-				players.addColumn(column);
-
-				column = new Column("rights");
-				column.setType("INTEGER");
-				players.addColumn(column);
-
-				column = new Column("timestamp");
-				column.setType("VARCHAR(255)");
-				players.addColumn(column);
-
-				column = new Column("salt");
-				column.setType("VARCHAR(255)");
-				players.addColumn(column);
-			}
-
-			Table inventory = new Table(this, "inventory");
-
-			{
-				column = new Column("protectionId");
-				column.setType("INTEGER");
-				column.setPrimary(true);
-				column.setAutoIncrement(false);
-				inventory.addColumn(column);
-
-				column = new Column("blockId");
-				column.setType("INTEGER");
-				inventory.addColumn(column);
-
-				column = new Column("slots");
-				column.setType("INTEGER");
-				inventory.addColumn(column);
-
-				column = new Column("stacks");
-				column.setType("VARCHAR(255)");
-				inventory.addColumn(column);
-
-				column = new Column("items");
-				column.setType("VARCHAR(255)");
-				inventory.addColumn(column);
-
-				column = new Column("durability");
-				column.setType("VARCHAR(255)");
-				inventory.addColumn(column);
-
-				column = new Column("last_transaction");
-				column.setType("VARCHAR(255)");
-				inventory.addColumn(column);
-
-				column = new Column("last_update");
-				column.setType("VARCHAR(255)");
-				inventory.addColumn(column);
-			}
-
-			Table jobs = new Table(this, "jobs");
-
-			{
-				column = new Column("id");
-				column.setType("INTEGER");
-				column.setPrimary(true);
-				jobs.addColumn(column);
-
-				column = new Column("type");
-				column.setType("INTEGER");
-				jobs.addColumn(column);
-
-				column = new Column("owner");
-				column.setType("VARCHAR(255)");
-				jobs.addColumn(column);
-
-				column = new Column("payload");
-				column.setType("VARCHAR(255)");
-				jobs.addColumn(column);
-
-				column = new Column("timestamp");
-				column.setType("VARCHAR(255)");
-				jobs.addColumn(column);
-			}
-
 			Table menuStyles = new Table(this, "menu_styles");
 
 			{
@@ -555,9 +461,6 @@ public class PhysDB extends Database {
 			protections.execute();
 			limits.execute();
 			rights.execute();
-			players.execute();
-			inventory.execute();
-			jobs.execute();
 			menuStyles.execute();
 
 			connection.commit();
@@ -659,7 +562,7 @@ public class PhysDB extends Database {
 		try {
 			PreparedStatement statement = prepare("SELECT protections.id AS protectionId, rights.id AS rightsId, protections.type AS protectionType, rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights FROM protections LEFT OUTER JOIN rights ON protections.id = rights.chest WHERE protections.id = ?");
 			statement.setInt(1, protectionId);
-			
+
 			return resolveProtection(statement);
 		} catch (SQLException e) {
 			printException(e);
@@ -667,7 +570,7 @@ public class PhysDB extends Database {
 
 		return null;
 	}
-	
+
 	/**
 	 * Resolve a list of n protections from a statement
 	 * 
@@ -676,24 +579,24 @@ public class PhysDB extends Database {
 	 */
 	private List<Protection> resolveProtections(PreparedStatement statement) {
 		List<Protection> protections = new ArrayList<Protection>();
-		
+
 		int lastId = -1;
 		ResultSet set = null;
 		Protection protection = null;
 		boolean init = true;
-		
+
 		try {
 			set = statement.executeQuery();
-			
+
 			while (set.next()) {
 				int protectionId = set.getInt("protectionId");
-				
+
 				if(lastId != protectionId) {
 					// add the last found protection
 					if(protection != null) {
 						protections.add(protection);
 					}
-					
+
 					lastId = protectionId;
 					init = true;
 					protection = new Protection();
@@ -745,7 +648,7 @@ public class PhysDB extends Database {
 					protection.addAccessRight(right);
 				}
 			}
-			
+
 			if(protection != null && !protections.contains(protection)) {
 				protections.add(protection);
 			}
@@ -758,7 +661,7 @@ public class PhysDB extends Database {
 				} catch(SQLException e) { }
 			}
 		}
-		
+
 		return protections;
 	}
 
@@ -770,11 +673,11 @@ public class PhysDB extends Database {
 	 */
 	private Protection resolveProtection(PreparedStatement statement) {
 		List<Protection> protections = resolveProtections(statement);
-		
+
 		if(protections.size() == 0) {
 			return null;
 		}
-		
+
 		return protections.get(0);
 	}
 
@@ -810,7 +713,7 @@ public class PhysDB extends Database {
 			if(protection != null) {
 				cache.put(cacheKey, protection);
 			}
-			
+
 			return protection;
 		} catch (SQLException e) {
 			printException(e);
@@ -829,7 +732,7 @@ public class PhysDB extends Database {
 
 		try {
 			PreparedStatement statement = prepare("SELECT protections.id AS protectionId, rights.id AS rightsId, protections.type AS protectionType, rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights FROM protections LEFT OUTER JOIN rights ON protections.id = rights.chest");
-			
+
 			return resolveProtections(statement);
 		} catch (Exception e) {
 			printException(e);
@@ -994,7 +897,7 @@ public class PhysDB extends Database {
 			statement.setString(9, new Timestamp(new Date().getTime()).toString());
 
 			statement.executeUpdate();
-			
+
 		} catch (SQLException e) {
 			printException(e);
 		}
@@ -1019,7 +922,7 @@ public class PhysDB extends Database {
 			statement.setString(3, entity.toLowerCase());
 
 			statement.executeUpdate();
-			
+
 		} catch (SQLException e) {
 			printException(e);
 		}
@@ -1047,7 +950,7 @@ public class PhysDB extends Database {
 			statement.setInt(4, type);
 
 			statement.executeUpdate();
-			
+
 		} catch (SQLException e) {
 			printException(e);
 		}
@@ -1075,7 +978,7 @@ public class PhysDB extends Database {
 			statement.setString(11, protection.getDate());
 
 			statement.executeUpdate();
-			
+
 		} catch(SQLException e) {
 			printException(e);
 		}
@@ -1093,7 +996,7 @@ public class PhysDB extends Database {
 			statement.setInt(1, id);
 
 			statement.executeUpdate();
-			
+
 		} catch (Exception e) {
 			printException(e);
 		}
@@ -1130,7 +1033,7 @@ public class PhysDB extends Database {
 			statement.setInt(1, protectionId);
 
 			statement.executeUpdate();
-			
+
 		} catch (SQLException e) {
 			printException(e);
 		}
@@ -1150,7 +1053,7 @@ public class PhysDB extends Database {
 			statement.setString(1, player);
 
 			statement.executeUpdate();
-			
+
 		} catch (Exception e) {
 			printException(e);
 		}
@@ -1174,7 +1077,7 @@ public class PhysDB extends Database {
 			statement.setString(2, entity.toLowerCase());
 
 			statement.executeUpdate();
-			
+
 		} catch (SQLException e) {
 			printException(e);
 		}
@@ -1189,7 +1092,7 @@ public class PhysDB extends Database {
 			statement.executeUpdate("DELETE FROM limits");
 
 			statement.close();
-			
+
 		} catch (SQLException e) {
 			printException(e);
 		}
@@ -1220,7 +1123,7 @@ public class PhysDB extends Database {
 
 			statement.setInt(1, chestID);
 			statement.executeUpdate();
-			
+
 		} catch (SQLException e) {
 			printException(e);
 		}
@@ -1240,7 +1143,7 @@ public class PhysDB extends Database {
 			statement.setString(2, entity.toLowerCase());
 
 			statement.executeUpdate();
-			
+
 		} catch (SQLException e) {
 			printException(e);
 		}
@@ -1258,7 +1161,7 @@ public class PhysDB extends Database {
 			statement.setString(1, player);
 
 			statement.executeUpdate();
-			
+
 		} catch (Exception e) {
 			printException(e);
 		}
@@ -1272,7 +1175,7 @@ public class PhysDB extends Database {
 			Statement statement = connection.createStatement();
 			statement.executeUpdate("DELETE FROM protections");
 			statement.close();
-			
+
 		} catch (SQLException e) {
 			printException(e);
 		}
@@ -1340,26 +1243,10 @@ public class PhysDB extends Database {
 			Statement statement = connection.createStatement();
 			statement.executeQuery("SELECT type FROM protections");
 			statement.close();
-			
+
 		} catch (SQLException e) {
-			logger.log("Outdated database!", Level.CONFIG);
-			logger.log("UPGRADING FROM 1.00 TO 1.10", Level.CONFIG);
-			logger.log("ALTERING TABLE protections AND FILLING WITH DEFAULT DATA", Level.CONFIG);
-
-			try {
-				Statement statement = connection.createStatement();
-				statement.addBatch("ALTER TABLE protections ADD type INTEGER");
-				statement.addBatch("UPDATE protections SET type='1'");
-				statement.executeBatch();
-				statement.close();
-				
-			} catch (SQLException ex) {
-				log("Oops! Something went wrong: ");
-				ex.printStackTrace();
-				return;
-			}
-
-			log("Update completed!");
+			addColumn("protections", "type", "INTEGER");
+			executeQueryNoException("UPDATE protections SET type='1'");
 		}
 	}
 
@@ -1371,20 +1258,9 @@ public class PhysDB extends Database {
 			Statement statement = connection.createStatement();
 			statement.executeQuery("SELECT id FROM protections");
 			statement.close();
-			
+
 		} catch (Exception e) {
-			logger.log("Outdated database!", Level.CONFIG);
-			logger.log("UPGRADING FROM 1.30 TO 1.40", Level.CONFIG);
-
-			logger.log("Renaming table chests to protections", Level.CONFIG);
-
-			try {
-				Statement statement = connection.createStatement();
-				statement.executeUpdate("ALTER TABLE chests RENAME TO protections");
-				statement.close();
-				
-			} catch (Exception e_) {
-			}
+			renameTable("chests", "protections");
 		}
 	}
 
@@ -1396,15 +1272,9 @@ public class PhysDB extends Database {
 			Statement statement = connection.createStatement();
 			statement.executeQuery("SELECT blockId FROM protections");
 			statement.close();
-			
+
 		} catch (Exception e) {
-			try {
-				Statement statement = connection.createStatement();
-				statement.executeUpdate("ALTER TABLE protections ADD blockId INTEGER");
-				statement.close();
-				
-			} catch (Exception ex) {
-			}
+			addColumn("protections", "blockId", "INTEGER");
 		}
 	}
 
@@ -1416,15 +1286,20 @@ public class PhysDB extends Database {
 			Statement statement = connection.createStatement();
 			statement.executeQuery("SELECT world FROM protections");
 			statement.close();
-			
+
 		} catch (Exception e) {
-			try {
-				Statement statement = connection.createStatement();
-				statement.executeUpdate("ALTER TABLE protections ADD world TEXT");
-				statement.close();
-				
-			} catch (Exception ex) {
-			}
+			addColumn("protections", "world", "TEXT");
+		}
+	}
+
+	/**
+	 * 3.01
+	 */
+	private void doUpdate301() {
+		// if false is returned, it was dropped
+		if(!dropTable("players")) {
+			dropTable("inventory");
+			dropTable("jobs");
 		}
 	}
 
@@ -1436,15 +1311,9 @@ public class PhysDB extends Database {
 			Statement statement = connection.createStatement();
 			statement.executeQuery("SELECT flags FROM protections");
 			statement.close();
-			
+
 		} catch (Exception e) {
-			try {
-				Statement statement = connection.createStatement();
-				statement.executeUpdate("ALTER TABLE protections ADD flags INTEGER");
-				statement.close();
-				
-			} catch (Exception ex) {
-			}
+			addColumn("protections", "flags", "INTEGER");
 		}
 	}
 }
