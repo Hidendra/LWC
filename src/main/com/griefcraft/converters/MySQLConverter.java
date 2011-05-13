@@ -50,7 +50,7 @@ public class MySQLConverter {
 
 		// this patcher only does something exciting if the old SQLite database
 		// still exists :-)
-		String database = lwc.getConfiguration().getString("core.database");
+		String database = lwc.getConfiguration().getString("database.database");
 
 		File file = new File(database);
 		if (!file.exists()) {
