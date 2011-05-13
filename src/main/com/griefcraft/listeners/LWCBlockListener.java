@@ -268,7 +268,6 @@ public class LWCBlockListener extends BlockListener {
 		}
 		
 		if(result == Result.CANCEL) {
-			player.sendMessage("(MODULE)");
 			return;
 		}
 	}
