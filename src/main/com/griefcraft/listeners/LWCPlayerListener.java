@@ -108,8 +108,6 @@ public class LWCPlayerListener extends PlayerListener {
 		
 		if(result == Module.Result.DEFAULT) {
 			lwc.enforceAccess(player, block);
-		} else {
-			player.sendMessage("(MODULE)");
 		}
 		
 		if (!canAccess) {
