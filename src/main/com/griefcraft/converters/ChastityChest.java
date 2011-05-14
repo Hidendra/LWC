@@ -25,8 +25,6 @@ import java.io.IOException;
 
 import org.bukkit.command.CommandSender;
 
-import sun.security.krb5.Config;
-
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.sql.PhysDB;

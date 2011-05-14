@@ -74,18 +74,7 @@ public class InfoModule extends JavaModule {
 			type = args[0].toLowerCase();
 		}
 		
-		if(type.equals("limits")) {
-			int used = lwc.getPhysicalDatabase().getProtectionCount(player.getName());
-			int quota = lwc.getProtectionLimits(player.getWorld().getName(), player.getName());
-			String displayQuota = "Unlimited";
-			
-			if(quota != -1) {
-				displayQuota = quota + "";
-			}
-			
-			lwc.sendLocale(player, "protection.info.limits", "used", used, "quota", displayQuota);
-		}
-		else if(type.equals("info")) {
+		if(type.equals("info")) {
 			lwc.getMemoryDatabase().unregisterAllActions(player.getName());
 			lwc.getMemoryDatabase().registerAction("info", player.getName());
 			lwc.sendLocale(player, "protection.info.finalize");

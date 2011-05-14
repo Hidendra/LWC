@@ -24,7 +24,6 @@ import java.util.List;
 import com.griefcraft.logging.Logger;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
-import com.griefcraft.model.Limit;
 import com.griefcraft.model.Protection;
 import com.griefcraft.sql.Database.Type;
 import com.griefcraft.sql.PhysDB;
@@ -76,19 +75,15 @@ public class MySQLConverter {
 
 			logger.log("Preliminary scan...............");
 			int startProtections = physicalDatabase.getProtectionCount();
-			int startLimits = physicalDatabase.getLimitCount();
 
 			int protections = sqliteDatabase.getProtectionCount();
 			int rights = sqliteDatabase.getRightsCount();
-			int limits = sqliteDatabase.getLimitCount();
 
 			int expectedProtections = protections + startProtections;
-			int expectedLimits = limits + startLimits;
 
 			logger.log("TO CONVERT:");
 			logger.log("Protections:\t" + protections);
 			logger.log("Rights:\t\t" + rights);
-			logger.log("Limits:\t\t" + limits);
 			logger.log("");
 
 			if (protections > 0) {
@@ -124,25 +119,6 @@ public class MySQLConverter {
 					logger.log("OK.");
 				} else {
 					logger.log("Weird, only " + protections + " protections are in the database? Continuing...");
-				}
-			}
-
-			if (expectedLimits > 0) {
-				logger.log("Converting: LIMITS");
-
-				List<Limit> tmp = sqliteDatabase.loadLimits();
-
-				for (Limit limit : tmp) {
-					physicalDatabase.registerProtectionLimit(limit.getType(), limit.getAmount(), limit.getEntity());
-				}
-
-				logger.log("COMMITTING");
-				physicalDatabase.getConnection().commit();
-				logger.log("OK , expecting: " + expectedLimits);
-				if (expectedLimits == (limits = physicalDatabase.getLimitCount())) {
-					logger.log("OK.");
-				} else {
-					logger.log("Weird, only " + limits + " limits are in the database? Continuing...");
 				}
 			}
 

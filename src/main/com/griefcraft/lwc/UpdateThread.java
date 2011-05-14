@@ -19,20 +19,10 @@ package com.griefcraft.lwc;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.Dispenser;
-import org.bukkit.block.Sign;
-import org.bukkit.entity.Player;
 
 import com.griefcraft.logging.Logger;
 import com.griefcraft.model.Protection;
-import com.griefcraft.util.StringUtils;
 
 public class UpdateThread implements Runnable {
 

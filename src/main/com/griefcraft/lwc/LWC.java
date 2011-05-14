@@ -452,64 +452,6 @@ public class LWC {
 	}
 
 	/**
-	 * Check for protection limits on a given player and return true if they are limited We also assume they are not an LWC admin
-	 * 
-	 * @param player
-	 *            the player to check
-	 * @return true if they are limited
-	 */
-	public boolean enforceProtectionLimits(Player player) {
-		int limit = getProtectionLimits(player.getWorld().getName(), player.getName());
-
-		/*
-		 * Alert the player if they're above or at the limit
-		 */
-		if (limit != -1) {
-			int protections = physicalDatabase.getProtectionCount(player.getName());
-
-			if (protections >= limit) {
-				player.sendMessage(Colors.Red + "You have exceeded your allowed amount of protections!");
-				return true;
-			}
-		}
-
-		return false;
-	}
-	
-	/**
-	 * Get the limits for a player. This scans group and global limits, as well
-	 * 
-	 * @param player
-	 * @return
-	 */
-	public int getProtectionLimits(String world, String player) {
-		int limit = -1;
-		
-		if(world.isEmpty()) {
-			world = plugin.getServer().getWorlds().get(0).getName();
-		}
-		
-		/*
-		 * Apply player limits
-		 */
-		limit = physicalDatabase.getPlayerLimit(player);
-
-		/*
-		 * Apply group limits.. can't be one line however
-		 */
-		if (limit == -1 && permissions != null) {
-			limit = physicalDatabase.getGroupLimit(permissions.getGroup(world, player));
-		}
-
-		/*
-		 * Apply global limits if need be
-		 */
-		limit = limit != -1 ? limit : physicalDatabase.getGlobalLimit();
-		
-		return limit;
-	}
-
-	/**
 	 * Find a block that is adjacent to another block given a Material
 	 * 
 	 * @param block
