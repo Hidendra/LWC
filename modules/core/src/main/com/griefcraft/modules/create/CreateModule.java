@@ -74,7 +74,6 @@ public class CreateModule extends JavaModule {
         int blockY = block.getY();
         int blockZ = block.getZ();
         
-        // TODO: limits, worldguard
         lwc.removeModes(player);
         Result registerProtection = lwc.getModuleLoader().dispatchEvent(Event.REGISTER_PROTECTION, player, block);
         

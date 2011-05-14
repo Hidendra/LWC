@@ -34,7 +34,6 @@ import org.yaml.snakeyaml.representer.Representer;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.util.Updater;
-import com.griefcraft.util.UpdaterFile;
 
 public class Configuration extends ConfigurationNode {
     private Yaml yaml;
