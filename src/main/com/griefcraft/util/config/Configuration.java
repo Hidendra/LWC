@@ -40,6 +40,11 @@ public class Configuration extends ConfigurationNode {
     private Yaml yaml;
     private File file;
     
+    /**
+     * List of loaded config files
+     */
+    private static Map<String, Configuration> loaded = new HashMap<String, Configuration>();
+    
     public Configuration(File file) {
         super(new HashMap<String, Object>());
         
@@ -50,6 +55,13 @@ public class Configuration extends ConfigurationNode {
         yaml = new Yaml(new SafeConstructor(), new Representer(), options);
         
         this.file = file;
+    }
+    
+    /**
+     * @return the list of loaded config files
+     */
+    public static Map<String, Configuration> getLoaded() {
+    	return loaded;
     }
     
     /**
@@ -64,13 +76,13 @@ public class Configuration extends ConfigurationNode {
     	// if it does not exist, attempt to download it if possible :-)
     	if(!file.exists()) {
     		Updater updater = LWC.getInstance().getPlugin().getUpdater();
-    		UpdaterFile updaterFile = new UpdaterFile(Updater.UPDATE_SITE + "lwc/skel/" + config);
-    		updaterFile.setLocalLocation(file.getPath());
-    		updater.download(updaterFile);
+    		updater.downloadConfig(config);
     	}
     	
     	Configuration configuration = new Configuration(file);
 		configuration.load();
+		loaded.put(config, configuration);
+		
 		return configuration;
     }
     

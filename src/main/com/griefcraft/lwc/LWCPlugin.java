@@ -57,9 +57,11 @@ import com.griefcraft.modules.destroy.DestroyModule;
 import com.griefcraft.modules.flag.FlagModule;
 import com.griefcraft.modules.free.FreeModule;
 import com.griefcraft.modules.info.InfoModule;
+import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.modules.lists.ListsModule;
 import com.griefcraft.modules.menu.MenuModule;
 import com.griefcraft.modules.modes.DropTransferModule;
+import com.griefcraft.modules.modes.MagnetModule;
 import com.griefcraft.modules.modes.PersistModule;
 import com.griefcraft.modules.modify.ModifyModule;
 import com.griefcraft.modules.owners.OwnersModule;
@@ -353,72 +355,6 @@ public class LWCPlugin extends JavaPlugin {
 
 		LWC.ENABLED = true;
 		log("At version: " + LWCInfo.FULL_VERSION);
-		
-		Runnable runnable = new Runnable() {
-			public void run() {
-				for(World world : getServer().getWorlds()) {
-					String worldName = world.getName();
-					List<Entity> entities = world.getEntities();
-					Iterator<Entity> iterator = entities.iterator();
-					
-					while(iterator.hasNext()) {
-						Entity entity = iterator.next();
-						if(!(entity instanceof Item)) {
-							continue;
-						}
-						
-						Item item = (Item) entity;
-						ItemStack itemStack = item.getItemStack();
-						Location location = item.getLocation();
-						int x = location.getBlockX();
-						int y = location.getBlockY();
-						int z = location.getBlockZ();
-						
-						List<Protection> protections = lwc.getPhysicalDatabase().loadProtections(worldName, x, y, z, 3);
-						Block block = null;
-						Protection protection = null;
-						
-						for(Protection temp : protections) {
-							protection = temp;
-							block = world.getBlockAt(protection.getX(), protection.getY(), protection.getZ());
-							
-							if(!(block.getState() instanceof ContainerBlock)) {
-								continue;
-							}
-							
-							if(!protection.hasFlag(Protection.Flag.MAGNET)) {
-								continue;
-							}
-							
-							// Remove the items and suck them up :3
-							Map<Integer, ItemStack> remaining = lwc.depositItems(block, itemStack);
-							
-							if(remaining.size() == 1) {
-								ItemStack other = remaining.values().iterator().next();
-								
-								if(itemStack.getTypeId() == other.getTypeId() && itemStack.getAmount() == other.getAmount() && itemStack.getData() == other.getData() && itemStack.getDurability() == other.getDurability()) {
-									continue;
-								}
-							}
-							
-							// remove the item on the ground
-							item.remove();
-							
-							// if we have a remainder, we need to drop them
-							if(remaining.size() > 0) {
-								for(ItemStack stack : remaining.values()) {
-									world.dropItemNaturally(location, stack);
-								}
-							}
-							
-							break;
-						}
-					}
-				}
-			}
-		};
-		
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, runnable, 50, 50);
 	}
 	
 	/**
@@ -426,6 +362,7 @@ public class LWCPlugin extends JavaPlugin {
 	 */
 	private void registerCoreModules() {
 		// core
+		registerModule(new LimitsModule());
 		registerModule(new CreateModule());
 		registerModule(new ModifyModule());
 		registerModule(new DestroyModule());
@@ -463,6 +400,7 @@ public class LWCPlugin extends JavaPlugin {
 		// modes
 		registerModule(new PersistModule());
 		registerModule(new DropTransferModule());
+		registerModule(new MagnetModule());
 		
 		// non-core modules but are included with LWC anyway
 		registerModule(new ListsModule());

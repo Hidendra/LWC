@@ -28,11 +28,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.griefcraft.logging.Logger;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
+import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.sql.Database;
+import com.griefcraft.util.config.Configuration;
 
 public class Updater {
 
@@ -138,6 +141,14 @@ public class Updater {
 		}
 
 		return false;
+	}
+	
+	public void downloadConfig(String config) {
+    	File file = new File(ModuleLoader.ROOT_PATH + config); // where to save to
+		UpdaterFile updaterFile = new UpdaterFile(Updater.UPDATE_SITE + "lwc/skel/" + config);
+		
+		updaterFile.setLocalLocation(file.getPath());
+		download(updaterFile);
 	}
 
 	/**
@@ -246,8 +257,6 @@ public class Updater {
 		folder.mkdirs();
 		folder = new File(DEST_LIBRARY_FOLDER + "lib/");
 		folder.mkdirs();
-		folder = new File(DEST_LIBRARY_FOLDER + "modules/");
-		folder.mkdir();
 
 		logger.log("Need to download " + needsUpdating.size() + " file(s)");
 
