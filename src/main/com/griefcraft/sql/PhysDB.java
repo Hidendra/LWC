@@ -25,9 +25,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-
-import com.avaje.ebeaninternal.server.persist.ExeUpdateSql;
 import com.griefcraft.cache.LRUCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
@@ -150,63 +147,6 @@ public class PhysDB extends Database {
 	}
 
 	/**
-	 * @return the Global limit for anyone without explicit limits
-	 */
-	public int getGlobalLimit() {
-		return getLimit(Limit.GLOBAL, "");
-	}
-
-	/**
-	 * Retrieve a group's chest limit
-	 * 
-	 * @param group
-	 *            the group to check
-	 * @return the amount of chests they are limited to. -1 = infinite
-	 */
-	public int getGroupLimit(String group) {
-		return getLimit(Limit.GROUP, group);
-	}
-
-	/**
-	 * Retrieve a limit for a given type
-	 * 
-	 * @param type
-	 *            0 = group, 1 = user. The latter overrides the former
-	 * @param entity
-	 *            the group or user to get
-	 * @return the amount of chests the entitiy is limited to. -1 = infinite
-	 */
-	public int getLimit(int type, String entity) {
-		int limit = -1;
-
-		try {
-			PreparedStatement statement = prepare("SELECT amount FROM limits WHERE type = ? AND entity = ?");
-			statement.setInt(1, type);
-			statement.setString(2, entity.toLowerCase());
-
-			ResultSet set = statement.executeQuery();
-
-			if (set.next()) {
-				limit = set.getInt("amount");
-			}
-
-			set.close();
-
-		} catch (SQLException e) {
-			printException(e);
-		}
-
-		return limit;
-	}
-
-	/**
-	 * @return the number of limits
-	 */
-	public int getLimitCount() {
-		return Integer.decode(fetch("SELECT COUNT(*) AS count FROM limits", "count") + "");
-	}
-
-	/**
 	 * Get the menu style for a player
 	 * 
 	 * @param player
@@ -231,17 +171,6 @@ public class PhysDB extends Database {
 		}
 
 		return LWC.getInstance().getConfiguration().getString("core.defaultMenuStyle");
-	}
-
-	/**
-	 * Retrieve a player's chest limit
-	 * 
-	 * @param user
-	 *            the user to check
-	 * @return the amount of chests they are limited to. -1 = infinite
-	 */
-	public int getPlayerLimit(String user) {
-		return getLimit(Limit.PLAYER, user);
 	}
 
 	/**
@@ -398,27 +327,6 @@ public class PhysDB extends Database {
 				protections.addColumn(column);
 			}
 
-			Table limits = new Table(this, "limits");
-
-			{
-				column = new Column("id");
-				column.setType("INTEGER");
-				column.setPrimary(true);
-				limits.addColumn(column);
-
-				column = new Column("type");
-				column.setType("INTEGER");
-				limits.addColumn(column);
-
-				column = new Column("amount");
-				column.setType("INTEGER");
-				limits.addColumn(column);
-
-				column = new Column("entity");
-				column.setType("VARCHAR(255)");
-				limits.addColumn(column);
-			}
-
 			Table rights = new Table(this, "rights");
 
 			{
@@ -459,7 +367,6 @@ public class PhysDB extends Database {
 			}
 
 			protections.execute();
-			limits.execute();
 			rights.execute();
 			menuStyles.execute();
 
@@ -1301,6 +1208,19 @@ public class PhysDB extends Database {
 			dropTable("inventory");
 			dropTable("jobs");
 		}
+		
+		// check limits table
+		try {
+			Statement statement = connection.createStatement();
+			statement.executeQuery("SELECT * FROM limits LIMIT 1");
+			statement.close();
+		} catch(Exception e) {
+			return;
+		}
+		
+		// Convert limits
+		
+		// dropTable("limits");
 	}
 
 	/**

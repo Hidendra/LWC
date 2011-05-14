@@ -17,8 +17,223 @@
 
 package com.griefcraft.modules.limits;
 
+import java.util.List;
+
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.util.Colors;
+import com.griefcraft.util.StringUtils;
+import com.griefcraft.util.config.Configuration;
 
 public class LimitsModule extends JavaModule {
+	
+	/**
+	 * Limits type
+	 */
+	public enum Type {
+		/**
+		 * Undefined type
+		 */
+		NULL,
+		
+		/**
+		 * Combines all blocks together into one
+		 * This type ignores chest:, furnace:, etc
+		 */
+		DEFAULT,
+		
+		/**
+		 * Limits are defined per-block 
+		 */
+		CUSTOM;
+		
+		public static Type resolve(String name) {
+			for(Type type : values()) {
+				if(type.toString().equalsIgnoreCase(name)) {
+					return type;
+				}
+			}
+			
+			return NULL;
+		}
+	}
+	
+	private Configuration configuration = Configuration.load("limits.yml");
+	
+	/**
+	 * Integer value that represents unlimited protections
+	 */
+	private int UNLIMITED = Integer.MAX_VALUE;
 
+	/**
+	 * Get the protection limits for a player
+	 * 
+	 * @param player
+	 * @param protection
+	 * @return
+	 */
+	public int mapProtectionLimit(Player player, int blockId) {
+		String limit = null;
+		Type type = Type.resolve(resolveValue(player, "type"));
+		
+		if(type == Type.DEFAULT) {
+			limit = resolveValue(player, "limit");
+		}
+		else if(type == Type.CUSTOM) {
+			// first try the block id
+			limit = resolveValue(player, blockId + "");
+			
+			// and now try the name
+			if(limit == null && blockId > 0) {
+				String name = Material.getMaterial(blockId).toString().toLowerCase().replaceAll("block", "");
+				
+				if(name.endsWith("_")) {
+					name = name.substring(0, name.length() - 1);
+				}
+				
+				limit = resolveValue(player, name);
+			}
+			
+			// if it's STILL null, fall back
+			if(limit == null) {
+				limit = resolveValue(player, "limit");
+			}
+		}
+		
+		if(limit.equalsIgnoreCase("unlimited")) {
+			return UNLIMITED;
+		}
+		
+		return limit != null && !limit.isEmpty() ? Integer.parseInt(limit) : UNLIMITED;
+	}
+	
+	public String resolveValue(Player player, String node) {
+		LWC lwc = LWC.getInstance();
+		
+		// check if we have permissions
+		boolean hasPermissions = lwc.getPermissions() != null;
+		
+		// resolve the limits type
+		String value = null;
+		
+		// try the player
+		value = map("players." + player.getName() + "." + node);
+		
+		// try permissions
+		if(value == null && hasPermissions) {
+			String groupName = lwc.getPermissions().getGroup(player.getWorld().getName(), player.getName());
+			
+			if(groupName != null && !groupName.isEmpty()) {
+				value = map("groups." + groupName + "." + node);
+			}
+		}
+		
+		// if all else fails, use master
+		if(value == null) {
+			value = map("master." + node);
+		}
+		
+		return value != null && !value.isEmpty() ? value : null;
+	}
+	
+	/**
+	 * Get the value from either the path or the master value if it's null
+	 * 
+	 * @param path
+	 * @return
+	 */
+	private String map(String path) {
+		String value = configuration.getString(path);
+		
+		if(value == null) { 
+			int lastIndex = path.lastIndexOf(".");
+			String node = path.substring(lastIndex + 1);
+			
+			value = configuration.getString("master." + node);
+		}
+		
+		if(value == null) {
+			value = "";
+		}
+		
+		return value;
+	}
+	
+	@Override
+	public Result onRegisterProtection(LWC lwc, Player player, Block block) {
+		int limit = mapProtectionLimit(player, block.getTypeId());
+
+		/*
+		 * Alert the player if they're above or at the limit
+		 */
+		if (limit != UNLIMITED) {
+			int protections = lwc.getPhysicalDatabase().getProtectionCount(player.getName());
+
+			if (protections >= limit) {
+				player.sendMessage(Colors.Red + "You have exceeded your allowed amount of protections!");
+				return CANCEL;
+			}
+		}
+		
+		return DEFAULT;
+	}
+	
+	@Override
+	public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
+		if(!StringUtils.hasFlag(command, "limits")) {
+			return DEFAULT;
+		}
+		
+		if(args.length == 0 && !(sender instanceof Player)) {
+			sender.sendMessage(Colors.Red + "Unsupported");
+			return CANCEL;
+		}
+		
+		String playerName;
+		
+		if(args.length == 0) {
+			playerName = ((Player) sender).getName();
+		} else {
+			if(lwc.isAdmin(sender)) {
+				playerName = args[0];
+			} else {
+				lwc.sendLocale(sender, "protection.accessdenied");
+				return CANCEL;
+			}
+		}
+		
+		Player player = lwc.getPlugin().getServer().getPlayer(playerName);
+		
+		if(player == null) {
+			// FIXME
+			return CANCEL;
+		}
+		
+		Type type = Type.resolve(resolveValue(player, "type"));
+		int limit = mapProtectionLimit(player, 0);
+		String limitShow = limit + "";
+		int current = lwc.getPhysicalDatabase().getProtectionCount(playerName);
+		
+		if(limit == UNLIMITED) {
+			limitShow = "Unlimited";
+		}
+		
+		String currColour = Colors.Green;
+		
+		if(limit == current) {
+			currColour = Colors.Red;
+		} else if (current > (limit / 2)) {
+			currColour = Colors.Yellow;
+		}
+		
+		lwc.sendLocale(sender, "protection.limits", "type", StringUtils.capitalizeFirstLetter(type.toString()), "player", playerName, "limit", limitShow, "protected", (currColour + current));
+		return CANCEL;
+	}
+	
 }

@@ -1,21 +1,12 @@
 package com.griefcraft.lwc;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.ContainerBlock;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
@@ -24,7 +15,6 @@ import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.server.ServerListener;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.griefcraft.listeners.LWCBlockListener;
@@ -32,7 +22,6 @@ import com.griefcraft.listeners.LWCEntityListener;
 import com.griefcraft.listeners.LWCPlayerListener;
 import com.griefcraft.listeners.LWCServerListener;
 import com.griefcraft.logging.Logger;
-import com.griefcraft.model.Protection;
 import com.griefcraft.modules.admin.AdminCache;
 import com.griefcraft.modules.admin.AdminCleanup;
 import com.griefcraft.modules.admin.AdminClear;
@@ -41,7 +30,6 @@ import com.griefcraft.modules.admin.AdminConvert;
 import com.griefcraft.modules.admin.AdminFind;
 import com.griefcraft.modules.admin.AdminFlush;
 import com.griefcraft.modules.admin.AdminForceOwner;
-import com.griefcraft.modules.admin.AdminGetLimits;
 import com.griefcraft.modules.admin.AdminLimits;
 import com.griefcraft.modules.admin.AdminLocale;
 import com.griefcraft.modules.admin.AdminPurge;
@@ -70,7 +58,6 @@ import com.griefcraft.modules.unlock.UnlockModule;
 import com.griefcraft.modules.worldguard.WorldGuardModule;
 import com.griefcraft.scripting.Module;
 import com.griefcraft.scripting.Module.Result;
-import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.scripting.ModuleLoader.Event;
 import com.griefcraft.sql.Database;
 import com.griefcraft.util.Colors;
@@ -273,7 +260,6 @@ public class LWCPlugin extends JavaPlugin {
 		
 		///// Dispatch command to modules
 		if(lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, args[0].toLowerCase(), args.length > 1 ? StringUtils.join(args, 1).split(" ") : new String[0]) == Result.CANCEL) {
-			sender.sendMessage("(MODULE)");
 			return true;
 		}
 
@@ -382,7 +368,6 @@ public class LWCPlugin extends JavaPlugin {
 		registerModule(new AdminFind());
 		registerModule(new AdminFlush());
 		registerModule(new AdminForceOwner());
-		registerModule(new AdminGetLimits());
 		registerModule(new AdminLimits());
 		registerModule(new AdminLocale());
 		registerModule(new AdminPurge());

@@ -28,14 +28,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-
 import com.griefcraft.logging.Logger;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.sql.Database;
-import com.griefcraft.util.config.Configuration;
 
 public class Updater {
 

@@ -32,13 +32,10 @@ import org.bukkit.event.block.SignChangeEvent;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
-import com.griefcraft.model.AccessRight;
-import com.griefcraft.model.Action;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.ModuleLoader.Event;
-import com.griefcraft.util.Colors;
 
 public class LWCBlockListener extends BlockListener {
 
@@ -224,14 +221,12 @@ public class LWCBlockListener extends BlockListener {
 			}
 		}
 
-		/*
-		 * Enforce anything preventing us from creating a protection
-		 */
-		if (!lwc.isAdmin(player)) {
-			if (lwc.enforceProtectionLimits(player)) {
-				return;
-			}
-		}
+        Result registerProtection = lwc.getModuleLoader().dispatchEvent(Event.REGISTER_PROTECTION, player, block);
+        
+        // another plugin cancelled the registration
+        if(registerProtection == Result.CANCEL) {
+        	return;
+        }
 
 		/*
 		 * All's good, protect the object!
