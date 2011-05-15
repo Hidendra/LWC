@@ -116,5 +116,22 @@ public class WorldGuardModule extends JavaModule {
 
 		return DEFAULT;
 	}
+	
+	/**
+	 * Set a config value in the configuration
+	 * 
+	 * @param path
+	 * @param value
+	 */
+	public void set(String path, Object value) {
+		configuration.setProperty(path, value);
+	}
+
+	/**
+	 * Save the configuration
+	 */
+	public boolean save() {
+		return configuration.save();
+	}
 
 }

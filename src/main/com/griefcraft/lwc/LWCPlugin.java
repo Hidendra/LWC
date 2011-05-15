@@ -337,68 +337,9 @@ public class LWCPlugin extends JavaPlugin {
 		updater.loadVersions(false);
 
 		lwc.load();
-		registerCoreModules();
 
 		LWC.ENABLED = true;
 		log("At version: " + LWCInfo.FULL_VERSION);
-	}
-	
-	/**
-	 * Register the core modules for LWC
-	 */
-	private void registerCoreModules() {
-		// core
-		registerModule(new LimitsModule());
-		registerModule(new CreateModule());
-		registerModule(new ModifyModule());
-		registerModule(new DestroyModule());
-		registerModule(new FreeModule());
-		registerModule(new InfoModule());
-		registerModule(new MenuModule());
-		registerModule(new UnlockModule());
-		registerModule(new OwnersModule());
-		
-		// admin commands
-		registerModule(new BaseAdminModule());
-		registerModule(new AdminCache());
-		registerModule(new AdminCleanup());
-		registerModule(new AdminClear());
-		registerModule(new AdminConfig());
-		registerModule(new AdminConvert());
-		registerModule(new AdminFind());
-		registerModule(new AdminFlush());
-		registerModule(new AdminForceOwner());
-		registerModule(new AdminLimits());
-		registerModule(new AdminLocale());
-		registerModule(new AdminPurge());
-		registerModule(new AdminReload());
-		registerModule(new AdminRemove());
-		registerModule(new AdminReport());
-		registerModule(new AdminUpdate());
-		registerModule(new AdminVersion());
-		registerModule(new AdminView());
-		
-		// flags
-		registerModule(new FlagModule());
-		registerModule(new RedstoneModule());
-		
-		// modes
-		registerModule(new PersistModule());
-		registerModule(new DropTransferModule());
-		registerModule(new MagnetModule());
-		
-		// non-core modules but are included with LWC anyway
-		registerModule(new ListsModule());
-		registerModule(new WorldGuardModule());
-	}
-	
-	/**
-	 * Register a module
-	 * 
-	 * @param module
-	 */
-	private void registerModule(Module module) {
-		lwc.getModuleLoader().registerModule(this, module);
 	}
 
 	/**

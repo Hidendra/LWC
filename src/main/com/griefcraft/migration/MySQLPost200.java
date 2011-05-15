@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.griefcraft.converters;
+package com.griefcraft.migration;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -29,7 +29,7 @@ import com.griefcraft.sql.Database.Type;
 import com.griefcraft.sql.PhysDB;
 
 // Sort of just a convenience class, so as to not make the LWC class more cluttered than it is right now
-public class MySQLConverter {
+public class MySQLPost200 {
 
 	private static Logger logger = Logger.getLogger("Patcher");
 

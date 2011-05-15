@@ -1,12 +1,3 @@
-## Core config
-# locale: The language LWC will use
-# auto_update: if true, LWC will auto update on server restarts if one is available
-# op_is_lwcadmin: if true, OPs will be lwc admins
-# flushInterval: database flush interval, recommended: 5-10
-# cacheSize: Cache size for protections and other items, recommended: 1000+
-# defaultMenuStyle: The default menu style to use for LWC commands, recommended: basic
-# verbose: if true, LWC will log more info to the console
-##
 core:
     locale: en
     autoUpdate: false
@@ -15,78 +6,21 @@ core:
     defaultMenuStyle: basic
     showNotices: true
     verbose: false
+    opIsLWCAdmin: true
 
-## Database configuration
-# note: for sqlite, only the path needs to be filled out
-# if you switch to MySQL, leave 'path' the same if you want LWC
-# to auto convert the database to MySQL
-##
-# adapter: sqlite OR mysql
-# path: path to the sqlite database (if applicable)
-# database: MySQL database to use
-# username: MySQL username to use
-# password: MySQL password to use
-# prefix: MySQL table prefix to use
-##
 database:
     adapter: sqlite
     path: plugins/LWC/lwc.db
-    database:
+    host: localhost
+    database: lwc
     username:
     password:
     prefix:
 
-## Fine tuning for lwc admins and mods
-# op: Minecraft OP
-# admin: LWC admin (permission node: lwc.admin)
-# mod: LWC mod (permission node: lwc.mod)
-##
-# internal: full access to /lwc admin (dangerous!)
-# notices: whether or not "That chest is protected by XX" will be sent to the player upon interacting
-# modify: ability to modify anyone's protections
-# info: ability to view extended protection info via /lwc info
-# view: ability to view protection's inventories (if mod is true, it cannot view protections owned by lwc admins!)
-# remove: ability to remove protections (both /cremove and physically removing the block)
-##
-permissions:
-        op:
-            internal: true
-            notices: true
-            modify: true
-            info: true
-            view: true
-            remove: true
-        admin:
-            internal: true
-            notices: true
-            modify: true
-            info: true
-            view: true
-            remove: true
-        mod:
-            internal: false
-            notices: true
-            modify: false
-            info: true
-            view: true
-            remove: false
-            
-
-## Fine tuning of protections, eg. disabling them or even adding custom protections
-# deny_redstone: default behaviour for blocking redstone
-##
-# enabled: if the block is protectable ingame (also invalidates current protections!)
-# auto_register: If the block should be auto registered when placed (off OR private OR public)
-##
-# To add a custom protection, add a new block using the Block Id. For example: (note block)
-##
-#         25:
-#             enabled: true
-#             auto_register: off
-##
 protections:
     denyRedstone: false
     autoRegister: off
+    allowBlockDestruction: off
     blocks:
         chest:
             enabled: true
@@ -106,28 +40,3 @@ protections:
         iron_door:
             enabled: true
             autoRegister: off
-
-## External plugins LWC may use if they are available
-# worldguard: only explicitly allows protections in the named regions
-# eg:
-##
-# regions:
-#     - region1
-#     - region2
-##
-external:
-    permissions:
-        enabled: true
-    worldguard:
-        enabled: false
-        regions: '*'
-    lists:
-        enabled: true
-
-
-## Mode configuration
-modes:
-    persist:
-        enabled: true
-    droptransfer:
-        enabled: true

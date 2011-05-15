@@ -13,17 +13,15 @@ master:
     wooden_door: unlimited
     iron_door: unlimited
 
+# Overrides for Permissions groups
 groups:
-    # gives Default 5 chests, 2 furnaces, 1 dispenser, and 0 of everything else
-    Default:
+    # Gives the group Example limits of 5 chests, 2 furnaces, and 1 dispenser, and 0 of everything else
+    Example:
         limit: 0
+        type: custom
         chest: 5
         furnace: 2
         dispenser: 1
-    # gives VIP 50 protections of any block
-    VIP:
-        type: default
-        limit: 50
 
 players:
     # Gives Notch unlimited protections
