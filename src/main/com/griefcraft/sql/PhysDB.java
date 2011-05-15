@@ -30,6 +30,8 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Limit;
 import com.griefcraft.model.Protection;
+import com.griefcraft.modules.limits.LimitsModule;
+import com.griefcraft.scripting.Module;
 import com.griefcraft.util.Performance;
 
 public class PhysDB extends Database {
@@ -220,18 +222,17 @@ public class PhysDB extends Database {
 	}
 
 	/**
-	 * Get the amount of chests a player has
+	 * Get the amount of protections a player has
 	 * 
-	 * @param user
-	 *            the player to check
-	 * @return the amount of chests they have locked
+	 * @param player
+	 * @return the amount of protections they have
 	 */
-	public int getProtectionCount(String user) {
+	public int getProtectionCount(String player) {
 		int amount = 0;
 
 		try {
 			PreparedStatement statement = prepare("SELECT id FROM protections WHERE owner = ?");
-			statement.setString(1, user);
+			statement.setString(1, player);
 
 			ResultSet set = statement.executeQuery();
 
@@ -240,7 +241,34 @@ public class PhysDB extends Database {
 			}
 
 			set.close();
+		} catch (SQLException e) {
+			printException(e);
+		}
 
+		return amount;
+	}
+
+	/**
+	 * Get the amount of chests a player has of a specific block id
+	 * 
+	 * @param player
+	 * @return the amount of protections they have of blockId
+	 */
+	public int getProtectionCount(String player, int blockId) {
+		int amount = 0;
+
+		try {
+			PreparedStatement statement = prepare("SELECT id FROM protections WHERE owner = ? AND blockId = ?");
+			statement.setString(1, player);
+			statement.setInt(2, blockId);
+
+			ResultSet set = statement.executeQuery();
+
+			while (set.next()) {
+				amount++;
+			}
+
+			set.close();
 		} catch (SQLException e) {
 			printException(e);
 		}
@@ -1219,8 +1247,53 @@ public class PhysDB extends Database {
 		}
 		
 		// Convert limits
+		LWC lwc = LWC.getInstance();
+		Module rawModule = lwc.getModuleLoader().getModule(LimitsModule.class);
 		
-		// dropTable("limits");
+		if(rawModule == null) {
+			log("Failed to load the Limits module. Something is wrong!");
+			return;
+		}
+		
+		LimitsModule limits = (LimitsModule) rawModule;
+		
+		// start going through the database
+		PreparedStatement statement = prepare("SELECT * FROM limits");
+		try {
+			ResultSet result = statement.executeQuery();
+			
+			while(result.next()) {
+				int type = result.getInt("type");
+				int amount = result.getInt("amount");
+				String entity = result.getString("entity");
+				
+				switch(type) {
+				// Global
+				case 2:
+					limits.set("master.type", "default");
+					limits.set("master.limit", amount);
+					break;
+					
+				// Group
+				case 0:
+					limits.set("groups." + entity + ".type", "default");
+					limits.set("groups." + entity + ".limit", amount);
+					break;
+					
+				// Player
+				case 1:
+					limits.set("players." + entity + ".type", "default");
+					limits.set("players." + entity + ".limit", amount);
+					break;
+				}
+			}
+		} catch(SQLException e) {
+			printException(e);
+			return;
+		}
+		
+		limits.save();
+		dropTable("limits");
 	}
 
 	/**

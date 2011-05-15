@@ -199,6 +199,26 @@ public class ModuleLoader {
 	}
 
 	/**
+	 * Get the first module represented by a class
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public Module getModule(Class<? extends Module> clazz) {
+		for(List<MetaData> modules : pluginModules.values()) {
+			for(MetaData metaData : modules) {
+				Module module = metaData.getModule();
+				
+				if(module.getClass() == clazz) {
+					return module;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
 	 * Register a module for a plugin
 	 * 
 	 * @param plugin

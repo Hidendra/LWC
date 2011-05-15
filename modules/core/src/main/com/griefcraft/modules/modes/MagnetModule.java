@@ -44,6 +44,10 @@ public class MagnetModule extends JavaModule {
 			Server server = Bukkit.getServer();
 			LWC lwc = LWC.getInstance();
 			
+			if(!LWC.ENABLED) {
+				server.getScheduler().cancelTask(taskId);
+			}
+			
 			for(World world : server.getWorlds()) {
 				String worldName = world.getName();
 				List<Entity> entities = world.getEntities();
@@ -70,6 +74,7 @@ public class MagnetModule extends JavaModule {
 						protection = temp;
 						block = world.getBlockAt(protection.getX(), protection.getY(), protection.getZ());
 						
+						// we only want inventory blocks
 						if(!(block.getState() instanceof ContainerBlock)) {
 							continue;
 						}
