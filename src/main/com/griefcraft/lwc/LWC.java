@@ -22,12 +22,48 @@ import org.bukkit.plugin.Plugin;
 
 import com.firestar.mcbans.mcbans;
 import com.griefcraft.cache.CacheSet;
-import com.griefcraft.converters.MySQLConverter;
 import com.griefcraft.logging.Logger;
+import com.griefcraft.migration.ConfigPost300;
+import com.griefcraft.migration.MySQLPost200;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
+import com.griefcraft.modules.admin.AdminCache;
+import com.griefcraft.modules.admin.AdminCleanup;
+import com.griefcraft.modules.admin.AdminClear;
+import com.griefcraft.modules.admin.AdminConfig;
+import com.griefcraft.modules.admin.AdminConvert;
+import com.griefcraft.modules.admin.AdminFind;
+import com.griefcraft.modules.admin.AdminFlush;
+import com.griefcraft.modules.admin.AdminForceOwner;
+import com.griefcraft.modules.admin.AdminLimits;
+import com.griefcraft.modules.admin.AdminLocale;
+import com.griefcraft.modules.admin.AdminPurge;
+import com.griefcraft.modules.admin.AdminReload;
+import com.griefcraft.modules.admin.AdminRemove;
+import com.griefcraft.modules.admin.AdminReport;
+import com.griefcraft.modules.admin.AdminUpdate;
+import com.griefcraft.modules.admin.AdminVersion;
+import com.griefcraft.modules.admin.AdminView;
+import com.griefcraft.modules.admin.BaseAdminModule;
+import com.griefcraft.modules.create.CreateModule;
+import com.griefcraft.modules.destroy.DestroyModule;
+import com.griefcraft.modules.flag.FlagModule;
+import com.griefcraft.modules.free.FreeModule;
+import com.griefcraft.modules.info.InfoModule;
+import com.griefcraft.modules.limits.LimitsModule;
+import com.griefcraft.modules.lists.ListsModule;
+import com.griefcraft.modules.menu.MenuModule;
+import com.griefcraft.modules.modes.DropTransferModule;
+import com.griefcraft.modules.modes.MagnetModule;
+import com.griefcraft.modules.modes.PersistModule;
+import com.griefcraft.modules.modify.ModifyModule;
+import com.griefcraft.modules.owners.OwnersModule;
+import com.griefcraft.modules.redstone.RedstoneModule;
+import com.griefcraft.modules.unlock.UnlockModule;
+import com.griefcraft.modules.worldguard.WorldGuardModule;
 import com.griefcraft.scripting.Module.Result;
+import com.griefcraft.scripting.Module;
 import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.scripting.ModuleLoader.Event;
 import com.griefcraft.sql.Database;
@@ -705,7 +741,7 @@ public class LWC {
 	 */
 	public boolean isAdmin(Player player) {
 		if(player.isOp()) {
-			if(configuration.getBoolean("permissions.op.enabled", true)) {
+			if(configuration.getBoolean("core.opIsLWCAdmin", true)) {
 				return true;
 			}
 		}
@@ -776,6 +812,12 @@ public class LWC {
 	public void load() {
 		configuration = Configuration.load("core.yml");
 		moduleLoader = new ModuleLoader();
+		registerCoreModules();
+		
+		// check for upgrade before everything else
+		ConfigPost300.checkConfigConversion(this);
+		plugin.loadDatabase();
+		
 		Performance.init();
 		
 		if (LWCInfo.DEVELOPMENT) {
@@ -806,8 +848,67 @@ public class LWC {
 			e.printStackTrace();
 		}
 
-		// check mysql
-		MySQLConverter.checkDatabaseConversion(this);
+		// check any major conversions
+		MySQLPost200.checkDatabaseConversion(this);
+	}
+	
+	/**
+	 * Register the core modules for LWC
+	 */
+	private void registerCoreModules() {
+		// core
+		registerModule(new LimitsModule());
+		registerModule(new CreateModule());
+		registerModule(new ModifyModule());
+		registerModule(new DestroyModule());
+		registerModule(new FreeModule());
+		registerModule(new InfoModule());
+		registerModule(new MenuModule());
+		registerModule(new UnlockModule());
+		registerModule(new OwnersModule());
+		
+		// admin commands
+		registerModule(new BaseAdminModule());
+		registerModule(new AdminCache());
+		registerModule(new AdminCleanup());
+		registerModule(new AdminClear());
+		registerModule(new AdminConfig());
+		registerModule(new AdminConvert());
+		
+		registerModule(new AdminFind());
+		registerModule(new AdminFlush());
+		registerModule(new AdminForceOwner());
+		registerModule(new AdminLimits());
+		registerModule(new AdminLocale());
+		registerModule(new AdminPurge());
+		registerModule(new AdminReload());
+		registerModule(new AdminRemove());
+		registerModule(new AdminReport());
+		registerModule(new AdminUpdate());
+		registerModule(new AdminVersion());
+		registerModule(new AdminView());
+		
+		// flags
+		registerModule(new FlagModule());
+		registerModule(new RedstoneModule());
+		
+		// modes
+		registerModule(new PersistModule());
+		registerModule(new DropTransferModule());
+		registerModule(new MagnetModule());
+		
+		// non-core modules but are included with LWC anyway
+		registerModule(new ListsModule());
+		registerModule(new WorldGuardModule());
+	}
+	
+	/**
+	 * Register a module
+	 * 
+	 * @param module
+	 */
+	private void registerModule(Module module) {
+		moduleLoader.registerModule(plugin, module);
 	}
 	
 	/**

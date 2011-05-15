@@ -70,7 +70,24 @@ public class LimitsModule extends JavaModule {
 	 * Integer value that represents unlimited protections
 	 */
 	private int UNLIMITED = Integer.MAX_VALUE;
+	
+	/**
+	 * Set a config value in the configuration
+	 * 
+	 * @param path
+	 * @param value
+	 */
+	public void set(String path, Object value) {
+		configuration.setProperty(path, value);
+	}
 
+	/**
+	 * Save the configuration
+	 */
+	public boolean save() {
+		return configuration.save();
+	}
+	
 	/**
 	 * Get the protection limits for a player
 	 * 
@@ -123,7 +140,7 @@ public class LimitsModule extends JavaModule {
 		String value = null;
 		
 		// try the player
-		value = map("players." + player.getName() + "." + node);
+		value = configuration.getString("players." + player.getName() + "." + node);
 		
 		// try permissions
 		if(value == null && hasPermissions) {
@@ -173,10 +190,17 @@ public class LimitsModule extends JavaModule {
 		 * Alert the player if they're above or at the limit
 		 */
 		if (limit != UNLIMITED) {
-			int protections = lwc.getPhysicalDatabase().getProtectionCount(player.getName());
+			Type type = Type.resolve(resolveValue(player, "type"));
+			int protections = 0; // 0 = *
+			
+			if(type == Type.CUSTOM) {
+				protections = lwc.getPhysicalDatabase().getProtectionCount(player.getName(), block.getTypeId());
+			} else { // Default
+				protections = lwc.getPhysicalDatabase().getProtectionCount(player.getName());
+			}
 
 			if (protections >= limit) {
-				player.sendMessage(Colors.Red + "You have exceeded your allowed amount of protections!");
+				lwc.sendLocale(player, "protection.exceeded");
 				return CANCEL;
 			}
 		}
