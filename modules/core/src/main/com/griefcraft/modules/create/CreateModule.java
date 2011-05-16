@@ -180,6 +180,7 @@ public class CreateModule extends JavaModule {
         
         if(args.length == 0) {
         	lwc.sendLocale(sender, "help.creation");
+        	return DEFAULT;
         }
         
         Player player = (Player) sender;

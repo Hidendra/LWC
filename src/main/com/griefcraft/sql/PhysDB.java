@@ -487,10 +487,9 @@ public class PhysDB extends Database {
 	}
 
 	/**
-	 * Load a chest at a given tile
+	 * Load a protection with the given id
 	 * 
 	 * @param protectionId
-	 *            the chest's ID
 	 * @return the Chest object
 	 */
 	public Protection loadProtection(int protectionId) {
@@ -504,6 +503,25 @@ public class PhysDB extends Database {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Load protections using a specific type
+	 * 
+	 * @param blockid
+	 * @return the Chest object
+	 */
+	public List<Protection> loadProtectionsUsingType(int type) {
+		try {
+			PreparedStatement statement = prepare("SELECT protections.id AS protectionId, rights.id AS rightsId, protections.type AS protectionType, rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights FROM protections LEFT OUTER JOIN rights ON protections.id = rights.chest WHERE protections.type = ?");
+			statement.setInt(1, type);
+
+			return resolveProtections(statement);
+		} catch (SQLException e) {
+			printException(e);
+		}
+
+		return new ArrayList<Protection>();
 	}
 
 	/**
@@ -663,8 +681,6 @@ public class PhysDB extends Database {
 	 * @return
 	 */
 	public List<Protection> loadProtections() {
-		List<Protection> protections = new ArrayList<Protection>();
-
 		try {
 			PreparedStatement statement = prepare("SELECT protections.id AS protectionId, rights.id AS rightsId, protections.type AS protectionType, rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights FROM protections LEFT OUTER JOIN rights ON protections.id = rights.chest");
 
@@ -673,11 +689,11 @@ public class PhysDB extends Database {
 			printException(e);
 		}
 
-		return protections;
+		return new ArrayList<Protection>();
 	}
 
 	/**
-	 * Load the first chest within a block's radius
+	 * Load the first protection within a block's radius
 	 * 
 	 * @param x
 	 *            the block's x coordinate
@@ -690,8 +706,6 @@ public class PhysDB extends Database {
 	 * @return the Chest found , null otherwise
 	 */
 	public List<Protection> loadProtections(String world, int _x, int _y, int _z, int radius) {
-		List<Protection> chests = new ArrayList<Protection>();
-
 		try {
 			PreparedStatement statement = prepare("SELECT protections.id AS protectionId, rights.id AS rightsId, protections.type AS protectionType, rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights FROM protections LEFT OUTER JOIN rights ON protections.id = rights.chest WHERE protections.world = ? AND protections.x >= ? AND protections.x <= ? AND protections.y >= ? AND protections.y <= ? AND protections.z >= ? AND protections.z <= ?");
 
@@ -708,11 +722,11 @@ public class PhysDB extends Database {
 			printException(e);
 		}
 
-		return chests;
+		return new ArrayList<Protection>();
 	}
 
 	/**
-	 * Load protections by a player, utilizing limits
+	 * Load protections by a player
 	 * 
 	 * @param player
 	 * @param start

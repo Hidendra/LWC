@@ -19,17 +19,22 @@ package com.griefcraft.model;
 
 public class ProtectionTypes {
 
-	public static final int PASSWORD = 1;
-	public static final int PRIVATE = 2;
 	/**
 	 * Creatable by anyone
 	 */
 	public static final int PUBLIC = 0;
+	public static final int PASSWORD = 1;
+	public static final int PRIVATE = 2;
 
-	public static final int TRAP_BAN = 4;
 	/**
 	 * Only creatable by lwc admins
 	 */
 	public static final int TRAP_KICK = 3;
+	public static final int TRAP_BAN = 4;
+	
+	/**
+	 * Status protections (for signs)
+	 */
+	public static final int STATUS = 5;
 
 }
