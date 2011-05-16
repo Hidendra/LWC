@@ -239,7 +239,7 @@ public class LWCPlugin extends JavaPlugin {
 				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "modify", argString.split(" "));
 				return true;
 			} else if (commandName.equals("cinfo")) {
-				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "info", "".split(" "));
+				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "info", new String[0]);
 				return true;
 			} else if (commandName.equals("cunlock")) {
 				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "unlock", argString.split(" "));
@@ -248,7 +248,7 @@ public class LWCPlugin extends JavaPlugin {
 				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "remove", "protection".split(" "));
 				return true;
 			} else if (commandName.equals("climits")) {
-				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "info", "limits".split(" "));
+				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "limits", new String[0]);
 				return true;
 			}
 		}
@@ -334,7 +334,10 @@ public class LWCPlugin extends JavaPlugin {
 
 		loadDatabase();
 		registerEvents();
-		updater.loadVersions(false);
+		
+		if(lwc.getConfiguration().getBoolean("core.autoUpdate", false)) {
+			updater.loadVersions(true);
+		}
 
 		lwc.load();
 
