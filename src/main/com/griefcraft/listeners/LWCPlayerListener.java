@@ -134,8 +134,8 @@ public class LWCPlayerListener extends PlayerListener {
 		/*
 		 * Prevent players with lwc.blockinventories from opening inventories
 		 */
-		if (lwc.getPermissions() != null && !lwc.getPermissions().permission(player, "lwc.protect") && lwc.getPermissions().permission(player, "lwc.blockinventory") && !lwc.isAdmin(player) && !lwc.isMod(player)) {
-			if (block.getState() instanceof ContainerBlock) {
+		if (block.getState() instanceof ContainerBlock) {
+			if (lwc.getPermissions() != null && !lwc.getPermissions().permission(player, "lwc.protect") && lwc.getPermissions().permission(player, "lwc.blockinventory") && !lwc.isAdmin(player) && !lwc.isMod(player)) {
 				lwc.sendLocale(player, "protection.interact.error.blocked");
 				event.setCancelled(true);
 				return;
