@@ -138,4 +138,14 @@ public interface Module {
 	 */
 	public Result onRegisterProtection(LWC lwc, Player player, Block block);
 	
+	/**
+	 * Called after a protection is registered
+	 * 
+	 * @param lwc
+	 * @param protection
+	 */
+	public void onPostRegistration(LWC lwc, Protection protection);
+	
+	// TODO: Post Removal, remove from node queue in status module
+	
 }

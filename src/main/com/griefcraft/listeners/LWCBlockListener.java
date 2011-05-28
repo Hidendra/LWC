@@ -128,7 +128,7 @@ public class LWCBlockListener extends BlockListener {
 		boolean canAdmin = lwc.canAdminProtection(player, protection);
 
 		Result result = lwc.getModuleLoader().dispatchEvent(Event.DESTROY_PROTECTION, player, protection, block, canAccess, canAdmin);
-
+		
 		if(result == Result.CANCEL) {
 			event.setCancelled(true);
 		}

@@ -84,4 +84,8 @@ public abstract class JavaModule implements Module {
 		return DEFAULT;
 	}
 
+	public void onPostRegistration(LWC lwc, Protection protection) {
+		
+	}
+	
 }
