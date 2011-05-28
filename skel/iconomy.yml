@@ -1,0 +1,13 @@
+## charge: is the default
+iConomy:
+    enabled: true
+    charge: 5.00
+
+# Overrides
+groups:
+    SomeGroup:
+        charge: 5.00
+
+players:
+    Hidendra:
+        charge: 5.00

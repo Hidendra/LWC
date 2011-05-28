@@ -17,6 +17,8 @@
 
 package com.griefcraft.modules.modes;
 
+import java.util.List;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -50,9 +52,16 @@ public class PersistModule extends JavaModule {
 				return CANCEL;
 			}
 		}
+		
+		List<String> modes = lwc.getMemoryDatabase().getModes(player.getName());
 
-		lwc.getMemoryDatabase().registerMode(player.getName(), mode);
-		lwc.sendLocale(player, "protection.modes.persist.finalize");
+		if(!modes.contains(mode)) {
+			lwc.getMemoryDatabase().registerMode(player.getName(), mode);
+			lwc.sendLocale(player, "protection.modes.persist.finalize");
+		} else {
+			lwc.getMemoryDatabase().unregisterMode(player.getName(), mode);
+			lwc.sendLocale(player, "protection.modes.persist.off");
+		}
 		
 		
 		return CANCEL;

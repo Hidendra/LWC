@@ -270,13 +270,13 @@ public class LWC {
 		}
 
 		if (isMod(player)) {
-			Player chestOwner = plugin.getServer().getPlayer(protection.getOwner());
+			Player protectionOwner = plugin.getServer().getPlayer(protection.getOwner());
 
-			if (chestOwner == null) {
+			if (protectionOwner == null) {
 				return true;
 			}
 
-			if (!isAdmin(chestOwner)) {
+			if (!isAdmin(protectionOwner)) {
 				return true;
 			}
 		}
@@ -291,7 +291,24 @@ public class LWC {
 			return memoryDatabase.hasAccess(player.getName(), protection);
 
 		case ProtectionTypes.PRIVATE:
-			return playerName.equalsIgnoreCase(protection.getOwner()) || protection.getAccess(AccessRight.PLAYER, playerName) >= 0 || (permissions != null && protection.getAccess(AccessRight.GROUP, permissions.getGroup(player.getWorld().getName(), player.getName())) >= 0);
+			if(playerName.equalsIgnoreCase(protection.getOwner())) {
+				return true;
+			}
+			
+			if(protection.getAccess(AccessRight.PLAYER, playerName) >= 0) {
+				return true;
+			}
+			
+			if(permissions != null) {
+				// TODO: Replace with getGroupProperName sometime, but only supported by Permissions 3.00+
+				String groupName = permissions.getGroup(player.getWorld().getName(), playerName);
+				
+				if(protection.getAccess(AccessRight.GROUP, groupName) >= 0) {
+					return true;
+				}
+			}
+			
+			return false;
 
 		default:
 			return false;
@@ -348,8 +365,25 @@ public class LWC {
 			return player.getName().equalsIgnoreCase(protection.getOwner()) && memoryDatabase.hasAccess(player.getName(), protection);
 
 		case ProtectionTypes.PRIVATE:
-			return playerName.equalsIgnoreCase(protection.getOwner()) || protection.getAccess(AccessRight.PLAYER, playerName) == 1 || (permissions != null && protection.getAccess(AccessRight.GROUP, permissions.getGroup(player.getWorld().getName(), player.getName())) == 1);
-
+			if(playerName.equalsIgnoreCase(protection.getOwner())) {
+				return true;
+			}
+			
+			if(protection.getAccess(AccessRight.PLAYER, playerName) == 1) {
+				return true;
+			}
+			
+			if(permissions != null) {
+				// TODO: Replace with getGroupProperName sometime, but only supported by Permissions 3.00+
+				String groupName = permissions.getGroup(player.getWorld().getName(), playerName);
+				
+				if(protection.getAccess(AccessRight.GROUP, groupName) == 1) {
+					return true;
+				}
+			}
+			
+			return false;
+			
 		default:
 			return false;
 		}
@@ -420,9 +454,7 @@ public class LWC {
 			return true;
 		}
 
-		/*
-		 * TODO: Remove at some point
-		 */
+		// support for old protection dbs that do not contain the block id
 		if (protection.getBlockId() == 0) {
 			protection.setBlockId(block.getTypeId());
 			updateThread.queueProtectionUpdate(protection);
@@ -435,7 +467,12 @@ public class LWC {
 		}
 
 		if (configuration.getBoolean("core.showNotices", true) && (isAdmin(player) || isMod(player))) {
-			sendLocale(player, "protection.general.notice.protected", "type", getLocale(protection.typeToString().toLowerCase()), "block", materialToString(block), "owner", protection.getOwner());
+			boolean isOwner = protection.isOwner(player);
+			boolean showMyNotices = configuration.getBoolean("core.showMyNotices", true);
+			
+			if(!isOwner || (isOwner && showMyNotices)) {
+				sendLocale(player, "protection.general.notice.protected", "type", getLocale(protection.typeToString().toLowerCase()), "block", materialToString(block), "owner", protection.getOwner());
+			}
 		}
 
 		switch (protection.getType()) {
@@ -654,7 +691,7 @@ public class LWC {
 	}
 
 	/**
-	 * Useful for getting double chests TODO: rewrite
+	 * Useful for getting double chests
 	 * 
 	 * @param x
 	 *            the x coordinate
@@ -848,6 +885,9 @@ public class LWC {
 			e.printStackTrace();
 		}
 
+		// tell all modules we're loaded
+		moduleLoader.loadAll();
+		
 		// check any major conversions
 		MySQLPost200.checkDatabaseConversion(this);
 	}
@@ -1366,6 +1406,11 @@ public class LWC {
 		
 		if(material.endsWith("_")) {
 			material = material.substring(0, material.length() - 1);
+		}
+		
+		// convert wall_sign / sign_post to sign
+		if(material.contains("sign")) {
+			material = "sign";
 		}
 		
 		String value = configuration.getString("protections." + node);

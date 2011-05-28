@@ -1,0 +1,39 @@
+name: LWC
+main: com.griefcraft.lwc.LWCPlugin
+version: 3.00-alpha5
+website: http://griefcraft.com
+author: Hidendra
+description: >
+             Inventory protection & management utilizing SQLite or MySQL as its backend
+             Other blocks can be protected such as Doors and Signs
+commands:
+  lwc:
+    description: LWC's hub command to access everything
+    usage: /<command>
+  cpublic:
+    description: Create a protection that is accessible by anyone but protectable by no one.
+    usage: /<command>
+  cpassword:
+    description: Create a protection that required a password to access it.
+    usage: /<command> <password>
+  cprivate:
+    description: Create a protection that only you and specific groups or people can access.
+    usage: /<command> <Users/Groups>
+  cmodify:
+    description: Modify an existing private protection.
+    usage: /<command> <Modifications>
+  cunlock:
+    description: Unlock a password-protected protection.
+    usage: /<command> <password>
+  cinfo:
+    description: View info on an existing protection.
+    usage: /<command>
+  cremove:
+    description: Remove an existing protection.
+    usage: /<command>
+  climits:
+    description: View your current protection limits.
+    usage: /<command>
+  cstatus:
+    description: Create a protected sign that can be used to view info on another protection live (contents, etc.)
+    usage: /<command> <protectionId>
