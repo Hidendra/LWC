@@ -28,6 +28,7 @@ import com.iConomy.iConomy;
 import com.iConomy.system.Account;
 import com.iConomy.system.BankAccount;
 import com.iConomy.system.Holdings;
+import com.iConomy.util.Constants;
 
 public class iConomyModule extends JavaModule {
 
@@ -73,11 +74,12 @@ public class iConomyModule extends JavaModule {
 			
 			Account account = iConomy.getAccount(playerName);
 			
-			// only attempt to withdrawl from their main bank account
+			// attempt to withdrawl from their holdings
 			Holdings holdings = account.getHoldings();
 			
 			if(!holdings.hasEnough(charge)) {
-				player.sendMessage(Colors.Red + "You do not have enough money to buy an LWC protection.");
+				
+				player.sendMessage(Colors.Red + "You do not have enough " + Constants.Major.get(1) + " to buy an LWC protection.");
 				player.sendMessage(Colors.Red + "The balance required for an LWC protection is: " + iConomy.format(charge));
 				return CANCEL;
 			}
