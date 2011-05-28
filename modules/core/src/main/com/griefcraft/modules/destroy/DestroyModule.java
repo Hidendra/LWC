@@ -28,17 +28,15 @@ public class DestroyModule extends JavaModule {
 	
 	@Override
 	public Result onDestroyProtection(LWC lwc, Player player, Protection protection, Block block, boolean canAccess, boolean canAdmin) {
-		if(canAdmin) {
+        boolean isOwner = protection.isOwner(player);
+
+		if(isOwner) {
 			protection.remove();
             lwc.sendLocale(player, "protection.unregistered", "block", LWC.materialToString(protection.getBlockId()));
             return ALLOW;
 		}
 		
-		if(!canAccess) {
-			return CANCEL;
-		}
-		
-		return DEFAULT;
+		return CANCEL;
 	}
 
 }

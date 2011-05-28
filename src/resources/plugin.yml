@@ -37,3 +37,15 @@ commands:
   cstatus:
     description: Create a protected sign that can be used to view info on another protection live (contents, etc.)
     usage: /<command> <protectionId>
+  credstone:
+    description: Enable or disable redstone on a protection
+    usage: /<command> <on|off>
+  cmagnet:
+    description: Enable or disable the magnet flag on an inventory protection, which makes it pick up items automatically around it.
+    usage: /<command> <on|off>
+  cdroptransfer:
+    description: Configure drop transferring (allows you to transfer to a selected chest by dropping items.)
+    usage: /<command> <select|on|off>
+  cpersist:
+    description: Toggle command persistence which allows you to use commands without retyping the command (e.g /cprivate)
+    usage: /<command>

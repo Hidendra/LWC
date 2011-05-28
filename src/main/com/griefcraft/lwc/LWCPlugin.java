@@ -106,8 +106,6 @@ public class LWCPlugin extends JavaPlugin {
 
 	/**
 	 * LWC updater
-	 * 
-	 * TODO: Remove when Bukkit has an updater that is working
 	 */
 	private Updater updater;
 
@@ -190,7 +188,15 @@ public class LWCPlugin extends JavaPlugin {
 			return true;
 		} else if (name.equals("cstatus")) {
 			return true;
-		}
+		} else if (name.equals("credstone")) {
+            return true;
+        } else if (name.equals("cmagnet")) {
+            return true;
+        } else if (name.equals("cdroptransfer")) {
+            return true;
+        } else if (name.equals("cpersist")) {
+            return true;
+        }
 		else {
 			return false;
 		}
@@ -221,14 +227,13 @@ public class LWCPlugin extends JavaPlugin {
 
 		// these can only apply to players, not the console (who has absolute player :P)
 		if (isPlayer) {
-			if (lwc.getPermissions() != null && !lwc.getPermissions().permission((Player) sender, "lwc.protect")) {
+			Player player = (Player) sender;
+            if (!lwc.hasPermission(player, "lwc.protect")) {
 				sender.sendMessage(Colors.Red + "You do not have permission to do that");
 				return true;
 			}
 
-			/*
-			 * Aliases
-			 */
+			// Aliases
 			if (commandName.equals("cpublic")) {
 				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", "public".split(" "));
 				return true;
@@ -257,6 +262,24 @@ public class LWCPlugin extends JavaPlugin {
 				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", ("status " + argString).split(" "));
 				return true;
 			}
+
+            // Flag aliases
+            if (commandName.equals("credstone")) {
+                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "flag", ("redstone " + argString).split(" "));
+                return true;
+            } else if(commandName.equals("cmagnet")) {
+                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "flag", ("magnet " + argString).split(" "));
+                return true;
+            }
+
+            // Mode aliases
+            if (commandName.equals("cdroptransfer")) {
+                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "mode", ("droptransfer " + argString).split(" "));
+                return true;
+            } else if (commandName.equals("cpersist")) {
+                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "mode", ("persist " + argString).split(" "));
+                return true;
+            }
 		}
 
 		if (args.length == 0) {
@@ -277,7 +300,6 @@ public class LWCPlugin extends JavaPlugin {
 		return false;
 	}
 
-	@Override
 	public void onDisable() {
 		if (lwc != null) {
 			LWC.ENABLED = false;
@@ -285,7 +307,6 @@ public class LWCPlugin extends JavaPlugin {
 		}
 	}
 
-	@Override
 	public void onEnable() {
 		String localization = lwc.getConfiguration().getString("core.locale");
 
@@ -363,10 +384,8 @@ public class LWCPlugin extends JavaPlugin {
 	/**
 	 * Register a hook with default priority
 	 * 
-	 * TODO: Change priority back to NORMAL when real permissions are in
-	 * 
-	 * @param hook
-	 *            the hook to register
+	 * @param listener
+     * @param eventType
 	 */
 	private void registerEvent(Listener listener, Type eventType) {
 		registerEvent(listener, eventType, Priority.Highest);
@@ -375,9 +394,9 @@ public class LWCPlugin extends JavaPlugin {
 	/**
 	 * Register a hook
 	 * 
-	 * @param hook
-	 *            the hook to register
-	 * @priority the priority to use
+	 * @param listener
+     * @param eventType
+     * @param priority
 	 */
 	private void registerEvent(Listener listener, Type eventType, Priority priority) {
 		logger.log("-> " + eventType.toString(), Level.CONFIG);
@@ -387,8 +406,6 @@ public class LWCPlugin extends JavaPlugin {
 
 	/**
 	 * Register all of the events used by LWC
-	 * 
-	 * TODO: Change priority back to NORMAL when real permissions are in
 	 */
 	private void registerEvents() {
 		/* Player events */

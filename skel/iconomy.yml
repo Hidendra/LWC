@@ -1,4 +1,8 @@
 ## charge: is the default
+# Otherwise, the charge value will take precedence in this order:
+# players.PLAYERNAME.charge
+# groups.GROUPNAME.charge
+# iConomy.charge
 iConomy:
     enabled: true
     charge: 5.00
