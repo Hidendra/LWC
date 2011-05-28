@@ -19,6 +19,7 @@ package com.griefcraft.listeners;
 
 import java.util.List;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Item;
@@ -78,6 +79,7 @@ public class LWCPlayerListener extends PlayerListener {
 		LWC lwc = plugin.getLWC();
 		Player player = event.getPlayer();
 		Block block = event.getClickedBlock();
+        Material material = block.getType();
 
 		/*
 		 * Prevent players with lwc.blockinventories from opening inventories
@@ -95,6 +97,21 @@ public class LWCPlayerListener extends PlayerListener {
 		Module.Result result = Module.Result.CANCEL;
 		boolean canAccess = lwc.canAccessProtection(player, protection);
 		boolean canAdmin = lwc.canAdminProtection(player, protection);
+
+        // TODO: Why is Left click a Right click, and the other way around? D:
+        if(event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            boolean ignoreLeftClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreLeftClick"));
+
+            if(ignoreLeftClick) {
+                return;
+            }
+        } else if(event.getAction() == Action.LEFT_CLICK_BLOCK) {
+            boolean ignoreRightClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreRightClick"));
+
+            if(ignoreRightClick) {
+                return;
+            }
+        }
 
 		if(protection != null) {
 			result = lwc.getModuleLoader().dispatchEvent(Event.INTERACT_PROTECTION, player, protection, actions, canAccess, canAdmin);
