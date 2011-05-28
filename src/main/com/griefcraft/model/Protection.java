@@ -119,7 +119,9 @@ public class Protection {
 	 * @return
 	 */
 	public boolean isOwner(Player player) {
-		return player != null && owner.equals(player.getName());
+        LWC lwc = LWC.getInstance();
+
+		return player != null && (owner.equals(player.getName()) || lwc.isAdmin(player));
 	}
 	
 	/**

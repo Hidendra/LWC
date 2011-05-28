@@ -336,7 +336,7 @@ public class LWC {
 	 * Check if a player has the ability to administrate a protection
 	 * 
 	 * @param player
-	 * @param Entity
+	 * @param protection
 	 * @return
 	 */
 	public boolean canAdminProtection(Player player, Protection protection) {
@@ -768,7 +768,22 @@ public class LWC {
 	public Configuration getConfiguration() {
 		return configuration;
 	}
-	
+
+    /**
+     * Check if a player has a permissions node
+     *
+     * @param player
+     * @param node
+     * @return
+     */
+    public boolean hasPermission(Player player, String node) {
+        if(permissions != null) {
+            return permissions.permission(player, node);
+        }
+
+        return false;
+    }
+
 	/**
 	 * Check if a player can do admin functions on LWC
 	 * 
@@ -783,13 +798,7 @@ public class LWC {
 			}
 		}
 		
-		if(permissions != null) {
-			if(permissions.has(player, "lwc.admin")) {
-				return true;
-			}
-		}
-		
-		return false;
+		return hasPermission(player, "lwc.admin");
 	}
 
 	/**
@@ -840,7 +849,11 @@ public class LWC {
 	 * @return
 	 */
 	public boolean isProtectable(Block block) {
-		return Boolean.parseBoolean(resolveProtectionConfiguration(block, "enabled"));
+		return isProtectable(block.getType());
+	}
+	
+	public boolean isProtectable(Material material) {
+		return Boolean.parseBoolean(resolveProtectionConfiguration(material, "enabled"));
 	}
 
 	/**
@@ -1045,8 +1058,8 @@ public class LWC {
 	/**
 	 * Send a locale to a player or console
 	 * 
-	 * @param player
-	 * @param locale
+	 * @param sender
+	 * @param key
 	 * @param args
 	 */
 	public void sendLocale(CommandSender sender, String key, Object... args) {
@@ -1101,8 +1114,8 @@ public class LWC {
 	/**
 	 * Ensure a chest/furnace is protectable where it's at
 	 * 
+	 * @param entities
 	 * @param block
-	 * @param size
 	 * @return
 	 */
 	private List<Block> _validateBlock(List<Block> entities, Block block) {
@@ -1113,7 +1126,7 @@ public class LWC {
 	 * Ensure a chest/furnace is protectable where it's at
 	 * 
 	 * @param block
-	 * @param size
+	 * @param block
 	 * @param isBaseBlock
 	 * @return
 	 */
@@ -1397,29 +1410,38 @@ public class LWC {
 	/**
 	 * Get the appropriate config value for the block (protections.block.node)
 	 * 
-	 * @param block
+	 * @param material
 	 * @param node
 	 * @return
 	 */
-	public String resolveProtectionConfiguration(Block block, String node) {
-		String material = block.getType().toString().toLowerCase().replaceAll("block", "");
+	public String resolveProtectionConfiguration(Material material, String node) {
+		List<String> names = new ArrayList<String>();
 		
-		if(material.endsWith("_")) {
-			material = material.substring(0, material.length() - 1);
+		String materialName = material.toString().toLowerCase();
+		
+		// add the name & the block id
+		names.add(materialName);
+		names.add(material.getId() + "");
+		
+		// check for the trimmed variant
+		String trimmedName = materialName.replaceAll("block", "");
+		
+		if(trimmedName.endsWith("_")) {
+			trimmedName = trimmedName.substring(0, trimmedName.length() - 1);
 		}
 		
-		// convert wall_sign / sign_post to sign
-		if(material.contains("sign")) {
-			material = "sign";
+		if(!trimmedName.equals(materialName)) {
+			names.add(trimmedName);
 		}
-		
-		String value = configuration.getString("protections." + node);
-		String temp = configuration.getString("protections.blocks." + material + "." + node);
-		
-		if(temp != null && !temp.isEmpty()) {
-			value = temp;
-		} else {
-			temp = configuration.getString("protections.blocks." + block.getTypeId() + "." + node);
+
+        String value = configuration.getString("protections." + node);
+
+		for(String name : names) {
+			if(name.contains("sign")) {
+				name = "sign";
+			}
+
+			String temp = configuration.getString("protections.blocks." + name + "." + node);
 			
 			if(temp != null && !temp.isEmpty()) {
 				value = temp;

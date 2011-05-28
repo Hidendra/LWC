@@ -111,13 +111,17 @@ public class LWCBlockListener extends BlockListener {
 			return;
 		}
 
-		if (plugin.getLWC().getConfiguration().getBoolean("protections.blockDestruction", false)) {
-			return;
-		}
-
 		LWC lwc = plugin.getLWC();
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
+        Material material = block.getType();
+
+        boolean ignoreBlockDestruction = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreBlockDestruction"));
+
+        if(ignoreBlockDestruction) {
+            return;
+        }
+
 		Protection protection = lwc.findProtection(block);
 		
 		if(protection == null) {
@@ -175,7 +179,7 @@ public class LWCBlockListener extends BlockListener {
 			}
 		}
 
-		String autoRegisterType = plugin.getLWC().resolveProtectionConfiguration(block, "autoRegister");
+		String autoRegisterType = plugin.getLWC().resolveProtectionConfiguration(block.getType(), "autoRegister");
 		
 		/*
 		 * Check if it's enabled
