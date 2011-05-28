@@ -38,7 +38,7 @@ public class ModuleLoader {
 
 	public enum Event {
 		/**
-		 * Not used with dispatchEvent
+		 * Called when a module is loaded
 		 */
 		LOAD(0),
 
@@ -90,7 +90,12 @@ public class ModuleLoader {
 		/**
 		 * Called when a player drops an item
 		 */
-		DROP_ITEM(3);
+		DROP_ITEM(3),
+		
+		/**
+		 * Called after a protection is registered
+		 */
+		POST_REGISTRATION(1);
 
 		Event(int arguments) {
 			this.arguments = arguments;
@@ -176,6 +181,10 @@ public class ModuleLoader {
 					case DROP_ITEM:
 						temp = module.onDropItem(lwc, (Player) args[0], (Item) args[1], (ItemStack) args[2]);
 						break;
+						
+					case POST_REGISTRATION:
+						module.onPostRegistration(lwc, (Protection) args[0]);
+						break;
 					}
 
 					if(temp != Result.DEFAULT) {
@@ -196,6 +205,22 @@ public class ModuleLoader {
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * Load all of the modules not marked as loaded
+	 */
+	public void loadAll() {
+		LWC lwc = LWC.getInstance();
+		
+		for(List<MetaData> modules : pluginModules.values()) {
+			for(MetaData metaData : modules) {
+				if(!metaData.isLoaded()) {
+					metaData.getModule().load(lwc);
+					metaData.trigger();
+				}
+			}
+		}
 	}
 
 	/**
@@ -238,7 +263,6 @@ public class ModuleLoader {
 		MetaData metaData = new MetaData(module);
 		modules.add(metaData);
 		pluginModules.put(plugin, modules);
-		module.load(LWC.getInstance());
 	}
 
 	/**

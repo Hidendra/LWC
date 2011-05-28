@@ -53,11 +53,11 @@ public class LWCPlayerListener extends PlayerListener {
 		if(!LWC.ENABLED) {
 			return;
 		}
-		
+
 		Player player = event.getPlayer();
 		Item item = event.getItemDrop();
 		ItemStack itemStack = item.getItemStack();
-		
+
 		Result result = plugin.getLWC().getModuleLoader().dispatchEvent(Event.DROP_ITEM, player, item, itemStack);
 
 		if(result == Result.CANCEL) {
@@ -70,7 +70,7 @@ public class LWCPlayerListener extends PlayerListener {
 		if(event.getAction() != Action.LEFT_CLICK_BLOCK && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
 			return;
 		}
-		
+
 		if(!LWC.ENABLED) {
 			return;
 		}
@@ -82,8 +82,8 @@ public class LWCPlayerListener extends PlayerListener {
 		/*
 		 * Prevent players with lwc.blockinventories from opening inventories
 		 */
-		if (lwc.getPermissions() != null && !lwc.getPermissions().permission(player, "lwc.protect") && lwc.getPermissions().permission(player, "lwc.blockinventory") && !lwc.isAdmin(player) && !lwc.isMod(player)) {
-			if (block.getState() instanceof ContainerBlock) {
+		if (block.getState() instanceof ContainerBlock) {
+			if (lwc.getPermissions() != null && !lwc.getPermissions().permission(player, "lwc.protect") && lwc.getPermissions().permission(player, "lwc.blockinventory") && !lwc.isAdmin(player) && !lwc.isMod(player)) {
 				lwc.sendLocale(player, "protection.interact.error.blocked");
 				event.setCancelled(true);
 				return;
@@ -95,21 +95,21 @@ public class LWCPlayerListener extends PlayerListener {
 		Module.Result result = Module.Result.CANCEL;
 		boolean canAccess = lwc.canAccessProtection(player, protection);
 		boolean canAdmin = lwc.canAdminProtection(player, protection);
-		
+
 		if(protection != null) {
 			result = lwc.getModuleLoader().dispatchEvent(Event.INTERACT_PROTECTION, player, protection, actions, canAccess, canAdmin);
 		} else {
 			result = lwc.getModuleLoader().dispatchEvent(Event.INTERACT_BLOCK, player, block, actions);
 		}
-		
+
 		if(result == Module.Result.ALLOW) {
 			return;
 		}
-		
+
 		if(result == Module.Result.DEFAULT) {
 			lwc.enforceAccess(player, block);
 		}
-		
+
 		if (!canAccess) {
 			event.setCancelled(true);
 			event.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
@@ -121,7 +121,7 @@ public class LWCPlayerListener extends PlayerListener {
 		if(!LWC.ENABLED) {
 			return;
 		}
-		
+
 		LWC lwc = plugin.getLWC();
 		String player = event.getPlayer().getName();
 

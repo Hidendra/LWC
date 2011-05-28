@@ -130,6 +130,18 @@ public class LimitsModule extends JavaModule {
 		return limit != null && !limit.isEmpty() ? Integer.parseInt(limit) : UNLIMITED;
 	}
 	
+	/**
+	 * Resolve a configuration node for a player. Tries nodes in this order:
+	 * <pre>
+	 * players.PLAYERNAME.node
+	 * groups.GROUPNAME.node
+	 * master.node
+	 * </pre>
+	 * 
+	 * @param player
+	 * @param node
+	 * @return
+	 */
 	public String resolveValue(Player player, String node) {
 		LWC lwc = LWC.getInstance();
 		

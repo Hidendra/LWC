@@ -20,6 +20,8 @@ package com.griefcraft.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.entity.Player;
+
 import com.griefcraft.cache.CacheSet;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.util.Colors;
@@ -109,6 +111,16 @@ public class Protection {
 	 * The z coordinate
 	 */
 	private int z;
+	
+	/**
+	 * Check if a player is the owner of the protection
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public boolean isOwner(Player player) {
+		return player != null && owner.equals(player.getName());
+	}
 	
 	/**
 	 * Check if a flag is toggled
@@ -360,6 +372,9 @@ public class Protection {
 
 		case ProtectionTypes.TRAP_BAN:
 			return "Ban trap";
+			
+		case ProtectionTypes.STATUS:
+			return "Status";
 		}
 
 		return "Unknown(raw:" + type + ")";

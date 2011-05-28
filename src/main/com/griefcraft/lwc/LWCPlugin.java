@@ -188,7 +188,10 @@ public class LWCPlugin extends JavaPlugin {
 			return true;
 		} else if (name.equals("climits")) {
 			return true;
-		} else {
+		} else if (name.equals("cstatus")) {
+			return true;
+		}
+		else {
 			return false;
 		}
 	}
@@ -230,10 +233,10 @@ public class LWCPlugin extends JavaPlugin {
 				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", "public".split(" "));
 				return true;
 			} else if (commandName.equals("cpassword")) {
-				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", ("password" + argString).split(" "));
+				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", ("password " + argString).split(" "));
 				return true;
 			} else if (commandName.equals("cprivate")) {
-				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", ("private" + argString).split(" "));
+				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", ("private " + argString).split(" "));
 				return true;
 			} else if (commandName.equals("cmodify")) {
 				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "modify", argString.split(" "));
@@ -249,6 +252,9 @@ public class LWCPlugin extends JavaPlugin {
 				return true;
 			} else if (commandName.equals("climits")) {
 				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "limits", new String[0]);
+				return true;
+			} else if (commandName.equals("cstatus")) {
+				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", ("status " + argString).split(" "));
 				return true;
 			}
 		}
