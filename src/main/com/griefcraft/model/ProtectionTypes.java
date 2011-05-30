@@ -31,10 +31,5 @@ public class ProtectionTypes {
 	 */
 	public static final int TRAP_KICK = 3;
 	public static final int TRAP_BAN = 4;
-	
-	/**
-	 * Status protections (for signs)
-	 */
-	public static final int STATUS = 5;
 
 }

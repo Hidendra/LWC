@@ -33,12 +33,12 @@ public class MenuModule extends JavaModule {
 			return DEFAULT;
 		}
 		
-		if (args.length < 2) {
+		if (args.length < 1) {
 			lwc.sendSimpleUsage(sender, "/lwc menu <basic|advanced>");
 			return CANCEL;
 		}
 
-		String newStyle = args[1].toLowerCase();
+		String newStyle = args[0].toLowerCase();
 
 		if (!newStyle.equals("basic") && !newStyle.equals("advanced")) {
 			sender.sendMessage(Colors.Red + "Invalid style.");

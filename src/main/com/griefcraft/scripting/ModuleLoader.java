@@ -17,10 +17,7 @@
 
 package com.griefcraft.scripting;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -242,6 +239,29 @@ public class ModuleLoader {
 		
 		return null;
 	}
+
+    /**
+     * Not intended to be used a lot -- use sparingly!
+     * The map returned is NOT modifiable.
+     *
+     * @return the registered modules
+     */
+    public Map<Plugin, List<MetaData>> getRegisteredModules() {
+        return Collections.unmodifiableMap(pluginModules);
+    }
+
+    /**
+     * @return the number of registered modules
+     */
+    public int getModuleCount() {
+        int count = 0;
+
+        for(List<MetaData> modules : pluginModules.values()) {
+            count += modules.size();
+        }
+
+        return count;
+    }
 	
 	/**
 	 * Register a module for a plugin
@@ -268,7 +288,7 @@ public class ModuleLoader {
 	/**
 	 * Remove the modules for a plugin
 	 * 
-	 * @param service
+	 * @param plugin
 	 */
 	public void removeModules(Plugin plugin) {
 		pluginModules.remove(plugin);

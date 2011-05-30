@@ -374,9 +374,6 @@ public class Protection {
 
 		case ProtectionTypes.TRAP_BAN:
 			return "Ban trap";
-			
-		case ProtectionTypes.STATUS:
-			return "Status";
 		}
 
 		return "Unknown(raw:" + type + ")";

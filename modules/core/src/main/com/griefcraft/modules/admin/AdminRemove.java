@@ -17,6 +17,7 @@
 
 package com.griefcraft.modules.admin;
 
+import com.griefcraft.model.Protection;
 import org.bukkit.command.CommandSender;
 
 import com.griefcraft.lwc.LWC;
@@ -49,7 +50,12 @@ public class AdminRemove extends JavaModule {
 			return CANCEL;
 		}
 
-		lwc.getPhysicalDatabase().unregisterProtection(protectionId);
+		Protection protection = lwc.getPhysicalDatabase().loadProtection(protectionId);
+
+        if(protection != null) {
+            protection.remove();
+        }
+
 		lwc.sendLocale(sender, "protection.admin.remove.finalize");
 		
 		

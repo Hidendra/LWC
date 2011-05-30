@@ -92,7 +92,7 @@ public class LimitsModule extends JavaModule {
 	 * Get the protection limits for a player
 	 * 
 	 * @param player
-	 * @param protection
+	 * @param blockId
 	 * @return
 	 */
 	public int mapProtectionLimit(Player player, int blockId) {
