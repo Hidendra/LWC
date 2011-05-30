@@ -2,8 +2,8 @@
 <project default="main">
 	
 	<!-- Name of the jar to create -->
-	<property name="jar.name" value="LWC.jar" />
-	<property name="iconomy.name" value="LWC-iConomy.jar" />
+	<property name="jar.core" value="LWC.jar" />
+	<property name="jar.iconomy" value="LWC-iConomy.jar" />
 	
 	<property name="lib" value="lib" />
 	<property name="src" value="src" />
@@ -71,7 +71,7 @@
 	<target name="lwc" description="Build LWC.jar">
 		<echo>Building LWC.jar</echo>
 	
-		<jar jarfile="${dist}/${branch}/${jar.name}">
+		<jar jarfile="${dist}/${branch}/${jar.core}">
 			<fileset dir="${src}" includes="lang/*" />
 			<fileset dir="${src}/resources/" includes="plugin.yml" />
 			<fileset dir="${bin}/core/" />
@@ -82,18 +82,18 @@
 		</jar>
 		
 		<!-- Copy LWC.jar to the dev server -->
-		<copy tofile="${dev}/${jar.name}" file="${dist}/${branch}/${jar.name}" overwrite="yes" />
+		<copy tofile="${dev}/${jar.core}" file="${dist}/${branch}/${jar.core}" overwrite="yes" />
 	</target>
 	
 	<target name="iconomy" description="Build LWC-iConomy.jar">
 		<echo>Building LWC-iConomy.jar</echo>
 	
-		<jar jarfile="${dist.iconomy}//${iconomy.name}">
+		<jar jarfile="${dist.iconomy}//${jar.iconomy}">
 			<fileset dir="${iconomy}/resources/" includes="plugin.yml" />
 			<fileset dir="${bin}/iconomy/" />
 		</jar>
 		
 		<!-- Copy LWC.jar to the dev server -->
-		<copy tofile="${dev}/${iconomy.name}" file="${dist.iconomy}/${iconomy.name}" overwrite="yes" />
+		<copy tofile="${dev}/${jar.iconomy}" file="${dist.iconomy}/${jar.iconomy}" overwrite="yes" />
 	</target>
 </project>
