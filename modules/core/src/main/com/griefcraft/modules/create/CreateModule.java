@@ -165,28 +165,6 @@ public class CreateModule extends JavaModule {
             physDb.registerProtection(block.getTypeId(), tmpType, worldName, playerName, reason, blockX, blockY, blockZ);
             lwc.sendLocale(player, "protection.interact.create.finalize");
         }
-        else if(protectionType.equals("status")) {
-        	if(block.getType() != Material.SIGN_POST && block.getType() != Material.WALL_SIGN) {
-        		lwc.sendLocale(player, "protection.create.status.notsign");
-        		return CANCEL;
-        	}
-        	
-        	protectionData = protectionData.trim();
-        	
-        	try {
-        		int protectionId = Integer.parseInt(protectionData);
-        		
-        		if(lwc.getPhysicalDatabase().loadProtection(protectionId) == null) {
-        			throw new Exception();
-        		}
-        	} catch(Exception e) {
-        		lwc.sendLocale(player, "protection.admin.view.noexist");
-        		return CANCEL;
-        	}
-        	
-            physDb.registerProtection(block.getTypeId(), ProtectionTypes.STATUS, worldName, playerName, protectionData, blockX, blockY, blockZ);
-            lwc.sendLocale(player, "protection.interact.create.finalize");
-        }
         
         // get the newly protected protection
         Protection protection = physDb.loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
@@ -238,24 +216,6 @@ public class CreateModule extends JavaModule {
             
             String hiddenPass = StringUtils.transform(data, '*');
             lwc.sendLocale(player, "protection.create.password", "password", hiddenPass);
-        }
-        else if(type.equals("status")) {
-        	if(data.isEmpty()) {
-        		lwc.sendSimpleUsage(player, "/lwc -c status <protectionId>");
-        		return CANCEL;
-        	}
-        	
-        	// verify the id
-        	try {
-        		int protectionId = Integer.parseInt(data);
-        		
-        		if(lwc.getPhysicalDatabase().loadProtection(protectionId) == null) {
-        			throw new Exception();
-        		}
-        	} catch(Exception e) {
-        		lwc.sendLocale(player, "protection.admin.view.noexist");
-        		return CANCEL;
-        	}
         }
         else if(!type.equals("public") && !type.equals("private")) {
             lwc.sendLocale(player, "help.creation");

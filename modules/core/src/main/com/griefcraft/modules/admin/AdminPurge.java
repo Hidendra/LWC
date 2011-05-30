@@ -34,7 +34,7 @@ public class AdminPurge extends JavaModule {
 		if(!args[0].equals("purge")) {
 			return DEFAULT;
 		}
-		if (args.length < 3) {
+		if (args.length < 2) {
 			lwc.sendSimpleUsage(sender, "/lwc admin purge <Players>");
 			return CANCEL;
 		}

@@ -10,6 +10,9 @@ commands:
   lwc:
     description: LWC's hub command to access everything
     usage: /<command>
+  cadmin:
+    description: Administrate LWC
+    usage: /<command>
   cpublic:
     description: Create a protection that is accessible by anyone but protectable by no one.
     usage: /<command>
