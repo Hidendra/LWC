@@ -18,7 +18,7 @@
 	<property name="dist" value="../../public_html/griefcraft/bukkit/lwc" />
 	<property name="dist.iconomy" value="${dist}/modules/iConomy" />
 	
-	<property name="branch" value="alpha" />
+	<property name="branch" value="beta" />
 	
 	<!-- Location of the plugins folder development server -->
 	<property name="dev" value="../../minecraft/plugins" />
