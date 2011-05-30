@@ -98,14 +98,13 @@ public class LWCPlayerListener extends PlayerListener {
 		boolean canAccess = lwc.canAccessProtection(player, protection);
 		boolean canAdmin = lwc.canAdminProtection(player, protection);
 
-        // TODO: Why is Left click a Right click, and the other way around? D:
-        if(event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+        if(event.getAction() == Action.LEFT_CLICK_BLOCK) {
             boolean ignoreLeftClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreLeftClick"));
 
             if(ignoreLeftClick) {
                 return;
             }
-        } else if(event.getAction() == Action.LEFT_CLICK_BLOCK) {
+        } else if(event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             boolean ignoreRightClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreRightClick"));
 
             if(ignoreRightClick) {
