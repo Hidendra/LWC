@@ -22,41 +22,6 @@ import com.griefcraft.listeners.LWCEntityListener;
 import com.griefcraft.listeners.LWCPlayerListener;
 import com.griefcraft.listeners.LWCServerListener;
 import com.griefcraft.logging.Logger;
-import com.griefcraft.modules.admin.AdminCache;
-import com.griefcraft.modules.admin.AdminCleanup;
-import com.griefcraft.modules.admin.AdminClear;
-import com.griefcraft.modules.admin.AdminConfig;
-import com.griefcraft.modules.admin.AdminConvert;
-import com.griefcraft.modules.admin.AdminFind;
-import com.griefcraft.modules.admin.AdminFlush;
-import com.griefcraft.modules.admin.AdminForceOwner;
-import com.griefcraft.modules.admin.AdminLimits;
-import com.griefcraft.modules.admin.AdminLocale;
-import com.griefcraft.modules.admin.AdminPurge;
-import com.griefcraft.modules.admin.AdminReload;
-import com.griefcraft.modules.admin.AdminRemove;
-import com.griefcraft.modules.admin.AdminReport;
-import com.griefcraft.modules.admin.AdminUpdate;
-import com.griefcraft.modules.admin.AdminVersion;
-import com.griefcraft.modules.admin.AdminView;
-import com.griefcraft.modules.admin.BaseAdminModule;
-import com.griefcraft.modules.create.CreateModule;
-import com.griefcraft.modules.destroy.DestroyModule;
-import com.griefcraft.modules.flag.FlagModule;
-import com.griefcraft.modules.free.FreeModule;
-import com.griefcraft.modules.info.InfoModule;
-import com.griefcraft.modules.limits.LimitsModule;
-import com.griefcraft.modules.lists.ListsModule;
-import com.griefcraft.modules.menu.MenuModule;
-import com.griefcraft.modules.modes.DropTransferModule;
-import com.griefcraft.modules.modes.MagnetModule;
-import com.griefcraft.modules.modes.PersistModule;
-import com.griefcraft.modules.modify.ModifyModule;
-import com.griefcraft.modules.owners.OwnersModule;
-import com.griefcraft.modules.redstone.RedstoneModule;
-import com.griefcraft.modules.unlock.UnlockModule;
-import com.griefcraft.modules.worldguard.WorldGuardModule;
-import com.griefcraft.scripting.Module;
 import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.ModuleLoader.Event;
 import com.griefcraft.sql.Database;
@@ -186,8 +151,6 @@ public class LWCPlugin extends JavaPlugin {
 			return true;
 		} else if (name.equals("climits")) {
 			return true;
-		} else if (name.equals("cstatus")) {
-			return true;
 		} else if (name.equals("credstone")) {
             return true;
         } else if (name.equals("cmagnet")) {
@@ -195,6 +158,8 @@ public class LWCPlugin extends JavaPlugin {
         } else if (name.equals("cdroptransfer")) {
             return true;
         } else if (name.equals("cpersist")) {
+            return true;
+        } else if (name.equals("cadmin")) {
             return true;
         }
 		else {
@@ -244,24 +209,27 @@ public class LWCPlugin extends JavaPlugin {
 				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", ("private " + argString).split(" "));
 				return true;
 			} else if (commandName.equals("cmodify")) {
-				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "modify", argString.split(" "));
+				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "modify", argString.isEmpty() ? new String[0] : argString.split(" "));
 				return true;
 			} else if (commandName.equals("cinfo")) {
 				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "info", new String[0]);
 				return true;
 			} else if (commandName.equals("cunlock")) {
-				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "unlock", argString.split(" "));
+				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "unlock", argString.isEmpty() ? new String[0] : argString.split(" "));
 				return true;
 			} else if (commandName.equals("cremove")) {
 				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "remove", "protection".split(" "));
 				return true;
 			} else if (commandName.equals("climits")) {
-				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "limits", new String[0]);
+				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "limits", argString.isEmpty() ? new String[0] : argString.split(" "));
 				return true;
 			} else if (commandName.equals("cstatus")) {
 				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", ("status " + argString).split(" "));
 				return true;
-			}
+			} else if (commandName.equals("cadmin")) {
+                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "admin", argString.isEmpty() ? new String[0] : argString.split(" "));
+                return true;
+            }
 
             // Flag aliases
             if (commandName.equals("credstone")) {

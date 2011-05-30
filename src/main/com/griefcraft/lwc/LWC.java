@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.griefcraft.modules.admin.*;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -28,24 +29,6 @@ import com.griefcraft.migration.MySQLPost200;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
-import com.griefcraft.modules.admin.AdminCache;
-import com.griefcraft.modules.admin.AdminCleanup;
-import com.griefcraft.modules.admin.AdminClear;
-import com.griefcraft.modules.admin.AdminConfig;
-import com.griefcraft.modules.admin.AdminConvert;
-import com.griefcraft.modules.admin.AdminFind;
-import com.griefcraft.modules.admin.AdminFlush;
-import com.griefcraft.modules.admin.AdminForceOwner;
-import com.griefcraft.modules.admin.AdminLimits;
-import com.griefcraft.modules.admin.AdminLocale;
-import com.griefcraft.modules.admin.AdminPurge;
-import com.griefcraft.modules.admin.AdminReload;
-import com.griefcraft.modules.admin.AdminRemove;
-import com.griefcraft.modules.admin.AdminReport;
-import com.griefcraft.modules.admin.AdminUpdate;
-import com.griefcraft.modules.admin.AdminVersion;
-import com.griefcraft.modules.admin.AdminView;
-import com.griefcraft.modules.admin.BaseAdminModule;
 import com.griefcraft.modules.create.CreateModule;
 import com.griefcraft.modules.destroy.DestroyModule;
 import com.griefcraft.modules.flag.FlagModule;
@@ -931,7 +914,6 @@ public class LWC {
 		registerModule(new AdminFind());
 		registerModule(new AdminFlush());
 		registerModule(new AdminForceOwner());
-		registerModule(new AdminLimits());
 		registerModule(new AdminLocale());
 		registerModule(new AdminPurge());
 		registerModule(new AdminReload());
@@ -940,6 +922,7 @@ public class LWC {
 		registerModule(new AdminUpdate());
 		registerModule(new AdminVersion());
 		registerModule(new AdminView());
+        registerModule(new AdminDebug());
 		
 		// flags
 		registerModule(new FlagModule());
