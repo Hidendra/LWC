@@ -20,7 +20,9 @@ database:
 protections:
     denyRedstone: false
     autoRegister: off
-    allowBlockDestruction: off
+    ignoreBlockDestruction: false
+    ignoreLeftClick: false
+    ignoreRightClick: false
     blocks:
         chest:
             enabled: true
