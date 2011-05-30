@@ -1,0 +1,99 @@
+<?xml version="1.0" ?>
+<project default="main">
+	
+	<!-- Name of the jar to create -->
+	<property name="jar.name" value="LWC.jar" />
+	<property name="iconomy.name" value="LWC-iConomy.jar" />
+	
+	<property name="lib" value="lib" />
+	<property name="src" value="src" />
+	<property name="bin" value="bin" />
+	
+	<property name="modules" value="modules" />
+	<property name="core" value="${modules}/core/" />
+	<property name="worldguard" value="${modules}/worldguard/" />
+	<property name="lists" value="${modules}/lists/" />
+	<property name="iconomy" value="${modules}/iconomy/" />
+	
+	<property name="dist" value="../../public_html/griefcraft/bukkit/lwc" />
+	<property name="dist.iconomy" value="${dist}/modules/iConomy" />
+	
+	<property name="branch" value="alpha" />
+	
+	<!-- Location of the plugins folder development server -->
+	<property name="dev" value="../../minecraft/plugins" />
+	
+	<fileset dir="${lib}" id="libs">
+		<include name="CraftBukkit.jar" />
+		<include name="Permissions.jar" />
+		<include name="WorldGuard.jar" />
+		<include name="WorldEdit.jar" />
+		<include name="Lists.jar" />
+		<include name="iConomy.jar" />
+		<include name="mcbans.jar" />
+	</fileset>
+	
+	<target name="main" depends="compile,build" description="Main target" />
+	
+	<target name="compile" description="Compilation">
+		<!-- create some folders -->
+		<mkdir dir="${bin}/core/" />
+		<mkdir dir="${bin}/iconomy/" />
+		
+		<echo>Compiling LWC and Core Modules</echo>
+		<javac srcdir="${src};${core};${worldguard};${lists}" destdir="${bin}/core/" deprecation="true" includeantruntime="true">
+			<classpath>
+				<fileset refid="libs" />
+			</classpath>
+		</javac>
+		
+		<echo>Compiling LWC-iConomy</echo>
+		<javac srcdir="${iconomy}" destdir="${bin}/iconomy/" deprecation="true" includeantruntime="true">
+			<classpath>
+				<fileset refid="libs" />
+				<dirset dir="${bin}/core/" />
+			</classpath>
+		</javac>
+	</target>
+  
+	<target name="build" depends="lwc,iconomy" description="Build the distribution files">
+		<!-- Copy the version file to the fileserver -->
+		<copy tofile="${dist}/VERSION" file="VERSION" overwrite="yes" />
+		
+		<!-- Copy skeleton files to the fileserver -->
+		<copy todir="${dist}/skel/">
+			<fileset dir="skel">
+				<include name="**" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="lwc" description="Build LWC.jar">
+		<echo>Building LWC.jar</echo>
+	
+		<jar jarfile="${dist}/${branch}/${jar.name}">
+			<fileset dir="${src}" includes="lang/*" />
+			<fileset dir="${src}/resources/" includes="plugin.yml" />
+			<fileset dir="${bin}/core/" />
+			
+			<manifest>
+				<attribute name="Class-Path" value="LWC/modules/core.jar" />
+			</manifest>
+		</jar>
+		
+		<!-- Copy LWC.jar to the dev server -->
+		<copy tofile="${dev}/${jar.name}" file="${dist}/${branch}/${jar.name}" overwrite="yes" />
+	</target>
+	
+	<target name="iconomy" description="Build LWC-iConomy.jar">
+		<echo>Building LWC-iConomy.jar</echo>
+	
+		<jar jarfile="${dist.iconomy}//${iconomy.name}">
+			<fileset dir="${iconomy}/resources/" includes="plugin.yml" />
+			<fileset dir="${bin}/iconomy/" />
+		</jar>
+		
+		<!-- Copy LWC.jar to the dev server -->
+		<copy tofile="${dev}/${iconomy.name}" file="${dist.iconomy}/${iconomy.name}" overwrite="yes" />
+	</target>
+</project>
