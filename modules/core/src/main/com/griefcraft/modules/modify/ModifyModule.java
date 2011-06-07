@@ -131,6 +131,11 @@ public class ModifyModule extends JavaModule {
 			sender.sendMessage(Colors.Red + "Console not supported.");
 			return CANCEL;
 		}
+
+        if(!lwc.hasPlayerPermission(sender, "lwc.modify")) {
+            lwc.sendLocale(sender, "protection.accessdenied");
+            return CANCEL;
+        }
 		
 		if (args.length < 1) {
 			lwc.sendLocale(sender, "help.modify");
