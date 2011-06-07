@@ -64,6 +64,11 @@ public class FreeModule extends JavaModule {
 		if(!StringUtils.hasFlag(command, "r") && !StringUtils.hasFlag(command, "remove")) {
 			return DEFAULT;
 		}
+
+        if(!lwc.hasPlayerPermission(sender, "lwc.remove")) {
+            lwc.sendLocale(sender, "protection.accessdenied");
+            return CANCEL;
+        }
 		
 		if (args.length < 1) {
 			lwc.sendSimpleUsage(sender, "/lwc -r <protection|modes>");
