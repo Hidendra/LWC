@@ -200,7 +200,7 @@ public class CreateModule extends JavaModule {
         /**
          * Allow individual enforcements with e.g lwc.create.private, or just the umbrella lwc.create for all
          */
-        if(!lwc.hasPermission(sender, "lwc.create." + type, "lwc.create")) {
+        if(!lwc.hasPermission(sender, "lwc.create." + type, "lwc.create", "lwc.protect")) {
             lwc.sendLocale(sender, "protection.accessdenied");
             return CANCEL;
         }
