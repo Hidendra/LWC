@@ -62,6 +62,11 @@ public class InfoModule extends JavaModule {
 		if(!StringUtils.hasFlag(command, "i") && !StringUtils.hasFlag(command, "info")) {
 			return DEFAULT;
 		}
+
+        if(!lwc.hasPlayerPermission(sender, "lwc.info")) {
+            lwc.sendLocale(sender, "protection.accessdenied");
+            return CANCEL;
+        }
 		
 		if(!(sender instanceof Player)) {
 			return DEFAULT;

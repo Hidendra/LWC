@@ -193,9 +193,9 @@ public class LWCPlugin extends JavaPlugin {
 		// these can only apply to players, not the console (who has absolute player :P)
 		if (isPlayer) {
 			Player player = (Player) sender;
-            if (!lwc.hasPermission(player, "lwc.protect")) {
+                if (!lwc.hasPermission(player, "lwc.protect")) {
 				sender.sendMessage(Colors.Red + "You do not have permission to do that");
-				return true;
+				// return true;
 			}
 
 			// Aliases

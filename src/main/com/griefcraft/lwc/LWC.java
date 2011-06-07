@@ -768,13 +768,42 @@ public class LWC {
 	 * @return
 	 */
 	public boolean hasAdminPermission(CommandSender sender, String node) {
-		if(!(sender instanceof Player)) {
-			return true;
-		}
-
-		Player player = (Player) sender;
-		return hasPermission(player, node);
+		return hasPermission(sender, node, "lwc.admin");
 	}
+
+    /**
+     * Check if a player has either access to lwc.protect or the specified node
+     * 
+     * @param sender
+     * @param node
+     * @return
+     */
+    public boolean hasPlayerPermission(CommandSender sender, String node) {
+        return hasPermission(sender, node, "lwc.protect");
+    }
+
+    /**
+     * Check a player for a node, using a fallback as a default (e.g lwc.protect)
+     * 
+     * @param sender
+     * @param node
+     * @param fallback
+     * @return
+     */
+    public boolean hasPermission(CommandSender sender, String node, String fallback) {
+        if(!(sender instanceof Player)) {
+            return true;
+        }
+
+        Player player = (Player) sender;
+        boolean hasNode = hasPermission(player, node);
+
+        if(!hasNode) {
+            return hasPermission(player, fallback);
+        }
+
+        return hasNode;
+    }
 
     /**
      * Check if a player has a permissions node

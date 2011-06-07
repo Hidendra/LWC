@@ -196,6 +196,14 @@ public class CreateModule extends JavaModule {
         String full = StringUtils.join(args, 0);
         String type = args[0].toLowerCase();
         String data = StringUtils.join(args, 1);
+
+        /**
+         * Allow individual enforcements with e.g lwc.create.private, or just the umbrella lwc.create for all
+         */
+        if(!lwc.hasPermission(sender, "lwc.create." + type, "lwc.create")) {
+            lwc.sendLocale(sender, "protection.accessdenied");
+            return CANCEL;
+        }
         
         if(type.equals("trap")) {
             if(!lwc.isAdmin(player)) {
