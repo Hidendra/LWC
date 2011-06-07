@@ -455,7 +455,14 @@ public class LWC {
 			boolean showMyNotices = configuration.getBoolean("core.showMyNotices", true);
 			
 			if((!isOwner && (isAdmin(player) || isMod(player))) || (isOwner && showMyNotices)) {
-				sendLocale(player, "protection.general.notice.protected", "type", getLocale(protection.typeToString().toLowerCase()), "block", materialToString(block), "owner", protection.getOwner());
+                String owner = protection.getOwner();
+
+                // replace your username with "you" if you own the protection
+                if(owner.equals(player.getName())) {
+                    owner = "you";
+                }
+
+				sendLocale(player, "protection.general.notice.protected", "type", getLocale(protection.typeToString().toLowerCase()), "block", materialToString(block), "owner", owner);
 			}
 		}
 
