@@ -790,7 +790,7 @@ public class LWC {
      * @param fallback
      * @return
      */
-    public boolean hasPermission(CommandSender sender, String node, String fallback) {
+    public boolean hasPermission(CommandSender sender, String node, String... fallback) {
         if(!(sender instanceof Player)) {
             return true;
         }
@@ -799,7 +799,11 @@ public class LWC {
         boolean hasNode = hasPermission(player, node);
 
         if(!hasNode) {
-            return hasPermission(player, fallback);
+            for(String temp : fallback) {
+                if(hasPermission(player, temp)) {
+                    return true;
+                }
+            }
         }
 
         return hasNode;
