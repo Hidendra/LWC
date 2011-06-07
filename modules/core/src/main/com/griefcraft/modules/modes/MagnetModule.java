@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.griefcraft.util.config.Configuration;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -36,7 +37,14 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 
 public class MagnetModule extends JavaModule {
-	
+
+    private Configuration configuration = Configuration.load("magnet.yml");
+
+    /**
+     * The radius around the container in which to suck up items
+     */
+    private int radius;
+
 	// does all of the work
 	// searches the worlds for items and magnet chests nearby
 	class SearchThread implements Runnable {
@@ -66,7 +74,7 @@ public class MagnetModule extends JavaModule {
 					int y = location.getBlockY();
 					int z = location.getBlockZ();
 					
-					List<Protection> protections = lwc.getPhysicalDatabase().loadProtections(worldName, x, y, z, 3);
+					List<Protection> protections = lwc.getPhysicalDatabase().loadProtections(worldName, x, y, z, radius);
 					Block block = null;
 					Protection protection = null;
 					
@@ -118,6 +126,8 @@ public class MagnetModule extends JavaModule {
 	
 	@Override
 	public void load(LWC lwc) {
+        radius = configuration.getInt("magnet.radius", 3);
+
 		// register our search thread schedule
 		SearchThread searchThread = new SearchThread();
 		taskId = lwc.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(lwc.getPlugin(), searchThread, 50, 50);

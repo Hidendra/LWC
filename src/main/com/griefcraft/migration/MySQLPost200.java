@@ -49,7 +49,7 @@ public class MySQLPost200 {
 
 		// this patcher only does something exciting if the old SQLite database
 		// still exists :-)
-		String database = lwc.getConfiguration().getString("database.database");
+		String database = lwc.getConfiguration().getString("database.path");
 
 		File file = new File(database);
 		if (!file.exists()) {

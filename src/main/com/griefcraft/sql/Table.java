@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.griefcraft.lwc.LWC;
 import com.griefcraft.sql.Database.Type;
 import com.griefcraft.util.Performance;
 
@@ -72,8 +73,19 @@ public class Table {
 	public void execute() {
 		StringBuffer buffer = new StringBuffer("CREATE TABLE IF NOT EXISTS ");
 
+        // do the prefix, if we're using MySQL
+        String prefix = "";
+
+        if(database.getType() == Type.MySQL) {
+            String temp = LWC.getInstance().getConfiguration().getString("database.prefix", "");
+
+            if(temp.length() > 0) {
+                prefix = temp;
+            }
+        }
+
 		// the table name
-		buffer.append(name);
+		buffer.append(prefix + name);
 		buffer.append(" ( ");
 
 		// add the columns
