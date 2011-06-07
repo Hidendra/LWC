@@ -19,6 +19,7 @@ package com.griefcraft.scripting;
 
 import java.util.*;
 
+import com.griefcraft.lwc.LWCInfo;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
@@ -194,7 +195,7 @@ public class ModuleLoader {
 				}
 			}
 		} catch(Throwable throwable) {
-			throw new ModuleException("LWC Module threw an uncaught exception!", throwable);
+			throw new ModuleException("LWC Module threw an uncaught exception! LWC version: " + LWCInfo.FULL_VERSION, throwable);
 		}
 
 		if(result == null) {

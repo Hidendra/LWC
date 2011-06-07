@@ -18,7 +18,7 @@ public class MySQLPost301 {
         PhysDB physicalDatabase = lwc.getPhysicalDatabase();
         String prefix = lwc.getConfiguration().getString("database.prefix");
 
-        if(prefix.length() == 0) {
+        if(prefix == null || prefix.length() == 0) {
             return;
         }
 
