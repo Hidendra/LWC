@@ -1,5 +1,7 @@
 package com.griefcraft.lwc;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -548,7 +550,7 @@ public class LWC {
 		Block adjacentBlock = null;
 		Block lastBlock = null;
 		List<Block> attempts = new ArrayList<Block>(5);
-		attempts.add(block);
+		// attempts.add(block);
 		
 		int found = 0;
 
