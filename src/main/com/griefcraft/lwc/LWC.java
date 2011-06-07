@@ -550,7 +550,7 @@ public class LWC {
 		Block adjacentBlock = null;
 		Block lastBlock = null;
 		List<Block> attempts = new ArrayList<Block>(5);
-		// attempts.add(block);
+		attempts.add(block);
 		
 		int found = 0;
 
