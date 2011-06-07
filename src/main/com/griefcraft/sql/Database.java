@@ -250,7 +250,7 @@ public abstract class Database {
 	 * @param table
 	 * @param column
 	 */
-	protected boolean addColumn(String table, String column, String type) {
+	public boolean addColumn(String table, String column, String type) {
 		return executeQueryNoException("ALTER TABLE " + table + " ADD " + column + " " + type);
 	}
 	
@@ -260,7 +260,7 @@ public abstract class Database {
 	 * @param table
 	 * @param newName
 	 */
-	protected boolean renameTable(String table, String newName) {
+	public boolean renameTable(String table, String newName) {
 		return executeQueryNoException("ALTER TABLE " + table + " RENAME TO " + newName);
 	}
 	
@@ -269,7 +269,7 @@ public abstract class Database {
 	 * 
 	 * @param table
 	 */
-	protected boolean dropTable(String table) {
+	public boolean dropTable(String table) {
 		return executeQueryNoException("DROP TABLE " + table);
 	}
 
@@ -279,7 +279,7 @@ public abstract class Database {
 	 * @param query
 	 * @return true if an exception was thrown
 	 */
-	protected boolean executeQueryNoException(String query) {
+	public boolean executeQueryNoException(String query) {
 		Statement statement = null;
 		boolean exception = false;
 

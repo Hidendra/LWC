@@ -42,3 +42,9 @@ protections:
         iron_door:
             enabled: true
             autoRegister: off
+
+modes:
+    droptransfer:
+        enabled: true
+    persist:
+        enabled: true

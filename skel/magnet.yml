@@ -1,0 +1,6 @@
+# Magnet module
+magnet:
+    enabled: true
+
+    # The radius around containers that they will suck up
+    radius: 3

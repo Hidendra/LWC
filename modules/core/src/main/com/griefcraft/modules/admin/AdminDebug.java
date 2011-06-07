@@ -25,10 +25,6 @@ public class AdminDebug extends JavaModule {
 			return DEFAULT;
 		}
 
-        if(!lwc.isAdmin(sender)) {
-            return DEFAULT;
-        }
-
         ModuleLoader moduleLoader = lwc.getModuleLoader();
 
         sender.sendMessage("Players: " + Colors.Green + lwc.getPlugin().getServer().getOnlinePlayers().length);

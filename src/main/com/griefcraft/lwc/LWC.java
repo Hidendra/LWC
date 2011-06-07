@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.griefcraft.migration.MySQLPost301;
 import com.griefcraft.modules.admin.*;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -751,6 +752,24 @@ public class LWC {
 	public Configuration getConfiguration() {
 		return configuration;
 	}
+	
+	/**
+	 * Check if a player has either access to lwc.admin or the specified node
+	 * 
+	 * @param sender
+	 * @param node
+	 * @return
+	 */
+	public boolean hasAdminPermission(CommandSender sender, String node) {
+		if(!(sender instanceof Player)) {
+			return true;
+		}
+	
+		Player player = (Player) sender;
+		System.out.println(node + " -> {" + hasPermission(player, node) + "}");
+		
+		return hasPermission(player, node);
+	}
 
     /**
      * Check if a player has a permissions node
@@ -886,6 +905,7 @@ public class LWC {
 		
 		// check any major conversions
 		MySQLPost200.checkDatabaseConversion(this);
+        MySQLPost301.checkDatabaseConversion(this);
 	}
 	
 	/**
@@ -910,7 +930,6 @@ public class LWC {
 		registerModule(new AdminClear());
 		registerModule(new AdminConfig());
 		registerModule(new AdminConvert());
-		
 		registerModule(new AdminFind());
 		registerModule(new AdminFlush());
 		registerModule(new AdminForceOwner());
