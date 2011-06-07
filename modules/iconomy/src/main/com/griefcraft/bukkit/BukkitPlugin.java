@@ -86,14 +86,11 @@ public class BukkitPlugin extends JavaPlugin {
 		initialized = true;
 	}
 	
-	@Override
 	public void onEnable() {
 		// register the server listener
 		getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, serverListener, Priority.Monitor, this);
-		info("Waiting for both LWC and iConomy to be loaded...");
 	}
 
-	@Override
 	public void onDisable() {
 		
 	}

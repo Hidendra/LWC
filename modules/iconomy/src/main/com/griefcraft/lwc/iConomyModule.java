@@ -51,6 +51,9 @@ public class iConomyModule extends JavaModule {
 		if(!configuration.getBoolean("iConomy.enabled", true)) {
 			return DEFAULT;
 		}
+
+        // if a discount was used
+        boolean usedDiscount = false;
 		
 		// how much to charge the player
 		double charge = 0D;
@@ -60,7 +63,33 @@ public class iConomyModule extends JavaModule {
 			String value = resolveValue(player, "charge");
 			charge = Double.parseDouble(value);
 		} catch(NumberFormatException e) { }
-		
+
+        // check if they have a discount available
+        try {
+            boolean isDiscountActive = Boolean.parseBoolean(resolveValue(player, "discount.active"));
+
+            if(isDiscountActive) {
+                int discountedProtections = Integer.parseInt(resolveValue(player, "discount.amount"));
+
+                if(discountedProtections > 0) {
+                    int currentProtections = lwc.getPhysicalDatabase().getProtectionCount(player.getName());
+
+                    if(discountedProtections > currentProtections) {
+                        charge = Double.parseDouble(resolveValue(player, "discount.newCharge"));
+                        usedDiscount = true;
+                    }
+                }
+            }
+        } catch(NumberFormatException e) { }
+
+        System.out.println("charge=" + charge);
+
+        // It's free!
+        if(charge == 0) {
+            player.sendMessage(Colors.Green + "This one's on us!");
+            return ALLOW;
+        }
+
 		// charge them
 		if(charge != 0) {
 			// get the player's account
@@ -78,7 +107,6 @@ public class iConomyModule extends JavaModule {
 			Holdings holdings = account.getHoldings();
 			
 			if(!holdings.hasEnough(charge)) {
-				
 				player.sendMessage(Colors.Red + "You do not have enough " + Constants.Major.get(1) + " to buy an LWC protection.");
 				player.sendMessage(Colors.Red + "The balance required for an LWC protection is: " + iConomy.format(charge));
 				return CANCEL;
@@ -86,7 +114,7 @@ public class iConomyModule extends JavaModule {
 			
 			// remove the money from their account
 			holdings.subtract(charge);
-			player.sendMessage(Colors.Green + "Charged " + iConomy.format(charge) + " for an LWC protection. Thank you.");
+			player.sendMessage(Colors.Green + "Charged " + iConomy.format(charge) + (usedDiscount ? (Colors.Red + " (Discount) " + Colors.Green) : "") + "for an LWC protection. Thank you.");
 			return ALLOW;
 		}
 		
@@ -148,10 +176,6 @@ public class iConomyModule extends JavaModule {
 			String node = path.substring(lastIndex + 1);
 			
 			value = configuration.getString("iConomy." + node);
-		}
-		
-		if(value == null) {
-			value = "";
 		}
 		
 		return value;
