@@ -17,6 +17,7 @@
 
 package com.griefcraft.modules.admin;
 
+import com.griefcraft.model.Protection;
 import org.bukkit.command.CommandSender;
 
 import com.griefcraft.lwc.LWC;
@@ -42,7 +43,11 @@ public class AdminPurge extends JavaModule {
 		String players = StringUtils.join(args, 1);
 
 		for (String toRemove : players.split(" ")) {
-			lwc.getPhysicalDatabase().unregisterProtectionByPlayer(toRemove);
+            // load all of their protections
+            for(Protection protection : lwc.getPhysicalDatabase().loadProtectionsByPlayer(toRemove, 0, 100000)) {
+                protection.remove();
+            }
+            
 			lwc.sendLocale(sender, "protection.admin.purge.finalize", "player", toRemove);
 		}
 		
