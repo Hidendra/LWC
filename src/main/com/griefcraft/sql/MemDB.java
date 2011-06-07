@@ -522,10 +522,8 @@ public class MemDB extends Database {
 	/**
 	 * Register a pending chest unlock, for when the player does /unlock <pass>
 	 * 
-	 * @param player
-	 *            the player to register
-	 * @param chestID
-	 *            the chestID to unlock
+	 * @param action
+     * @param player
 	 */
 	public void registerAction(String action, String player) {
 		try {
