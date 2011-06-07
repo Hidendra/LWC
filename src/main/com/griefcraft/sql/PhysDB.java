@@ -416,10 +416,11 @@ public class PhysDB extends Database {
 
 	/**
 	 * Get the rights for a protection id ranging from start-max
-	 * 
+	 *
 	 * @param protectionId
 	 * @param start
 	 * @param max
+     * @deprecated
 	 * @return
 	 */
 	public List<AccessRight> loadAccessRights(int protectionId, int start, int max) {

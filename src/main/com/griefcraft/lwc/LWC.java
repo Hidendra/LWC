@@ -441,13 +441,13 @@ public class LWC {
 		// support for old protection dbs that do not contain the block id
 		if (protection.getBlockId() == 0) {
 			protection.setBlockId(block.getTypeId());
-			updateThread.queueProtectionUpdate(protection);
+			protection.save();
 		}
 
 		// multi-world, update old protections
 		if (protection.getWorld() == null || protection.getWorld().isEmpty()) {
 			protection.setWorld(block.getWorld().getName());
-			updateThread.queueProtectionUpdate(protection);
+			protection.save();
 		}
 
 		if (configuration.getBoolean("core.showNotices", true)) {

@@ -31,8 +31,11 @@ public class BaseAdminModule extends JavaModule {
 			return DEFAULT;
 		}
 		
-		if(args.length == 0 && lwc.isAdmin(sender)) {
-			lwc.sendLocale(sender, "help.admin");
+		if(args.length == 0) {
+            if(lwc.isAdmin(sender)) {
+			    lwc.sendLocale(sender, "help.admin");
+            }
+            
 			return CANCEL;
 		} else if(args.length > 0) {
 			// check for permissions

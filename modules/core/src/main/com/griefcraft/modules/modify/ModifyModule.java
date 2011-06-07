@@ -52,9 +52,7 @@ public class ModifyModule extends JavaModule {
 				entities = defaultEntities.split(" ");
 			}
 
-			if (lwc.notInPersistentMode(player.getName())) {
-				lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-			}
+			lwc.removeModes(player);
 
 			for (String rightsName : entities) {
 				boolean remove = false;
@@ -102,9 +100,7 @@ public class ModifyModule extends JavaModule {
 			}
 		} else {
 			lwc.sendLocale(player, "protection.interact.error.notowner", "block", LWC.materialToString(protection.getBlockId()));
-			if (lwc.notInPersistentMode(player.getName())) {
-				lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-			}
+			lwc.removeModes(player);
 		}
 		
 		return CANCEL;

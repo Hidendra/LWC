@@ -82,8 +82,6 @@ public class iConomyModule extends JavaModule {
             }
         } catch(NumberFormatException e) { }
 
-        System.out.println("charge=" + charge);
-
         // It's free!
         if(charge == 0) {
             player.sendMessage(Colors.Green + "This one's on us!");
