@@ -236,7 +236,7 @@ public class MemDB extends Database {
 
 	/**
 	 * Get all of the users "logged in" to a chest
-	 * 
+	 *
 	 * @param chestID
 	 *            the chest ID to look at
 	 * @return

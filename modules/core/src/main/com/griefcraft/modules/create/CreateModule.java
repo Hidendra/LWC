@@ -43,8 +43,13 @@ public class CreateModule extends JavaModule {
 		if(!actions.contains("create")) {
 			return DEFAULT;
 		}
-		
-		lwc.sendLocale(player, "protection.interact.error.alreadyregistered", "block", LWC.materialToString(protection.getBlockId()));
+
+        if(protection.getOwner().equals(player.getName())) {
+		    lwc.sendLocale(player, "protection.interact.error.alreadyregistered", "block", LWC.materialToString(protection.getBlockId()));
+        } else {
+            lwc.sendLocale(player, "protection.interact.error.notowner", "block", LWC.materialToString(protection.getBlockId()));
+        }
+
 		lwc.removeModes(player);
 		return CANCEL;
 	}
@@ -168,7 +173,8 @@ public class CreateModule extends JavaModule {
         
         // get the newly protected protection
         Protection protection = physDb.loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
-        
+
+        // tell the modules that a protection was registered
         if(protection != null) {
         	lwc.getModuleLoader().dispatchEvent(Event.POST_REGISTRATION, protection);
         }

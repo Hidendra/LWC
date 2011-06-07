@@ -376,7 +376,6 @@ public class LWCPlugin extends JavaPlugin {
 		registerEvent(entityListener, Type.ENTITY_EXPLODE);
 
 		/* Block events */
-		registerEvent(blockListener, Type.BLOCK_DAMAGE);
 		registerEvent(blockListener, Type.BLOCK_BREAK);
 		registerEvent(blockListener, Type.BLOCK_PLACE);
 		registerEvent(blockListener, Type.REDSTONE_CHANGE);

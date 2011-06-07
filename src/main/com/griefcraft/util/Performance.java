@@ -24,6 +24,7 @@ import java.util.List;
 import com.griefcraft.cache.CacheSet;
 import com.griefcraft.logging.Logger;
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.lwc.LWCInfo;
 
 public class Performance {
 
@@ -77,6 +78,7 @@ public class Performance {
 		
 		report.add(" ");
 
+		report.add(" + Version:\t" + Colors.Gray + LWCInfo.FULL_VERSION);
 		report.add(" + Engine:\t" + Colors.Gray + lwc.getPhysicalDatabase().getType());
 		report.add(" + Date:\t" + Colors.Gray + new Date());
 		report.add(" + Time:\t" + Colors.Gray + getTimeRunningSeconds() + " seconds");
