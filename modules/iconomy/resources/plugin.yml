@@ -1,6 +1,6 @@
 name: LWC-iConomy
 main: com.griefcraft.bukkit.BukkitPlugin
-version: 1.00
+version: 1.01
 website: http://griefcraft.com
 author: Hidendra
 description: LWC iConomy module to allow protections to be purchased using iConomy money.

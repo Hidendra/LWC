@@ -1,4 +1,5 @@
-## charge: is the default
+## charge: is the default currency to charge
+
 # Otherwise, the charge value will take precedence in this order:
 # players.PLAYERNAME.charge
 # groups.GROUPNAME.charge
@@ -6,6 +7,15 @@
 iConomy:
     enabled: true
     charge: 5.00
+
+    # Discounted protections
+    # The discount applies for protections while you are below AMOUNT protections.
+    # E.g, if it's set to 5 (and charge = 0.00), while you have less than 5
+    # protections, they are free
+    discount:
+        active: false
+        amount: 5
+        newCharge: 0.00
 
 # Overrides
 groups:
