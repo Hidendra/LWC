@@ -178,19 +178,18 @@ public class PhysDB extends Database {
 	/**
 	 * Get the access level of a player to a chest -1 = no access 0 = normal access 1 = chest admin
 	 * 
-	 * @param player
-	 * @param chestID
+	 * @param type
+	 * @param protectionId
 	 * @return the player's access level
-	 * @see Protection.getAccess(int, string)
 	 */
 	@Deprecated
-	public int getPrivateAccess(int type, int chestID, String... entities) {
+	public int getPrivateAccess(int type, int protectionId, String... entities) {
 		int access = -1;
 
 		try {
 			PreparedStatement statement = prepare("SELECT entity, rights FROM rights WHERE type = ? AND chest = ?");
 			statement.setInt(1, type);
-			statement.setInt(2, chestID);
+			statement.setInt(2, protectionId);
 
 			ResultSet set = statement.executeQuery();
 
@@ -508,8 +507,8 @@ public class PhysDB extends Database {
 	/**
 	 * Load protections using a specific type
 	 * 
-	 * @param blockid
-	 * @return the Chest object
+	 * @param type
+	 * @return the Protection object
 	 */
 	public List<Protection> loadProtectionsUsingType(int type) {
 		try {
@@ -634,6 +633,35 @@ public class PhysDB extends Database {
 		return protections.get(0);
 	}
 
+    /**
+     * Fill the protection cache as much as possible with protections
+     * Caches the most recent protections
+     */
+    public void precache() {
+        LWC lwc = LWC.getInstance();
+        LRUCache<String, Protection> cache = lwc.getCaches().getProtections();
+
+        try {
+            PreparedStatement statement = prepare("SELECT protections.id AS protectionId, rights.id AS rightsId, protections.type AS protectionType, rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights FROM protections LEFT OUTER JOIN rights ON protections.id = rights.chest ORDER BY protections.id DESC LIMIT ?");
+            statement.setInt(1, lwc.getConfiguration().getInt("core.cacheSize", 10000));
+
+            // scrape the protections from the result set now
+            List<Protection> protections = resolveProtections(statement);
+
+            // throw all of the protections in
+            for(Protection protection : protections) {
+                String cacheKey = protection.getCacheKey();
+                cache.put(cacheKey, protection);
+            }
+
+            log("Precached " + protections.size() + " protections.");
+        } catch(SQLException e) {
+            printException(e);
+        }
+
+        // Cache them all 
+    }
+
 	/**
 	 * Load a chest at a given tile
 	 * 
@@ -695,27 +723,24 @@ public class PhysDB extends Database {
 	/**
 	 * Load the first protection within a block's radius
 	 * 
-	 * @param x
-	 *            the block's x coordinate
-	 * @param y
-	 *            the block's y coordinate
-	 * @param z
-	 *            the block's z coordinate
-	 * @param radius
-	 *            the radius to search
-	 * @return the Chest found , null otherwise
+	 * @param world
+     * @param x
+     * @param y
+     * @param z
+     * @param radius
+	 * @return list of Protection objects found
 	 */
-	public List<Protection> loadProtections(String world, int _x, int _y, int _z, int radius) {
+	public List<Protection> loadProtections(String world, int x, int y, int z, int radius) {
 		try {
 			PreparedStatement statement = prepare("SELECT protections.id AS protectionId, rights.id AS rightsId, protections.type AS protectionType, rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights FROM protections LEFT OUTER JOIN rights ON protections.id = rights.chest WHERE protections.world = ? AND protections.x >= ? AND protections.x <= ? AND protections.y >= ? AND protections.y <= ? AND protections.z >= ? AND protections.z <= ?");
 
 			statement.setString(1, world);
-			statement.setInt(2, _x - radius);
-			statement.setInt(3, _x + radius);
-			statement.setInt(4, _y - radius);
-			statement.setInt(5, _y + radius);
-			statement.setInt(6, _z - radius);
-			statement.setInt(7, _z + radius);
+			statement.setInt(2, x - radius);
+			statement.setInt(3, x + radius);
+			statement.setInt(4, y - radius);
+			statement.setInt(5, y + radius);
+			statement.setInt(6, z - radius);
+			statement.setInt(7, z + radius);
 
 			return resolveProtections(statement);
 		} catch (Exception e) {
@@ -730,7 +755,7 @@ public class PhysDB extends Database {
 	 * 
 	 * @param player
 	 * @param start
-	 * @param max
+	 * @param count
 	 * @return
 	 */
 	public List<Protection> loadProtectionsByPlayer(String player, int start, int count) {
@@ -856,9 +881,8 @@ public class PhysDB extends Database {
 	 * Register a limit
 	 * 
 	 * @param type
-	 *            the type to register
-	 * @param data
-	 *            the user/group to register
+     * @param amount
+     * @param entity
 	 */
 	public void registerProtectionLimit(int type, int amount, String entity) {
 		try {

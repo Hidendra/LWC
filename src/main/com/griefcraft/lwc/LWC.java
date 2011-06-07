@@ -450,11 +450,11 @@ public class LWC {
 			updateThread.queueProtectionUpdate(protection);
 		}
 
-		if (configuration.getBoolean("core.showNotices", true) && (isAdmin(player) || isMod(player))) {
+		if (configuration.getBoolean("core.showNotices", true)) {
 			boolean isOwner = protection.isOwner(player);
 			boolean showMyNotices = configuration.getBoolean("core.showMyNotices", true);
 			
-			if(!isOwner || (isOwner && showMyNotices)) {
+			if((!isOwner && (isAdmin(player) || isMod(player))) || (isOwner && showMyNotices)) {
 				sendLocale(player, "protection.general.notice.protected", "type", getLocale(protection.typeToString().toLowerCase()), "block", materialToString(block), "owner", protection.getOwner());
 			}
 		}
@@ -764,10 +764,8 @@ public class LWC {
 		if(!(sender instanceof Player)) {
 			return true;
 		}
-	
+
 		Player player = (Player) sender;
-		System.out.println(node + " -> {" + hasPermission(player, node) + "}");
-		
 		return hasPermission(player, node);
 	}
 
@@ -783,7 +781,7 @@ public class LWC {
             return permissions.permission(player, node);
         }
 
-        return false;
+        return true;
     }
 
 	/**
@@ -900,12 +898,15 @@ public class LWC {
 			e.printStackTrace();
 		}
 
-		// tell all modules we're loaded
-		moduleLoader.loadAll();
-		
 		// check any major conversions
 		MySQLPost200.checkDatabaseConversion(this);
         MySQLPost301.checkDatabaseConversion(this);
+
+        // precache lots of protections
+        physicalDatabase.precache();
+
+		// tell all modules we're loaded
+		moduleLoader.loadAll();
 	}
 	
 	/**
