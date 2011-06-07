@@ -4,3 +4,8 @@ magnet:
 
     # The radius around containers that they will suck up
     radius: 3
+
+    # A blacklist of items that will NOT be picked up
+    # Item names usually work, but be careful
+    blacklist:
+        - 500

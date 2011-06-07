@@ -17,15 +17,13 @@
 
 package com.griefcraft.modules.modes;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import com.griefcraft.util.config.Configuration;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Server;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Entity;
@@ -39,6 +37,11 @@ import com.griefcraft.scripting.JavaModule;
 public class MagnetModule extends JavaModule {
 
     private Configuration configuration = Configuration.load("magnet.yml");
+
+    /**
+     * The item blacklist
+     */
+    private List<Integer> itemBlacklist;
 
     /**
      * The radius around the container in which to suck up items
@@ -69,6 +72,12 @@ public class MagnetModule extends JavaModule {
 					
 					Item item = (Item) entity;
 					ItemStack itemStack = item.getItemStack();
+
+                    // check if it is in the blacklist
+                    if(itemBlacklist.contains(itemStack.getTypeId())) {
+                        continue;
+                    }
+
 					Location location = item.getLocation();
 					int x = location.getBlockX();
 					int y = location.getBlockY();
@@ -126,7 +135,19 @@ public class MagnetModule extends JavaModule {
 	
 	@Override
 	public void load(LWC lwc) {
+        itemBlacklist = new ArrayList<Integer>();
         radius = configuration.getInt("magnet.radius", 3);
+
+        // get the item blacklist
+        List<String> temp = configuration.getStringList("magnet.blacklist", new ArrayList<String>());
+
+        for(String item : temp) {
+            Material material = Material.matchMaterial(item);
+
+            if(material != null) {
+                itemBlacklist.add(material.getId());
+            }
+        }
 
 		// register our search thread schedule
 		SearchThread searchThread = new SearchThread();

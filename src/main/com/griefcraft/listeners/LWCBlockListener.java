@@ -139,22 +139,6 @@ public class LWCBlockListener extends BlockListener {
 	}
 
 	/**
-	 * Redirect certain events (to more seperate the two distinct functions they are used for)
-	 */
-	@Override
-	public void onBlockDamage(BlockDamageEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
-
-		if(!LWC.ENABLED) {
-			return;
-		}
-		
-		blockTouched(event);
-	}
-
-	/**
 	 * Used for auto registering placed protections
 	 */
 	@Override
@@ -241,34 +225,6 @@ public class LWCBlockListener extends BlockListener {
 		 * Tell them
 		 */
 		lwc.sendLocale(player, "protection.onplace.create.finalize", "type", lwc.getLocale(autoRegisterType.toLowerCase()), "block", LWC.materialToString(block));
-	}
-
-	/**
-	 * Called when a block is touched (left clicked). Used to complete registrations, etc etc!
-	 * 
-	 * @param event
-	 */
-	private void blockTouched(BlockDamageEvent event) {
-		LWC lwc = plugin.getLWC();
-		Player player = event.getPlayer();
-		Block block = event.getBlock();
-		Protection protection = lwc.findProtection(block);
-
-		List<String> actions = lwc.getMemoryDatabase().getActions(player.getName());
-		
-		Result result;
-		boolean canAccess = lwc.canAccessProtection(player, protection);
-		boolean canAdmin = lwc.canAdminProtection(player, protection);
-		
-		if(protection != null) {
-			result = lwc.getModuleLoader().dispatchEvent(Event.INTERACT_PROTECTION, player, protection, actions, canAccess, canAdmin);
-		} else {
-			result = lwc.getModuleLoader().dispatchEvent(Event.INTERACT_BLOCK, player, block, actions);
-		}
-		
-		if(result == Result.CANCEL) {
-			return;
-		}
 	}
 
 }

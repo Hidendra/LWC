@@ -47,7 +47,7 @@ public class PersistModule extends JavaModule {
 		}
 		
 		if(!lwc.isModeWhitelisted(player, mode)) {
-			if (!lwc.isAdmin(sender) && lwc.isModeEnabled(mode)) {
+			if (!lwc.isAdmin(sender) && !lwc.isModeEnabled(mode)) {
 				lwc.sendLocale(player, "protection.modes.disabled");
 				return CANCEL;
 			}

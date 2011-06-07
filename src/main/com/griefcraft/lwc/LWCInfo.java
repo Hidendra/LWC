@@ -40,10 +40,10 @@ public class LWCInfo {
 	/**
 	 * LWC's version
 	 */
-	public static final double VERSION = 3.00;
+	public static final double VERSION = 3.01;
 
 	static {
-		FULL_VERSION = String.format("v%.2f-final", VERSION);
+		FULL_VERSION = String.format("v%.2f", VERSION);
 	}
 
 }

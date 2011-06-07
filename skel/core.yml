@@ -5,6 +5,7 @@ core:
     cacheSize: 10000
     defaultMenuStyle: basic
     showNotices: true
+    showMyNotices: true
     verbose: false
     opIsLWCAdmin: true
 
