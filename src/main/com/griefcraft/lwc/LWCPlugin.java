@@ -193,10 +193,6 @@ public class LWCPlugin extends JavaPlugin {
 		// these can only apply to players, not the console (who has absolute player :P)
 		if (isPlayer) {
 			Player player = (Player) sender;
-                if (!lwc.hasPermission(player, "lwc.protect")) {
-				sender.sendMessage(Colors.Red + "You do not have permission to do that");
-				// return true;
-			}
 
 			// Aliases
 			if (commandName.equals("cpublic")) {
@@ -222,9 +218,6 @@ public class LWCPlugin extends JavaPlugin {
 				return true;
 			} else if (commandName.equals("climits")) {
 				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "limits", argString.isEmpty() ? new String[0] : argString.split(" "));
-				return true;
-			} else if (commandName.equals("cstatus")) {
-				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", ("status " + argString).split(" "));
 				return true;
 			} else if (commandName.equals("cadmin")) {
                 lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "admin", argString.isEmpty() ? new String[0] : argString.split(" "));
