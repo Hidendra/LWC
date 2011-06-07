@@ -192,8 +192,6 @@ public class LWCPlugin extends JavaPlugin {
 
 		// these can only apply to players, not the console (who has absolute player :P)
 		if (isPlayer) {
-			Player player = (Player) sender;
-
 			// Aliases
 			if (commandName.equals("cpublic")) {
 				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", "public".split(" "));
