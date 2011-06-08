@@ -17,14 +17,13 @@
 
 package com.griefcraft.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.entity.Player;
-
 import com.griefcraft.cache.CacheSet;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.util.Colors;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Protection {
 

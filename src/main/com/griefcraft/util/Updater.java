@@ -17,23 +17,17 @@
 
 package com.griefcraft.util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import com.griefcraft.logging.Logger;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.sql.Database;
+
+import java.io.*;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class Updater {
 

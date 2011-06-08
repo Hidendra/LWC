@@ -7,7 +7,6 @@ import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
@@ -15,15 +14,15 @@ import java.util.Map;
 
 public class AdminDebug extends JavaModule {
 
-	@Override
-	public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
-		if(!StringUtils.hasFlag(command, "a") && !StringUtils.hasFlag(command, "admin")) {
-			return DEFAULT;
-		}
+    @Override
+    public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
+        if (!StringUtils.hasFlag(command, "a") && !StringUtils.hasFlag(command, "admin")) {
+            return DEFAULT;
+        }
 
-		if(!args[0].equals("debug")) {
-			return DEFAULT;
-		}
+        if (!args[0].equals("debug")) {
+            return DEFAULT;
+        }
 
         ModuleLoader moduleLoader = lwc.getModuleLoader();
 
@@ -31,7 +30,7 @@ public class AdminDebug extends JavaModule {
         sender.sendMessage("Loaded modules: " + Colors.Green + moduleLoader.getModuleCount());
         sender.sendMessage("Module hierarchy:");
 
-        for(Map.Entry<Plugin, List<MetaData>> entry : moduleLoader.getRegisteredModules().entrySet()) {
+        for (Map.Entry<Plugin, List<MetaData>> entry : moduleLoader.getRegisteredModules().entrySet()) {
             Plugin plugin = entry.getKey();
             List<MetaData> modules = entry.getValue();
 
@@ -40,9 +39,9 @@ public class AdminDebug extends JavaModule {
 
         sender.sendMessage(" ");
         // send a report
-        moduleLoader.dispatchEvent(ModuleLoader.Event.COMMAND, sender, "admin", new String[] { "report" });
+        moduleLoader.dispatchEvent(ModuleLoader.Event.COMMAND, sender, "admin", new String[]{"report"});
 
-		return CANCEL;
-	}
+        return CANCEL;
+    }
 
 }
