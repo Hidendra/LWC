@@ -170,7 +170,6 @@ public class ChestProtect implements Runnable {
 		}
 	}
 
-	@Override
 	public void run() {
 		try {
 			log("LWC Conversion tool for Chest Protect chests");

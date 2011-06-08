@@ -226,6 +226,8 @@ public abstract class Database {
 			return null;
 		}
 
+        System.out.println(sql);
+
 		if (statementCache.containsKey(sql)) {
 			postPrepare();
 			return statementCache.get(sql);

@@ -21,6 +21,10 @@ iConomy:
 groups:
     SomeGroup:
         charge: 5.00
+        discount:
+            active: false
+            amount: 5
+            newCharge: 0.00
 
 players:
     Hidendra:
