@@ -132,7 +132,6 @@ public class ChastityChest implements Runnable {
 		}
 	}
 
-	@Override
 	public void run() {
 		try {
 			log("LWC Conversion tool for Chastity Chest chests");
