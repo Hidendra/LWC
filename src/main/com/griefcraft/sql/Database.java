@@ -226,8 +226,6 @@ public abstract class Database {
 			return null;
 		}
 
-        System.out.println(sql);
-
 		if (statementCache.containsKey(sql)) {
 			postPrepare();
 			return statementCache.get(sql);
@@ -253,7 +251,7 @@ public abstract class Database {
 	 * @param column
 	 */
 	public boolean addColumn(String table, String column, String type) {
-		return executeQueryNoException("ALTER TABLE " + table + " ADD " + column + " " + type);
+		return executeUpdateNoException("ALTER TABLE " + table + " ADD " + column + " " + type);
 	}
 	
 	/**
@@ -263,7 +261,7 @@ public abstract class Database {
 	 * @param newName
 	 */
 	public boolean renameTable(String table, String newName) {
-		return executeQueryNoException("ALTER TABLE " + table + " RENAME TO " + newName);
+		return executeUpdateNoException("ALTER TABLE " + table + " RENAME TO " + newName);
 	}
 	
 	/**
@@ -272,24 +270,24 @@ public abstract class Database {
 	 * @param table
 	 */
 	public boolean dropTable(String table) {
-		return executeQueryNoException("DROP TABLE " + table);
+		return executeUpdateNoException("DROP TABLE " + table);
 	}
 
 	/**
-	 * Execute a query, ignoring any exceptions
+	 * Execute an update, ignoring any exceptions
 	 * 
 	 * @param query
 	 * @return true if an exception was thrown
 	 */
-	public boolean executeQueryNoException(String query) {
+	public boolean executeUpdateNoException(String query) {
 		Statement statement = null;
 		boolean exception = false;
 
 		try {
 			statement = connection.createStatement();
-			statement.executeQuery(query);
+			statement.executeUpdate(query);
 		} catch (SQLException e) {
-			exception = true;
+            exception = true;
 		} finally {
 			try {
 				if(statement != null) {
