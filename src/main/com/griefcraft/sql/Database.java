@@ -1,16 +1,16 @@
 /**
  * This file is part of LWC (https://github.com/Hidendra/LWC)
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -39,279 +39,279 @@ import org.bukkit.Bukkit;
 
 public abstract class Database {
 
-	public enum Type {
-		MySQL("mysql.jar"), //
-		SQLite("sqlite.jar"), //
-		NONE("nil"); //
+    public enum Type {
+        MySQL("mysql.jar"), //
+        SQLite("sqlite.jar"), //
+        NONE("nil"); //
 
-		private String driver;
+        private String driver;
 
-		Type(String driver) {
-			this.driver = driver;
-		}
+        Type(String driver) {
+            this.driver = driver;
+        }
 
-		public String getDriver() {
-			return driver;
-		}
+        public String getDriver() {
+            return driver;
+        }
 
-	}
+    }
 
-	/**
-	 * The database engine being used for this connection
-	 */
-	public Type currentType;
+    /**
+     * The database engine being used for this connection
+     */
+    public Type currentType;
 
-	/**
-	 * Store cached prepared statements.
-	 * 
-	 * Since SQLite JDBC doesn't cache them.. we do it ourselves :S
-	 */
-	private Map<String, PreparedStatement> statementCache = new HashMap<String, PreparedStatement>();
+    /**
+     * Store cached prepared statements.
+     * <p/>
+     * Since SQLite JDBC doesn't cache them.. we do it ourselves :S
+     */
+    private Map<String, PreparedStatement> statementCache = new HashMap<String, PreparedStatement>();
 
-	/**
-	 * The connection to the database
-	 */
-	protected Connection connection = null;
+    /**
+     * The connection to the database
+     */
+    protected Connection connection = null;
 
-	/**
-	 * Logging object
-	 */
-	protected Logger logger = Logger.getLogger(getClass().getSimpleName());
+    /**
+     * Logging object
+     */
+    protected Logger logger = Logger.getLogger(getClass().getSimpleName());
 
-	/**
-	 * The default database engine being used. This is set via config
-	 * 
-	 * @default SQLite
-	 */
-	public static Type DefaultType = Type.NONE;
+    /**
+     * The default database engine being used. This is set via config
+     *
+     * @default SQLite
+     */
+    public static Type DefaultType = Type.NONE;
 
-	/**
-	 * If we are connected to sqlite
-	 */
-	private boolean connected = false;
+    /**
+     * If we are connected to sqlite
+     */
+    private boolean connected = false;
 
-	public Database() {
-		currentType = DefaultType;
-	}
+    public Database() {
+        currentType = DefaultType;
+    }
 
-	public Database(Type currentType) {
-		this.currentType = currentType;
-	}
-	
-	/**
-	 * Print an exception to stdout
-	 * 
-	 * @param exception
-	 */
-	protected void printException(Exception exception) {
-		
-	}
+    public Database(Type currentType) {
+        this.currentType = currentType;
+    }
 
-	/**
-	 * Connect to MySQL
-	 * 
-	 * @return if the connection was succesful
-	 */
-	public boolean connect() throws Exception {
-		if (connection != null) {
-			return true;
-		}
-		
-		if(currentType == null || currentType == Type.NONE) {
-			log("Invalid database engine");
-			return false;
-		}
+    /**
+     * Print an exception to stdout
+     *
+     * @param exception
+     */
+    protected void printException(Exception exception) {
 
-		// load the database jar
+    }
+
+    /**
+     * Connect to MySQL
+     *
+     * @return if the connection was succesful
+     */
+    public boolean connect() throws Exception {
+        if (connection != null) {
+            return true;
+        }
+
+        if (currentType == null || currentType == Type.NONE) {
+            log("Invalid database engine");
+            return false;
+        }
+
+        // load the database jar
         ClassLoader classLoader;
 
-        if(currentType == Type.SQLite) {
-		    classLoader = new URLClassLoader(new URL[] { new URL("jar:file:" + new File(Updater.DEST_LIBRARY_FOLDER + "lib/" + currentType.getDriver()).getPath() + "!/") });
+        if (currentType == Type.SQLite) {
+            classLoader = new URLClassLoader(new URL[]{new URL("jar:file:" + new File(Updater.DEST_LIBRARY_FOLDER + "lib/" + currentType.getDriver()).getPath() + "!/")});
         } else {
             classLoader = Bukkit.getServer().getClass().getClassLoader();
         }
 
-		// DatabaseClassLoader classLoader = DatabaseClassLoader.getInstance(new URL("jar:file:" + new File(Updater.DEST_LIBRARY_FOLDER + "lib/" + currentType.getDriver()).getAbsolutePath() + "!/"));
-		
-		String className = "";
-		if (currentType == Type.MySQL) {
-			className = "com.mysql.jdbc.Driver";
-		} else {
-			className = "org.sqlite.JDBC";
-		}
+        // DatabaseClassLoader classLoader = DatabaseClassLoader.getInstance(new URL("jar:file:" + new File(Updater.DEST_LIBRARY_FOLDER + "lib/" + currentType.getDriver()).getAbsolutePath() + "!/"));
 
-		Driver driver = (Driver) classLoader.loadClass(className).newInstance();
-		DriverManager.registerDriver(new DriverStub(driver));
+        String className = "";
+        if (currentType == Type.MySQL) {
+            className = "com.mysql.jdbc.Driver";
+        } else {
+            className = "org.sqlite.JDBC";
+        }
 
-		Properties properties = new Properties();
+        Driver driver = (Driver) classLoader.loadClass(className).newInstance();
+        DriverManager.registerDriver(new DriverStub(driver));
 
-		// if we're using mysql, append the database info
-		if (currentType == Type.MySQL) {
-			LWC lwc = LWC.getInstance();
-			properties.put("autoReconnect", "true");
-			properties.put("user", lwc.getConfiguration().getString("database.username"));
-			properties.put("password", lwc.getConfiguration().getString("database.password"));
-		}
+        Properties properties = new Properties();
 
-		connection = DriverManager.getConnection("jdbc:" + currentType.toString().toLowerCase() + ":" + getDatabasePath(), properties);
-		connected = true;
+        // if we're using mysql, append the database info
+        if (currentType == Type.MySQL) {
+            LWC lwc = LWC.getInstance();
+            properties.put("autoReconnect", "true");
+            properties.put("user", lwc.getConfiguration().getString("database.username"));
+            properties.put("password", lwc.getConfiguration().getString("database.password"));
+        }
 
-		return true;
-	}
+        connection = DriverManager.getConnection("jdbc:" + currentType.toString().toLowerCase() + ":" + getDatabasePath(), properties);
+        connected = true;
 
-	public void dispose() {
-		statementCache.clear();
+        return true;
+    }
 
-		try {
-			if (connection != null) {
-				connection.close();
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		connection = null;
-	}
+    public void dispose() {
+        statementCache.clear();
 
-	/**
-	 * @return the connection to the database
-	 */
-	public Connection getConnection() {
-		return connection;
-	}
+        try {
+            if (connection != null) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-	/**
-	 * @return the path where the database file should be saved
-	 */
-	public String getDatabasePath() {
-		Configuration lwcConfiguration = LWC.getInstance().getConfiguration();
-		
-		if (currentType == Type.MySQL) {
-			return "//" + lwcConfiguration.getString("database.host") + "/" + lwcConfiguration.getString("database.database");
-		}
+        connection = null;
+    }
 
-		return lwcConfiguration.getString("database.path");
-	}
+    /**
+     * @return the connection to the database
+     */
+    public Connection getConnection() {
+        return connection;
+    }
 
-	/**
-	 * @return the database engine type
-	 */
-	public Type getType() {
-		return currentType;
-	}
+    /**
+     * @return the path where the database file should be saved
+     */
+    public String getDatabasePath() {
+        Configuration lwcConfiguration = LWC.getInstance().getConfiguration();
 
-	public abstract void load();
+        if (currentType == Type.MySQL) {
+            return "//" + lwcConfiguration.getString("database.host") + "/" + lwcConfiguration.getString("database.database");
+        }
 
-	/**
-	 * Log a string to stdout
-	 * 
-	 * @param str
-	 *            The string to log
-	 */
-	public void log(String str) {
-		logger.log(str);
-	}
+        return lwcConfiguration.getString("database.path");
+    }
 
-	public void log(String str, Level level) {
-		logger.log(str, level);
-	}
-	
-	/**
-	 * Called after a statement is prepared
-	 */
-	protected void postPrepare() {
-		
-	}
+    /**
+     * @return the database engine type
+     */
+    public Type getType() {
+        return currentType;
+    }
 
-	/**
-	 * Prepare a statement unless it's already cached (and if so, just return it)
-	 * 
-	 * @param sql
-	 * @return
-	 */
-	public PreparedStatement prepare(String sql) {
-		if (connection == null) {
-			return null;
-		}
+    public abstract void load();
 
-		if (statementCache.containsKey(sql)) {
-			postPrepare();
-			return statementCache.get(sql);
-		}
+    /**
+     * Log a string to stdout
+     *
+     * @param str The string to log
+     */
+    public void log(String str) {
+        logger.log(str);
+    }
 
-		try {
-			PreparedStatement preparedStatement = connection.prepareStatement(sql);
-			statementCache.put(sql, preparedStatement);
-			postPrepare();
+    public void log(String str, Level level) {
+        logger.log(str, level);
+    }
 
-			return preparedStatement;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+    /**
+     * Called after a statement is prepared
+     */
+    protected void postPrepare() {
 
-		return null;
-	}
+    }
 
-	/**
-	 * Add a column to a table
-	 * 
-	 * @param table
-	 * @param column
-	 */
-	public boolean addColumn(String table, String column, String type) {
-		return executeUpdateNoException("ALTER TABLE " + table + " ADD " + column + " " + type);
-	}
-	
-	/**
-	 * Rename a table
-	 * 
-	 * @param table
-	 * @param newName
-	 */
-	public boolean renameTable(String table, String newName) {
-		return executeUpdateNoException("ALTER TABLE " + table + " RENAME TO " + newName);
-	}
-	
-	/**
-	 * Drop a table
-	 * 
-	 * @param table
-	 */
-	public boolean dropTable(String table) {
-		return executeUpdateNoException("DROP TABLE " + table);
-	}
+    /**
+     * Prepare a statement unless it's already cached (and if so, just return it)
+     *
+     * @param sql
+     * @return
+     */
+    public PreparedStatement prepare(String sql) {
+        if (connection == null) {
+            return null;
+        }
 
-	/**
-	 * Execute an update, ignoring any exceptions
-	 * 
-	 * @param query
-	 * @return true if an exception was thrown
-	 */
-	public boolean executeUpdateNoException(String query) {
-		Statement statement = null;
-		boolean exception = false;
+        if (statementCache.containsKey(sql)) {
+            postPrepare();
+            return statementCache.get(sql);
+        }
 
-		try {
-			statement = connection.createStatement();
-			statement.executeUpdate(query);
-		} catch (SQLException e) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            statementCache.put(sql, preparedStatement);
+            postPrepare();
+
+            return preparedStatement;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * Add a column to a table
+     *
+     * @param table
+     * @param column
+     */
+    public boolean addColumn(String table, String column, String type) {
+        return executeUpdateNoException("ALTER TABLE " + table + " ADD " + column + " " + type);
+    }
+
+    /**
+     * Rename a table
+     *
+     * @param table
+     * @param newName
+     */
+    public boolean renameTable(String table, String newName) {
+        return executeUpdateNoException("ALTER TABLE " + table + " RENAME TO " + newName);
+    }
+
+    /**
+     * Drop a table
+     *
+     * @param table
+     */
+    public boolean dropTable(String table) {
+        return executeUpdateNoException("DROP TABLE " + table);
+    }
+
+    /**
+     * Execute an update, ignoring any exceptions
+     *
+     * @param query
+     * @return true if an exception was thrown
+     */
+    public boolean executeUpdateNoException(String query) {
+        Statement statement = null;
+        boolean exception = false;
+
+        try {
+            statement = connection.createStatement();
+            statement.executeUpdate(query);
+        } catch (SQLException e) {
             exception = true;
-		} finally {
-			try {
-				if(statement != null) {
-					statement.close();
-				}
-			} catch(SQLException e) { }
-		}
-		
-		return exception;
-	}
-	
-	/**
-	 * @return true if connected to the database
-	 */
-	public boolean isConnected() {
-		return connected;
-	}
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException e) {
+            }
+        }
+
+        return exception;
+    }
+
+    /**
+     * @return true if connected to the database
+     */
+    public boolean isConnected() {
+        return connected;
+    }
 
 }
