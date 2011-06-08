@@ -5,7 +5,6 @@ import com.griefcraft.cache.CacheSet;
 import com.griefcraft.logging.Logger;
 import com.griefcraft.migration.ConfigPost300;
 import com.griefcraft.migration.MySQLPost200;
-import com.griefcraft.migration.MySQLPost301;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
@@ -929,7 +928,6 @@ public class LWC {
 
         // check any major conversions
         MySQLPost200.checkDatabaseConversion(this);
-        MySQLPost301.checkDatabaseConversion(this);
 
         // precache lots of protections
         physicalDatabase.precache();
