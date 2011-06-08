@@ -86,24 +86,24 @@ public class Updater {
 
 	/**
 	 * Check for dependencies
-	 * 
-	 * @return true if LWC should be reloaded
 	 */
 	public void check() {
-		String[] shared = new String[] { DEST_LIBRARY_FOLDER + "lib/" + Database.DefaultType.getDriver(), getFullNativeLibraryPath() };
+        if(Database.DefaultType == Database.Type.SQLite) {
+            String[] shared = new String[] { DEST_LIBRARY_FOLDER + "lib/sqlite.jar", getFullNativeLibraryPath() };
 
-		for (String path : shared) {
-			File file = new File(path);
+            for (String path : shared) {
+                File file = new File(path);
 
-			if (file != null && !file.exists() && !file.isDirectory()) {
-				UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "shared/" + path.replaceAll(DEST_LIBRARY_FOLDER, ""));
-				updaterFile.setLocalLocation(path);
+                if (file != null && !file.exists() && !file.isDirectory()) {
+                    UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "shared/" + path.replaceAll(DEST_LIBRARY_FOLDER, ""));
+                    updaterFile.setLocalLocation(path);
 
-				if (!needsUpdating.contains(updaterFile)) {
-					needsUpdating.add(updaterFile);
-				}
-			}
-		}
+                    if (!needsUpdating.contains(updaterFile)) {
+                        needsUpdating.add(updaterFile);
+                    }
+                }
+            }
+        }
 
 		if (LWC.getInstance().getConfiguration().getBoolean("core.autoUpdate", false)) {
 			if (latestPluginVersion > LWCInfo.VERSION) {
@@ -201,7 +201,6 @@ public class Updater {
 	 */
 	public void loadVersions(boolean background) {
 		class Background_Check_Thread implements Runnable {
-			@Override
 			public void run() {
 				try {
 					URL url = new URL(UPDATE_SITE + VERSION_FILE);

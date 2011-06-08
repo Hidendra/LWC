@@ -35,6 +35,7 @@ import com.griefcraft.logging.Logger;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.util.Updater;
 import com.griefcraft.util.config.Configuration;
+import org.bukkit.Bukkit;
 
 public abstract class Database {
 
@@ -122,7 +123,14 @@ public abstract class Database {
 		}
 
 		// load the database jar
-		URLClassLoader classLoader = new URLClassLoader(new URL[] { new URL("jar:file:" + new File(Updater.DEST_LIBRARY_FOLDER + "lib/" + currentType.getDriver()).getPath() + "!/") });
+        ClassLoader classLoader;
+
+        if(currentType == Type.SQLite) {
+		    classLoader = new URLClassLoader(new URL[] { new URL("jar:file:" + new File(Updater.DEST_LIBRARY_FOLDER + "lib/" + currentType.getDriver()).getPath() + "!/") });
+        } else {
+            classLoader = Bukkit.getServer().getClass().getClassLoader();
+        }
+
 		// DatabaseClassLoader classLoader = DatabaseClassLoader.getInstance(new URL("jar:file:" + new File(Updater.DEST_LIBRARY_FOLDER + "lib/" + currentType.getDriver()).getAbsolutePath() + "!/"));
 		
 		String className = "";
