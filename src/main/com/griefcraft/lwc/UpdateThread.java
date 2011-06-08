@@ -17,12 +17,12 @@
 
 package com.griefcraft.lwc;
 
+import com.griefcraft.logging.Logger;
+import com.griefcraft.model.Protection;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
-import com.griefcraft.logging.Logger;
-import com.griefcraft.model.Protection;
 
 public class UpdateThread implements Runnable {
 

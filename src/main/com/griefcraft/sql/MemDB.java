@@ -17,15 +17,15 @@
 
 package com.griefcraft.sql;
 
+import com.griefcraft.model.Action;
+import com.griefcraft.model.Protection;
+import com.griefcraft.util.Performance;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.griefcraft.model.Action;
-import com.griefcraft.model.Protection;
-import com.griefcraft.util.Performance;
 
 public class MemDB extends Database {
 

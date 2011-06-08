@@ -17,9 +17,9 @@
 
 package com.griefcraft.logging;
 
-import java.util.logging.Level;
-
 import com.griefcraft.lwc.LWC;
+
+import java.util.logging.Level;
 
 public class Logger {
 

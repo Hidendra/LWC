@@ -1,37 +1,15 @@
 package com.griefcraft.lwc;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Formatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.griefcraft.migration.MySQLPost301;
-import com.griefcraft.modules.admin.*;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.ContainerBlock;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-
 import com.firestar.mcbans.mcbans;
 import com.griefcraft.cache.CacheSet;
 import com.griefcraft.logging.Logger;
 import com.griefcraft.migration.ConfigPost300;
 import com.griefcraft.migration.MySQLPost200;
+import com.griefcraft.migration.MySQLPost301;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
+import com.griefcraft.modules.admin.*;
 import com.griefcraft.modules.create.CreateModule;
 import com.griefcraft.modules.destroy.DestroyModule;
 import com.griefcraft.modules.flag.FlagModule;
@@ -48,8 +26,8 @@ import com.griefcraft.modules.owners.OwnersModule;
 import com.griefcraft.modules.redstone.RedstoneModule;
 import com.griefcraft.modules.unlock.UnlockModule;
 import com.griefcraft.modules.worldguard.WorldGuardModule;
-import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.Module;
+import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.scripting.ModuleLoader.Event;
 import com.griefcraft.sql.Database;
@@ -61,6 +39,20 @@ import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.config.Configuration;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.ContainerBlock;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+
+import java.security.MessageDigest;
+import java.util.*;
 
 public class LWC {
 
@@ -456,7 +448,7 @@ public class LWC {
             boolean isOwner = protection.isOwner(player);
             boolean showMyNotices = configuration.getBoolean("core.showMyNotices", true);
 
-            if ((!isOwner && (isAdmin(player) || isMod(player))) || (isOwner && showMyNotices)) {
+            if (isAdmin(player) || isMod(player) || (isOwner && showMyNotices)) {
                 String owner = protection.getOwner();
 
                 // replace your username with "you" if you own the protection
