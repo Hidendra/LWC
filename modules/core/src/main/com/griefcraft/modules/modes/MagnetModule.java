@@ -39,6 +39,11 @@ public class MagnetModule extends JavaModule {
     private Configuration configuration = Configuration.load("magnet.yml");
 
     /**
+     * If this module is enabled
+     */
+    private boolean enabled = false;
+
+    /**
      * The item blacklist
      */
     private List<Integer> itemBlacklist;
@@ -47,6 +52,16 @@ public class MagnetModule extends JavaModule {
      * The radius around the container in which to suck up items
      */
     private int radius;
+
+    /**
+     * How many items to check each time
+     */
+    private int perSweep;
+
+    /**
+     * The current entity queue
+     */
+    private List<Entity> entities = null;
 
 	// does all of the work
 	// searches the worlds for items and magnet chests nearby
@@ -61,14 +76,23 @@ public class MagnetModule extends JavaModule {
 			
 			for(World world : server.getWorlds()) {
 				String worldName = world.getName();
-				List<Entity> entities = world.getEntities();
+
+                if(entities == null || entities.size() == 0) {
+                    entities = world.getEntities();
+                }
+
 				Iterator<Entity> iterator = entities.iterator();
+                int count = 0;
 				
 				while(iterator.hasNext()) {
 					Entity entity = iterator.next();
 					if(!(entity instanceof Item)) {
 						continue;
 					}
+
+                    if(count > perSweep) {
+                        break;
+                    }
 					
 					Item item = (Item) entity;
 					ItemStack itemStack = item.getItemStack();
@@ -123,6 +147,9 @@ public class MagnetModule extends JavaModule {
 						
 						break;
 					}
+
+                    count ++;
+                    iterator.remove();
 				}
 			}
 		}
@@ -135,8 +162,14 @@ public class MagnetModule extends JavaModule {
 	
 	@Override
 	public void load(LWC lwc) {
+        enabled = configuration.getBoolean("magnet.enabled", false);
         itemBlacklist = new ArrayList<Integer>();
         radius = configuration.getInt("magnet.radius", 3);
+        perSweep = configuration.getInt("magnet.perSweep", 20);
+
+        if(!enabled) {
+            return;
+        }
 
         // get the item blacklist
         List<String> temp = configuration.getStringList("magnet.blacklist", new ArrayList<String>());
