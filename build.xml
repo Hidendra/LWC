@@ -18,7 +18,7 @@
 	<property name="dist" value="../../public_html/griefcraft/bukkit/lwc" />
 	<property name="dist.iconomy" value="${dist}/modules/iConomy" />
 	
-	<property name="branch" value="release" />
+	<property name="branch" value="development" />
 	
 	<!-- Location of the plugins folder development server -->
 	<property name="dev" value="../../minecraft/plugins" />
@@ -41,14 +41,14 @@
 		<mkdir dir="${bin}/iconomy/" />
 		
 		<echo>Compiling LWC and Core Modules</echo>
-		<javac srcdir="${src};${core};${worldguard};${lists}" destdir="${bin}/core/" deprecation="true" includeantruntime="true">
+		<javac srcdir="${src};${core};${worldguard};${lists}" destdir="${bin}/core/" debuglevel="lines,vars,source" deprecation="true" includeantruntime="true">
 			<classpath>
 				<fileset refid="libs" />
 			</classpath>
 		</javac>
 		
 		<echo>Compiling LWC-iConomy</echo>
-		<javac srcdir="${iconomy}" destdir="${bin}/iconomy/" deprecation="true" includeantruntime="true">
+		<javac srcdir="${iconomy}" destdir="${bin}/iconomy/" deprecation="true" debuglevel="lines,vars,source" includeantruntime="true">
 			<classpath>
 				<fileset refid="libs" />
 				<dirset dir="${bin}/core/" />
