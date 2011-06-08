@@ -34,124 +34,124 @@ import com.griefcraft.util.Updater;
 
 public class LWCPlugin extends JavaPlugin {
 
-	/**
-	 * The block listener
-	 */
-	private BlockListener blockListener;
+    /**
+     * The block listener
+     */
+    private BlockListener blockListener;
 
-	/**
-	 * The entity listener
-	 */
-	private EntityListener entityListener;
+    /**
+     * The entity listener
+     */
+    private EntityListener entityListener;
 
-	/**
-	 * The player listener
-	 */
-	private PlayerListener playerListener;
-	
-	/**
-	 * The server listener
-	 */
-	private ServerListener serverListener;
+    /**
+     * The player listener
+     */
+    private PlayerListener playerListener;
 
-	/**
-	 * The locale for LWC
-	 */
-	private LWCResourceBundle locale;
+    /**
+     * The server listener
+     */
+    private ServerListener serverListener;
 
-	/**
-	 * The logging object
-	 */
-	private Logger logger = Logger.getLogger("LWC");
+    /**
+     * The locale for LWC
+     */
+    private LWCResourceBundle locale;
 
-	/**
-	 * The LWC instance
-	 */
-	private LWC lwc;
+    /**
+     * The logging object
+     */
+    private Logger logger = Logger.getLogger("LWC");
 
-	/**
-	 * LWC updater
-	 */
-	private Updater updater;
+    /**
+     * The LWC instance
+     */
+    private LWC lwc;
 
-	public LWCPlugin() {
-		log("Loading shared objects");
+    /**
+     * LWC updater
+     */
+    private Updater updater;
 
-		updater = new Updater();
-		lwc = new LWC(this);
-		playerListener = new LWCPlayerListener(this);
-		blockListener = new LWCBlockListener(this);
-		entityListener = new LWCEntityListener(this);
-		serverListener = new LWCServerListener(this);
+    public LWCPlugin() {
+        log("Loading shared objects");
 
-		/*
-		 * Set the SQLite native library path
-		 */
-		System.setProperty("org.sqlite.lib.path", updater.getOSSpecificFolder());
+        updater = new Updater();
+        lwc = new LWC(this);
+        playerListener = new LWCPlayerListener(this);
+        blockListener = new LWCBlockListener(this);
+        entityListener = new LWCEntityListener(this);
+        serverListener = new LWCServerListener(this);
 
-		// we want to force people who used sqlite.purejava before to switch:
-		System.setProperty("sqlite.purejava", "");
+        /*
+           * Set the SQLite native library path
+           */
+        System.setProperty("org.sqlite.lib.path", updater.getOSSpecificFolder());
 
-		// BUT, some can't use native, so we need to give them the option to use
-		// pure:
-		String isPureJava = System.getProperty("lwc.purejava");
+        // we want to force people who used sqlite.purejava before to switch:
+        System.setProperty("sqlite.purejava", "");
 
-		if (isPureJava != null && isPureJava.equalsIgnoreCase("true")) {
-			System.setProperty("sqlite.purejava", "true");
-		}
+        // BUT, some can't use native, so we need to give them the option to use
+        // pure:
+        String isPureJava = System.getProperty("lwc.purejava");
 
-		log("Native library: " + updater.getFullNativeLibraryPath());
-	}
+        if (isPureJava != null && isPureJava.equalsIgnoreCase("true")) {
+            System.setProperty("sqlite.purejava", "true");
+        }
 
-	/**
-	 * @return the locale
-	 */
-	public ResourceBundle getLocale() {
-		return locale;
-	}
+        log("Native library: " + updater.getFullNativeLibraryPath());
+    }
 
-	/**
-	 * @return the LWC instance
-	 */
-	public LWC getLWC() {
-		return lwc;
-	}
+    /**
+     * @return the locale
+     */
+    public ResourceBundle getLocale() {
+        return locale;
+    }
 
-	/**
-	 * @return the Updater instance
-	 */
-	public Updater getUpdater() {
-		return updater;
-	}
+    /**
+     * @return the LWC instance
+     */
+    public LWC getLWC() {
+        return lwc;
+    }
 
-	/**
-	 * Verify a command name
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public boolean isValidCommand(String name) {
-		name = name.toLowerCase();
+    /**
+     * @return the Updater instance
+     */
+    public Updater getUpdater() {
+        return updater;
+    }
 
-		if (name.equals("lwc")) {
-			return true;
-		} else if (name.equals("cpublic")) {
-			return true;
-		} else if (name.equals("cpassword")) {
-			return true;
-		} else if (name.equals("cprivate")) {
-			return true;
-		} else if (name.equals("cinfo")) {
-			return true;
-		} else if (name.equals("cmodify")) {
-			return true;
-		} else if (name.equals("cunlock")) {
-			return true;
-		} else if (name.equals("cremove")) {
-			return true;
-		} else if (name.equals("climits")) {
-			return true;
-		} else if (name.equals("credstone")) {
+    /**
+     * Verify a command name
+     *
+     * @param name
+     * @return
+     */
+    public boolean isValidCommand(String name) {
+        name = name.toLowerCase();
+
+        if (name.equals("lwc")) {
+            return true;
+        } else if (name.equals("cpublic")) {
+            return true;
+        } else if (name.equals("cpassword")) {
+            return true;
+        } else if (name.equals("cprivate")) {
+            return true;
+        } else if (name.equals("cinfo")) {
+            return true;
+        } else if (name.equals("cmodify")) {
+            return true;
+        } else if (name.equals("cunlock")) {
+            return true;
+        } else if (name.equals("cremove")) {
+            return true;
+        } else if (name.equals("climits")) {
+            return true;
+        } else if (name.equals("credstone")) {
             return true;
         } else if (name.equals("cmagnet")) {
             return true;
@@ -161,63 +161,62 @@ public class LWCPlugin extends JavaPlugin {
             return true;
         } else if (name.equals("cadmin")) {
             return true;
+        } else {
+            return false;
         }
-		else {
-			return false;
-		}
-	}
+    }
 
-	/**
-	 * Load the database
-	 */
-	public void loadDatabase() {
-		String database = lwc.getConfiguration().getString("database.adapter");
+    /**
+     * Load the database
+     */
+    public void loadDatabase() {
+        String database = lwc.getConfiguration().getString("database.adapter");
 
-		if (database.equals("mysql")) {
-			Database.DefaultType = Database.Type.MySQL;
-		} else {
-			Database.DefaultType = Database.Type.SQLite;
-		}
-	}
+        if (database.equals("mysql")) {
+            Database.DefaultType = Database.Type.MySQL;
+        } else {
+            Database.DefaultType = Database.Type.SQLite;
+        }
+    }
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
-		String commandName = command.getName().toLowerCase();
-		String argString = StringUtils.join(args, 0);
-		boolean isPlayer = (sender instanceof Player); // check if they're a player
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
+        String commandName = command.getName().toLowerCase();
+        String argString = StringUtils.join(args, 0);
+        boolean isPlayer = (sender instanceof Player); // check if they're a player
 
-		if (!isValidCommand(commandName)) {
-			return false;
-		}
+        if (!isValidCommand(commandName)) {
+            return false;
+        }
 
-		// these can only apply to players, not the console (who has absolute player :P)
-		if (isPlayer) {
-			// Aliases
-			if (commandName.equals("cpublic")) {
-				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", "public".split(" "));
-				return true;
-			} else if (commandName.equals("cpassword")) {
-				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", ("password " + argString).split(" "));
-				return true;
-			} else if (commandName.equals("cprivate")) {
-				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", ("private " + argString).split(" "));
-				return true;
-			} else if (commandName.equals("cmodify")) {
-				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "modify", argString.isEmpty() ? new String[0] : argString.split(" "));
-				return true;
-			} else if (commandName.equals("cinfo")) {
-				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "info", new String[0]);
-				return true;
-			} else if (commandName.equals("cunlock")) {
-				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "unlock", argString.isEmpty() ? new String[0] : argString.split(" "));
-				return true;
-			} else if (commandName.equals("cremove")) {
-				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "remove", "protection".split(" "));
-				return true;
-			} else if (commandName.equals("climits")) {
-				lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "limits", argString.isEmpty() ? new String[0] : argString.split(" "));
-				return true;
-			} else if (commandName.equals("cadmin")) {
+        // these can only apply to players, not the console (who has absolute player :P)
+        if (isPlayer) {
+            // Aliases
+            if (commandName.equals("cpublic")) {
+                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", "public".split(" "));
+                return true;
+            } else if (commandName.equals("cpassword")) {
+                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", ("password " + argString).split(" "));
+                return true;
+            } else if (commandName.equals("cprivate")) {
+                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", ("private " + argString).split(" "));
+                return true;
+            } else if (commandName.equals("cmodify")) {
+                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "modify", argString.isEmpty() ? new String[0] : argString.split(" "));
+                return true;
+            } else if (commandName.equals("cinfo")) {
+                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "info", new String[0]);
+                return true;
+            } else if (commandName.equals("cunlock")) {
+                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "unlock", argString.isEmpty() ? new String[0] : argString.split(" "));
+                return true;
+            } else if (commandName.equals("cremove")) {
+                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "remove", "protection".split(" "));
+                return true;
+            } else if (commandName.equals("climits")) {
+                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "limits", argString.isEmpty() ? new String[0] : argString.split(" "));
+                return true;
+            } else if (commandName.equals("cadmin")) {
                 lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "admin", argString.isEmpty() ? new String[0] : argString.split(" "));
                 return true;
             }
@@ -226,7 +225,7 @@ public class LWCPlugin extends JavaPlugin {
             if (commandName.equals("credstone")) {
                 lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "flag", ("redstone " + argString).split(" "));
                 return true;
-            } else if(commandName.equals("cmagnet")) {
+            } else if (commandName.equals("cmagnet")) {
                 lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "flag", ("magnet " + argString).split(" "));
                 return true;
             }
@@ -239,150 +238,150 @@ public class LWCPlugin extends JavaPlugin {
                 lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "mode", ("persist " + argString).split(" "));
                 return true;
             }
-		}
+        }
 
-		if (args.length == 0) {
-			lwc.sendFullHelp(sender);
-			return true;
-		}
-		
-		///// Dispatch command to modules
-		if(lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, args[0].toLowerCase(), args.length > 1 ? StringUtils.join(args, 1).split(" ") : new String[0]) == Result.CANCEL) {
-			return true;
-		}
+        if (args.length == 0) {
+            lwc.sendFullHelp(sender);
+            return true;
+        }
 
-		if (!isPlayer) {
-			sender.sendMessage(Colors.Red + "That LWC command is not supported through the console :-)");
-			return true;
-		}
+        ///// Dispatch command to modules
+        if (lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, args[0].toLowerCase(), args.length > 1 ? StringUtils.join(args, 1).split(" ") : new String[0]) == Result.CANCEL) {
+            return true;
+        }
 
-		return false;
-	}
+        if (!isPlayer) {
+            sender.sendMessage(Colors.Red + "That LWC command is not supported through the console :-)");
+            return true;
+        }
 
-	public void onDisable() {
-		if (lwc != null) {
-			LWC.ENABLED = false;
-			lwc.destruct();
-		}
-	}
+        return false;
+    }
 
-	public void onEnable() {
-		String localization = lwc.getConfiguration().getString("core.locale");
+    public void onDisable() {
+        if (lwc != null) {
+            LWC.ENABLED = false;
+            lwc.destruct();
+        }
+    }
 
-		try {
-			ResourceBundle defaultBundle = null;
-			ResourceBundle optionalBundle = null;
+    public void onEnable() {
+        String localization = lwc.getConfiguration().getString("core.locale");
 
-			// load the default locale first
-			defaultBundle = ResourceBundle.getBundle("lang.lwc", new Locale("en"), new UTF8Control());
+        try {
+            ResourceBundle defaultBundle = null;
+            ResourceBundle optionalBundle = null;
 
-			// and now check if a bundled locale the same as the server's locale exists
-			try {
-				optionalBundle = ResourceBundle.getBundle("lang.lwc", new Locale(localization), new UTF8Control());
-			} catch (MissingResourceException e) {
-			}
-			
-			// ensure both bundles arent the same
-			if(defaultBundle == optionalBundle) {
-				optionalBundle = null;
-			}
+            // load the default locale first
+            defaultBundle = ResourceBundle.getBundle("lang.lwc", new Locale("en"), new UTF8Control());
 
-			locale = new LWCResourceBundle(defaultBundle);
-			
-			if(optionalBundle != null) {
-				locale.addExtensionBundle(optionalBundle);
-			}
-		} catch (MissingResourceException e) {
-			log("We are missing the default locale in LWC.jar.. What happened to it? :-(");
-			log("###########################");
-			log("## SHUTTING DOWN LWC !!! ##");
-			log("###########################");
-			getServer().getPluginManager().disablePlugin(this);
-			return;
-		}
+            // and now check if a bundled locale the same as the server's locale exists
+            try {
+                optionalBundle = ResourceBundle.getBundle("lang.lwc", new Locale(localization), new UTF8Control());
+            } catch (MissingResourceException e) {
+            }
 
-		// located in plugins/LWC/locale/, values in that overrides the ones in the default :-)
-		ResourceBundle optionalBundle = null;
+            // ensure both bundles arent the same
+            if (defaultBundle == optionalBundle) {
+                optionalBundle = null;
+            }
 
-		try {
-			optionalBundle = ResourceBundle.getBundle("lwc", new Locale(localization), new LocaleClassLoader(), new UTF8Control());
-		} catch (MissingResourceException e) {
-		}
+            locale = new LWCResourceBundle(defaultBundle);
 
-		if (optionalBundle != null) {
-			locale.addExtensionBundle(optionalBundle);
-			log("Loaded override bundle: " + optionalBundle.getLocale().toString());
-		}
+            if (optionalBundle != null) {
+                locale.addExtensionBundle(optionalBundle);
+            }
+        } catch (MissingResourceException e) {
+            log("We are missing the default locale in LWC.jar.. What happened to it? :-(");
+            log("###########################");
+            log("## SHUTTING DOWN LWC !!! ##");
+            log("###########################");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
-		int overrides = optionalBundle != null ? optionalBundle.keySet().size() : 0;
+        // located in plugins/LWC/locale/, values in that overrides the ones in the default :-)
+        ResourceBundle optionalBundle = null;
 
-		log("Loaded " + locale.keySet().size() + " locale strings (" + overrides + " overrides)");
+        try {
+            optionalBundle = ResourceBundle.getBundle("lwc", new Locale(localization), new LocaleClassLoader(), new UTF8Control());
+        } catch (MissingResourceException e) {
+        }
 
-		loadDatabase();
-		registerEvents();
-		
-		if(lwc.getConfiguration().getBoolean("core.autoUpdate", false)) {
-			updater.loadVersions(true);
-		}
+        if (optionalBundle != null) {
+            locale.addExtensionBundle(optionalBundle);
+            log("Loaded override bundle: " + optionalBundle.getLocale().toString());
+        }
 
-		lwc.load();
+        int overrides = optionalBundle != null ? optionalBundle.keySet().size() : 0;
 
-		LWC.ENABLED = true;
-		log("At version: " + LWCInfo.FULL_VERSION);
-	}
+        log("Loaded " + locale.keySet().size() + " locale strings (" + overrides + " overrides)");
 
-	/**
-	 * Log a string to the console
-	 * 
-	 * @param str
-	 */
-	private void log(String str) {
-		logger.log(str);
-	}
+        loadDatabase();
+        registerEvents();
 
-	/**
-	 * Register a hook with default priority
-	 * 
-	 * @param listener
+        if (lwc.getConfiguration().getBoolean("core.autoUpdate", false)) {
+            updater.loadVersions(true);
+        }
+
+        lwc.load();
+
+        LWC.ENABLED = true;
+        log("At version: " + LWCInfo.FULL_VERSION);
+    }
+
+    /**
+     * Log a string to the console
+     *
+     * @param str
+     */
+    private void log(String str) {
+        logger.log(str);
+    }
+
+    /**
+     * Register a hook with default priority
+     *
+     * @param listener
      * @param eventType
-	 */
-	private void registerEvent(Listener listener, Type eventType) {
-		registerEvent(listener, eventType, Priority.Highest);
-	}
+     */
+    private void registerEvent(Listener listener, Type eventType) {
+        registerEvent(listener, eventType, Priority.Highest);
+    }
 
-	/**
-	 * Register a hook
-	 * 
-	 * @param listener
+    /**
+     * Register a hook
+     *
+     * @param listener
      * @param eventType
      * @param priority
-	 */
-	private void registerEvent(Listener listener, Type eventType, Priority priority) {
-		logger.log("-> " + eventType.toString(), Level.CONFIG);
+     */
+    private void registerEvent(Listener listener, Type eventType, Priority priority) {
+        logger.log("-> " + eventType.toString(), Level.CONFIG);
 
-		getServer().getPluginManager().registerEvent(eventType, listener, priority, this);
-	}
+        getServer().getPluginManager().registerEvent(eventType, listener, priority, this);
+    }
 
-	/**
-	 * Register all of the events used by LWC
-	 */
-	private void registerEvents() {
-		/* Player events */
-		registerEvent(playerListener, Type.PLAYER_QUIT, Priority.Monitor);
-		registerEvent(playerListener, Type.PLAYER_DROP_ITEM);
-		registerEvent(playerListener, Type.PLAYER_INTERACT);
+    /**
+     * Register all of the events used by LWC
+     */
+    private void registerEvents() {
+        /* Player events */
+        registerEvent(playerListener, Type.PLAYER_QUIT, Priority.Monitor);
+        registerEvent(playerListener, Type.PLAYER_DROP_ITEM);
+        registerEvent(playerListener, Type.PLAYER_INTERACT);
 
-		/* Entity events */
-		registerEvent(entityListener, Type.ENTITY_EXPLODE);
+        /* Entity events */
+        registerEvent(entityListener, Type.ENTITY_EXPLODE);
 
-		/* Block events */
-		registerEvent(blockListener, Type.BLOCK_BREAK);
-		registerEvent(blockListener, Type.BLOCK_PLACE);
-		// registerEvent(blockListener, Type.REDSTONE_CHANGE);
-		registerEvent(blockListener, Type.SIGN_CHANGE);
-		
-		/* Server events */
-		registerEvent(serverListener, Type.PLUGIN_DISABLE);
-	}
+        /* Block events */
+        registerEvent(blockListener, Type.BLOCK_BREAK);
+        registerEvent(blockListener, Type.BLOCK_PLACE);
+        // registerEvent(blockListener, Type.REDSTONE_CHANGE);
+        registerEvent(blockListener, Type.SIGN_CHANGE);
+
+        /* Server events */
+        registerEvent(serverListener, Type.PLUGIN_DISABLE);
+    }
 
 }

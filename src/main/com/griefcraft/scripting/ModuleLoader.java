@@ -1,16 +1,16 @@
 /**
  * This file is part of LWC (https://github.com/Hidendra/LWC)
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -34,212 +34,212 @@ import com.griefcraft.scripting.Module.Result;
 
 public class ModuleLoader {
 
-	public enum Event {
-		/**
-		 * Called when a module is loaded
-		 */
-		LOAD(0),
+    public enum Event {
+        /**
+         * Called when a module is loaded
+         */
+        LOAD(0),
 
-		/**
-		 * Called when a module is unloaded
-		 */
-		UNLOAD(0),
+        /**
+         * Called when a module is unloaded
+         */
+        UNLOAD(0),
 
-		/**
-		 * Called when a console or player issues a command
-		 */
-		COMMAND(3),
+        /**
+         * Called when a console or player issues a command
+         */
+        COMMAND(3),
 
-		/**
-		 * Called when redstone is passed to a protection
-		 */
-		REDSTONE(3),
+        /**
+         * Called when redstone is passed to a protection
+         */
+        REDSTONE(3),
 
-		/**
-		 * Called when a protection is destroyed
-		 */
-		DESTROY_PROTECTION(5),
+        /**
+         * Called when a protection is destroyed
+         */
+        DESTROY_PROTECTION(5),
 
-		/**
-		 * Called when a valid protection is left clicked
-		 */
-		INTERACT_PROTECTION(5),
+        /**
+         * Called when a valid protection is left clicked
+         */
+        INTERACT_PROTECTION(5),
 
-		/**
-		 * Called when a block is left clicked
-		 */
-		INTERACT_BLOCK(3),
-		
-		/**
-		 * Called before a protection is registered
-		 */
-		REGISTER_PROTECTION(2),
-		
-		/**
-		 * Called when a protection needs to be checked if a player can access it
-		 */
-		ACCESS_PROTECTION(2),
-		
-		/**
-		 * Called when a protection needs to be checked if a player can admin it
-		 */
-		ADMIN_PROTECTION(2),
-		
-		/**
-		 * Called when a player drops an item
-		 */
-		DROP_ITEM(3),
-		
-		/**
-		 * Called after a protection is registered
-		 */
-		POST_REGISTRATION(1);
+        /**
+         * Called when a block is left clicked
+         */
+        INTERACT_BLOCK(3),
 
-		Event(int arguments) {
-			this.arguments = arguments;
-		}
+        /**
+         * Called before a protection is registered
+         */
+        REGISTER_PROTECTION(2),
 
-		public int getExpectedArguments() {
-			return arguments;
-		}
+        /**
+         * Called when a protection needs to be checked if a player can access it
+         */
+        ACCESS_PROTECTION(2),
 
-		/**
-		 * Expected amount of arguments (not counting the lwc object!)
-		 */
-		int arguments;
-	}
+        /**
+         * Called when a protection needs to be checked if a player can admin it
+         */
+        ADMIN_PROTECTION(2),
 
-	private static Logger logger = Logger.getLogger("Loader");
+        /**
+         * Called when a player drops an item
+         */
+        DROP_ITEM(3),
 
-	/**
-	 * Path to the root of scripts
-	 */
-	public final static String ROOT_PATH = "plugins/LWC/";
+        /**
+         * Called after a protection is registered
+         */
+        POST_REGISTRATION(1);
 
-	/**
-	 * Map of loaded modules
-	 */
-	// private Map<String, Map<String, MetaData>> packageModules = new HashMap<String, Map<String, MetaData>>();
-	private Map<Plugin, List<MetaData>> pluginModules = new HashMap<Plugin, List<MetaData>>();
+        Event(int arguments) {
+            this.arguments = arguments;
+        }
 
-	/**
-	 * Dispatch an event
-	 * 
-	 * @param event
-	 * @param args
-	 */
-	public Result dispatchEvent(Event event, Object... args) {
-		if(event.getExpectedArguments() > args.length) {
-			return Result.DEFAULT;
-		}
+        public int getExpectedArguments() {
+            return arguments;
+        }
 
-		LWC lwc = LWC.getInstance();
-		Result result = Result.DEFAULT;
+        /**
+         * Expected amount of arguments (not counting the lwc object!)
+         */
+        int arguments;
+    }
 
-		try {
-			for(List<MetaData> modules : pluginModules.values()) {
-				for(MetaData metaData : modules) {
-					Module module = metaData.getModule();
-					Result temp = Result.DEFAULT;
+    private static Logger logger = Logger.getLogger("Loader");
 
-					switch(event) {
+    /**
+     * Path to the root of scripts
+     */
+    public final static String ROOT_PATH = "plugins/LWC/";
 
-					case COMMAND:
-						temp = module.onCommand(lwc, (CommandSender) args[0], (String) args[1], (String[]) args[2]);
-						break;
+    /**
+     * Map of loaded modules
+     */
+    // private Map<String, Map<String, MetaData>> packageModules = new HashMap<String, Map<String, MetaData>>();
+    private Map<Plugin, List<MetaData>> pluginModules = new HashMap<Plugin, List<MetaData>>();
 
-					case REDSTONE:
-						temp = module.onRedstone(lwc, (Protection) args[0], (Block) args[1], (Integer) args[2]);
-						break;
+    /**
+     * Dispatch an event
+     *
+     * @param event
+     * @param args
+     */
+    public Result dispatchEvent(Event event, Object... args) {
+        if (event.getExpectedArguments() > args.length) {
+            return Result.DEFAULT;
+        }
 
-					case DESTROY_PROTECTION:
-						temp = module.onDestroyProtection(lwc, (Player) args[0], (Protection) args[1], (Block) args[2], (Boolean) args[3], (Boolean) args[4]);
-						break;
+        LWC lwc = LWC.getInstance();
+        Result result = Result.DEFAULT;
 
-					case INTERACT_PROTECTION:
-						temp = module.onProtectionInteract(lwc, (Player) args[0], (Protection) args[1], (List<String>) args[2], (Boolean) args[3], (Boolean) args[4]);
-						break;
+        try {
+            for (List<MetaData> modules : pluginModules.values()) {
+                for (MetaData metaData : modules) {
+                    Module module = metaData.getModule();
+                    Result temp = Result.DEFAULT;
 
-					case INTERACT_BLOCK:
-						temp = module.onBlockInteract(lwc, (Player) args[0], (Block) args[1], (List<String>) args[2]);
-						break;
-						
-					case REGISTER_PROTECTION:
-						temp = module.onRegisterProtection(lwc, (Player) args[0], (Block) args[1]);
-						break;
-						
-					case ACCESS_PROTECTION:
-						temp = module.canAccessProtection(lwc, (Player) args[0], (Protection) args[1]);
-						break;
-						
-					case ADMIN_PROTECTION:
-						temp = module.canAdminProtection(lwc, (Player) args[0], (Protection) args[1]);
-						break;
-						
-					case DROP_ITEM:
-						temp = module.onDropItem(lwc, (Player) args[0], (Item) args[1], (ItemStack) args[2]);
-						break;
-						
-					case POST_REGISTRATION:
-						module.onPostRegistration(lwc, (Protection) args[0]);
-						break;
-					}
+                    switch (event) {
 
-					if(temp != Result.DEFAULT) {
-						result = temp;
-					}
+                        case COMMAND:
+                            temp = module.onCommand(lwc, (CommandSender) args[0], (String) args[1], (String[]) args[2]);
+                            break;
 
-					if(result == Result.CANCEL) {
-						return result;
-					}
-				}
-			}
-		} catch(Throwable throwable) {
-			throw new ModuleException("LWC Module threw an uncaught exception! LWC version: " + LWCInfo.FULL_VERSION, throwable);
-		}
+                        case REDSTONE:
+                            temp = module.onRedstone(lwc, (Protection) args[0], (Block) args[1], (Integer) args[2]);
+                            break;
 
-		if(result == null) {
-			result = Result.DEFAULT;
-		}
-		
-		return result;
-	}
-	
-	/**
-	 * Load all of the modules not marked as loaded
-	 */
-	public void loadAll() {
-		LWC lwc = LWC.getInstance();
-		
-		for(List<MetaData> modules : pluginModules.values()) {
-			for(MetaData metaData : modules) {
-				if(!metaData.isLoaded()) {
-					metaData.getModule().load(lwc);
-					metaData.trigger();
-				}
-			}
-		}
-	}
+                        case DESTROY_PROTECTION:
+                            temp = module.onDestroyProtection(lwc, (Player) args[0], (Protection) args[1], (Block) args[2], (Boolean) args[3], (Boolean) args[4]);
+                            break;
 
-	/**
-	 * Get the first module represented by a class
-	 * 
-	 * @param clazz
-	 * @return
-	 */
-	public Module getModule(Class<? extends Module> clazz) {
-		for(List<MetaData> modules : pluginModules.values()) {
-			for(MetaData metaData : modules) {
-				Module module = metaData.getModule();
-				
-				if(module.getClass() == clazz) {
-					return module;
-				}
-			}
-		}
-		
-		return null;
-	}
+                        case INTERACT_PROTECTION:
+                            temp = module.onProtectionInteract(lwc, (Player) args[0], (Protection) args[1], (List<String>) args[2], (Boolean) args[3], (Boolean) args[4]);
+                            break;
+
+                        case INTERACT_BLOCK:
+                            temp = module.onBlockInteract(lwc, (Player) args[0], (Block) args[1], (List<String>) args[2]);
+                            break;
+
+                        case REGISTER_PROTECTION:
+                            temp = module.onRegisterProtection(lwc, (Player) args[0], (Block) args[1]);
+                            break;
+
+                        case ACCESS_PROTECTION:
+                            temp = module.canAccessProtection(lwc, (Player) args[0], (Protection) args[1]);
+                            break;
+
+                        case ADMIN_PROTECTION:
+                            temp = module.canAdminProtection(lwc, (Player) args[0], (Protection) args[1]);
+                            break;
+
+                        case DROP_ITEM:
+                            temp = module.onDropItem(lwc, (Player) args[0], (Item) args[1], (ItemStack) args[2]);
+                            break;
+
+                        case POST_REGISTRATION:
+                            module.onPostRegistration(lwc, (Protection) args[0]);
+                            break;
+                    }
+
+                    if (temp != Result.DEFAULT) {
+                        result = temp;
+                    }
+
+                    if (result == Result.CANCEL) {
+                        return result;
+                    }
+                }
+            }
+        } catch (Throwable throwable) {
+            throw new ModuleException("LWC Module threw an uncaught exception! LWC version: " + LWCInfo.FULL_VERSION, throwable);
+        }
+
+        if (result == null) {
+            result = Result.DEFAULT;
+        }
+
+        return result;
+    }
+
+    /**
+     * Load all of the modules not marked as loaded
+     */
+    public void loadAll() {
+        LWC lwc = LWC.getInstance();
+
+        for (List<MetaData> modules : pluginModules.values()) {
+            for (MetaData metaData : modules) {
+                if (!metaData.isLoaded()) {
+                    metaData.getModule().load(lwc);
+                    metaData.trigger();
+                }
+            }
+        }
+    }
+
+    /**
+     * Get the first module represented by a class
+     *
+     * @param clazz
+     * @return
+     */
+    public Module getModule(Class<? extends Module> clazz) {
+        for (List<MetaData> modules : pluginModules.values()) {
+            for (MetaData metaData : modules) {
+                Module module = metaData.getModule();
+
+                if (module.getClass() == clazz) {
+                    return module;
+                }
+            }
+        }
+
+        return null;
+    }
 
     /**
      * Not intended to be used a lot -- use sparingly!
@@ -257,42 +257,42 @@ public class ModuleLoader {
     public int getModuleCount() {
         int count = 0;
 
-        for(List<MetaData> modules : pluginModules.values()) {
+        for (List<MetaData> modules : pluginModules.values()) {
             count += modules.size();
         }
 
         return count;
     }
-	
-	/**
-	 * Register a module for a plugin
-	 * 
-	 * @param plugin
-	 * @param module
-	 */
-	public void registerModule(Plugin plugin, Module module) {
-		List<MetaData> modules = null;
 
-		if(plugin != null) {
-			modules = pluginModules.get(plugin);
-		}
+    /**
+     * Register a module for a plugin
+     *
+     * @param plugin
+     * @param module
+     */
+    public void registerModule(Plugin plugin, Module module) {
+        List<MetaData> modules = null;
 
-		if(modules == null) {
-			modules = new ArrayList<MetaData>();
-		}
+        if (plugin != null) {
+            modules = pluginModules.get(plugin);
+        }
 
-		MetaData metaData = new MetaData(module);
-		modules.add(metaData);
-		pluginModules.put(plugin, modules);
-	}
+        if (modules == null) {
+            modules = new ArrayList<MetaData>();
+        }
 
-	/**
-	 * Remove the modules for a plugin
-	 * 
-	 * @param plugin
-	 */
-	public void removeModules(Plugin plugin) {
-		pluginModules.remove(plugin);
-	}
+        MetaData metaData = new MetaData(module);
+        modules.add(metaData);
+        pluginModules.put(plugin, modules);
+    }
+
+    /**
+     * Remove the modules for a plugin
+     *
+     * @param plugin
+     */
+    public void removeModules(Plugin plugin) {
+        pluginModules.remove(plugin);
+    }
 
 }
