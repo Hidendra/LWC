@@ -1,16 +1,16 @@
 /**
  * This file is part of LWC (https://github.com/Hidendra/LWC)
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -36,102 +36,102 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 
 public class WorldGuardModule extends JavaModule {
 
-	/**
-	 * The WorldGuard module configuration
-	 */
-	private Configuration configuration = Configuration.load("worldguard.yml");
+    /**
+     * The WorldGuard module configuration
+     */
+    private Configuration configuration = Configuration.load("worldguard.yml");
 
-	/**
-	 * The world guard plugin if it is enabled
-	 */
-	private WorldGuardPlugin worldGuard = null;
+    /**
+     * The world guard plugin if it is enabled
+     */
+    private WorldGuardPlugin worldGuard = null;
 
-	@Override
-	public void load(LWC lwc) {
-		Plugin plugin = lwc.getPlugin().getServer().getPluginManager().getPlugin("WorldGuard");
+    @Override
+    public void load(LWC lwc) {
+        Plugin plugin = lwc.getPlugin().getServer().getPluginManager().getPlugin("WorldGuard");
 
-		if(plugin != null) {
-			worldGuard = (WorldGuardPlugin) plugin;
-		}
-	}
+        if (plugin != null) {
+            worldGuard = (WorldGuardPlugin) plugin;
+        }
+    }
 
-	@Override
-	public Result onRegisterProtection(LWC lwc, Player player, Block block) {
-		if(worldGuard == null) {
-			return DEFAULT;
-		}
-		
-		if(!configuration.getBoolean("worldguard.enabled", false)) {
-			return DEFAULT;
-		}
+    @Override
+    public Result onRegisterProtection(LWC lwc, Player player, Block block) {
+        if (worldGuard == null) {
+            return DEFAULT;
+        }
 
-		try {
-			/*
-			 * Now get the region manager
-			 */
-			GlobalRegionManager regions = worldGuard.getGlobalRegionManager();
-			RegionManager regionManager = regions.get(player.getWorld());
+        if (!configuration.getBoolean("worldguard.enabled", false)) {
+            return DEFAULT;
+        }
 
-			/*
-			 * We need to reflect into BukkitUtil.toVector
-			 */
-			Class<?> bukkitUtil = worldGuard.getClass().getClassLoader().loadClass("com.sk89q.worldguard.bukkit.BukkitUtil");
-			Method toVector = bukkitUtil.getMethod("toVector", Block.class);
-			Vector blockVector = (Vector) toVector.invoke(null, block);
+        try {
+            /*
+                * Now get the region manager
+                */
+            GlobalRegionManager regions = worldGuard.getGlobalRegionManager();
+            RegionManager regionManager = regions.get(player.getWorld());
 
-			/*
-			 * Now let's get the list of regions at the block we're clicking
-			 */
-			List<String> regionSet = regionManager.getApplicableRegionsIDs(blockVector);
-			List<String> allowedRegions = configuration.getStringList("worldguard.regions", new ArrayList<String>());
+            /*
+                * We need to reflect into BukkitUtil.toVector
+                */
+            Class<?> bukkitUtil = worldGuard.getClass().getClassLoader().loadClass("com.sk89q.worldguard.bukkit.BukkitUtil");
+            Method toVector = bukkitUtil.getMethod("toVector", Block.class);
+            Vector blockVector = (Vector) toVector.invoke(null, block);
 
-			boolean deny = true;
+            /*
+                * Now let's get the list of regions at the block we're clicking
+                */
+            List<String> regionSet = regionManager.getApplicableRegionsIDs(blockVector);
+            List<String> allowedRegions = configuration.getStringList("worldguard.regions", new ArrayList<String>());
 
-			/*
-			 * Check for *
-			 */
-			if (allowedRegions.contains("*")) {
-				if (regionSet.size() > 0) {
-					return ALLOW;
-				}
-			}
+            boolean deny = true;
 
-			/*
-			 * If there are no regions, we need to deny them
-			 */
-			for (String region : regionSet) {
-				if (allowedRegions.contains(region)) {
-					deny = false;
-					break;
-				}
-			}
+            /*
+                * Check for *
+                */
+            if (allowedRegions.contains("*")) {
+                if (regionSet.size() > 0) {
+                    return ALLOW;
+                }
+            }
 
-			if (deny) {
-				player.sendMessage(Colors.Red + "You cannot protect that " + LWC.materialToString(block) + " outside of WorldGuard regions");
-				return CANCEL;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+            /*
+                * If there are no regions, we need to deny them
+                */
+            for (String region : regionSet) {
+                if (allowedRegions.contains(region)) {
+                    deny = false;
+                    break;
+                }
+            }
 
-		return DEFAULT;
-	}
-	
-	/**
-	 * Set a config value in the configuration
-	 * 
-	 * @param path
-	 * @param value
-	 */
-	public void set(String path, Object value) {
-		configuration.setProperty(path, value);
-	}
+            if (deny) {
+                player.sendMessage(Colors.Red + "You cannot protect that " + LWC.materialToString(block) + " outside of WorldGuard regions");
+                return CANCEL;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-	/**
-	 * Save the configuration
-	 */
-	public boolean save() {
-		return configuration.save();
-	}
+        return DEFAULT;
+    }
+
+    /**
+     * Set a config value in the configuration
+     *
+     * @param path
+     * @param value
+     */
+    public void set(String path, Object value) {
+        configuration.setProperty(path, value);
+    }
+
+    /**
+     * Save the configuration
+     */
+    public boolean save() {
+        return configuration.save();
+    }
 
 }
