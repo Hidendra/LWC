@@ -17,9 +17,11 @@
 
 package com.griefcraft.scripting;
 
-import java.util.*;
-
+import com.griefcraft.logging.Logger;
+import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
+import com.griefcraft.model.Protection;
+import com.griefcraft.scripting.Module.Result;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
@@ -27,10 +29,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import com.griefcraft.logging.Logger;
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.Protection;
-import com.griefcraft.scripting.Module.Result;
+import java.util.*;
 
 public class ModuleLoader {
 
