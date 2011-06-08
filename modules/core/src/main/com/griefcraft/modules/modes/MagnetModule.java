@@ -87,6 +87,7 @@ public class MagnetModule extends JavaModule {
 				while(iterator.hasNext()) {
 					Entity entity = iterator.next();
 					if(!(entity instanceof Item)) {
+                        iterator.remove();
 						continue;
 					}
 
@@ -99,6 +100,7 @@ public class MagnetModule extends JavaModule {
 
                     // check if it is in the blacklist
                     if(itemBlacklist.contains(itemStack.getTypeId())) {
+                        iterator.remove();
                         continue;
                     }
 
