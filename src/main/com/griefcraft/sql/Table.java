@@ -79,7 +79,7 @@ public class Table {
         if(database.getType() == Type.MySQL) {
             String temp = LWC.getInstance().getConfiguration().getString("database.prefix", "");
 
-            if(temp.length() > 0) {
+            if(temp != null && temp.length() > 0) {
                 prefix = temp;
             }
         }
