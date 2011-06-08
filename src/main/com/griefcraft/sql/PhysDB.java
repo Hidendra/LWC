@@ -420,7 +420,6 @@ public class PhysDB extends Database {
 	 * @param protectionId
 	 * @param start
 	 * @param max
-     * @deprecated
 	 * @return
 	 */
 	public List<AccessRight> loadAccessRights(int protectionId, int start, int max) {
@@ -660,12 +659,12 @@ public class PhysDB extends Database {
             printException(e);
         }
 
-        // Cache them all 
+        // Cache them all
     }
 
 	/**
 	 * Load a chest at a given tile
-	 * 
+	 *
 	 * @param x
 	 * @param y
 	 * @param z
@@ -692,9 +691,7 @@ public class PhysDB extends Database {
 			Protection protection = resolveProtection(statement);
 
 			// cache the protection
-			if(protection != null) {
-				cache.put(cacheKey, protection);
-			}
+			cache.put(cacheKey, protection);
 
 			return protection;
 		} catch (SQLException e) {
