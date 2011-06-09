@@ -827,7 +827,13 @@ public class LWC {
             }
         }
 
-        return hasPermission(player, "lwc.admin");
+        if(permissions != null) {
+            if (permissions.has(player, "lwc.admin")) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
