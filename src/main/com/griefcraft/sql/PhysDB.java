@@ -28,6 +28,7 @@ import com.griefcraft.util.Performance;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 public class PhysDB extends Database {
@@ -566,6 +567,7 @@ public class PhysDB extends Database {
         try {
             PreparedStatement statement = prepare("SELECT " + prefix + "protections.id AS protectionId, " + prefix + "rights.id AS rightsId, " + prefix + "protections.type AS protectionType, " + prefix + "rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights FROM " + prefix + "protections LEFT OUTER JOIN " + prefix + "rights ON " + prefix + "protections.id = " + prefix + "rights.chest ORDER BY " + prefix + "protections.id DESC LIMIT ?");
             statement.setInt(1, lwc.getConfiguration().getInt("core.cacheSize", 10000));
+            statement.setFetchSize(Integer.MIN_VALUE);
 
             // scrape the protections from the result set now
             List<Protection> protections = resolveProtections(statement);
@@ -925,9 +927,11 @@ public class PhysDB extends Database {
             if (currentType == Type.SQLite) {
                 statement.executeUpdate("CREATE INDEX IF NOT EXISTS in1 ON " + prefix + "protections (owner, x, y, z)");
                 statement.executeUpdate("CREATE INDEX IF NOT EXISTS in3 ON " + prefix + "rights (chest, entity)");
+                statement.executeUpdate("CREATE INDEX IF NOT EXISTS in6 ON " + prefix + "protections (id)");
             } else {
                 statement.executeUpdate("CREATE INDEX in1 ON " + prefix + "protections (x, y, z)");
                 statement.executeUpdate("CREATE INDEX in3 ON " + prefix + "rights (chest)");
+                statement.executeUpdate("CREATE INDEX in6 ON " + prefix + "protections (id)");
             }
 
             connection.commit();
