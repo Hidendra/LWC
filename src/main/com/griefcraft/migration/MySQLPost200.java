@@ -51,6 +51,10 @@ public class MySQLPost200 {
 		// still exists :-)
 		String database = lwc.getConfiguration().getString("database.path");
 
+		if(database == null || database.equals("")) {
+			return;
+		}
+		
 		File file = new File(database);
 		if (!file.exists()) {
 			return;
