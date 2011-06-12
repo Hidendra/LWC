@@ -454,8 +454,14 @@ public class LWC {
                 if (owner.equals(player.getName())) {
                     owner = getLocale("you");
                 }
+                
+                String blockName = materialToString(block);
 
-                sendLocale(player, "protection.general.notice.protected", "type", getLocale(protection.typeToString().toLowerCase()), "block", materialToString(block), "owner", owner);
+                if(!getLocale("protection." + blockName.toLowerCase() + ".notice.protected").startsWith("UNKNOWN_LOCALE")) {
+                	sendLocale(player, "protection." + blockName.toLowerCase() + ".notice.protected", "type", getLocale(protection.typeToString().toLowerCase()), "block", blockName, "owner", owner);
+                } else {
+                	sendLocale(player, "protection.general.notice.protected", "type", getLocale(protection.typeToString().toLowerCase()), "block", blockName, "owner", owner);
+                }
             }
         }
 
