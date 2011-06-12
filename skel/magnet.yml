@@ -6,7 +6,7 @@ magnet:
     radius: 3
 
     # How many items to check per sweep (per world)
-    # It is HIGHLY UNRECOMMENDED to use a low value
+    # It is HIGHLY UNRECOMMENDED to use a very high value
     perSweep: 20
 
     # A blacklist of items that will NOT be picked up
