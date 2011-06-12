@@ -452,7 +452,7 @@ public class LWC {
 
                 // replace your username with "you" if you own the protection
                 if (owner.equals(player.getName())) {
-                    owner = "you";
+                    owner = getLocale("you");
                 }
 
                 sendLocale(player, "protection.general.notice.protected", "type", getLocale(protection.typeToString().toLowerCase()), "block", materialToString(block), "owner", owner);
@@ -1434,7 +1434,25 @@ public class LWC {
      */
     public static String materialToString(Material material) {
         if (material != null) {
-            return StringUtils.capitalizeFirstLetter(material.toString().replaceAll("_", " "));
+            String materialName = material.toString().toLowerCase().replaceAll("block", "");
+
+            if (materialName.contains("sign")) {
+            	materialName = "Sign";
+            }
+            
+            if (materialName.endsWith("_")) {
+                materialName = materialName.substring(0, materialName.length() - 1);
+            }
+            
+            // attempt to match the locale
+            String locale = LWC.getInstance().getLocale(materialName.toLowerCase());
+            
+            // if it starst with UNKNOWN_LOCALE, use the material name
+            if(locale.startsWith("UNKNOWN_LOCALE_")) {
+            	locale = materialName;
+            }
+        	
+            return StringUtils.capitalizeFirstLetter(locale);
         }
 
         return "";
@@ -1457,11 +1475,7 @@ public class LWC {
         names.add(material.getId() + "");
 
         // check for the trimmed variant
-        String trimmedName = materialName.replaceAll("block", "");
-
-        if (trimmedName.endsWith("_")) {
-            trimmedName = trimmedName.substring(0, trimmedName.length() - 1);
-        }
+        String trimmedName = materialToString(material).toLowerCase();
 
         if (!trimmedName.equals(materialName)) {
             names.add(trimmedName);
