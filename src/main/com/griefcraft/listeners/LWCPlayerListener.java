@@ -23,9 +23,14 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.Module;
 import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.ModuleLoader.Event;
+
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.ContainerBlock;
+import org.bukkit.craftbukkit.CraftChunk;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -77,7 +82,13 @@ public class LWCPlayerListener extends PlayerListener {
 
         LWC lwc = plugin.getLWC();
         Player player = event.getPlayer();
-        Block block = event.getClickedBlock();
+        Block clickedBlock = event.getClickedBlock();
+        Location location = clickedBlock.getLocation();
+        
+        CraftWorld craftWorld = (CraftWorld) clickedBlock.getWorld();
+        Block block = new CraftBlock((CraftChunk) craftWorld.getChunkAt(location), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        block.setTypeId(craftWorld.getBlockTypeIdAt(location));
+
         Material material = block.getType();
 
         /*
