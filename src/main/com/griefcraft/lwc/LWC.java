@@ -11,14 +11,15 @@ import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.modules.admin.*;
 import com.griefcraft.modules.create.CreateModule;
 import com.griefcraft.modules.destroy.DestroyModule;
+import com.griefcraft.modules.doors.DoorsModule;
 import com.griefcraft.modules.flag.FlagModule;
+import com.griefcraft.modules.flag.MagnetModule;
 import com.griefcraft.modules.free.FreeModule;
 import com.griefcraft.modules.info.InfoModule;
 import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.modules.lists.ListsModule;
 import com.griefcraft.modules.menu.MenuModule;
 import com.griefcraft.modules.modes.DropTransferModule;
-import com.griefcraft.modules.modes.MagnetModule;
 import com.griefcraft.modules.modes.PersistModule;
 import com.griefcraft.modules.modify.ModifyModule;
 import com.griefcraft.modules.owners.OwnersModule;
@@ -910,10 +911,6 @@ public class LWC {
 
         Performance.init();
 
-        if (LWCInfo.DEVELOPMENT) {
-            log("Development mode is ON");
-        }
-
         physicalDatabase = new PhysDB();
         memoryDatabase = new MemDB();
         updateThread = new UpdateThread(this);
@@ -962,6 +959,7 @@ public class LWC {
         registerModule(new MenuModule());
         registerModule(new UnlockModule());
         registerModule(new OwnersModule());
+        registerModule(new DoorsModule());
 
         // admin commands
         registerModule(new BaseAdminModule());
@@ -1442,8 +1440,13 @@ public class LWC {
         if (material != null) {
             String materialName = material.toString().toLowerCase().replaceAll("block", "");
 
+            // some name normalizations
             if (materialName.contains("sign")) {
             	materialName = "Sign";
+            }
+            
+            if(materialName.contains("furnace")) {
+            	materialName = "furnace";
             }
             
             if (materialName.endsWith("_")) {
@@ -1474,26 +1477,15 @@ public class LWC {
     public String resolveProtectionConfiguration(Material material, String node) {
         List<String> names = new ArrayList<String>();
 
-        String materialName = material.toString().toLowerCase();
+        String materialName = materialToString(material).toLowerCase().replaceAll(" ", "_");
 
         // add the name & the block id
         names.add(materialName);
         names.add(material.getId() + "");
 
-        // check for the trimmed variant
-        String trimmedName = materialToString(material).toLowerCase();
-
-        if (!trimmedName.equals(materialName)) {
-            names.add(trimmedName);
-        }
-
         String value = configuration.getString("protections." + node);
 
         for (String name : names) {
-            if (name.contains("sign")) {
-                name = "sign";
-            }
-
             String temp = configuration.getString("protections.blocks." + name + "." + node);
 
             if (temp != null && !temp.isEmpty()) {

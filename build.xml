@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<project default="main">
+<project name="LWC" default="all">
 	
 	<!-- Name of the jar to create -->
 	<property name="jar.core" value="LWC.jar" />
@@ -23,6 +23,7 @@
 	<!-- Location of the plugins folder development server -->
 	<property name="dev" value="../../minecraft/plugins" />
 	
+	<!-- Libraries used by LWC & modules -->
 	<fileset dir="${lib}" id="libs">
 		<include name="CraftBukkit.jar" />
 		<include name="Permissions.jar" />
@@ -31,17 +32,36 @@
 		<include name="Lists.jar" />
 		<include name="iConomy.jar" />
 		<include name="mcbans.jar" />
+		<include name="junit.jar" />
 	</fileset>
 	
-	<target name="main" depends="compile,build" description="Main target" />
+	<!-- JUnit testing -->
+	<property name="test.classname" value="com.griefcraft.LWCTestSuite" />
+	<path id="test.classpath">
+		<pathelement location="${bin}/core/" />
+		<pathelement location="${bin}/iconomy/" />
+		<pathelement location="${bin}/tests/" />
+		<fileset refid="libs" />
+	</path>
 	
-	<target name="compile" description="Compilation">
+	<target name="all" depends="clean,compile,build,test" description="Main target" />
+	
+	<target name="clean">
+		<!-- Delete the previous folders -->
+		<delete dir="${bin}/core/" />
+		<delete dir="${bin}/iconomy/" />
+		<delete dir="${bin}/tests/" />
+		
 		<!-- create some folders -->
 		<mkdir dir="${bin}/core/" />
 		<mkdir dir="${bin}/iconomy/" />
+		<mkdir dir="${bin}/tests/" />
+	</target>
+	
+	<target name="compile" description="Compilation">
 		
 		<echo>Compiling LWC and Core Modules</echo>
-		<javac srcdir="${src};${core};${worldguard};${lists}" destdir="${bin}/core/" debuglevel="lines,vars,source" deprecation="true" includeantruntime="true">
+		<javac srcdir="${src}/main/;${core};${worldguard};${lists}" destdir="${bin}/core/" debuglevel="lines,vars,source" deprecation="true" includeantruntime="true">
 			<classpath>
 				<fileset refid="libs" />
 			</classpath>
@@ -52,6 +72,15 @@
 			<classpath>
 				<fileset refid="libs" />
 				<dirset dir="${bin}/core/" />
+			</classpath>
+		</javac>
+		
+		<echo>Compiling LWC Unit Tests</echo>
+		<javac srcdir="${src}/tests/" destdir="${bin}/tests/" deprecation="true" debuglevel="lines,vars,source" includeantruntime="true">
+			<classpath>
+				<fileset refid="libs" />
+				<dirset dir="${bin}/core/" />
+				<dirset dir="${bin}/iconomy/" />
 			</classpath>
 		</javac>
 	</target>
@@ -95,5 +124,13 @@
 		
 		<!-- Copy LWC.jar to the dev server -->
 		<copy tofile="${dev}/${jar.iconomy}" file="${dist.iconomy}/${jar.iconomy}" overwrite="yes" />
+	</target>
+	
+	<target name="test">
+		<junit fork="yes" haltonfailure="yes">
+			<test name="${test.classname}" />
+			<formatter type="plain" usefile="false" />
+			<classpath refid="test.classpath" />
+		</junit>
 	</target>
 </project>

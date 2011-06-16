@@ -28,11 +28,6 @@ public class LWCInfo {
     public static final String CONF_FILE = "plugins/LWC/lwc.properties";
 
     /**
-     * Dev mode flag
-     */
-    public static final boolean DEVELOPMENT = false;
-
-    /**
      * Full LWC version
      */
     public static final String FULL_VERSION;
@@ -40,10 +35,10 @@ public class LWCInfo {
     /**
      * LWC's version
      */
-    public static final double VERSION = 3.06;
+    public static final double VERSION = 3.10;
 
     static {
-        FULL_VERSION = String.format("v%.2f-dev", VERSION);
+        FULL_VERSION = String.format("v%.2f", VERSION);
     }
 
 }
