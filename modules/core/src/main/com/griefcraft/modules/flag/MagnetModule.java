@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.griefcraft.modules.modes;
+package com.griefcraft.modules.flag;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
@@ -64,7 +64,7 @@ public class MagnetModule extends JavaModule {
 
     // does all of the work
     // searches the worlds for items and magnet chests nearby
-    class SearchThread implements Runnable {
+    class MagnetTask implements Runnable {
         public void run() {
             Server server = Bukkit.getServer();
             LWC lwc = LWC.getInstance();
@@ -184,7 +184,7 @@ public class MagnetModule extends JavaModule {
         }
 
         // register our search thread schedule
-        SearchThread searchThread = new SearchThread();
+        MagnetTask searchThread = new MagnetTask();
         taskId = lwc.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(lwc.getPlugin(), searchThread, 50, 50);
     }
 

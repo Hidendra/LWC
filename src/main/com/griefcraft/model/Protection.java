@@ -20,6 +20,10 @@ package com.griefcraft.model;
 import com.griefcraft.cache.CacheSet;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.util.Colors;
+
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -345,6 +349,26 @@ public class Protection {
      */
     public String getCacheKey() {
         return world + ":" + x + ":" + y + ":" + z;
+    }
+    
+    /**
+     * @return the Bukkit world
+     */
+    public World getBukkitWorld() {
+    	return Bukkit.getServer().getWorld(world);
+    }
+    
+    /**
+     * @return the block representing the protection in the world
+     */
+    public Block getBlock() {
+    	World world = getBukkitWorld();
+    	
+    	if(world == null) {
+    		return null;
+    	}
+    	
+    	return world.getBlockAt(x, y, z);
     }
 
     /**
