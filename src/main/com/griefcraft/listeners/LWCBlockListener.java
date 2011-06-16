@@ -154,6 +154,13 @@ public class LWCBlockListener extends BlockListener {
                 return;
             }
         }
+        
+        Result registerProtection = lwc.getModuleLoader().dispatchEvent(Event.REGISTER_PROTECTION, player, block);
+
+        // something cancelled registration
+        if (registerProtection == Result.CANCEL) {
+            return;
+        }
 
         String autoRegisterType = plugin.getLWC().resolveProtectionConfiguration(block.getType(), "autoRegister");
 
@@ -161,6 +168,14 @@ public class LWCBlockListener extends BlockListener {
            * Check if it's enabled
            */
         if (!autoRegisterType.equalsIgnoreCase("private") && !autoRegisterType.equalsIgnoreCase("public")) {
+            return;
+        }
+
+        /**
+         * Check permissions
+         */
+        if (!lwc.hasPermission(player, "lwc.create." + autoRegisterType, "lwc.create", "lwc.protect")) {
+            lwc.sendLocale(player, "protection.accessdenied");
             return;
         }
 
@@ -199,13 +214,6 @@ public class LWCBlockListener extends BlockListener {
                     }
                 }
             }
-        }
-
-        Result registerProtection = lwc.getModuleLoader().dispatchEvent(Event.REGISTER_PROTECTION, player, block);
-
-        // another plugin cancelled the registration
-        if (registerProtection == Result.CANCEL) {
-            return;
         }
 
         /*

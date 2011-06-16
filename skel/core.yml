@@ -5,7 +5,7 @@ core:
     cacheSize: 10000
     defaultMenuStyle: basic
     showNotices: true
-    showMyNotices: true
+    showMyNotices: false
     verbose: false
     opIsLWCAdmin: true
 
@@ -41,6 +41,9 @@ protections:
             enabled: true
             autoRegister: off
         iron_door:
+            enabled: true
+            autoRegister: off
+        trap_door:
             enabled: true
             autoRegister: off
 
