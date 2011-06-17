@@ -1456,7 +1456,7 @@ public class LWC {
             // attempt to match the locale
             String locale = LWC.getInstance().getLocale(materialName.toLowerCase());
             
-            // if it starst with UNKNOWN_LOCALE, use the material name
+            // if it starts with UNKNOWN_LOCALE, use the default material name
             if(locale.startsWith("UNKNOWN_LOCALE_")) {
             	locale = materialName;
             }
