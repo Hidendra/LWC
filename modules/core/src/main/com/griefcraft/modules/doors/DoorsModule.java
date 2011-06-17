@@ -65,7 +65,7 @@ public class DoorsModule extends JavaModule {
 	private Configuration configuration;
 
 	// The triggered doors
-	private LinkedList<DoorAction> doors = new LinkedList<DoorAction>();
+	private LinkedList<DoorAction> doors;
 
 	/**
 	 * The action to perform on doors
@@ -160,7 +160,6 @@ public class DoorsModule extends JavaModule {
 			break;
 		}
 		
-		// check if it's open
 		if(door.isTopHalf()) {
 			data |= 0x8;
 		}
@@ -169,8 +168,6 @@ public class DoorsModule extends JavaModule {
 	}
 	
 	/**
-	 * Door.isOpen is broken
-	 * 
 	 * @param data
 	 * @return
 	 */
