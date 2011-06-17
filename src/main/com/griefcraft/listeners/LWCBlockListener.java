@@ -154,13 +154,6 @@ public class LWCBlockListener extends BlockListener {
                 return;
             }
         }
-        
-        Result registerProtection = lwc.getModuleLoader().dispatchEvent(Event.REGISTER_PROTECTION, player, block);
-
-        // something cancelled registration
-        if (registerProtection == Result.CANCEL) {
-            return;
-        }
 
         String autoRegisterType = plugin.getLWC().resolveProtectionConfiguration(block.getType(), "autoRegister");
 
@@ -190,6 +183,13 @@ public class LWCBlockListener extends BlockListener {
            * If the block isn't protectable, don't let them
            */
         if (!lwc.isProtectable(block)) {
+            return;
+        }
+        
+        Result registerProtection = lwc.getModuleLoader().dispatchEvent(Event.REGISTER_PROTECTION, player, block);
+
+        // something cancelled registration
+        if (registerProtection == Result.CANCEL) {
             return;
         }
 
