@@ -149,21 +149,21 @@ public class MockServer implements Server {
 	}
 	
 	public boolean addRecipe(Recipe arg0) {
-		// TODO Auto-generated method stub
+		methodCalled("addRecipe(%s)", arg0.toString());
 		return false;
 	}
 
 	public void configureDbConfig(ServerConfig arg0) {
-		// TODO Auto-generated method stub
+		methodCalled("configureDbConfig(%s)", arg0.toString());
 	}
 
 	public Player[] getOnlinePlayers() {
-		// TODO Auto-generated method stub
+		methodCalled("getOnlinePlayers()");
 		return null;
 	}
 
 	public Player getPlayer(String arg0) {
-		// TODO Auto-generated method stub
+		methodCalled("getPlayer(%s)", arg0);
 		return null;
 	}
 
