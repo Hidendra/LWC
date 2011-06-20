@@ -111,6 +111,11 @@ public class LWC {
      */
     private PermissionHandler permissions;
 
+    /**
+     * Whether or not we utilize logic to work around the Bukkit 656 bug.  http://leaky.bukkit.org/issues/656
+     */
+    private boolean bug656workaround;
+    
     public LWC(LWCPlugin plugin) {
         this.plugin = plugin;
 
@@ -120,6 +125,8 @@ public class LWC {
 
         configuration = Configuration.load("core.yml");
         caches = new CacheSet();
+        
+        bug656workaround = configuration.getBoolean("core.bukkitBug656workaround", false);
     }
 
     /**
@@ -610,6 +617,28 @@ public class LWC {
             Protection protection = physicalDatabase.loadProtection(world.getName(), protectableBlock.getX(), protectableBlock.getY(), protectableBlock.getZ());
 
             if (protection != null) {
+            	
+            	/* For the bug #656 workaround, if the protection we got from the DB was not for the
+            	 * block we were originally passed, then we've found an adjacent protection, such as for
+            	 * double chests. We record the protection we found so that if Bukkit later starts
+            	 * returning bogus blocks, we have already recorded the protected adjacent block and
+            	 * so it will stay protected.
+            	 */
+            	if( bug656workaround ) {
+            		// note, it's not a bug that I'm not checking the world here. getProtectionSet() above
+            		// is guaranteed to return a maximum of 2 blocks and they are guaranteed to be
+            		// adjacent to each other, thus we already know both blocks are in the same world.
+            		if( protectableBlock.getX() != x || protectableBlock.getY() != y
+            				|| protectableBlock.getZ() != z )
+            		{
+//            			log(" found adjacent protectableBlock: " + protectableBlock + " for x="+x+",y="+y+"z="+z);
+            			if( physicalDatabase.getCachedProtection(world.getName(), x, y, z) == null ) {
+            				log(": [DEBUG] caching LWC adjacent block: "+protectableBlock.toString());
+            				physicalDatabase.addCachedProtection(world.getName(), x, y, z, protection);
+            			}
+            		}
+            	}
+            	
                 return protection;
             }
         }
@@ -694,14 +723,30 @@ public class LWC {
 
         Block baseBlock = world.getBlockAt(x, y, z);
 
-        /*
-           * First check the block they clicked
-           */
-        entities = _validateBlock(entities, baseBlock, true);
+        /* Normal logic is to check the block they clicked to see if it's a "valid" block.
+         * Since bug #656 doesn't accurately report block state, this results in valid blocks
+         * getting dropped from the protection list.  The workaround just applies the protection
+         * to the given x,y,z block regardless of what Bukkit says the state/material of that
+         * block is.
+         */
+        if( bug656workaround ) {
+            entities.add(baseBlock);
+        }
+        else {
+			/*
+			 * First check the block they clicked
+			 */
+			entities = _validateBlock(entities, baseBlock, true);
+        }
+        
 
         int dev = -1;
         boolean isXDir = true;
 
+        /* This loop checks each block in 1 direction on the X/Z axis, so it checks a total of 4 blocks: (X-1, Z); (X+1,Z); (X,Z-1); (X,Z+1)
+         * It is looking for any protectable blocks in that range, primarily looking for double chests.
+         * - comment by morganm 6/19/2011, code by Hidendra
+         */
         while (true) {
             Block block = world.getBlockAt(x + (isXDir ? dev : 0), y, z + (isXDir ? 0 : dev));
             entities = _validateBlock(entities, block);

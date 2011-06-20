@@ -17,12 +17,7 @@
 
 package com.griefcraft.listeners;
 
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.lwc.LWCPlugin;
-import com.griefcraft.model.Protection;
-import com.griefcraft.scripting.Module;
-import com.griefcraft.scripting.Module.Result;
-import com.griefcraft.scripting.ModuleLoader.Event;
+import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -40,7 +35,13 @@ import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.lwc.LWCPlugin;
+import com.griefcraft.model.Protection;
+import com.griefcraft.scripting.Module;
+import com.griefcraft.scripting.Module.Result;
+import com.griefcraft.scripting.ModuleLoader.Event;
+import com.griefcraft.util.config.Configuration;
 
 public class LWCPlayerListener extends PlayerListener {
 
@@ -48,9 +49,13 @@ public class LWCPlayerListener extends PlayerListener {
      * The plugin instance
      */
     private LWCPlugin plugin;
+    private boolean bug656workaround;
 
     public LWCPlayerListener(LWCPlugin plugin) {
         this.plugin = plugin;
+        
+        Configuration config = plugin.getLWC().getConfiguration();
+        bug656workaround = config.getBoolean("core.bukkitBug656workaround", false);
     }
 
     @Override

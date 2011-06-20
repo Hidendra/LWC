@@ -586,6 +586,40 @@ public class PhysDB extends Database {
         // Cache them all
     }
 
+    /** Used for the Bukkit #656 workaround to add a "cached" protection node when we find a
+     * 2-block chest. A protection normally only applies to one block, so this method will be
+     * called for the 2nd half of the chest to apply the same protection to the second block
+     * when it is first noticed.  In this way, even if Bukkit goes bonkers (as in bug #656),
+     * and starts returning bogus Blocks, we have already cached the double chest when
+     * we first noticed it and the Protection will still apply.
+     * 
+     * @param worldName
+     * @param x
+     * @param y
+     * @param z
+     */
+    public void addCachedProtection(String worldName, int x, int y, int z, Protection p) {
+        String cacheKey = worldName + ":" + x + ":" + y + ":" + z;
+        LRUCache<String, Protection> cache = LWC.getInstance().getCaches().getProtections();
+        
+        cache.put(cacheKey, p);
+    }
+    
+    /** Return the cached Protection for a given block (if any). 
+     * 
+     * @param worldName
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    public Protection getCachedProtection(String worldName, int x, int y, int z) {
+        String cacheKey = worldName + ":" + x + ":" + y + ":" + z;
+        LRUCache<String, Protection> cache = LWC.getInstance().getCaches().getProtections();
+        
+        return cache.get(cacheKey);
+    }
+    
     /**
      * Load a chest at a given tile
      *
