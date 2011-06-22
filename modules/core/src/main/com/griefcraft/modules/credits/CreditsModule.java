@@ -37,6 +37,11 @@ public class CreditsModule extends JavaModule {
 	 * How many lines to send when they first use /lwc credits
 	 */
 	public static final int FIRST_SEND = 2;
+	
+	/**
+	 * How often to send messages
+	 */
+	public static final long UPDATE_INTERVAL = 1150L;
 
 	/**
 	 * The credits list
@@ -93,7 +98,7 @@ public class CreditsModule extends JavaModule {
 				}
 
 				try {
-					Thread.sleep(1150L);
+					Thread.sleep(UPDATE_INTERVAL);
 				} catch(Exception e) { }
 			}
 		}
@@ -154,6 +159,8 @@ public class CreditsModule extends JavaModule {
 				Colors.Blue + "THANK YOU!"
 		};
 
+		// not using the bukkit scheduler because tick rates vary from server to server
+		// on one server, it'll send every second, while on another, every 5 seconds!
 		CreditsTask task = new CreditsTask();
 		new Thread(task).start();
 		// lwc.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(lwc.getPlugin(), task, 10, 10);
