@@ -128,6 +128,14 @@ public class LWC {
         
         bug656workaround = configuration.getBoolean("core.bukkitBug656workaround", false);
     }
+    
+    /** Return true if the Bug 565 workaround flag is enabled.
+     * 
+     * @return
+     */
+    public boolean isBug656WorkAround() {
+    	return bug656workaround;
+    }
 
     /**
      * Get the currently loaded LWC instance
@@ -633,7 +641,7 @@ public class LWC {
             		{
 //            			log(" found adjacent protectableBlock: " + protectableBlock + " for x="+x+",y="+y+"z="+z);
             			if( physicalDatabase.getCachedProtection(world.getName(), x, y, z) == null ) {
-            				log(": [DEBUG] caching LWC adjacent block: "+protectableBlock.toString());
+//            				log(": [DEBUG] caching LWC adjacent block: "+protectableBlock.toString());
             				physicalDatabase.addCachedProtection(world.getName(), x, y, z, protection);
             			}
             		}
@@ -743,7 +751,8 @@ public class LWC {
         int dev = -1;
         boolean isXDir = true;
 
-        /* This loop checks each block in 1 direction on the X/Z axis, so it checks a total of 4 blocks: (X-1, Z); (X+1,Z); (X,Z-1); (X,Z+1)
+        /* This loop checks each block in 1 direction on the X/Z axis, so it checks a total of
+         * four blocks: (X-1, Z); (X+1,Z); (X,Z-1); (X,Z+1)
          * It is looking for any protectable blocks in that range, primarily looking for double chests.
          * - comment by morganm 6/19/2011, code by Hidendra
          */
