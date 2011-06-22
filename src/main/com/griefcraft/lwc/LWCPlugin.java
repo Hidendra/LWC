@@ -260,6 +260,7 @@ public class LWCPlugin extends JavaPlugin {
     }
 
     public void onEnable() {
+        LWC.ENABLED = true;
         String localization = lwc.getConfiguration().getString("core.locale");
 
         try {
@@ -320,7 +321,6 @@ public class LWCPlugin extends JavaPlugin {
 
         lwc.load();
 
-        LWC.ENABLED = true;
         log("At version: " + LWCInfo.FULL_VERSION);
     }
 

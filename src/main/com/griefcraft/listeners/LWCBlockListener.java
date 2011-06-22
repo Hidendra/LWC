@@ -35,7 +35,7 @@ public class LWCBlockListener extends BlockListener {
      * The plugin instance
      */
     private LWCPlugin plugin;
-
+    
     public LWCBlockListener(LWCPlugin plugin) {
         this.plugin = plugin;
     }
