@@ -10,6 +10,7 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.modules.admin.*;
 import com.griefcraft.modules.create.CreateModule;
+import com.griefcraft.modules.credits.CreditsModule;
 import com.griefcraft.modules.destroy.DestroyModule;
 import com.griefcraft.modules.doors.DoorsModule;
 import com.griefcraft.modules.flag.FlagModule;
@@ -960,6 +961,7 @@ public class LWC {
         registerModule(new UnlockModule());
         registerModule(new OwnersModule());
         registerModule(new DoorsModule());
+        registerModule(new CreditsModule());
 
         // admin commands
         registerModule(new BaseAdminModule());
