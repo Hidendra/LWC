@@ -49,7 +49,7 @@ public class AccessRight {
 
     @Override
     public String toString() {
-        return String.format("AccessRight = %d { protection=%d name=%s rights=%d type=%s", id, protectionId, name, rights, typeToString(rights));
+        return String.format("AccessRight = %d { protection=%d name=%s rights=%d type=%s }", id, protectionId, name, rights, typeToString(rights));
     }
 
     public String getName() {

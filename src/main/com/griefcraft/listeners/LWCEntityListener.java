@@ -19,6 +19,7 @@ package com.griefcraft.listeners;
 
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
+
 import org.bukkit.block.Block;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityListener;

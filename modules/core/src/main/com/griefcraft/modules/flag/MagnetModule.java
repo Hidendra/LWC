@@ -131,7 +131,7 @@ public class MagnetModule extends JavaModule {
                         if (remaining.size() == 1) {
                             ItemStack other = remaining.values().iterator().next();
 
-                            if (itemStack.getTypeId() == other.getTypeId() && itemStack.getAmount() == other.getAmount() && itemStack.getData() == other.getData() && itemStack.getDurability() == other.getDurability()) {
+                            if (itemStack.getTypeId() == other.getTypeId() && itemStack.getAmount() == other.getAmount()) {
                                 continue;
                             }
                         }
