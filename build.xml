@@ -10,10 +10,10 @@
 	<property name="bin" value="bin" />
 	
 	<property name="modules" value="modules" />
-	<property name="core" value="${modules}/core/" />
-	<property name="worldguard" value="${modules}/worldguard/" />
-	<property name="lists" value="${modules}/lists/" />
-	<property name="iconomy" value="${modules}/iconomy/" />
+	<property name="core" value="${modules}/core/src/" />
+	<property name="worldguard" value="${modules}/worldguard/src/" />
+	<property name="lists" value="${modules}/lists/src/" />
+	<property name="iconomy" value="${modules}/iconomy/src/" />
 	
 	<property name="dist" value="../../public_html/griefcraft/bukkit/lwc" />
 	<property name="dist.iconomy" value="${dist}/modules/iConomy" />
@@ -40,7 +40,7 @@
 	<path id="test.classpath">
 		<pathelement location="${bin}/core/" />
 		<pathelement location="${bin}/iconomy/" />
-		<pathelement location="${bin}/tests/" />
+		<pathelement location="${bin}/test/" />
 		<fileset refid="libs" />
 	</path>
 	
@@ -50,25 +50,25 @@
 		<!-- Delete the previous folders -->
 		<delete dir="${bin}/core/" />
 		<delete dir="${bin}/iconomy/" />
-		<delete dir="${bin}/tests/" />
+		<delete dir="${bin}/test/" />
 		
 		<!-- create some folders -->
 		<mkdir dir="${bin}/core/" />
 		<mkdir dir="${bin}/iconomy/" />
-		<mkdir dir="${bin}/tests/" />
+		<mkdir dir="${bin}/test/" />
 	</target>
 	
 	<target name="compile" description="Compilation">
 		
 		<echo>Compiling LWC and Core Modules</echo>
-		<javac srcdir="${src}/main/;${core};${worldguard};${lists}" destdir="${bin}/core/" debuglevel="lines,vars,source" deprecation="true" includeantruntime="true">
+		<javac srcdir="${src}/main/java/;${core};${worldguard}/main/java/;${lists}/main/java/" destdir="${bin}/core/" debuglevel="lines,vars,source" deprecation="true" includeantruntime="true">
 			<classpath>
 				<fileset refid="libs" />
 			</classpath>
 		</javac>
 		
 		<echo>Compiling LWC-iConomy</echo>
-		<javac srcdir="${iconomy}" destdir="${bin}/iconomy/" deprecation="true" debuglevel="lines,vars,source" includeantruntime="true">
+		<javac srcdir="${iconomy}/main/java/" destdir="${bin}/iconomy/" deprecation="true" debuglevel="lines,vars,source" includeantruntime="true">
 			<classpath>
 				<fileset refid="libs" />
 				<dirset dir="${bin}/core/" />
@@ -76,7 +76,7 @@
 		</javac>
 		
 		<echo>Compiling LWC Unit Tests</echo>
-		<javac srcdir="${src}/tests/" destdir="${bin}/tests/" deprecation="true" debuglevel="lines,vars,source" includeantruntime="true">
+		<javac srcdir="${src}/test/main/java/" destdir="${bin}/test/" deprecation="true" debuglevel="lines,vars,source" includeantruntime="true">
 			<classpath>
 				<fileset refid="libs" />
 				<dirset dir="${bin}/core/" />
