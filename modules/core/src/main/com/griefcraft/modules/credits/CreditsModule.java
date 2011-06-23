@@ -132,9 +132,19 @@ public class CreditsModule extends JavaModule {
 				"TCarlsen - Danish",
 				" ",
 				
+				Colors.Red + "Donations",
+				Colors.Gray + "(chronological order)",
+				"darknavi",
+				"Vetyver",
+				"pablo0713",
+				"Irishsailor & Land of Legend server",
+				"aidan",
+				"Monstertke",
+				" ",
+				
 				Colors.Red + "And....",
 				Colors.LightBlue + "Old Griefcraft server -- love you guys!",
-				"Kainzo (too much to list!!!)",
+				"Kainzo (endless)",
 				"& the Herocraft team",
 				"#bukkit",
 				"Bryan (CursedChild)",
@@ -150,7 +160,6 @@ public class CreditsModule extends JavaModule {
 				"Taco",
 				"Acrobat",
 				"SquallSeeD31",
-				"Soxra",
 				" ",
 				
 				"To everyone else and anyone I missed....",
