@@ -11,6 +11,7 @@ import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.modules.admin.*;
 import com.griefcraft.modules.create.CreateModule;
 import com.griefcraft.modules.credits.CreditsModule;
+import com.griefcraft.modules.debug.DebugModule;
 import com.griefcraft.modules.destroy.DestroyModule;
 import com.griefcraft.modules.doors.DoorsModule;
 import com.griefcraft.modules.flag.FlagModule;
@@ -1015,6 +1016,7 @@ public class LWC {
         registerModule(new UnlockModule());
         registerModule(new OwnersModule());
         registerModule(new DoorsModule());
+        registerModule(new DebugModule());
         registerModule(new CreditsModule());
 
         // admin commands
@@ -1024,6 +1026,7 @@ public class LWC {
         registerModule(new AdminClear());
         registerModule(new AdminConfig());
         registerModule(new AdminConvert());
+        registerModule(new AdminDebug());
         registerModule(new AdminFind());
         registerModule(new AdminFlush());
         registerModule(new AdminForceOwner());
@@ -1035,7 +1038,6 @@ public class LWC {
         registerModule(new AdminUpdate());
         registerModule(new AdminVersion());
         registerModule(new AdminView());
-        registerModule(new AdminDebug());
 
         // flags
         registerModule(new FlagModule());
