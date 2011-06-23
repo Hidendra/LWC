@@ -152,6 +152,7 @@ public class CreditsModule extends JavaModule {
 				"arensirb",
 				"RustyDagger",
 				"HotelErotica",
+				"andrewkm",
 				"Moo0",
 				"Dawodo",
 				"xPaw",
