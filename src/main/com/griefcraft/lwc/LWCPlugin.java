@@ -253,13 +253,15 @@ public class LWCPlugin extends JavaPlugin {
     }
 
     public void onDisable() {
+        LWC.ENABLED = false;
+        
         if (lwc != null) {
-            LWC.ENABLED = false;
             lwc.destruct();
         }
     }
 
     public void onEnable() {
+        LWC.ENABLED = true;
         String localization = lwc.getConfiguration().getString("core.locale");
 
         try {
@@ -322,7 +324,6 @@ public class LWCPlugin extends JavaPlugin {
 
         String version = getDescription().getVersion();
         LWCInfo.setVersion(version);
-        LWC.ENABLED = true;
         log("At version: " + LWCInfo.FULL_VERSION);
     }
 
