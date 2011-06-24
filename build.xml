@@ -106,9 +106,6 @@
 	
 	<target name="iconomy" description="Build LWC-iConomy.jar">
 		<echo>Building LWC-iConomy.jar</echo>
-
-		<mkdir dir="${build}/modules" />
-		<mkdir dir="${build}/modules/iConomy" />
 		
 		<jar jarfile="${build}/${jar.iconomy}">
 			<fileset dir="${iconomy}/resources/" includes="plugin.yml" />
