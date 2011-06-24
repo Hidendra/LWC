@@ -110,7 +110,7 @@
 		<mkdir dir="${build}/modules" />
 		<mkdir dir="${build}/modules/iConomy" />
 		
-		<jar jarfile="${build}/modules/iConomy/${jar.iconomy}">
+		<jar jarfile="${build}/${jar.iconomy}">
 			<fileset dir="${iconomy}/resources/" includes="plugin.yml" />
 			<fileset dir="${bin}/iconomy/" />
 		</jar>
