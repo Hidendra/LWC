@@ -15,10 +15,7 @@
 	<property name="lists" value="${modules}/lists/src/" />
 	<property name="iconomy" value="${modules}/iconomy/src/" />
 	
-	<property name="dist" value="../../public_html/griefcraft/bukkit/lwc" />
-	<property name="dist.iconomy" value="${dist}/modules/iConomy" />
-	
-	<property name="branch" value="release" />
+	<property name="build" value="build" />
 	
 	<!-- Location of the plugins folder development server -->
 	<property name="dev" value="../../minecraft/plugins" />
@@ -44,7 +41,7 @@
 		<fileset refid="libs" />
 	</path>
 	
-	<target name="all" depends="clean,compile,build,test" description="Main target" />
+	<target name="all" depends="clean,compile,build,lwc,iconomy,test" description="Main target" />
 	
 	<target name="clean">
 		<!-- Delete the previous folders -->
@@ -60,7 +57,7 @@
 	
 	<target name="compile" description="Compilation">
 		
-		<echo>Compiling LWC and Core Modules</echo>
+		<echo>${label}</echo>
 		<javac srcdir="${src}/main/java/;${core};${worldguard}/main/java/;${lists}/main/java/" destdir="${bin}/core/" debuglevel="lines,vars,source" deprecation="true" includeantruntime="true">
 			<classpath>
 				<fileset refid="libs" />
@@ -85,22 +82,18 @@
 		</javac>
 	</target>
   
-	<target name="build" depends="lwc,iconomy" description="Build the distribution files">
-		<!-- Copy the version file to the fileserver -->
-		<copy tofile="${dist}/VERSION" file="VERSION" overwrite="yes" />
-		
-		<!-- Copy skeleton files to the fileserver -->
-		<copy todir="${dist}/skel/">
-			<fileset dir="skel">
-				<include name="**" />
-			</fileset>
-		</copy>
+	<target name="build" description="Build the distribution files">
+		<delete dir="${build}" />
+		<mkdir dir="${build}" />
+		<mkdir dir="${build}/junit" />
+
+		<copy tofile="${build}/VERSION" file="VERSION" overwrite="yes" />
 	</target>
 	
 	<target name="lwc" description="Build LWC.jar">
 		<echo>Building LWC.jar</echo>
 	
-		<jar jarfile="${dist}/${branch}/${jar.core}">
+		<jar jarfile="${build}/${jar.core}">
 			<fileset dir="${src}" includes="lang/*" />
 			<fileset dir="${src}/resources/" includes="plugin.yml" />
 			<fileset dir="${bin}/core/" />
@@ -109,27 +102,31 @@
 				<attribute name="Class-Path" value="LWC/modules/core.jar" />
 			</manifest>
 		</jar>
-		
-		<!-- Copy LWC.jar to the dev server -->
-		<copy tofile="${dev}/${jar.core}" file="${dist}/${branch}/${jar.core}" overwrite="yes" />
 	</target>
 	
 	<target name="iconomy" description="Build LWC-iConomy.jar">
 		<echo>Building LWC-iConomy.jar</echo>
-	
-		<jar jarfile="${dist.iconomy}//${jar.iconomy}">
+
+		<mkdir dir="${build}/modules" />
+		<mkdir dir="${build}/modules/iConomy" />
+		
+		<jar jarfile="${build}/modules/iConomy/${jar.iconomy}">
 			<fileset dir="${iconomy}/resources/" includes="plugin.yml" />
 			<fileset dir="${bin}/iconomy/" />
 		</jar>
-		
-		<!-- Copy LWC.jar to the dev server -->
-		<copy tofile="${dev}/${jar.iconomy}" file="${dist.iconomy}/${jar.iconomy}" overwrite="yes" />
 	</target>
 	
 	<target name="test">
+		<mkdir dir="${build}/test-reports/" />
+		
 		<junit fork="yes" haltonfailure="yes">
-			<test name="${test.classname}" />
-			<formatter type="plain" usefile="false" />
+			<batchtest fork="yes" todir="${build}/test-reports/">
+				<fileset dir="${bin}/test/">
+				        <include name="**/*Test.class" />
+				</fileset>
+			</batchtest>
+			
+		    <formatter type="xml" />
 			<classpath refid="test.classpath" />
 		</junit>
 	</target>
