@@ -564,9 +564,15 @@ public class PhysDB extends Database {
         LWC lwc = LWC.getInstance();
         LRUCache<String, Protection> cache = lwc.getCaches().getProtections();
 
+        int precacheSize = lwc.getConfiguration().getInt("core.precache", -1);
+        
+        if(precacheSize == -1) {
+        	precacheSize = lwc.getConfiguration().getInt("core.cacheSize", 10000);
+        }
+        
         try {
             PreparedStatement statement = prepare("SELECT " + prefix + "protections.id AS protectionId, " + prefix + "rights.id AS rightsId, " + prefix + "protections.type AS protectionType, " + prefix + "rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights FROM " + prefix + "protections LEFT OUTER JOIN " + prefix + "rights ON " + prefix + "protections.id = " + prefix + "rights.chest ORDER BY " + prefix + "protections.id DESC LIMIT ?");
-            statement.setInt(1, lwc.getConfiguration().getInt("core.cacheSize", 10000));
+            statement.setInt(1, precacheSize);
             statement.setFetchSize(Integer.MIN_VALUE);
 
             // scrape the protections from the result set now
