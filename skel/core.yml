@@ -21,9 +21,9 @@ database:
     path: plugins/LWC/lwc.db
     host: localhost
     database: lwc
-    username:
-    password:
-    prefix:
+    username: ''
+    password: ''
+    prefix: ''
 
 protections:
     denyRedstone: false
