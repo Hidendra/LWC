@@ -28,7 +28,7 @@ import com.griefcraft.lwc.LWCPlugin;
 
 import static org.junit.Assert.*;
 
-public class LWCTestSuite {
+public class LWCTest {
 
 	/**
 	 * mock Bukkit server
@@ -36,9 +36,9 @@ public class LWCTestSuite {
 	private static MockServer server = null;
 	private static Logger logger = Logger.getLogger("TestSuite");
 	
-	public LWCTestSuite() {
-		if(LWCTestSuite.server == null) {
-			LWCTestSuite.server = new MockServer();
+	public LWCTest() {
+		if(LWCTest.server == null) {
+			LWCTest.server = new MockServer();
 		}
 	}
 	
