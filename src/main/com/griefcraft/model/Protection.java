@@ -27,11 +27,16 @@ import org.bukkit.entity.Player;
 
 import com.griefcraft.cache.CacheSet;
 import com.griefcraft.cache.LRUCache;
+import com.griefcraft.logging.Logger;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.util.Colors;
 
 public class Protection {
 
+	// re-use LWC logger
+	@SuppressWarnings("unused")
+	private Logger logger = Logger.getLogger("LWC");
+	
     // just a footnote, if a flag is "on", it is SET in the database, however if it's set to "off"
     // it is REMOVED from the database if it is in it!
     public enum Flag {
@@ -323,7 +328,8 @@ public class Protection {
          */
         if( lwc.isBug656WorkAround() ) {
         	World worldObject = lwc.getPlugin().getServer().getWorld(world);
-        	List<Block> blocks = lwc.getProtectionSet(worldObject, x, y, z);
+        	List<Block> blocks = lwc.getRelatedBlocks(worldObject, x, y, z);
+//        	logger.log(" removeCache(): cacheKey: "+getCacheKey()+", blocks.size()="+blocks.size());
         	for(Block b : blocks) {
         		String cacheKey = b.getWorld().getName() + ":" + b.getX() + ":" + b.getY() + ":" + b.getZ();
         		cache.remove(cacheKey);
