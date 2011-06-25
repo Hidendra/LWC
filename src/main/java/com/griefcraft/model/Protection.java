@@ -27,10 +27,7 @@ import org.bukkit.entity.Player;
 
 import com.griefcraft.cache.CacheSet;
 import com.griefcraft.cache.LRUCache;
-<<<<<<< HEAD
-=======
 import com.griefcraft.logging.Logger;
->>>>>>> 4c49d4de086dad9d9e75b95d88b5abfdd8aa3908
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.util.Colors;
 
@@ -331,12 +328,7 @@ public class Protection {
          */
         if( lwc.isBug656WorkAround() ) {
         	World worldObject = lwc.getPlugin().getServer().getWorld(world);
-<<<<<<< HEAD
-        	List<Block> blocks = lwc.getProtectionSet(worldObject, x, y, z);
-=======
         	List<Block> blocks = lwc.getRelatedBlocks(worldObject, x, y, z);
-//        	logger.log(" removeCache(): cacheKey: "+getCacheKey()+", blocks.size()="+blocks.size());
->>>>>>> 4c49d4de086dad9d9e75b95d88b5abfdd8aa3908
         	for(Block b : blocks) {
         		String cacheKey = b.getWorld().getName() + ":" + b.getX() + ":" + b.getY() + ":" + b.getZ();
         		cache.remove(cacheKey);
