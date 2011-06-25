@@ -758,8 +758,7 @@ public class LWC {
         List<Block> entities = new ArrayList<Block>(2);
 
         Block baseBlock = world.getBlockAt(x, y, z);
-
-<<<<<<< HEAD
+        
         /* Normal logic is to check the block they clicked to see if it's a "valid" block.
          * Since bug #656 doesn't accurately report block state, this results in valid blocks
          * getting dropped from the protection list.  The workaround just applies the protection
@@ -775,15 +774,6 @@ public class LWC {
 			 */
 			entities = _validateBlock(entities, baseBlock, true);
         }
-        
-
-=======
-		/*
-		 * First check the block they clicked
-		 */
-		entities = _validateBlock(entities, baseBlock, true);
-        
->>>>>>> 4c49d4de086dad9d9e75b95d88b5abfdd8aa3908
         int dev = -1;
         boolean isXDir = true;
 
