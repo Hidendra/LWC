@@ -324,6 +324,10 @@ public class LWCPlugin extends JavaPlugin {
 
         String version = getDescription().getVersion();
         LWCInfo.setVersion(version);
+<<<<<<< HEAD
+=======
+        LWC.ENABLED = true;
+>>>>>>> 4c49d4de086dad9d9e75b95d88b5abfdd8aa3908
         log("At version: " + LWCInfo.FULL_VERSION);
     }
 

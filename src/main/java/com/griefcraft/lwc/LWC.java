@@ -1,5 +1,25 @@
 package com.griefcraft.lwc;
 
+import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Formatter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.ContainerBlock;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+
 import com.firestar.mcbans.mcbans;
 import com.griefcraft.cache.CacheSet;
 import com.griefcraft.logging.Logger;
@@ -8,7 +28,24 @@ import com.griefcraft.migration.MySQLPost200;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
-import com.griefcraft.modules.admin.*;
+import com.griefcraft.modules.admin.AdminCache;
+import com.griefcraft.modules.admin.AdminCleanup;
+import com.griefcraft.modules.admin.AdminClear;
+import com.griefcraft.modules.admin.AdminConfig;
+import com.griefcraft.modules.admin.AdminConvert;
+import com.griefcraft.modules.admin.AdminDebug;
+import com.griefcraft.modules.admin.AdminFind;
+import com.griefcraft.modules.admin.AdminFlush;
+import com.griefcraft.modules.admin.AdminForceOwner;
+import com.griefcraft.modules.admin.AdminLocale;
+import com.griefcraft.modules.admin.AdminPurge;
+import com.griefcraft.modules.admin.AdminReload;
+import com.griefcraft.modules.admin.AdminRemove;
+import com.griefcraft.modules.admin.AdminReport;
+import com.griefcraft.modules.admin.AdminUpdate;
+import com.griefcraft.modules.admin.AdminVersion;
+import com.griefcraft.modules.admin.AdminView;
+import com.griefcraft.modules.admin.BaseAdminModule;
 import com.griefcraft.modules.create.CreateModule;
 import com.griefcraft.modules.credits.CreditsModule;
 import com.griefcraft.modules.debug.DebugModule;
@@ -41,20 +78,6 @@ import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.config.Configuration;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.ContainerBlock;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-
-import java.security.MessageDigest;
-import java.util.*;
 
 public class LWC {
 
@@ -613,6 +636,8 @@ public class LWC {
             return null;
         }
 
+//        log("findProtection: world="+world+",x="+x+",y="+y+"z="+z);
+        
         Block block = world.getBlockAt(x, y, z);
 
         if (block == null) {
@@ -624,6 +649,7 @@ public class LWC {
 
         // loop through and check for protected blocks
         for (Block protectableBlock : protections) {
+//            log("findProtection: checking protectableBlock world="+world.getName()+",x="+protectableBlock.getX()+",y="+protectableBlock.getY()+"z="+protectableBlock.getZ());
             Protection protection = physicalDatabase.loadProtection(world.getName(), protectableBlock.getX(), protectableBlock.getY(), protectableBlock.getZ());
 
             if (protection != null) {
@@ -733,6 +759,7 @@ public class LWC {
 
         Block baseBlock = world.getBlockAt(x, y, z);
 
+<<<<<<< HEAD
         /* Normal logic is to check the block they clicked to see if it's a "valid" block.
          * Since bug #656 doesn't accurately report block state, this results in valid blocks
          * getting dropped from the protection list.  The workaround just applies the protection
@@ -750,6 +777,13 @@ public class LWC {
         }
         
 
+=======
+		/*
+		 * First check the block they clicked
+		 */
+		entities = _validateBlock(entities, baseBlock, true);
+        
+>>>>>>> 4c49d4de086dad9d9e75b95d88b5abfdd8aa3908
         int dev = -1;
         boolean isXDir = true;
 
@@ -775,6 +809,20 @@ public class LWC {
             dev = 1;
         }
 
+//		log("getProtectionSet.preCache: entities.size()="+entities.size()+", baseblock="+baseBlock);
+		
+        /* Normal logic is to check the block they clicked to see if it's a "valid" block.
+         * Since bug #656 doesn't accurately report block state, this results in valid blocks
+         * getting dropped from the protection list.  The workaround just applies the protection
+         * to the given x,y,z block regardless of what Bukkit says the state/material of that
+         * block is.
+         */
+        if( entities.isEmpty() ) {
+        	findCachedProtection(entities, baseBlock);
+        }
+        
+//		log("getProtectionSet.exit: entities.size()="+entities.size()+", baseblock="+baseBlock);
+        
         return entities;
     }
 
@@ -946,7 +994,7 @@ public class LWC {
      * @return
      */
     public boolean isProtectable(Block block) {
-        return isProtectable(block.getType());
+		return isProtectable(block.getType());
     }
 
     public boolean isProtectable(Material material) {
@@ -1218,6 +1266,63 @@ public class LWC {
         return _validateBlock(entities, block, false);
     }
 
+    /** Used only when Bukkit #656 flag is enabled, this call will look for any cached protections
+     * related to the given block.
+     * 
+     * @param block
+     * @return
+     */
+    private boolean findCachedProtection(List<Block> entities, Block block) {
+    	boolean foundProtection = false;
+    	
+		if( physicalDatabase.getCachedProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ()) != null ) {
+			// if the block isn't part of the list, see if it should be, and if so, add it
+	    	if( !entities.contains(block) ) {
+	    		entities.add(block);
+	    	}
+	    	
+	    	foundProtection = true;
+		}
+		
+		return foundProtection;
+    }
+    
+    /** This is very similar to _validateBlock(), except we return all blocks related to a given
+     * protection.  The primary difference is that for a door block, this will return both door
+     * blocks and the block underneath the door, whereas _validateBlock() will generally only
+     * return both door blocks unless the baseBlock happens to be the the underneath block.
+     * 
+     * The primary purpose of this method is for the bug656 workaround, to make sure we accurately
+     * unlock all related "locked" blocks when /cremove is used.
+     * 
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     * @return the blocks found related to the protection at the block passed in (if any)
+     */
+    public List<Block> getRelatedBlocks(World world, int x, int y, int z) {
+    	Block block = world.getBlockAt(x,y,z);
+    	
+    	// let getProtectionSet()/_validateBlock do most of the work
+    	List<Block> entities = getProtectionSet(world, x, y, z);
+    	
+    	// now check if it was a door, that we've included the block underneath the door also
+    	switch(block.getTypeId()) {
+	        case 64:	// wooden door
+	        case 71:	// iron door
+	        	Block down = block.getFace(BlockFace.DOWN);
+	        	if( down.getTypeId() == 64 || down.getTypeId() == 71 ) {
+	        		down = down.getFace(BlockFace.DOWN);
+	        	}
+	        	
+	        	if( !entities.contains(down) )
+	        		entities.add(down);
+    	}
+    	
+    	return entities;
+    }
+    
     /**
      * Ensure a chest/furnace is protectable where it's at
      *
@@ -1240,7 +1345,7 @@ public class LWC {
 
         if (entities.size() == 1) {
             Block other = entities.get(0);
-
+            
             switch (other.getTypeId()) {
 
                 /*
