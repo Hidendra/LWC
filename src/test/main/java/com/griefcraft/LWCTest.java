@@ -41,7 +41,7 @@ public class LWCTest {
 			LWCTest.server = new MockServer();
 		}
 		
-		System.out.println("cnstrct");
+		server.softReset();
 	}
 	
 	@Test
