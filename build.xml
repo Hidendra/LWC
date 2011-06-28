@@ -85,7 +85,6 @@
 	<target name="build" description="Build the distribution files">
 		<delete dir="${build}" />
 		<mkdir dir="${build}" />
-		<mkdir dir="${build}/junit" />
 
 		<copy tofile="${build}/VERSION" file="VERSION" overwrite="yes" />
 	</target>
