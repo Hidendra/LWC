@@ -40,11 +40,18 @@ public class LWCTest {
 		if(LWCTest.server == null) {
 			LWCTest.server = new MockServer();
 		}
+		
+		System.out.println("cnstrct");
 	}
 	
 	@Test
 	public void CheckLWC() {
 		assertNotNull(getLWC());
+	}
+	
+	@Test
+	public void Nothing() {
+		
 	}
 	
 	/**

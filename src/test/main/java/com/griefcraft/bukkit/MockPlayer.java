@@ -18,11 +18,14 @@
 package com.griefcraft.bukkit;
 
 import java.net.InetSocketAddress;
+import java.util.Deque;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Achievement;
+import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,9 +47,28 @@ import org.bukkit.util.Vector;
 public class MockPlayer implements Player {
 
 	private String playerName;
+	private String displayName;
+	private boolean op;
 
+	/**
+	 * The message history for the player
+	 */
+	private Deque<String> messageHistory = new LinkedList<String>();
+	
 	public MockPlayer(String playerName) {
 		this.playerName = playerName;
+		this.displayName = playerName;
+	}
+	
+	/**
+	 * @return the last message received
+	 */
+	public String pollLastMessage() {
+		return messageHistory.pollLast();
+	}
+
+	public void sendMessage(String arg0) {
+		messageHistory.addLast(arg0);
 	}
 
 	public boolean isOnline() {
@@ -56,20 +78,25 @@ public class MockPlayer implements Player {
 	public String getName() {
 		return playerName;
 	}
-
-	public InetSocketAddress getAddress() {
-		// TODO Auto-generated method stub
-		return null;
+	
+	public void setOp(boolean op) {
+		this.op = op;
 	}
 
 	public boolean isOp() {
-		// TODO Auto-generated method stub
-		return false;
+		return op;
 	}
 
-	public void sendMessage(String arg0) {
-		// TODO Auto-generated method stub
+	public Server getServer() {
+		return Bukkit.getServer();
+	}
 
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String arg0) {
+		this.displayName = arg0;
 	}
 
 	public Location getLocation() {
@@ -77,14 +104,19 @@ public class MockPlayer implements Player {
 		return null;
 	}
 
-	public Server getServer() {
+	public World getWorld() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public World getWorld() {
+	public InetSocketAddress getAddress() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public void sendRawMessage(String arg0) {
+		// TODO Auto-generated method stub
+
 	}
 
 	public boolean isDead() {
@@ -98,16 +130,6 @@ public class MockPlayer implements Player {
 	}
 
 	public void kickPlayer(String arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public String getDisplayName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void setDisplayName(String arg0) {
 		// TODO Auto-generated method stub
 
 	}
@@ -450,11 +472,6 @@ public class MockPlayer implements Player {
 	public boolean sendChunkChange(Location arg0, int arg1, int arg2, int arg3, byte[] arg4) {
 		// TODO Auto-generated method stub
 		return false;
-	}
-
-	public void sendRawMessage(String arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void setCompassTarget(Location arg0) {

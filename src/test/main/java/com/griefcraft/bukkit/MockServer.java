@@ -63,7 +63,7 @@ public class MockServer implements Server {
 	private Logger logger = Logger.getLogger("MockServer");
 	
 	/**
-	 * The currently loaded worlds (stores nothing at the moment)
+	 * The currently loaded worlds
 	 */
 	private Map<String, World> worlds;
 	
