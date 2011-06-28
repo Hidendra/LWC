@@ -29,6 +29,7 @@ import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerListener;
@@ -68,6 +69,22 @@ public class LWCPlayerListener extends PlayerListener {
         if (result == Result.CANCEL) {
             event.setCancelled(true);
         }
+    }
+    
+    @Override
+    public void onPlayerChat(PlayerChatEvent event) {
+    	if(!plugin.getLWC().getConfiguration().getBoolean("core.filterunlock", true)) {
+    		return;
+    	}
+    	
+    	/**
+    	 * We want to block messages starting with cunlock incase someone screws up /cunlock password.
+    	 */
+    	String message = event.getMessage();
+    	
+    	if(message.startsWith("cunlock")) {
+    		event.setCancelled(true);
+    	}
     }
 
     @Override

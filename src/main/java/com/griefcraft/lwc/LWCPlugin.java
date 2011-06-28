@@ -367,6 +367,7 @@ public class LWCPlugin extends JavaPlugin {
         registerEvent(playerListener, Type.PLAYER_QUIT, Priority.Monitor);
         registerEvent(playerListener, Type.PLAYER_DROP_ITEM);
         registerEvent(playerListener, Type.PLAYER_INTERACT);
+        registerEvent(playerListener, Type.PLAYER_CHAT);
 
         /* Entity events */
         registerEvent(entityListener, Type.ENTITY_EXPLODE);
