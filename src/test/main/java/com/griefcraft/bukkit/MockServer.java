@@ -63,6 +63,11 @@ public class MockServer implements Server {
 	private Logger logger = Logger.getLogger("MockServer");
 	
 	/**
+	 * The players online
+	 */
+	private List<Player> players;
+	
+	/**
 	 * The currently loaded worlds
 	 */
 	private Map<String, World> worlds;
@@ -81,10 +86,19 @@ public class MockServer implements Server {
 		// bind the mock server to Bukkit
 		Bukkit.setServer(this);
 		
+		players = new ArrayList<Player>();
 		worlds = new LinkedHashMap<String, World>();
 		pluginManager = new SimplePluginManager(this);
 		scheduler = new CraftScheduler(null);
 		loadPlugins();
+	}
+	
+	/**
+	 * Clear out worlds, players, and so on
+	 */
+	public void softReset() {
+		players = new ArrayList<Player>();
+		worlds = new LinkedHashMap<String, World>();
 	}
 	
 	/**
@@ -95,6 +109,15 @@ public class MockServer implements Server {
 	 */
 	private void methodCalled(String method, Object... bind) {
 		logger.info("CALL -> " + String.format(method, bind));
+	}
+	
+	/**
+	 * Add a player
+	 * 
+	 * @param player
+	 */
+	public void addPlayer(Player player) {
+		players.add(player);
 	}
 	
 	/**
@@ -159,13 +182,42 @@ public class MockServer implements Server {
 
 	public Player[] getOnlinePlayers() {
 		methodCalled("getOnlinePlayers()");
-		return null;
+		return players.toArray(new Player[players.size()]);
 	}
 
 	public Player getPlayer(String arg0) {
 		methodCalled("getPlayer(%s)", arg0);
+		
+		for(Player player : players) {
+			if(player.getName().equals(arg0)) {
+				return player;
+			}
+		}
+		
 		return null;
 	}
+	
+	// borrowed from Bukkit
+	public List<Player> matchPlayer(String arg0) {
+        List<Player> matchedPlayers = new ArrayList<Player>();
+
+        for (Player iterPlayer : this.getOnlinePlayers()) {
+            String iterPlayerName = iterPlayer.getName();
+
+            if (arg0.equalsIgnoreCase(iterPlayerName)) {
+                // Exact match
+                matchedPlayers.clear();
+                matchedPlayers.add(iterPlayer);
+                break;
+            }
+            if (iterPlayerName.toLowerCase().indexOf(arg0.toLowerCase()) != -1) {
+                // Partial match
+                matchedPlayers.add(iterPlayer);
+            }
+        }
+
+        return matchedPlayers;
+    }
 
 	public Logger getLogger() {
 		return logger;
@@ -201,11 +253,6 @@ public class MockServer implements Server {
 
 	public String getName() {
 		return NAME;
-	}
-
-	public List<Player> matchPlayer(String arg0) {
-		methodCalled("matchPlayer(%s)", arg0);
-		return null;
 	}
 
 	public int broadcastMessage(String arg0) {
