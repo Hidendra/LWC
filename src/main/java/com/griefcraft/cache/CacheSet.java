@@ -39,7 +39,7 @@ public class CacheSet {
         int maxCapacity = LWC.getInstance().getConfiguration().getInt("core.cacheSize", 10000);
 
         protectionCache = new LRUCache<String, Protection>(maxCapacity);
-        logger.info("Protection cache: 0/" + maxCapacity);
+        logger.info("LWC: Protection cache: 0/" + maxCapacity);
     }
 
     /**
