@@ -17,15 +17,15 @@
 
 package com.griefcraft.sql;
 
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.sql.Database.Type;
-import com.griefcraft.util.Performance;
-
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.sql.Database.Type;
+import com.griefcraft.util.Performance;
 
 public class Table {
 
@@ -141,7 +141,7 @@ public class Table {
         }
 
         // log it as verbose
-        database.log("Synched table " + name + " (" + columns.size() + " columns)", Level.CONFIG);
+        database.log("Synched table " + name + " (" + columns.size() + " columns)");
 
         // add the query to performance
         if (memory) {

@@ -49,6 +49,7 @@ public class MockPlayer implements Player {
 	private String playerName;
 	private String displayName;
 	private boolean op;
+	private World world;
 
 	/**
 	 * The message history for the player
@@ -99,12 +100,15 @@ public class MockPlayer implements Player {
 		this.displayName = arg0;
 	}
 
-	public Location getLocation() {
-		// TODO Auto-generated method stub
-		return null;
+	public World getWorld() {
+		return world;
+	}
+	
+	public void setWorld(World world) {
+		this.world = world;
 	}
 
-	public World getWorld() {
+	public Location getLocation() {
 		// TODO Auto-generated method stub
 		return null;
 	}

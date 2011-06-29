@@ -137,6 +137,8 @@ public class MockServer implements Server {
                     } catch (Throwable ex) {
                         Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, ex.getMessage() + " initializing " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
                     }
+                    
+                    logger.info("Loaded: " + plugin.getDescription().getName());
                 }
             } catch (Throwable ex) {
                 Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, ex.getMessage() + " (Is it up to date?)", ex);
@@ -199,6 +201,8 @@ public class MockServer implements Server {
 	
 	// borrowed from Bukkit
 	public List<Player> matchPlayer(String arg0) {
+		methodCalled("matchPlayer(%s)", arg0);
+		
         List<Player> matchedPlayers = new ArrayList<Player>();
 
         for (Player iterPlayer : this.getOnlinePlayers()) {

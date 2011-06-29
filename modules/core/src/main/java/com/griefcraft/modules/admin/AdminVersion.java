@@ -17,13 +17,14 @@
 
 package com.griefcraft.modules.admin;
 
+import org.bukkit.command.CommandSender;
+
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.Updater;
-import org.bukkit.command.CommandSender;
 
 public class AdminVersion extends JavaModule {
 

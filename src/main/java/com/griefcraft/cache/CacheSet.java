@@ -17,7 +17,9 @@
 
 package com.griefcraft.cache;
 
-import com.griefcraft.logging.Logger;
+
+import java.util.logging.Logger;
+
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 
@@ -37,7 +39,7 @@ public class CacheSet {
         int maxCapacity = LWC.getInstance().getConfiguration().getInt("core.cacheSize", 10000);
 
         protectionCache = new LRUCache<String, Protection>(maxCapacity);
-        logger.log("Protection cache: 0/" + maxCapacity);
+        logger.info("Protection cache: 0/" + maxCapacity);
     }
 
     /**

@@ -20,8 +20,8 @@ package com.griefcraft.migration;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Logger;
 
-import com.griefcraft.logging.Logger;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Protection;
@@ -60,11 +60,11 @@ public class MySQLPost200 {
 			return;
 		}
 
-		logger.log("######################################################");
-		logger.log("######################################################");
-		logger.log("SQLite to MySQL conversion required");
+		logger.info("######################################################");
+		logger.info("######################################################");
+		logger.info("SQLite to MySQL conversion required");
 
-		logger.log("Loading SQLite");
+		logger.info("Loading SQLite");
 
 		// rev up those sqlite databases because I sure am hungry for some
 		// data...
@@ -74,10 +74,10 @@ public class MySQLPost200 {
 			sqliteDatabase.connect();
 			sqliteDatabase.load();
 
-			logger.log("SQLite is good to go");
+			logger.info("SQLite is good to go");
 			physicalDatabase.getConnection().setAutoCommit(false);
 
-			logger.log("Preliminary scan...............");
+			logger.info("Preliminary scan...............");
 			int startProtections = physicalDatabase.getProtectionCount();
 
 			int protections = sqliteDatabase.getProtectionCount();
@@ -85,13 +85,13 @@ public class MySQLPost200 {
 
 			int expectedProtections = protections + startProtections;
 
-			logger.log("TO CONVERT:");
-			logger.log("Protections:\t" + protections);
-			logger.log("Rights:\t\t" + rights);
-			logger.log("");
+			logger.info("TO CONVERT:");
+			logger.info("Protections:\t" + protections);
+			logger.info("Rights:\t\t" + rights);
+			logger.info("");
 
 			if (protections > 0) {
-				logger.log("Converting: PROTECTIONS");
+				logger.info("Converting: PROTECTIONS");
 
 				List<Protection> tmp = sqliteDatabase.loadProtections();
 
@@ -116,28 +116,28 @@ public class MySQLPost200 {
 				
 				}
 
-				logger.log("COMMITTING");
+				logger.info("COMMITTING");
 				physicalDatabase.getConnection().commit();
-				logger.log("OK , expecting: " + expectedProtections);
+				logger.info("OK , expecting: " + expectedProtections);
 				if (expectedProtections == (protections = physicalDatabase.getProtectionCount())) {
-					logger.log("OK.");
+					logger.info("OK.");
 				} else {
-					logger.log("Weird, only " + protections + " protections are in the database? Continuing...");
+					logger.info("Weird, only " + protections + " protections are in the database? Continuing...");
 				}
 			}
 
-			logger.log("Closing SQLite");
+			logger.info("Closing SQLite");
 			sqliteDatabase.getConnection().close();
 
-			logger.log("Renaming \"" + database + "\" to \"" + database + ".old\"");
+			logger.info("Renaming \"" + database + "\" to \"" + database + ".old\"");
 			if (!file.renameTo(new File(database + ".old"))) {
-				logger.log("NOTICE: FAILED TO RENAME lwc.db!! Please rename this manually!");
+				logger.info("NOTICE: FAILED TO RENAME lwc.db!! Please rename this manually!");
 			}
 
-			logger.log("SQLite to MySQL conversion is now complete!\n");
-			logger.log("Thank you!");
+			logger.info("SQLite to MySQL conversion is now complete!\n");
+			logger.info("Thank you!");
 		} catch (Exception e) {
-			logger.log("#### SEVERE ERROR: Something bad happened when converting the database (Oops!)");
+			logger.info("#### SEVERE ERROR: Something bad happened when converting the database (Oops!)");
 			e.printStackTrace();
 		}
 
@@ -147,8 +147,8 @@ public class MySQLPost200 {
 			e.printStackTrace();
 		}
 
-		logger.log("######################################################");
-		logger.log("######################################################");
+		logger.info("######################################################");
+		logger.info("######################################################");
 	}
 
 }

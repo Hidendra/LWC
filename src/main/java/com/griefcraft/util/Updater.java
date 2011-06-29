@@ -17,17 +17,24 @@
 
 package com.griefcraft.util;
 
-import com.griefcraft.logging.Logger;
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.lwc.LWCInfo;
-import com.griefcraft.scripting.ModuleLoader;
-import com.griefcraft.sql.Database;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
+
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.lwc.LWCInfo;
+import com.griefcraft.scripting.ModuleLoader;
+import com.griefcraft.sql.Database;
 
 public class Updater {
 
@@ -103,8 +110,8 @@ public class Updater {
 
         if (LWC.getInstance().getConfiguration().getBoolean("core.autoUpdate", false)) {
             if (latestPluginVersion > LWCInfo.VERSION) {
-                logger.log("Update detected for LWC");
-                logger.log("Latest version: " + latestPluginVersion);
+                logger.info("Update detected for LWC");
+                logger.info("Latest version: " + latestPluginVersion);
             }
         }
     }
@@ -125,10 +132,10 @@ public class Updater {
 
             try {
                 update();
-                logger.log("Updated successful");
+                logger.info("Updated successful");
                 return true;
             } catch (Exception e) {
-                logger.log("Update failed: " + e.getMessage());
+                logger.info("Update failed: " + e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -249,7 +256,7 @@ public class Updater {
         folder = new File(DEST_LIBRARY_FOLDER + "lib/");
         folder.mkdirs();
 
-        logger.log("Need to download " + needsUpdating.size() + " file(s)");
+        logger.info("Need to download " + needsUpdating.size() + " file(s)");
 
         Iterator<UpdaterFile> iterator = needsUpdating.iterator();
 
@@ -259,7 +266,7 @@ public class Updater {
             String fileName = item.getRemoteLocation();
             fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
 
-            logger.log(" - Downloading file: " + fileName);
+            logger.info(" - Downloading file: " + fileName);
 
             URL url = new URL(item.getRemoteLocation());
             File file = new File(item.getLocalLocation());
@@ -276,7 +283,7 @@ public class Updater {
             inputStream.close();
             outputStream.close();
 
-            logger.log("  + Download complete");
+            logger.info("  + Download complete");
             iterator.remove();
         }
     }

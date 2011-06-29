@@ -17,17 +17,27 @@
 
 package com.griefcraft;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.logging.Logger;
 
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.junit.Test;
 
+import com.griefcraft.bukkit.MockPlayer;
 import com.griefcraft.bukkit.MockServer;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 
-import static org.junit.Assert.*;
-
+/**
+ * 
+ * WORLD NAMES UTILIZED
+ *   - main
+ *   - nether
+ * 
+ */
 public class LWCTest {
 
 	/**
@@ -50,7 +60,21 @@ public class LWCTest {
 	}
 	
 	@Test
-	public void Nothing() {
+	public void CheckPermissions() {
+		// we need permissions in these tests
+		assertNotNull(getLWC().getPermissions());
+	}
+	
+	@Test
+	public void CreateHidendra() {
+		Player player = new MockPlayer("Hidendra");
+		server.addPlayer(player);
+		
+		assertEquals(server.getOnlinePlayers().length, 1);
+	}
+	
+	@Test
+	public void Case1() {
 		
 	}
 	

@@ -20,16 +20,15 @@ package com.griefcraft.migration;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import org.bukkit.Material;
 
-import com.griefcraft.logging.Logger;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.modules.worldguard.WorldGuardModule;
 
@@ -49,7 +48,7 @@ public class ConfigPost300 {
 		
 		// delete internal.ini
 		new File("plugins/LWC/internal.ini").delete();
-		logger.log("Converting lwc.properties to new variants");
+		logger.info("Converting lwc.properties to new variants");
 		
 		// we need to convert..
 		populate();
