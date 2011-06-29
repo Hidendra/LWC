@@ -1013,7 +1013,7 @@ public class LWC {
 
         if (permissionsPlugin != null) {
             permissions = ((Permissions) permissionsPlugin).getHandler();
-            logger.info("Using Permissions API...");
+            logger.info("Using Permissions API");
         }
 
         log("Loading " + Database.DefaultType);
