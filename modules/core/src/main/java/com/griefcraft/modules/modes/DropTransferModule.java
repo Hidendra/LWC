@@ -17,11 +17,9 @@
 
 package com.griefcraft.modules.modes;
 
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.Protection;
-import com.griefcraft.scripting.JavaModule;
-import com.griefcraft.util.Colors;
-import com.griefcraft.util.StringUtils;
+import java.util.List;
+import java.util.Map;
+
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -30,8 +28,11 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
-import java.util.Map;
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Protection;
+import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.util.Colors;
+import com.griefcraft.util.StringUtils;
 
 public class DropTransferModule extends JavaModule {
 

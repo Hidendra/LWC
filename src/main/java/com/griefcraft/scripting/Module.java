@@ -17,15 +17,16 @@
 
 package com.griefcraft.scripting;
 
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.Protection;
+import java.util.List;
+
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Protection;
 
 /**
  * This interface defines methods that modules may implement

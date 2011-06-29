@@ -17,18 +17,23 @@
 
 package com.griefcraft.util.config;
 
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.scripting.ModuleLoader;
-import com.griefcraft.util.Updater;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.reader.UnicodeReader;
 import org.yaml.snakeyaml.representer.Representer;
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.scripting.ModuleLoader;
+import com.griefcraft.util.Updater;
 
 public class Configuration extends ConfigurationNode {
     private Yaml yaml;

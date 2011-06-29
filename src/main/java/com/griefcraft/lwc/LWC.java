@@ -7,6 +7,7 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -22,7 +23,6 @@ import org.bukkit.plugin.Plugin;
 
 import com.firestar.mcbans.mcbans;
 import com.griefcraft.cache.CacheSet;
-import com.griefcraft.logging.Logger;
 import com.griefcraft.migration.ConfigPost300;
 import com.griefcraft.migration.MySQLPost200;
 import com.griefcraft.model.AccessRight;
@@ -1013,7 +1013,7 @@ public class LWC {
 
         if (permissionsPlugin != null) {
             permissions = ((Permissions) permissionsPlugin).getHandler();
-            logger.log("Using Permissions API...");
+            logger.info("Using Permissions API...");
         }
 
         log("Loading " + Database.DefaultType);
@@ -1024,7 +1024,7 @@ public class LWC {
             physicalDatabase.load();
             memoryDatabase.load();
 
-            Logger.getLogger(Database.DefaultType.toString()).log("Using: " + StringUtils.capitalizeFirstLetter(physicalDatabase.getConnection().getMetaData().getDriverVersion()));
+            log("Using: " + StringUtils.capitalizeFirstLetter(physicalDatabase.getConnection().getMetaData().getDriverVersion()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1532,7 +1532,7 @@ public class LWC {
      * @param str
      */
     private void log(String str) {
-        logger.log(str);
+        logger.info("LWC: " + str);
     }
 
     /**

@@ -17,10 +17,11 @@
 
 package com.griefcraft.modules.admin;
 
+import org.bukkit.command.CommandSender;
+
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.StringUtils;
-import org.bukkit.command.CommandSender;
 
 // reference class :-)
 // args is assumed to be at least length 1 (BaseAdminModule MUST be registered before these)

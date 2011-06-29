@@ -17,6 +17,9 @@
 
 package com.griefcraft.lwc;
 
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+
 import com.griefcraft.bukkit.BukkitPlugin;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.Colors;
@@ -25,8 +28,6 @@ import com.iConomy.iConomy;
 import com.iConomy.system.Account;
 import com.iConomy.system.Holdings;
 import com.iConomy.util.Constants;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 
 public class iConomyModule extends JavaModule {
 

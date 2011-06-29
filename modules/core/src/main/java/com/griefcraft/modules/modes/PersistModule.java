@@ -17,13 +17,14 @@
 
 package com.griefcraft.modules.modes;
 
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.scripting.JavaModule;
-import com.griefcraft.util.StringUtils;
+import java.util.List;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.List;
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.util.StringUtils;
 
 public class PersistModule extends JavaModule {
 

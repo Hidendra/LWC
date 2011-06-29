@@ -17,10 +17,11 @@
 
 package com.griefcraft.modules.redstone;
 
+import org.bukkit.block.Block;
+
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
-import org.bukkit.block.Block;
 
 public class RedstoneModule extends JavaModule {
 

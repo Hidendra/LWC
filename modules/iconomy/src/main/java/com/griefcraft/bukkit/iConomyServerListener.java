@@ -17,12 +17,13 @@
 
 package com.griefcraft.bukkit;
 
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.lwc.LWCPlugin;
-import com.iConomy.iConomy;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.Plugin;
+
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.lwc.LWCPlugin;
+import com.iConomy.iConomy;
 
 public class iConomyServerListener extends ServerListener {
 
