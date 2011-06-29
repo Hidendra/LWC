@@ -62,6 +62,8 @@ public class LWCTest {
 	@Test
 	public void CheckPermissions() {
 		// we need permissions in these tests
+		logger.info("Permissions: " + getLWC().getPermissions());
+		logger.info("Permissions(real): " + server.getPluginManager().getPlugin("Permissions"));
 		assertNotNull(getLWC().getPermissions());
 	}
 	
