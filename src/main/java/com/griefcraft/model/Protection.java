@@ -19,6 +19,7 @@ package com.griefcraft.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -27,7 +28,6 @@ import org.bukkit.entity.Player;
 
 import com.griefcraft.cache.CacheSet;
 import com.griefcraft.cache.LRUCache;
-import com.griefcraft.logging.Logger;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.util.Colors;
 

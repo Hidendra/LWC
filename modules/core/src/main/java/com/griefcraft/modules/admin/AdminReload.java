@@ -17,11 +17,12 @@
 
 package com.griefcraft.modules.admin;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
+
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.StringUtils;
-import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.Plugin;
 
 public class AdminReload extends JavaModule {
 

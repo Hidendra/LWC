@@ -3,6 +3,8 @@ main: com.griefcraft.lwc.LWCPlugin
 version: 3.11
 website: http://griefcraft.com
 author: Hidendra
+softdepend:
+    - 'Permissions'
 description: >
              Inventory protection & management utilizing SQLite or MySQL as its backend
              Other blocks can be protected such as Doors and Signs

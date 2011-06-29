@@ -17,17 +17,18 @@
 
 package com.griefcraft.modules.unlock;
 
+import static com.griefcraft.util.StringUtils.encrypt;
+import static com.griefcraft.util.StringUtils.join;
+
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-import static com.griefcraft.util.StringUtils.encrypt;
-import static com.griefcraft.util.StringUtils.join;
 
 public class UnlockModule extends JavaModule {
 

@@ -17,15 +17,18 @@
 
 package com.griefcraft.bukkit;
 
-import com.griefcraft.logging.Logger;
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.lwc.iConomyModule;
-import com.griefcraft.scripting.Module;
-import com.iConomy.iConomy;
+
+import java.util.logging.Logger;
+
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.lwc.iConomyModule;
+import com.griefcraft.scripting.Module;
+import com.iConomy.iConomy;
 
 public class BukkitPlugin extends JavaPlugin {
     private Logger logger = Logger.getLogger("LWC-iConomy");
@@ -101,7 +104,7 @@ public class BukkitPlugin extends JavaPlugin {
     }
 
     public void info(String message) {
-        logger.log("LWC-iConomy: " + message);
+        logger.info("LWC-iConomy: " + message);
     }
 
 }

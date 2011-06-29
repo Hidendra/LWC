@@ -17,20 +17,27 @@
 
 package com.griefcraft.sql;
 
-import com.griefcraft.logging.Logger;
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.util.Updater;
-import com.griefcraft.util.config.Configuration;
-import org.bukkit.Bukkit;
 
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.bukkit.Bukkit;
+
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.util.Updater;
+import com.griefcraft.util.config.Configuration;
 
 public abstract class Database {
 
@@ -203,11 +210,7 @@ public abstract class Database {
      * @param str The string to log
      */
     public void log(String str) {
-        logger.log(str);
-    }
-
-    public void log(String str, Level level) {
-        logger.log(str, level);
+        logger.info("LWC: " + str);
     }
 
     /**

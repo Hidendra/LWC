@@ -17,21 +17,26 @@
 
 package com.griefcraft.modules.flag;
 
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.Protection;
-import com.griefcraft.scripting.JavaModule;
-import com.griefcraft.util.config.Configuration;
-import org.bukkit.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Protection;
+import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.util.config.Configuration;
 
 public class MagnetModule extends JavaModule {
 

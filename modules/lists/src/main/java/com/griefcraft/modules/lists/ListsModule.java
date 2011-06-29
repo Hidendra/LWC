@@ -17,6 +17,9 @@
 
 package com.griefcraft.modules.lists;
 
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Protection;
@@ -25,8 +28,6 @@ import com.griefcraft.scripting.JavaModule;
 import com.herocraftonline.dthielke.lists.Lists;
 import com.herocraftonline.dthielke.lists.PrivilegedList;
 import com.herocraftonline.dthielke.lists.PrivilegedList.PrivilegeLevel;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 public class ListsModule extends JavaModule {
 
