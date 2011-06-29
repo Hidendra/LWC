@@ -127,6 +127,10 @@
 	<target name="test">
 		<mkdir dir="${build}/test-reports/" />
 		
+		<!-- Prevent the already packaged classes from interfering -->
+		<delete dir="${bin}/core/" />
+		<delete dir="${bin}/iconomy/" />
+		
 		<junit fork="yes" haltonfailure="yes">
 			<batchtest fork="yes" todir="${build}/test-reports/">
 				<fileset dir="${bin}/test/">

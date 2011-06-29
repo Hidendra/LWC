@@ -278,6 +278,8 @@ public class LWCPlugin extends JavaPlugin {
         try {
             ResourceBundle defaultBundle = null;
             ResourceBundle optionalBundle = null;
+            
+            log(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
 
             // load the default locale first
             defaultBundle = ResourceBundle.getBundle("lang.lwc", new Locale("en"), new UTF8Control());
@@ -288,7 +290,7 @@ public class LWCPlugin extends JavaPlugin {
             } catch (MissingResourceException e) {
             }
 
-            // ensure both bundles arent the same
+            // ensure both bundles aren't the same
             if (defaultBundle == optionalBundle) {
                 optionalBundle = null;
             }
