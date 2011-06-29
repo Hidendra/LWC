@@ -22,8 +22,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -95,6 +99,8 @@ public class MockServer implements Server {
 	public MockServer() {
 		// bind the mock server to Bukkit
 		Bukkit.setServer(this);
+		
+		logger.info("Loading MockServer");
 		
 		players = new ArrayList<Player>();
 		worlds = new LinkedHashMap<String, World>();
@@ -329,6 +335,8 @@ public class MockServer implements Server {
 	 * Load all plugins
 	 */
 	public void loadPlugins() {
+		methodCalled("loadPlugins()");
+		
         pluginManager.registerInterface(JavaPluginLoader.class);
 
         File pluginFolder = new File("plugins");

@@ -20,7 +20,11 @@ package com.griefcraft;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -28,8 +32,6 @@ import org.junit.Test;
 
 import com.griefcraft.bukkit.MockPlayer;
 import com.griefcraft.bukkit.MockServer;
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.lwc.LWCPlugin;
 
 /**
  * 
@@ -48,6 +50,16 @@ public class LWCTest {
 	
 	public LWCTest() {
 		if(LWCTest.server == null) {
+			ConsoleHandler consoleHandler = new ConsoleHandler();
+			consoleHandler.setFormatter(new SimpleFormatter() {
+				@Override
+				public synchronized String format(LogRecord arg0) {
+					return arg0.getMessage();
+				}
+			});
+			Logger global = Logger.getLogger("");
+			global.addHandler(consoleHandler);
+			
 			LWCTest.server = new MockServer();
 		}
 		
@@ -56,15 +68,12 @@ public class LWCTest {
 	
 	@Test
 	public void CheckLWC() {
-		assertNotNull(getLWC());
+		assertEquals(getPlugin("LWC").isEnabled(), true);
 	}
 	
 	@Test
 	public void CheckPermissions() {
-		// we need permissions in these tests
-		logger.info("Permissions: " + getLWC().getPermissions());
-		logger.info("Permissions(real): " + server.getPluginManager().getPlugin("Permissions"));
-		assertNotNull(getLWC().getPermissions());
+		assertEquals(getPlugin("Permissions").isEnabled(), true);
 	}
 	
 	@Test
@@ -81,16 +90,17 @@ public class LWCTest {
 	}
 	
 	/**
-	 * @return the LWC object
+	 * @param pluginName The plugin to retrieve
+	 * @return the plugin object
 	 */
-	private LWC getLWC() {
-		Plugin plugin = server.getPluginManager().getPlugin("LWC");
+	private Plugin getPlugin(String pluginName) {
+		Plugin plugin = server.getPluginManager().getPlugin(pluginName);
 		
 		if(plugin == null) {
 			return null;
 		}
 		
-		return ((LWCPlugin) plugin).getLWC();
+		return plugin;
 	}
 	
 }
