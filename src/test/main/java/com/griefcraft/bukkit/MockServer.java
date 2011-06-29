@@ -29,14 +29,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.SimplePluginManager;
@@ -59,6 +62,8 @@ public class MockServer implements Server {
 	public static final String UPDATE_FOLDER = "";
 	public static final int MAX_PLAYERS = 64;
 	public static final int SERVER_PORT = 5555; // doesn't run a server, just aesthetic
+	public static final int SPAWN_RADIUS = 15;
+	public static final boolean ONLINE_MODE = false;
 	
 	private Logger logger = Logger.getLogger("MockServer");
 	
@@ -82,15 +87,28 @@ public class MockServer implements Server {
 	 */
 	private BukkitScheduler scheduler;
 	
+	/**
+	 * The plugin command map
+	 */
+	private CommandMap commandMap;
+	
 	public MockServer() {
 		// bind the mock server to Bukkit
 		Bukkit.setServer(this);
 		
 		players = new ArrayList<Player>();
 		worlds = new LinkedHashMap<String, World>();
-		pluginManager = new SimplePluginManager(this);
+		commandMap = new SimpleCommandMap(this);
+		pluginManager = new SimplePluginManager(this, (SimpleCommandMap) commandMap);
 		scheduler = new CraftScheduler(null);
 		loadPlugins();
+        enablePlugins(PluginLoadOrder.STARTUP);
+        
+        // create 1 world
+        World world = new MockWorld();
+        worlds.put("main", world);
+        
+        enablePlugins(PluginLoadOrder.POSTWORLD);
 	}
 	
 	/**
@@ -119,34 +137,6 @@ public class MockServer implements Server {
 	public void addPlayer(Player player) {
 		players.add(player);
 	}
-	
-	/**
-	 * Load all plugins
-	 */
-	public void loadPlugins() {
-        pluginManager.registerInterface(JavaPluginLoader.class);
-
-        File pluginFolder = new File("plugins");
-
-        if (pluginFolder.exists()) {
-            try {
-                Plugin[] plugins = pluginManager.loadPlugins(pluginFolder);
-                for (Plugin plugin : plugins) {
-                    try {
-                        plugin.onLoad();
-                    } catch (Throwable ex) {
-                        Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, ex.getMessage() + " initializing " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
-                    }
-                    
-                    logger.info("Loaded: " + plugin.getDescription().getName());
-                }
-            } catch (Throwable ex) {
-                Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, ex.getMessage() + " (Is it up to date?)", ex);
-            }
-        } else {
-            pluginFolder.mkdir();
-        }
-    }
 
 	public World getWorld(String arg0) {
 		methodCalled("getWorld(%s)", arg0);
@@ -312,5 +302,85 @@ public class MockServer implements Server {
 		methodCalled("savePlayers()");
 	}
 
+	@Override
+	public Map<String, String[]> getCommandAliases() {
+		methodCalled("getCommandAliases()");
+		return null;
+	}
+
+	@Override
+	public boolean getOnlineMode() {
+		methodCalled("getOnlineMode()");
+		return ONLINE_MODE;
+	}
+
+	@Override
+	public int getSpawnRadius() {
+		methodCalled("getSpawnRadius()");
+		return SPAWN_RADIUS;
+	}
+
+	@Override
+	public void setSpawnRadius(int arg0) {
+		methodCalled("setSpawnRadius(%d)", arg0);
+	}
+	
+	/**
+	 * Load all plugins
+	 */
+	public void loadPlugins() {
+        pluginManager.registerInterface(JavaPluginLoader.class);
+
+        File pluginFolder = new File("plugins");
+
+        if (pluginFolder.exists()) {
+            try {
+                Plugin[] plugins = pluginManager.loadPlugins(pluginFolder);
+                for (Plugin plugin : plugins) {
+                    try {
+                        plugin.onLoad();
+                    } catch (Throwable ex) {
+                        Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, ex.getMessage() + " initializing " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
+                    }
+                }
+            } catch (Throwable ex) {
+                Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, ex.getMessage() + " (Is it up to date?)", ex);
+            }
+        } else {
+            pluginFolder.mkdir();
+        }
+    }
+	
+	/**
+	 * Enable all plugins
+	 * 
+	 * @param type
+	 */
+	public void enablePlugins(PluginLoadOrder type) {
+        Plugin[] plugins = pluginManager.getPlugins();
+
+        for (Plugin plugin : plugins) {
+            if ((!plugin.isEnabled()) && (plugin.getDescription().getLoad() == type)) {
+                loadPlugin(plugin);
+            }
+        }
+
+        if (type == PluginLoadOrder.POSTWORLD) {
+            // ((SimpleCommandMap) commandMap).registerServerAliases();
+        }
+    }
+	
+	/**
+	 * Load a plugin
+	 * 
+	 * @param plugin
+	 */
+	private void loadPlugin(Plugin plugin) {
+        try {
+            pluginManager.enablePlugin(plugin);
+        } catch (Throwable ex) {
+            Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, ex.getMessage() + " loading " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
+        }
+    }
 	
 }

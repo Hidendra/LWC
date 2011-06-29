@@ -1,7 +1,12 @@
 package com.griefcraft.lwc;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
 import java.util.MissingResourceException;
+import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -295,11 +300,7 @@ public class LWCPlugin extends JavaPlugin {
             }
         } catch (MissingResourceException e) {
             log("We are missing the default locale in LWC.jar.. What happened to it? :-(");
-            log("###########################");
-            log("## SHUTTING DOWN LWC !!! ##");
-            log("###########################");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
+            throw e;
         }
 
         // located in plugins/LWC/locale/, values in that overrides the ones in the default :-)
