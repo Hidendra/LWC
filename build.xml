@@ -41,6 +41,16 @@
 		<fileset refid="libs" />
 	</path>
 	
+	<!-- Jenkins integration -->
+	<property environment="env"/>
+	
+	<condition property="BUILD_NUMBER" value="${env.BUILD_NUMBER}" else="MANUAL">
+	    <isset property="env.BUILD_NUMBER" />
+	</condition>
+	<condition property="GIT_COMMIT" value="${env.GIT_COMMIT}" else="MANUAL">
+		    <isset property="env.GIT_COMMIT" />
+	</condition>
+	
 	<target name="all" depends="clean,compile,build,lwc,iconomy,test" description="Main target" />
 	
 	<target name="clean">
@@ -98,7 +108,9 @@
 			<fileset dir="${bin}/core/" />
 			
 			<manifest>
-				<attribute name="Class-Path" value="LWC/modules/core.jar" />
+				<attribute name="Implementation-Title" value="LWC" />
+				<attribute name="Implementation-Vendor" value="Hidendra" />
+				<attribute name="Implementation-Version" value="git-LWC-${GIT_COMMIT}-b${BUILD_NUMBER}jnks" />
 			</manifest>
 		</jar>
 	</target>

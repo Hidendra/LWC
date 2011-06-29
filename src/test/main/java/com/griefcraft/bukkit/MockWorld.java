@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.bukkit.BlockChangeDelegate;
 import org.bukkit.Chunk;
+import org.bukkit.ChunkSnapshot;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.TreeType;
@@ -426,6 +427,48 @@ public class MockWorld implements World {
 	public boolean unloadChunkRequest(int arg0, int arg1, boolean arg2) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public boolean createExplosion(Location arg0, float arg1, boolean arg2) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean createExplosion(double arg0, double arg1, double arg2, float arg3, boolean arg4) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean getAllowAnimals() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean getAllowMonsters() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public ChunkSnapshot getEmptyChunkSnapshot(int arg0, int arg1, boolean arg2, boolean arg3) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setSpawnFlags(boolean arg0, boolean arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public <T extends Entity> T spawn(Location arg0, Class<T> arg1) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
