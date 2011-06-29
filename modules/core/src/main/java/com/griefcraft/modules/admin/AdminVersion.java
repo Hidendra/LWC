@@ -21,6 +21,7 @@ import org.bukkit.command.CommandSender;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
+import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
@@ -48,8 +49,10 @@ public class AdminVersion extends JavaModule {
         if (latestPluginVersion > currPluginVersion) {
             pluginColor = Colors.Red;
         }
+        
+        String full = LWCInfo.FULL_VERSION + "-" + LWCPlugin.class.getPackage().getImplementationVersion();
 
-        lwc.sendLocale(sender, "protection.admin.version.finalize", "plugin_color", pluginColor, "plugin_version", LWCInfo.FULL_VERSION, "latest_plugin", latestPluginVersion);
+        lwc.sendLocale(sender, "protection.admin.version.finalize", "plugin_color", pluginColor, "plugin_version", full, "latest_plugin", latestPluginVersion);
         return CANCEL;
     }
 
