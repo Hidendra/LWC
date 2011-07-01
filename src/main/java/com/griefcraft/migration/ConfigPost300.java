@@ -32,14 +32,15 @@ import org.bukkit.Material;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.modules.worldguard.WorldGuardModule;
 
-public class ConfigPost300 {
+public class ConfigPost300 implements MigrationUtility {
 	private static Logger logger = Logger.getLogger("Patcher");
 	
 	// contains the core config equivilent keypairs
 	// e.g locale->core.locale
 	private static Map<String, String> mappings = null;
 	
-	public static void checkConfigConversion(LWC lwc) {
+	public void run() {
+		LWC lwc = LWC.getInstance();
 		File configFile = new File("plugins/LWC/lwc.properties");
 		
 		if(!configFile.exists()) {

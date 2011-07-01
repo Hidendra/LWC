@@ -36,7 +36,7 @@ public class FreeModule extends JavaModule {
             return DEFAULT;
         }
 
-        if (lwc.isAdmin(player) || protection.getOwner().equals(player.getName())) {
+        if (lwc.hasAdminPermission(player, "lwc.admin.remove") || protection.getOwner().equals(player.getName())) {
             protection.remove();
             lwc.sendLocale(player, "protection.interact.remove.finalize", "block", LWC.materialToString(protection.getBlockId()));
             lwc.removeModes(player);
