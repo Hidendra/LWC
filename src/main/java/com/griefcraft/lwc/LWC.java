@@ -1630,7 +1630,7 @@ public class LWC {
     public String resolveProtectionConfiguration(Material material, String node) {
         List<String> names = new ArrayList<String>();
 
-        String materialName = materialToString(material).toLowerCase().replaceAll(" ", "_");
+        String materialName = material.toString().toLowerCase().replaceAll("block", "").replaceAll(" ", "_");
 
         // add the name & the block id
         names.add(materialName);
