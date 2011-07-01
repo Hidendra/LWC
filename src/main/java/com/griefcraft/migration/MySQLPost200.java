@@ -29,7 +29,7 @@ import com.griefcraft.sql.Database.Type;
 import com.griefcraft.sql.PhysDB;
 
 // Sort of just a convenience class, so as to not make the LWC class more cluttered than it is right now
-public class MySQLPost200 {
+public class MySQLPost200 implements MigrationUtility {
 
 	private static Logger logger = Logger.getLogger("Patcher");
 
@@ -38,7 +38,8 @@ public class MySQLPost200 {
 	 * 
 	 * @param lwc
 	 */
-	public static void checkDatabaseConversion(LWC lwc) {
+	public void run() {
+		LWC lwc = LWC.getInstance();
 		PhysDB physicalDatabase = lwc.getPhysicalDatabase();
 
 		// this patcher only does something exciting if you have mysql enabled

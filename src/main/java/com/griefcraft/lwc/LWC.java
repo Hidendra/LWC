@@ -25,6 +25,7 @@ import com.firestar.mcbans.mcbans;
 import com.griefcraft.cache.CacheSet;
 import com.griefcraft.migration.ConfigPost300;
 import com.griefcraft.migration.MySQLPost200;
+import com.griefcraft.migration.UpdatePost312;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
@@ -1000,7 +1001,7 @@ public class LWC {
         registerCoreModules();
 
         // check for upgrade before everything else
-        ConfigPost300.checkConfigConversion(this);
+        new ConfigPost300().run();
         plugin.loadDatabase();
 
         Performance.init();
@@ -1030,7 +1031,7 @@ public class LWC {
         }
 
         // check any major conversions
-        MySQLPost200.checkDatabaseConversion(this);
+        new MySQLPost200().run();
 
         // precache lots of protections
         physicalDatabase.precache();
