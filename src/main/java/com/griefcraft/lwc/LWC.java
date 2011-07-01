@@ -25,7 +25,6 @@ import com.firestar.mcbans.mcbans;
 import com.griefcraft.cache.CacheSet;
 import com.griefcraft.migration.ConfigPost300;
 import com.griefcraft.migration.MySQLPost200;
-import com.griefcraft.migration.UpdatePost312;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
