@@ -1591,20 +1591,7 @@ public class LWC {
      */
     public static String materialToString(Material material) {
         if (material != null) {
-            String materialName = material.toString().toLowerCase().replaceAll("block", "");
-
-            // some name normalizations
-            if (materialName.contains("sign")) {
-            	materialName = "Sign";
-            }
-            
-            if(materialName.contains("furnace")) {
-            	materialName = "furnace";
-            }
-            
-            if (materialName.endsWith("_")) {
-                materialName = materialName.substring(0, materialName.length() - 1);
-            }
+            String materialName = normalizeName(material);
             
             // attempt to match the locale
             String locale = LWC.getInstance().getLocale(materialName.toLowerCase());
@@ -1619,6 +1606,34 @@ public class LWC {
 
         return "";
     }
+    
+    /**
+     * Normalize a name to a more readable & usable form. 
+     * 
+     * E.g sign_post/wall_sign = Sign, furnace/burning_furnace = Furnace,
+     *     iron_door_block = iron_door
+     * 
+     * @param material
+     * @return
+     */
+    public static String normalizeName(Material material) {
+    	String name = material.toString().toLowerCase().replaceAll("block", "");
+    	
+        // some name normalizations
+        if (name.contains("sign")) {
+        	name = "Sign";
+        }
+        
+        if(name.contains("furnace")) {
+        	name = "furnace";
+        }
+        
+        if (name.endsWith("_")) {
+        	name = name.substring(0, name.length() - 1);
+        }
+    	
+    	return name.toLowerCase();
+    }
 
     /**
      * Get the appropriate config value for the block (protections.block.node)
@@ -1630,14 +1645,14 @@ public class LWC {
     public String resolveProtectionConfiguration(Material material, String node) {
         List<String> names = new ArrayList<String>();
 
-        String materialName = material.toString().toLowerCase().replaceAll("block", "").replaceAll(" ", "_");
-
+        String materialName = normalizeName(material);
+        
         // add the name & the block id
         names.add(materialName);
         names.add(material.getId() + "");
 
         String value = configuration.getString("protections." + node);
-
+        
         for (String name : names) {
             String temp = configuration.getString("protections.blocks." + name + "." + node);
 
