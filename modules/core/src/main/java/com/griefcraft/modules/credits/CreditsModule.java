@@ -139,6 +139,7 @@ public class CreditsModule extends JavaModule {
 				"Irishsailor & Land of Legend server",
 				"aidan",
 				"Monstertke",
+				"wokka",
 				" ",
 				
 				Colors.Red + "And....",
@@ -160,6 +161,8 @@ public class CreditsModule extends JavaModule {
 				"Taco",
 				"Acrobat",
 				"SquallSeeD31",
+				"Wahrheit",
+				"Kerazene",
 				" ",
 				
 				"To everyone else and anyone I missed....",
