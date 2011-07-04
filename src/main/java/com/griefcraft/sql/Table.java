@@ -74,14 +74,10 @@ public class Table {
         StringBuffer buffer = new StringBuffer("CREATE TABLE IF NOT EXISTS ");
 
         // do the prefix, if we're using MySQL
-        String prefix = "";
-
-        if (database.getType() == Type.MySQL) {
-            String temp = LWC.getInstance().getConfiguration().getString("database.prefix", "");
-
-            if (temp != null && temp.length() > 0) {
-                prefix = temp;
-            }
+        String prefix = LWC.getInstance().getConfiguration().getString("database.prefix", "");
+        
+        if(prefix == null) {
+        	prefix = "";
         }
 
         // the table name
@@ -140,7 +136,6 @@ public class Table {
             }
         }
 
-        // log it as verbose
         database.log("Synched table " + name + " (" + columns.size() + " columns)");
 
         // add the query to performance
