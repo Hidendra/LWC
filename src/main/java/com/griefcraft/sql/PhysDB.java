@@ -36,12 +36,6 @@ import com.griefcraft.util.Performance;
 
 public class PhysDB extends Database {
 
-    /**
-     * If the database was already loaded
-     */
-    private boolean loaded = false;
-    private String prefix = "";
-
     public PhysDB() {
         super();
     }
@@ -242,11 +236,6 @@ public class PhysDB extends Database {
             return;
         }
 
-        prefix = LWC.getInstance().getConfiguration().getString("database.prefix", "");
-        if (prefix == null) {
-            prefix = "";
-        }
-
         /**
          * Updates that alter or rename a table go here
          */
@@ -364,6 +353,7 @@ public class PhysDB extends Database {
         try {
             connection.setAutoCommit(true);
         } catch (Exception e) {
+        	printException(e);
         }
 
         doUpdate100();

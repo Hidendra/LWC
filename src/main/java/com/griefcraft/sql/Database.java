@@ -91,12 +91,28 @@ public abstract class Database {
      * If we are connected to sqlite
      */
     private boolean connected = false;
+    
+    /**
+     * If the database has been loaded
+     */
+    protected boolean loaded = false;
+    
+    /**
+     * The database prefix (only if we're using MySQL.)
+     */
+    protected String prefix = "";
 
     public Database() {
         currentType = DefaultType;
+
+        prefix = LWC.getInstance().getConfiguration().getString("database.prefix", "");
+        if (prefix == null) {
+            prefix = "";
+        }
     }
 
     public Database(Type currentType) {
+    	this();
         this.currentType = currentType;
     }
 
@@ -106,7 +122,7 @@ public abstract class Database {
      * @param exception
      */
     protected void printException(Exception exception) {
-
+    	exception.printStackTrace();
     }
 
     /**
