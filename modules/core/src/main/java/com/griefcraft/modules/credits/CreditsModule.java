@@ -128,6 +128,7 @@ public class CreditsModule extends JavaModule {
 				"christley - Swedish",
 				"IlyaGulya - Russian",
 				"Raul \"RME\" Martinez - Spanish",
+				"David \"DME\" Martinez - Spanish",
 				"TCarlsen - Danish",
 				" ",
 				
