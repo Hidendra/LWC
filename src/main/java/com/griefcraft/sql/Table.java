@@ -136,7 +136,7 @@ public class Table {
             }
         }
 
-        database.log("Synched table " + prefix + name + " (" + columns.size() + " columns)");
+        // database.log("Synched table " + prefix + name + " (" + columns.size() + " columns)");
 
         // add the query to performance
         if (memory) {

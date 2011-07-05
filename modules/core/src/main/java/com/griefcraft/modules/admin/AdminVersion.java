@@ -50,7 +50,7 @@ public class AdminVersion extends JavaModule {
             pluginColor = Colors.Red;
         }
         
-        String full = LWCInfo.FULL_VERSION + "-" + LWCPlugin.class.getPackage().getImplementationVersion();
+        String full = LWCInfo.FULL_VERSION;
 
         lwc.sendLocale(sender, "protection.admin.version.finalize", "plugin_color", pluginColor, "plugin_version", full, "latest_plugin", latestPluginVersion);
         return CANCEL;
