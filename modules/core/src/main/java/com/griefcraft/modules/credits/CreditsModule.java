@@ -144,7 +144,10 @@ public class CreditsModule extends JavaModule {
 				
 				Colors.Red + "And....",
 				Colors.LightBlue + "Old Griefcraft server -- love you guys!",
-				"Kainzo (endless)",
+				"jobsti",
+				"Joy",
+				"KaneHart",
+				"Kainzo (you find issues before I have a chance to look :3)",
 				"& the Herocraft team",
 				"#bukkit",
 				"Bryan (CursedChild)",

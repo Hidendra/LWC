@@ -278,8 +278,6 @@ public class LWCPlugin extends JavaPlugin {
         try {
             ResourceBundle defaultBundle = null;
             ResourceBundle optionalBundle = null;
-            
-            log(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
 
             // load the default locale first
             defaultBundle = ResourceBundle.getBundle("lang.lwc", new Locale("en"), new UTF8Control());
@@ -363,7 +361,7 @@ public class LWCPlugin extends JavaPlugin {
      * @param priority
      */
     private void registerEvent(Listener listener, Type eventType, Priority priority) {
-        logger.info("-> " + eventType.toString());
+        // logger.info("-> " + eventType.toString());
 
         getServer().getPluginManager().registerEvent(eventType, listener, priority, this);
     }
