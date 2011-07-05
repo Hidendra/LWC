@@ -28,9 +28,9 @@ public class LWCInfo {
     public static final String CONF_FILE = "plugins/LWC/lwc.properties";
 
     /**
-     * Full LWC version
+     * Full LWC version with git commit & CI build (unless manually built.)
      */
-    public static String FULL_VERSION = "-1";
+    public static String FULL_VERSION;
 
     /**
      * LWC's version.
@@ -38,9 +38,10 @@ public class LWCInfo {
      * Initialized to bogus value, but it will be set properly once the plugin starts up based
      * on the version listed in plugin.xml.
      */
-    public static double VERSION = -1;
+    public static double VERSION;
 
-    /** Rather than managing the version in multiple spots, I added this method which will be
+    /** 
+     * Rather than managing the version in multiple spots, I added this method which will be
      * invoked from Plugin startup to set the version, which is pulled from the plugin.xml file.
      * 
      * @param version
@@ -54,6 +55,6 @@ public class LWCInfo {
     		e.printStackTrace();
     	}
     	
-    	FULL_VERSION = version;
+    	FULL_VERSION = version + "-" + LWCPlugin.class.getPackage().getImplementationVersion();
     }
 }
