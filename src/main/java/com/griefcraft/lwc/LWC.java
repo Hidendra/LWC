@@ -411,6 +411,11 @@ public class LWC {
      * Free some memory (LWC was disabled)
      */
     public void destruct() {
+        
+    	// destroy the modules
+        moduleLoader.shutdown();
+        moduleLoader = null;
+        
         log("Freeing " + Database.DefaultType);
 
         if (physicalDatabase != null) {

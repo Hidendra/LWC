@@ -209,6 +209,15 @@ public class ModuleLoader {
 
         return result;
     }
+    
+    /**
+     * Shutdown the plugin loader
+     * 
+     * @todo broadcast UNLOAD
+     */
+    public void shutdown() {
+    	pluginModules.clear();
+    }
 
     /**
      * Load all of the modules not marked as loaded
