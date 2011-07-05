@@ -152,6 +152,8 @@ public class CreditsModule extends JavaModule {
 				"#bukkit",
 				"Bryan (CursedChild)",
 				"Ken (i_pk_pjers_i)",
+				"SeeD419",
+				"Lim-Dul",
 				"arensirb",
 				"RustyDagger",
 				"HotelErotica",
@@ -166,6 +168,8 @@ public class CreditsModule extends JavaModule {
 				"SquallSeeD31",
 				"Wahrheit",
 				"Kerazene",
+				"spunkiie",
+				"Zalastri",
 				" ",
 				
 				"To everyone else and anyone I missed....",
