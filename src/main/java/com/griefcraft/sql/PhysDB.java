@@ -1041,12 +1041,6 @@ public class PhysDB extends Database {
      * 3.01
      */
     private void doUpdate301() {
-        // if false is returned, it was dropped
-        if (!dropTable("players")) {
-            dropTable("inventory");
-            dropTable("jobs");
-        }
-
         // check limits table
         try {
             Statement statement = connection.createStatement();
