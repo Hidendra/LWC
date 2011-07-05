@@ -55,6 +55,15 @@ public class Configuration extends ConfigurationNode {
 
         this.file = file;
     }
+    
+    /**
+     * Reload the configuration maps
+     */
+    public static void reload() {
+    	for(Configuration configuration : loaded.values()) {
+    		configuration.load();
+    	}
+    }
 
     /**
      * @return the list of loaded config files

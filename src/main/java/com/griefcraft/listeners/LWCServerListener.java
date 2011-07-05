@@ -21,6 +21,7 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.Plugin;
 
+import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 
 public class LWCServerListener extends ServerListener {
@@ -34,6 +35,10 @@ public class LWCServerListener extends ServerListener {
     // remove any modules used by the plugin
     @Override
     public void onPluginDisable(PluginDisableEvent event) {
+    	if(!LWC.ENABLED) {
+    		return;
+    	}
+    	
         Plugin disabled = event.getPlugin();
 
         plugin.getLWC().getModuleLoader().removeModules(disabled);

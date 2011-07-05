@@ -23,6 +23,7 @@ import org.bukkit.plugin.Plugin;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.StringUtils;
+import com.griefcraft.util.config.Configuration;
 
 public class AdminReload extends JavaModule {
 
@@ -36,9 +37,7 @@ public class AdminReload extends JavaModule {
             return DEFAULT;
         }
 
-        Plugin plugin = lwc.getPlugin();
-        plugin.getPluginLoader().disablePlugin(plugin);
-        plugin.getPluginLoader().enablePlugin(plugin);
+        Configuration.reload();
 
         lwc.sendLocale(sender, "protection.admin.reload.finalize");
         return CANCEL;
