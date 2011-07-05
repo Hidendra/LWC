@@ -51,7 +51,7 @@
 		    <isset property="env.GIT_COMMIT" />
 	</condition>
 	
-	<target name="all" depends="clean,compile,build,lwc,iconomy" description="Main target" />
+	<target name="all" depends="clean,compile,build,lwc,iconomy,test" description="Main target" />
 	
 	<target name="clean">
 		<!-- Delete the previous folders -->
