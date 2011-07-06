@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -214,11 +215,19 @@ public class DoorsModule extends JavaModule {
 				if(isValid((temp = protectionBlock.getFace(face)).getType())) {
 					Protection found = lwc.findProtection(temp);
 					
-					if(found != null) {
-						if(lwc.canAccessProtection(player, found)) {
-							// we can access it, add it to the blocks
-							blocks.addAll(lwc.getProtectionSet(found.getBukkitWorld(), found.getX(), found.getY(), found.getZ()));
+					if(found == null) {
+						continue;
+					}
+
+					if(lwc.canAccessProtection(player, found)) {
+						World world = found.getBukkitWorld();
+
+						if(world == null) {
+							continue;
 						}
+
+						// we can access it, add it to the blocks
+						blocks.addAll(lwc.getProtectionSet(world, found.getX(), found.getY(), found.getZ()));
 					}
 				}
 			}
