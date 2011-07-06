@@ -870,6 +870,10 @@ public class LWC {
      * @return
      */
     public boolean hasAdminPermission(CommandSender sender, String node) {
+    	if(isAdmin(sender)) {
+    		return true;
+    	}
+    	
         return hasPermission(sender, node, "lwc.admin");
     }
 
