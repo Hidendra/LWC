@@ -760,8 +760,12 @@ public class LWC {
      * @return the Chest[] array of chests
      */
     public List<Block> getProtectionSet(World world, int x, int y, int z) {
-        List<Block> entities = new ArrayList<Block>(2);
+        List<Block> entities = new ArrayList<Block>(3);
 
+        if(world == null) {
+        	return entities;
+        }
+        
         Block baseBlock = world.getBlockAt(x, y, z);
         
         /* Normal logic is to check the block they clicked to see if it's a "valid" block.
