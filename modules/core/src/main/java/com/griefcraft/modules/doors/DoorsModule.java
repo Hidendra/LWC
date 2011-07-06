@@ -220,14 +220,8 @@ public class DoorsModule extends JavaModule {
 					}
 
 					if(lwc.canAccessProtection(player, found)) {
-						World world = found.getBukkitWorld();
-
-						if(world == null) {
-							continue;
-						}
-
 						// we can access it, add it to the blocks
-						blocks.addAll(lwc.getProtectionSet(world, found.getX(), found.getY(), found.getZ()));
+						blocks.addAll(lwc.getProtectionSet(found.getBukkitWorld(), found.getX(), found.getY(), found.getZ()));
 					}
 				}
 			}
