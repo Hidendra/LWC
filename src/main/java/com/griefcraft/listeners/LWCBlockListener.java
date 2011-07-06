@@ -173,7 +173,6 @@ public class LWCBlockListener extends BlockListener {
          * Check permissions
          */
         if (!lwc.hasPermission(player, "lwc.create." + autoRegisterType, "lwc.create", "lwc.protect")) {
-            lwc.sendLocale(player, "protection.accessdenied");
             return;
         }
 
