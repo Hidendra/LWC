@@ -17,6 +17,15 @@
 
 package com.griefcraft.modules.admin;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.command.CommandSender;
 
 import com.griefcraft.lwc.LWC;
@@ -36,11 +45,9 @@ public class AdminPurgeBanned extends JavaModule {
             return DEFAULT;
         }
         
+        List<String> players = loadBannedPlayers();
         
-
-        String players = StringUtils.join(args, 1);
-
-        for (String toRemove : players.split(" ")) {
+        for (String toRemove : players) {
             // load all of their protections
             for (Protection protection : lwc.getPhysicalDatabase().loadProtectionsByPlayer(toRemove, 0, 100000)) {
                 protection.remove();
@@ -50,6 +57,36 @@ public class AdminPurgeBanned extends JavaModule {
         }
 
         return CANCEL;
+    }
+    
+    /**
+     * Load the list of currently banned players
+     * 
+     * @return
+     */
+    private List<String> loadBannedPlayers() {
+    	List<String> banned = new ArrayList<String>();
+    	
+    	File file = new File("banned-players.txt");
+    	
+    	if(!file.exists()) {
+    		return banned;
+    	}
+    	
+    	try {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+			String line;
+			
+			while((line = reader.readLine()) != null) {
+				banned.add(line);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    	
+    	return banned;
     }
 
 }
