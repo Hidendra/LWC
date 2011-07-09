@@ -39,7 +39,7 @@ public class BaseAdminModule extends JavaModule {
             return CANCEL;
         } else if (args.length > 0) {
             // check for permissions
-            if (!lwc.hasAdminPermission(sender, "lwc.admin." + args[0])) {
+            if (!lwc.hasAdminPermission(sender, "lwc.admin." + args[0].toLowerCase())) {
                 return CANCEL;
             }
         }
