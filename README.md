@@ -1,7 +1,8 @@
 #LWC: Lightweight Inventory Protection and Management
 
 LWC has a simple ideal: Allow the protection of our most important blocks individually. This includes chests, furnaces, dispensers, and even doors and signs (and just lately, trap doors.)
-By default, LWC uses SQLite, a stateless, serverless RDBMS (a fancy term for a database server.) It also has the ability to use MySQL!
+
+LWC does not use flat-file storage. By default, LWC uses SQLite, a stateless, serverless RDBMS (a fancy term for a database server.) It also has the ability to use MySQL!
 
 What you can protect
 ----------------------
