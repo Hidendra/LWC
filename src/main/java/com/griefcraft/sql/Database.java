@@ -115,6 +115,13 @@ public abstract class Database {
     	this();
         this.currentType = currentType;
     }
+    
+    /**
+     * @return the table prefix
+     */
+    public String getPrefix() {
+    	return prefix;
+    }
 
     /**
      * Print an exception to stdout
