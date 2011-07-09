@@ -490,6 +490,14 @@ public class LWC {
             protection.setWorld(block.getWorld().getName());
             protection.save();
         }
+        
+        // update timestamp
+        if(hasAccess) {
+    		long timestamp = System.currentTimeMillis() / 1000L;
+    		
+    		protection.setLastAccessed(timestamp);
+    		protection.save();
+    	}
 
         if (configuration.getBoolean("core.showNotices", true)) {
             boolean isOwner = protection.isOwner(player);
