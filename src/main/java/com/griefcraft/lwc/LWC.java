@@ -34,6 +34,7 @@ import com.griefcraft.modules.admin.AdminClear;
 import com.griefcraft.modules.admin.AdminConfig;
 import com.griefcraft.modules.admin.AdminConvert;
 import com.griefcraft.modules.admin.AdminDebug;
+import com.griefcraft.modules.admin.AdminExpire;
 import com.griefcraft.modules.admin.AdminFind;
 import com.griefcraft.modules.admin.AdminFlush;
 import com.griefcraft.modules.admin.AdminForceOwner;
@@ -1101,6 +1102,7 @@ public class LWC {
         registerModule(new AdminView());
         registerModule(new AdminQuery());
         registerModule(new AdminPurgeBanned());
+        registerModule(new AdminExpire());
 
         // flags
         registerModule(new FlagModule());
