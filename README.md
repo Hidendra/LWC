@@ -1,23 +1,28 @@
 #LWC: Lightweight Inventory Protection and Management
 
-A simple (<i>but advanced!</i>) inventory protection mod. It does not use flat files, but instead <b>sqlite</b> -- a stateless, serverless SQL engine. In some cases it is actually <i>faster</i> than MySQL and other SQL engines.
+LWC has a simple ideal: Allow the protection of our most important blocks individually. This includes chests, furnaces, dispensers, and even doors and signs (and just lately, trap doors.)
+By default, LWC uses SQLite, a stateless, serverless RDBMS (a fancy term for a database server.) It also has the ability to use MySQL!
 
 What you can protect
 ----------------------
 * Chests
 * Dispensers
 * Furnaces
+* Doors
+* Signs
+* Trap doors
+* Any other block you can imagine! Custom protections are totally possibly
 
 Features
 ----------------------
 
-* Private protections by Users and Groups or even by Password
-* Public protections that anyone can use, but no one can register
-* Protection limits--limit the amount of protections a User or Group can register
-* Small memory footprint - LWC uses both physical and memory databases and entities are only loaded into memory when they are needed until done with them
-* No excessive disk I/O. The disk is only written to when a new Chest is protected, a limit created or an access right created <span style="font-size: .75em;">(for private protections)</span>
-* Built in support for double chests: proper recognition only requires you to register one side of a double chest. Internally, only one chest is registered, saving storage space
-* much more. some features are largely undocumented!
+* Plug 'n play! LWC handles all dependency resolution -- you just put LWC.jar in your plugins directory
+* Has reached a level where its routinely safe and stable.
+* Protections can be: Public, Password, and Private (by User and/or Groups)
+* Limits of how many protections a user or group can lock
+* Small memory footprint. No flat files.
+* For chests, only 1 side of the chest needs to be protected. The plugin saves space by dynamically linking connected chests as protected
+* Much, much more. This post would be extremely long if I were to post every feature LWC has to offer.
 
 Converting
 ----------------------
