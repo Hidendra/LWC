@@ -30,6 +30,7 @@ import com.griefcraft.cache.CacheSet;
 import com.griefcraft.cache.LRUCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.util.Colors;
+import com.griefcraft.util.StringUtils;
 
 public class Protection {
 
@@ -122,6 +123,11 @@ public class Protection {
      * The z coordinate
      */
     private int z;
+    
+    /**
+     * The timestamp of when the protection was last accessed
+     */
+    private long lastAccessed;
 
     /**
      * Check if a player is the owner of the protection
@@ -258,6 +264,10 @@ public class Protection {
     public int getZ() {
         return z;
     }
+    
+    public long getLastAccessed() {
+    	return lastAccessed;
+    }
 
     public void setBlockId(int blockId) {
         this.blockId = blockId;
@@ -301,6 +311,10 @@ public class Protection {
 
     public void setZ(int z) {
         this.z = z;
+    }
+    
+    public void setLastAccessed(long lastAccessed) {
+    	this.lastAccessed = lastAccessed;
     }
 
     /**
@@ -356,7 +370,6 @@ public class Protection {
      */
     public void save() {
         LWC.getInstance().getUpdateThread().queueProtectionUpdate(this);
-        update();
     }
 
     /**
@@ -375,7 +388,7 @@ public class Protection {
     }
     
     /**
-     * @return the Bukkit world
+     * @return the Bukkit world the protection should be located in
      */
     public World getBukkitWorld() {
     	return Bukkit.getServer().getWorld(world);
@@ -399,7 +412,27 @@ public class Protection {
      */
     @Override
     public String toString() {
-        return String.format("%s %s" + Colors.White + " {" + Colors.Green + "Id=%d Owner=%s Location=[@%s %d,%d,%d] Created=%s Flags=%d" + Colors.White + "}", typeToString(), (blockId > 0 ? (LWC.materialToString(blockId)) : "Not yet cached"), id, owner, world, x, y, z, date, flags);
+    	// format the flags prettily
+    	String flags = "";
+    	
+    	for(Flag flag : Flag.values()) {
+    		if(hasFlag(flag)) {
+    			flags += flag.toString() + ",";
+    		}
+    	}
+    	
+    	if(flags.endsWith(",")) {
+    		flags = flags.substring(0, flags.length() - 1);
+    	}
+    	
+    	// format the last accessed time
+    	String lastAccessed = StringUtils.timeToString((System.currentTimeMillis() / 1000L) - this.lastAccessed);
+    	
+    	if(!lastAccessed.equals("Not yet known")) {
+    		lastAccessed += " ago";
+    	}
+    	
+        return String.format("%s %s" + Colors.White + " " + Colors.Green + "Id=%d Owner=%s Location=[%s %d,%d,%d] Created=%s Flags=%s LastAccessed=%s", typeToString(), (blockId > 0 ? (LWC.materialToString(blockId)) : "Not yet cached"), id, owner, world, x, y, z, date, flags, lastAccessed);
     }
 
     /**
