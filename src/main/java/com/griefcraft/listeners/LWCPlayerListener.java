@@ -153,7 +153,7 @@ public class LWCPlayerListener extends PlayerListener {
             lwc.enforceAccess(player, block);
         }
 
-        if (!canAccess) {
+        if (!canAccess || result == Module.Result.CANCEL) {
             event.setCancelled(true);
             event.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
         }
