@@ -37,6 +37,11 @@ public class AdminExpire extends JavaModule {
         if (!args[0].equals("expire")) {
             return DEFAULT;
         }
+
+        if (args.length < 2) {
+            lwc.sendSimpleUsage(sender, "/lwc admin expire <time>");
+            return CANCEL;
+        }
         
         String toParse = StringUtils.join(args, 1);
         long time = StringUtils.parseTime(toParse);
