@@ -29,7 +29,7 @@ Converting
 ----------------------
 
 Are you using ChestProtect or Chastity chests? LWC can seamlessly convert every chest from ChestProtect and all private chests from Chastity (only user permissions)
-<b>In-game</b>: `/lwc -a convert <chestprotect|chastity>`
+<b>In-game</b>: `/lwc admin convert <chestprotect|chastity>`
 
 Commands
 ----------------------
