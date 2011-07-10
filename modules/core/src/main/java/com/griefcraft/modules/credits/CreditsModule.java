@@ -141,6 +141,7 @@ public class CreditsModule extends JavaModule {
 				"aidan",
 				"Monstertke",
 				"wokka",
+				"Andreoli3",
 				" ",
 				
 				Colors.Red + "And....",
