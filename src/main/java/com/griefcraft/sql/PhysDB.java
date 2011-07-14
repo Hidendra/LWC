@@ -647,10 +647,11 @@ public class PhysDB extends Database {
         }
 
         try {
-            PreparedStatement statement = prepare("SELECT " + prefix + "protections.id AS protectionId, " + prefix + "rights.id AS rightsId, " + prefix + "protections.type AS protectionType, " + prefix + "rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights, last_accessed FROM " + prefix + "protections LEFT OUTER JOIN " + prefix + "rights ON " + prefix + "protections.id = " + prefix + "rights.chest WHERE " + prefix + "protections.x = ? AND " + prefix + "protections.y = ? AND " + prefix + "protections.z = ?");
+            PreparedStatement statement = prepare("SELECT " + prefix + "protections.id AS protectionId, " + prefix + "rights.id AS rightsId, " + prefix + "protections.type AS protectionType, " + prefix + "rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights, last_accessed FROM " + prefix + "protections LEFT OUTER JOIN " + prefix + "rights ON " + prefix + "protections.id = " + prefix + "rights.chest WHERE " + prefix + "protections.x = ? AND " + prefix + "protections.y = ? AND " + prefix + "protections.z = ? AND " + prefix + "protections.world = ?");
             statement.setInt(1, x);
             statement.setInt(2, y);
             statement.setInt(3, z);
+            statement.setString(4, worldName);
 
             Protection protection = resolveProtection(statement);
 
