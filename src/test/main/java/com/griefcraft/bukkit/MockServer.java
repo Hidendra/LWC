@@ -22,12 +22,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.ConsoleHandler;
+import java.util.UUID;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -148,6 +145,11 @@ public class MockServer implements Server {
 		methodCalled("getWorld(%s)", arg0);
 		
 		return worlds.get(arg0);
+	}
+	
+	public World getWorld(UUID uuid) {
+		
+		return null;
 	}
 
 	public List<World> getWorlds() {
