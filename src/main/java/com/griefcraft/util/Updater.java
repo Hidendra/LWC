@@ -91,6 +91,11 @@ public class Updater {
      * Check for dependencies
      */
     public void check() {
+    	// account of dev builds or nonvalid builds
+    	if(LWCInfo.VERSION == 0d) {
+    		return;
+    	}
+    	
         if (Database.DefaultType == Database.Type.SQLite) {
             String[] shared = new String[]{DEST_LIBRARY_FOLDER + "lib/sqlite.jar", getFullNativeLibraryPath()};
 

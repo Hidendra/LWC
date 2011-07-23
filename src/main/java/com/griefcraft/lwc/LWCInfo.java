@@ -49,6 +49,11 @@ public class LWCInfo {
      */
     public static void setVersion(String version) {
     	try {
+    		// account for dev bilds
+    		if(version.endsWith("-dev")) {
+    			version = version.substring(0, version.length() - "-dev".length());
+    		}
+    		
     		VERSION = Double.parseDouble(version);
     	}
     	catch(NumberFormatException e) {

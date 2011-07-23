@@ -18,6 +18,7 @@
 package com.griefcraft.bukkit;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.BlockChangeDelegate;
 import org.bukkit.Chunk;
@@ -26,6 +27,7 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.TreeType;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Boat;
@@ -358,31 +360,7 @@ public class MockWorld implements World {
 	}
 
 	@Override
-	public Boat spawnBoat(Location arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public LivingEntity spawnCreature(Location arg0, CreatureType arg1) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Minecart spawnMinecart(Location arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public PoweredMinecart spawnPoweredMinecart(Location arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public StorageMinecart spawnStorageMinecart(Location arg0) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -467,6 +445,42 @@ public class MockWorld implements World {
 
 	@Override
 	public <T extends Entity> T spawn(Location arg0, Class<T> arg1) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Biome getBiome(int arg0, int arg1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Block getHighestBlockAt(Location arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Block getHighestBlockAt(int arg0, int arg1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public double getHumidity(int arg0, int arg1) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getTemperature(int arg0, int arg1) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public UUID getUID() {
 		// TODO Auto-generated method stub
 		return null;
 	}
