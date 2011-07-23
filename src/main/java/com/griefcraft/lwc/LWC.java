@@ -955,7 +955,7 @@ public class LWC {
         }
 
         if(permissions != null) {
-            if (permissions.has(player, "lwc.admin")) {
+            if (hasPermission(player, "lwc.admin")) {
                 return true;
             }
         }
@@ -971,7 +971,7 @@ public class LWC {
      */
     public boolean isMod(Player player) {
         if (permissions != null) {
-            if (permissions.has(player, "lwc.mod")) {
+            if (hasPermission(player, "lwc.mod")) {
                 return true;
             }
         }
@@ -1000,7 +1000,7 @@ public class LWC {
             return false;
         }
 
-        return permissions.permission(player, "lwc.mode." + mode);
+        return hasPermission(player, "lwc.mode." + mode, "lwc.allmodes");
     }
 
     /**

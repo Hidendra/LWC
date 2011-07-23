@@ -70,7 +70,8 @@ public class DropTransferModule extends JavaModule {
         return -1;
     }
 
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public Result onDropItem(LWC lwc, Player player, Item item, ItemStack itemStack) {
         int protectionId = getPlayerDropTransferTarget(player.getName());
 

@@ -8,6 +8,7 @@ softdepend:
 description: >
              Inventory protection & management utilizing SQLite or MySQL as its backend
              Other blocks can also be protected individually, if configured.
+
 commands:
   lwc:
     description: LWC's hub command to access everything
@@ -64,3 +65,79 @@ commands:
     description: Toggle command persistence which allows you to use commands without retyping the command (e.g /cprivate)
     usage: /<command>
     permission: lwc.mode.persist
+
+permissions:
+
+  lwc.protect:
+      description: Gives the ability to basic LWC usage (almost everything except LWC admin.)
+      children:
+          lwc.create.*: true
+          lwc.modify: true
+          lwc.unlock: true
+          lwc.info: true
+          lwc.remove: true
+          lwc.flag.*: true
+
+  lwc.admin:
+      description: Gives you absolutely power over LWC. As an LWC admin, you have no restrictions.
+      default: op
+      children:
+          lwc.allcommands
+
+  lwc.allcommands:
+      description: Gives you access to every LWC command. Without lwc.admin or lwc.mod, you cannot open protections you do not own.
+
+  lwc.mod:
+      description: Allows you to open anyone's protection but not remove them
+      default: op
+
+  lwc.denyinteract:
+      description: Denys you access to any block LWC can protect. For example, with this permission set, you cannot open even unprotected chests (if protectable.)
+
+  lwc.create.*:
+      description: Allows you to create every basic protection (public, private, password.)
+      default: false
+      children:
+          lwc.create.public: true
+          lwc.create.password: true
+          lwc.create.private: true
+          lwc.modify: true
+          lwc.unlock: true
+          lwc.info: true
+          lwc.remove: true
+          lwc.flag.*: true
+  lwc.create.public:
+      description: Allows you to create a public protection.
+  lwc.create.password:
+      description: Allows you to create a password protection.
+  lwc.create.private:
+      description: Allows you to create a private protection.
+
+  lwc.modify:
+      description: Allows you to modify protections you own.
+  lwc.unlock:
+      description: Allows you to unlock password-protected protections.
+  lwc.info:
+      description: Allows you to view the owner and other misc data on a protection.
+  lwc.remove:
+      description: Allows you to remove protections you own.
+
+  lwc.flag.*:
+      description: Gives you access to every usable flag.
+      children:
+           lwc.allflags: true
+  lwc.allflags:
+      description: Gives you access to every usable flag.
+  lwc.flag.redstone:
+      description: Allows you to use the redstone flag, which enables or disables the use of redstone on a protection depending on plugin settings.
+  lwc.flag.magnet:
+      description: Allows you to use the magnet flag, which makes a protection such as a chest suck up dropped items in a specific radius around it.
+
+  lwc.mode.*:
+      description: Gives you access to every usable mode, provided they are already disabled.
+  lwc.allmodes:
+      description: Gives you access to every mode, provided they are already disabled.
+  lwc.mode.persist:
+      description: Allows you to use the persist flag, which allows you to use commands repeatably.
+  lwc.mode.droptransfer:
+      description: Allows you to use the drop transfer flag, which allows you to "drop" items into your chest from far away.
