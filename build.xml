@@ -24,6 +24,7 @@
 	<fileset dir="${lib}" id="libs">
 		<include name="CraftBukkit.jar" />
 		<include name="Permissions.jar" />
+		<include name="PermissionsBukkit.jar" />
 		<include name="WorldGuard.jar" />
 		<include name="WorldEdit.jar" />
 		<include name="Lists.jar" />

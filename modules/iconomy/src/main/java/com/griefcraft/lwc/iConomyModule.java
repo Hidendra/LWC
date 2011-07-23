@@ -21,12 +21,11 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import com.griefcraft.bukkit.BukkitPlugin;
+import com.griefcraft.integration.ICurrency;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.config.Configuration;
 import com.iConomy.iConomy;
-import com.iConomy.system.Account;
-import com.iConomy.system.Holdings;
 import com.iConomy.util.Constants;
 
 public class iConomyModule extends JavaModule {
@@ -94,25 +93,17 @@ public class iConomyModule extends JavaModule {
             // get the player's account
             String playerName = player.getName();
 
-            if (!iConomy.hasAccount(playerName)) {
-                player.sendMessage(Colors.Red + "You do not have an iConomy Bank Account!");
-                plugin.info(":: WARNING :: Player " + playerName + " does not have an iConomy Bank Account (TRIED TO CREATE LWC PROTECTION)");
-                return CANCEL;
-            }
-
-            Account account = iConomy.getAccount(playerName);
-
-            // attempt to withdrawl from their holdings
-            Holdings holdings = account.getHoldings();
-
-            if (!holdings.hasEnough(charge)) {
+            // the currency handler
+            ICurrency currency = lwc.getCurrency();
+            
+            if (!currency.canAfford(player, charge)) {
                 player.sendMessage(Colors.Red + "You do not have enough " + Constants.Major.get(1) + " to buy an LWC protection.");
                 player.sendMessage(Colors.Red + "The balance required for an LWC protection is: " + iConomy.format(charge));
                 return CANCEL;
             }
 
             // remove the money from their account
-            holdings.subtract(charge);
+            currency.removeMoney(player, charge);
             player.sendMessage(Colors.Green + "Charged " + iConomy.format(charge) + (usedDiscount ? (Colors.Red + " (Discount) " + Colors.Green) : "") + "for an LWC protection. Thank you.");
             return ALLOW;
         }
@@ -146,7 +137,7 @@ public class iConomyModule extends JavaModule {
 
         // try permissions
         if (value == null && hasPermissions) {
-            String groupName = lwc.getPermissions().getGroup(player.getWorld().getName(), player.getName());
+            String groupName = lwc.getPermissions().getGroup(player);
 
             if (groupName != null && !groupName.isEmpty()) {
                 value = map("groups." + groupName + "." + node);
