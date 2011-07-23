@@ -152,7 +152,7 @@ public class LWCBlockListener extends BlockListener {
         Player player = event.getPlayer();
         Block block = event.getBlockPlaced();
 
-        // check for an adjacent chest
+        // water exploit (placing 3+ chests in a row inside water, fire, etc)
         if (block.getType() == Material.CHEST) {
             if (lwc.findAdjacentDoubleChest(block) != null) {
                 event.setCancelled(true);
@@ -160,18 +160,18 @@ public class LWCBlockListener extends BlockListener {
             }
         }
 
+        // The placable block must be protectable
+        if (!lwc.isProtectable(block)) {
+            return;
+        }
+
         String autoRegisterType = plugin.getLWC().resolveProtectionConfiguration(block.getType(), "autoRegister");
 
-        /*
-           * Check if it's enabled
-           */
+        // is it auto registerable?
         if (!autoRegisterType.equalsIgnoreCase("private") && !autoRegisterType.equalsIgnoreCase("public")) {
             return;
         }
 
-        /**
-         * Check permissions
-         */
         if (!lwc.hasPermission(player, "lwc.create." + autoRegisterType, "lwc.create", "lwc.protect")) {
             return;
         }
@@ -182,13 +182,6 @@ public class LWCBlockListener extends BlockListener {
         if (autoRegisterType.equalsIgnoreCase("private")) {
             type = ProtectionTypes.PRIVATE;
         }
-
-        /*
-           * If the block isn't protectable, don't let them
-           */
-        if (!lwc.isProtectable(block)) {
-            return;
-        }
         
         Result registerProtection = lwc.getModuleLoader().dispatchEvent(Event.REGISTER_PROTECTION, player, block);
 
@@ -197,22 +190,15 @@ public class LWCBlockListener extends BlockListener {
             return;
         }
 
-        /*
-           * If it's a chest, make sure they aren't trying to place it beside an already registered chest
-           */
+        // If it's a chest, make sure they aren't placing it beside an already registered chest
         if (block.getType() == Material.CHEST) {
             BlockFace[] faces = new BlockFace[]{BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
 
             for (BlockFace blockFace : faces) {
-                Block face = block.getFace(blockFace);
+                Block face = block.getRelative(blockFace);
 
-                /*
-                     * They're placing it beside a chest, check if it's protected
-                     */
+                //They're placing it beside a chest, check if it's already protected
                 if (face.getType() == Material.CHEST) {
-                    /*
-                          * If it's protected, just return -- don't auto protect it
-                          */
                     if (lwc.getPhysicalDatabase().loadProtection(face.getWorld().getName(), face.getX(), face.getY(), face.getZ()) != null) {
                         return;
                     }
@@ -220,14 +206,8 @@ public class LWCBlockListener extends BlockListener {
             }
         }
 
-        /*
-           * All's good, protect the object!
-           */
+        // All good!
         lwc.getPhysicalDatabase().registerProtection(block.getTypeId(), type, block.getWorld().getName(), player.getName(), "", block.getX(), block.getY(), block.getZ());
-
-        /*
-           * Tell them
-           */
         lwc.sendLocale(player, "protection.onplace.create.finalize", "type", lwc.getLocale(autoRegisterType.toLowerCase()), "block", LWC.materialToString(block));
     }
 

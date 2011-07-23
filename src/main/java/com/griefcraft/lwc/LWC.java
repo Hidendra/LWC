@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -16,7 +18,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.command.ColouredConsoleSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -24,6 +27,13 @@ import org.bukkit.plugin.Plugin;
 
 import com.firestar.mcbans.mcbans;
 import com.griefcraft.cache.CacheSet;
+import com.griefcraft.integration.ICurrency;
+import com.griefcraft.integration.IPermissions;
+import com.griefcraft.integration.currency.NoCurrency;
+import com.griefcraft.integration.currency.iConomyCurrency;
+import com.griefcraft.integration.permissions.BukkitPermissions;
+import com.griefcraft.integration.permissions.NijiPermissions;
+import com.griefcraft.integration.permissions.NoPermissions;
 import com.griefcraft.migration.ConfigPost300;
 import com.griefcraft.migration.MySQLPost200;
 import com.griefcraft.model.AccessRight;
@@ -80,8 +90,6 @@ import com.griefcraft.util.Colors;
 import com.griefcraft.util.Performance;
 import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.config.Configuration;
-import com.nijiko.permissions.PermissionHandler;
-import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class LWC {
 
@@ -134,11 +142,21 @@ public class LWC {
      * Checks for updates that need to be pushed to the sql database
      */
     private UpdateThread updateThread;
+    
+    /**
+     * Allow output to be coloured
+     */
+    private ColouredConsoleSender console;
 
     /**
-     * Permissions plugin
+     * The permissions handler
      */
-    private PermissionHandler permissions;
+    private IPermissions permissions;
+    
+    /**
+     * The currency handler
+     */
+    private ICurrency currency;
 
     /**
      * Whether or not we utilize logic to work around the Bukkit 656 bug.  http://leaky.bukkit.org/issues/656
@@ -156,6 +174,10 @@ public class LWC {
         caches = new CacheSet();
         
         bug656workaround = configuration.getBoolean("core.bukkitBug656workaround", false);
+        
+        try {
+        	console = new ColouredConsoleSender((CraftServer) Bukkit.getServer());
+        } catch(Exception e) { }
     }
     
     /** Return true if the Bug 565 workaround flag is enabled.
@@ -323,7 +345,7 @@ public class LWC {
 
                 if (permissions != null) {
                     // TODO: Replace with getGroupProperName sometime, but only supported by Permissions 3.00+
-                    String groupName = permissions.getGroup(player.getWorld().getName(), playerName);
+                    String groupName = permissions.getGroup(player);
 
                     if (protection.getAccess(AccessRight.GROUP, groupName) >= 0) {
                         return true;
@@ -397,7 +419,7 @@ public class LWC {
 
                 if (permissions != null) {
                     // TODO: Replace with getGroupProperName sometime, but only supported by Permissions 3.00+
-                    String groupName = permissions.getGroup(player.getWorld().getName(), playerName);
+                    String groupName = permissions.getGroup(player);
 
                     if (protection.getAccess(AccessRight.GROUP, groupName) == 1) {
                         return true;
@@ -743,10 +765,17 @@ public class LWC {
     }
 
     /**
-     * @return the permissions
+     * @return the Permissions handler
      */
-    public PermissionHandler getPermissions() {
+    public IPermissions getPermissions() {
         return permissions;
+    }
+    
+    /**
+     * @return the Currency handler
+     */
+    public ICurrency getCurrency() {
+    	return currency;
     }
 
     /**
@@ -937,8 +966,7 @@ public class LWC {
             return permissions.permission(player, node);
         }
 
-        // Recommended Build #1000+
-        return ((CraftPlayer) player).hasPermission(node);
+        return false;
     }
 
     /**
@@ -1035,13 +1063,25 @@ public class LWC {
         memoryDatabase = new MemDB();
         updateThread = new UpdateThread(this);
 
-        Plugin permissionsPlugin = resolvePlugin("Permissions");
-
-        if (permissionsPlugin != null) {
-            permissions = ((Permissions) permissionsPlugin).getHandler();
-            logger.info("Using Permissions API");
+        // Permissions init
+        permissions = new NoPermissions();
+        
+        if(resolvePlugin("Permissions") != null) {
+        	permissions = new NijiPermissions();
+        } else if(resolvePlugin("PermissionsBukkit") != null) {
+        	permissions = new BukkitPermissions();
         }
-
+        
+        // Currency init
+        currency = new NoCurrency();
+        
+        if(resolvePlugin("iConomy") != null) {
+        	currency = new iConomyCurrency();
+        }
+        
+        log("Permissions API: " + Colors.Red + permissions.getClass().getSimpleName());
+        log("Currency API: " + Colors.Red + currency.getClass().getSimpleName());
+        
         log("Loading " + Database.DefaultType);
         try {
             physicalDatabase.connect();
@@ -1561,7 +1601,13 @@ public class LWC {
      * @param str
      */
     private void log(String str) {
-        logger.info("LWC: " + str);
+    	str = "LWC: " + str;
+    	
+    	if(console != null) {
+    		console.sendMessage(str);
+    	} else {
+    		logger.info(ChatColor.stripColor(str));
+    	}
     }
 
     /**

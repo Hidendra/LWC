@@ -152,7 +152,7 @@ public class LimitsModule extends JavaModule {
 
         // try permissions
         if (value == null && hasPermissions) {
-            String groupName = lwc.getPermissions().getGroup(player.getWorld().getName(), player.getName());
+            String groupName = lwc.getPermissions().getGroup(player);
 
             if (groupName != null && !groupName.isEmpty()) {
                 value = map("groups." + groupName + "." + node);
