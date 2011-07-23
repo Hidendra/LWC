@@ -16,6 +16,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -936,7 +937,8 @@ public class LWC {
             return permissions.permission(player, node);
         }
 
-        return true;
+        // Recommended Build #1000+
+        return ((CraftPlayer) player).hasPermission(node);
     }
 
     /**

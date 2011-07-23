@@ -22,6 +22,7 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Achievement;
@@ -44,6 +45,10 @@ import org.bukkit.entity.Vehicle;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 public class MockPlayer implements Player {
@@ -62,6 +67,16 @@ public class MockPlayer implements Player {
 		this.playerName = playerName;
 		this.displayName = playerName;
 	}
+	
+	public boolean hasPermission(String node) {
+		if(op) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
 	
 	/**
 	 * @return the last message received
@@ -532,6 +547,68 @@ public class MockPlayer implements Player {
 
 	@Override
 	public void setPlayerTime(long arg0, boolean arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public PermissionAttachment addAttachment(Plugin arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PermissionAttachment addAttachment(Plugin arg0, int arg1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PermissionAttachment addAttachment(Plugin arg0, String arg1,
+			boolean arg2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PermissionAttachment addAttachment(Plugin arg0, String arg1,
+			boolean arg2, int arg3) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<PermissionAttachmentInfo> getEffectivePermissions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean hasPermission(Permission arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isPermissionSet(String arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isPermissionSet(Permission arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void recalculatePermissions() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeAttachment(PermissionAttachment arg0) {
 		// TODO Auto-generated method stub
 		
 	}
