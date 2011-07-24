@@ -32,6 +32,7 @@ protections:
     ignoreBlockDestruction: false
     ignoreLeftClick: false
     ignoreRightClick: false
+    ignoreExplosions: false
     blocks:
         chest:
             enabled: true
