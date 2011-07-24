@@ -913,6 +913,10 @@ public class LWC {
     		return true;
     	}
     	
+    	if(!permissions.isActive()) {
+    		return false;
+    	}
+    	
         return hasPermission(sender, node, "lwc.admin");
     }
 
@@ -924,6 +928,10 @@ public class LWC {
      * @return
      */
     public boolean hasPlayerPermission(CommandSender sender, String node) {
+    	if(!permissions.isActive()) {
+    		return true;
+    	}
+    	
         return hasPermission(sender, node, "lwc.protect");
     }
 
@@ -962,11 +970,11 @@ public class LWC {
      * @return
      */
     public boolean hasPermission(Player player, String node) {
-        if (permissions != null) {
-            return permissions.permission(player, node);
+        if(!permissions.isActive()) {
+        	return !node.contains("admin") && !node.contains("mod");
         }
 
-        return false;
+        return permissions.permission(player, node);
     }
 
     /**
@@ -1730,7 +1738,7 @@ public class LWC {
         
         for (String name : names) {
             String temp = configuration.getString("protections.blocks." + name + "." + node);
-
+            
             if (temp != null && !temp.isEmpty()) {
                 value = temp;
             }
