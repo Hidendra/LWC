@@ -42,7 +42,8 @@ public class NijiPermissions implements IPermissions {
 			return null;
 		}
 		
-		return handler.getPrimaryGroup(player.getWorld().getName(), player.getName());
+		// return handler.getPrimaryGroup(player.getWorld().getName(), player.getName());
+		return handler.getGroup(player.getWorld().getName(), player.getName());
 	}
 
 }
