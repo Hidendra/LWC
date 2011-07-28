@@ -1074,10 +1074,10 @@ public class LWC {
         // Permissions init
         permissions = new NoPermissions();
         
-        if(resolvePlugin("Permissions") != null) {
-        	permissions = new NijiPermissions();
-        } else if(resolvePlugin("PermissionsBukkit") != null) {
+        if(resolvePlugin("PermissionsBukkit") != null) {
         	permissions = new BukkitPermissions();
+        } else if(resolvePlugin("Permissions") != null) {
+        	permissions = new NijiPermissions();
         }
         
         // Currency init
