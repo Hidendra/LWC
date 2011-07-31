@@ -101,11 +101,6 @@ permissions:
           lwc.create.public: true
           lwc.create.password: true
           lwc.create.private: true
-          lwc.modify: true
-          lwc.unlock: true
-          lwc.info: true
-          lwc.remove: true
-          lwc.flag.*: true
   lwc.create.public:
       description: Allows you to create a public protection.
   lwc.create.password:
@@ -128,6 +123,9 @@ permissions:
            lwc.allflags: true
   lwc.allflags:
       description: Gives you access to every usable flag.
+      children:
+           lwc.flag.redstone: true
+           lwc.flag.magnet: true
   lwc.flag.redstone:
       description: Allows you to use the redstone flag, which enables or disables the use of redstone on a protection depending on plugin settings.
   lwc.flag.magnet:
@@ -137,6 +135,9 @@ permissions:
       description: Gives you access to every usable mode, provided they are already disabled.
   lwc.allmodes:
       description: Gives you access to every mode, provided they are already disabled.
+      children:
+          lwc.mode.persist: true
+          lwc.mode.droptransfer: true
   lwc.mode.persist:
       description: Allows you to use the persist flag, which allows you to use commands repeatably.
   lwc.mode.droptransfer:
