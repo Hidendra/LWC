@@ -430,17 +430,17 @@ public class LWC {
 
         log("Freeing " + Database.DefaultType);
 
+        if (updateThread != null) {
+            updateThread.stop();
+            updateThread = null;
+        }
+
         if (physicalDatabase != null) {
             physicalDatabase.dispose();
         }
 
         if (memoryDatabase != null) {
             memoryDatabase.dispose();
-        }
-
-        if (updateThread != null) {
-            updateThread.stop();
-            updateThread = null;
         }
 
         physicalDatabase = null;
