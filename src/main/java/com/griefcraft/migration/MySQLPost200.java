@@ -35,8 +35,6 @@ public class MySQLPost200 implements MigrationUtility {
 
 	/**
 	 * Check for required SQLite->MySQL conversion
-	 * 
-	 * @param lwc
 	 */
 	public void run() {
 		LWC lwc = LWC.getInstance();
