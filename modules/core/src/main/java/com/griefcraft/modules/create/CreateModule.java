@@ -93,27 +93,26 @@ public class CreateModule extends JavaModule {
             return ALLOW;
         }
 
+        // The created protection
+        Protection protection = null;
+
         if (protectionType.equals("public")) {
-            physDb.registerProtection(block.getTypeId(), ProtectionTypes.PUBLIC, worldName, playerName, "", blockX, blockY, blockZ);
+            protection = physDb.registerProtection(block.getTypeId(), ProtectionTypes.PUBLIC, worldName, playerName, "", blockX, blockY, blockZ);
             lwc.sendLocale(player, "protection.interact.create.finalize");
         } else if (protectionType.equals("password")) {
             String password = lwc.encrypt(protectionData);
 
-            physDb.registerProtection(block.getTypeId(), ProtectionTypes.PASSWORD, worldName, playerName, password, blockX, blockY, blockZ);
-
-            // load the freshly created protection!
-            Protection protection = physDb.loadProtection(worldName, blockX, blockY, blockZ);
+            protection = physDb.registerProtection(block.getTypeId(), ProtectionTypes.PASSWORD, worldName, playerName, password, blockX, blockY, blockZ);
             memDb.registerPlayer(playerName, protection.getId());
+            
             lwc.sendLocale(player, "protection.interact.create.finalize");
             lwc.sendLocale(player, "protection.interact.create.password");
         } else if (protectionType.equals("private")) {
             String[] rights = protectionData.split(" ");
 
-            physDb.registerProtection(block.getTypeId(), ProtectionTypes.PRIVATE, worldName, playerName, "", blockX, blockY, blockZ);
+            protection = physDb.registerProtection(block.getTypeId(), ProtectionTypes.PRIVATE, worldName, playerName, "", blockX, blockY, blockZ);
+            
             lwc.sendLocale(player, "protection.interact.create.finalize");
-
-            // load the protection that was created
-            Protection protection = physDb.loadProtection(worldName, blockX, blockY, blockZ);
 
             for (String right : rights) {
                 boolean admin = false;
@@ -169,12 +168,9 @@ public class CreateModule extends JavaModule {
                 tmpType = ProtectionTypes.TRAP_BAN;
             }
 
-            physDb.registerProtection(block.getTypeId(), tmpType, worldName, playerName, reason, blockX, blockY, blockZ);
+            protection = physDb.registerProtection(block.getTypeId(), tmpType, worldName, playerName, reason, blockX, blockY, blockZ);
             lwc.sendLocale(player, "protection.interact.create.finalize");
         }
-
-        // get the newly protected protection
-        Protection protection = physDb.loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
 
         // tell the modules that a protection was registered
         if (protection != null) {
