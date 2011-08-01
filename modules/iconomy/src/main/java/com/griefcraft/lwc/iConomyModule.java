@@ -17,9 +17,6 @@
 
 package com.griefcraft.lwc;
 
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-
 import com.griefcraft.bukkit.BukkitPlugin;
 import com.griefcraft.integration.ICurrency;
 import com.griefcraft.scripting.JavaModule;
@@ -27,6 +24,8 @@ import com.griefcraft.util.Colors;
 import com.griefcraft.util.config.Configuration;
 import com.iConomy.iConomy;
 import com.iConomy.util.Constants;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 public class iConomyModule extends JavaModule {
 
@@ -90,10 +89,7 @@ public class iConomyModule extends JavaModule {
 
         // charge them
         if (charge != 0) {
-            // get the player's account
-            String playerName = player.getName();
-
-            // the currency handler
+            // the currency handler to use
             ICurrency currency = lwc.getCurrency();
             
             if (!currency.canAfford(player, charge)) {
@@ -123,14 +119,14 @@ public class iConomyModule extends JavaModule {
      * @param node
      * @return
      */
-    public String resolveValue(Player player, String node) {
+    private String resolveValue(Player player, String node) {
         LWC lwc = LWC.getInstance();
 
         // check if we have permissions
         boolean hasPermissions = lwc.getPermissions() != null;
 
         // resolve the limits type
-        String value = null;
+        String value;
 
         // try the player
         value = configuration.getString("players." + player.getName() + "." + node);

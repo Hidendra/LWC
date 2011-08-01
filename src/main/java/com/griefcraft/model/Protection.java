@@ -17,20 +17,19 @@
 
 package com.griefcraft.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-
 import com.griefcraft.cache.CacheSet;
 import com.griefcraft.cache.LRUCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 public class Protection {
 
@@ -61,8 +60,6 @@ public class Protection {
             return bit;
         }
     }
-
-    ;
 
     /**
      * List of the access rights for the protection
@@ -391,6 +388,10 @@ public class Protection {
      * @return the Bukkit world the protection should be located in
      */
     public World getBukkitWorld() {
+        if(world == null || world.isEmpty()) {
+            return Bukkit.getServer().getWorlds().get(0);
+        }
+
     	return Bukkit.getServer().getWorld(world);
     }
     

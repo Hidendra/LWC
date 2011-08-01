@@ -17,21 +17,18 @@
 
 package com.griefcraft;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-
+import com.griefcraft.bukkit.MockPlayer;
+import com.griefcraft.bukkit.MockServer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.junit.Test;
 
-import com.griefcraft.bukkit.MockPlayer;
-import com.griefcraft.bukkit.MockServer;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * 

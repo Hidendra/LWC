@@ -17,26 +17,21 @@
 
 package com.griefcraft.modules.flag;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Server;
-import org.bukkit.World;
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Protection;
+import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.util.config.Configuration;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.Protection;
-import com.griefcraft.scripting.JavaModule;
-import com.griefcraft.util.config.Configuration;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class MagnetModule extends JavaModule {
 
@@ -69,7 +64,7 @@ public class MagnetModule extends JavaModule {
 
     // does all of the work
     // searches the worlds for items and magnet chests nearby
-    class MagnetTask implements Runnable {
+    private class MagnetTask implements Runnable {
         public void run() {
             Server server = Bukkit.getServer();
             LWC lwc = LWC.getInstance();
@@ -114,8 +109,8 @@ public class MagnetModule extends JavaModule {
                     int z = location.getBlockZ();
 
                     List<Protection> protections = lwc.getPhysicalDatabase().loadProtections(worldName, x, y, z, radius);
-                    Block block = null;
-                    Protection protection = null;
+                    Block block;
+                    Protection protection;
 
                     for (Protection temp : protections) {
                         protection = temp;

@@ -18,10 +18,10 @@
 package com.griefcraft.cache;
 
 
-import java.util.logging.Logger;
-
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
+
+import java.util.logging.Logger;
 
 public class CacheSet {
 

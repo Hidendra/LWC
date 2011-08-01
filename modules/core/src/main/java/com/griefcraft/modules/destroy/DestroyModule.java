@@ -17,12 +17,11 @@
 
 package com.griefcraft.modules.destroy;
 
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 public class DestroyModule extends JavaModule {
 

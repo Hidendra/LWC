@@ -1,12 +1,11 @@
 package com.griefcraft.integration.permissions;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-
 import com.griefcraft.integration.IPermissions;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 public class NijiPermissions implements IPermissions {
 
@@ -30,12 +29,9 @@ public class NijiPermissions implements IPermissions {
 	}
 	
 	public boolean permission(Player player, String node) {
-		if(handler == null) {
-			return false;
-		}
-		
-		return handler.permission(player, node);
-	}
+        return handler != null && handler.permission(player, node);
+
+    }
 
 	public String getGroup(Player player) {
 		if(handler == null) {

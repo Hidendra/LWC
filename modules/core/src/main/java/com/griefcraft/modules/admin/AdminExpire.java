@@ -17,14 +17,13 @@
 
 package com.griefcraft.modules.admin;
 
-import java.sql.PreparedStatement;
-
-import org.bukkit.command.CommandSender;
-
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.StringUtils;
+import org.bukkit.command.CommandSender;
+
+import java.sql.PreparedStatement;
 
 public class AdminExpire extends JavaModule {
 
@@ -52,7 +51,7 @@ public class AdminExpire extends JavaModule {
         }
 
         int threshold = (int) ((System.currentTimeMillis() / 1000L) - time);
-        int count = 0;
+        int count;
         
         // raw SQL
         PhysDB database = lwc.getPhysicalDatabase();

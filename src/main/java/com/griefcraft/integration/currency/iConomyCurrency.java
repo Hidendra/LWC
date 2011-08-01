@@ -1,11 +1,10 @@
 package com.griefcraft.integration.currency;
 
-import org.bukkit.entity.Player;
-
 import com.griefcraft.integration.ICurrency;
 import com.iConomy.iConomy;
 import com.iConomy.system.Account;
 import com.iConomy.system.Holdings;
+import org.bukkit.entity.Player;
 
 public class iConomyCurrency implements ICurrency {
 	
@@ -25,13 +24,10 @@ public class iConomyCurrency implements ICurrency {
 
 	public boolean canAfford(Player player, double money) {
 		Account account = iConomy.getAccount(player.getName());
-		
-		if(account == null) {
-			return false;
-		}
-		
-		return account.getHoldings().hasEnough(money);
-	}
+
+        return account != null && account.getHoldings().hasEnough(money);
+
+    }
 
 	public double addMoney(Player player, double money) {
 		Account account = iConomy.getAccount(player.getName());

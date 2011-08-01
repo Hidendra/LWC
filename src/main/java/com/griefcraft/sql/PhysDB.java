@@ -17,15 +17,6 @@
 
 package com.griefcraft.sql;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import com.griefcraft.cache.LRUCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
@@ -33,6 +24,11 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.scripting.Module;
 import com.griefcraft.util.Performance;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class PhysDB extends Database {
 

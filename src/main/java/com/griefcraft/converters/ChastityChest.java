@@ -17,17 +17,12 @@
 
 package com.griefcraft.converters;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-
-import org.bukkit.command.CommandSender;
-
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.sql.PhysDB;
+import org.bukkit.command.CommandSender;
+
+import java.io.*;
 
 /**
  * Convert Chastity chests to LWC
@@ -73,7 +68,7 @@ public class ChastityChest implements Runnable {
         for (String path : CHESTS_FILES) {
             file = new File(path);
 
-            if (file != null && file.exists()) {
+            if (file.exists()) {
                 break;
             }
         }

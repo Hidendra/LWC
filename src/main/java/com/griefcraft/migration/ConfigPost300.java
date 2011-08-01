@@ -17,20 +17,15 @@
 
 package com.griefcraft.migration;
 
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.modules.worldguard.WorldGuardModule;
+import org.bukkit.Material;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.logging.Logger;
-
-import org.bukkit.Material;
-
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.modules.worldguard.WorldGuardModule;
 
 public class ConfigPost300 implements MigrationUtility {
 	private static Logger logger = Logger.getLogger("Patcher");

@@ -17,15 +17,15 @@
 
 package com.griefcraft.sql;
 
+import com.griefcraft.model.Action;
+import com.griefcraft.model.Protection;
+import com.griefcraft.util.Performance;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.griefcraft.model.Action;
-import com.griefcraft.model.Protection;
-import com.griefcraft.util.Performance;
 
 public class MemDB extends Database {
 
@@ -48,9 +48,9 @@ public class MemDB extends Database {
             statement.setString(1, player);
             statement.setString(2, action);
 
-            final ResultSet set = statement.executeQuery();
+            ResultSet set = statement.executeQuery();
 
-            while (set.next()) {
+            if(set.next()) {
                 final int id = set.getInt("id");
                 final String actionString = set.getString("action");
                 final String playerString = set.getString("player");
@@ -306,11 +306,8 @@ public class MemDB extends Database {
      * @return true if the player has access
      */
     public boolean hasAccess(String player, Protection chest) {
-        if (chest == null) {
-            return true;
-        }
+        return chest == null || hasAccess(player, chest.getId());
 
-        return hasAccess(player, chest.getId());
     }
 
     /**
@@ -347,15 +344,14 @@ public class MemDB extends Database {
             PreparedStatement statement = prepare("SELECT id FROM " + prefix + "locks WHERE player = ?");
             statement.setString(1, player);
 
-            final ResultSet set = statement.executeQuery();
+            ResultSet set = statement.executeQuery();
 
-            while (set.next()) {
-
-
+            if(set.next()) {
+                set.close();
                 return true;
             }
-
-
+            
+            set.close();
         } catch (final Exception e) {
             printException(e);
         }

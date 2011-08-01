@@ -1,8 +1,7 @@
 package com.griefcraft.integration.currency;
 
-import org.bukkit.entity.Player;
-
 import com.griefcraft.integration.ICurrency;
+import org.bukkit.entity.Player;
 
 public class NoCurrency implements ICurrency {
 

@@ -18,23 +18,17 @@
 package com.griefcraft.util;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.lwc.LWCInfo;
+import com.griefcraft.scripting.ModuleLoader;
+import com.griefcraft.sql.Database;
+
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
-
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.lwc.LWCInfo;
-import com.griefcraft.scripting.ModuleLoader;
-import com.griefcraft.sql.Database;
 
 public class Updater {
 
@@ -102,7 +96,7 @@ public class Updater {
             for (String path : shared) {
                 File file = new File(path);
 
-                if (file != null && !file.exists() && !file.isDirectory()) {
+                if (!file.exists() && !file.isDirectory()) {
                     UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "shared/" + path.replaceAll(DEST_LIBRARY_FOLDER, ""));
                     updaterFile.setLocalLocation(path);
 
