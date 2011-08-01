@@ -97,7 +97,7 @@ public class FlagModule extends JavaModule {
         /**
          * Allow lwc.flag.?? (e.g lwc.flag.redstone) or optionally the umbrella node lwc.allflags
          */
-        if (!lwc.hasPermission(sender, "lwc.flag." + flagName, "lwc.allflags")) {
+        if (!lwc.hasPermission(sender, "lwc.flag." + flagName, "lwc.protect", "lwc.allflags")) {
             lwc.sendLocale(sender, "protection.accessdenied");
             return CANCEL;
         }
