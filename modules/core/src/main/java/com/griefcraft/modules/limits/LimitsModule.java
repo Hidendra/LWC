@@ -17,16 +17,15 @@
 
 package com.griefcraft.modules.limits;
 
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.config.Configuration;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class LimitsModule extends JavaModule {
 
@@ -92,7 +91,7 @@ public class LimitsModule extends JavaModule {
      * @param blockId
      * @return
      */
-    public int mapProtectionLimit(Player player, int blockId) {
+    private int mapProtectionLimit(Player player, int blockId) {
         String limit = null;
         Type type = Type.resolve(resolveValue(player, "type"));
 
@@ -119,11 +118,11 @@ public class LimitsModule extends JavaModule {
             }
         }
 
-        if (limit.equalsIgnoreCase("unlimited")) {
+        if (limit == null || limit.equalsIgnoreCase("unlimited")) {
             return UNLIMITED;
         }
 
-        return limit != null && !limit.isEmpty() ? Integer.parseInt(limit) : UNLIMITED;
+        return !limit.isEmpty() ? Integer.parseInt(limit) : UNLIMITED;
     }
 
     /**
@@ -138,14 +137,14 @@ public class LimitsModule extends JavaModule {
      * @param node
      * @return
      */
-    public String resolveValue(Player player, String node) {
+    private String resolveValue(Player player, String node) {
         LWC lwc = LWC.getInstance();
 
         // check if we have permissions
         boolean hasPermissions = lwc.getPermissions() != null;
 
         // resolve the limits type
-        String value = null;
+        String value;
 
         // try the player
         value = configuration.getString("players." + player.getName() + "." + node);
@@ -199,7 +198,7 @@ public class LimitsModule extends JavaModule {
            */
         if (limit != UNLIMITED) {
             Type type = Type.resolve(resolveValue(player, "type"));
-            int protections = 0; // 0 = *
+            int protections; // 0 = *
 
             if (type == Type.CUSTOM) {
                 protections = lwc.getPhysicalDatabase().getProtectionCount(player.getName(), block.getTypeId());

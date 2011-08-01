@@ -17,13 +17,12 @@
 
 package com.griefcraft.modules.menu;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class MenuModule extends JavaModule {
 

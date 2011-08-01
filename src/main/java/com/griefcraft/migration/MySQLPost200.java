@@ -17,16 +17,16 @@
 
 package com.griefcraft.migration;
 
-import java.io.File;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.logging.Logger;
-
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Protection;
 import com.griefcraft.sql.Database.Type;
 import com.griefcraft.sql.PhysDB;
+
+import java.io.File;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Logger;
 
 // Sort of just a convenience class, so as to not make the LWC class more cluttered than it is right now
 public class MySQLPost200 implements MigrationUtility {

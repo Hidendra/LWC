@@ -17,15 +17,14 @@
 
 package com.griefcraft.sql;
 
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.sql.Database.Type;
+import com.griefcraft.util.Performance;
+
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.sql.Database.Type;
-import com.griefcraft.util.Performance;
 
 public class Table {
 
@@ -71,7 +70,7 @@ public class Table {
      * Create the table
      */
     public void execute() {
-        StringBuffer buffer = new StringBuffer("CREATE TABLE IF NOT EXISTS ");
+        StringBuilder buffer = new StringBuilder("CREATE TABLE IF NOT EXISTS ");
 
         // do the prefix, if we're using MySQL
         String prefix = LWC.getInstance().getConfiguration().getString("database.prefix", "");
@@ -81,7 +80,7 @@ public class Table {
         }
 
         // the table name
-        buffer.append(prefix + name);
+        buffer.append(prefix).append(name);
         buffer.append(" ( ");
 
         // add the columns

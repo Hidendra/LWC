@@ -17,32 +17,6 @@
 
 package com.griefcraft.lwc;
 
-import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Formatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import com.griefcraft.util.UpdateThread;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.ContainerBlock;
-import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.command.ColouredConsoleSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-
 import com.firestar.mcbans.mcbans;
 import com.griefcraft.cache.CacheSet;
 import com.griefcraft.integration.ICurrency;
@@ -57,27 +31,7 @@ import com.griefcraft.migration.MySQLPost200;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
-import com.griefcraft.modules.admin.AdminCache;
-import com.griefcraft.modules.admin.AdminCleanup;
-import com.griefcraft.modules.admin.AdminClear;
-import com.griefcraft.modules.admin.AdminConfig;
-import com.griefcraft.modules.admin.AdminConvert;
-import com.griefcraft.modules.admin.AdminDebug;
-import com.griefcraft.modules.admin.AdminExpire;
-import com.griefcraft.modules.admin.AdminFind;
-import com.griefcraft.modules.admin.AdminFlush;
-import com.griefcraft.modules.admin.AdminForceOwner;
-import com.griefcraft.modules.admin.AdminLocale;
-import com.griefcraft.modules.admin.AdminPurge;
-import com.griefcraft.modules.admin.AdminPurgeBanned;
-import com.griefcraft.modules.admin.AdminQuery;
-import com.griefcraft.modules.admin.AdminReload;
-import com.griefcraft.modules.admin.AdminRemove;
-import com.griefcraft.modules.admin.AdminReport;
-import com.griefcraft.modules.admin.AdminUpdate;
-import com.griefcraft.modules.admin.AdminVersion;
-import com.griefcraft.modules.admin.AdminView;
-import com.griefcraft.modules.admin.BaseAdminModule;
+import com.griefcraft.modules.admin.*;
 import com.griefcraft.modules.create.CreateModule;
 import com.griefcraft.modules.credits.CreditsModule;
 import com.griefcraft.modules.debug.DebugModule;
@@ -107,7 +61,27 @@ import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.Performance;
 import com.griefcraft.util.StringUtils;
+import com.griefcraft.util.UpdateThread;
 import com.griefcraft.util.config.Configuration;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.ContainerBlock;
+import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.command.ColouredConsoleSender;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+
+import java.security.MessageDigest;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class LWC {
 
@@ -160,7 +134,7 @@ public class LWC {
      * Checks for updates that need to be pushed to the sql database
      */
     private UpdateThread updateThread;
-    
+
     /**
      * Allow output to be coloured
      */
@@ -170,7 +144,7 @@ public class LWC {
      * The permissions handler
      */
     private IPermissions permissions;
-    
+
     /**
      * The currency handler
      */
@@ -180,7 +154,7 @@ public class LWC {
      * Whether or not we utilize logic to work around the Bukkit 656 bug.  http://leaky.bukkit.org/issues/656
      */
     private boolean bug656workaround;
-    
+
     public LWC(LWCPlugin plugin) {
         this.plugin = plugin;
 
@@ -190,16 +164,16 @@ public class LWC {
 
         configuration = Configuration.load("core.yml");
         caches = new CacheSet();
-        
+
         bug656workaround = configuration.getBoolean("core.bukkitBug656workaround", false);
-        
+
         try {
         	console = new ColouredConsoleSender((CraftServer) Bukkit.getServer());
         } catch(Exception e) { }
     }
-    
+
     /** Return true if the Bug 565 workaround flag is enabled.
-     * 
+     *
      * @return
      */
     public boolean isBug656WorkAround() {
@@ -249,7 +223,7 @@ public class LWC {
      * @return remaining items (if any)
      */
     public Map<Integer, ItemStack> depositItems(Block block, ItemStack itemStack) {
-        BlockState blockState = null;
+        BlockState blockState;
 
         if ((blockState = block.getState()) != null && (blockState instanceof ContainerBlock)) {
             Block doubleChestBlock = findAdjacentBlock(block, Material.CHEST);
@@ -288,11 +262,8 @@ public class LWC {
     public boolean canAccessProtection(Player player, Block block) {
         Protection protection = findProtection(block);
 
-        if (protection != null) {
-            return canAccessProtection(player, protection);
-        }
+        return protection != null && canAccessProtection(player, protection);
 
-        return false;
     }
 
     /**
@@ -387,11 +358,8 @@ public class LWC {
     public boolean canAdminProtection(Player player, Block block) {
         Protection protection = findProtection(block);
 
-        if (protection != null) {
-            return canAdminProtection(player, protection);
-        }
+        return protection != null && canAdminProtection(player, protection);
 
-        return false;
     }
 
     /**
@@ -455,11 +423,11 @@ public class LWC {
      * Free some memory (LWC was disabled)
      */
     public void destruct() {
-        
+
     	// destroy the modules
         moduleLoader.shutdown();
         moduleLoader = null;
-        
+
         log("Freeing " + Database.DefaultType);
 
         if (physicalDatabase != null) {
@@ -482,19 +450,17 @@ public class LWC {
     /**
      * Encrypt a string using SHA1
      *
-     * @param plaintext
+     * @param text
      * @return
      */
-    public String encrypt(String plaintext) {
-        MessageDigest md = null;
-
+    public String encrypt(String text) {
         try {
-            md = MessageDigest.getInstance("SHA");
-            md.update(plaintext.getBytes("UTF-8"));
+            MessageDigest md = MessageDigest.getInstance("SHA");
+            md.update(text.getBytes("UTF-8"));
 
             final byte[] raw = md.digest();
             return byteArray2Hex(raw);
-        } catch (final Exception e) {
+        } catch (Exception e) {
 
         }
 
@@ -532,11 +498,11 @@ public class LWC {
             protection.setWorld(block.getWorld().getName());
             protection.save();
         }
-        
+
         // update timestamp
         if(hasAccess) {
     		long timestamp = System.currentTimeMillis() / 1000L;
-    		
+
     		protection.setLastAccessed(timestamp);
     		protection.save();
     	}
@@ -552,7 +518,7 @@ public class LWC {
                 if (owner.equals(player.getName())) {
                     owner = getLocale("you");
                 }
-                
+
                 String blockName = materialToString(block);
 
                 if(!getLocale("protection." + blockName.toLowerCase() + ".notice.protected").startsWith("UNKNOWN_LOCALE")) {
@@ -592,15 +558,11 @@ public class LWC {
                 if (!hasAccess) {
                     Plugin mcbansPlugin;
 
-                    /*
-                      * See if we have mcbans
-                      */
+                    // See if we have mcbans
                     if ((mcbansPlugin = plugin.getServer().getPluginManager().getPlugin("MCBans")) != null) {
                         mcbans mcbans = (mcbans) mcbansPlugin;
 
-                        /*
-                           * good good, ban them
-                           */
+                        // ban then locally
                         mcbans.mcb_handler.ban(player.getName(), "LWC", protection.getData(), "");
                     }
 
@@ -625,7 +587,7 @@ public class LWC {
         List<Block> ignoreList = Arrays.asList(ignore);
 
         for (BlockFace face : faces) {
-            Block adjacentBlock = block.getFace(face);
+            Block adjacentBlock = block.getRelative(face);
 
             if (adjacentBlock.getType() == material && !ignoreList.contains(adjacentBlock)) {
                 return adjacentBlock;
@@ -642,7 +604,7 @@ public class LWC {
      * @return
      */
     public Block findAdjacentDoubleChest(Block block) {
-        Block adjacentBlock = null;
+        Block adjacentBlock;
         Block lastBlock = null;
         List<Block> attempts = new ArrayList<Block>(5);
         attempts.add(block);
@@ -694,7 +656,7 @@ public class LWC {
         }
 
 //        log("findProtection: world="+world+",x="+x+",y="+y+"z="+z);
-        
+
         Block block = world.getBlockAt(x, y, z);
 
         if (block == null) {
@@ -710,7 +672,7 @@ public class LWC {
             Protection protection = physicalDatabase.loadProtection(world.getName(), protectableBlock.getX(), protectableBlock.getY(), protectableBlock.getZ());
 
             if (protection != null) {
-            	
+
             	/* For the bug #656 workaround, if the protection we got from the DB was not for the
             	 * block we were originally passed, then we've found an adjacent protection, such as for
             	 * double chests. We record the protection we found so that if Bukkit later starts
@@ -731,7 +693,7 @@ public class LWC {
             			}
             		}
             	}
-            	
+
                 return protection;
             }
         }
@@ -788,7 +750,7 @@ public class LWC {
     public IPermissions getPermissions() {
         return permissions;
     }
-    
+
     /**
      * @return the Currency handler
      */
@@ -824,9 +786,9 @@ public class LWC {
         if(world == null) {
         	return entities;
         }
-        
+
         Block baseBlock = world.getBlockAt(x, y, z);
-        
+
         /* Normal logic is to check the block they clicked to see if it's a "valid" block.
          * Since bug #656 doesn't accurately report block state, this results in valid blocks
          * getting dropped from the protection list.  The workaround just applies the protection
@@ -868,7 +830,7 @@ public class LWC {
         }
 
 //		log("getProtectionSet.preCache: entities.size()="+entities.size()+", baseblock="+baseBlock);
-		
+
         /* Normal logic is to check the block they clicked to see if it's a "valid" block.
          * Since bug #656 doesn't accurately report block state, this results in valid blocks
          * getting dropped from the protection list.  The workaround just applies the protection
@@ -878,9 +840,9 @@ public class LWC {
         if( entities.isEmpty() ) {
         	findCachedProtection(entities, baseBlock);
         }
-        
+
 //		log("getProtectionSet.exit: entities.size()="+entities.size()+", baseblock="+baseBlock);
-        
+
         return entities;
     }
 
@@ -905,11 +867,8 @@ public class LWC {
      * @return
      */
     public boolean isAdmin(CommandSender sender) {
-        if (sender instanceof Player) {
-            return isAdmin((Player) sender);
-        }
+        return !(sender instanceof Player) || isAdmin((Player) sender);
 
-        return true;
     }
 
     /**
@@ -927,15 +886,8 @@ public class LWC {
      * @return
      */
     public boolean hasAdminPermission(CommandSender sender, String node) {
-    	if(isAdmin(sender)) {
-    		return true;
-    	}
-    	
-    	if(!permissions.isActive()) {
-    		return false;
-    	}
-    	
-        return hasPermission(sender, node, "lwc.admin");
+        return isAdmin(sender) || permissions.isActive() && hasPermission(sender, node, "lwc.admin");
+
     }
 
     /**
@@ -946,11 +898,8 @@ public class LWC {
      * @return
      */
     public boolean hasPlayerPermission(CommandSender sender, String node) {
-    	if(!permissions.isActive()) {
-    		return true;
-    	}
-    	
-        return hasPermission(sender, node, "lwc.protect");
+        return !permissions.isActive() || hasPermission(sender, node, "lwc.protect");
+
     }
 
     /**
@@ -1050,11 +999,8 @@ public class LWC {
      * @return
      */
     public boolean isModeWhitelisted(Player player, String mode) {
-        if (permissions == null) {
-            return false;
-        }
+        return permissions != null && hasPermission(player, "lwc.mode." + mode, "lwc.allmodes");
 
-        return hasPermission(player, "lwc.mode." + mode, "lwc.allmodes");
     }
 
     /**
@@ -1091,23 +1037,23 @@ public class LWC {
 
         // Permissions init
         permissions = new NoPermissions();
-        
+
         if(resolvePlugin("PermissionsBukkit") != null) {
         	permissions = new BukkitPermissions();
         } else if(resolvePlugin("Permissions") != null) {
         	permissions = new NijiPermissions();
         }
-        
+
         // Currency init
         currency = new NoCurrency();
-        
+
         if(resolvePlugin("iConomy") != null) {
         	currency = new iConomyCurrency();
         }
-        
+
         log("Permissions API: " + Colors.Red + permissions.getClass().getSimpleName());
         log("Currency API: " + Colors.Red + currency.getClass().getSimpleName());
-        
+
         log("Loading " + Database.DefaultType);
         try {
             physicalDatabase.connect();
@@ -1353,33 +1299,33 @@ public class LWC {
 
     /** Used only when Bukkit #656 flag is enabled, this call will look for any cached protections
      * related to the given block.
-     * 
+     *
      * @param block
      * @return
      */
     private boolean findCachedProtection(List<Block> entities, Block block) {
     	boolean foundProtection = false;
-    	
+
 		if( physicalDatabase.getCachedProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ()) != null ) {
 			// if the block isn't part of the list, see if it should be, and if so, add it
 	    	if( !entities.contains(block) ) {
 	    		entities.add(block);
 	    	}
-	    	
+
 	    	foundProtection = true;
 		}
-		
+
 		return foundProtection;
     }
-    
+
     /** This is very similar to _validateBlock(), except we return all blocks related to a given
      * protection.  The primary difference is that for a door block, this will return both door
      * blocks and the block underneath the door, whereas _validateBlock() will generally only
      * return both door blocks unless the baseBlock happens to be the the underneath block.
-     * 
+     *
      * The primary purpose of this method is for the bug656 workaround, to make sure we accurately
      * unlock all related "locked" blocks when /cremove is used.
-     * 
+     *
      * @param world
      * @param x
      * @param y
@@ -1388,26 +1334,26 @@ public class LWC {
      */
     public List<Block> getRelatedBlocks(World world, int x, int y, int z) {
     	Block block = world.getBlockAt(x,y,z);
-    	
+
     	// let getProtectionSet()/_validateBlock do most of the work
     	List<Block> entities = getProtectionSet(world, x, y, z);
-    	
+
     	// now check if it was a door, that we've included the block underneath the door also
     	switch(block.getTypeId()) {
 	        case 64:	// wooden door
 	        case 71:	// iron door
-	        	Block down = block.getFace(BlockFace.DOWN);
+	        	Block down = block.getRelative(BlockFace.DOWN);
 	        	if( down.getTypeId() == 64 || down.getTypeId() == 71 ) {
-	        		down = down.getFace(BlockFace.DOWN);
+	        		down = down.getRelative(BlockFace.DOWN);
 	        	}
-	        	
+
 	        	if( !entities.contains(down) )
 	        		entities.add(down);
     	}
-    	
+
     	return entities;
     }
-    
+
     /**
      * Ensure a chest/furnace is protectable where it's at
      *
@@ -1426,36 +1372,28 @@ public class LWC {
         }
 
         Material type = block.getType();
-        Block up = block.getFace(BlockFace.UP);
+        Block up = block.getRelative(BlockFace.UP);
 
         if (entities.size() == 1) {
             Block other = entities.get(0);
-            
+
             switch (other.getTypeId()) {
 
-                /*
-                 * Furnace
-                 */
+                // Furnace
                 case 61:
                 case 62:
                     return entities;
 
-                /*
-                     * Dispensers
-                     */
+                // Dispenser
                 case 23:
                     return entities;
 
-                /*
-                     * Sign
-                     */
+                // Sign / Wall sign
                 case 63:
                 case 68:
                     return entities;
 
-                /*
-                     * Chest
-                     */
+                // Chest
                 case 54:
                     if (type != Material.CHEST) {
                         return entities;
@@ -1463,9 +1401,7 @@ public class LWC {
 
                     break;
 
-                /*
-                 * Wooden door
-                 */
+                // Wooden door
                 case 64:
                     if (type != Material.WOODEN_DOOR) {
                         return entities;
@@ -1473,9 +1409,7 @@ public class LWC {
 
                     break;
 
-                /*
-                 * Iron door
-                 */
+                // Iron door
                 case 71:
                     if (type != Material.IRON_DOOR_BLOCK) {
                         return entities;
@@ -1491,13 +1425,11 @@ public class LWC {
         } else if (isProtectable(block) && isBaseBlock && !isComplexBlock(block)) {
             entities.add(block);
         } else if (isBaseBlock && (up.getType() == Material.WOODEN_DOOR || up.getType() == Material.IRON_DOOR_BLOCK || type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK)) {
-            /*
-                * check if they're clicking the block under the door
-                */
+            // check if they're clicking the block under the door
             if (type != Material.WOODEN_DOOR && type != Material.IRON_DOOR_BLOCK) {
                 entities.clear();
                 entities.add(block); // block under the door
-                entities.add(block.getFace(BlockFace.UP)); // bottom half
+                entities.add(block.getRelative(BlockFace.UP)); // bottom half
                 entities.add(block.getWorld().getBlockAt(block.getX(), block.getY() + 2, block.getZ())); // top
                 // half
             } else {
@@ -1506,19 +1438,15 @@ public class LWC {
                     entities.add(block); // bottom half
                     entities.add(up); // top half
                 } else {
-                    entities.add(block.getFace(BlockFace.DOWN)); // bottom half
+                    entities.add(block.getRelative(BlockFace.DOWN)); // bottom half
                     entities.add(block); // top half
                 }
             }
         } else if (isBaseBlock && (up.getType() == Material.SIGN_POST || up.getType() == Material.WALL_SIGN || type == Material.SIGN_POST || type == Material.WALL_SIGN)) {
-            /*
-                * If it's a wall sign, also protect the wall it's attached to!
-                */
+            // If it's a wall sign, also protect the wall it's attached to!
 
             if (entities.size() == 0) {
-                /*
-                     * Check if we're clicking on the sign itself, otherwise it's the block above it
-                     */
+                // Check if we're clicking on the sign itself, otherwise it's the block above it
                 if (type == Material.SIGN_POST || type == Material.WALL_SIGN) {
                     entities.add(block);
                 } else {
@@ -1533,26 +1461,20 @@ public class LWC {
 
             return entities;
         } else if (!isProtectable(block) && entities.size() == 0) {
-            /*
-                * Look for a ronery wall sign
-                */
-            Block face = null;
+            // Look for a ronery wall sign
+            Block face;
 
             // this shortens it quite a bit, just put the possible faces into an
             // array
             BlockFace[] faces = new BlockFace[]{BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
 
-            /*
-                * Match wall signs to the wall it's attached to
-                */
+            // Match wall signs to the wall it's attached to
             for (BlockFace blockFace : faces) {
-                if ((face = block.getFace(blockFace)) != null) {
+                if ((face = block.getRelative(blockFace)) != null) {
                     if (face.getType() == Material.WALL_SIGN) {
                         byte direction = face.getData();
 
-                        /*
-                               * Protect the wall the wall sign is attached to
-                               */
+                        // Protect the wall the sign is attached to
                         switch (direction) {
                             case 0x02: // east
                                 if (blockFace == BlockFace.EAST) {
@@ -1628,7 +1550,7 @@ public class LWC {
      */
     private void log(String str) {
     	str = "LWC: " + str;
-    	
+
     	if(console != null) {
     		console.sendMessage(str);
     	} else {
@@ -1690,49 +1612,49 @@ public class LWC {
      * @param material
      * @return
      */
-    public static String materialToString(Material material) {
+    private static String materialToString(Material material) {
         if (material != null) {
             String materialName = normalizeName(material);
-            
+
             // attempt to match the locale
             String locale = LWC.getInstance().getLocale(materialName.toLowerCase());
-            
+
             // if it starts with UNKNOWN_LOCALE, use the default material name
             if(locale.startsWith("UNKNOWN_LOCALE_")) {
             	locale = materialName;
             }
-        	
+
             return StringUtils.capitalizeFirstLetter(locale);
         }
 
         return "";
     }
-    
+
     /**
-     * Normalize a name to a more readable & usable form. 
-     * 
+     * Normalize a name to a more readable & usable form.
+     *
      * E.g sign_post/wall_sign = Sign, furnace/burning_furnace = Furnace,
      *     iron_door_block = iron_door
-     * 
+     *
      * @param material
      * @return
      */
-    public static String normalizeName(Material material) {
+    private static String normalizeName(Material material) {
     	String name = material.toString().toLowerCase().replaceAll("block", "");
-    	
+
         // some name normalizations
         if (name.contains("sign")) {
         	name = "Sign";
         }
-        
+
         if(name.contains("furnace")) {
         	name = "furnace";
         }
-        
+
         if (name.endsWith("_")) {
         	name = name.substring(0, name.length() - 1);
         }
-    	
+
     	return name.toLowerCase();
     }
 
@@ -1747,16 +1669,16 @@ public class LWC {
         List<String> names = new ArrayList<String>();
 
         String materialName = normalizeName(material);
-        
+
         // add the name & the block id
         names.add(materialName);
         names.add(material.getId() + "");
 
         String value = configuration.getString("protections." + node);
-        
+
         for (String name : names) {
             String temp = configuration.getString("protections.blocks." + name + "." + node);
-            
+
             if (temp != null && !temp.isEmpty()) {
                 value = temp;
             }

@@ -17,13 +17,12 @@
 
 package com.griefcraft.integration.permissions;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-
 import com.griefcraft.integration.IPermissions;
 import com.platymuus.bukkit.permissions.Group;
 import com.platymuus.bukkit.permissions.PermissionsPlugin;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 /**
  * BukkitPermissions is supported by the CraftBukkit Recommended Build #1000+ ONLY

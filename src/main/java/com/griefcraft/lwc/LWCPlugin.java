@@ -17,17 +17,14 @@
 
 package com.griefcraft.lwc;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import com.griefcraft.listeners.LWCBlockListener;
+import com.griefcraft.listeners.LWCEntityListener;
+import com.griefcraft.listeners.LWCPlayerListener;
+import com.griefcraft.listeners.LWCServerListener;
+import com.griefcraft.scripting.Module.Result;
+import com.griefcraft.scripting.ModuleLoader.Event;
+import com.griefcraft.sql.Database;
+import com.griefcraft.util.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -40,19 +37,10 @@ import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.griefcraft.listeners.LWCBlockListener;
-import com.griefcraft.listeners.LWCEntityListener;
-import com.griefcraft.listeners.LWCPlayerListener;
-import com.griefcraft.listeners.LWCServerListener;
-import com.griefcraft.scripting.Module.Result;
-import com.griefcraft.scripting.ModuleLoader.Event;
-import com.griefcraft.sql.Database;
-import com.griefcraft.util.Colors;
-import com.griefcraft.util.LWCResourceBundle;
-import com.griefcraft.util.LocaleClassLoader;
-import com.griefcraft.util.StringUtils;
-import com.griefcraft.util.UTF8Control;
-import com.griefcraft.util.Updater;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 public class LWCPlugin extends JavaPlugin {
 
@@ -181,11 +169,7 @@ public class LWCPlugin extends JavaPlugin {
             return true;
         } else if (name.equals("cpersist")) {
             return true;
-        } else if (name.equals("cadmin")) {
-            return true;
-        } else {
-            return false;
-        }
+        } else return name.equals("cadmin");
     }
 
     /**

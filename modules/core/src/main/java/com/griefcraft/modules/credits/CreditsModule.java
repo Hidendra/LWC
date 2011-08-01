@@ -17,30 +17,29 @@
 
 package com.griefcraft.modules.credits;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class CreditsModule extends JavaModule {
 
 	/**
 	 * How many lines to send when they first use /lwc credits
 	 */
-	public static final int FIRST_SEND = 2;
+	private static final int FIRST_SEND = 2;
 	
 	/**
 	 * How often to send messages
 	 */
-	public static final long UPDATE_INTERVAL = 1150L;
+	private static final long UPDATE_INTERVAL = 1150L;
 
 	/**
 	 * The credits list
@@ -50,9 +49,9 @@ public class CreditsModule extends JavaModule {
 	/**
 	 * Players to send to and the credits index
 	 */
-	private Map<CommandSender, Integer> scrolling = Collections.synchronizedMap(new HashMap<CommandSender, Integer>());
+	private final Map<CommandSender, Integer> scrolling = Collections.synchronizedMap(new HashMap<CommandSender, Integer>());
 
-	class CreditsTask implements Runnable {
+	private class CreditsTask implements Runnable {
 
 		public void run() {
 			while(LWC.ENABLED) {
