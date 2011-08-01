@@ -74,7 +74,7 @@ public class UpdateThread implements Runnable {
      * Activate flushing
      */
     public void flush() {
-        flush = true;
+        _flush();
     }
 
     /**
@@ -113,6 +113,7 @@ public class UpdateThread implements Runnable {
      */
     public void stop() {
         running = false;
+        _flush();
 
         if (thread != null && !thread.isInterrupted()) {
             thread.interrupt();
@@ -134,16 +135,12 @@ public class UpdateThread implements Runnable {
                 e.printStackTrace();
             }
 
-            /*
-                * Loop through
-                */
+            // save all of the protections now
             while ((protection = protectionUpdateQueue.poll()) != null) {
                 protection.saveNow();
             }
 
-            /*
-                * Commit
-                */
+            // commit
             try {
                 connection.commit();
                 connection.setAutoCommit(true);
