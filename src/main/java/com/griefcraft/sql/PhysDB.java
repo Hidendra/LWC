@@ -295,7 +295,7 @@ public class PhysDB extends Database {
                 column = new Column("date");
                 column.setType("VARCHAR(255)");
                 protections.addColumn(column);
-                
+
                 column = new Column("last_accessed");
                 column.setType("INTEGER");
                 protections.addColumn(column);
@@ -354,7 +354,7 @@ public class PhysDB extends Database {
         try {
             connection.setAutoCommit(true);
         } catch (Exception e) {
-        	printException(e);
+            printException(e);
         }
 
         doUpdate100();
@@ -437,6 +437,52 @@ public class PhysDB extends Database {
         }
 
         return new ArrayList<Protection>();
+    }
+
+    /**
+     * Resolve a protection without resolving its rights
+     *
+     * @param set
+     * @return
+     */
+    public Protection resolveProtectionNoRights(ResultSet set) {
+        if (set == null) {
+            return null;
+        }
+
+        Protection protection = new Protection();
+
+        try {
+            int protectionId = set.getInt("protectionId");
+            int x = set.getInt("x");
+            int y = set.getInt("y");
+            int z = set.getInt("z");
+            int flags = set.getInt("flags");
+            int blockId = set.getInt("blockId");
+            int type = set.getInt("protectionType");
+            String world = set.getString("world");
+            String owner = set.getString("owner");
+            String password = set.getString("password");
+            String date = set.getString("date");
+            long lastAccessed = set.getLong("last_accessed");
+
+            protection.setId(protectionId);
+            protection.setX(x);
+            protection.setY(y);
+            protection.setZ(z);
+            protection.setFlags(flags);
+            protection.setBlockId(blockId);
+            protection.setType(type);
+            protection.setWorld(world);
+            protection.setOwner(owner);
+            protection.setData(password);
+            protection.setDate(date);
+            protection.setLastAccessed(lastAccessed);
+        } catch (SQLException e) {
+            printException(e);
+        }
+
+        return protection;
     }
 
     /**
@@ -561,11 +607,11 @@ public class PhysDB extends Database {
         LRUCache<String, Protection> cache = lwc.getCaches().getProtections();
 
         int precacheSize = lwc.getConfiguration().getInt("core.precache", -1);
-        
-        if(precacheSize == -1) {
-        	precacheSize = lwc.getConfiguration().getInt("core.cacheSize", 10000);
+
+        if (precacheSize == -1) {
+            precacheSize = lwc.getConfiguration().getInt("core.cacheSize", 10000);
         }
-        
+
         try {
             PreparedStatement statement = prepare("SELECT " + prefix + "protections.id AS protectionId, " + prefix + "rights.id AS rightsId, " + prefix + "protections.type AS protectionType, " + prefix + "rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights, last_accessed FROM " + prefix + "protections LEFT OUTER JOIN " + prefix + "rights ON " + prefix + "protections.id = " + prefix + "rights.chest ORDER BY " + prefix + "protections.id DESC LIMIT ?");
             statement.setInt(1, precacheSize);
@@ -588,13 +634,14 @@ public class PhysDB extends Database {
         // Cache them all
     }
 
-    /** Used for the Bukkit #656 workaround to add a "cached" protection node when we find a
+    /**
+     * Used for the Bukkit #656 workaround to add a "cached" protection node when we find a
      * 2-block chest. A protection normally only applies to one block, so this method will be
      * called for the 2nd half of the chest to apply the same protection to the second block
      * when it is first noticed.  In this way, even if Bukkit goes bonkers (as in bug #656),
      * and starts returning bogus Blocks, we have already cached the double chest when
      * we first noticed it and the Protection will still apply.
-     * 
+     *
      * @param worldName
      * @param x
      * @param y
@@ -603,12 +650,13 @@ public class PhysDB extends Database {
     public void addCachedProtection(String worldName, int x, int y, int z, Protection p) {
         String cacheKey = worldName + ":" + x + ":" + y + ":" + z;
         LRUCache<String, Protection> cache = LWC.getInstance().getCaches().getProtections();
-        
+
         cache.put(cacheKey, p);
     }
-    
-    /** Return the cached Protection for a given block (if any). 
-     * 
+
+    /**
+     * Return the cached Protection for a given block (if any).
+     *
      * @param worldName
      * @param x
      * @param y
@@ -618,10 +666,10 @@ public class PhysDB extends Database {
     public Protection getCachedProtection(String worldName, int x, int y, int z) {
         String cacheKey = worldName + ":" + x + ":" + y + ":" + z;
         LRUCache<String, Protection> cache = LWC.getInstance().getCaches().getProtections();
-        
+
         return cache.get(cacheKey);
     }
-    
+
     /**
      * Load a chest at a given tile
      *
@@ -663,7 +711,7 @@ public class PhysDB extends Database {
     }
 
     /**
-     * Load every protection, use sparingly!
+     * Load all protections (use sparingly !!)
      *
      * @return
      */
@@ -796,13 +844,13 @@ public class PhysDB extends Database {
 
             // remove the null protection from cache if it's in there
             LWC.getInstance().getCaches().getProtections().remove(world + ":" + x + ":" + y + ":" + z);
-            
+
             // return the newly created protection
             return loadProtection(world, x, y, z);
         } catch (SQLException e) {
             printException(e);
         }
-        
+
         return null;
     }
 
@@ -1122,7 +1170,7 @@ public class PhysDB extends Database {
         Statement statement = null;
         try {
             statement = connection.createStatement();
-            statement.execute("SELECT * FROM " + prefix + "protections");
+            statement.execute("SELECT id FROM " + prefix + "protections limit 1");
         } catch (SQLException e) {
             // The table does not exist, let's go ahead and rename all of the tables
             renameTable("protections", prefix + "protections");
@@ -1137,12 +1185,12 @@ public class PhysDB extends Database {
             }
         }
     }
-    
+
     /**
      * 3.30
      */
     private void doUpdate330() {
-    	Statement statement = null;
+        Statement statement = null;
         try {
             statement = connection.createStatement();
             statement.execute("SELECT last_accessed FROM " + prefix + "protections");
