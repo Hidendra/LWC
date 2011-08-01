@@ -45,7 +45,7 @@ public class BukkitPermissions implements IPermissions {
 	}
 	
 	public boolean isActive() {
-		return true;
+		return handler != null;
 	}
 	
 	public boolean permission(Player player, String node) {
