@@ -123,6 +123,10 @@ public class Updater {
     public boolean checkDist() {
         check();
 
+        if(LWCInfo.VERSION == 0) {
+            return false;
+        }
+
         if (latestPluginVersion > LWCInfo.VERSION) {
             UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + DIST_FILE);
             updaterFile.setLocalLocation("plugins/LWC.jar");
