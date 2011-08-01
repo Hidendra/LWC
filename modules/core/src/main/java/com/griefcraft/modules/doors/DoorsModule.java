@@ -17,22 +17,20 @@
 
 package com.griefcraft.modules.doors;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Protection;
+import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.util.config.Configuration;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.material.Door;
 
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.Protection;
-import com.griefcraft.scripting.JavaModule;
-import com.griefcraft.util.config.Configuration;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 public class DoorsModule extends JavaModule {
 
@@ -57,8 +55,8 @@ public class DoorsModule extends JavaModule {
 		 */
 		TOGGLE,
 
-		NULL;
-	}
+		NULL
+    }
 
 	private Configuration configuration;
 
@@ -78,7 +76,7 @@ public class DoorsModule extends JavaModule {
 	// if the module is even enabled
 	private boolean enabled;
 	
-	class DoorTask implements Runnable {
+	private class DoorTask implements Runnable {
 		public void run() {
 			Iterator<DoorAction> iter = doors.iterator();
 			while(iter.hasNext()) {
@@ -166,7 +164,7 @@ public class DoorsModule extends JavaModule {
 	}
 	
 	/**
-	 * @param data
+	 * @param door
 	 * @return
 	 */
 	private boolean isDoorOpen(Door door) {
@@ -205,14 +203,14 @@ public class DoorsModule extends JavaModule {
 		// search around for iron doors if enabled
 		if(configuration.getBoolean("doors.doubleDoors", true)) {
 			Block protectionBlock = protection.getBlock();
-			Block temp = null;
+			Block temp;
 			
 			BlockFace[] faces = new BlockFace[] {
 					BlockFace.NORTH, BlockFace.WEST, BlockFace.EAST, BlockFace.SOUTH
 			};
 			
 			for(BlockFace face : faces) {
-				if(isValid((temp = protectionBlock.getFace(face)).getType())) {
+				if(isValid((temp = protectionBlock.getRelative(face)).getType())) {
 					Protection found = lwc.findProtection(temp);
 					
 					if(found == null) {

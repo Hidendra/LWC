@@ -17,12 +17,11 @@
 
 package com.griefcraft.listeners;
 
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.lwc.LWCPlugin;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.Plugin;
-
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.lwc.LWCPlugin;
 
 public class LWCServerListener extends ServerListener {
 

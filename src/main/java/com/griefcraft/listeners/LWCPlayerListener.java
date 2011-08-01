@@ -17,8 +17,12 @@
 
 package com.griefcraft.listeners;
 
-import java.util.List;
-
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.lwc.LWCPlugin;
+import com.griefcraft.model.Protection;
+import com.griefcraft.scripting.Module;
+import com.griefcraft.scripting.Module.Result;
+import com.griefcraft.scripting.ModuleLoader.Event;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -29,19 +33,10 @@ import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerChatEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerListener;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.lwc.LWCPlugin;
-import com.griefcraft.model.Protection;
-import com.griefcraft.scripting.Module;
-import com.griefcraft.scripting.Module.Result;
-import com.griefcraft.scripting.ModuleLoader.Event;
+import java.util.List;
 
 public class LWCPlayerListener extends PlayerListener {
 

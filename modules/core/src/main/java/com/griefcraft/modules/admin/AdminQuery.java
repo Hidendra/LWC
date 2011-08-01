@@ -17,15 +17,13 @@
 
 package com.griefcraft.modules.admin;
 
-import java.sql.Statement;
-
-import org.bukkit.command.CommandSender;
-
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
-import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
+import org.bukkit.command.CommandSender;
+
+import java.sql.Statement;
 
 public class AdminQuery extends JavaModule {
 

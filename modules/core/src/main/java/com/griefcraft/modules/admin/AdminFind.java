@@ -17,14 +17,13 @@
 
 package com.griefcraft.modules.admin;
 
-import java.util.List;
-
-import org.bukkit.command.CommandSender;
-
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.StringUtils;
+import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 public class AdminFind extends JavaModule {
 

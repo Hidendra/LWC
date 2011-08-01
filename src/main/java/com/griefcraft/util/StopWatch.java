@@ -37,11 +37,11 @@
 
 package com.griefcraft.util;
 
+import org.bukkit.command.CommandSender;
+
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.bukkit.command.CommandSender;
 
 /**
  * Simple stop watch, allowing for timing of a number of tasks,
@@ -240,7 +240,7 @@ public class StopWatch {
      * For custom reporting, call getTaskInfo() and use the task info directly.
      */
     public String prettyPrint() {
-        StringBuffer sb = new StringBuffer(shortSummary());
+        StringBuilder sb = new StringBuilder(shortSummary());
         sb.append('\n');
         if (!this.keepTaskList) {
             sb.append("No task info kept");
@@ -255,10 +255,10 @@ public class StopWatch {
             NumberFormat pf = NumberFormat.getPercentInstance();
             pf.setMinimumIntegerDigits(3);
             pf.setGroupingUsed(false);
-            for (int i = 0; i < tasks.length; i++) {
-                sb.append(nf.format(tasks[i].getTimeMillis()) + "  ");
-                sb.append(pf.format(tasks[i].getTimeSeconds() / getTotalTimeSeconds()) + "  ");
-                sb.append(tasks[i].getTaskName() + "\n");
+            for (TaskInfo task : tasks) {
+                sb.append(nf.format(task.getTimeMillis()) + "  ");
+                sb.append(pf.format(task.getTimeSeconds() / getTotalTimeSeconds()) + "  ");
+                sb.append(task.getTaskName() + "\n");
             }
         }
         return sb.toString();
@@ -283,11 +283,11 @@ public class StopWatch {
             pf.setMinimumIntegerDigits(3);
             pf.setGroupingUsed(false);
 
-            for (int i = 0; i < tasks.length; i++) {
+            for (TaskInfo task : tasks) {
                 String line = "";
-                line += nf.format(tasks[i].getTimeMillis()) + "  ";
-                line += pf.format(tasks[i].getTimeSeconds() / getTotalTimeSeconds()) + "  ";
-                line += tasks[i].getTaskName();
+                line += nf.format(task.getTimeMillis()) + "  ";
+                line += pf.format(task.getTimeSeconds() / getTotalTimeSeconds()) + "  ";
+                line += task.getTaskName();
 
                 sender.sendMessage(line);
             }
@@ -300,13 +300,13 @@ public class StopWatch {
      */
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer(shortSummary());
+        StringBuilder sb = new StringBuilder(shortSummary());
         if (this.keepTaskList) {
             TaskInfo[] tasks = getTaskInfo();
-            for (int i = 0; i < tasks.length; i++) {
-                sb.append("; [" + tasks[i].getTaskName() + "] took " + tasks[i].getTimeMillis());
-                long percent = Math.round((100.0 * tasks[i].getTimeSeconds()) / getTotalTimeSeconds());
-                sb.append(" = " + percent + "%");
+            for (TaskInfo task : tasks) {
+                sb.append("; [" + task.getTaskName() + "] took " + task.getTimeMillis());
+                long percent = Math.round((100.0 * task.getTimeSeconds()) / getTotalTimeSeconds());
+                sb.append(" = ").append(percent).append("%");
             }
         } else {
             sb.append("; no task info kept");

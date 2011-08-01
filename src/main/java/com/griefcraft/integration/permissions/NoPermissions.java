@@ -1,8 +1,7 @@
 package com.griefcraft.integration.permissions;
 
-import org.bukkit.entity.Player;
-
 import com.griefcraft.integration.IPermissions;
+import org.bukkit.entity.Player;
 
 public class NoPermissions implements IPermissions {
 

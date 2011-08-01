@@ -17,9 +17,11 @@
 
 package com.griefcraft.modules.modes;
 
-import java.util.List;
-import java.util.Map;
-
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Protection;
+import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.util.Colors;
+import com.griefcraft.util.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -28,11 +30,8 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.Protection;
-import com.griefcraft.scripting.JavaModule;
-import com.griefcraft.util.Colors;
-import com.griefcraft.util.StringUtils;
+import java.util.List;
+import java.util.Map;
 
 public class DropTransferModule extends JavaModule {
 
@@ -49,7 +48,7 @@ public class DropTransferModule extends JavaModule {
      * @param player
      * @return
      */
-    public boolean isPlayerDropTransferring(String player) {
+    private boolean isPlayerDropTransferring(String player) {
         return lwc.getMemoryDatabase().hasMode(player, "+dropTransfer");
     }
 
@@ -59,7 +58,7 @@ public class DropTransferModule extends JavaModule {
      * @param player
      * @return
      */
-    public int getPlayerDropTransferTarget(String player) {
+    private int getPlayerDropTransferTarget(String player) {
         String target = lwc.getMemoryDatabase().getModeData(player, "dropTransfer");
 
         try {

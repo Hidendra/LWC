@@ -17,20 +17,19 @@
 
 package com.griefcraft.modules.admin;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Protection;
+import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.util.StringUtils;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.Protection;
-import com.griefcraft.scripting.JavaModule;
-import com.griefcraft.util.StringUtils;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class AdminCleanup extends JavaModule {
 
@@ -46,7 +45,7 @@ public class AdminCleanup extends JavaModule {
 
         lwc.sendLocale(sender, "protection.admin.cleanup.start", "count", lwc.getPhysicalDatabase().getProtectionCount());
 
-        // do the work in a seperate thread so we don't fully lock the server
+        // do the work in a separate thread so we don't fully lock the server
         // new Thread(new Admin_Cleanup_Thread(lwc, sender)).start();
         new Admin_Cleanup_Thread(lwc, sender).run();
         return CANCEL;
@@ -89,15 +88,12 @@ public class AdminCleanup extends JavaModule {
                         continue;
                     }
 
-                    String worldName = protection.getWorld();
-                    World world = (worldName == null || worldName.isEmpty()) ? server.getWorlds().get(0) : server.getWorld(worldName);
+                    World world = protection.getBukkitWorld();
 
                     if (world == null) {
-                        lwc.sendLocale(sender, "protection.admin.cleanup.noworld", "world", worldName);
+                        lwc.sendLocale(sender, "protection.admin.cleanup.noworld", "world", world.getName());
                         continue;
                     }
-
-                    worldName = world.getName();
 
                     // now we can check the world for the protection
                     Block block = world.getBlockAt(protection.getX(), protection.getY(), protection.getZ());

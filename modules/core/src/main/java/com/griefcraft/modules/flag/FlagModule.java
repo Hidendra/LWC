@@ -17,16 +17,15 @@
 
 package com.griefcraft.modules.flag;
 
-import java.util.List;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Action;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.StringUtils;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class FlagModule extends JavaModule {
 
@@ -93,7 +92,7 @@ public class FlagModule extends JavaModule {
         Player player = (Player) sender;
         String flagName = args[0];
         String type = args[1].toLowerCase();
-        String internalType = ""; // + or -
+        String internalType; // + or -
 
         /**
          * Allow lwc.flag.?? (e.g lwc.flag.redstone) or optionally the umbrella node lwc.allflags

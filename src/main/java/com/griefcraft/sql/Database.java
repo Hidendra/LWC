@@ -18,26 +18,19 @@
 package com.griefcraft.sql;
 
 
-import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.bukkit.Bukkit;
-
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.util.Updater;
 import com.griefcraft.util.config.Configuration;
+import org.bukkit.Bukkit;
+
+import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Logger;
 
 public abstract class Database {
 

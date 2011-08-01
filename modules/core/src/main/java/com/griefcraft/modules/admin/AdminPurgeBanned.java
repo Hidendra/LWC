@@ -17,21 +17,15 @@
 
 package com.griefcraft.modules.admin;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.command.CommandSender;
-
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.StringUtils;
+import org.bukkit.command.CommandSender;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AdminPurgeBanned extends JavaModule {
 

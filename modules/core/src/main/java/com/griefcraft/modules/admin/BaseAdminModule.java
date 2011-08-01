@@ -17,11 +17,10 @@
 
 package com.griefcraft.modules.admin;
 
-import org.bukkit.command.CommandSender;
-
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.StringUtils;
+import org.bukkit.command.CommandSender;
 
 public class BaseAdminModule extends JavaModule {
 
