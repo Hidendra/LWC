@@ -1076,27 +1076,6 @@ public class LWC {
 
         // tell all modules we're loaded
         moduleLoader.loadAll();
-
-        try {
-            physicalDatabase.getConnection().setAutoCommit(false);
-
-            PreparedStatement statement = physicalDatabase.getConnection().prepareStatement("insert into lwc_protections (blockId, type, world, owner, password, x, y, z) VALUES (56, 1, 'world', 'Hidendra', '', 50, 75, 100);");
-
-            for(int i=0; i<2000; i++) {
-                for(int i2=0; i2<1000; i2++) {
-                    // statement.addBatch();
-                }
-
-                statement.executeBatch();
-                physicalDatabase.getConnection().commit();
-                statement.clearBatch();
-            }
-        } catch(Exception e) { }
-
-        try {
-            physicalDatabase.getConnection().commit();
-            physicalDatabase.getConnection().setAutoCommit(true);
-        } catch(Exception e) { }
     }
 
     /**
