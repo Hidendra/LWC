@@ -79,7 +79,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import java.beans.Statement;
 import java.security.MessageDigest;
 import java.sql.PreparedStatement;
 import java.util.*;

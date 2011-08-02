@@ -17,19 +17,15 @@
 
 package com.griefcraft.modules.admin;
 
-import com.avaje.ebeaninternal.server.lib.sql.Prefix;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
-import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -37,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.zip.CheckedOutputStream;
 
 public class AdminCleanup extends JavaModule {
 
@@ -149,11 +144,6 @@ public class AdminCleanup extends JavaModule {
 
                     if(count % 100000 == 0 || count == totalProtections || count == 1) {
                         sender.sendMessage(Colors.Red + count + " / " + totalProtections);
-                    }
-
-                    // Flush the statement every 1000 batches
-                    if(completed % 100000 == 0) {
-                        // push(toRemove);
                     }
 
                     if (world == null) {
