@@ -1675,6 +1675,10 @@ public class LWC {
         names.add(materialName);
         names.add(material.getId() + "");
 
+        if(!materialName.equals(material.toString().toLowerCase())) {
+            names.add(material.toString().toLowerCase());
+        }
+
         String value = configuration.getString("protections." + node);
 
         for (String name : names) {

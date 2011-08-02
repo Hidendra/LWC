@@ -168,7 +168,7 @@ public class AdminCleanup extends JavaModule {
                     }
                 }
 
-                // Flush the statement one last time once completed!
+                // Close the streaming statement
                 result.close();
                 resultStatement.close();
 
