@@ -959,7 +959,7 @@ public class LWC {
         }
 
         if(permissions.isActive()) {
-            if (hasPermission(player)) {
+            if (hasPermission(player, "lwc.admin")) {
                 return true;
             }
         }
