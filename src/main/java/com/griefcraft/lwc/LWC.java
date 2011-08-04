@@ -333,7 +333,7 @@ public class LWC {
                     return true;
                 }
 
-                if (permissions != null) {
+                if (permissions.isActive()) {
                     // TODO: Replace with getGroupProperName sometime, but only supported by Permissions 3.00+
                     String groupName = permissions.getGroup(player);
 
@@ -404,7 +404,7 @@ public class LWC {
                     return true;
                 }
 
-                if (permissions != null) {
+                if (permissions.isActive()) {
                     // TODO: Replace with getGroupProperName sometime, but only supported by Permissions 3.00+
                     String groupName = permissions.getGroup(player);
 
@@ -958,8 +958,8 @@ public class LWC {
             }
         }
 
-        if(permissions != null) {
-            if (hasPermission(player, "lwc.admin")) {
+        if(permissions.isActive()) {
+            if (hasPermission(player)) {
                 return true;
             }
         }
@@ -974,7 +974,7 @@ public class LWC {
      * @return true if the player is an LWC mod
      */
     public boolean isMod(Player player) {
-        if (permissions != null) {
+        if (permissions.isActive()) {
             if (hasPermission(player, "lwc.mod")) {
                 return true;
             }
@@ -1000,7 +1000,7 @@ public class LWC {
      * @return
      */
     public boolean isModeWhitelisted(Player player, String mode) {
-        return permissions != null && hasPermission(player, "lwc.mode." + mode, "lwc.allmodes");
+        return permissions.isActive() && hasPermission(player, "lwc.mode." + mode, "lwc.allmodes");
 
     }
 
