@@ -157,23 +157,11 @@ public class DropTransferModule extends JavaModule {
             return DEFAULT;
         }
 
-        if (args.length == 0) {
-            lwc.sendSimpleUsage(sender, "/lwc mode <mode>");
-            return CANCEL;
-        }
-
-        String mode = args[0];
         Player player = (Player) sender;
+        String mode = args[0].toLowerCase();
 
-        if (!mode.equalsIgnoreCase("droptransfer")) {
+        if(!mode.equals("droptransfer")) {
             return DEFAULT;
-        }
-
-        if (!lwc.isModeWhitelisted(player, mode)) {
-            if (!lwc.isAdmin(sender) && !lwc.isModeEnabled(mode)) {
-                lwc.sendLocale(player, "protection.modes.disabled");
-                return CANCEL;
-            }
         }
 
         // internal name

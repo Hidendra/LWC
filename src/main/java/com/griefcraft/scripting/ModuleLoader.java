@@ -93,7 +93,12 @@ public class ModuleLoader {
         /**
          * Called after a protection is registered
          */
-        POST_REGISTRATION(1);
+        POST_REGISTRATION(1),
+
+        /**
+         * Called when a localized message is sent to a player (e.g lwc.accessdenied)
+         */
+        SEND_LOCALE(2);
 
         Event(int arguments) {
             this.arguments = arguments;
@@ -182,6 +187,10 @@ public class ModuleLoader {
 
                         case POST_REGISTRATION:
                             module.onPostRegistration(lwc, (Protection) args[0]);
+                            break;
+
+                        case SEND_LOCALE:
+                            temp = module.onSendLocale(lwc, (Player) args[0], (String) args[1]);
                             break;
                     }
 

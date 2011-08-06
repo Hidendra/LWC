@@ -169,6 +169,8 @@ public class LWCPlugin extends JavaPlugin {
             return true;
         } else if (name.equals("cpersist")) {
             return true;
+        } else if (name.equals("cnospam")) {
+            return true;
         } else return name.equals("cadmin");
     }
 
@@ -242,6 +244,9 @@ public class LWCPlugin extends JavaPlugin {
                 return true;
             } else if (commandName.equals("cpersist")) {
                 lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "mode", ("persist " + argString).split(" "));
+                return true;
+            } else if (commandName.equals("cnospam")) {
+                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "mode", ("nospam " + argString).split(" "));
                 return true;
             }
         }

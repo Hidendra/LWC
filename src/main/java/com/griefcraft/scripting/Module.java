@@ -121,8 +121,8 @@ public interface Module {
      *
      * @param lwc
      * @param player
-     * @param protection
-     * @param canAccess
+     * @param block
+     * @param actions
      * @return
      */
     public Result onBlockInteract(LWC lwc, Player player, Block block, List<String> actions);
@@ -145,6 +145,14 @@ public interface Module {
      */
     public void onPostRegistration(LWC lwc, Protection protection);
 
-    // TODO: Post Removal, remove from node queue in status module
+    /**
+     * Called when a localized message is sent to a player (e.g lwc.accessdenied)
+     * 
+     * @param lwc
+     * @param player
+     * @param locale
+     * @since LWC 3.40
+     */
+    public Result onSendLocale(LWC lwc, Player player, String locale);
 
 }
