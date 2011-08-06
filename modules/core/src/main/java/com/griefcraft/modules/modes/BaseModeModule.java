@@ -25,33 +25,34 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class PersistModule extends JavaModule {
+public class BaseModeModule extends JavaModule {
 
-    @Override
+        @Override
     public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
         if (!StringUtils.hasFlag(command, "p") && !StringUtils.hasFlag(command, "mode")) {
             return DEFAULT;
         }
 
-        Player player = (Player) sender;
+        if (args.length == 0) {
+            lwc.sendSimpleUsage(sender, "/lwc mode <mode>");
+            return CANCEL;
+        }
+
+        if(!(sender instanceof Player)) {
+            return CANCEL;
+        }
+
         String mode = args[0].toLowerCase();
+        Player player = (Player) sender;
 
-        if(!mode.equals("persist")) {
-            return DEFAULT;
+        if (!lwc.isModeWhitelisted(player, mode)) {
+            if (!lwc.isAdmin(sender) && !lwc.isModeEnabled(mode)) {
+                lwc.sendLocale(player, "protection.modes.disabled");
+                return CANCEL;
+            }
         }
 
-        List<String> modes = lwc.getMemoryDatabase().getModes(player.getName());
-
-        if (!modes.contains(mode)) {
-            lwc.getMemoryDatabase().registerMode(player.getName(), mode);
-            lwc.sendLocale(player, "protection.modes.persist.finalize");
-        } else {
-            lwc.getMemoryDatabase().unregisterMode(player.getName(), mode);
-            lwc.sendLocale(player, "protection.modes.persist.off");
-        }
-
-
-        return CANCEL;
+        return DEFAULT;
     }
 
 }
