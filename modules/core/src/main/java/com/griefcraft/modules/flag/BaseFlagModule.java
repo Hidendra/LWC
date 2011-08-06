@@ -27,7 +27,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class FlagModule extends JavaModule {
+public class BaseFlagModule extends JavaModule {
 
     @Override
     public Result onProtectionInteract(LWC lwc, Player player, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin) {

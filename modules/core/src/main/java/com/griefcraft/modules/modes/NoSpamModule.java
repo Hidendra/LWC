@@ -25,7 +25,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class PersistModule extends JavaModule {
+public class NoSpamModule extends JavaModule {
 
     @Override
     public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
@@ -36,7 +36,7 @@ public class PersistModule extends JavaModule {
         Player player = (Player) sender;
         String mode = args[0].toLowerCase();
 
-        if(!mode.equals("persist")) {
+        if(!mode.equals("nospam")) {
             return DEFAULT;
         }
 
@@ -44,14 +44,31 @@ public class PersistModule extends JavaModule {
 
         if (!modes.contains(mode)) {
             lwc.getMemoryDatabase().registerMode(player.getName(), mode);
-            lwc.sendLocale(player, "protection.modes.persist.finalize");
+            lwc.sendLocale(player, "protection.modes.nospam.finalize");
         } else {
             lwc.getMemoryDatabase().unregisterMode(player.getName(), mode);
-            lwc.sendLocale(player, "protection.modes.persist.off");
+            lwc.sendLocale(player, "protection.modes.nospam.off");
         }
 
 
         return CANCEL;
+    }
+
+    @Override
+    public Result onSendLocale(LWC lwc, Player player, String locale) {
+        List<String> modes = lwc.getMemoryDatabase().getModes(player.getName());
+
+        // they don't intrigue us
+        if(!modes.contains("nospam")) {
+            return DEFAULT;
+        }
+
+        // hide all of the creation messages
+        if(locale.endsWith("create.finalize")) {
+            return CANCEL;
+        }
+
+        return DEFAULT;
     }
 
 }

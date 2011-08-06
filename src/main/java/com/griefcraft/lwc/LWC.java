@@ -37,14 +37,16 @@ import com.griefcraft.modules.credits.CreditsModule;
 import com.griefcraft.modules.debug.DebugModule;
 import com.griefcraft.modules.destroy.DestroyModule;
 import com.griefcraft.modules.doors.DoorsModule;
-import com.griefcraft.modules.flag.FlagModule;
+import com.griefcraft.modules.flag.BaseFlagModule;
 import com.griefcraft.modules.flag.MagnetModule;
 import com.griefcraft.modules.free.FreeModule;
 import com.griefcraft.modules.info.InfoModule;
 import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.modules.lists.ListsModule;
 import com.griefcraft.modules.menu.MenuModule;
+import com.griefcraft.modules.modes.BaseModeModule;
 import com.griefcraft.modules.modes.DropTransferModule;
+import com.griefcraft.modules.modes.NoSpamModule;
 import com.griefcraft.modules.modes.PersistModule;
 import com.griefcraft.modules.modify.ModifyModule;
 import com.griefcraft.modules.owners.OwnersModule;
@@ -80,7 +82,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.security.MessageDigest;
-import java.sql.PreparedStatement;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -1120,13 +1121,15 @@ public class LWC {
         registerModule(new AdminExpire());
 
         // flags
-        registerModule(new FlagModule());
+        registerModule(new BaseFlagModule());
         registerModule(new RedstoneModule());
+        registerModule(new MagnetModule());
 
         // modes
+        registerModule(new BaseModeModule());
         registerModule(new PersistModule());
         registerModule(new DropTransferModule());
-        registerModule(new MagnetModule());
+        registerModule(new NoSpamModule());
 
         // non-core modules but are included with LWC anyway
         registerModule(new ListsModule());
@@ -1241,6 +1244,16 @@ public class LWC {
     public void sendLocale(CommandSender sender, String key, Object... args) {
         String message = getLocale(key, args);
         String menuStyle = null; // null unless required!
+
+        // broadcast an event if they are a player
+        if(sender instanceof Player) {
+            Result result = moduleLoader.dispatchEvent(Event.SEND_LOCALE, sender, key);
+
+            // did they cancel it?
+            if(result == Result.CANCEL) {
+                return;
+            }
+        }
 
         if (message == null) {
             sender.sendMessage(Colors.Red + "LWC: " + Colors.White + "Undefined locale: \"" + Colors.Gray + key + Colors.White + "\"");
