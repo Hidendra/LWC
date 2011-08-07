@@ -634,6 +634,9 @@ public class PhysDB extends Database {
         LWC lwc = LWC.getInstance();
         LRUCache<String, Protection> cache = lwc.getCaches().getProtections();
 
+        // clear the cache incase we're working on a dirty cache
+        cache.clear();
+
         int precacheSize = lwc.getConfiguration().getInt("core.precache", -1);
 
         if (precacheSize == -1) {

@@ -39,16 +39,20 @@ public class AdminPurge extends JavaModule {
             return CANCEL;
         }
 
-        String players = StringUtils.join(args, 1);
+        boolean shouldRemoveBlocks = args[1].endsWith("remove");
+        String players = StringUtils.join(args, shouldRemoveBlocks ? 2 : 1);
 
         for (String toRemove : players.split(" ")) {
-            // load all of their protections
-            for (Protection protection : lwc.getPhysicalDatabase().loadProtectionsByPlayer(toRemove, 0, 100000)) {
-                protection.remove();
-            }
+            if(toRemove.contains("'")) continue; // bad me
+
+            // Remove all of them
+            lwc.fastRemoveProtections(sender, "owner = '" + toRemove + "'", shouldRemoveBlocks);
 
             lwc.sendLocale(sender, "protection.admin.purge.finalize", "player", toRemove);
         }
+
+        // reload the cache!
+        LWC.getInstance().getPhysicalDatabase().precache();
 
         return CANCEL;
     }
