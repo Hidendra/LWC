@@ -177,13 +177,6 @@ public class LWCBlockListener extends BlockListener {
         if (autoRegisterType.equalsIgnoreCase("private")) {
             type = ProtectionTypes.PRIVATE;
         }
-        
-        Result registerProtection = lwc.getModuleLoader().dispatchEvent(Event.REGISTER_PROTECTION, player, block);
-
-        // something cancelled registration
-        if (registerProtection == Result.CANCEL) {
-            return;
-        }
 
         // If it's a chest, make sure they aren't placing it beside an already registered chest
         if (block.getType() == Material.CHEST) {
@@ -199,6 +192,13 @@ public class LWCBlockListener extends BlockListener {
                     }
                 }
             }
+        }
+        
+        Result registerProtection = lwc.getModuleLoader().dispatchEvent(Event.REGISTER_PROTECTION, player, block);
+
+        // something cancelled registration
+        if (registerProtection == Result.CANCEL) {
+            return;
         }
 
         // All good!
