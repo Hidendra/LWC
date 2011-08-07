@@ -20,10 +20,12 @@ package com.griefcraft.sql;
 import com.griefcraft.cache.LRUCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
+import com.griefcraft.model.History;
 import com.griefcraft.model.Protection;
 import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.scripting.Module;
 import com.griefcraft.util.Performance;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -249,7 +251,6 @@ public class PhysDB extends Database {
             Column column;
 
             Table protections = new Table(this, "protections");
-
             {
                 column = new Column("id");
                 column.setType("INTEGER");
@@ -302,7 +303,6 @@ public class PhysDB extends Database {
             }
 
             Table rights = new Table(this, "rights");
-
             {
                 column = new Column("id");
                 column.setType("INTEGER");
@@ -327,7 +327,6 @@ public class PhysDB extends Database {
             }
 
             Table menuStyles = new Table(this, "menu_styles");
-
             {
                 column = new Column("player");
                 column.setType("VARCHAR(255)");
@@ -340,9 +339,38 @@ public class PhysDB extends Database {
                 menuStyles.addColumn(column);
             }
 
+            Table history = new Table(this, "history");
+            {
+                column = new Column("id");
+                column.setType("INTEGER");
+                column.setPrimary(true);
+                history.addColumn(column);
+
+                column = new Column("protectionId");
+                column.setType("INTEGER");
+                history.addColumn(column);
+
+                column = new Column("type");
+                column.setType("INTEGER");
+                history.addColumn(column);
+
+                column = new Column("status");
+                column.setType("INTEGER");
+                history.addColumn(column);
+
+                column = new Column("metadata");
+                column.setType("VARCHAR(255)");
+                history.addColumn(column);
+
+                column = new Column("timestamp");
+                column.setType("long");
+                history.addColumn(column);
+            }
+
             protections.execute();
             rights.execute();
             menuStyles.execute();
+            history.execute();
 
             connection.commit();
 
@@ -817,15 +845,18 @@ public class PhysDB extends Database {
     }
 
     /**
-     * Add a chest to the protected chests
+     * Register a protection
      *
-     * @param player   the player that owns the chest
-     * @param password the password of the chest
-     * @param x        the x coordinate of the chest
-     * @param y        the y coordinate of the chest
-     * @param z        the z coordinate of the chest
+     * @param blockId
+     * @param type
+     * @param world
+     * @param player
+     * @param data
+     * @param x
+     * @param y
+     * @param z
      */
-    public Protection registerProtection(int blockId, int type, String world, String player, String password, int x, int y, int z) {
+    public Protection registerProtection(int blockId, int type, String world, String player, String data, int x, int y, int z) {
         try {
             PreparedStatement statement = prepare("INSERT INTO " + prefix + "protections (blockId, type, world, owner, password, x, y, z, date, last_accessed) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
@@ -833,7 +864,7 @@ public class PhysDB extends Database {
             statement.setInt(2, type);
             statement.setString(3, world);
             statement.setString(4, player);
-            statement.setString(5, password);
+            statement.setString(5, data);
             statement.setInt(6, x);
             statement.setInt(7, y);
             statement.setInt(8, z);
@@ -845,13 +876,103 @@ public class PhysDB extends Database {
             // remove the null protection from cache if it's in there
             LWC.getInstance().getCaches().getProtections().remove(world + ":" + x + ":" + y + ":" + z);
 
+            // We need to create the initial transaction for this protection
+            // this transaction is viewable and modifiable during POST_REGISTRATION
+            Protection protection = loadProtection(world, x, y, z);
+
+            History transaction = protection.createHistoryObject();
+            transaction.setType(History.Type.TRANSACTION);
+            transaction.setStatus(History.Status.ACTIVE);
+
+            // now sync the history object to the database
+            transaction.sync();
+
             // return the newly created protection
-            return loadProtection(world, x, y, z);
+            return protection;
         } catch (SQLException e) {
             printException(e);
         }
 
         return null;
+    }
+
+    /**
+     * Sync a History object to the database or save a newly created one
+     * 
+     * @param history
+     */
+    public void saveHistory(History history) {
+        try {
+            PreparedStatement statement;
+
+            // prepared statement index
+            int index = 1;
+
+            if(history.doesExist()) {
+                statement = prepare("REPLACE INTO " + prefix + "history (id, protectionId, type, status, metadata) VALUES (?, ?, ?, ?, ?)");
+                statement.setInt(index ++, history.getId());
+            } else {
+                statement = prepare("INSERT INTO " + prefix + "history (protectionId, type, status, metadata, timestamp) VALUES (?, ?, ?, ?, ?)");
+            }
+
+            statement.setInt(index++, history.getProtectionId());
+            statement.setInt(index++, history.getType().ordinal());
+            statement.setInt(index ++, history.getStatus().ordinal());
+            statement.setString(index++, history.getSafeMetaData());
+
+            if(!history.doesExist()) {
+                statement.setLong(index++, System.currentTimeMillis() / 1000L);
+            }
+
+            statement.executeUpdate();
+        } catch(SQLException e) {
+            printException(e);
+        }
+    }
+
+    /**
+     * Load all of the History objects for a given protection
+     * 
+     * @param protection
+     * @return
+     */
+    public List<History> loadHistory(Protection protection) {
+        List<History> temp = new ArrayList<History>();
+
+        try {
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE protectionId = ?");
+            statement.setInt(1, protection.getId());
+
+            ResultSet set = statement.executeQuery();
+
+            while(set.next()) {
+                int historyId = set.getInt("id");
+                int protectionId = set.getInt("protectionId");
+                int type_ord = set.getInt("type");
+                int status_ord = set.getInt("status");
+                String[] metadata = set.getString("metadata").split(",");
+                long timestamp = set.getLong("timestamp");
+
+                History.Type type = History.Type.values()[type_ord];
+                History.Status status = History.Status.values()[status_ord];
+
+                History history = protection.createHistoryObject();
+                
+                history.setId(historyId);
+                history.setType(type);
+                history.setStatus(status);
+                history.setMetaData(metadata);
+                history.setTimestamp(timestamp);
+
+                // seems ok
+                temp.add(history);
+            }
+
+        } catch(SQLException e) {
+            printException(e);
+        }
+
+        return temp;
     }
 
     /**
@@ -872,7 +993,6 @@ public class PhysDB extends Database {
             statement.setInt(4, type);
 
             statement.executeUpdate();
-
         } catch (SQLException e) {
             printException(e);
         }
@@ -932,16 +1052,37 @@ public class PhysDB extends Database {
     public void unregisterProtection(int protectionId) {
         try {
             PreparedStatement statement = prepare("DELETE FROM " + prefix + "protections WHERE id = ?");
-
             statement.setInt(1, protectionId);
 
             statement.executeUpdate();
-
         } catch (SQLException e) {
             printException(e);
         }
 
         unregisterProtectionRights(protectionId);
+        unregisterProtectionHistory(protectionId);
+    }
+
+    public void unregisterProtectionHistory(int protectionId) {
+        try {
+            PreparedStatement statement = prepare("DELETE FROM " + prefix + "history WHERE protectionId = ?");
+            statement.setInt(1, protectionId);
+            
+            statement.executeUpdate();
+        } catch(SQLException e) {
+            printException(e);
+        }
+    }
+
+    public void unregisterHistory(int historyId) {
+        try {
+            PreparedStatement statement = prepare("DELETE FROM " + prefix + "history WHERE id = ?");
+            statement.setInt(1, historyId);
+
+            statement.executeUpdate();
+        } catch(SQLException e) {
+            printException(e);
+        }
     }
 
     /**

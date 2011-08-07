@@ -93,12 +93,17 @@ public class Table {
             buffer.append(" ");
 
             if (column.isPrimary()) {
-                buffer.append("PRIMARY KEY");
-                buffer.append(" ");
+                buffer.append("PRIMARY KEY ");
             }
 
             if (column.shouldAutoIncrement() && database.getType() == Type.MySQL) {
-                buffer.append("AUTO_INCREMENT");
+                buffer.append("AUTO_INCREMENT ");
+            }
+
+            if(!column.getDefaultValue().isEmpty()) {
+                buffer.append("DEFAULT ");
+                buffer.append(column.getDefaultValue());
+                buffer.append(" ");
             }
 
             // check if there's more columns in the stack

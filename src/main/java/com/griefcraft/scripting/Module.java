@@ -146,6 +146,14 @@ public interface Module {
     public void onPostRegistration(LWC lwc, Protection protection);
 
     /**
+     * Called after a protection is removed (at this point, the protection is IMMUTABLE.)
+     * 
+     * @param lwc
+     * @param protection
+     */
+    public void onPostRemoval(LWC lwc, Protection protection);
+
+    /**
      * Called when a localized message is sent to a player (e.g lwc.accessdenied)
      * 
      * @param lwc

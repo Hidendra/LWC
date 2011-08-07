@@ -96,6 +96,11 @@ public class ModuleLoader {
         POST_REGISTRATION(1),
 
         /**
+         * Called after a protection is confirmed to be set to be removed (cannot be cancelled here.)
+         */
+        POST_REMOVAL(1),
+
+        /**
          * Called when a localized message is sent to a player (e.g lwc.accessdenied)
          */
         SEND_LOCALE(2);
@@ -187,6 +192,10 @@ public class ModuleLoader {
 
                         case POST_REGISTRATION:
                             module.onPostRegistration(lwc, (Protection) args[0]);
+                            break;
+
+                        case POST_REMOVAL:
+                            module.onPostRemoval(lwc, (Protection) args[0]);
                             break;
 
                         case SEND_LOCALE:

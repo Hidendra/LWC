@@ -50,12 +50,21 @@ public class Column {
      */
     private String type;
 
+    /**
+     * The default value
+     */
+    private String defaultValue;
+
     public Column(String name) {
         this.name = name;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue == null ? "" : defaultValue;
     }
 
     public String getType() {
@@ -68,6 +77,10 @@ public class Column {
 
     public void setAutoIncrement(boolean autoIncrement) {
         this.autoIncrement = autoIncrement;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
     public void setPrimary(boolean primary) {
