@@ -1060,7 +1060,7 @@ public class PhysDB extends Database {
         }
 
         unregisterProtectionRights(protectionId);
-        unregisterProtectionHistory(protectionId);
+        // unregisterProtectionHistory(protectionId);
     }
 
     public void unregisterProtectionHistory(int protectionId) {

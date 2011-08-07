@@ -1485,9 +1485,9 @@ public class LWC {
             // Match wall signs to the wall it's attached to
             for (BlockFace blockFace : faces) {
                 if ((face = block.getRelative(blockFace)) != null) {
-                    if (face.getType() == Material.WALL_SIGN) {
-                        byte direction = face.getData();
+                    byte direction = face.getData();
 
+                    if (face.getType() == Material.WALL_SIGN) {
                         // Protect the wall the sign is attached to
                         switch (direction) {
                             case 0x02: // east
@@ -1514,7 +1514,32 @@ public class LWC {
                                 }
                                 break;
                         }
+                    } else if(face.getType() == Material.TRAP_DOOR) {
+                        switch (direction) {
+                            case 0x00: // west
+                                if (blockFace == BlockFace.EAST) {
+                                    entities.add(face);
+                                }
+                                break;
 
+                            case 0x01: // east
+                                if (blockFace == BlockFace.WEST) {
+                                    entities.add(face);
+                                }
+                                break;
+
+                            case 0x02: // south
+                                if (blockFace == BlockFace.NORTH) {
+                                    entities.add(face);
+                                }
+                                break;
+
+                            case 0x03: // north
+                                if (blockFace == BlockFace.SOUTH) {
+                                    entities.add(face);
+                                }
+                                break;
+                        }
                     }
 
                 }
