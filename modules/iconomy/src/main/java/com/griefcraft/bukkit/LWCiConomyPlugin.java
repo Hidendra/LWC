@@ -25,23 +25,19 @@ import com.iConomy.iConomy;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
 
-public class BukkitPlugin extends JavaPlugin {
+public class LWCiConomyPlugin extends JavaPlugin {
     private Logger logger = Logger.getLogger("LWC-iConomy");
 
     /**
      * The LWC object
      */
     private LWC lwc;
-
-    /**
-     * The iConomy plugin
-     */
-    private iConomy money;
-
+    
     /**
      * The module class for iConomy
      */
@@ -52,54 +48,35 @@ public class BukkitPlugin extends JavaPlugin {
      */
     private Listener serverListener = null;
 
-    private boolean initialized = false;
-
-    public BukkitPlugin() {
+    public LWCiConomyPlugin() {
         iConomyModule = new iConomyModule(this);
         serverListener = new iConomyServerListener(this);
     }
 
     /**
-     * @return iConomy
-     */
-    public iConomy getIConomy() {
-        return money;
-    }
-
-    /**
      * Initialize LWC-iConomy
-     *
-     * @param lwc
-     * @param money
      */
-    public void init(LWC lwc, iConomy money) {
-        if (isInitialized()) {
-            return; // already initialized
-        }
-
-        this.lwc = lwc;
-        this.money = money;
-
-        // now we can register our iConomy module
-        lwc.getModuleLoader().registerModule(this, iConomyModule);
+    public void init() {
+        LWC.getInstance().getModuleLoader().registerModule(this, iConomyModule);
         info("Registered iConomy Module into LWC successfully! Version: " + getDescription().getVersion());
-        initialized = true;
     }
 
     public void onEnable() {
-        // register the server listener
-        getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, serverListener, Priority.Monitor, this);
+        Plugin iConomy = getServer().getPluginManager().getPlugin("iConomy");
+        Plugin lwc = getServer().getPluginManager().getPlugin("LWC");
+
+        if(lwc != null && iConomy != null && lwc.isEnabled() && iConomy.isEnabled()) {
+            init();
+        } else {
+            // register the server listener
+            getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, serverListener, Priority.Monitor, this);
+
+            info("Waiting for LWC & iConomy to be enabled...");
+        }
     }
 
     public void onDisable() {
 
-    }
-
-    /**
-     * @return true if iConomy is initialized
-     */
-    public boolean isInitialized() {
-        return initialized;
     }
 
     private void info(String message) {
