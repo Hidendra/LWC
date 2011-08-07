@@ -137,7 +137,6 @@ public class AdminCleanup extends JavaModule {
 
                 while (result.next()) {
                     Protection protection = lwc.getPhysicalDatabase().resolveProtectionNoRights(result);
-
                     World world = protection.getBukkitWorld();
 
                     count ++;
@@ -155,7 +154,7 @@ public class AdminCleanup extends JavaModule {
                     }
 
                     // now we can check the world for the protection
-                    Block block = world.getBlockAt(protection.getX(), protection.getY(), protection.getZ());
+                    Block block = protection.getBlock();
 
                     // remove protections not found in the world
                     if (block == null || !lwc.isProtectable(block)) {
