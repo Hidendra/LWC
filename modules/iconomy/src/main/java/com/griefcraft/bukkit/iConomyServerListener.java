@@ -17,18 +17,15 @@
 
 package com.griefcraft.bukkit;
 
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.lwc.LWCPlugin;
-import com.iConomy.iConomy;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.Plugin;
 
 public class iConomyServerListener extends ServerListener {
 
-    private BukkitPlugin plugin;
+    private LWCiConomyPlugin plugin;
 
-    public iConomyServerListener(BukkitPlugin plugin) {
+    public iConomyServerListener(LWCiConomyPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -43,10 +40,7 @@ public class iConomyServerListener extends ServerListener {
 
         if (iConomy != null && lwcPlugin != null) {
             if (iConomy.isEnabled() && lwcPlugin.isEnabled()) {
-                iConomy money = (iConomy) iConomy;
-                LWC lwc = ((LWCPlugin) lwcPlugin).getLWC();
-
-                plugin.init(lwc, money);
+                plugin.init();
             }
         }
     }

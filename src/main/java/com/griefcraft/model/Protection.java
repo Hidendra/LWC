@@ -20,6 +20,7 @@ package com.griefcraft.model;
 import com.griefcraft.cache.CacheSet;
 import com.griefcraft.cache.LRUCache;
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
 import org.bukkit.Bukkit;
@@ -127,6 +128,12 @@ public class Protection {
     private long lastAccessed;
 
     /**
+     * Immutable flag for the protection. When removed, this bool is switched to true and any setters
+     * will no longer work. However, everything is still intact and in memory at this point (for now.)
+     */
+    private boolean removed = false;
+
+    /**
      * Check if a player is the owner of the protection
      *
      * @param player
@@ -136,6 +143,45 @@ public class Protection {
         LWC lwc = LWC.getInstance();
 
         return player != null && (owner.equals(player.getName()) || lwc.isAdmin(player));
+    }
+
+    /**
+     * Create a History object that is attached to this protection
+     * @return
+     */
+    public History createHistoryObject() {
+        History history = new History();
+
+        history.setProtectionId(id);
+        history.setStatus(History.Status.INACTIVE);
+
+        return history;
+    }
+
+    /**
+     * @return the related history for this protection
+     */
+    public List<History> getRelatedHistory() {
+        return LWC.getInstance().getPhysicalDatabase().loadHistory(this);
+    }
+
+    /**
+     * Get the related history for this protection using the given type
+     *
+     * @param type
+     * @return
+     */
+    public List<History> getRelatedHistory(History.Type type) {
+        List<History> matches = new ArrayList<History>();
+        List<History> relatedHistory = getRelatedHistory();
+
+        for(History history : relatedHistory) {
+            if(history.getType() == type) {
+                matches.add(history);
+            }
+        }
+
+        return matches;
     }
 
     /**
@@ -155,6 +201,10 @@ public class Protection {
      * @return
      */
     public boolean addFlag(Flag flag) {
+        if(removed) {
+            return false;
+        }
+
         if (!hasFlag(flag)) {
             flags |= flag.getBit();
             return true;
@@ -171,6 +221,10 @@ public class Protection {
      * @return
      */
     public void removeFlag(Flag flag) {
+        if(removed) {
+            return;
+        }
+
         if (!hasFlag(flag)) {
             return;
         }
@@ -214,6 +268,10 @@ public class Protection {
      * @param right
      */
     public void addAccessRight(AccessRight right) {
+        if(removed) {
+            return;
+        }
+
         access.add(right);
     }
 
@@ -267,50 +325,98 @@ public class Protection {
     }
 
     public void setBlockId(int blockId) {
+        if(removed) {
+            return;
+        }
+
         this.blockId = blockId;
     }
 
     public void setData(String data) {
+        if(removed) {
+            return;
+        }
+
         this.data = data;
     }
 
     public void setDate(String date) {
+        if(removed) {
+            return;
+        }
+
         this.date = date;
     }
 
     public void setId(int id) {
+        if(removed) {
+            return;
+        }
+
         this.id = id;
     }
 
     public void setFlags(int flags) {
+        if(removed) {
+            return;
+        }
+
         this.flags = flags;
     }
 
     public void setOwner(String owner) {
+        if(removed) {
+            return;
+        }
+
         this.owner = owner;
     }
 
     public void setType(int type) {
+        if(removed) {
+            return;
+        }
+
         this.type = type;
     }
 
     public void setWorld(String world) {
+        if(removed) {
+            return;
+        }
+
         this.world = world;
     }
 
     public void setX(int x) {
+        if(removed) {
+            return;
+        }
+
         this.x = x;
     }
 
     public void setY(int y) {
+        if(removed) {
+            return;
+        }
+
         this.y = y;
     }
 
     public void setZ(int z) {
+        if(removed) {
+            return;
+        }
+
         this.z = z;
     }
     
     public void setLastAccessed(long lastAccessed) {
+        if(removed) {
+            return;
+        }
+
     	this.lastAccessed = lastAccessed;
     }
 
@@ -318,15 +424,32 @@ public class Protection {
      * Remove the protection from the database
      */
     public void remove() {
+        if(removed) {
+            return;
+        }
+
         LWC lwc = LWC.getInstance();
-        lwc.getPhysicalDatabase().unregisterProtection(id);
         removeCache();
+
+        // make this protection immutable
+        removed = true;
+
+        // broadcast the removal event
+        // we broadcast before actually removing to give them a chance to use any data that would be removed otherwise
+        lwc.getModuleLoader().dispatchEvent(ModuleLoader.Event.POST_REMOVAL, this);
+
+        // and now finally remove it from the database
+        lwc.getPhysicalDatabase().unregisterProtection(id);
     }
 
     /**
      * Remove the protection from cache
      */
     public void removeCache() {
+        if(removed) {
+            return;
+        }
+
     	LWC lwc = LWC.getInstance();
     	LRUCache<String,Protection> cache = lwc.getCaches().getProtections();
     	
@@ -352,6 +475,10 @@ public class Protection {
      * Note that save() and saveNow() call this
      */
     public void update() {
+        if(removed) {
+            return;
+        }
+
         CacheSet caches = LWC.getInstance().getCaches();
         removeCache();
 
@@ -366,6 +493,10 @@ public class Protection {
      * Queue the protection to be saved
      */
     public void save() {
+        if(removed) {
+            return;
+        }
+
         LWC.getInstance().getUpdateThread().queueProtectionUpdate(this);
     }
 
@@ -373,6 +504,10 @@ public class Protection {
      * Force a protection update in the live database
      */
     public void saveNow() {
+        if(removed) {
+            return;
+        }
+
         LWC.getInstance().getPhysicalDatabase().saveProtection(this);
         update();
     }
@@ -393,6 +528,13 @@ public class Protection {
         }
 
     	return Bukkit.getServer().getWorld(world);
+    }
+
+    /**
+     * @return the Bukkit Player object of the owner
+     */
+    public Player getBukkitOwner() {
+        return Bukkit.getServer().getPlayer(owner);
     }
     
     /**

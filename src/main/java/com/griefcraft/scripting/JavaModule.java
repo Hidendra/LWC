@@ -88,6 +88,10 @@ public abstract class JavaModule implements Module {
     	
     }
 
+    public void onPostRemoval(LWC lwc, Protection protection) {
+        
+    }
+
     public Result onSendLocale(LWC lwc, Player player, String locale) {
         return DEFAULT;
     }
