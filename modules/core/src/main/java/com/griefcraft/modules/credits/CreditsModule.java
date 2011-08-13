@@ -136,11 +136,12 @@ public class CreditsModule extends JavaModule {
 				"darknavi",
 				"Vetyver",
 				"pablo0713",
-				"Irishsailor & Land of Legend server",
+				"IrishSailor & Land of Legend server",
 				"aidan",
 				"Monstertke",
 				"wokka",
 				"Andreoli3",
+                "IrishSailor (again!)",
 				" ",
 				
 				Colors.Red + "And....",
