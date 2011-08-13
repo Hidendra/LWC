@@ -4,6 +4,7 @@ import com.griefcraft.integration.ICurrency;
 import com.iConomy.iConomy;
 import com.iConomy.system.Account;
 import com.iConomy.system.Holdings;
+import com.iConomy.util.Constants;
 import org.bukkit.entity.Player;
 
 public class iConomyCurrency implements ICurrency {
@@ -11,6 +12,14 @@ public class iConomyCurrency implements ICurrency {
 	public boolean isActive() {
 		return true;
 	}
+
+    public String format(double money) {
+        return iConomy.format(money);
+    }
+
+    public String getMoneyName() {
+        return Constants.Major.get(1);
+    }
 	
 	public double getBalance(Player player) {
 		Account account = iConomy.getAccount(player.getName());

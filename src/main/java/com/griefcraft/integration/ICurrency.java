@@ -8,6 +8,21 @@ public interface ICurrency {
 	 * @return true if a currency is active
 	 */
 	public boolean isActive();
+
+    /**
+     * Format money
+     *
+     * @param money
+     * @return
+     */
+    public String format(double money);
+
+    /**
+     * Get the money name (e.g dollars)
+     * 
+     * @return
+     */
+    public String getMoneyName();
 	
 	/**
 	 * Get the current balance for a player

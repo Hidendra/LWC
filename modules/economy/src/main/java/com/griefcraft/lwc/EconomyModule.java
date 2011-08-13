@@ -17,15 +17,13 @@
 
 package com.griefcraft.lwc;
 
-import com.griefcraft.bukkit.LWCiConomyPlugin;
+import com.griefcraft.bukkit.LWCEconomyPlugin;
 import com.griefcraft.integration.ICurrency;
 import com.griefcraft.model.History;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.config.Configuration;
-import com.iConomy.iConomy;
-import com.iConomy.util.Constants;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -36,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public class iConomyModule extends JavaModule {
+public class EconomyModule extends JavaModule {
 
     private Logger logger = Logger.getLogger("LWC");
 
@@ -48,7 +46,7 @@ public class iConomyModule extends JavaModule {
     /**
      * The bukkit plugin
      */
-    private LWCiConomyPlugin plugin;
+    private LWCEconomyPlugin plugin;
 
     /**
      * A cache of prices. When a value is inputted, it stays in memory for milliseconds at best.
@@ -56,7 +54,7 @@ public class iConomyModule extends JavaModule {
      */
     private Map<Location, Double> priceCache = Collections.synchronizedMap(new HashMap<Location, Double>());
 
-    public iConomyModule(LWCiConomyPlugin plugin) {
+    public EconomyModule(LWCEconomyPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -143,14 +141,24 @@ public class iConomyModule extends JavaModule {
             // refund them :)
             Player owner = protection.getBukkitOwner();
 
-            lwc.getCurrency().addMoney(owner, charge);
-            owner.sendMessage(Colors.Green + "You have been refunded " + iConomy.format(charge) + " because an LWC protection of yours was removed!");
+            // the currency to use
+            ICurrency currency = lwc.getCurrency();
+
+            currency.addMoney(owner, charge);
+            owner.sendMessage(Colors.Green + "You have been refunded " + currency.format(charge) + " because an LWC protection of yours was removed!");
         }
     }
 
     @Override
     public Result onRegisterProtection(LWC lwc, Player player, Block block) {
         if (!configuration.getBoolean("iConomy.enabled", true)) {
+            return DEFAULT;
+        }
+
+        // currency handler to use
+        ICurrency currency = lwc.getCurrency();
+
+        if(!currency.isActive()) {
             return DEFAULT;
         }
 
@@ -200,12 +208,9 @@ public class iConomyModule extends JavaModule {
 
         // charge them
         if (charge != 0) {
-            // the currency handler to use
-            ICurrency currency = lwc.getCurrency();
-            
             if (!currency.canAfford(player, charge)) {
-                player.sendMessage(Colors.Red + "You do not have enough " + Constants.Major.get(1) + " to buy an LWC protection.");
-                player.sendMessage(Colors.Red + "The balance required for an LWC protection is: " + iConomy.format(charge));
+                player.sendMessage(Colors.Red + "You do not have enough " + currency.getMoneyName() + " to buy an LWC protection.");
+                player.sendMessage(Colors.Red + "The balance required for an LWC protection is: " + currency.format(charge));
                 
                 // remove from cache
                 priceCache.remove(location);
@@ -214,7 +219,7 @@ public class iConomyModule extends JavaModule {
 
             // remove the money from their account
             currency.removeMoney(player, charge);
-            player.sendMessage(Colors.Green + "Charged " + iConomy.format(charge) + (usedDiscount ? (Colors.Red + " (Discount)" + Colors.Green) : "") + " for an LWC protection. Thank you.");
+            player.sendMessage(Colors.Green + "Charged " + currency.format(charge) + (usedDiscount ? (Colors.Red + " (Discount)" + Colors.Green) : "") + " for an LWC protection. Thank you.");
             return ALLOW;
         }
 

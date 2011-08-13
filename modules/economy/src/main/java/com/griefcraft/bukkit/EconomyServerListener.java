@@ -21,11 +21,11 @@ import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.Plugin;
 
-public class iConomyServerListener extends ServerListener {
+public class EconomyServerListener extends ServerListener {
 
-    private LWCiConomyPlugin plugin;
+    private LWCEconomyPlugin plugin;
 
-    public iConomyServerListener(LWCiConomyPlugin plugin) {
+    public EconomyServerListener(LWCEconomyPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -35,11 +35,10 @@ public class iConomyServerListener extends ServerListener {
             return;
         }
 
-        Plugin iConomy = plugin.getServer().getPluginManager().getPlugin("iConomy");
         Plugin lwcPlugin = plugin.getServer().getPluginManager().getPlugin("LWC");
 
-        if (iConomy != null && lwcPlugin != null) {
-            if (iConomy.isEnabled() && lwcPlugin.isEnabled()) {
+        if (lwcPlugin != null) {
+            if (lwcPlugin.isEnabled()) {
                 plugin.init();
             }
         }

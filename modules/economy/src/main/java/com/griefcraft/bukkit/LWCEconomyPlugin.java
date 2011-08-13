@@ -19,9 +19,8 @@ package com.griefcraft.bukkit;
 
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.lwc.iConomyModule;
+import com.griefcraft.lwc.EconomyModule;
 import com.griefcraft.scripting.Module;
-import com.iConomy.iConomy;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Listener;
@@ -30,7 +29,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
 
-public class LWCiConomyPlugin extends JavaPlugin {
+public class LWCEconomyPlugin extends JavaPlugin {
     private Logger logger = Logger.getLogger("LWC-iConomy");
 
     /**
@@ -48,9 +47,9 @@ public class LWCiConomyPlugin extends JavaPlugin {
      */
     private Listener serverListener = null;
 
-    public LWCiConomyPlugin() {
-        iConomyModule = new iConomyModule(this);
-        serverListener = new iConomyServerListener(this);
+    public LWCEconomyPlugin() {
+        iConomyModule = new EconomyModule(this);
+        serverListener = new EconomyServerListener(this);
     }
 
     /**
@@ -58,14 +57,13 @@ public class LWCiConomyPlugin extends JavaPlugin {
      */
     public void init() {
         LWC.getInstance().getModuleLoader().registerModule(this, iConomyModule);
-        info("Registered iConomy Module into LWC successfully! Version: " + getDescription().getVersion());
+        info("Registered Economy Module into LWC successfully! Version: " + getDescription().getVersion());
     }
 
     public void onEnable() {
-        Plugin iConomy = getServer().getPluginManager().getPlugin("iConomy");
         Plugin lwc = getServer().getPluginManager().getPlugin("LWC");
 
-        if(lwc != null && iConomy != null && lwc.isEnabled() && iConomy.isEnabled()) {
+        if(lwc != null && lwc.isEnabled()) {
             init();
         } else {
             // register the server listener
