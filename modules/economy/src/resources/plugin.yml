@@ -1,5 +1,5 @@
 name: LWC-iConomy
-main: com.griefcraft.bukkit.LWCiConomyPlugin
+main: com.griefcraft.bukkit.LWCEconomyPlugin
 version: 1.02
 website: http://griefcraft.com
 author: Hidendra

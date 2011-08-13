@@ -9,6 +9,14 @@ public class NoCurrency implements ICurrency {
 		return false;
 	}
 
+    public String format(double money) {
+        return Double.toString(money);
+    }
+
+    public String getMoneyName() {
+        return "";
+    }
+
 	public double getBalance(Player player) {
 		return 0;
 	}

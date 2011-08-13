@@ -3,7 +3,7 @@
 	
 	<!-- Name of the jar to create -->
 	<property name="jar.core" value="LWC.jar" />
-	<property name="jar.iconomy" value="LWC-iConomy.jar" />
+	<property name="jar.economy" value="LWC-Economy.jar" />
 	
 	<property name="lib" value="lib" />
 	<property name="src" value="src" />
@@ -13,7 +13,7 @@
 	<property name="core" value="${modules}/core/src/" />
 	<property name="worldguard" value="${modules}/worldguard/src/" />
 	<property name="lists" value="${modules}/lists/src/" />
-	<property name="iconomy" value="${modules}/iconomy/src/" />
+	<property name="economy" value="${modules}/economy/src/" />
 	
 	<property name="build" value="build" />
 	
@@ -31,13 +31,14 @@
 		<include name="iConomy.jar" />
 		<include name="mcbans.jar" />
 		<include name="junit.jar" />
+        <include name="BOSEconomy.jar" />
 	</fileset>
 	
 	<!-- JUnit testing -->
 	<property name="test.classname" value="com.griefcraft.LWCTestSuite" />
 	<path id="test.classpath">
 		<pathelement location="${bin}/core/" />
-		<pathelement location="${bin}/iconomy/" />
+		<pathelement location="${bin}/economy/" />
 		<pathelement location="${bin}/test/" />
 		<fileset refid="libs" />
 	</path>
@@ -52,17 +53,17 @@
 		    <isset property="env.GIT_COMMIT" />
 	</condition>
 	
-	<target name="all" depends="clean,compile,build,lwc,iconomy,test" description="Main target" />
+	<target name="all" depends="clean,compile,build,lwc,economy,test" description="Main target" />
 	
 	<target name="clean">
 		<!-- Delete the previous folders -->
 		<delete dir="${bin}/core/" />
-		<delete dir="${bin}/iconomy/" />
+		<delete dir="${bin}/economy/" />
 		<delete dir="${bin}/test/" />
 		
 		<!-- create some folders -->
 		<mkdir dir="${bin}/core/" />
-		<mkdir dir="${bin}/iconomy/" />
+		<mkdir dir="${bin}/economy/" />
 		<mkdir dir="${bin}/test/" />
 	</target>
 	
@@ -75,8 +76,8 @@
 			</classpath>
 		</javac>
 		
-		<echo>Compiling LWC-iConomy</echo>
-		<javac srcdir="${iconomy}/main/java/" destdir="${bin}/iconomy/" deprecation="true" debug="true" debuglevel="lines,vars,source" includeantruntime="true">
+		<echo>Compiling LWC-Economy</echo>
+		<javac srcdir="${economy}/main/java/" destdir="${bin}/economy/" deprecation="true" debug="true" debuglevel="lines,vars,source" includeantruntime="true">
 			<classpath>
 				<fileset refid="libs" />
 				<dirset dir="${bin}/core/" />
@@ -88,7 +89,7 @@
 			<classpath>
 				<fileset refid="libs" />
 				<dirset dir="${bin}/core/" />
-				<dirset dir="${bin}/iconomy/" />
+				<dirset dir="${bin}/economy/" />
 			</classpath>
 		</javac>
 	</target>
@@ -116,12 +117,12 @@
 		</jar>
 	</target>
 	
-	<target name="iconomy" description="Build LWC-iConomy.jar">
-		<echo>Building LWC-iConomy.jar</echo>
+	<target name="economy" description="Build LWC-economy.jar">
+		<echo>Building LWC-Economy.jar</echo>
 		
-		<jar jarfile="${build}/${jar.iconomy}">
-			<fileset dir="${iconomy}/resources/" includes="plugin.yml" />
-			<fileset dir="${bin}/iconomy/" />
+		<jar jarfile="${build}/${jar.economy}">
+			<fileset dir="${economy}/resources/" includes="plugin.yml" />
+			<fileset dir="${bin}/economy/" />
 		</jar>
 	</target>
 	
@@ -130,7 +131,7 @@
 		
 		<!-- Prevent the already packaged classes from interfering -->
 		<delete dir="${bin}/core/" />
-		<delete dir="${bin}/iconomy/" />
+		<delete dir="${bin}/economy/" />
 		
 		<junit fork="yes" haltonfailure="yes">
 			<batchtest fork="yes" todir="${build}/test-reports/">
