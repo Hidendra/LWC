@@ -20,6 +20,21 @@ package com.griefcraft.model;
 public class AccessRight {
 
     /**
+     * The player has no access to the protection
+     */
+    public static final int RIGHT_NOACCESS = -1;
+
+    /**
+     * The player has player rights to the protection
+     */
+    public static final int RIGHT_PLAYER = 0;
+
+    /**
+     * The player has admin rights to the protection
+     */
+    public static final int RIGHT_ADMIN = 1;
+
+    /**
      * Access right is for a group
      */
     public static final int GROUP = 0;
@@ -33,6 +48,11 @@ public class AccessRight {
      * Used in conjuction with HeroList
      */
     public static final int LIST = 2;
+
+    /**
+     * Not saved to the database
+     */
+    public static final int TEMPORARY = 3;
 
     /**
      * Used in conjunction with /lwc -O
@@ -99,6 +119,8 @@ public class AccessRight {
             return "Player";
         } else if (type == LIST) {
             return "List";
+        } else if (type == TEMPORARY) {
+            return "Temporary";
         }
 
         return "Unknown";

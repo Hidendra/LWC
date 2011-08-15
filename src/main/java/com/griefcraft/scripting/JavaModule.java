@@ -19,6 +19,7 @@ package com.griefcraft.scripting;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
+import com.griefcraft.scripting.event.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
@@ -46,6 +47,50 @@ public abstract class JavaModule implements Module {
     public final static Result DEFAULT = Result.DEFAULT;
 
     public void load(LWC lwc) {
+    }
+
+    public void protectionAccessRequest(LWCAccessEvent event) {
+        
+    }
+
+    public void onDropItem(LWCDropEvent event) {
+
+    }
+
+    public void onCommand(LWCCommandEvent event) {
+
+    }
+
+    public void onRedstone(LWCRedstoneEvent event) {
+
+    }
+
+    public void onDestroyProtection(LWCProtectionDestroyEvent event) {
+
+    }
+
+    public void onProtectionInteract(LWCProtectionInteractEvent event) {
+
+    }
+
+    public void onBlockInteract(LWCBlockInteractEvent event) {
+
+    }
+
+    public void onRegisterProtection(LWCProtectionRegisterEvent event) {
+
+    }
+
+    public void onPostRegistration(LWCRegistrationPostEvent event) {
+
+    }
+
+    public void onPostRemoval(LWCProtectionRemovePostEvent event) {
+
+    }
+
+    public void onSendLocale(LWCSendLocaleEvent event) {
+        
     }
 
     public Result canAccessProtection(LWC lwc, Player player, Protection protection) {
