@@ -1593,7 +1593,7 @@ public class LWC {
      *
      * @param str
      */
-    private void log(String str) {
+    public void log(String str) {
     	str = "LWC: " + str;
 
     	if(console != null) {

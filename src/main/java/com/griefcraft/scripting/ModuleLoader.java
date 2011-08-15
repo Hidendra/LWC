@@ -20,8 +20,10 @@ package com.griefcraft.scripting;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
+import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.Module.Result;
+import com.griefcraft.scripting.event.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
@@ -29,6 +31,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+import javax.imageio.spi.RegisterableService;
+import javax.naming.OperationNotSupportedException;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -103,7 +107,13 @@ public class ModuleLoader {
         /**
          * Called when a localized message is sent to a player (e.g lwc.accessdenied)
          */
-        SEND_LOCALE(2);
+        SEND_LOCALE(2),
+
+
+        // new / temp
+        ACCESS_REQUEST();
+
+        Event() { }
 
         Event(int arguments) {
             this.arguments = arguments;
@@ -134,9 +144,55 @@ public class ModuleLoader {
 
     /**
      * Dispatch an event
+     * 
+     * @param event
+     */
+    public void dispatchEvent(LWCEvent event) {
+        if(event == null) {
+            return;
+        }
+
+        LWC lwc = LWC.getInstance();
+        
+        try {
+            for(List<MetaData> modules : pluginModules.values()) {
+                for(MetaData metaData : modules) {
+                    Module module = metaData.getModule();
+
+                    if(event instanceof LWCAccessEvent) {
+                        module.protectionAccessRequest((LWCAccessEvent) event);
+                    } else if(event instanceof LWCBlockInteractEvent) {
+                        module.onBlockInteract((LWCBlockInteractEvent) event);
+                    } else if(event instanceof LWCCommandEvent) {
+                        module.onCommand((LWCCommandEvent) event);
+                    } else if(event instanceof LWCDropEvent) {
+                        module.onDropItem((LWCDropEvent) event);
+                    } else if(event instanceof LWCProtectionDestroyEvent) {
+                        module.onDestroyProtection((LWCProtectionDestroyEvent) event);
+                    } else if(event instanceof LWCProtectionInteractEvent) {
+                        module.onProtectionInteract((LWCProtectionInteractEvent) event);
+                    } else if(event instanceof LWCProtectionRegisterEvent) {
+                        module.onRegisterProtection((LWCProtectionRegisterEvent) event);
+                    } else if(event instanceof LWCProtectionRemovePostEvent) {
+                        module.onPostRemoval((LWCProtectionRemovePostEvent) event);
+                    } else if(event instanceof LWCRegistrationPostEvent) {
+                        module.onPostRegistration((LWCRegistrationPostEvent) event);
+                    } else if(event instanceof LWCSendLocaleEvent) {
+                        module.onSendLocale((LWCSendLocaleEvent) event);
+                    }
+                }
+            }
+        } catch (Throwable throwable) {
+            throw new ModuleException("LWC Module threw an uncaught exception! LWC version: " + LWCInfo.FULL_VERSION, throwable);
+        }
+    }
+
+    /**
+     * Dispatch an event
      *
      * @param event
      * @param args
+     * @deprecated
      */
     public Result dispatchEvent(Event event, Object... args) {
         if (event.getExpectedArguments() > args.length) {
@@ -156,26 +212,68 @@ public class ModuleLoader {
 
                         case COMMAND:
                             temp = module.onCommand(lwc, (CommandSender) args[0], (String) args[1], (String[]) args[2]);
+
+                            LWCCommandEvent commandEvent = new LWCCommandEvent((CommandSender) args[0], (String) args[1], (String[]) args[2]);
+                            dispatchEvent(commandEvent);
+
+                            if(commandEvent.isCancelled()) {
+                                temp = Result.CANCEL;
+                            }
                             break;
 
                         case REDSTONE:
                             temp = module.onRedstone(lwc, (Protection) args[0], (Block) args[1], (Integer) args[2]);
+
+                            LWCRedstoneEvent redstoneEvent = new LWCRedstoneEvent((Protection) args[0], (Integer) args[2]);
+                            dispatchEvent(redstoneEvent);
+
+                            if(redstoneEvent.isCancelled()) {
+                                temp = Result.CANCEL;
+                            }
                             break;
 
                         case DESTROY_PROTECTION:
                             temp = module.onDestroyProtection(lwc, (Player) args[0], (Protection) args[1], (Block) args[2], (Boolean) args[3], (Boolean) args[4]);
+
+                            LWCProtectionDestroyEvent destroyEvent = new LWCProtectionDestroyEvent((Player) args[0], (Protection) args[1], (Boolean) args[3], (Boolean) args[4]);
+                            dispatchEvent(destroyEvent);
+
+                            if(destroyEvent.isCancelled()) {
+                                temp = Result.CANCEL;
+                            }
                             break;
 
                         case INTERACT_PROTECTION:
                             temp = module.onProtectionInteract(lwc, (Player) args[0], (Protection) args[1], (List<String>) args[2], (Boolean) args[3], (Boolean) args[4]);
+
+                            LWCProtectionInteractEvent protectionInteractEvent = new LWCProtectionInteractEvent((Player) args[0], (Protection) args[1], (List<String>) args[2], (Boolean) args[3], (Boolean) args[4]);
+                            dispatchEvent(protectionInteractEvent);
+
+                            if(protectionInteractEvent.isCancelled()) {
+                                temp = Result.CANCEL;
+                            }
                             break;
 
                         case INTERACT_BLOCK:
                             temp = module.onBlockInteract(lwc, (Player) args[0], (Block) args[1], (List<String>) args[2]);
+
+                            LWCBlockInteractEvent blockInteractEvent = new LWCBlockInteractEvent((Player) args[0], (Block) args[1], (List<String>) args[2]);
+                            dispatchEvent(blockInteractEvent);
+
+                            if(blockInteractEvent.isCancelled()) {
+                                temp = Result.CANCEL;
+                            }
                             break;
 
                         case REGISTER_PROTECTION:
                             temp = module.onRegisterProtection(lwc, (Player) args[0], (Block) args[1]);
+
+                            LWCProtectionRegisterEvent registerEvent = new LWCProtectionRegisterEvent((Player) args[0], (Block) args[1]);
+                            dispatchEvent(registerEvent);
+
+                            if(registerEvent.isCancelled()) {
+                                temp = Result.CANCEL;
+                            }
                             break;
 
                         case ACCESS_PROTECTION:
@@ -192,15 +290,33 @@ public class ModuleLoader {
 
                         case POST_REGISTRATION:
                             module.onPostRegistration(lwc, (Protection) args[0]);
+
+                            Protection protection = (Protection) args[0];
+                            LWCRegistrationPostEvent registrationPostEvent = new LWCRegistrationPostEvent(protection.getBukkitOwner(), protection);
+                            dispatchEvent(registrationPostEvent);
                             break;
 
                         case POST_REMOVAL:
                             module.onPostRemoval(lwc, (Protection) args[0]);
+
+                            protection = (Protection) args[0];
+                            LWCProtectionRemovePostEvent removePostEvent = new LWCProtectionRemovePostEvent(protection.getBukkitOwner(), protection);
+                            dispatchEvent(removePostEvent);
                             break;
 
                         case SEND_LOCALE:
                             temp = module.onSendLocale(lwc, (Player) args[0], (String) args[1]);
+
+                            LWCSendLocaleEvent localeEvent = new LWCSendLocaleEvent((Player) args[0], (String) args[1]);
+                            dispatchEvent(localeEvent);
+
+                            if(localeEvent.isCancelled()) {
+                                temp = Result.CANCEL;
+                            }
                             break;
+
+                        case ACCESS_REQUEST:
+                            throw new OperationNotSupportedException("ACCESS_REQUEST");
                     }
 
                     if (temp != Result.DEFAULT) {
