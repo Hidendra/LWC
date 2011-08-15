@@ -29,6 +29,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -243,7 +244,7 @@ public class Protection {
      *
      * @param type
      * @param name
-     * @return
+     * @return the access the player has
      */
     public int getAccess(int type, String name) {
         for (AccessRight right : access) {
@@ -260,6 +261,21 @@ public class Protection {
      */
     public List<AccessRight> getAccessRights() {
         return access;
+    }
+
+    /**
+     * Remove temporary access rights from the protection
+     */
+    public void removeTemporaryAccessRights() {
+        Iterator<AccessRight> iter = access.iterator();
+
+        while(iter.hasNext()) {
+            AccessRight right = iter.next();
+
+            if(right.getType() == AccessRight.TEMPORARY) {
+                iter.remove();
+            }
+        }
     }
 
     /**
@@ -429,6 +445,7 @@ public class Protection {
         }
 
         LWC lwc = LWC.getInstance();
+        removeTemporaryAccessRights();
         removeCache();
 
         // make this protection immutable
