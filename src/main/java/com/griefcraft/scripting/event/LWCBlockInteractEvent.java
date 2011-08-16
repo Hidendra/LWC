@@ -4,18 +4,21 @@ import com.griefcraft.scripting.ModuleLoader;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.List;
 
 public class LWCBlockInteractEvent extends LWCPlayerEvent implements Cancellable {
 
+    private PlayerInteractEvent event;
     private Block block;
     private List<String> actions;
     private boolean cancelled;
 
-    public LWCBlockInteractEvent(Player player, Block block, List<String> actions) {
-        super(ModuleLoader.Event.INTERACT_BLOCK, player);
+    public LWCBlockInteractEvent(PlayerInteractEvent event, Block block, List<String> actions) {
+        super(ModuleLoader.Event.INTERACT_BLOCK, event.getPlayer());
 
+        this.event = event;
         this.block = block;
         this.actions = actions;
     }

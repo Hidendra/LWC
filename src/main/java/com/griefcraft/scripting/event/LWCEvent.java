@@ -5,14 +5,14 @@ import com.griefcraft.scripting.ModuleLoader;
 
 public class LWCEvent {
 
-    private ModuleLoader.Event event;
+    private ModuleLoader.Event eventType;
 
     public LWCEvent(ModuleLoader.Event event) {
-        this.event = event;
+        this.eventType = event;
     }
 
     public ModuleLoader.Event getEventType() {
-        return event;
+        return eventType;
     }
 
     public LWC getLWC() {
