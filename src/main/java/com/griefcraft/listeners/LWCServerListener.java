@@ -31,7 +31,6 @@ public class LWCServerListener extends ServerListener {
         this.plugin = plugin;
     }
 
-    // remove any modules used by the plugin
     @Override
     public void onPluginDisable(PluginDisableEvent event) {
     	if(!LWC.ENABLED) {
@@ -40,6 +39,9 @@ public class LWCServerListener extends ServerListener {
     	
         Plugin disabled = event.getPlugin();
 
+        /**
+         * Remove any modules registered by the disabled plugin
+         */
         plugin.getLWC().getModuleLoader().removeModules(disabled);
     }
 

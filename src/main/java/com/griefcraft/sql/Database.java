@@ -19,6 +19,7 @@ package com.griefcraft.sql;
 
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.scripting.ModuleException;
 import com.griefcraft.util.Updater;
 import com.griefcraft.util.config.Configuration;
 import org.bukkit.Bukkit;
@@ -122,7 +123,7 @@ public abstract class Database {
      * @param exception
      */
     protected void printException(Exception exception) {
-    	exception.printStackTrace();
+    	throw new ModuleException(exception);
     }
 
     /**

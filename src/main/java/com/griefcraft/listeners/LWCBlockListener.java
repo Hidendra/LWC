@@ -128,12 +128,17 @@ public class LWCBlockListener extends BlockListener {
         boolean canAccess = lwc.canAccessProtection(player, protection);
         boolean canAdmin = lwc.canAdminProtection(player, protection);
 
-        Result result = lwc.getModuleLoader().dispatchEvent(Event.DESTROY_PROTECTION, player, protection, block, canAccess, canAdmin);
-        LWCProtectionDestroyEvent evt = new LWCProtectionDestroyEvent(player, protection, canAccess, canAdmin);
-        lwc.getModuleLoader().dispatchEvent(evt);
+        try {
+            Result result = lwc.getModuleLoader().dispatchEvent(Event.DESTROY_PROTECTION, player, protection, block, canAccess, canAdmin);
+            LWCProtectionDestroyEvent evt = new LWCProtectionDestroyEvent(player, protection, canAccess, canAdmin);
+            lwc.getModuleLoader().dispatchEvent(evt);
 
-        if (evt.isCancelled() || result == Result.CANCEL) {
+            if (evt.isCancelled() || result == Result.CANCEL) {
+                event.setCancelled(true);
+            }
+        } catch(Exception e) {
             event.setCancelled(true);
+            lwc.sendLocale(player, "protection.internalerror", "id", "BLOCK_BREAK");
         }
     }
 
@@ -200,19 +205,23 @@ public class LWCBlockListener extends BlockListener {
                 }
             }
         }
-        
-        Result registerProtection = lwc.getModuleLoader().dispatchEvent(Event.REGISTER_PROTECTION, player, block);
-        LWCProtectionRegisterEvent evt = new LWCProtectionRegisterEvent(player, block);
-        lwc.getModuleLoader().dispatchEvent(evt);
 
-        // something cancelled registration
-        if (evt.isCancelled() || registerProtection == Result.CANCEL) {
-            return;
+        try {
+            Result registerProtection = lwc.getModuleLoader().dispatchEvent(Event.REGISTER_PROTECTION, player, block);
+            LWCProtectionRegisterEvent evt = new LWCProtectionRegisterEvent(player, block);
+            lwc.getModuleLoader().dispatchEvent(evt);
+
+            // something cancelled registration
+            if (evt.isCancelled() || registerProtection == Result.CANCEL) {
+                return;
+            }
+
+            // All good!
+            lwc.getPhysicalDatabase().registerProtection(block.getTypeId(), type, block.getWorld().getName(), player.getName(), "", block.getX(), block.getY(), block.getZ());
+            lwc.sendLocale(player, "protection.onplace.create.finalize", "type", lwc.getLocale(autoRegisterType.toLowerCase()), "block", LWC.materialToString(block));
+        } catch(Exception e) {
+            lwc.sendLocale(player, "protection.internalerror", "id", "PLAYER_INTERACT");
         }
-
-        // All good!
-        lwc.getPhysicalDatabase().registerProtection(block.getTypeId(), type, block.getWorld().getName(), player.getName(), "", block.getX(), block.getY(), block.getZ());
-        lwc.sendLocale(player, "protection.onplace.create.finalize", "type", lwc.getLocale(autoRegisterType.toLowerCase()), "block", LWC.materialToString(block));
     }
 
 }
