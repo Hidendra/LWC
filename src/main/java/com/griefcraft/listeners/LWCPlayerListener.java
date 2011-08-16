@@ -119,57 +119,63 @@ public class LWCPlayerListener extends PlayerListener {
             }
         }
 
-        List<String> actions = lwc.getMemoryDatabase().getActions(player.getName());
-        Protection protection = lwc.findProtection(block);
-        Module.Result result = Module.Result.CANCEL;
-        boolean canAccess = lwc.canAccessProtection(player, protection);
-        boolean canAdmin = lwc.canAdminProtection(player, protection);
+        try {
+            List<String> actions = lwc.getMemoryDatabase().getActions(player.getName());
+            Protection protection = lwc.findProtection(block);
+            Module.Result result = Module.Result.CANCEL;
+            boolean canAccess = lwc.canAccessProtection(player, protection);
+            boolean canAdmin = lwc.canAdminProtection(player, protection);
 
-        if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-            boolean ignoreLeftClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreLeftClick"));
+            if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+                boolean ignoreLeftClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreLeftClick"));
 
-            if (ignoreLeftClick) {
+                if (ignoreLeftClick) {
+                    return;
+                }
+            } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                boolean ignoreRightClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreRightClick"));
+
+                if (ignoreRightClick) {
+                    return;
+                }
+            }
+
+            if (protection != null) {
+                result = lwc.getModuleLoader().dispatchEvent(Event.INTERACT_PROTECTION, player, protection, actions, canAccess, canAdmin);
+
+                if(result == Result.DEFAULT) {
+                    LWCProtectionInteractEvent evt = new LWCProtectionInteractEvent(event, protection, actions, canAccess, canAdmin);
+                    lwc.getModuleLoader().dispatchEvent(evt);
+
+                    result = evt.getResult();
+                }
+            } else {
+                result = lwc.getModuleLoader().dispatchEvent(Event.INTERACT_BLOCK, player, block, actions);
+
+                if(result == Result.DEFAULT) {
+                    LWCBlockInteractEvent evt = new LWCBlockInteractEvent(event, block, actions);
+                    lwc.getModuleLoader().dispatchEvent(evt);
+
+                    result = evt.getResult();
+                }
+            }
+
+            if (result == Module.Result.ALLOW) {
                 return;
             }
-        } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            boolean ignoreRightClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreRightClick"));
 
-            if (ignoreRightClick) {
-                return;
+            if (result == Module.Result.DEFAULT) {
+                lwc.enforceAccess(player, block);
             }
-        }
 
-        if (protection != null) {
-            result = lwc.getModuleLoader().dispatchEvent(Event.INTERACT_PROTECTION, player, protection, actions, canAccess, canAdmin);
-
-            if(result == Result.DEFAULT) {
-                LWCProtectionInteractEvent evt = new LWCProtectionInteractEvent(event, protection, actions, canAccess, canAdmin);
-                lwc.getModuleLoader().dispatchEvent(evt);
-
-                result = evt.getResult();
+            if (!canAccess || result == Module.Result.CANCEL) {
+                event.setCancelled(true);
+                event.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
             }
-        } else {
-            result = lwc.getModuleLoader().dispatchEvent(Event.INTERACT_BLOCK, player, block, actions);
-
-            if(result == Result.DEFAULT) {
-                LWCBlockInteractEvent evt = new LWCBlockInteractEvent(event, block, actions);
-                lwc.getModuleLoader().dispatchEvent(evt);
-
-                result = evt.getResult();
-            }
-        }
-
-        if (result == Module.Result.ALLOW) {
-            return;
-        }
-
-        if (result == Module.Result.DEFAULT) {
-            lwc.enforceAccess(player, block);
-        }
-
-        if (!canAccess || result == Module.Result.CANCEL) {
+        } catch(Exception e) {
             event.setCancelled(true);
             event.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
+            lwc.sendLocale(player, "protection.internalerror", "id", "PLAYER_INTERACT");
         }
     }
 
