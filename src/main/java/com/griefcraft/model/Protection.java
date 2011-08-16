@@ -459,6 +459,16 @@ public class Protection {
 
         // and now finally remove it from the database
         lwc.getPhysicalDatabase().unregisterProtection(id);
+
+        // mark related transactions as inactive
+        for(History history : getRelatedHistory(History.Type.TRANSACTION)) {
+            if(history.getStatus() != History.Status.ACTIVE) {
+                continue;
+            }
+
+            history.setStatus(History.Status.INACTIVE);
+            history.save();
+        }
     }
 
     /**
