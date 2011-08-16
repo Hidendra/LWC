@@ -201,53 +201,61 @@ public class LWCPlugin extends JavaPlugin {
         // these can only apply to players, not the console (who has absolute player :P)
         if (isPlayer) {
             // Aliases
+            String aliasCommand = null;
+            String[] aliasArgs = new String[0];
+
             if (commandName.equals("cpublic")) {
-                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", "public".split(" "));
-                return true;
+                aliasCommand = "create";
+                aliasArgs = new String[] { "public" };
             } else if (commandName.equals("cpassword")) {
-                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", ("password " + argString).split(" "));
-                return true;
+                aliasCommand = "create";
+                aliasArgs = ("password " + argString).split(" ");
             } else if (commandName.equals("cprivate")) {
-                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "create", ("private " + argString).split(" "));
-                return true;
+                aliasCommand = "create";
+                aliasArgs = ("private " + argString).split(" ");
             } else if (commandName.equals("cmodify")) {
-                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "modify", argString.isEmpty() ? new String[0] : argString.split(" "));
-                return true;
+                aliasCommand = "modify";
+                aliasArgs = argString.isEmpty() ? new String[0] : argString.split(" ");
             } else if (commandName.equals("cinfo")) {
-                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "info", new String[0]);
-                return true;
+                aliasCommand = "info";
             } else if (commandName.equals("cunlock")) {
-                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "unlock", argString.isEmpty() ? new String[0] : argString.split(" "));
-                return true;
+                aliasCommand = "unlock";
+                aliasArgs = argString.isEmpty() ? new String[0] : argString.split(" ");
             } else if (commandName.equals("cremove")) {
-                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "remove", "protection".split(" "));
-                return true;
+                aliasCommand = "remove";
+                aliasArgs = new String[] { "protection" };
             } else if (commandName.equals("climits")) {
-                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "limits", argString.isEmpty() ? new String[0] : argString.split(" "));
-                return true;
+                aliasCommand = "limits";
+                aliasArgs = argString.isEmpty() ? new String[0] : argString.split(" ");
             } else if (commandName.equals("cadmin")) {
-                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "admin", argString.isEmpty() ? new String[0] : argString.split(" "));
-                return true;
+                aliasCommand = "admin";
+                aliasArgs = argString.isEmpty() ? new String[0] : argString.split(" ");
             }
 
             // Flag aliases
             if (commandName.equals("credstone")) {
-                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "flag", ("redstone " + argString).split(" "));
-                return true;
+                aliasCommand = "flag";
+                aliasArgs = ("redstone " + argString).split(" ");
             } else if (commandName.equals("cmagnet")) {
-                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "flag", ("magnet " + argString).split(" "));
-                return true;
+                aliasCommand = "flag";
+                aliasArgs = ("magnet " + argString).split(" ");
             }
 
             // Mode aliases
             if (commandName.equals("cdroptransfer")) {
-                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "mode", ("droptransfer " + argString).split(" "));
-                return true;
+                aliasCommand = "mode";
+                aliasArgs = ("droptransfer " + argString).split(" ");
             } else if (commandName.equals("cpersist")) {
-                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "mode", ("persist " + argString).split(" "));
-                return true;
+                aliasCommand = "mode";
+                aliasArgs = ("persist " + argString).split(" ");
             } else if (commandName.equals("cnospam")) {
-                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, "mode", ("nospam " + argString).split(" "));
+                aliasCommand = "mode";
+                aliasArgs = ("nospam " + argString).split(" ");
+            }
+
+            if(aliasCommand != null) {
+                lwc.getModuleLoader().dispatchEvent(new LWCCommandEvent(sender, aliasCommand, aliasArgs));
+                lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, aliasCommand, aliasArgs);
                 return true;
             }
         }

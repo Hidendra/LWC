@@ -25,7 +25,6 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.scripting.Module;
 import com.griefcraft.util.Performance;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import java.sql.*;
 import java.util.ArrayList;

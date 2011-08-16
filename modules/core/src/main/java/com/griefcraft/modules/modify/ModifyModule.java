@@ -22,6 +22,9 @@ import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Action;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCBlockInteractEvent;
+import com.griefcraft.scripting.event.LWCCommandEvent;
+import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
 import org.bukkit.block.Block;
@@ -35,10 +38,19 @@ import static com.griefcraft.util.StringUtils.join;
 public class ModifyModule extends JavaModule {
 
     @Override
-    public Result onProtectionInteract(LWC lwc, Player player, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin) {
-        if (!actions.contains("modify")) {
-            return DEFAULT;
+    public void onProtectionInteract(LWCProtectionInteractEvent event) {
+        if(event.getResult() != Result.DEFAULT) {
+            return;
         }
+
+        if (!event.hasAction("modify")) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        Protection protection = event.getProtection();
+        Player player = event.getPlayer();
+        event.setResult(Result.CANCEL);
 
         if (lwc.canAdminProtection(player, protection)) {
             Action action = lwc.getMemoryDatabase().getAction("modify", player.getName());
@@ -101,39 +113,57 @@ public class ModifyModule extends JavaModule {
             lwc.removeModes(player);
         }
 
-        return CANCEL;
+        return;
     }
 
     @Override
-    public Result onBlockInteract(LWC lwc, Player player, Block block, List<String> actions) {
-        if (!actions.contains("modify")) {
-            return DEFAULT;
+    public void onBlockInteract(LWCBlockInteractEvent event) {
+        if(event.getResult() != Result.DEFAULT) {
+            return;
         }
+
+        if (!event.hasAction("modify")) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        Block block = event.getBlock();
+        Player player = event.getPlayer();
+        event.setResult(Result.CANCEL);
 
         lwc.sendLocale(player, "protection.interact.error.notregistered", "block", LWC.materialToString(block));
         lwc.removeModes(player);
-        return CANCEL;
+        return;
     }
 
     @Override
-    public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
-        if (!StringUtils.hasFlag(command, "m") && !StringUtils.hasFlag(command, "modify")) {
-            return DEFAULT;
+    public void onCommand(LWCCommandEvent event) {
+        if(event.isCancelled()) {
+            return;
         }
+
+        if (!event.hasFlag("m", "modify")) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        CommandSender sender = event.getSender();
+        String[] args = event.getArgs();
+        event.setCancelled(true);
 
         if (!(sender instanceof Player)) {
             sender.sendMessage(Colors.Red + "Console not supported.");
-            return CANCEL;
+            return;
         }
 
         if (!lwc.hasPlayerPermission(sender, "lwc.modify")) {
             lwc.sendLocale(sender, "protection.accessdenied");
-            return CANCEL;
+            return;
         }
 
         if (args.length < 1) {
             lwc.sendLocale(sender, "help.modify");
-            return CANCEL;
+            return;
         }
 
         String full = join(args, 0);
@@ -142,7 +172,7 @@ public class ModifyModule extends JavaModule {
         lwc.getMemoryDatabase().unregisterAllActions(player.getName());
         lwc.getMemoryDatabase().registerAction("modify", player.getName(), full);
         lwc.sendLocale(sender, "protection.modify.finalize");
-        return CANCEL;
+        return;
     }
 
 }

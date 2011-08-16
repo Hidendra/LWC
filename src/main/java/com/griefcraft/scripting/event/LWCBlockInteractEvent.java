@@ -14,7 +14,7 @@ public class LWCBlockInteractEvent extends LWCPlayerEvent implements IResult {
     private PlayerInteractEvent event;
     private Block block;
     private List<String> actions;
-    private Module.Result result;
+    private Module.Result result = Module.Result.DEFAULT;
 
     public LWCBlockInteractEvent(PlayerInteractEvent event, Block block, List<String> actions) {
         super(ModuleLoader.Event.INTERACT_BLOCK, event.getPlayer());

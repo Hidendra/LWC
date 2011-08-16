@@ -20,6 +20,7 @@ package com.griefcraft.modules.modes;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
 import org.bukkit.Material;
@@ -69,7 +70,6 @@ public class DropTransferModule extends JavaModule {
         return -1;
     }
 
-    @SuppressWarnings("deprecation")
 	@Override
     public Result onDropItem(LWC lwc, Player player, Item item, ItemStack itemStack) {
         int protectionId = getPlayerDropTransferTarget(player.getName());
@@ -152,24 +152,30 @@ public class DropTransferModule extends JavaModule {
     }
 
     @Override
-    public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
-        if (!StringUtils.hasFlag(command, "p") && !StringUtils.hasFlag(command, "mode")) {
-            return DEFAULT;
+    public void onCommand(LWCCommandEvent event) {
+        if (!event.hasFlag("p", "mode")) {
+            return;
         }
+
+        LWC lwc = event.getLWC();
+        CommandSender sender = event.getSender();
+        String[] args = event.getArgs();
 
         Player player = (Player) sender;
         String mode = args[0].toLowerCase();
 
         if(!mode.equals("droptransfer")) {
-            return DEFAULT;
+            return;
         }
+
+        event.setCancelled(true);
 
         // internal name
         mode = "dropTransfer";
 
         if (args.length < 2) {
             lwc.sendLocale(player, "protection.modes.dropxfer.help");
-            return CANCEL;
+            return;
         }
 
         String action = args[1].toLowerCase();
@@ -178,7 +184,7 @@ public class DropTransferModule extends JavaModule {
         if (action.equals("select")) {
             if (isPlayerDropTransferring(playerName)) {
                 lwc.sendLocale(player, "protection.modes.dropxfer.select.error");
-                return CANCEL;
+                return;
             }
 
             lwc.getMemoryDatabase().unregisterMode(playerName, mode);
@@ -190,7 +196,7 @@ public class DropTransferModule extends JavaModule {
 
             if (target == -1) {
                 lwc.sendLocale(player, "protection.modes.dropxfer.selectchest");
-                return CANCEL;
+                return;
             }
 
             lwc.getMemoryDatabase().registerMode(playerName, "+dropTransfer");
@@ -200,7 +206,7 @@ public class DropTransferModule extends JavaModule {
 
             if (target == -1) {
                 lwc.sendLocale(player, "protection.modes.dropxfer.selectchest");
-                return CANCEL;
+                return;
             }
 
             lwc.getMemoryDatabase().unregisterMode(playerName, "+dropTransfer");
@@ -217,7 +223,7 @@ public class DropTransferModule extends JavaModule {
             }
         }
 
-        return CANCEL;
+        return;
     }
 
 }

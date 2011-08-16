@@ -22,6 +22,9 @@ import com.griefcraft.integration.ICurrency;
 import com.griefcraft.model.History;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
+import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
+import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.config.Configuration;
 import org.bukkit.Location;
@@ -59,10 +62,12 @@ public class EconomyModule extends JavaModule {
     }
 
     @Override
-    public void onPostRegistration(LWC lwc, Protection protection) {
+    public void onPostRegistration(LWCProtectionRegistrationPostEvent event) {
         if (!configuration.getBoolean("iConomy.enabled", true)) {
             return;
         }
+
+        Protection protection = event.getProtection();
 
         // we need to inject the iconomy price into the transaction!
         Block block = protection.getBlock();
@@ -98,10 +103,13 @@ public class EconomyModule extends JavaModule {
     }
 
     @Override
-    public void onPostRemoval(LWC lwc, Protection protection) {
+    public void onPostRemoval(LWCProtectionRemovePostEvent event) {
         if (!configuration.getBoolean("iConomy.enabled", true)) {
             return;
         }
+
+        LWC lwc = event.getLWC();
+        Protection protection = event.getProtection();
 
         // first, do we still have a currency processor?
         if(!lwc.getCurrency().isActive()) {
@@ -150,16 +158,20 @@ public class EconomyModule extends JavaModule {
     }
 
     @Override
-    public Result onRegisterProtection(LWC lwc, Player player, Block block) {
+    public void onRegisterProtection(LWCProtectionRegisterEvent event) {
         if (!configuration.getBoolean("iConomy.enabled", true)) {
-            return DEFAULT;
+            return;
         }
+
+        LWC lwc = event.getLWC();
+        Block block = event.getBlock();
+        Player player = event.getPlayer();
 
         // currency handler to use
         ICurrency currency = lwc.getCurrency();
 
         if(!currency.isActive()) {
-            return DEFAULT;
+            return;
         }
 
         // if a discount was used
@@ -203,7 +215,7 @@ public class EconomyModule extends JavaModule {
         // It's free!
         if (charge == 0) {
             player.sendMessage(Colors.Green + "This one's on us!");
-            return ALLOW;
+            return;
         }
 
         // charge them
@@ -214,16 +226,17 @@ public class EconomyModule extends JavaModule {
                 
                 // remove from cache
                 priceCache.remove(location);
-                return CANCEL;
+                event.setCancelled(true);
+                return;
             }
 
             // remove the money from their account
             currency.removeMoney(player, charge);
             player.sendMessage(Colors.Green + "Charged " + currency.format(charge) + (usedDiscount ? (Colors.Red + " (Discount)" + Colors.Green) : "") + " for an LWC protection. Thank you.");
-            return ALLOW;
+            return;
         }
 
-        return DEFAULT;
+        return;
     }
 
     /**
