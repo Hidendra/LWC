@@ -20,6 +20,9 @@ package com.griefcraft.modules.free;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCBlockInteractEvent;
+import com.griefcraft.scripting.event.LWCCommandEvent;
+import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.util.StringUtils;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -30,10 +33,19 @@ import java.util.List;
 public class FreeModule extends JavaModule {
 
     @Override
-    public Result onProtectionInteract(LWC lwc, Player player, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin) {
-        if (!actions.contains("free")) {
-            return DEFAULT;
+    public void onProtectionInteract(LWCProtectionInteractEvent event) {
+        if(event.getResult() != Result.DEFAULT) {
+            return;
         }
+
+        if (!event.hasAction("free")) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        Protection protection = event.getProtection();
+        Player player = event.getPlayer();
+        event.setResult(Result.CANCEL);
 
         if (lwc.hasAdminPermission(player, "lwc.admin.remove") || protection.getOwner().equals(player.getName())) {
             protection.remove();
@@ -44,38 +56,53 @@ public class FreeModule extends JavaModule {
             lwc.removeModes(player);
         }
 
-        return CANCEL;
+        return;
     }
 
     @Override
-    public Result onBlockInteract(LWC lwc, Player player, Block block, List<String> actions) {
-        if (!actions.contains("free")) {
-            return DEFAULT;
+    public void onBlockInteract(LWCBlockInteractEvent event) {
+        if (!event.hasAction("free")) {
+            return;
         }
+
+        LWC lwc = event.getLWC();
+        Block block = event.getBlock();
+        Player player = event.getPlayer();
+        event.setResult(Result.CANCEL);
 
         lwc.sendLocale(player, "protection.interact.error.notregistered", "block", LWC.materialToString(block));
         lwc.removeModes(player);
-        return CANCEL;
+        return;
     }
 
     @Override
-    public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
-        if (!StringUtils.hasFlag(command, "r") && !StringUtils.hasFlag(command, "remove")) {
-            return DEFAULT;
+    public void onCommand(LWCCommandEvent event) {
+        if(event.isCancelled()) {
+            return;
         }
+
+        if (!event.hasFlag("r", "remove")) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        CommandSender sender = event.getSender();
+        String[] args = event.getArgs();
+
+        if (!(sender instanceof Player)) {
+            return;
+        }
+
+        event.setCancelled(true);
 
         if (!lwc.hasPlayerPermission(sender, "lwc.remove")) {
             lwc.sendLocale(sender, "protection.accessdenied");
-            return CANCEL;
+            return;
         }
 
         if (args.length < 1) {
             lwc.sendSimpleUsage(sender, "/lwc -r <protection|modes>");
-            return CANCEL;
-        }
-
-        if (!(sender instanceof Player)) {
-            return DEFAULT;
+            return;
         }
 
         String type = args[0].toLowerCase();
@@ -84,7 +111,7 @@ public class FreeModule extends JavaModule {
         if (type.equals("protection") || type.equals("chest") || type.equals("furnace") || type.equals("dispenser")) {
             if (lwc.getMemoryDatabase().hasPendingChest(player.getName())) {
                 lwc.sendLocale(sender, "protection.general.pending");
-                return CANCEL;
+                return;
             }
 
             lwc.getMemoryDatabase().unregisterAllActions(player.getName());
@@ -97,7 +124,7 @@ public class FreeModule extends JavaModule {
             lwc.sendSimpleUsage(sender, "/lwc -r <protection|modes>");
         }
 
-        return CANCEL;
+        return;
     }
 
 }

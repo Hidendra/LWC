@@ -19,6 +19,7 @@ package com.griefcraft.modules.credits;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
 import org.bukkit.command.CommandSender;
@@ -188,10 +189,16 @@ public class CreditsModule extends JavaModule {
 	}
 
 	@Override
-	public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
-		if(!StringUtils.hasFlag(command, "credits") && !StringUtils.hasFlag(command, "thanks")) {
-			return DEFAULT;
-		}
+	public void onCommand(LWCCommandEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+
+        if (!event.hasFlag("credits", "thanks")) {
+            return;
+        }
+
+        CommandSender sender = event.getSender();
 
 		if(!scrolling.containsKey(sender)) {
 			scrolling.put(sender, 0);
@@ -199,7 +206,8 @@ public class CreditsModule extends JavaModule {
 			scrolling.remove(sender);
 		}
 
-		return CANCEL;
+        event.setCancelled(true);
+		return;
 	}
 
 }
