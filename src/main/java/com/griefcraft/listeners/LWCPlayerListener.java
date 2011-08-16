@@ -23,6 +23,9 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.Module;
 import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.ModuleLoader.Event;
+import com.griefcraft.scripting.event.LWCBlockInteractEvent;
+import com.griefcraft.scripting.event.LWCDropItemEvent;
+import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -60,8 +63,10 @@ public class LWCPlayerListener extends PlayerListener {
         ItemStack itemStack = item.getItemStack();
 
         Result result = plugin.getLWC().getModuleLoader().dispatchEvent(Event.DROP_ITEM, player, item, itemStack);
+        LWCDropItemEvent evt = new LWCDropItemEvent(player, event);
+        plugin.getLWC().getModuleLoader().dispatchEvent(evt);
 
-        if (result == Result.CANCEL) {
+        if (evt.isCancelled() || result == Result.CANCEL) {
             event.setCancelled(true);
         }
     }
@@ -136,8 +141,22 @@ public class LWCPlayerListener extends PlayerListener {
 
         if (protection != null) {
             result = lwc.getModuleLoader().dispatchEvent(Event.INTERACT_PROTECTION, player, protection, actions, canAccess, canAdmin);
+
+            if(result == Result.DEFAULT) {
+                LWCProtectionInteractEvent evt = new LWCProtectionInteractEvent(event, protection, actions, canAccess, canAdmin);
+                lwc.getModuleLoader().dispatchEvent(evt);
+
+                result = evt.getResult();
+            }
         } else {
             result = lwc.getModuleLoader().dispatchEvent(Event.INTERACT_BLOCK, player, block, actions);
+
+            if(result == Result.DEFAULT) {
+                LWCBlockInteractEvent evt = new LWCBlockInteractEvent(event, block, actions);
+                lwc.getModuleLoader().dispatchEvent(evt);
+
+                result = evt.getResult();
+            }
         }
 
         if (result == Module.Result.ALLOW) {

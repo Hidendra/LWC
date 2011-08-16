@@ -55,7 +55,7 @@ public interface Module {
      *
      * @param event
      */
-    public void onDropItem(LWCDropEvent event);
+    public void onDropItem(LWCDropItemEvent event);
 
     /**
      * Called when a player or console executes an LWC command
@@ -103,7 +103,7 @@ public interface Module {
      *
      * @param event
      */
-    public void onPostRegistration(LWCRegistrationPostEvent event);
+    public void onPostRegistration(LWCProtectionRegistrationPostEvent event);
 
     /**
      * Called after a protection is removed (the Protection class given is immutable.)

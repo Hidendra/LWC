@@ -24,7 +24,6 @@ import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -53,7 +52,7 @@ public abstract class JavaModule implements Module {
         
     }
 
-    public void onDropItem(LWCDropEvent event) {
+    public void onDropItem(LWCDropItemEvent event) {
 
     }
 
@@ -81,7 +80,7 @@ public abstract class JavaModule implements Module {
 
     }
 
-    public void onPostRegistration(LWCRegistrationPostEvent event) {
+    public void onPostRegistration(LWCProtectionRegistrationPostEvent event) {
 
     }
 
