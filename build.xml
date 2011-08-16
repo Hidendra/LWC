@@ -1,148 +1,151 @@
 <?xml version="1.0" ?>
 <project name="LWC" default="all">
-	
-	<!-- Name of the jar to create -->
-	<property name="jar.core" value="LWC.jar" />
-	<property name="jar.economy" value="LWC-Economy.jar" />
-	
-	<property name="lib" value="lib" />
-	<property name="src" value="src" />
-	<property name="bin" value="bin" />
-	
-	<property name="modules" value="modules" />
-	<property name="core" value="${modules}/core/src/" />
-	<property name="worldguard" value="${modules}/worldguard/src/" />
-	<property name="lists" value="${modules}/lists/src/" />
-	<property name="economy" value="${modules}/economy/src/" />
-	
-	<property name="build" value="build" />
-	
-	<!-- Location of the plugins folder development server -->
-	<property name="dev" value="../../minecraft/plugins" />
-	
-	<!-- Libraries used by LWC & modules -->
-	<fileset dir="${lib}" id="libs">
-		<include name="CraftBukkit.jar" />
-		<include name="Permissions.jar" />
-		<include name="PermissionsBukkit.jar" />
-		<include name="WorldGuard.jar" />
-		<include name="WorldEdit.jar" />
-		<include name="Lists.jar" />
-		<include name="iConomy.jar" />
-		<include name="mcbans.jar" />
-		<include name="junit.jar" />
-        <include name="BOSEconomy.jar" />
-	</fileset>
-	
-	<!-- JUnit testing -->
-	<property name="test.classname" value="com.griefcraft.LWCTestSuite" />
-	<path id="test.classpath">
-		<pathelement location="${bin}/core/" />
-		<pathelement location="${bin}/economy/" />
-		<pathelement location="${bin}/test/" />
-		<fileset refid="libs" />
-	</path>
-	
-	<!-- Jenkins integration -->
-	<property environment="env"/>
-	
-	<condition property="BUILD_NUMBER" value="${env.BUILD_NUMBER}" else="MANUAL">
-	    <isset property="env.BUILD_NUMBER" />
-	</condition>
-	<condition property="GIT_COMMIT" value="${env.GIT_COMMIT}" else="MANUAL">
-		    <isset property="env.GIT_COMMIT" />
-	</condition>
-	
-	<target name="all" depends="clean,compile,build,lwc,economy" description="Main target" />
-	
-	<target name="clean">
-		<!-- Delete the previous folders -->
-		<delete dir="${bin}/core/" />
-		<delete dir="${bin}/economy/" />
-		<delete dir="${bin}/test/" />
-		
-		<!-- create some folders -->
-		<mkdir dir="${bin}/core/" />
-		<mkdir dir="${bin}/economy/" />
-		<mkdir dir="${bin}/test/" />
-	</target>
-	
-	<target name="compile" description="Compilation">
-		
-		<echo>${label}</echo>
-		<javac srcdir="${src}/main/java/;${core};${worldguard}/main/java/;${lists}/main/java/" destdir="${bin}/core/" debug="true" debuglevel="lines,vars,source" deprecation="true" includeantruntime="true">
-			<classpath>
-				<fileset refid="libs" />
-			</classpath>
-		</javac>
-		
-		<echo>Compiling LWC-Economy</echo>
-		<javac srcdir="${economy}/main/java/" destdir="${bin}/economy/" deprecation="true" debug="true" debuglevel="lines,vars,source" includeantruntime="true">
-			<classpath>
-				<fileset refid="libs" />
-				<dirset dir="${bin}/core/" />
-			</classpath>
-		</javac>
-		
-		<echo>Compiling LWC Unit Tests</echo>
-		<javac srcdir="${src}/test/main/java/" destdir="${bin}/test/" deprecation="true" debug="true" debuglevel="lines,vars,source" includeantruntime="true">
-			<classpath>
-				<fileset refid="libs" />
-				<dirset dir="${bin}/core/" />
-				<dirset dir="${bin}/economy/" />
-			</classpath>
-		</javac>
-	</target>
-  
-	<target name="build" description="Build the distribution files">
-		<delete dir="${build}" />
-		<mkdir dir="${build}" />
 
-		<copy tofile="${build}/VERSION" file="VERSION" overwrite="yes" />
-	</target>
-	
-	<target name="lwc" description="Build LWC.jar">
-		<echo>Building LWC.jar</echo>
-	
-		<jar jarfile="${build}/${jar.core}">
-			<fileset dir="${src}" includes="lang/*" />
-			<fileset dir="${src}/resources/" includes="plugin.yml" />
-			<fileset dir="${bin}/core/" />
-			
-			<manifest>
-				<attribute name="Implementation-Title" value="LWC" />
-				<attribute name="Implementation-Vendor" value="Hidendra" />
-				<!-- <attribute name="Implementation-Version" value="git-LWC-${GIT_COMMIT}-b${BUILD_NUMBER}jnks" /> -->
-                <attribute name="Implementation-Version" value="${BUILD_NUMBER}" />
-			</manifest>
-		</jar>
-	</target>
-	
-	<target name="economy" description="Build LWC-economy.jar">
-		<echo>Building LWC-Economy.jar</echo>
-		
-		<jar jarfile="${build}/${jar.economy}">
-			<fileset dir="${economy}/resources/" includes="plugin.yml" />
-			<fileset dir="${bin}/economy/" />
-		</jar>
-	</target>
-	
-	<target name="test">
-		<mkdir dir="${build}/test-reports/" />
-		
-		<!-- Prevent the already packaged classes from interfering -->
-		<delete dir="${bin}/core/" />
-		<delete dir="${bin}/economy/" />
-		
-		<junit fork="yes" haltonfailure="yes">
-			<batchtest fork="yes" todir="${build}/test-reports/">
-				<fileset dir="${bin}/test/">
-				        <include name="**/*Test.class" />
-				</fileset>
-			</batchtest>
-			
-			<formatter type="xml" />
-			<classpath refid="test.classpath" />
-		</junit>
-	</target>
+    <!-- Name of the jar to create -->
+    <property name="jar.core" value="LWC.jar"/>
+    <property name="jar.economy" value="LWC-Economy.jar"/>
+
+    <property name="lib" value="lib"/>
+    <property name="src" value="src"/>
+    <property name="bin" value="bin"/>
+
+    <property name="modules" value="modules"/>
+    <property name="core" value="${modules}/core/src/"/>
+    <property name="worldguard" value="${modules}/worldguard/src/"/>
+    <property name="lists" value="${modules}/lists/src/"/>
+    <property name="economy" value="${modules}/economy/src/"/>
+
+    <property name="build" value="build"/>
+
+    <!-- Location of the plugins folder development server -->
+    <property name="dev" value="../../minecraft/plugins"/>
+
+    <!-- Libraries used by LWC & modules -->
+    <fileset dir="${lib}" id="libs">
+        <include name="CraftBukkit.jar"/>
+        <include name="Permissions.jar"/>
+        <include name="PermissionsBukkit.jar"/>
+        <include name="WorldGuard.jar"/>
+        <include name="WorldEdit.jar"/>
+        <include name="Lists.jar"/>
+        <include name="iConomy.jar"/>
+        <include name="mcbans.jar"/>
+        <include name="junit.jar"/>
+        <include name="BOSEconomy.jar"/>
+    </fileset>
+
+    <!-- JUnit testing -->
+    <property name="test.classname" value="com.griefcraft.LWCTestSuite"/>
+    <path id="test.classpath">
+        <pathelement location="${bin}/core/"/>
+        <pathelement location="${bin}/economy/"/>
+        <pathelement location="${bin}/test/"/>
+        <fileset refid="libs"/>
+    </path>
+
+    <!-- Jenkins integration -->
+    <property environment="env"/>
+
+    <condition property="BUILD_NUMBER" value="${env.BUILD_NUMBER}" else="MANUAL">
+        <isset property="env.BUILD_NUMBER"/>
+    </condition>
+    <condition property="GIT_COMMIT" value="${env.GIT_COMMIT}" else="MANUAL">
+        <isset property="env.GIT_COMMIT"/>
+    </condition>
+
+    <target name="all" depends="clean,compile,build,lwc,economy" description="Main target"/>
+
+    <target name="clean">
+        <!-- Delete the previous folders -->
+        <delete dir="${bin}/core/"/>
+        <delete dir="${bin}/economy/"/>
+        <delete dir="${bin}/test/"/>
+
+        <!-- create some folders -->
+        <mkdir dir="${bin}/core/"/>
+        <mkdir dir="${bin}/economy/"/>
+        <mkdir dir="${bin}/test/"/>
+    </target>
+
+    <target name="compile" description="Compilation">
+
+        <echo>${label}</echo>
+        <javac srcdir="${src}/main/java/;${core};${worldguard}/main/java/;${lists}/main/java/" destdir="${bin}/core/"
+               debug="true" debuglevel="lines,vars,source" deprecation="true" includeantruntime="true">
+            <classpath>
+                <fileset refid="libs"/>
+            </classpath>
+        </javac>
+
+        <echo>Compiling LWC-Economy</echo>
+        <javac srcdir="${economy}/main/java/" destdir="${bin}/economy/" deprecation="true" debug="true"
+               debuglevel="lines,vars,source" includeantruntime="true">
+            <classpath>
+                <fileset refid="libs"/>
+                <dirset dir="${bin}/core/"/>
+            </classpath>
+        </javac>
+
+        <echo>Compiling LWC Unit Tests</echo>
+        <javac srcdir="${src}/test/main/java/" destdir="${bin}/test/" deprecation="true" debug="true"
+               debuglevel="lines,vars,source" includeantruntime="true">
+            <classpath>
+                <fileset refid="libs"/>
+                <dirset dir="${bin}/core/"/>
+                <dirset dir="${bin}/economy/"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="build" description="Build the distribution files">
+        <delete dir="${build}"/>
+        <mkdir dir="${build}"/>
+
+        <copy tofile="${build}/VERSION" file="VERSION" overwrite="yes"/>
+    </target>
+
+    <target name="lwc" description="Build LWC.jar">
+        <echo>Building LWC.jar</echo>
+
+        <jar jarfile="${build}/${jar.core}">
+            <fileset dir="${src}" includes="lang/*"/>
+            <fileset dir="${src}/resources/" includes="plugin.yml"/>
+            <fileset dir="${bin}/core/"/>
+
+            <manifest>
+                <attribute name="Implementation-Title" value="LWC"/>
+                <attribute name="Implementation-Vendor" value="Hidendra"/>
+                <!-- <attribute name="Implementation-Version" value="git-LWC-${GIT_COMMIT}-b${BUILD_NUMBER}jnks" /> -->
+                <attribute name="Implementation-Version" value="${BUILD_NUMBER}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="economy" description="Build LWC-economy.jar">
+        <echo>Building LWC-Economy.jar</echo>
+
+        <jar jarfile="${build}/${jar.economy}">
+            <fileset dir="${economy}/resources/" includes="plugin.yml"/>
+            <fileset dir="${bin}/economy/"/>
+        </jar>
+    </target>
+
+    <target name="test">
+        <mkdir dir="${build}/test-reports/"/>
+
+        <!-- Prevent the already packaged classes from interfering -->
+        <delete dir="${bin}/core/"/>
+        <delete dir="${bin}/economy/"/>
+
+        <junit fork="yes" haltonfailure="yes">
+            <batchtest fork="yes" todir="${build}/test-reports/">
+                <fileset dir="${bin}/test/">
+                    <include name="**/*Test.class"/>
+                </fileset>
+            </batchtest>
+
+            <formatter type="xml"/>
+            <classpath refid="test.classpath"/>
+        </junit>
+    </target>
 </project>
