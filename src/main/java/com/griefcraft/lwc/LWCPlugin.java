@@ -23,6 +23,7 @@ import com.griefcraft.listeners.LWCPlayerListener;
 import com.griefcraft.listeners.LWCServerListener;
 import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.ModuleLoader.Event;
+import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.sql.Database;
 import com.griefcraft.util.*;
 import org.bukkit.command.Command;
@@ -258,6 +259,13 @@ public class LWCPlugin extends JavaPlugin {
 
         ///// Dispatch command to modules
         if (lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, args[0].toLowerCase(), args.length > 1 ? StringUtils.join(args, 1).split(" ") : new String[0]) == Result.CANCEL) {
+            return true;
+        }
+
+        LWCCommandEvent evt = new LWCCommandEvent(sender, args[0].toLowerCase(), args.length > 1 ? StringUtils.join(args, 1).split(" ") : new String[0]);
+        lwc.getModuleLoader().dispatchEvent(evt);
+
+        if(evt.isCancelled()) {
             return true;
         }
 

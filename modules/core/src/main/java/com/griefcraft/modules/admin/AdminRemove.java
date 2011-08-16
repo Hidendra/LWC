@@ -20,24 +20,36 @@ package com.griefcraft.modules.admin;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.util.StringUtils;
 import org.bukkit.command.CommandSender;
 
 public class AdminRemove extends JavaModule {
 
     @Override
-    public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
-        if (!StringUtils.hasFlag(command, "a") && !StringUtils.hasFlag(command, "admin")) {
-            return DEFAULT;
+    public void onCommand(LWCCommandEvent event) {
+        if(event.isCancelled()) {
+            return;
         }
 
-        if (!args[0].equals("remove")) {
-            return DEFAULT;
+        if(!event.hasFlag("a", "admin")) {
+            return;
         }
+
+        LWC lwc = event.getLWC();
+        CommandSender sender = event.getSender();
+        String[] args = event.getArgs();
+
+        if(!args[0].equals("remove")) {
+            return;
+        }
+
+        // we have the right command
+        event.setCancelled(true);
 
         if (args.length < 2) {
             lwc.sendSimpleUsage(sender, "/lwc admin remove <id>");
-            return CANCEL;
+            return;
         }
 
         int protectionId;
@@ -46,7 +58,7 @@ public class AdminRemove extends JavaModule {
             protectionId = Integer.parseInt(args[1]);
         } catch (Exception e) {
             lwc.sendLocale(sender, "protection.admin.remove.invalidid");
-            return CANCEL;
+            return;
         }
 
         Protection protection = lwc.getPhysicalDatabase().loadProtection(protectionId);
@@ -58,7 +70,7 @@ public class AdminRemove extends JavaModule {
         lwc.sendLocale(sender, "protection.admin.remove.finalize");
 
 
-        return CANCEL;
+        return;
     }
 
 }

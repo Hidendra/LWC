@@ -16,14 +16,25 @@ import java.util.Map;
 public class AdminDebug extends JavaModule {
 
     @Override
-    public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
-        if (!StringUtils.hasFlag(command, "a") && !StringUtils.hasFlag(command, "admin")) {
-            return DEFAULT;
+    public void onCommand(LWCCommandEvent event) {
+        if(event.isCancelled()) {
+            return;
         }
 
-        if (!args[0].equals("debug")) {
-            return DEFAULT;
+        if(!event.hasFlag("a", "admin")) {
+            return;
         }
+
+        LWC lwc = event.getLWC();
+        CommandSender sender = event.getSender();
+        String[] args = event.getArgs();
+
+        if(!args[0].equals("debug")) {
+            return;
+        }
+
+        // we have the right command
+        event.setCancelled(true);
 
         ModuleLoader moduleLoader = lwc.getModuleLoader();
 
@@ -42,7 +53,7 @@ public class AdminDebug extends JavaModule {
         // send a report
         moduleLoader.dispatchEvent(new LWCCommandEvent(sender, "admin", new String[] { "report" }));
 
-        return CANCEL;
+        return;
     }
 
 }

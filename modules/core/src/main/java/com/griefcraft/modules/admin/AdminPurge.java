@@ -20,23 +20,36 @@ package com.griefcraft.modules.admin;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.util.StringUtils;
 import org.bukkit.command.CommandSender;
 
 public class AdminPurge extends JavaModule {
 
     @Override
-    public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
-        if (!StringUtils.hasFlag(command, "a") && !StringUtils.hasFlag(command, "admin")) {
-            return DEFAULT;
+    public void onCommand(LWCCommandEvent event) {
+        if(event.isCancelled()) {
+            return;
         }
 
-        if (!args[0].equals("purge")) {
-            return DEFAULT;
+        if(!event.hasFlag("a", "admin")) {
+            return;
         }
+
+        LWC lwc = event.getLWC();
+        CommandSender sender = event.getSender();
+        String[] args = event.getArgs();
+
+        if(!args[0].equals("purge")) {
+            return;
+        }
+
+        // we have the right command
+        event.setCancelled(true);
+
         if (args.length < 2) {
             lwc.sendSimpleUsage(sender, "/lwc admin purge <Players>");
-            return CANCEL;
+            return;
         }
 
         boolean shouldRemoveBlocks = args[1].endsWith("remove");
@@ -54,7 +67,7 @@ public class AdminPurge extends JavaModule {
         // reload the cache!
         LWC.getInstance().getPhysicalDatabase().precache();
 
-        return CANCEL;
+        return;
     }
 
 }

@@ -20,6 +20,7 @@ package com.griefcraft.modules.admin;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
 import org.bukkit.World;
@@ -37,14 +38,25 @@ import java.util.List;
 public class AdminCleanup extends JavaModule {
 
     @Override
-    public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
-        if (!StringUtils.hasFlag(command, "a") && !StringUtils.hasFlag(command, "admin")) {
-            return DEFAULT;
+    public void onCommand(LWCCommandEvent event) {
+        if(event.isCancelled()) {
+            return;
         }
 
-        if (!args[0].equals("cleanup")) {
-            return DEFAULT;
+        if(!event.hasFlag("a", "admin")) {
+            return;
         }
+
+        LWC lwc = event.getLWC();
+        CommandSender sender = event.getSender();
+        String[] args = event.getArgs();
+
+        if(!args[0].equals("cleanup")) {
+            return;
+        }
+
+        // we have the right command
+        event.setCancelled(true);
 
         // if we shouldn't output
         boolean silent = false;
@@ -58,7 +70,7 @@ public class AdminCleanup extends JavaModule {
         // do the work in a separate thread so we don't fully lock the server
         // new Thread(new Admin_Cleanup_Thread(lwc, sender)).start();
         new Admin_Cleanup_Thread(lwc, sender, silent).run();
-        return CANCEL;
+        return;
     }
 
     /**
