@@ -22,6 +22,9 @@ import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Action;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCBlockInteractEvent;
+import com.griefcraft.scripting.event.LWCCommandEvent;
+import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
 import org.bukkit.block.Block;
@@ -33,10 +36,19 @@ import java.util.List;
 public class OwnersModule extends JavaModule {
 
     @Override
-    public Result onProtectionInteract(LWC lwc, Player player, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin) {
-        if (!actions.contains("owners")) {
-            return DEFAULT;
+    public void onProtectionInteract(LWCProtectionInteractEvent event) {
+        if(event.getResult() != Result.DEFAULT) {
+            return;
         }
+
+        if (!event.hasAction("owners")) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        Protection protection = event.getProtection();
+        Player player = event.getPlayer();
+        event.setResult(Result.CANCEL);
 
         Action action = lwc.getMemoryDatabase().getAction("owners", player.getName());
         int accessPage = Integer.parseInt(action.getData());
@@ -83,30 +95,47 @@ public class OwnersModule extends JavaModule {
         }
 
         lwc.removeModes(player);
-
-        return DEFAULT;
+        return;
     }
 
     @Override
-    public Result onBlockInteract(LWC lwc, Player player, Block block, List<String> actions) {
-        if (!actions.contains("owners")) {
-            return DEFAULT;
+    public void onBlockInteract(LWCBlockInteractEvent event) {
+        if(event.getResult() != Result.DEFAULT) {
+            return;
         }
+
+        if (!event.hasAction("owners")) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        Player player = event.getPlayer();
+        Block block = event.getBlock();
 
         lwc.sendLocale(player, "protection.interact.error.notregistered", "block", LWC.materialToString(block));
         lwc.removeModes(player);
-        return CANCEL;
+        return;
     }
 
     @Override
-    public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
-        if (!StringUtils.hasFlag(command, "o") && !StringUtils.hasFlag(command, "owner") && !StringUtils.hasFlag(command, "owners")) {
-            return DEFAULT;
+    public void onCommand(LWCCommandEvent event) {
+        if(event.isCancelled()) {
+            return;
         }
+
+        if (!event.hasFlag("o", "owner", "owners")) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        CommandSender sender = event.getSender();
+        String[] args = event.getArgs();
+        
+        event.setCancelled(true);
 
         if (!(sender instanceof Player)) {
             sender.sendMessage(Colors.Red + "Console not supported.");
-            return CANCEL;
+            return;
         }
 
         Player player = (Player) sender;
@@ -117,14 +146,14 @@ public class OwnersModule extends JavaModule {
                 page = Integer.parseInt(args[0]);
             } catch (Exception e) {
                 lwc.sendSimpleUsage(sender, "/lwc -owners [page]");
-                return CANCEL;
+                return;
             }
         }
 
         lwc.getMemoryDatabase().unregisterAllActions(player.getName());
         lwc.getMemoryDatabase().registerAction("owners", player.getName(), page + "");
         lwc.sendLocale(sender, "protection.owners.finalize");
-        return CANCEL;
+        return;
     }
 
 }

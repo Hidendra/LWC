@@ -19,6 +19,8 @@ package com.griefcraft.modules.limits;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCCommandEvent;
+import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.config.Configuration;
@@ -190,7 +192,11 @@ public class LimitsModule extends JavaModule {
     }
 
     @Override
-    public Result onRegisterProtection(LWC lwc, Player player, Block block) {
+    public void onRegisterProtection(LWCProtectionRegisterEvent event) {
+        LWC lwc = event.getLWC();
+        Player player = event.getPlayer();
+        Block block = event.getBlock();
+        
         int limit = mapProtectionLimit(player, block.getTypeId());
 
         /*
@@ -208,22 +214,28 @@ public class LimitsModule extends JavaModule {
 
             if (protections >= limit) {
                 lwc.sendLocale(player, "protection.exceeded");
-                return CANCEL;
+                event.setCancelled(true);
+                return;
             }
         }
 
-        return DEFAULT;
+        return;
     }
 
     @Override
-    public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
-        if (!StringUtils.hasFlag(command, "limits")) {
-            return DEFAULT;
+    public void onCommand(LWCCommandEvent event) {
+        if (!event.hasFlag("limits")) {
+            return;
         }
+
+        LWC lwc = event.getLWC();
+        CommandSender sender = event.getSender();
+        String[] args = event.getArgs();
+        event.setCancelled(true);
 
         if (args.length == 0 && !(sender instanceof Player)) {
             sender.sendMessage(Colors.Red + "Unsupported");
-            return CANCEL;
+            return;
         }
 
         String playerName;
@@ -235,15 +247,14 @@ public class LimitsModule extends JavaModule {
                 playerName = args[0];
             } else {
                 lwc.sendLocale(sender, "protection.accessdenied");
-                return CANCEL;
+                return;
             }
         }
 
         Player player = lwc.getPlugin().getServer().getPlayer(playerName);
 
         if (player == null) {
-            // FIXME
-            return CANCEL;
+            return;
         }
 
         Type type = Type.resolve(resolveValue(player, "type"));
@@ -264,7 +275,7 @@ public class LimitsModule extends JavaModule {
         }
 
         lwc.sendLocale(sender, "protection.limits", "type", StringUtils.capitalizeFirstLetter(type.toString()), "player", playerName, "limit", limitShow, "protected", (currColour + current));
-        return CANCEL;
+        return;
     }
 
 }

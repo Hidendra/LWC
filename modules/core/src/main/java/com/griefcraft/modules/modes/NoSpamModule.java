@@ -19,6 +19,8 @@ package com.griefcraft.modules.modes;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCCommandEvent;
+import com.griefcraft.scripting.event.LWCSendLocaleEvent;
 import com.griefcraft.util.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -28,16 +30,20 @@ import java.util.List;
 public class NoSpamModule extends JavaModule {
 
     @Override
-    public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
-        if (!StringUtils.hasFlag(command, "p") && !StringUtils.hasFlag(command, "mode")) {
-            return DEFAULT;
+    public void onCommand(LWCCommandEvent event) {
+        if (!event.hasFlag("p", "mode")) {
+            return;
         }
+
+        LWC lwc = event.getLWC();
+        CommandSender sender = event.getSender();
+        String[] args = event.getArgs();
 
         Player player = (Player) sender;
         String mode = args[0].toLowerCase();
 
         if(!mode.equals("nospam")) {
-            return DEFAULT;
+            return;
         }
 
         List<String> modes = lwc.getMemoryDatabase().getModes(player.getName());
@@ -50,25 +56,30 @@ public class NoSpamModule extends JavaModule {
             lwc.sendLocale(player, "protection.modes.nospam.off");
         }
 
-
-        return CANCEL;
+        event.setCancelled(true);
+        return;
     }
 
     @Override
-    public Result onSendLocale(LWC lwc, Player player, String locale) {
+    public void onSendLocale(LWCSendLocaleEvent event) {
+        LWC lwc = event.getLWC();
+        Player player = event.getPlayer();
+        String locale = event.getLocale();
+
         List<String> modes = lwc.getMemoryDatabase().getModes(player.getName());
 
         // they don't intrigue us
         if(!modes.contains("nospam")) {
-            return DEFAULT;
+            return;
         }
 
         // hide all of the creation messages
         if(locale.endsWith("create.finalize")) {
-            return CANCEL;
+            return;
         }
 
-        return DEFAULT;
+        event.setCancelled(true);
+        return;
     }
 
 }

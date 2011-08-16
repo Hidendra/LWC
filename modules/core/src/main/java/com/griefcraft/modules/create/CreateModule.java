@@ -24,8 +24,7 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.ModuleLoader.Event;
-import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
-import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
+import com.griefcraft.scripting.event.*;
 import com.griefcraft.sql.MemDB;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
@@ -39,10 +38,18 @@ import java.util.List;
 public class CreateModule extends JavaModule {
 
     @Override
-    public Result onProtectionInteract(LWC lwc, Player player, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin) {
-        if (!actions.contains("create")) {
-            return DEFAULT;
+    public void onProtectionInteract(LWCProtectionInteractEvent event) {
+        if(event.getResult() != Result.DEFAULT) {
+            return;
         }
+
+        if (!event.hasAction("create")) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        Protection protection = event.getProtection();
+        Player player = event.getPlayer();
 
         if (protection.getOwner().equals(player.getName())) {
             lwc.sendLocale(player, "protection.interact.error.alreadyregistered", "block", LWC.materialToString(protection.getBlockId()));
@@ -51,17 +58,26 @@ public class CreateModule extends JavaModule {
         }
 
         lwc.removeModes(player);
-        return CANCEL;
+        event.setResult(Result.CANCEL);
+        return;
     }
 
     @Override
-    public Result onBlockInteract(LWC lwc, Player player, Block block, List<String> actions) {
-        if (!actions.contains("create")) {
-            return DEFAULT;
+    public void onBlockInteract(LWCBlockInteractEvent event) {
+        if(event.getResult() != Result.DEFAULT) {
+            return;
         }
 
+        if (!event.hasAction("create")) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        Block block = event.getBlock();
+        Player player = event.getPlayer();
+
         if (!lwc.isProtectable(block)) {
-            return DEFAULT;
+            return;
         }
 
         PhysDB physDb = lwc.getPhysicalDatabase();
@@ -77,7 +93,8 @@ public class CreateModule extends JavaModule {
         if (!lwc.hasPermission(player, "lwc.create." + protectionType, "lwc.create", "lwc.protect")) {
             lwc.sendLocale(player, "protection.accessdenied");
             lwc.removeModes(player);
-            return CANCEL;
+            event.setResult(Result.CANCEL);
+            return;
         }
 
         // misc data we'll use later
@@ -94,7 +111,7 @@ public class CreateModule extends JavaModule {
 
         // another plugin cancelled the registration
         if (evt.isCancelled() || registerProtection == Result.CANCEL) {
-            return ALLOW;
+            return;
         }
 
         // The created protection
@@ -182,22 +199,31 @@ public class CreateModule extends JavaModule {
             lwc.getModuleLoader().dispatchEvent(new LWCProtectionRegistrationPostEvent(protection));
         }
 
-        return CANCEL;
+        event.setResult(Result.CANCEL);
+        return;
     }
 
     @Override
-    public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
-        if (!StringUtils.hasFlag(command, "c") && !StringUtils.hasFlag(command, "create")) {
-            return DEFAULT;
+    public void onCommand(LWCCommandEvent event) {
+        if(event.isCancelled()) {
+            return;
         }
 
+        if (!event.hasFlag("c", "create")) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        CommandSender sender = event.getSender();
+        String[] args = event.getArgs();
+
         if (!(sender instanceof Player)) {
-            return DEFAULT;
+            return;
         }
 
         if (args.length == 0) {
             lwc.sendLocale(sender, "help.creation");
-            return DEFAULT;
+            return;
         }
 
         Player player = (Player) sender;
@@ -205,36 +231,37 @@ public class CreateModule extends JavaModule {
         String full = StringUtils.join(args, 0);
         String type = args[0].toLowerCase();
         String data = StringUtils.join(args, 1);
+        event.setCancelled(true);
 
         /**
          * Allow individual enforcements with e.g lwc.create.private, or just the umbrella lwc.create for all
          */
         if (!lwc.hasPermission(sender, "lwc.create." + type, "lwc.create", "lwc.protect")) {
             lwc.sendLocale(sender, "protection.accessdenied");
-            return CANCEL;
+            return;
         }
 
         if (type.equals("trap")) {
             if (!lwc.isAdmin(player)) {
                 lwc.sendLocale(player, "protection.accessdenied");
-                return CANCEL;
+                return;
             }
 
             if (args.length < 2) {
                 lwc.sendSimpleUsage(player, "/lwc -c trap <kick/ban> [reason]");
-                return CANCEL;
+                return;
             }
         } else if (type.equals("password")) {
             if (args.length < 2) {
                 lwc.sendSimpleUsage(player, "/lwc -c password <Password>");
-                return CANCEL;
+                return;
             }
 
             String hiddenPass = StringUtils.transform(data, '*');
             lwc.sendLocale(player, "protection.create.password", "password", hiddenPass);
         } else if (!type.equals("public") && !type.equals("private")) {
             lwc.sendLocale(player, "help.creation");
-            return CANCEL;
+            return;
         }
 
         MemDB db = lwc.getMemoryDatabase();
@@ -242,7 +269,7 @@ public class CreateModule extends JavaModule {
         db.registerAction("create", player.getName(), full);
 
         lwc.sendLocale(player, "protection.create.finalize", "type", lwc.getLocale(type));
-        return CANCEL;
+        return;
     }
 
 }

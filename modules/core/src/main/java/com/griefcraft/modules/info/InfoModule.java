@@ -20,6 +20,9 @@ package com.griefcraft.modules.info;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCBlockInteractEvent;
+import com.griefcraft.scripting.event.LWCCommandEvent;
+import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.util.StringUtils;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -30,45 +33,73 @@ import java.util.List;
 public class InfoModule extends JavaModule {
 
     @Override
-    public Result onProtectionInteract(LWC lwc, Player player, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin) {
-        if (!actions.contains("info")) {
-            return DEFAULT;
+    public void onProtectionInteract(LWCProtectionInteractEvent event) {
+        if(event.getResult() != Result.DEFAULT) {
+            return;
         }
 
-        lwc.sendLocale(player, "protection.interact.info.finalize", "type", lwc.getLocale(protection.typeToString().toLowerCase()), "owner", protection.getOwner(), "access", lwc.getLocale((canAccess ? "yes" : "no")));
+        if (!event.hasAction("info")) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        Protection protection = event.getProtection();
+        Player player = event.getPlayer();
+        event.setResult(Result.CANCEL);
+
+        lwc.sendLocale(player, "protection.interact.info.finalize", "type", lwc.getLocale(protection.typeToString().toLowerCase()), "owner", protection.getOwner(), "access", lwc.getLocale((event.canAccess() ? "yes" : "no")));
 
         if (lwc.isAdmin(player)) {
             lwc.sendLocale(player, "protection.interact.info.raw", "raw", protection.toString());
         }
 
         lwc.removeModes(player);
-        return CANCEL;
+        return;
     }
 
     @Override
-    public Result onBlockInteract(LWC lwc, Player player, Block block, List<String> actions) {
-        if (!actions.contains("info")) {
-            return DEFAULT;
+    public void onBlockInteract(LWCBlockInteractEvent event) {
+        if(event.getResult() != Result.DEFAULT) {
+            return;
         }
+
+        if (!event.hasAction("info")) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        Block block = event.getBlock();
+        Player player = event.getPlayer();
+        event.setResult(Result.CANCEL);
 
         lwc.sendLocale(player, "protection.interact.error.notregistered", "block", LWC.materialToString(block));
         lwc.removeModes(player);
-        return CANCEL;
+        return;
     }
 
     @Override
-    public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
-        if (!StringUtils.hasFlag(command, "i") && !StringUtils.hasFlag(command, "info")) {
-            return DEFAULT;
+    public void onCommand(LWCCommandEvent event) {
+        if(event.isCancelled()) {
+            return;
         }
+
+        if (!event.hasFlag("i", "info")) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        CommandSender sender = event.getSender();
+        String[] args = event.getArgs();
+
+        if (!(sender instanceof Player)) {
+            return;
+        }
+
+        event.setCancelled(true);
 
         if (!lwc.hasPlayerPermission(sender, "lwc.info")) {
             lwc.sendLocale(sender, "protection.accessdenied");
-            return CANCEL;
-        }
-
-        if (!(sender instanceof Player)) {
-            return DEFAULT;
+            return;
         }
 
         Player player = (Player) sender;
@@ -84,7 +115,7 @@ public class InfoModule extends JavaModule {
             lwc.sendLocale(player, "protection.info.finalize");
         }
 
-        return CANCEL;
+        return;
     }
 
 }

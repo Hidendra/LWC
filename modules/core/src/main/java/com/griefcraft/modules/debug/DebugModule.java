@@ -5,6 +5,7 @@ import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.Protection.Flag;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
 import org.bukkit.command.CommandSender;
@@ -45,15 +46,24 @@ public class DebugModule extends JavaModule {
 		no = lwc.getLocale("no");
 	}
 
-	@Override
-	public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
-		if(!StringUtils.hasFlag(command, "debug")) {
-			return DEFAULT;
-		}
+    @Override
+    public void onCommand(LWCCommandEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+
+        if (!event.hasFlag("debug")) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        CommandSender sender = event.getSender();
+        String[] args = event.getArgs();
+        event.setCancelled(true);
 
 		if(!(sender instanceof Player)) {
 			sender.sendMessage("This command is only usable by real players :-)");
-			return CANCEL;
+			return;
 		}
 
 		Player player = (Player) sender;
@@ -85,7 +95,7 @@ public class DebugModule extends JavaModule {
 		doPermission(player, "lwc.admin");
 
 
-		return CANCEL;
+		return;
 	}
 
 	/**

@@ -19,6 +19,7 @@ package com.griefcraft.modules.modes;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.util.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,19 +28,25 @@ import java.util.List;
 
 public class BaseModeModule extends JavaModule {
 
-        @Override
-    public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
-        if (!StringUtils.hasFlag(command, "p") && !StringUtils.hasFlag(command, "mode")) {
-            return DEFAULT;
+    @Override
+    public void onCommand(LWCCommandEvent event) {
+        if (!event.hasFlag("p", "mode")) {
+            return;
         }
+
+        LWC lwc = event.getLWC();
+        CommandSender sender = event.getSender();
+        String[] args = event.getArgs();
+
+        event.setCancelled(true);
 
         if (args.length == 0) {
             lwc.sendSimpleUsage(sender, "/lwc mode <mode>");
-            return CANCEL;
+            return;
         }
 
         if(!(sender instanceof Player)) {
-            return CANCEL;
+            return;
         }
 
         String mode = args[0].toLowerCase();
@@ -48,11 +55,12 @@ public class BaseModeModule extends JavaModule {
         if (!lwc.isModeWhitelisted(player, mode)) {
             if (!lwc.isAdmin(sender) && !lwc.isModeEnabled(mode)) {
                 lwc.sendLocale(player, "protection.modes.disabled");
-                return CANCEL;
+                return;
             }
         }
 
-        return DEFAULT;
+        event.setCancelled(false);
+        return;
     }
 
 }

@@ -20,6 +20,7 @@ package com.griefcraft.modules.doors;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.util.config.Configuration;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -185,14 +186,18 @@ public class DoorsModule extends JavaModule {
 	}
 
 	@Override
-	public Result onProtectionInteract(LWC lwc, Player player, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin) {
+	public void onProtectionInteract(LWCProtectionInteractEvent event) {
 		if(!enabled || action == Action.NULL) {
-			return DEFAULT;
+			return;
 		}
 		
-		if(!canAccess) {
-			return DEFAULT;
+		if(!event.canAccess()) {
+			return;
 		}
+
+        LWC lwc = event.getLWC();
+        Protection protection = event.getProtection();
+        Player player = event.getPlayer();
 
 		// get the blocks for the door
 		List<Block> blocks = lwc.getProtectionSet(protection.getBukkitWorld(), protection.getX(), protection.getY(), protection.getZ());
@@ -288,7 +293,7 @@ public class DoorsModule extends JavaModule {
 			block.setData(data);
 		}
 
-		return DEFAULT;
+		return;
 	}
 
 }

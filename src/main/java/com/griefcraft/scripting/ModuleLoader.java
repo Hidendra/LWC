@@ -149,8 +149,6 @@ public class ModuleLoader {
         if(event == null) {
             return;
         }
-
-        LWC lwc = LWC.getInstance();
         
         try {
             for(List<MetaData> modules : pluginModules.values()) {

@@ -13,7 +13,7 @@ public class LWCProtectionInteractEvent extends LWCProtectionEvent implements IR
 
     private PlayerInteractEvent event;
     private List<String> actions;
-    private Module.Result result;
+    private Module.Result result = Module.Result.DEFAULT;
 
     public LWCProtectionInteractEvent(PlayerInteractEvent event, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin) {
         super(ModuleLoader.Event.INTERACT_PROTECTION, event.getPlayer(), protection, canAccess, canAdmin);
