@@ -5,11 +5,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.player.PlayerDropItemEvent;
 
-public class LWCDropEvent extends LWCPlayerEvent implements Cancellable {
+public class LWCDropItemEvent extends LWCPlayerEvent implements Cancellable {
 
     private PlayerDropItemEvent dropItemEvent;
 
-    public LWCDropEvent(Player player, PlayerDropItemEvent dropItemEvent) {
+    public LWCDropItemEvent(Player player, PlayerDropItemEvent dropItemEvent) {
         super(ModuleLoader.Event.DROP_ITEM, player);
 
         this.dropItemEvent = dropItemEvent;

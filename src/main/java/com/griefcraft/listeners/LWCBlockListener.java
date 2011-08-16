@@ -23,6 +23,9 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.ModuleLoader.Event;
+import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
+import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
+import com.griefcraft.scripting.event.LWCRedstoneEvent;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -60,8 +63,10 @@ public class LWCBlockListener extends BlockListener {
         }
 
         Result result = lwc.getModuleLoader().dispatchEvent(Event.REDSTONE, protection, block, event.getOldCurrent());
+        LWCRedstoneEvent evt = new LWCRedstoneEvent(event, protection);
+        lwc.getModuleLoader().dispatchEvent(evt);
 
-        if (result == Result.CANCEL) {
+        if (evt.isCancelled() || result == Result.CANCEL) {
             event.setNewCurrent(event.getOldCurrent());
         }
     }
@@ -124,8 +129,10 @@ public class LWCBlockListener extends BlockListener {
         boolean canAdmin = lwc.canAdminProtection(player, protection);
 
         Result result = lwc.getModuleLoader().dispatchEvent(Event.DESTROY_PROTECTION, player, protection, block, canAccess, canAdmin);
+        LWCProtectionDestroyEvent evt = new LWCProtectionDestroyEvent(player, protection, canAccess, canAdmin);
+        lwc.getModuleLoader().dispatchEvent(evt);
 
-        if (result == Result.CANCEL) {
+        if (evt.isCancelled() || result == Result.CANCEL) {
             event.setCancelled(true);
         }
     }
@@ -195,9 +202,11 @@ public class LWCBlockListener extends BlockListener {
         }
         
         Result registerProtection = lwc.getModuleLoader().dispatchEvent(Event.REGISTER_PROTECTION, player, block);
+        LWCProtectionRegisterEvent evt = new LWCProtectionRegisterEvent(player, block);
+        lwc.getModuleLoader().dispatchEvent(evt);
 
         // something cancelled registration
-        if (registerProtection == Result.CANCEL) {
+        if (evt.isCancelled() || registerProtection == Result.CANCEL) {
             return;
         }
 

@@ -20,7 +20,6 @@ package com.griefcraft.scripting;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
-import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.event.*;
@@ -31,7 +30,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import javax.imageio.spi.RegisterableService;
 import javax.naming.OperationNotSupportedException;
 import java.util.*;
 import java.util.logging.Logger;
@@ -165,8 +163,8 @@ public class ModuleLoader {
                         module.onBlockInteract((LWCBlockInteractEvent) event);
                     } else if(event instanceof LWCCommandEvent) {
                         module.onCommand((LWCCommandEvent) event);
-                    } else if(event instanceof LWCDropEvent) {
-                        module.onDropItem((LWCDropEvent) event);
+                    } else if(event instanceof LWCDropItemEvent) {
+                        module.onDropItem((LWCDropItemEvent) event);
                     } else if(event instanceof LWCProtectionDestroyEvent) {
                         module.onDestroyProtection((LWCProtectionDestroyEvent) event);
                     } else if(event instanceof LWCProtectionInteractEvent) {
@@ -175,8 +173,8 @@ public class ModuleLoader {
                         module.onRegisterProtection((LWCProtectionRegisterEvent) event);
                     } else if(event instanceof LWCProtectionRemovePostEvent) {
                         module.onPostRemoval((LWCProtectionRemovePostEvent) event);
-                    } else if(event instanceof LWCRegistrationPostEvent) {
-                        module.onPostRegistration((LWCRegistrationPostEvent) event);
+                    } else if(event instanceof LWCProtectionRegistrationPostEvent) {
+                        module.onPostRegistration((LWCProtectionRegistrationPostEvent) event);
                     } else if(event instanceof LWCSendLocaleEvent) {
                         module.onSendLocale((LWCSendLocaleEvent) event);
                     }

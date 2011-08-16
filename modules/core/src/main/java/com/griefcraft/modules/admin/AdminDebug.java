@@ -4,6 +4,7 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.MetaData;
 import com.griefcraft.scripting.ModuleLoader;
+import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
 import org.bukkit.command.CommandSender;
@@ -39,7 +40,7 @@ public class AdminDebug extends JavaModule {
 
         sender.sendMessage(" ");
         // send a report
-        moduleLoader.dispatchEvent(ModuleLoader.Event.COMMAND, sender, "admin", new String[]{"report"});
+        moduleLoader.dispatchEvent(new LWCCommandEvent(sender, "admin", new String[] { "report" }));
 
         return CANCEL;
     }
