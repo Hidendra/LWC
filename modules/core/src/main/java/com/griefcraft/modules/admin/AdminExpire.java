@@ -20,6 +20,7 @@ package com.griefcraft.modules.admin;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
@@ -40,18 +41,29 @@ import java.util.List;
 public class AdminExpire extends JavaModule {
 
     @Override
-    public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
-        if (!StringUtils.hasFlag(command, "a") && !StringUtils.hasFlag(command, "admin")) {
-            return DEFAULT;
+    public void onCommand(LWCCommandEvent event) {
+        if(event.isCancelled()) {
+            return;
         }
 
-        if (!args[0].equals("expire")) {
-            return DEFAULT;
+        if(!event.hasFlag("a", "admin")) {
+            return;
         }
+
+        LWC lwc = event.getLWC();
+        CommandSender sender = event.getSender();
+        String[] args = event.getArgs();
+
+        if(!args[0].equals("expire")) {
+            return;
+        }
+
+        // we have the right command
+        event.setCancelled(true);
 
         if (args.length < 2) {
             lwc.sendSimpleUsage(sender, "/lwc admin expire <time>");
-            return CANCEL;
+            return;
         }
 
         boolean shouldRemoveBlocks = args[1].endsWith("remove");
@@ -60,7 +72,7 @@ public class AdminExpire extends JavaModule {
 
         if (time == 0L) {
             lwc.sendLocale(sender, "protection.admin.expire.invalidtime");
-            return CANCEL;
+            return;
         }
 
         int threshold = (int) ((System.currentTimeMillis() / 1000L) - time);
@@ -76,7 +88,7 @@ public class AdminExpire extends JavaModule {
 
         lwc.sendLocale(sender, "protection.admin.expire.removed", "count", count);
 
-        return CANCEL;
+        return;
     }
 
 }

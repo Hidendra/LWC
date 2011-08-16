@@ -20,6 +20,7 @@ package com.griefcraft.modules.admin;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.util.StringUtils;
 import net.minecraft.server.EntityHuman;
 import org.bukkit.World;
@@ -33,18 +34,29 @@ import org.bukkit.entity.Player;
 public class AdminView extends JavaModule {
 
     @Override
-    public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
-        if (!StringUtils.hasFlag(command, "a") && !StringUtils.hasFlag(command, "admin")) {
-            return DEFAULT;
+    public void onCommand(LWCCommandEvent event) {
+        if(event.isCancelled()) {
+            return;
         }
 
-        if (!args[0].equals("view")) {
-            return DEFAULT;
+        if(!event.hasFlag("a", "admin")) {
+            return;
         }
+
+        LWC lwc = event.getLWC();
+        CommandSender sender = event.getSender();
+        String[] args = event.getArgs();
+
+        if(!args[0].equals("view")) {
+            return;
+        }
+
+        // we have the right command
+        event.setCancelled(true);
 
         if (!(sender instanceof Player)) {
             lwc.sendLocale(sender, "protection.admin.noconsole");
-            return CANCEL;
+            return;
         }
 
         Player player = (Player) sender;
@@ -52,7 +64,7 @@ public class AdminView extends JavaModule {
 
         if (args.length < 2) {
             lwc.sendSimpleUsage(sender, "/lwc admin view <id>");
-            return CANCEL;
+            return;
         }
 
         int protectionId = Integer.parseInt(args[1]);
@@ -60,14 +72,14 @@ public class AdminView extends JavaModule {
 
         if (protection == null) {
             lwc.sendLocale(sender, "protection.admin.view.noexist");
-            return CANCEL;
+            return;
         }
 
         Block block = world.getBlockAt(protection.getX(), protection.getY(), protection.getZ());
 
         if (!(block.getState() instanceof ContainerBlock)) {
             lwc.sendLocale(sender, "protection.admin.view.noinventory");
-            return CANCEL;
+            return;
         }
 
         net.minecraft.server.World handle = ((CraftWorld) block.getWorld()).getHandle();
@@ -91,7 +103,7 @@ public class AdminView extends JavaModule {
         }
 
         lwc.sendLocale(sender, "protection.admin.view.viewing", "id", protectionId);
-        return CANCEL;
+        return;
     }
 
 }

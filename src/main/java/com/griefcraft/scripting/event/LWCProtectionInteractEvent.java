@@ -22,6 +22,16 @@ public class LWCProtectionInteractEvent extends LWCProtectionEvent implements IR
         this.actions = actions;
     }
 
+    /**
+     * Check if the player's actions contains the action
+     *
+     * @param action
+     * @return
+     */
+    public boolean hasAction(String action) {
+        return actions.contains(action);
+    }
+
     public PlayerInteractEvent getEvent() {
         return event;
     }

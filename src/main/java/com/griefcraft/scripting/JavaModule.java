@@ -92,50 +92,62 @@ public abstract class JavaModule implements Module {
         
     }
 
+    @Deprecated
     public Result canAccessProtection(LWC lwc, Player player, Protection protection) {
         return DEFAULT;
     }
 
+    @Deprecated
     public Result canAdminProtection(LWC lwc, Player player, Protection protection) {
         return DEFAULT;
     }
 
+    @Deprecated
     public Result onDropItem(LWC lwc, Player player, Item item, ItemStack itemStack) {
         return DEFAULT;
     }
 
+    @Deprecated
     public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
         return DEFAULT;
     }
 
+    @Deprecated
     public Result onRedstone(LWC lwc, Protection protection, Block block, int current) {
         return DEFAULT;
     }
 
+    @Deprecated
     public Result onDestroyProtection(LWC lwc, Player player, Protection protection, Block block, boolean canAccess, boolean canAdmin) {
         return DEFAULT;
     }
 
+    @Deprecated
     public Result onProtectionInteract(LWC lwc, Player player, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin) {
         return DEFAULT;
     }
 
+    @Deprecated
     public Result onBlockInteract(LWC lwc, Player player, Block block, List<String> actions) {
         return DEFAULT;
     }
 
+    @Deprecated
     public Result onRegisterProtection(LWC lwc, Player player, Block block) {
         return DEFAULT;
     }
 
+    @Deprecated
     public void onPostRegistration(LWC lwc, Protection protection) {
     	
     }
 
+    @Deprecated
     public void onPostRemoval(LWC lwc, Protection protection) {
         
     }
 
+    @Deprecated
     public Result onSendLocale(LWC lwc, Player player, String locale) {
         return DEFAULT;
     }
