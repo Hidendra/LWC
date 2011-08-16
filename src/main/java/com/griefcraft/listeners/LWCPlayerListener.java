@@ -176,6 +176,7 @@ public class LWCPlayerListener extends PlayerListener {
             event.setCancelled(true);
             event.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
             lwc.sendLocale(player, "protection.internalerror", "id", "PLAYER_INTERACT");
+            e.printStackTrace();
         }
     }
 
