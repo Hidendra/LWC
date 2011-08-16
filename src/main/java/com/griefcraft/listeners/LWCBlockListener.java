@@ -139,6 +139,7 @@ public class LWCBlockListener extends BlockListener {
         } catch(Exception e) {
             event.setCancelled(true);
             lwc.sendLocale(player, "protection.internalerror", "id", "BLOCK_BREAK");
+            e.printStackTrace();
         }
     }
 
@@ -221,6 +222,7 @@ public class LWCBlockListener extends BlockListener {
             lwc.sendLocale(player, "protection.onplace.create.finalize", "type", lwc.getLocale(autoRegisterType.toLowerCase()), "block", LWC.materialToString(block));
         } catch(Exception e) {
             lwc.sendLocale(player, "protection.internalerror", "id", "PLAYER_INTERACT");
+            e.printStackTrace();
         }
     }
 
