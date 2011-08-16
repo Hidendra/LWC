@@ -4,18 +4,25 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.ModuleLoader;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.List;
 
 public class LWCProtectionInteractEvent extends LWCProtectionEvent implements Cancellable {
 
+    private PlayerInteractEvent event;
     private List<String> actions;
     private boolean cancelled;
 
-    public LWCProtectionInteractEvent(Player player, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin) {
-        super(ModuleLoader.Event.INTERACT_PROTECTION, player, protection, canAccess, canAdmin);
+    public LWCProtectionInteractEvent(PlayerInteractEvent event, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin) {
+        super(ModuleLoader.Event.INTERACT_PROTECTION, event.getPlayer(), protection, canAccess, canAdmin);
 
+        this.event = event;
         this.actions = actions;
+    }
+
+    public PlayerInteractEvent getEvent() {
+        return event;
     }
 
     public List<String> getActions() {
