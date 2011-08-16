@@ -9,12 +9,3 @@ bin
 .project
 *.txt
 *.bat
-
-lib/CraftBukkit.jar
-lib/iConomy.jar
-lib/Lists.jar
-lib/mcbans.jar
-lib/Permissions.jar
-lib/WorldEdit.jar
-lib/WorldGuard.jar
-lib/junit.jar
