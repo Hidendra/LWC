@@ -42,8 +42,8 @@ public class OwnersModule extends JavaModule {
         int accessPage = Integer.parseInt(action.getData());
 
         /*
-           * Calculate range
-           */
+         * Calculate range
+         */
         int start = (accessPage - 1) * AccessRight.RESULTS_PER_PAGE;
         int max = start + AccessRight.RESULTS_PER_PAGE;
 
@@ -51,8 +51,8 @@ public class OwnersModule extends JavaModule {
         int numRights = lwc.getPhysicalDatabase().countRightsForProtection(protection.getId());
 
         /*
-           * May have only been 2 rows left, or something. Get the real max
-           */
+         * May have only been 2 rows left, or something. Get the real max
+         */
         int realMax = start + accessRights.size();
 
         player.sendMessage("");
@@ -81,6 +81,8 @@ public class OwnersModule extends JavaModule {
 
             player.sendMessage(builder.toString());
         }
+
+        lwc.removeModes(player);
 
         return DEFAULT;
     }
