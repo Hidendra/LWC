@@ -3,26 +3,27 @@ package com.griefcraft.scripting.event;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.ModuleLoader;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.block.BlockRedstoneEvent;
 
 public class LWCRedstoneEvent extends LWCEvent implements Cancellable {
 
+    private BlockRedstoneEvent event;
     private Protection protection;
-    private int current;
     private boolean cancelled;
 
-    public LWCRedstoneEvent(Protection protection, int current) {
+    public LWCRedstoneEvent(BlockRedstoneEvent event, Protection protection) {
         super(ModuleLoader.Event.REDSTONE);
 
+        this.event = event;
         this.protection = protection;
-        this.current = current;
+    }
+
+    public BlockRedstoneEvent getEvent() {
+        return event;
     }
 
     public Protection getProtection() {
         return protection;
-    }
-
-    public int getCurrent() {
-        return current;
     }
 
     public boolean isCancelled() {

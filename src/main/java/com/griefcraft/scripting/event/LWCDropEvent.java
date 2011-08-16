@@ -8,7 +8,6 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 public class LWCDropEvent extends LWCPlayerEvent implements Cancellable {
 
     private PlayerDropItemEvent dropItemEvent;
-    private boolean cancelled;
 
     public LWCDropEvent(Player player, PlayerDropItemEvent dropItemEvent) {
         super(ModuleLoader.Event.DROP_ITEM, player);
@@ -20,12 +19,22 @@ public class LWCDropEvent extends LWCPlayerEvent implements Cancellable {
         return dropItemEvent;
     }
 
+    /**
+     * Acts as a proxy for dropItemEvent.isCancelled()
+     *
+     * @return
+     */
     public boolean isCancelled() {
-        return cancelled;
+        return dropItemEvent.isCancelled();
     }
 
+    /**
+     * Acts as a proxy for dropItemEvent.setCancelled(bool)
+     *
+     * @param cancelled
+     */
     public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
+        dropItemEvent.setCancelled(cancelled);
     }
 
 }
