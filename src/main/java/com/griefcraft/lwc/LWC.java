@@ -893,7 +893,6 @@ public class LWC {
      */
     public boolean hasAdminPermission(CommandSender sender, String node) {
         return isAdmin(sender) || permissions.isActive() && hasPermission(sender, node, "lwc.admin");
-
     }
 
     /**

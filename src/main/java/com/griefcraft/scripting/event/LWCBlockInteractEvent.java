@@ -24,6 +24,16 @@ public class LWCBlockInteractEvent extends LWCPlayerEvent implements IResult {
         this.actions = actions;
     }
 
+    /**
+     * Check if the player's actions contains the action
+     *
+     * @param action
+     * @return
+     */
+    public boolean hasAction(String action) {
+        return actions.contains(action);
+    }
+
     public Block getBlock() {
         return block;
     }

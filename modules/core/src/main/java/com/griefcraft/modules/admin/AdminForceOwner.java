@@ -21,6 +21,9 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Action;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCBlockInteractEvent;
+import com.griefcraft.scripting.event.LWCCommandEvent;
+import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.util.StringUtils;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -31,10 +34,18 @@ import java.util.List;
 public class AdminForceOwner extends JavaModule {
 
     @Override
-    public Result onProtectionInteract(LWC lwc, Player player, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin) {
-        if (!actions.contains("forceowner")) {
-            return DEFAULT;
+    public void onProtectionInteract(LWCProtectionInteractEvent event) {
+        if(event.getResult() != Result.DEFAULT) {
+            return;
         }
+
+        if (!event.hasAction("forceowner")) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        Protection protection = event.getProtection();
+        Player player = event.getPlayer();
 
         Action action = lwc.getMemoryDatabase().getAction("forceowner", player.getName());
         String newOwner = action.getData();
@@ -44,39 +55,59 @@ public class AdminForceOwner extends JavaModule {
 
         lwc.sendLocale(player, "protection.interact.forceowner.finalize", "player", newOwner);
         lwc.removeModes(player);
+        event.setResult(Result.CANCEL);
 
-        return DEFAULT;
+        return;
     }
 
     @Override
-    public Result onBlockInteract(LWC lwc, Player player, Block block, List<String> actions) {
-        if (!actions.contains("forceowner")) {
-            return DEFAULT;
+    public void onBlockInteract(LWCBlockInteractEvent event) {
+        if(event.getResult() != Result.DEFAULT) {
+            return;
         }
 
-        lwc.sendLocale(player, "protection.interact.error.notregistered", "block", LWC.materialToString(block));
+        if (!event.hasAction("forceowner")) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        Player player = event.getPlayer();
+
+        lwc.sendLocale(player, "protection.interact.error.notregistered", "block", LWC.materialToString(event.getBlock()));
         lwc.removeModes(player);
-        return CANCEL;
+        event.setResult(Result.CANCEL);
+        return;
     }
 
     @Override
-    public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args) {
-        if (!StringUtils.hasFlag(command, "a") && !StringUtils.hasFlag(command, "admin")) {
-            return DEFAULT;
+    public void onCommand(LWCCommandEvent event) {
+        if(event.isCancelled()) {
+            return;
         }
 
-        if (!args[0].equals("forceowner")) {
-            return DEFAULT;
+        if(!event.hasFlag("a", "admin")) {
+            return;
         }
+
+        LWC lwc = event.getLWC();
+        CommandSender sender = event.getSender();
+        String[] args = event.getArgs();
+
+        if(!args[0].equals("forceowner")) {
+            return;
+        }
+
+        // we have the right command
+        event.setCancelled(true);
 
         if (args.length < 2) {
             lwc.sendSimpleUsage(sender, "/lwc admin forceowner <player>");
-            return CANCEL;
+            return;
         }
 
         if (!(sender instanceof Player)) {
             lwc.sendLocale(sender, "protection.admin.noconsole");
-            return CANCEL;
+            return;
         }
 
         Player player = (Player) sender;
@@ -85,7 +116,7 @@ public class AdminForceOwner extends JavaModule {
         lwc.getMemoryDatabase().registerAction("forceowner", player.getName(), newOwner);
         lwc.sendLocale(sender, "protection.admin.forceowner.finalize", "player", newOwner);
 
-        return CANCEL;
+        return;
     }
 
 }
