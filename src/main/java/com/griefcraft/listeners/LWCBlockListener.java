@@ -32,6 +32,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.*;
 
+import java.util.List;
+
 public class LWCBlockListener extends BlockListener {
 
     /**
@@ -140,6 +142,22 @@ public class LWCBlockListener extends BlockListener {
             event.setCancelled(true);
             lwc.sendLocale(player, "protection.internalerror", "id", "BLOCK_BREAK");
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onBlockPistonExtend(BlockPistonExtendEvent event) {
+        if (!LWC.ENABLED) {
+            return;
+        }
+
+        LWC lwc = plugin.getLWC();
+        Block block = event.getBlock().getRelative(event.getDirection());
+
+        Protection protection = lwc.findProtection(block);
+
+        if (protection != null) {
+            event.setCancelled(true);
         }
     }
 

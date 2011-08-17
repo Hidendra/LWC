@@ -406,6 +406,7 @@ public class LWCPlugin extends JavaPlugin {
         registerEvent(blockListener, Type.BLOCK_PLACE);
         registerEvent(blockListener, Type.REDSTONE_CHANGE);
         registerEvent(blockListener, Type.SIGN_CHANGE);
+        registerEvent(blockListener, Type.BLOCK_PISTON_EXTEND);
 
         /* Server events */
         registerEvent(serverListener, Type.PLUGIN_DISABLE);
