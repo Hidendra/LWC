@@ -8,7 +8,7 @@ core:
     showMyNotices: false
     verbose: false
     opIsLWCAdmin: true
-    ignoreExplosions: false
+    
     # If you're having an issue where chest locks randomly stop working, and if you type '/lwc -o' and hit
     # one of these "not workin" chests and see something like 'That Air is not registered!', you may be
     # experiencing bukkit bug #656: http://leaky.bukkit.org/issues/656
@@ -19,9 +19,9 @@ core:
 
 database:
     adapter: sqlite
-    path: plugins/LWC/lwc.db
-    host: localhost
-    database: lwc
+    path: 'plugins/LWC/lwc.db'
+    host: 'localhost'
+    database: 'lwc'
     username: ''
     password: ''
     prefix: 'lwc_'
