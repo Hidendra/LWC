@@ -87,6 +87,41 @@ public class LimitsModule extends JavaModule {
     }
 
     /**
+     * Check if a player has reached their protection limit for a specific block type
+     *
+     * @param player
+     * @param block
+     * @return true if the player reached their limit
+     */
+    public boolean hasReachedLimit(Player player, Block block) {
+        LWC lwc = LWC.getInstance();
+        int limit = mapProtectionLimit(player, block.getTypeId());
+
+        // if they're limit is unlimited, how could they get above it? :)
+        if (limit == UNLIMITED) {
+            return true;
+        }
+
+        Type type = Type.resolve(resolveValue(player, "type"));
+        int protections; // 0 = *
+
+        switch (type) {
+            case CUSTOM:
+                protections = lwc.getPhysicalDatabase().getProtectionCount(player.getName(), block.getTypeId());
+                break;
+
+            case DEFAULT:
+                protections = lwc.getPhysicalDatabase().getProtectionCount(player.getName());
+                break;
+
+            default:
+                throw new UnsupportedOperationException("Limit type " + type.toString() + " is undefined in LimitsModule::hasReachedLimit");
+        }
+
+        return protections >= limit;
+    }
+
+    /**
      * Get the protection limits for a player
      *
      * @param player
@@ -196,27 +231,10 @@ public class LimitsModule extends JavaModule {
         LWC lwc = event.getLWC();
         Player player = event.getPlayer();
         Block block = event.getBlock();
-        
-        int limit = mapProtectionLimit(player, block.getTypeId());
 
-        /*
-           * Alert the player if they're above or at the limit
-           */
-        if (limit != UNLIMITED) {
-            Type type = Type.resolve(resolveValue(player, "type"));
-            int protections; // 0 = *
-
-            if (type == Type.CUSTOM) {
-                protections = lwc.getPhysicalDatabase().getProtectionCount(player.getName(), block.getTypeId());
-            } else { // Default
-                protections = lwc.getPhysicalDatabase().getProtectionCount(player.getName());
-            }
-
-            if (protections >= limit) {
-                lwc.sendLocale(player, "protection.exceeded");
-                event.setCancelled(true);
-                return;
-            }
+        if (hasReachedLimit(player, block)) {
+            lwc.sendLocale(player, "protection.exceeded");
+            event.setCancelled(true);
         }
 
         return;

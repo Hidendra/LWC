@@ -159,6 +159,10 @@ public class EconomyModule extends JavaModule {
 
     @Override
     public void onRegisterProtection(LWCProtectionRegisterEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+
         if (!configuration.getBoolean("iConomy.enabled", true)) {
             return;
         }
