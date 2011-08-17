@@ -48,13 +48,10 @@ protections:
             autoRegister: private
         wooden_door:
             enabled: true
-            autoRegister: off
         iron_door:
             enabled: true
-            autoRegister: off
         trap_door:
             enabled: true
-            autoRegister: off
 
 modes:
     droptransfer:
