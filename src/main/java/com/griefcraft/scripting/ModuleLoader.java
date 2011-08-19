@@ -20,7 +20,6 @@ package com.griefcraft.scripting;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
-import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.event.*;
@@ -138,7 +137,6 @@ public class ModuleLoader {
     /**
      * Map of loaded modules
      */
-    // private Map<String, Map<String, MetaData>> packageModules = new HashMap<String, Map<String, MetaData>>();
     private final Map<Plugin, List<MetaData>> pluginModules = new LinkedHashMap<Plugin, List<MetaData>>();
 
     public ModuleLoader() {
