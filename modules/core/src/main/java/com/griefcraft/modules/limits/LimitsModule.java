@@ -99,7 +99,7 @@ public class LimitsModule extends JavaModule {
 
         // if they're limit is unlimited, how could they get above it? :)
         if (limit == UNLIMITED) {
-            return true;
+            return false;
         }
 
         Type type = Type.resolve(resolveValue(player, "type"));
@@ -228,6 +228,10 @@ public class LimitsModule extends JavaModule {
 
     @Override
     public void onRegisterProtection(LWCProtectionRegisterEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+
         LWC lwc = event.getLWC();
         Player player = event.getPlayer();
         Block block = event.getBlock();
@@ -236,12 +240,14 @@ public class LimitsModule extends JavaModule {
             lwc.sendLocale(player, "protection.exceeded");
             event.setCancelled(true);
         }
-
-        return;
     }
 
     @Override
     public void onCommand(LWCCommandEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+
         if (!event.hasFlag("limits")) {
             return;
         }
