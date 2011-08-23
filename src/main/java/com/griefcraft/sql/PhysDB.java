@@ -21,10 +21,12 @@ import com.griefcraft.cache.LRUCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.History;
+import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.scripting.Module;
 import com.griefcraft.util.Performance;
+import org.bukkit.entity.Player;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -247,6 +249,7 @@ public class PhysDB extends Database {
         doUpdate301();
         doUpdate302();
         doUpdate330();
+        doBetaUpdate340();
 
         try {
             connection.setAutoCommit(false);
@@ -351,6 +354,10 @@ public class PhysDB extends Database {
 
                 column = new Column("protectionId");
                 column.setType("INTEGER");
+                history.add(column);
+
+                column = new Column("player");
+                column.setType("VARCHAR(255)");
                 history.add(column);
 
                 column = new Column("type");
@@ -903,8 +910,12 @@ public class PhysDB extends Database {
             Protection protection = loadProtection(world, x, y, z);
 
             History transaction = protection.createHistoryObject();
+            transaction.setPlayer(player);
             transaction.setType(History.Type.TRANSACTION);
             transaction.setStatus(History.Status.ACTIVE);
+            
+            // store the player that created the protection
+            transaction.addMetaData("creator=" + player);
 
             // now sync the history object to the database
             transaction.sync();
@@ -931,13 +942,14 @@ public class PhysDB extends Database {
             int index = 1;
 
             if (history.doesExist()) {
-                statement = prepare("REPLACE INTO " + prefix + "history (id, protectionId, type, status, metadata) VALUES (?, ?, ?, ?, ?)");
+                statement = prepare("REPLACE INTO " + prefix + "history (id, protectionId, player, type, status, metadata) VALUES (?, ?, ?, ?, ?, ?)");
                 statement.setInt(index++, history.getId());
             } else {
-                statement = prepare("INSERT INTO " + prefix + "history (protectionId, type, status, metadata, timestamp) VALUES (?, ?, ?, ?, ?)");
+                statement = prepare("INSERT INTO " + prefix + "history (protectionId, player, type, status, metadata, timestamp) VALUES (?, ?, ?, ?, ?, ?)");
             }
 
             statement.setInt(index++, history.getProtectionId());
+            statement.setString(index++, history.getPlayer());
             statement.setInt(index++, history.getType().ordinal());
             statement.setInt(index++, history.getStatus().ordinal());
             statement.setString(index++, history.getSafeMetaData());
@@ -970,6 +982,7 @@ public class PhysDB extends Database {
             while (set.next()) {
                 int historyId = set.getInt("id");
                 int protectionId = set.getInt("protectionId");
+                String player = set.getString("player");
                 int type_ord = set.getInt("type");
                 int status_ord = set.getInt("status");
                 String[] metadata = set.getString("metadata").split(",");
@@ -982,6 +995,55 @@ public class PhysDB extends Database {
 
                 history.setId(historyId);
                 history.setType(type);
+                history.setPlayer(player);
+                history.setStatus(status);
+                history.setMetaData(metadata);
+                history.setTimestamp(timestamp);
+
+                // seems ok
+                temp.add(history);
+            }
+
+        } catch (SQLException e) {
+            printException(e);
+        }
+
+        return temp;
+    }
+
+    /**
+     * Load all protection history that the given player created
+     * 
+     * @param player
+     * @return
+     */
+    public List<History> loadHistory(Player player) {
+        List<History> temp = new ArrayList<History>();
+        LWCPlayer lwcPlayer = LWC.getInstance().wrapPlayer(player);
+
+        try {
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE player = ?");
+            statement.setString(1, player.getName());
+
+            ResultSet set = statement.executeQuery();
+
+            while (set.next()) {
+                int historyId = set.getInt("id");
+                int protectionId = set.getInt("protectionId");
+                int type_ord = set.getInt("type");
+                int status_ord = set.getInt("status");
+                String[] metadata = set.getString("metadata").split(",");
+                long timestamp = set.getLong("timestamp");
+
+                History.Type type = History.Type.values()[type_ord];
+                History.Status status = History.Status.values()[status_ord];
+
+                History history = lwcPlayer.createHistoryObject();
+
+                history.setId(historyId);
+                history.setProtectionId(protectionId);
+                history.setType(type);
+                history.setPlayer(player.getName());
                 history.setStatus(status);
                 history.setMetaData(metadata);
                 history.setTimestamp(timestamp);
@@ -1359,6 +1421,26 @@ public class PhysDB extends Database {
             statement.execute("SELECT last_accessed FROM " + prefix + "protections");
         } catch (SQLException e) {
             addColumn(prefix + "protections", "last_accessed", "INTEGER");
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
+    }
+
+    /**
+     * TODO this is temporary
+     */
+    private void doBetaUpdate340() {
+        Statement statement = null;
+        try {
+            statement = connection.createStatement();
+            statement.execute("SELECT player FROM " + prefix + "history");
+        } catch (SQLException e) {
+            dropTable(prefix + "history");
         } finally {
             if (statement != null) {
                 try {

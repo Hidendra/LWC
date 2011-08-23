@@ -468,7 +468,7 @@ public class Protection {
             }
 
             history.setStatus(History.Status.INACTIVE);
-            history.save();
+            history.sync();
         }
     }
 

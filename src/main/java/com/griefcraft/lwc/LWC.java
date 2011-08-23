@@ -30,6 +30,7 @@ import com.griefcraft.integration.permissions.NoPermissions;
 import com.griefcraft.migration.ConfigPost300;
 import com.griefcraft.migration.MySQLPost200;
 import com.griefcraft.model.AccessRight;
+import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.modules.admin.*;
@@ -184,6 +185,16 @@ public class LWC {
             console = new ColouredConsoleSender((CraftServer) Bukkit.getServer());
         } catch (Exception e) {
         }
+    }
+
+    /**
+     * Create an LWCPlayer object for a player
+     *
+     * @param player
+     * @return
+     */
+    public LWCPlayer wrapPlayer(Player player) {
+        return new LWCPlayer(this, player);
     }
 
     /**

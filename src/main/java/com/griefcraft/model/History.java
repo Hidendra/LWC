@@ -70,6 +70,11 @@ public class History {
     private int protectionId;
 
     /**
+     * The player that caused the history action to be created
+     */
+    private String player;
+
+    /**
      * The history type, e.g TRANSACTION
      */
     private Type type;
@@ -133,6 +138,70 @@ public class History {
 
         // we're okey
         this.metadata = temp;
+    }
+
+    /**
+     * Get a boolean value from the metadata using the key (key=value)
+     *
+     * @param key
+     * @return
+     */
+    public boolean getBoolean(String key) {
+        String metadata = getMetaDataStartsWith(key + "=");
+
+        if(metadata == null) {
+            return false;
+        }
+
+        return Boolean.parseBoolean(metadata.substring((key + "=").length()));
+    }
+
+    /**
+     * Get a String value from the metadata using the key (key=value)
+     *
+     * @param key
+     * @return
+     */
+    public String getString(String key) {
+        String metadata = getMetaDataStartsWith(key + "=");
+
+        if(metadata == null) {
+            return "";
+        }
+
+        return metadata.substring((key + "=").length());
+    }
+
+    /**
+     * Get an integer value from the metadata using the key (key=value)
+     *
+     * @param key
+     * @return
+     */
+    public int getInteger(String key) {
+        String metadata = getMetaDataStartsWith(key + "=");
+
+        if(metadata == null) {
+            return 0;
+        }
+
+        return Integer.parseInt(metadata.substring((key + "=").length()));
+    }
+
+    /**
+     * Get a double value from the metadata using the key (key=value)
+     *
+     * @param key
+     * @return
+     */
+    public double getDouble(String key) {
+        String metadata = getMetaDataStartsWith(key + "=");
+
+        if(metadata == null) {
+            return 0;
+        }
+
+        return Double.parseDouble(metadata.substring((key + "=").length()));
     }
 
     /**
@@ -214,6 +283,10 @@ public class History {
         return protectionId;
     }
 
+    public String getPlayer() {
+        return player;
+    }
+
     public Type getType() {
         return type;
     }
@@ -235,8 +308,12 @@ public class History {
         this.exists = true;
     }
 
-    protected void setProtectionId(int protectionId) {
+    public void setProtectionId(int protectionId) {
         this.protectionId = protectionId;
+    }
+
+    public void setPlayer(String player) {
+        this.player = player;
     }
 
     public void setType(Type type) {
