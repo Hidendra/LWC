@@ -18,6 +18,7 @@
 package com.griefcraft.modules.destroy;
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.History;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
@@ -37,6 +38,12 @@ public class DestroyModule extends JavaModule {
         boolean isOwner = protection.isOwner(player);
 
         if (isOwner) {
+            // bind the player who destroyed the protection
+            for(History history : protection.getRelatedHistory(History.Type.TRANSACTION)) {
+                history.addMetaData("destroyer=" + player.getName());
+                history.sync();
+            }
+
             protection.remove();
             lwc.sendLocale(player, "protection.unregistered", "block", LWC.materialToString(protection.getBlockId()));
             return;

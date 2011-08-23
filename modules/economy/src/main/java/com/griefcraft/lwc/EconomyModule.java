@@ -20,6 +20,7 @@ package com.griefcraft.lwc;
 import com.griefcraft.bukkit.LWCEconomyPlugin;
 import com.griefcraft.integration.ICurrency;
 import com.griefcraft.model.History;
+import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
@@ -55,7 +56,7 @@ public class EconomyModule extends JavaModule {
      * A cache of prices. When a value is inputted, it stays in memory for milliseconds at best.
      * The best way to do this? ha, probably not
      */
-    private Map<Location, Double> priceCache = Collections.synchronizedMap(new HashMap<Location, Double>());
+    private Map<Location, String> priceCache = Collections.synchronizedMap(new HashMap<Location, String>());
 
     public EconomyModule(LWCEconomyPlugin plugin) {
         this.plugin = plugin;
@@ -81,7 +82,10 @@ public class EconomyModule extends JavaModule {
         Location location = block.getLocation();
 
         // okey, get how much they were charged
-        double charge = priceCache.get(location);
+        String cachedPrice = priceCache.get(location);
+
+        boolean usedDiscount = cachedPrice.startsWith("d");
+        double charge = Double.parseDouble(usedDiscount ? cachedPrice.substring(1) : cachedPrice);
 
         // get related transactions..
         List<History> transactions = protection.getRelatedHistory(History.Type.TRANSACTION);
@@ -94,9 +98,16 @@ public class EconomyModule extends JavaModule {
         // get the last entry
         History history = transactions.get(transactions.size() - 1);
 
-        // add the price and save it
-        history.addMetaData("iconomy=" + charge);
-        history.save();
+        // add the price
+        history.addMetaData("charge=" + charge);
+
+        // was it a discount?
+        if(usedDiscount) {
+            history.addMetaData("discount=true");
+        }
+
+        // save it
+        history.sync();
 
         // we no longer need the value in the price cache :)
         priceCache.remove(location);
@@ -124,22 +135,8 @@ public class EconomyModule extends JavaModule {
                 continue;
             }
 
-            String metadata = history.getMetaDataStartsWith("iconomy=");
-
-            if (metadata == null) {
-                continue;
-            }
-
-            // We have a match!
-            String[] split = metadata.split("=");
-            double charge = 0.00d;
-
-            try {
-                charge = Double.parseDouble(split[1]);
-            } catch (NumberFormatException e) {
-                logger.severe("uh-oh! Error parsing metadata: " + metadata + "; history=" + history.getId());
-                continue;
-            }
+            // obtain the charge
+            double charge = history.getDouble("charge");
 
             // No need to refund if it's negative or 0
             if (charge <= 0) {
@@ -155,6 +152,40 @@ public class EconomyModule extends JavaModule {
             currency.addMoney(owner, charge);
             owner.sendMessage(Colors.Green + "You have been refunded " + currency.format(charge) + " because an LWC protection of yours was removed!");
         }
+    }
+
+    /**
+     * Get the amount of protections the player purchased for  the given discount price
+     * 
+     * @param lwc
+     * @param player
+     * @param discountPrice
+     * @return
+     */
+    private int getDiscountedProtections(LWC lwc, Player player, double discountPrice) {
+        LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
+        List<History> related = lwcPlayer.getRelatedHistory(History.Type.TRANSACTION);
+
+        if(related.size() == 0) {
+            return 0;
+        }
+
+        int amount = 0;
+
+        for(History history : related) {
+            if(!history.getBoolean("discount")) {
+                continue;
+            }
+
+            // obtain the charge
+            double charge = history.getDouble("charge");
+
+            if(charge == discountPrice) {
+                amount ++;
+            }
+        }
+
+        return amount;
     }
 
     @Override
@@ -197,12 +228,14 @@ public class EconomyModule extends JavaModule {
 
             if (isDiscountActive) {
                 int discountedProtections = Integer.parseInt(resolveValue(player, "discount.amount"));
+                double wouldCharge = Double.parseDouble(resolveValue(player, "discount.newCharge"));
 
                 if (discountedProtections > 0) {
-                    int currentProtections = lwc.getPhysicalDatabase().getProtectionCount(player.getName());
+                    // int currentProtections = lwc.getPhysicalDatabase().getProtectionCount(player.getName());
+                    int currentProtections = getDiscountedProtections(lwc, player, wouldCharge);
 
                     if (discountedProtections > currentProtections) {
-                        charge = Double.parseDouble(resolveValue(player, "discount.newCharge"));
+                        charge = wouldCharge;
                         usedDiscount = true;
                     }
                 }
@@ -214,7 +247,7 @@ public class EconomyModule extends JavaModule {
         Location location = block.getLocation();
 
         // cache the charge momentarily
-        priceCache.put(location, charge);
+        priceCache.put(location, (usedDiscount ? "d" : "") + charge);
 
         // It's free!
         if (charge == 0) {
