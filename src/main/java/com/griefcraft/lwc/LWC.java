@@ -339,11 +339,10 @@ public class LWC {
                 }
 
                 if (permissions.isActive()) {
-                    // TODO: Replace with getGroupProperName sometime, but only supported by Permissions 3.00+
-                    String groupName = permissions.getGroup(player);
-
-                    if (protection.getAccess(AccessRight.GROUP, groupName) >= 0) {
-                        return true;
+                    for(String groupName : permissions.getGroups(player)) {
+                        if (protection.getAccess(AccessRight.GROUP, groupName) >= 0) {
+                            return true;
+                        }
                     }
                 }
 
@@ -410,11 +409,10 @@ public class LWC {
                 }
 
                 if (permissions.isActive()) {
-                    // TODO: Replace with getGroupProperName sometime, but only supported by Permissions 3.00+
-                    String groupName = permissions.getGroup(player);
-
-                    if (protection.getAccess(AccessRight.GROUP, groupName) == 1) {
-                        return true;
+                    for(String groupName : permissions.getGroups(player)) {
+                        if (protection.getAccess(AccessRight.GROUP, groupName) == 1) {
+                            return true;
+                        }
                     }
                 }
 

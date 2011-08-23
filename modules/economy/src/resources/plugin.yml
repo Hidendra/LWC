@@ -5,4 +5,4 @@ website: http://griefcraft.com
 author: Hidendra
 description: Economy module for LWC to allow protections to be purchased using currency.
 depend:
-    - LWC
+    - 'LWC'
