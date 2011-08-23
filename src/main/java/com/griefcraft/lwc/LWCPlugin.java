@@ -350,10 +350,7 @@ public class LWCPlugin extends JavaPlugin {
         loadDatabase();
         registerEvents();
 
-        if (lwc.getConfiguration().getBoolean("core.autoUpdate", false)) {
-            updater.loadVersions(true);
-        }
-
+        updater.check();
         lwc.load();
 
         String version = getDescription().getVersion();
