@@ -24,6 +24,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * BukkitPermissions is supported by the CraftBukkit Recommended Build #1000+ ONLY
  */
@@ -52,18 +55,25 @@ public class BukkitPermissions implements IPermissions {
 		return player.hasPermission(node);
 	}
 
-	public String getGroup(Player player) {
+	public List<String> getGroups(Player player) {
 		if(handler == null) {
 			return null;
 		}
-		
-		Group group = handler.getGroup(player.getName());
-		
-		if(group != null) {
-			return group.getName();
-		}
-		
-		return null;
+
+        List<Group> found = handler.getGroups(player.getName());
+        List<String> groups = new ArrayList<String>(found.size());
+
+        if(found.size() == 0) {
+            return groups;
+        }
+
+
+        // add in the groups
+        for(Group group : found) {
+            groups.add(group.getName());
+        }
+
+        return groups;
 	}
 	
 }

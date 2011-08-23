@@ -2,6 +2,8 @@ package com.griefcraft.integration;
 
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 public interface IPermissions {
 	
 	/**
@@ -19,11 +21,11 @@ public interface IPermissions {
 	public boolean permission(Player player, String node);
 	
 	/**
-	 * Get the group the selected player is located in.
+	 * Get the groups a player belongs to
 	 * 
 	 * @param player
 	 * @return
 	 */
-	public String getGroup(Player player);
+	public List<String> getGroups(Player player);
 	
 }

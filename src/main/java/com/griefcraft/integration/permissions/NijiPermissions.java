@@ -7,7 +7,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class NijiPermissions implements IPermissions {
+
+    /**
+     * The permissions plugin instance
+     */
+    private Permissions plugin;
 
 	/**
 	 * The Permissions handler
@@ -20,8 +28,9 @@ public class NijiPermissions implements IPermissions {
 		if(permissionsPlugin == null) {
 			return;
 		}
-		
-		handler = ((Permissions) permissionsPlugin).getHandler();
+
+        plugin = (Permissions) permissionsPlugin;
+		handler = plugin.getHandler();
 	}
 	
 	public boolean isActive() {
@@ -33,13 +42,19 @@ public class NijiPermissions implements IPermissions {
 
     }
 
-	public String getGroup(Player player) {
+	public List<String> getGroups(Player player) {
 		if(handler == null) {
 			return null;
 		}
+
+        List<String> groups = new ArrayList<String>();
+        groups.add(handler.getGroup(player.getWorld().getName(), player.getName()));
+
+        // TODO: when semver comparator is done, check for >= 3.0.0 (if so, get all the player's group, otherwise
+        //       fallback onto single group methods)
 		
-		// return handler.getPrimaryGroup(player.getWorld().getName(), player.getName());
-		return handler.getGroup(player.getWorld().getName(), player.getName());
+		// return handler.getPrimaryGroup(player.getWorld().getName(), player.getName()); // perm 3.0+
+		return groups;
 	}
 
 }

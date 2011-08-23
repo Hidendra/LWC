@@ -178,7 +178,7 @@ public class LimitsModule extends JavaModule {
         LWC lwc = LWC.getInstance();
 
         // check if we have permissions
-        boolean hasPermissions = lwc.getPermissions() != null;
+        boolean hasPermissions = lwc.getPermissions().isActive();
 
         // resolve the limits type
         String value;
@@ -186,12 +186,12 @@ public class LimitsModule extends JavaModule {
         // try the player
         value = configuration.getString("players." + player.getName() + "." + node);
 
-        // try permissions
+        // try the player's groups
         if (value == null && hasPermissions) {
-            String groupName = lwc.getPermissions().getGroup(player);
-
-            if (groupName != null && !groupName.isEmpty()) {
-                value = map("groups." + groupName + "." + node);
+            for(String groupName : lwc.getPermissions().getGroups(player)) {
+                if (groupName != null && !groupName.isEmpty()) {
+                    value = map("groups." + groupName + "." + node);
+                }
             }
         }
 

@@ -60,7 +60,7 @@ public class Table {
      *
      * @param column
      */
-    public void addColumn(Column column) {
+    public void add(Column column) {
         column.setTable(this);
 
         columns.add(column);

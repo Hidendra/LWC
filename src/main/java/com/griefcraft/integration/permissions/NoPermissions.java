@@ -3,6 +3,9 @@ package com.griefcraft.integration.permissions;
 import com.griefcraft.integration.IPermissions;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class NoPermissions implements IPermissions {
 
 	public boolean isActive() {
@@ -13,8 +16,8 @@ public class NoPermissions implements IPermissions {
 		return false;
 	}
 
-	public String getGroup(Player player) {
-		return null;
+	public List<String> getGroups(Player player) {
+		return new ArrayList<String>();
 	}
 
 }

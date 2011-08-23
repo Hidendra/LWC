@@ -1,10 +1,8 @@
 name: LWC
 main: com.griefcraft.lwc.LWCPlugin
-version: 3.40-dev
+version: 3.40
 website: http://griefcraft.com
 author: Hidendra
-softdepend:
-    - 'Permissions'
 description: >
              Inventory protection & management utilizing SQLite or MySQL as its backend
              Other blocks can also be protected individually, if configured.
@@ -71,6 +69,12 @@ commands:
     permission: lwc.mode.nospam
 
 permissions:
+
+  lwc.*:
+      description: Full administrative access to LWC
+      children:
+          lwc.protect: true
+          lwc.admin: true
 
   lwc.protect:
       description: Gives the ability to basic LWC usage (almost everything except LWC admin.)
