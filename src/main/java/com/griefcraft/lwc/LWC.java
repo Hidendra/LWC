@@ -793,20 +793,21 @@ public class LWC {
 
         Block baseBlock = world.getBlockAt(x, y, z);
 
+		/*
+		* First check the block they clicked either way -- incase that chunk isn't affected by bug 656
+		*/
+		entities = _validateBlock(entities, baseBlock, true);
+
         /* Normal logic is to check the block they clicked to see if it's a "valid" block.
          * Since bug #656 doesn't accurately report block state, this results in valid blocks
          * getting dropped from the protection list.  The workaround just applies the protection
          * to the given x,y,z block regardless of what Bukkit says the state/material of that
          * block is.
          */
-        if( bug656workaround ) {
+        if( bug656workaround && entities.size() == 0 ) {
             entities.add(baseBlock);
         }
         else {
-			/*
-			 * First check the block they clicked
-			 */
-			entities = _validateBlock(entities, baseBlock, true);
         }
         int dev = -1;
         boolean isXDir = true;
@@ -1372,6 +1373,25 @@ public class LWC {
     }
 
     /**
+     * Check if a block is destroyed when the block below it is destroyed
+     *
+     * @param block
+     * @return
+     */
+    private boolean isDestroyedByGravity(Block block) {
+        switch(block.getType()) {
+            case SIGN_POST:
+            case WALL_SIGN:
+            case RAILS:
+            case POWERED_RAIL:
+            case DETECTOR_RAIL:
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Ensure a chest/furnace is protectable where it's at
      *
      * @param block
@@ -1459,12 +1479,12 @@ public class LWC {
                     entities.add(block); // top half
                 }
             }
-        } else if (isBaseBlock && (up.getType() == Material.SIGN_POST || up.getType() == Material.WALL_SIGN || type == Material.SIGN_POST || type == Material.WALL_SIGN)) {
-            // If it's a wall sign, also protect the wall it's attached to!
+        } else if (isBaseBlock && (isDestroyedByGravity(block) || isDestroyedByGravity(up))) {
+            // If it's a block that is destroyed when the block below it is destroyed, protect it!
 
             if (entities.size() == 0) {
-                // Check if we're clicking on the sign itself, otherwise it's the block above it
-                if (type == Material.SIGN_POST || type == Material.WALL_SIGN) {
+                // Check if we're clicking on the special block itself, otherwise it's the block above it
+                if (isProtectable(block)) {
                     entities.add(block);
                 } else {
                     entities.add(up);
