@@ -19,7 +19,17 @@ package com.griefcraft.scripting;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
-import com.griefcraft.scripting.event.*;
+import com.griefcraft.scripting.event.LWCAccessEvent;
+import com.griefcraft.scripting.event.LWCBlockInteractEvent;
+import com.griefcraft.scripting.event.LWCCommandEvent;
+import com.griefcraft.scripting.event.LWCDropItemEvent;
+import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
+import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
+import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
+import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
+import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
+import com.griefcraft.scripting.event.LWCRedstoneEvent;
+import com.griefcraft.scripting.event.LWCSendLocaleEvent;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
@@ -49,7 +59,7 @@ public abstract class JavaModule implements Module {
     }
 
     public void protectionAccessRequest(LWCAccessEvent event) {
-        
+
     }
 
     public void onDropItem(LWCDropItemEvent event) {
@@ -89,7 +99,7 @@ public abstract class JavaModule implements Module {
     }
 
     public void onSendLocale(LWCSendLocaleEvent event) {
-        
+
     }
 
     @Deprecated
@@ -139,12 +149,12 @@ public abstract class JavaModule implements Module {
 
     @Deprecated
     public void onPostRegistration(LWC lwc, Protection protection) {
-    	
+
     }
 
     @Deprecated
     public void onPostRemoval(LWC lwc, Protection protection) {
-        
+
     }
 
     @Deprecated

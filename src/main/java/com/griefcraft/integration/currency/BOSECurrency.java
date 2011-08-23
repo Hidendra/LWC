@@ -24,8 +24,8 @@ public class BOSECurrency implements ICurrency {
     }
 
     public boolean isActive() {
-		return true;
-	}
+        return true;
+    }
 
     public String format(double money) {
         return handler.getMoneyFormatted(money);
@@ -35,29 +35,29 @@ public class BOSECurrency implements ICurrency {
         return handler.getMoneyName();
     }
 
-	public double getBalance(Player player) {
-		return handler.getPlayerMoneyDouble(player.getName());
-	}
+    public double getBalance(Player player) {
+        return handler.getPlayerMoneyDouble(player.getName());
+    }
 
-	public boolean canAfford(Player player, double money) {
+    public boolean canAfford(Player player, double money) {
         return getBalance(player) >= money;
     }
 
-	public double addMoney(Player player, double money) {
-        handler.addPlayerMoney(player.getName(), money, false);
-        
-        return getBalance(player);
-	}
-
-	public double removeMoney(Player player, double money) {
-		// we're removing money, so it should be positive
-		if(money > 0) {
-			money = -money;
-		}
-
+    public double addMoney(Player player, double money) {
         handler.addPlayerMoney(player.getName(), money, false);
 
         return getBalance(player);
-	}
+    }
+
+    public double removeMoney(Player player, double money) {
+        // we're removing money, so it should be positive
+        if (money > 0) {
+            money = -money;
+        }
+
+        handler.addPlayerMoney(player.getName(), money, false);
+
+        return getBalance(player);
+    }
 
 }

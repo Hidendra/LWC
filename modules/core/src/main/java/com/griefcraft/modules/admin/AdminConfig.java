@@ -20,18 +20,17 @@ package com.griefcraft.modules.admin;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
-import com.griefcraft.util.StringUtils;
 import org.bukkit.command.CommandSender;
 
 public class AdminConfig extends JavaModule {
 
     @Override
     public void onCommand(LWCCommandEvent event) {
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             return;
         }
 
-        if(!event.hasFlag("a", "admin")) {
+        if (!event.hasFlag("a", "admin")) {
             return;
         }
 
@@ -39,7 +38,7 @@ public class AdminConfig extends JavaModule {
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
 
-        if(!args[0].equals("config")) {
+        if (!args[0].equals("config")) {
             return;
         }
 

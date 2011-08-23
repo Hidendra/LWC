@@ -36,10 +36,10 @@ import java.util.logging.Logger;
 
 public class Protection {
 
-	// re-use LWC logger
-	@SuppressWarnings("unused")
-	private Logger logger = Logger.getLogger("LWC");
-	
+    // re-use LWC logger
+    @SuppressWarnings("unused")
+    private Logger logger = Logger.getLogger("LWC");
+
     // just a footnote, if a flag is "on", it is SET in the database, however if it's set to "off"
     // it is REMOVED from the database if it is in it!
     public enum Flag {
@@ -123,7 +123,7 @@ public class Protection {
      * The z coordinate
      */
     private int z;
-    
+
     /**
      * The timestamp of when the protection was last accessed
      */
@@ -149,6 +149,7 @@ public class Protection {
 
     /**
      * Create a History object that is attached to this protection
+     *
      * @return
      */
     public History createHistoryObject() {
@@ -177,8 +178,8 @@ public class Protection {
         List<History> matches = new ArrayList<History>();
         List<History> relatedHistory = getRelatedHistory();
 
-        for(History history : relatedHistory) {
-            if(history.getType() == type) {
+        for (History history : relatedHistory) {
+            if (history.getType() == type) {
                 matches.add(history);
             }
         }
@@ -203,7 +204,7 @@ public class Protection {
      * @return
      */
     public boolean addFlag(Flag flag) {
-        if(removed) {
+        if (removed) {
             return false;
         }
 
@@ -223,7 +224,7 @@ public class Protection {
      * @return
      */
     public void removeFlag(Flag flag) {
-        if(removed) {
+        if (removed) {
             return;
         }
 
@@ -270,10 +271,10 @@ public class Protection {
     public void removeTemporaryAccessRights() {
         Iterator<AccessRight> iter = access.iterator();
 
-        while(iter.hasNext()) {
+        while (iter.hasNext()) {
             AccessRight right = iter.next();
 
-            if(right.getType() == AccessRight.TEMPORARY) {
+            if (right.getType() == AccessRight.TEMPORARY) {
                 iter.remove();
             }
         }
@@ -285,7 +286,7 @@ public class Protection {
      * @param right
      */
     public void addAccessRight(AccessRight right) {
-        if(removed) {
+        if (removed) {
             return;
         }
 
@@ -336,13 +337,13 @@ public class Protection {
     public int getZ() {
         return z;
     }
-    
+
     public long getLastAccessed() {
-    	return lastAccessed;
+        return lastAccessed;
     }
 
     public void setBlockId(int blockId) {
-        if(removed) {
+        if (removed) {
             return;
         }
 
@@ -350,7 +351,7 @@ public class Protection {
     }
 
     public void setData(String data) {
-        if(removed) {
+        if (removed) {
             return;
         }
 
@@ -358,7 +359,7 @@ public class Protection {
     }
 
     public void setDate(String date) {
-        if(removed) {
+        if (removed) {
             return;
         }
 
@@ -366,7 +367,7 @@ public class Protection {
     }
 
     public void setId(int id) {
-        if(removed) {
+        if (removed) {
             return;
         }
 
@@ -374,7 +375,7 @@ public class Protection {
     }
 
     public void setFlags(int flags) {
-        if(removed) {
+        if (removed) {
             return;
         }
 
@@ -382,7 +383,7 @@ public class Protection {
     }
 
     public void setOwner(String owner) {
-        if(removed) {
+        if (removed) {
             return;
         }
 
@@ -390,7 +391,7 @@ public class Protection {
     }
 
     public void setType(int type) {
-        if(removed) {
+        if (removed) {
             return;
         }
 
@@ -398,7 +399,7 @@ public class Protection {
     }
 
     public void setWorld(String world) {
-        if(removed) {
+        if (removed) {
             return;
         }
 
@@ -406,7 +407,7 @@ public class Protection {
     }
 
     public void setX(int x) {
-        if(removed) {
+        if (removed) {
             return;
         }
 
@@ -414,7 +415,7 @@ public class Protection {
     }
 
     public void setY(int y) {
-        if(removed) {
+        if (removed) {
             return;
         }
 
@@ -422,26 +423,26 @@ public class Protection {
     }
 
     public void setZ(int z) {
-        if(removed) {
+        if (removed) {
             return;
         }
 
         this.z = z;
     }
-    
+
     public void setLastAccessed(long lastAccessed) {
-        if(removed) {
+        if (removed) {
             return;
         }
 
-    	this.lastAccessed = lastAccessed;
+        this.lastAccessed = lastAccessed;
     }
 
     /**
      * Remove the protection from the database
      */
     public void remove() {
-        if(removed) {
+        if (removed) {
             return;
         }
 
@@ -461,8 +462,8 @@ public class Protection {
         lwc.getPhysicalDatabase().unregisterProtection(id);
 
         // mark related transactions as inactive
-        for(History history : getRelatedHistory(History.Type.TRANSACTION)) {
-            if(history.getStatus() != History.Status.ACTIVE) {
+        for (History history : getRelatedHistory(History.Type.TRANSACTION)) {
+            if (history.getStatus() != History.Status.ACTIVE) {
                 continue;
             }
 
@@ -475,27 +476,27 @@ public class Protection {
      * Remove the protection from cache
      */
     public void removeCache() {
-        if(removed) {
+        if (removed) {
             return;
         }
 
-    	LWC lwc = LWC.getInstance();
-    	LRUCache<String,Protection> cache = lwc.getCaches().getProtections();
-    	
+        LWC lwc = LWC.getInstance();
+        LRUCache<String, Protection> cache = lwc.getCaches().getProtections();
+
         cache.remove(getCacheKey());
-        
+
         /* For Bug 656 workaround we record in-memory any double-chests/etc we find as
-         * we find them, since we can't count on Bukkit to reliably return that info later.
-         * As a result, when we are removing a protection (and therefore LWC calls this method
-         * to remove it's cache object), we need to remove the adjacent block from memory also.
-         */
-        if( lwc.isBug656WorkAround() ) {
-        	World worldObject = lwc.getPlugin().getServer().getWorld(world);
-        	List<Block> blocks = lwc.getRelatedBlocks(worldObject, x, y, z);
-        	for(Block b : blocks) {
-        		String cacheKey = b.getWorld().getName() + ":" + b.getX() + ":" + b.getY() + ":" + b.getZ();
-        		cache.remove(cacheKey);
-        	}
+        * we find them, since we can't count on Bukkit to reliably return that info later.
+        * As a result, when we are removing a protection (and therefore LWC calls this method
+        * to remove it's cache object), we need to remove the adjacent block from memory also.
+        */
+        if (lwc.isBug656WorkAround()) {
+            World worldObject = lwc.getPlugin().getServer().getWorld(world);
+            List<Block> blocks = lwc.getRelatedBlocks(worldObject, x, y, z);
+            for (Block b : blocks) {
+                String cacheKey = b.getWorld().getName() + ":" + b.getX() + ":" + b.getY() + ":" + b.getZ();
+                cache.remove(cacheKey);
+            }
         }
     }
 
@@ -504,7 +505,7 @@ public class Protection {
      * Note that save() and saveNow() call this
      */
     public void update() {
-        if(removed) {
+        if (removed) {
             return;
         }
 
@@ -522,7 +523,7 @@ public class Protection {
      * Queue the protection to be saved
      */
     public void save() {
-        if(removed) {
+        if (removed) {
             return;
         }
 
@@ -533,7 +534,7 @@ public class Protection {
      * Force a protection update in the live database
      */
     public void saveNow() {
-        if(removed) {
+        if (removed) {
             return;
         }
 
@@ -547,16 +548,16 @@ public class Protection {
     public String getCacheKey() {
         return world + ":" + x + ":" + y + ":" + z;
     }
-    
+
     /**
      * @return the Bukkit world the protection should be located in
      */
     public World getBukkitWorld() {
-        if(world == null || world.isEmpty()) {
+        if (world == null || world.isEmpty()) {
             return Bukkit.getServer().getWorlds().get(0);
         }
 
-    	return Bukkit.getServer().getWorld(world);
+        return Bukkit.getServer().getWorld(world);
     }
 
     /**
@@ -565,18 +566,18 @@ public class Protection {
     public Player getBukkitOwner() {
         return Bukkit.getServer().getPlayer(owner);
     }
-    
+
     /**
      * @return the block representing the protection in the world
      */
     public Block getBlock() {
-    	World world = getBukkitWorld();
-    	
-    	if(world == null) {
-    		return null;
-    	}
-    	
-    	return world.getBlockAt(x, y, z);
+        World world = getBukkitWorld();
+
+        if (world == null) {
+            return null;
+        }
+
+        return world.getBlockAt(x, y, z);
     }
 
     /**
@@ -584,26 +585,26 @@ public class Protection {
      */
     @Override
     public String toString() {
-    	// format the flags prettily
-    	String flags = "";
-    	
-    	for(Flag flag : Flag.values()) {
-    		if(hasFlag(flag)) {
-    			flags += flag.toString() + ",";
-    		}
-    	}
-    	
-    	if(flags.endsWith(",")) {
-    		flags = flags.substring(0, flags.length() - 1);
-    	}
-    	
-    	// format the last accessed time
-    	String lastAccessed = StringUtils.timeToString((System.currentTimeMillis() / 1000L) - this.lastAccessed);
-    	
-    	if(!lastAccessed.equals("Not yet known")) {
-    		lastAccessed += " ago";
-    	}
-    	
+        // format the flags prettily
+        String flags = "";
+
+        for (Flag flag : Flag.values()) {
+            if (hasFlag(flag)) {
+                flags += flag.toString() + ",";
+            }
+        }
+
+        if (flags.endsWith(",")) {
+            flags = flags.substring(0, flags.length() - 1);
+        }
+
+        // format the last accessed time
+        String lastAccessed = StringUtils.timeToString((System.currentTimeMillis() / 1000L) - this.lastAccessed);
+
+        if (!lastAccessed.equals("Not yet known")) {
+            lastAccessed += " ago";
+        }
+
         return String.format("%s %s" + Colors.White + " " + Colors.Green + "Id=%d Owner=%s Location=[%s %d,%d,%d] Created=%s Flags=%s LastAccessed=%s", typeToString(), (blockId > 0 ? (LWC.materialToString(blockId)) : "Not yet cached"), id, owner, world, x, y, z, date, flags, lastAccessed);
     }
 

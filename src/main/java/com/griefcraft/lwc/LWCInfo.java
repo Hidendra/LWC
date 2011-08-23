@@ -34,32 +34,31 @@ public class LWCInfo {
 
     /**
      * LWC's version.
-     * 
+     * <p/>
      * Initialized to bogus value, but it will be set properly once the plugin starts up based
      * on the version listed in plugin.xml.
      */
     public static double VERSION;
 
-    /** 
+    /**
      * Rather than managing the version in multiple spots, I added this method which will be
      * invoked from Plugin startup to set the version, which is pulled from the plugin.xml file.
-     * 
+     *
      * @param version
      * @author morganm
      */
     public static void setVersion(String version) {
-    	try {
-    		// account for dev bilds
-    		if(version.endsWith("-dev")) {
-    			version = version.substring(0, version.length() - "-dev".length());
-    		}
-    		
-    		VERSION = Double.parseDouble(version);
-    	}
-    	catch(NumberFormatException e) {
-    		e.printStackTrace();
-    	}
-    	
-    	FULL_VERSION = String.format("%.2f (%s)", VERSION, LWCPlugin.class.getPackage().getImplementationVersion());
+        try {
+            // account for dev bilds
+            if (version.endsWith("-dev")) {
+                version = version.substring(0, version.length() - "-dev".length());
+            }
+
+            VERSION = Double.parseDouble(version);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+
+        FULL_VERSION = String.format("%.2f (%s)", VERSION, LWCPlugin.class.getPackage().getImplementationVersion());
     }
 }

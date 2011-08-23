@@ -33,10 +33,10 @@ public class LWCServerListener extends ServerListener {
 
     @Override
     public void onPluginDisable(PluginDisableEvent event) {
-    	if(!LWC.ENABLED) {
-    		return;
-    	}
-    	
+        if (!LWC.ENABLED) {
+            return;
+        }
+
         Plugin disabled = event.getPlugin();
 
         /**

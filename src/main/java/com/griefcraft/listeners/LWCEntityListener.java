@@ -44,17 +44,17 @@ public class LWCEntityListener extends EntityListener {
         if (event.isCancelled()) {
             return;
         }
-        
+
         boolean ignoreExplosions = plugin.getLWC().getConfiguration().getBoolean("core.ignoreExplosions", false);
 
         for (Block block : event.blockList()) {
             Protection protection = plugin.getLWC().getPhysicalDatabase().loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
 
             if (protection != null) {
-                if(ignoreExplosions) {
-                	protection.remove();
+                if (ignoreExplosions) {
+                    protection.remove();
                 } else {
-                	event.setCancelled(true);
+                    event.setCancelled(true);
                 }
             }
         }

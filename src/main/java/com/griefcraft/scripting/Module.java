@@ -19,7 +19,17 @@ package com.griefcraft.scripting;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
-import com.griefcraft.scripting.event.*;
+import com.griefcraft.scripting.event.LWCAccessEvent;
+import com.griefcraft.scripting.event.LWCBlockInteractEvent;
+import com.griefcraft.scripting.event.LWCCommandEvent;
+import com.griefcraft.scripting.event.LWCDropItemEvent;
+import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
+import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
+import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
+import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
+import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
+import com.griefcraft.scripting.event.LWCRedstoneEvent;
+import com.griefcraft.scripting.event.LWCSendLocaleEvent;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
@@ -59,13 +69,14 @@ public interface Module {
 
     /**
      * Called when a player or console executes an LWC command
+     *
      * @param event
      */
     public void onCommand(LWCCommandEvent event);
 
     /**
      * Called when redstone interacts with a protection
-     * 
+     *
      * @param event
      */
     public void onRedstone(LWCRedstoneEvent event);
@@ -93,7 +104,7 @@ public interface Module {
 
     /**
      * Called immediately before a protection is registered
-     * 
+     *
      * @param event
      */
     public void onRegisterProtection(LWCProtectionRegisterEvent event);
@@ -234,7 +245,7 @@ public interface Module {
 
     /**
      * Called after a protection is removed (at this point, the protection is IMMUTABLE.)
-     * 
+     *
      * @param lwc
      * @param protection
      */
@@ -243,7 +254,7 @@ public interface Module {
 
     /**
      * Called when a localized message is sent to a player (e.g lwc.accessdenied)
-     * 
+     *
      * @param lwc
      * @param player
      * @param locale

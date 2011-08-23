@@ -22,7 +22,11 @@ import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.sql.PhysDB;
 import org.bukkit.command.CommandSender;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 /**
  * Convert Chastity chests to LWC

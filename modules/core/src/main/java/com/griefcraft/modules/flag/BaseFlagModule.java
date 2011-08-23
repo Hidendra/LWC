@@ -27,8 +27,6 @@ import com.griefcraft.util.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.List;
-
 public class BaseFlagModule extends JavaModule {
 
     @Override

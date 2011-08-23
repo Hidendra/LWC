@@ -1,16 +1,16 @@
 /**
  * This file is part of LWC (https://github.com/Hidendra/LWC)
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -30,11 +30,11 @@ public class AdminQuery extends JavaModule {
 
     @Override
     public void onCommand(LWCCommandEvent event) {
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             return;
         }
 
-        if(!event.hasFlag("a", "admin")) {
+        if (!event.hasFlag("a", "admin")) {
             return;
         }
 
@@ -42,25 +42,25 @@ public class AdminQuery extends JavaModule {
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
 
-        if(!args[0].equals("query")) {
+        if (!args[0].equals("query")) {
             return;
         }
 
         // we have the right command
         event.setCancelled(true);
-        
+
         String query = StringUtils.join(args, 1);
-        
+
         try {
-        	Statement statement = lwc.getPhysicalDatabase().getConnection().createStatement();
-        	statement.executeUpdate(query);
-        	statement.close();
-        	sender.sendMessage(Colors.Green + "Done.");
-        } catch(Exception e) {
-        	sender.sendMessage(Colors.Red + "Err: " + e.getMessage());
+            Statement statement = lwc.getPhysicalDatabase().getConnection().createStatement();
+            statement.executeUpdate(query);
+            statement.close();
+            sender.sendMessage(Colors.Green + "Done.");
+        } catch (Exception e) {
+            sender.sendMessage(Colors.Red + "Err: " + e.getMessage());
         }
 
         return;
     }
-	
+
 }

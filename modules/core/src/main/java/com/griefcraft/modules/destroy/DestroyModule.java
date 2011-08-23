@@ -21,13 +21,12 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 public class DestroyModule extends JavaModule {
 
     public void onDestroyProtection(LWCProtectionDestroyEvent event) {
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             return;
         }
 

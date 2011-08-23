@@ -50,7 +50,7 @@ public class MemDB extends Database {
 
             ResultSet set = statement.executeQuery();
 
-            if(set.next()) {
+            if (set.next()) {
                 final int id = set.getInt("id");
                 final String actionString = set.getString("action");
                 final String playerString = set.getString("player");
@@ -346,11 +346,11 @@ public class MemDB extends Database {
 
             ResultSet set = statement.executeQuery();
 
-            if(set.next()) {
+            if (set.next()) {
                 set.close();
                 return true;
             }
-            
+
             set.close();
         } catch (final Exception e) {
             printException(e);
@@ -474,7 +474,7 @@ public class MemDB extends Database {
         } catch (final Exception e) {
             printException(e);
         }
-        
+
         loaded = true;
     }
 

@@ -27,11 +27,11 @@ public class AdminLocale extends JavaModule {
 
     @Override
     public void onCommand(LWCCommandEvent event) {
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             return;
         }
 
-        if(!event.hasFlag("a", "admin")) {
+        if (!event.hasFlag("a", "admin")) {
             return;
         }
 
@@ -39,7 +39,7 @@ public class AdminLocale extends JavaModule {
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
 
-        if(!args[0].equals("locale")) {
+        if (!args[0].equals("locale")) {
             return;
         }
 

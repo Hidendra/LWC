@@ -8,16 +8,16 @@ import java.util.List;
 
 public class NoPermissions implements IPermissions {
 
-	public boolean isActive() {
-		return false;
-	}
+    public boolean isActive() {
+        return false;
+    }
 
-	public boolean permission(Player player, String node) {
-		return false;
-	}
+    public boolean permission(Player player, String node) {
+        return false;
+    }
 
-	public List<String> getGroups(Player player) {
-		return new ArrayList<String>();
-	}
+    public List<String> getGroups(Player player) {
+        return new ArrayList<String>();
+    }
 
 }

@@ -21,7 +21,6 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
-import com.griefcraft.util.StringUtils;
 import net.minecraft.server.EntityHuman;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -35,11 +34,11 @@ public class AdminView extends JavaModule {
 
     @Override
     public void onCommand(LWCCommandEvent event) {
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             return;
         }
 
-        if(!event.hasFlag("a", "admin")) {
+        if (!event.hasFlag("a", "admin")) {
             return;
         }
 
@@ -47,7 +46,7 @@ public class AdminView extends JavaModule {
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
 
-        if(!args[0].equals("view")) {
+        if (!args[0].equals("view")) {
             return;
         }
 

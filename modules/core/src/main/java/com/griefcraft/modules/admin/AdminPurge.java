@@ -18,7 +18,6 @@
 package com.griefcraft.modules.admin;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.util.StringUtils;
@@ -28,11 +27,11 @@ public class AdminPurge extends JavaModule {
 
     @Override
     public void onCommand(LWCCommandEvent event) {
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             return;
         }
 
-        if(!event.hasFlag("a", "admin")) {
+        if (!event.hasFlag("a", "admin")) {
             return;
         }
 
@@ -40,7 +39,7 @@ public class AdminPurge extends JavaModule {
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
 
-        if(!args[0].equals("purge")) {
+        if (!args[0].equals("purge")) {
             return;
         }
 
@@ -56,7 +55,7 @@ public class AdminPurge extends JavaModule {
         String players = StringUtils.join(args, shouldRemoveBlocks ? 2 : 1);
 
         for (String toRemove : players.split(" ")) {
-            if(toRemove.contains("'")) continue; // bad me
+            if (toRemove.contains("'")) continue; // bad me
 
             // Remove all of them
             lwc.fastRemoveProtections(sender, "owner = '" + toRemove + "'", shouldRemoveBlocks);

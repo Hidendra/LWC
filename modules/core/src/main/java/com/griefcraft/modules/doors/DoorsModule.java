@@ -1,16 +1,16 @@
 /**
  * This file is part of LWC (https://github.com/Hidendra/LWC)
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -35,265 +35,265 @@ import java.util.List;
 
 public class DoorsModule extends JavaModule {
 
-	class DoorAction {
-		// The door location
-		public Location location;
-		
-		// when to close the door (ms)
-		public long triggerTime;
-	}
+    class DoorAction {
+        // The door location
+        public Location location;
 
-	enum Action {
-		/**
-		 * The door will open and close after <interval> seconds.
-		 * It will only close the door if it was open; not re-open it.
-		 */
-		OPEN_AND_CLOSE,
-
-		/**
-		 * The door will open or close, depending on its state.
-		 * It will not automatically close itself.
-		 */
-		TOGGLE,
-
-		NULL
+        // when to close the door (ms)
+        public long triggerTime;
     }
 
-	private Configuration configuration;
+    enum Action {
+        /**
+         * The door will open and close after <interval> seconds.
+         * It will only close the door if it was open; not re-open it.
+         */
+        OPEN_AND_CLOSE,
 
-	// The triggered doors
-	private LinkedList<DoorAction> doors;
+        /**
+         * The door will open or close, depending on its state.
+         * It will not automatically close itself.
+         */
+        TOGGLE,
 
-	/**
-	 * The action to perform on doors
-	 */
-	private Action action;
+        NULL
+    }
 
-	/**
-	 * If applicable, the interval
-	 */
-	private int interval;
+    private Configuration configuration;
 
-	// if the module is even enabled
-	private boolean enabled;
-	
-	private class DoorTask implements Runnable {
-		public void run() {
-			Iterator<DoorAction> iter = doors.iterator();
-			while(iter.hasNext()) {
-				DoorAction doorAction = iter.next();
-				Location location = doorAction.location;
-				
-				if(System.currentTimeMillis() > doorAction.triggerTime) {
-					Block block = location.getBlock();
-					
-					Door door = new Door(block.getType(), block.getData());
-					byte data = initializeDoorData(door);
-					
-					// Close the door
-					if(isDoorOpen(door)) {
-						if((block.getData() & 0x4) != 0x4) {
-							data |= 0x4;
-						}
-					}
-					
-					block.setData(data);
-					iter.remove();
-				}
-			}
-		}
-	}
+    // The triggered doors
+    private LinkedList<DoorAction> doors;
 
-	@Override
-	public void load(LWC lwc) {
-		configuration = Configuration.load("doors.yml");
-		doors = new LinkedList<DoorAction>();
-		enabled = configuration.getBoolean("doors.enabled", true);
+    /**
+     * The action to perform on doors
+     */
+    private Action action;
 
-		String action = configuration.getString("doors.action");
+    /**
+     * If applicable, the interval
+     */
+    private int interval;
 
-		if(action == null) {
-			this.action = Action.NULL;
-			return;
-		}
+    // if the module is even enabled
+    private boolean enabled;
 
-		if(action.equalsIgnoreCase("openAndClose")) {
-			this.action = Action.OPEN_AND_CLOSE;
-			this.interval = configuration.getInt("doors.interval", 3);
-		} else if(action.equalsIgnoreCase("toggle")) {
-			this.action = Action.TOGGLE;
-		}
-		
-		// start the task
-		DoorTask doorTask = new DoorTask();
-		lwc.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(lwc.getPlugin(), doorTask, 20, 20);
-	}
-	
-	/**
-	 * Scrape data from a doot
-	 * 
-	 * @param door
-	 * @return
-	 */
-	private byte initializeDoorData(Door door) {
-		byte data = 0x00;
+    private class DoorTask implements Runnable {
+        public void run() {
+            Iterator<DoorAction> iter = doors.iterator();
+            while (iter.hasNext()) {
+                DoorAction doorAction = iter.next();
+                Location location = doorAction.location;
 
-		// get the hinge position
-		switch(door.getHingeCorner()) {
-		case NORTH_EAST:
-			data |= 0x0;
-			break;
+                if (System.currentTimeMillis() > doorAction.triggerTime) {
+                    Block block = location.getBlock();
 
-		case SOUTH_EAST:
-			data |= 0x1;
-			break;
+                    Door door = new Door(block.getType(), block.getData());
+                    byte data = initializeDoorData(door);
 
-		case SOUTH_WEST:
-			data |= 0x2;
-			break;
+                    // Close the door
+                    if (isDoorOpen(door)) {
+                        if ((block.getData() & 0x4) != 0x4) {
+                            data |= 0x4;
+                        }
+                    }
 
-		case NORTH_WEST:
-			data |= 0x3;
-			break;
-		}
-		
-		if(door.isTopHalf()) {
-			data |= 0x8;
-		}
-		
-		return data;
-	}
-	
-	/**
-	 * @param door
-	 * @return
-	 */
-	private boolean isDoorOpen(Door door) {
-		switch(door.getHingeCorner()) {
-		default:
-			return door.isOpen();
-		}
-	}
-	
-	/**
-	 * Check if a material is usable by this (doors.)
-	 * 
-	 * @param material
-	 * @return
-	 */
-	private boolean isValid(Material material) {
-		return material == Material.IRON_DOOR_BLOCK; // || material == Material.WOODEN_DOOR;
-	}
+                    block.setData(data);
+                    iter.remove();
+                }
+            }
+        }
+    }
 
-	@Override
-	public void onProtectionInteract(LWCProtectionInteractEvent event) {
-		if(!enabled || action == Action.NULL) {
-			return;
-		}
-		
-		if(!event.canAccess()) {
-			return;
-		}
+    @Override
+    public void load(LWC lwc) {
+        configuration = Configuration.load("doors.yml");
+        doors = new LinkedList<DoorAction>();
+        enabled = configuration.getBoolean("doors.enabled", true);
+
+        String action = configuration.getString("doors.action");
+
+        if (action == null) {
+            this.action = Action.NULL;
+            return;
+        }
+
+        if (action.equalsIgnoreCase("openAndClose")) {
+            this.action = Action.OPEN_AND_CLOSE;
+            this.interval = configuration.getInt("doors.interval", 3);
+        } else if (action.equalsIgnoreCase("toggle")) {
+            this.action = Action.TOGGLE;
+        }
+
+        // start the task
+        DoorTask doorTask = new DoorTask();
+        lwc.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(lwc.getPlugin(), doorTask, 20, 20);
+    }
+
+    /**
+     * Scrape data from a doot
+     *
+     * @param door
+     * @return
+     */
+    private byte initializeDoorData(Door door) {
+        byte data = 0x00;
+
+        // get the hinge position
+        switch (door.getHingeCorner()) {
+            case NORTH_EAST:
+                data |= 0x0;
+                break;
+
+            case SOUTH_EAST:
+                data |= 0x1;
+                break;
+
+            case SOUTH_WEST:
+                data |= 0x2;
+                break;
+
+            case NORTH_WEST:
+                data |= 0x3;
+                break;
+        }
+
+        if (door.isTopHalf()) {
+            data |= 0x8;
+        }
+
+        return data;
+    }
+
+    /**
+     * @param door
+     * @return
+     */
+    private boolean isDoorOpen(Door door) {
+        switch (door.getHingeCorner()) {
+            default:
+                return door.isOpen();
+        }
+    }
+
+    /**
+     * Check if a material is usable by this (doors.)
+     *
+     * @param material
+     * @return
+     */
+    private boolean isValid(Material material) {
+        return material == Material.IRON_DOOR_BLOCK; // || material == Material.WOODEN_DOOR;
+    }
+
+    @Override
+    public void onProtectionInteract(LWCProtectionInteractEvent event) {
+        if (!enabled || action == Action.NULL) {
+            return;
+        }
+
+        if (!event.canAccess()) {
+            return;
+        }
 
         LWC lwc = event.getLWC();
         Protection protection = event.getProtection();
         Player player = event.getPlayer();
 
-		// get the blocks for the door
-		List<Block> blocks = lwc.getProtectionSet(protection.getBukkitWorld(), protection.getX(), protection.getY(), protection.getZ());
-		
-		// only send them one message :-)
-		boolean sentMessage = false;
+        // get the blocks for the door
+        List<Block> blocks = lwc.getProtectionSet(protection.getBukkitWorld(), protection.getX(), protection.getY(), protection.getZ());
 
-		// search around for iron doors if enabled
-		if(configuration.getBoolean("doors.doubleDoors", true)) {
-			Block protectionBlock = protection.getBlock();
-			Block temp;
-			
-			BlockFace[] faces = new BlockFace[] {
-					BlockFace.NORTH, BlockFace.WEST, BlockFace.EAST, BlockFace.SOUTH
-			};
-			
-			for(BlockFace face : faces) {
-				if(isValid((temp = protectionBlock.getRelative(face)).getType())) {
-					Protection found = lwc.findProtection(temp);
-					
-					if(found == null) {
-						continue;
-					}
+        // only send them one message :-)
+        boolean sentMessage = false;
 
-					if(lwc.canAccessProtection(player, found)) {
-						// we can access it, add it to the blocks
-						blocks.addAll(lwc.getProtectionSet(found.getBukkitWorld(), found.getX(), found.getY(), found.getZ()));
-					}
-				}
-			}
-		}
-		
-		for(Block block : blocks) {
-			if(!isValid(block.getType())) {
-				continue;
-			}
+        // search around for iron doors if enabled
+        if (configuration.getBoolean("doors.doubleDoors", true)) {
+            Block protectionBlock = protection.getBlock();
+            Block temp;
 
-			// create the door instance
-			Door door = new Door(block.getType(), block.getData());
+            BlockFace[] faces = new BlockFace[]{
+                    BlockFace.NORTH, BlockFace.WEST, BlockFace.EAST, BlockFace.SOUTH
+            };
 
-			// process the current door's data
-			byte data = initializeDoorData(door);
+            for (BlockFace face : faces) {
+                if (isValid((temp = protectionBlock.getRelative(face)).getType())) {
+                    Protection found = lwc.findProtection(temp);
 
-			switch(this.action) {
-			case TOGGLE:
+                    if (found == null) {
+                        continue;
+                    }
 
-				if((block.getData() & 0x4) != 0x4) {
-					data |= 0x4;
-				}
-				
-				if(!sentMessage) {
-					sentMessage = true;
-					
-					if(isDoorOpen(door)) {
-						// lwc.sendLocale(player, "protection.doors.open");
-					} else {
-						// lwc.sendLocale(player, "protection.doors.close");
-					}
-				}
+                    if (lwc.canAccessProtection(player, found)) {
+                        // we can access it, add it to the blocks
+                        blocks.addAll(lwc.getProtectionSet(found.getBukkitWorld(), found.getX(), found.getY(), found.getZ()));
+                    }
+                }
+            }
+        }
 
-				break;
+        for (Block block : blocks) {
+            if (!isValid(block.getType())) {
+                continue;
+            }
 
-			case OPEN_AND_CLOSE:
+            // create the door instance
+            Door door = new Door(block.getType(), block.getData());
 
-				if((block.getData() & 0x4) != 0x4) {
-					data |= 0x4;
-				}
-				
-				if(!sentMessage) {
-					sentMessage = true;
-					
-					if(isDoorOpen(door)) {
-						// lwc.sendLocale(player, "protection.doors.open");
-					} else {
-						// lwc.sendLocale(player, "protection.doors.close");
-					}
-				}
+            // process the current door's data
+            byte data = initializeDoorData(door);
 
-				if(!isDoorOpen(door)) {
-					Location location = new Location(block.getWorld(), block.getX(), block.getY(), block.getZ());
-					
-					DoorAction doorAction = new DoorAction();
-					doorAction.location = location;
-					doorAction.triggerTime = System.currentTimeMillis() + (interval * 1000L);
-					
-					doors.push(doorAction);
-				}
+            switch (this.action) {
+                case TOGGLE:
 
-				break;
-			}
+                    if ((block.getData() & 0x4) != 0x4) {
+                        data |= 0x4;
+                    }
 
-			// update the door
-			block.setData(data);
-		}
+                    if (!sentMessage) {
+                        sentMessage = true;
 
-		return;
-	}
+                        if (isDoorOpen(door)) {
+                            // lwc.sendLocale(player, "protection.doors.open");
+                        } else {
+                            // lwc.sendLocale(player, "protection.doors.close");
+                        }
+                    }
+
+                    break;
+
+                case OPEN_AND_CLOSE:
+
+                    if ((block.getData() & 0x4) != 0x4) {
+                        data |= 0x4;
+                    }
+
+                    if (!sentMessage) {
+                        sentMessage = true;
+
+                        if (isDoorOpen(door)) {
+                            // lwc.sendLocale(player, "protection.doors.open");
+                        } else {
+                            // lwc.sendLocale(player, "protection.doors.close");
+                        }
+                    }
+
+                    if (!isDoorOpen(door)) {
+                        Location location = new Location(block.getWorld(), block.getX(), block.getY(), block.getZ());
+
+                        DoorAction doorAction = new DoorAction();
+                        doorAction.location = location;
+                        doorAction.triggerTime = System.currentTimeMillis() + (interval * 1000L);
+
+                        doors.push(doorAction);
+                    }
+
+                    break;
+            }
+
+            // update the door
+            block.setData(data);
+        }
+
+        return;
+    }
 
 }

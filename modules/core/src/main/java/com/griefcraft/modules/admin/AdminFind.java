@@ -21,7 +21,6 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
-import com.griefcraft.util.StringUtils;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
@@ -30,11 +29,11 @@ public class AdminFind extends JavaModule {
 
     @Override
     public void onCommand(LWCCommandEvent event) {
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             return;
         }
 
-        if(!event.hasFlag("a", "admin")) {
+        if (!event.hasFlag("a", "admin")) {
             return;
         }
 
@@ -42,7 +41,7 @@ public class AdminFind extends JavaModule {
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
 
-        if(!args[0].equals("find")) {
+        if (!args[0].equals("find")) {
             return;
         }
 

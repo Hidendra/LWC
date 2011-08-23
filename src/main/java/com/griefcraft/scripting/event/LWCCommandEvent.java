@@ -27,8 +27,8 @@ public class LWCCommandEvent extends LWCEvent implements Cancellable {
      * @return
      */
     public boolean hasFlag(String... flags) {
-        for(String flag : flags) {
-            if(StringUtils.hasFlag(command, flag)) {
+        for (String flag : flags) {
+            if (StringUtils.hasFlag(command, flag)) {
                 return true;
             }
         }
@@ -43,8 +43,8 @@ public class LWCCommandEvent extends LWCEvent implements Cancellable {
      * @return
      */
     public boolean hasArgumentFlag(String... flags) {
-        for(String flag : flags) {
-            if(StringUtils.hasFlag(args, flag)) {
+        for (String flag : flags) {
+            if (StringUtils.hasFlag(args, flag)) {
                 return true;
             }
         }

@@ -27,7 +27,12 @@ import org.bukkit.Bukkit;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -85,12 +90,12 @@ public abstract class Database {
      * If we are connected to sqlite
      */
     private boolean connected = false;
-    
+
     /**
      * If the database has been loaded
      */
     protected boolean loaded = false;
-    
+
     /**
      * The database prefix (only if we're using MySQL.)
      */
@@ -106,15 +111,15 @@ public abstract class Database {
     }
 
     public Database(Type currentType) {
-    	this();
+        this();
         this.currentType = currentType;
     }
-    
+
     /**
      * @return the table prefix
      */
     public String getPrefix() {
-    	return prefix;
+        return prefix;
     }
 
     /**
@@ -123,7 +128,7 @@ public abstract class Database {
      * @param exception
      */
     protected void printException(Exception exception) {
-    	throw new ModuleException(exception);
+        throw new ModuleException(exception);
     }
 
     /**
