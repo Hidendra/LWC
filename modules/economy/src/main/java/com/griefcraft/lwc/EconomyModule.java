@@ -28,6 +28,7 @@ import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.config.Configuration;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -144,7 +145,7 @@ public class EconomyModule extends JavaModule {
             }
 
             // refund them :)
-            Player owner = protection.getBukkitOwner();
+            Player owner = Bukkit.getServer().getPlayer(history.getPlayer());
 
             // the currency to use
             ICurrency currency = lwc.getCurrency();
@@ -152,40 +153,6 @@ public class EconomyModule extends JavaModule {
             currency.addMoney(owner, charge);
             owner.sendMessage(Colors.Green + "You have been refunded " + currency.format(charge) + " because an LWC protection of yours was removed!");
         }
-    }
-
-    /**
-     * Get the amount of protections the player purchased for  the given discount price
-     * 
-     * @param lwc
-     * @param player
-     * @param discountPrice
-     * @return
-     */
-    private int getDiscountedProtections(LWC lwc, Player player, double discountPrice) {
-        LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
-        List<History> related = lwcPlayer.getRelatedHistory(History.Type.TRANSACTION);
-
-        if(related.size() == 0) {
-            return 0;
-        }
-
-        int amount = 0;
-
-        for(History history : related) {
-            if(!history.getBoolean("discount")) {
-                continue;
-            }
-
-            // obtain the charge
-            double charge = history.getDouble("charge");
-
-            if(charge == discountPrice) {
-                amount ++;
-            }
-        }
-
-        return amount;
     }
 
     @Override
@@ -334,6 +301,40 @@ public class EconomyModule extends JavaModule {
         }
 
         return value;
+    }
+
+    /**
+     * Get the amount of protections the player purchased for  the given discount price
+     *
+     * @param lwc
+     * @param player
+     * @param discountPrice
+     * @return
+     */
+    private int getDiscountedProtections(LWC lwc, Player player, double discountPrice) {
+        LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
+        List<History> related = lwcPlayer.getRelatedHistory(History.Type.TRANSACTION);
+
+        if(related.size() == 0) {
+            return 0;
+        }
+
+        int amount = 0;
+
+        for(History history : related) {
+            if(!history.getBoolean("discount")) {
+                continue;
+            }
+
+            // obtain the charge
+            double charge = history.getDouble("charge");
+
+            if(charge == discountPrice) {
+                amount ++;
+            }
+        }
+
+        return amount;
     }
 
 }
