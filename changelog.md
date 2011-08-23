@@ -1,10 +1,12 @@
 **LWC-Economy 1.20**
+
 * LWC-iConomy.jar has now become LWC-Economy.jar -- please update accordingly.
 * BOSEconomy is now supported alongside iConomy. No extra setup is necessary for either!
 * Money paid for protections can now be refunded when you destroy the protection, even if the person who paid (the owner) is offline.
 * Discounts now give out the exact amount of protections for the discounted price. For example, if 'newCharge' is set to 0 and 'amount' is set to 5, a player will be able to create 5 protections for free after it takes effect.
 
 **LWC 3.40**
+
 * Almost all current LWC Module events have been deprecated. They have been replaced with events such as: `onProtectionInteract(LWCProtectionInteractEvent event)`
 * Fixed PermissionsBukkit compatibility: some commands did not work correctly
 * `/lwc admin cleanup` has been drastically sped up
