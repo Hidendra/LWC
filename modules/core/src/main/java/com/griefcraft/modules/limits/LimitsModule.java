@@ -188,7 +188,7 @@ public class LimitsModule extends JavaModule {
 
         // try the player's groups
         if (value == null && hasPermissions) {
-            for(String groupName : lwc.getPermissions().getGroups(player)) {
+            for (String groupName : lwc.getPermissions().getGroups(player)) {
                 if (groupName != null && !groupName.isEmpty() && value == null) {
                     value = map("groups." + groupName + "." + node);
                 }
@@ -228,7 +228,7 @@ public class LimitsModule extends JavaModule {
 
     @Override
     public void onRegisterProtection(LWCProtectionRegisterEvent event) {
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             return;
         }
 
@@ -244,7 +244,7 @@ public class LimitsModule extends JavaModule {
 
     @Override
     public void onCommand(LWCCommandEvent event) {
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             return;
         }
 

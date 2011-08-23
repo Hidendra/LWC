@@ -4,7 +4,7 @@ import com.griefcraft.scripting.ModuleLoader;
 import org.bukkit.entity.Player;
 
 public class LWCPlayerEvent extends LWCEvent {
-    
+
     private Player player;
 
     public LWCPlayerEvent(ModuleLoader.Event event, Player player) {

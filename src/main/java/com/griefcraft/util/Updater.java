@@ -23,7 +23,13 @@ import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.sql.Database;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -85,11 +91,11 @@ public class Updater {
      * Check for dependencies
      */
     public void check() {
-    	// account of dev builds or nonvalid builds
-    	if(LWCInfo.VERSION == 0d) {
-    		return;
-    	}
-    	
+        // account of dev builds or nonvalid builds
+        if (LWCInfo.VERSION == 0d) {
+            return;
+        }
+
         if (Database.DefaultType == Database.Type.SQLite) {
             String[] shared = new String[]{DEST_LIBRARY_FOLDER + "lib/sqlite.jar", getFullNativeLibraryPath()};
 
@@ -123,7 +129,7 @@ public class Updater {
     public boolean checkDist() {
         check();
 
-        if(LWCInfo.VERSION == 0) {
+        if (LWCInfo.VERSION == 0) {
             return false;
         }
 

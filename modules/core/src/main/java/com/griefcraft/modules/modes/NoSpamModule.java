@@ -21,7 +21,6 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCSendLocaleEvent;
-import com.griefcraft.util.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -42,7 +41,7 @@ public class NoSpamModule extends JavaModule {
         Player player = (Player) sender;
         String mode = args[0].toLowerCase();
 
-        if(!mode.equals("nospam")) {
+        if (!mode.equals("nospam")) {
             return;
         }
 
@@ -69,12 +68,12 @@ public class NoSpamModule extends JavaModule {
         List<String> modes = lwc.getMemoryDatabase().getModes(player.getName());
 
         // they don't intrigue us
-        if(!modes.contains("nospam")) {
+        if (!modes.contains("nospam")) {
             return;
         }
 
         // hide all of the creation messages
-        if(locale.endsWith("create.finalize")) {
+        if (locale.endsWith("create.finalize")) {
             return;
         }
 

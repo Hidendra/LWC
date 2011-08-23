@@ -2,7 +2,6 @@ package com.griefcraft.scripting.event;
 
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.ModuleLoader;
-import org.bukkit.entity.Player;
 
 public class LWCProtectionRemovePostEvent extends LWCProtectionEvent {
 

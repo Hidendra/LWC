@@ -20,11 +20,8 @@ package com.griefcraft.modules.modes;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
-import com.griefcraft.util.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.List;
 
 public class BaseModeModule extends JavaModule {
 
@@ -45,7 +42,7 @@ public class BaseModeModule extends JavaModule {
             return;
         }
 
-        if(!(sender instanceof Player)) {
+        if (!(sender instanceof Player)) {
             return;
         }
 

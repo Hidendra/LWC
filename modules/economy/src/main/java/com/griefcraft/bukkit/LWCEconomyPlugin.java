@@ -18,8 +18,8 @@
 package com.griefcraft.bukkit;
 
 
-import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.EconomyModule;
+import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.Module;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
@@ -36,7 +36,7 @@ public class LWCEconomyPlugin extends JavaPlugin {
      * The LWC object
      */
     private LWC lwc;
-    
+
     /**
      * The module class for iConomy
      */
@@ -63,7 +63,7 @@ public class LWCEconomyPlugin extends JavaPlugin {
     public void onEnable() {
         Plugin lwc = getServer().getPluginManager().getPlugin("LWC");
 
-        if(lwc != null && lwc.isEnabled()) {
+        if (lwc != null && lwc.isEnabled()) {
             init();
         } else {
             // register the server listener

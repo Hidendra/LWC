@@ -26,7 +26,11 @@ import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.scripting.Module;
 import com.griefcraft.util.Performance;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -916,7 +920,7 @@ public class PhysDB extends Database {
 
     /**
      * Sync a History object to the database or save a newly created one
-     * 
+     *
      * @param history
      */
     public void saveHistory(History history) {
@@ -926,31 +930,31 @@ public class PhysDB extends Database {
             // prepared statement index
             int index = 1;
 
-            if(history.doesExist()) {
+            if (history.doesExist()) {
                 statement = prepare("REPLACE INTO " + prefix + "history (id, protectionId, type, status, metadata) VALUES (?, ?, ?, ?, ?)");
-                statement.setInt(index ++, history.getId());
+                statement.setInt(index++, history.getId());
             } else {
                 statement = prepare("INSERT INTO " + prefix + "history (protectionId, type, status, metadata, timestamp) VALUES (?, ?, ?, ?, ?)");
             }
 
             statement.setInt(index++, history.getProtectionId());
             statement.setInt(index++, history.getType().ordinal());
-            statement.setInt(index ++, history.getStatus().ordinal());
+            statement.setInt(index++, history.getStatus().ordinal());
             statement.setString(index++, history.getSafeMetaData());
 
-            if(!history.doesExist()) {
+            if (!history.doesExist()) {
                 statement.setLong(index++, System.currentTimeMillis() / 1000L);
             }
 
             statement.executeUpdate();
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             printException(e);
         }
     }
 
     /**
      * Load all of the History objects for a given protection
-     * 
+     *
      * @param protection
      * @return
      */
@@ -963,7 +967,7 @@ public class PhysDB extends Database {
 
             ResultSet set = statement.executeQuery();
 
-            while(set.next()) {
+            while (set.next()) {
                 int historyId = set.getInt("id");
                 int protectionId = set.getInt("protectionId");
                 int type_ord = set.getInt("type");
@@ -975,7 +979,7 @@ public class PhysDB extends Database {
                 History.Status status = History.Status.values()[status_ord];
 
                 History history = protection.createHistoryObject();
-                
+
                 history.setId(historyId);
                 history.setType(type);
                 history.setStatus(status);
@@ -986,7 +990,7 @@ public class PhysDB extends Database {
                 temp.add(history);
             }
 
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             printException(e);
         }
 
@@ -1085,9 +1089,9 @@ public class PhysDB extends Database {
         try {
             PreparedStatement statement = prepare("DELETE FROM " + prefix + "history WHERE protectionId = ?");
             statement.setInt(1, protectionId);
-            
+
             statement.executeUpdate();
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             printException(e);
         }
     }
@@ -1098,7 +1102,7 @@ public class PhysDB extends Database {
             statement.setInt(1, historyId);
 
             statement.executeUpdate();
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             printException(e);
         }
     }

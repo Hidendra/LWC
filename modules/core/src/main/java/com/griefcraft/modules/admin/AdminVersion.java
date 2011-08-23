@@ -22,7 +22,6 @@ import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.util.Colors;
-import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.Updater;
 import org.bukkit.command.CommandSender;
 
@@ -30,11 +29,11 @@ public class AdminVersion extends JavaModule {
 
     @Override
     public void onCommand(LWCCommandEvent event) {
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             return;
         }
 
-        if(!event.hasFlag("a", "admin")) {
+        if (!event.hasFlag("a", "admin")) {
             return;
         }
 
@@ -42,7 +41,7 @@ public class AdminVersion extends JavaModule {
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
 
-        if(!args[0].equals("version")) {
+        if (!args[0].equals("version")) {
             return;
         }
 
@@ -59,7 +58,7 @@ public class AdminVersion extends JavaModule {
         if (latestPluginVersion > currPluginVersion) {
             pluginColor = Colors.Red;
         }
-        
+
         String full = LWCInfo.FULL_VERSION;
 
         lwc.sendLocale(sender, "protection.admin.version.finalize", "plugin_color", pluginColor, "plugin_version", full, "latest_plugin", latestPluginVersion);

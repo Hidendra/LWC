@@ -17,7 +17,11 @@
 
 package com.griefcraft.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 public class LWCResourceBundle extends ResourceBundle {
 
