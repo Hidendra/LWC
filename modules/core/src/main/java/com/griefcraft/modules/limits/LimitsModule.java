@@ -189,7 +189,7 @@ public class LimitsModule extends JavaModule {
         // try the player's groups
         if (value == null && hasPermissions) {
             for(String groupName : lwc.getPermissions().getGroups(player)) {
-                if (groupName != null && !groupName.isEmpty()) {
+                if (groupName != null && !groupName.isEmpty() && value == null) {
                     value = map("groups." + groupName + "." + node);
                 }
             }

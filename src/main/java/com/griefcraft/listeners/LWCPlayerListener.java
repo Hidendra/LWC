@@ -165,7 +165,7 @@ public class LWCPlayerListener extends PlayerListener {
             }
 
             if (result == Module.Result.DEFAULT) {
-                lwc.enforceAccess(player, block);
+                lwc.enforceAccess(player, protection.getBlock());
             }
 
             if (!canAccess || result == Module.Result.CANCEL) {
