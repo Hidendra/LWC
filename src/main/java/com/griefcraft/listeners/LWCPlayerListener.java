@@ -112,9 +112,7 @@ public class LWCPlayerListener extends PlayerListener {
 
         Material material = block.getType();
 
-        /*
-           * Prevent players with lwc.blockinventories from opening inventories
-           */
+        // Prevent players with lwc.deny from interacting
         if (block.getState() instanceof ContainerBlock) {
             if (!lwc.hasPermission(player, "lwc.protect") && lwc.hasPermission(player, "lwc.deny") && !lwc.isAdmin(player) && !lwc.isMod(player)) {
                 lwc.sendLocale(player, "protection.interact.error.blocked");
