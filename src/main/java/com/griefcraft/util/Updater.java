@@ -114,6 +114,8 @@ public class Updater {
         }
 
         if (LWC.getInstance().getConfiguration().getBoolean("core.autoUpdate", false)) {
+            loadVersions(false);
+
             if (latestPluginVersion > LWCInfo.VERSION) {
                 logger.info("Update detected for LWC");
                 logger.info("Latest version: " + latestPluginVersion);
