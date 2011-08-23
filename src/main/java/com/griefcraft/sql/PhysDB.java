@@ -254,51 +254,51 @@ public class PhysDB extends Database {
                 column = new Column("id");
                 column.setType("INTEGER");
                 column.setPrimary(true);
-                protections.addColumn(column);
+                protections.add(column);
 
                 column = new Column("type");
                 column.setType("INTEGER");
-                protections.addColumn(column);
+                protections.add(column);
 
                 column = new Column("flags");
                 column.setType("INTEGER");
-                protections.addColumn(column);
+                protections.add(column);
 
                 column = new Column("blockId");
                 column.setType("INTEGER");
-                protections.addColumn(column);
+                protections.add(column);
 
                 column = new Column("world");
                 column.setType("VARCHAR(255)");
-                protections.addColumn(column);
+                protections.add(column);
 
                 column = new Column("owner");
                 column.setType("VARCHAR(255)");
-                protections.addColumn(column);
+                protections.add(column);
 
                 column = new Column("password");
                 column.setType("VARCHAR(255)");
-                protections.addColumn(column);
+                protections.add(column);
 
                 column = new Column("x");
                 column.setType("INTEGER");
-                protections.addColumn(column);
+                protections.add(column);
 
                 column = new Column("y");
                 column.setType("INTEGER");
-                protections.addColumn(column);
+                protections.add(column);
 
                 column = new Column("z");
                 column.setType("INTEGER");
-                protections.addColumn(column);
+                protections.add(column);
 
                 column = new Column("date");
                 column.setType("VARCHAR(255)");
-                protections.addColumn(column);
+                protections.add(column);
 
                 column = new Column("last_accessed");
                 column.setType("INTEGER");
-                protections.addColumn(column);
+                protections.add(column);
             }
 
             Table rights = new Table(this, "rights");
@@ -306,23 +306,23 @@ public class PhysDB extends Database {
                 column = new Column("id");
                 column.setType("INTEGER");
                 column.setPrimary(true);
-                rights.addColumn(column);
+                rights.add(column);
 
                 column = new Column("chest");
                 column.setType("INTEGER");
-                rights.addColumn(column);
+                rights.add(column);
 
                 column = new Column("entity");
                 column.setType("TEXT");
-                rights.addColumn(column);
+                rights.add(column);
 
                 column = new Column("rights");
                 column.setType("INTEGER");
-                rights.addColumn(column);
+                rights.add(column);
 
                 column = new Column("type");
                 column.setType("INTEGER");
-                rights.addColumn(column);
+                rights.add(column);
             }
 
             Table menuStyles = new Table(this, "menu_styles");
@@ -331,11 +331,11 @@ public class PhysDB extends Database {
                 column.setType("VARCHAR(255)");
                 column.setPrimary(true);
                 column.setAutoIncrement(false);
-                menuStyles.addColumn(column);
+                menuStyles.add(column);
 
                 column = new Column("menu");
                 column.setType("VARCHAR(255)");
-                menuStyles.addColumn(column);
+                menuStyles.add(column);
             }
 
             Table history = new Table(this, "history");
@@ -343,27 +343,43 @@ public class PhysDB extends Database {
                 column = new Column("id");
                 column.setType("INTEGER");
                 column.setPrimary(true);
-                history.addColumn(column);
+                history.add(column);
 
                 column = new Column("protectionId");
                 column.setType("INTEGER");
-                history.addColumn(column);
+                history.add(column);
 
                 column = new Column("type");
                 column.setType("INTEGER");
-                history.addColumn(column);
+                history.add(column);
 
                 column = new Column("status");
                 column.setType("INTEGER");
-                history.addColumn(column);
+                history.add(column);
 
                 column = new Column("metadata");
                 column.setType("VARCHAR(255)");
-                history.addColumn(column);
+                history.add(column);
 
                 column = new Column("timestamp");
                 column.setType("long");
-                history.addColumn(column);
+                history.add(column);
+            }
+
+            Table tasks = new Table(this, "tasks");
+            {
+                column = new Column("id");
+                column.setType("INTEGER");
+                column.setPrimary(true);
+                tasks.add(column);
+
+                column = new Column("type");
+                column.setType("INTEGER");
+                tasks.add(column);
+
+                column = new Column("data");
+                column.setType("VARCHAR(255)");
+                tasks.add(column);
             }
 
             protections.execute();

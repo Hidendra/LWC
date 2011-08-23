@@ -389,15 +389,15 @@ public class MemDB extends Database {
                 column = new Column("id");
                 column.setType("INTEGER");
                 column.setPrimary(true);
-                sessions.addColumn(column);
+                sessions.add(column);
 
                 column = new Column("player");
                 column.setType("VARCHAR(255)");
-                sessions.addColumn(column);
+                sessions.add(column);
 
                 column = new Column("chest");
                 column.setType("INTEGER");
-                sessions.addColumn(column);
+                sessions.add(column);
             }
 
             Table locks = new Table(this, "locks");
@@ -407,15 +407,15 @@ public class MemDB extends Database {
                 column = new Column("id");
                 column.setType("INTEGER");
                 column.setPrimary(true);
-                locks.addColumn(column);
+                locks.add(column);
 
                 column = new Column("player");
                 column.setType("VARCHAR(255)");
-                locks.addColumn(column);
+                locks.add(column);
 
                 column = new Column("password");
                 column.setType("VARCHAR(100)");
-                locks.addColumn(column);
+                locks.add(column);
             }
 
             Table actions = new Table(this, "actions");
@@ -425,23 +425,23 @@ public class MemDB extends Database {
                 column = new Column("id");
                 column.setType("INTEGER");
                 column.setPrimary(true);
-                actions.addColumn(column);
+                actions.add(column);
 
                 column = new Column("action");
                 column.setType("VARCHAR(255)");
-                actions.addColumn(column);
+                actions.add(column);
 
                 column = new Column("player");
                 column.setType("VARCHAR(255)");
-                actions.addColumn(column);
+                actions.add(column);
 
                 column = new Column("chest");
                 column.setType("INTEGER");
-                actions.addColumn(column);
+                actions.add(column);
 
                 column = new Column("data");
                 column.setType("VARCHAR(255)");
-                actions.addColumn(column);
+                actions.add(column);
             }
 
             Table modes = new Table(this, "modes");
@@ -451,19 +451,19 @@ public class MemDB extends Database {
                 column = new Column("id");
                 column.setType("INTEGER");
                 column.setPrimary(true);
-                modes.addColumn(column);
+                modes.add(column);
 
                 column = new Column("player");
                 column.setType("VARCHAR(255)");
-                modes.addColumn(column);
+                modes.add(column);
 
                 column = new Column("mode");
                 column.setType("VARCHAR(255)");
-                modes.addColumn(column);
+                modes.add(column);
 
                 column = new Column("data");
                 column.setType("VARCHAR(255)");
-                modes.addColumn(column);
+                modes.add(column);
             }
 
             // now create all of the tables
