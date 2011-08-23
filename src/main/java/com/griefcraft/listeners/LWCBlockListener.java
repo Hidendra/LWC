@@ -30,7 +30,12 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.*;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockListener;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
+import org.bukkit.event.block.SignChangeEvent;
 
 public class LWCBlockListener extends BlockListener {
 
@@ -38,7 +43,7 @@ public class LWCBlockListener extends BlockListener {
      * The plugin instance
      */
     private LWCPlugin plugin;
-    
+
     public LWCBlockListener(LWCPlugin plugin) {
         this.plugin = plugin;
     }
@@ -136,7 +141,7 @@ public class LWCBlockListener extends BlockListener {
             if (evt.isCancelled() || result == Result.CANCEL) {
                 event.setCancelled(true);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             event.setCancelled(true);
             lwc.sendLocale(player, "protection.internalerror", "id", "BLOCK_BREAK");
             e.printStackTrace();
@@ -236,7 +241,7 @@ public class LWCBlockListener extends BlockListener {
             // All good!
             lwc.getPhysicalDatabase().registerProtection(block.getTypeId(), type, block.getWorld().getName(), player.getName(), "", block.getX(), block.getY(), block.getZ());
             lwc.sendLocale(player, "protection.onplace.create.finalize", "type", lwc.getLocale(autoRegisterType.toLowerCase()), "block", LWC.materialToString(block));
-        } catch(Exception e) {
+        } catch (Exception e) {
             lwc.sendLocale(player, "protection.internalerror", "id", "PLAYER_INTERACT");
             e.printStackTrace();
         }

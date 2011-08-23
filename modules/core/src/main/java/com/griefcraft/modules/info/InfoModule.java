@@ -23,18 +23,15 @@ import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
-import com.griefcraft.util.StringUtils;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.List;
 
 public class InfoModule extends JavaModule {
 
     @Override
     public void onProtectionInteract(LWCProtectionInteractEvent event) {
-        if(event.getResult() != Result.DEFAULT) {
+        if (event.getResult() != Result.DEFAULT) {
             return;
         }
 
@@ -59,7 +56,7 @@ public class InfoModule extends JavaModule {
 
     @Override
     public void onBlockInteract(LWCBlockInteractEvent event) {
-        if(event.getResult() != Result.DEFAULT) {
+        if (event.getResult() != Result.DEFAULT) {
             return;
         }
 
@@ -79,7 +76,7 @@ public class InfoModule extends JavaModule {
 
     @Override
     public void onCommand(LWCCommandEvent event) {
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             return;
         }
 

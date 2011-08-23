@@ -73,7 +73,7 @@ public class EconomyModule extends JavaModule {
         Block block = protection.getBlock();
 
         // Uh-oh! This REALLY should never happen ... !
-        if(block == null || !priceCache.containsKey(block.getLocation())) {
+        if (block == null || !priceCache.containsKey(block.getLocation())) {
             logger.severe("LWC-iConomy POST_REGISTRATION has encountered a severe problem!");
             return;
         }
@@ -87,7 +87,7 @@ public class EconomyModule extends JavaModule {
         List<History> transactions = protection.getRelatedHistory(History.Type.TRANSACTION);
 
         // this really should not happen either (never!)
-        if(transactions.size() == 0) {
+        if (transactions.size() == 0) {
             logger.severe("LWC-iConomy POST_REGISTRATION encountered a severen problem!: transactions.size() == 0");
         }
 
@@ -112,21 +112,21 @@ public class EconomyModule extends JavaModule {
         Protection protection = event.getProtection();
 
         // first, do we still have a currency processor?
-        if(!lwc.getCurrency().isActive()) {
+        if (!lwc.getCurrency().isActive()) {
             return;
         }
 
         // we need to refund them, load up transactions
         List<History> transactions = protection.getRelatedHistory(History.Type.TRANSACTION);
 
-        for(History history : transactions) {
-            if(history.getStatus() == History.Status.INACTIVE) {
+        for (History history : transactions) {
+            if (history.getStatus() == History.Status.INACTIVE) {
                 continue;
             }
 
             String metadata = history.getMetaDataStartsWith("iconomy=");
 
-            if(metadata == null) {
+            if (metadata == null) {
                 continue;
             }
 
@@ -136,13 +136,13 @@ public class EconomyModule extends JavaModule {
 
             try {
                 charge = Double.parseDouble(split[1]);
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 logger.severe("uh-oh! Error parsing metadata: " + metadata + "; history=" + history.getId());
                 continue;
             }
 
             // No need to refund if it's negative or 0
-            if(charge <= 0) {
+            if (charge <= 0) {
                 continue;
             }
 
@@ -159,7 +159,7 @@ public class EconomyModule extends JavaModule {
 
     @Override
     public void onRegisterProtection(LWCProtectionRegisterEvent event) {
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             return;
         }
 
@@ -174,7 +174,7 @@ public class EconomyModule extends JavaModule {
         // currency handler to use
         ICurrency currency = lwc.getCurrency();
 
-        if(!currency.isActive()) {
+        if (!currency.isActive()) {
             return;
         }
 
@@ -227,7 +227,7 @@ public class EconomyModule extends JavaModule {
             if (!currency.canAfford(player, charge)) {
                 player.sendMessage(Colors.Red + "You do not have enough " + currency.getMoneyName() + " to buy an LWC protection.");
                 player.sendMessage(Colors.Red + "The balance required for an LWC protection is: " + currency.format(charge));
-                
+
                 // remove from cache
                 priceCache.remove(location);
                 event.setCancelled(true);
@@ -269,7 +269,7 @@ public class EconomyModule extends JavaModule {
 
         // try permissions
         if (value == null && hasPermissions) {
-            for(String groupName : lwc.getPermissions().getGroups(player)) {
+            for (String groupName : lwc.getPermissions().getGroups(player)) {
                 if (groupName != null && !groupName.isEmpty() && value == null) {
                     value = map("groups." + groupName + "." + node);
                 }

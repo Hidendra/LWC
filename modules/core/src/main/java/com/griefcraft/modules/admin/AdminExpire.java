@@ -18,35 +18,20 @@
 package com.griefcraft.modules.admin;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
-import com.griefcraft.sql.PhysDB;
-import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.ContainerBlock;
 import org.bukkit.command.CommandSender;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 public class AdminExpire extends JavaModule {
 
     @Override
     public void onCommand(LWCCommandEvent event) {
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             return;
         }
 
-        if(!event.hasFlag("a", "admin")) {
+        if (!event.hasFlag("a", "admin")) {
             return;
         }
 
@@ -54,7 +39,7 @@ public class AdminExpire extends JavaModule {
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
 
-        if(!args[0].equals("expire")) {
+        if (!args[0].equals("expire")) {
             return;
         }
 

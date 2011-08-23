@@ -25,7 +25,12 @@ import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.ModuleLoader.Event;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.sql.Database;
-import com.griefcraft.util.*;
+import com.griefcraft.util.Colors;
+import com.griefcraft.util.LWCResourceBundle;
+import com.griefcraft.util.LocaleClassLoader;
+import com.griefcraft.util.StringUtils;
+import com.griefcraft.util.UTF8Control;
+import com.griefcraft.util.Updater;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -206,7 +211,7 @@ public class LWCPlugin extends JavaPlugin {
 
             if (commandName.equals("cpublic")) {
                 aliasCommand = "create";
-                aliasArgs = new String[] { "public" };
+                aliasArgs = new String[]{"public"};
             } else if (commandName.equals("cpassword")) {
                 aliasCommand = "create";
                 aliasArgs = ("password " + argString).split(" ");
@@ -223,7 +228,7 @@ public class LWCPlugin extends JavaPlugin {
                 aliasArgs = argString.isEmpty() ? new String[0] : argString.split(" ");
             } else if (commandName.equals("cremove")) {
                 aliasCommand = "remove";
-                aliasArgs = new String[] { "protection" };
+                aliasArgs = new String[]{"protection"};
             } else if (commandName.equals("climits")) {
                 aliasCommand = "limits";
                 aliasArgs = argString.isEmpty() ? new String[0] : argString.split(" ");
@@ -253,7 +258,7 @@ public class LWCPlugin extends JavaPlugin {
                 aliasArgs = ("nospam " + argString).split(" ");
             }
 
-            if(aliasCommand != null) {
+            if (aliasCommand != null) {
                 lwc.getModuleLoader().dispatchEvent(new LWCCommandEvent(sender, aliasCommand, aliasArgs));
                 lwc.getModuleLoader().dispatchEvent(Event.COMMAND, sender, aliasCommand, aliasArgs);
                 return true;
@@ -273,7 +278,7 @@ public class LWCPlugin extends JavaPlugin {
         LWCCommandEvent evt = new LWCCommandEvent(sender, args[0].toLowerCase(), args.length > 1 ? StringUtils.join(args, 1).split(" ") : new String[0]);
         lwc.getModuleLoader().dispatchEvent(evt);
 
-        if(evt.isCancelled()) {
+        if (evt.isCancelled()) {
             return true;
         }
 
@@ -287,7 +292,7 @@ public class LWCPlugin extends JavaPlugin {
 
     public void onDisable() {
         LWC.ENABLED = false;
-        
+
         if (lwc != null) {
             lwc.destruct();
         }

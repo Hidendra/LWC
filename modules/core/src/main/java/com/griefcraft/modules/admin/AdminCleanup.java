@@ -22,7 +22,6 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.util.Colors;
-import com.griefcraft.util.StringUtils;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -39,11 +38,11 @@ public class AdminCleanup extends JavaModule {
 
     @Override
     public void onCommand(LWCCommandEvent event) {
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             return;
         }
 
-        if(!event.hasFlag("a", "admin")) {
+        if (!event.hasFlag("a", "admin")) {
             return;
         }
 
@@ -51,7 +50,7 @@ public class AdminCleanup extends JavaModule {
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
 
-        if(!args[0].equals("cleanup")) {
+        if (!args[0].equals("cleanup")) {
             return;
         }
 
@@ -61,7 +60,7 @@ public class AdminCleanup extends JavaModule {
         // if we shouldn't output
         boolean silent = false;
 
-        if(args.length > 1 && args[1].equalsIgnoreCase("silent")) {
+        if (args.length > 1 && args[1].equalsIgnoreCase("silent")) {
             silent = true;
         }
 
@@ -90,7 +89,7 @@ public class AdminCleanup extends JavaModule {
 
         /**
          * Push removal changes to the database
-         * 
+         *
          * @param toRemove
          */
         public void push(List<Integer> toRemove) throws SQLException {
@@ -107,24 +106,24 @@ public class AdminCleanup extends JavaModule {
             // create the statement to use
             Statement statement = lwc.getPhysicalDatabase().getConnection().createStatement();
 
-            while(iter.hasNext()) {
+            while (iter.hasNext()) {
                 int protectionId = iter.next();
 
-                if(count % 100000 == 0) {
+                if (count % 100000 == 0) {
                     builder.append("DELETE FROM " + prefix + "protections WHERE id IN (" + protectionId);
                 } else {
                     builder.append("," + protectionId);
                 }
 
-                if(count % 100000 == 99999 || count == (total - 1)) {
+                if (count % 100000 == 99999 || count == (total - 1)) {
                     builder.append(")");
                     statement.executeUpdate(builder.toString());
                     builder.setLength(0);
-                    
+
                     sender.sendMessage(Colors.Green + "REMOVED " + (count + 1) + " / " + total);
                 }
 
-                count ++;
+                count++;
             }
 
             statement.close();
@@ -151,17 +150,17 @@ public class AdminCleanup extends JavaModule {
                     Protection protection = lwc.getPhysicalDatabase().resolveProtectionNoRights(result);
                     World world = protection.getBukkitWorld();
 
-                    count ++;
+                    count++;
 
-                    if(count % 100000 == 0 || count == totalProtections || count == 1) {
+                    if (count % 100000 == 0 || count == totalProtections || count == 1) {
                         sender.sendMessage(Colors.Red + count + " / " + totalProtections);
                     }
 
                     if (world == null) {
-                        if(!silent) {
+                        if (!silent) {
                             lwc.sendLocale(sender, "protection.admin.cleanup.noworld", "world", protection.getWorld());
                         }
-                        
+
                         continue;
                     }
 
@@ -172,8 +171,8 @@ public class AdminCleanup extends JavaModule {
                     if (block == null || !lwc.isProtectable(block)) {
                         toRemove.add(protection.getId());
                         completed++;
-                        
-                        if(!silent) {
+
+                        if (!silent) {
                             lwc.sendLocale(sender, "protection.admin.cleanup.removednoexist", "protection", protection.toString());
                         }
                     }

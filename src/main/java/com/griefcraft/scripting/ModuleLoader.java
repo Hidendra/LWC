@@ -22,7 +22,17 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.Module.Result;
-import com.griefcraft.scripting.event.*;
+import com.griefcraft.scripting.event.LWCAccessEvent;
+import com.griefcraft.scripting.event.LWCBlockInteractEvent;
+import com.griefcraft.scripting.event.LWCCommandEvent;
+import com.griefcraft.scripting.event.LWCDropItemEvent;
+import com.griefcraft.scripting.event.LWCEvent;
+import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
+import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
+import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
+import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
+import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
+import com.griefcraft.scripting.event.LWCSendLocaleEvent;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
@@ -31,7 +41,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import javax.naming.OperationNotSupportedException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class ModuleLoader {
@@ -111,7 +125,8 @@ public class ModuleLoader {
         // new / temp
         ACCESS_REQUEST();
 
-        Event() { }
+        Event() {
+        }
 
         Event(int arguments) {
             this.arguments = arguments;
@@ -146,38 +161,38 @@ public class ModuleLoader {
 
     /**
      * Dispatch an event
-     * 
+     *
      * @param event
      */
     public void dispatchEvent(LWCEvent event) {
-        if(event == null) {
+        if (event == null) {
             return;
         }
-        
+
         try {
-            for(List<MetaData> modules : pluginModules.values()) {
-                for(MetaData metaData : modules) {
+            for (List<MetaData> modules : pluginModules.values()) {
+                for (MetaData metaData : modules) {
                     Module module = metaData.getModule();
 
-                    if(event instanceof LWCAccessEvent) {
+                    if (event instanceof LWCAccessEvent) {
                         module.protectionAccessRequest((LWCAccessEvent) event);
-                    } else if(event instanceof LWCBlockInteractEvent) {
+                    } else if (event instanceof LWCBlockInteractEvent) {
                         module.onBlockInteract((LWCBlockInteractEvent) event);
-                    } else if(event instanceof LWCCommandEvent) {
+                    } else if (event instanceof LWCCommandEvent) {
                         module.onCommand((LWCCommandEvent) event);
-                    } else if(event instanceof LWCDropItemEvent) {
+                    } else if (event instanceof LWCDropItemEvent) {
                         module.onDropItem((LWCDropItemEvent) event);
-                    } else if(event instanceof LWCProtectionDestroyEvent) {
+                    } else if (event instanceof LWCProtectionDestroyEvent) {
                         module.onDestroyProtection((LWCProtectionDestroyEvent) event);
-                    } else if(event instanceof LWCProtectionInteractEvent) {
+                    } else if (event instanceof LWCProtectionInteractEvent) {
                         module.onProtectionInteract((LWCProtectionInteractEvent) event);
-                    } else if(event instanceof LWCProtectionRegisterEvent) {
+                    } else if (event instanceof LWCProtectionRegisterEvent) {
                         module.onRegisterProtection((LWCProtectionRegisterEvent) event);
-                    } else if(event instanceof LWCProtectionRemovePostEvent) {
+                    } else if (event instanceof LWCProtectionRemovePostEvent) {
                         module.onPostRemoval((LWCProtectionRemovePostEvent) event);
-                    } else if(event instanceof LWCProtectionRegistrationPostEvent) {
+                    } else if (event instanceof LWCProtectionRegistrationPostEvent) {
                         module.onPostRegistration((LWCProtectionRegistrationPostEvent) event);
-                    } else if(event instanceof LWCSendLocaleEvent) {
+                    } else if (event instanceof LWCSendLocaleEvent) {
                         module.onSendLocale((LWCSendLocaleEvent) event);
                     }
                 }
@@ -281,14 +296,14 @@ public class ModuleLoader {
 
         return result;
     }
-    
+
     /**
      * Shutdown the plugin loader
-     * 
+     *
      * @todo broadcast UNLOAD
      */
     public void shutdown() {
-    	pluginModules.clear();
+        pluginModules.clear();
     }
 
     /**

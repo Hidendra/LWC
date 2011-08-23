@@ -20,7 +20,6 @@ package com.griefcraft.modules.modes;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
-import com.griefcraft.util.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -41,7 +40,7 @@ public class PersistModule extends JavaModule {
         Player player = (Player) sender;
         String mode = args[0].toLowerCase();
 
-        if(!mode.equals("persist")) {
+        if (!mode.equals("persist")) {
             return;
         }
 

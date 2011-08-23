@@ -24,7 +24,11 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.ModuleLoader.Event;
-import com.griefcraft.scripting.event.*;
+import com.griefcraft.scripting.event.LWCBlockInteractEvent;
+import com.griefcraft.scripting.event.LWCCommandEvent;
+import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
+import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
+import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
 import com.griefcraft.sql.MemDB;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
@@ -33,13 +37,11 @@ import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.List;
-
 public class CreateModule extends JavaModule {
 
     @Override
     public void onProtectionInteract(LWCProtectionInteractEvent event) {
-        if(event.getResult() != Result.DEFAULT) {
+        if (event.getResult() != Result.DEFAULT) {
             return;
         }
 
@@ -64,7 +66,7 @@ public class CreateModule extends JavaModule {
 
     @Override
     public void onBlockInteract(LWCBlockInteractEvent event) {
-        if(event.getResult() != Result.DEFAULT) {
+        if (event.getResult() != Result.DEFAULT) {
             return;
         }
 
@@ -88,7 +90,7 @@ public class CreateModule extends JavaModule {
         String[] split = actionData.split(" ");
         String protectionType = split[0].toLowerCase();
         String protectionData = StringUtils.join(split, 1);
-        
+
         // check permissions again (DID THE LITTLE SHIT MOVE WORLDS??!?!?!?!?!?)
         if (!lwc.hasPermission(player, "lwc.create." + protectionType, "lwc.create", "lwc.protect")) {
             lwc.sendLocale(player, "protection.accessdenied");
@@ -125,14 +127,14 @@ public class CreateModule extends JavaModule {
 
             protection = physDb.registerProtection(block.getTypeId(), ProtectionTypes.PASSWORD, worldName, playerName, password, blockX, blockY, blockZ);
             memDb.registerPlayer(playerName, protection.getId());
-            
+
             lwc.sendLocale(player, "protection.interact.create.finalize");
             lwc.sendLocale(player, "protection.interact.create.password");
         } else if (protectionType.equals("private")) {
             String[] rights = protectionData.split(" ");
 
             protection = physDb.registerProtection(block.getTypeId(), ProtectionTypes.PRIVATE, worldName, playerName, "", blockX, blockY, blockZ);
-            
+
             lwc.sendLocale(player, "protection.interact.create.finalize");
 
             for (String right : rights) {
@@ -205,7 +207,7 @@ public class CreateModule extends JavaModule {
 
     @Override
     public void onCommand(LWCCommandEvent event) {
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             return;
         }
 

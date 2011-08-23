@@ -6,7 +6,6 @@ import com.griefcraft.scripting.MetaData;
 import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.util.Colors;
-import com.griefcraft.util.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
@@ -17,11 +16,11 @@ public class AdminDebug extends JavaModule {
 
     @Override
     public void onCommand(LWCCommandEvent event) {
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             return;
         }
 
-        if(!event.hasFlag("a", "admin")) {
+        if (!event.hasFlag("a", "admin")) {
             return;
         }
 
@@ -29,7 +28,7 @@ public class AdminDebug extends JavaModule {
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
 
-        if(!args[0].equals("debug")) {
+        if (!args[0].equals("debug")) {
             return;
         }
 
@@ -51,7 +50,7 @@ public class AdminDebug extends JavaModule {
 
         sender.sendMessage(" ");
         // send a report
-        moduleLoader.dispatchEvent(new LWCCommandEvent(sender, "admin", new String[] { "report" }));
+        moduleLoader.dispatchEvent(new LWCCommandEvent(sender, "admin", new String[]{"report"}));
 
         return;
     }

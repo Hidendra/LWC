@@ -22,7 +22,6 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.util.Colors;
-import com.griefcraft.util.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -70,7 +69,7 @@ public class DropTransferModule extends JavaModule {
         return -1;
     }
 
-	@Override
+    @Override
     public Result onDropItem(LWC lwc, Player player, Item item, ItemStack itemStack) {
         int protectionId = getPlayerDropTransferTarget(player.getName());
 
@@ -164,7 +163,7 @@ public class DropTransferModule extends JavaModule {
         Player player = (Player) sender;
         String mode = args[0].toLowerCase();
 
-        if(!mode.equals("droptransfer")) {
+        if (!mode.equals("droptransfer")) {
             return;
         }
 

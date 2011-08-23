@@ -21,13 +21,12 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCRedstoneEvent;
-import org.bukkit.block.Block;
 
 public class RedstoneModule extends JavaModule {
 
     @Override
     public void onRedstone(LWCRedstoneEvent event) {
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             return;
         }
 

@@ -36,7 +36,11 @@ import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -70,21 +74,21 @@ public class LWCPlayerListener extends PlayerListener {
             event.setCancelled(true);
         }
     }
-    
+
     @Override
     public void onPlayerChat(PlayerChatEvent event) {
-    	if(!plugin.getLWC().getConfiguration().getBoolean("core.filterunlock", true)) {
-    		return;
-    	}
-    	
-    	/**
-    	 * We want to block messages starting with cunlock incase someone screws up /cunlock password.
-    	 */
-    	String message = event.getMessage();
-    	
-    	if(message.startsWith("cunlock")) {
-    		event.setCancelled(true);
-    	}
+        if (!plugin.getLWC().getConfiguration().getBoolean("core.filterunlock", true)) {
+            return;
+        }
+
+        /**
+         * We want to block messages starting with cunlock incase someone screws up /cunlock password.
+         */
+        String message = event.getMessage();
+
+        if (message.startsWith("cunlock")) {
+            event.setCancelled(true);
+        }
     }
 
     @Override
@@ -101,7 +105,7 @@ public class LWCPlayerListener extends PlayerListener {
         Player player = event.getPlayer();
         Block clickedBlock = event.getClickedBlock();
         Location location = clickedBlock.getLocation();
-        
+
         CraftWorld craftWorld = (CraftWorld) clickedBlock.getWorld();
         Block block = new CraftBlock((CraftChunk) craftWorld.getChunkAt(location), location.getBlockX(), location.getBlockY(), location.getBlockZ());
         block.setTypeId(craftWorld.getBlockTypeIdAt(location));
@@ -143,7 +147,7 @@ public class LWCPlayerListener extends PlayerListener {
             if (protection != null) {
                 result = lwc.getModuleLoader().dispatchEvent(Event.INTERACT_PROTECTION, player, protection, actions, canAccess, canAdmin);
 
-                if(result == Result.DEFAULT) {
+                if (result == Result.DEFAULT) {
                     LWCProtectionInteractEvent evt = new LWCProtectionInteractEvent(event, protection, actions, canAccess, canAdmin);
                     lwc.getModuleLoader().dispatchEvent(evt);
 
@@ -152,7 +156,7 @@ public class LWCPlayerListener extends PlayerListener {
             } else {
                 result = lwc.getModuleLoader().dispatchEvent(Event.INTERACT_BLOCK, player, block, actions);
 
-                if(result == Result.DEFAULT) {
+                if (result == Result.DEFAULT) {
                     LWCBlockInteractEvent evt = new LWCBlockInteractEvent(event, block, actions);
                     lwc.getModuleLoader().dispatchEvent(evt);
 
@@ -165,14 +169,14 @@ public class LWCPlayerListener extends PlayerListener {
             }
 
             if (result == Module.Result.DEFAULT) {
-                lwc.enforceAccess(player, protection.getBlock());
+                lwc.enforceAccess(player, protection != null ? protection.getBlock() : block);
             }
 
             if (!canAccess || result == Module.Result.CANCEL) {
                 event.setCancelled(true);
                 event.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             event.setCancelled(true);
             event.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
             lwc.sendLocale(player, "protection.internalerror", "id", "PLAYER_INTERACT");

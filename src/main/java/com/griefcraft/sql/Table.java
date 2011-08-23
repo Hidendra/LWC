@@ -74,9 +74,9 @@ public class Table {
 
         // do the prefix, if we're using MySQL
         String prefix = LWC.getInstance().getConfiguration().getString("database.prefix", "");
-        
-        if(prefix == null) {
-        	prefix = "";
+
+        if (prefix == null) {
+            prefix = "";
         }
 
         // the table name
@@ -100,7 +100,7 @@ public class Table {
                 buffer.append("AUTO_INCREMENT ");
             }
 
-            if(!column.getDefaultValue().isEmpty()) {
+            if (!column.getDefaultValue().isEmpty()) {
                 buffer.append("DEFAULT ");
                 buffer.append(column.getDefaultValue());
                 buffer.append(" ");
