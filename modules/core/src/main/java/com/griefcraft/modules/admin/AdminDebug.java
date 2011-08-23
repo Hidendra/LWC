@@ -45,7 +45,7 @@ public class AdminDebug extends JavaModule {
             Plugin plugin = entry.getKey();
             List<MetaData> modules = entry.getValue();
 
-            sender.sendMessage(Colors.Green + plugin.getDescription().getName() + Colors.Yellow + " -> " + Colors.Green + modules.size() + Colors.Yellow + " registered modules");
+            sender.sendMessage(Colors.Green + plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion() + Colors.Yellow + " -> " + Colors.Green + modules.size() + Colors.Yellow + " registered modules");
         }
 
         sender.sendMessage(" ");

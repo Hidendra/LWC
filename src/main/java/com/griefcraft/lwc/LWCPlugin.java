@@ -299,6 +299,8 @@ public class LWCPlugin extends JavaPlugin {
     }
 
     public void onEnable() {
+        String version = getDescription().getVersion();
+        LWCInfo.setVersion(version);
         LWC.ENABLED = true;
         String localization = lwc.getConfiguration().getString("core.locale");
 
@@ -350,11 +352,16 @@ public class LWCPlugin extends JavaPlugin {
         loadDatabase();
         registerEvents();
 
-        updater.check();
+        // update LWC and/or download missing libs
+        try {
+            updater.check();
+            updater.update();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
         lwc.load();
 
-        String version = getDescription().getVersion();
-        LWCInfo.setVersion(version);
         log("At version: " + LWCInfo.FULL_VERSION);
     }
 
