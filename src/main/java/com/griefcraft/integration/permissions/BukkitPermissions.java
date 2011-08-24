@@ -67,7 +67,6 @@ public class BukkitPermissions implements IPermissions {
             return groups;
         }
 
-
         // add in the groups
         for (Group group : found) {
             groups.add(group.getName());
