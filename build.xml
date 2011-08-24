@@ -127,6 +127,14 @@
         <jar jarfile="${build}/${jar.economy}">
             <fileset dir="${economy}/resources/" includes="plugin.yml"/>
             <fileset dir="${bin}/economy/"/>
+
+            <manifest>
+                <attribute name="Class-Path" value="LWC.jar"/>
+                <attribute name="Implementation-Title" value="LWC"/>
+                <attribute name="Implementation-Vendor" value="Hidendra"/>
+                <!-- <attribute name="Implementation-Version" value="git-LWC-${GIT_COMMIT}-b${BUILD_NUMBER}jnks" /> -->
+                <attribute name="Implementation-Version" value="${BUILD_NUMBER}"/>
+            </manifest>
         </jar>
     </target>
 
