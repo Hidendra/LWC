@@ -20,7 +20,6 @@ package com.griefcraft.bukkit;
 
 import com.griefcraft.lwc.EconomyModule;
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.scripting.Module;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Listener;
@@ -38,17 +37,11 @@ public class LWCEconomyPlugin extends JavaPlugin {
     private LWC lwc;
 
     /**
-     * The module class for iConomy
-     */
-    private Module iConomyModule = null;
-
-    /**
      * Our server listener, listens for iConomy to be loaded
      */
     private Listener serverListener = null;
 
     public LWCEconomyPlugin() {
-        iConomyModule = new EconomyModule(this);
         serverListener = new EconomyServerListener(this);
     }
 
@@ -56,7 +49,7 @@ public class LWCEconomyPlugin extends JavaPlugin {
      * Initialize LWC-iConomy
      */
     public void init() {
-        LWC.getInstance().getModuleLoader().registerModule(this, iConomyModule);
+        LWC.getInstance().getModuleLoader().registerModule(this, new EconomyModule(this));
         info("Registered Economy Module into LWC successfully! Version: " + getDescription().getVersion());
     }
 
@@ -78,7 +71,7 @@ public class LWCEconomyPlugin extends JavaPlugin {
     }
 
     private void info(String message) {
-        logger.info("LWC-iConomy: " + message);
+        logger.info("LWC-Economy: " + message);
     }
 
 }
