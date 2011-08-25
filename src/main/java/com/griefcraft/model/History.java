@@ -101,12 +101,7 @@ public class History {
      */
     private boolean exists = false;
 
-    /**
-     * We use a protected constructor to only strictly allow History objects be created by their owner (which would
-     * be a Protection object.) It is not necessary to do <pre>new History()</pre> and as such it is recommended to
-     * instead use <pre>protection.createHistoryObject()</pre>
-     */
-    protected History() {
+    public History() {
         // set some defaults to account for stupidness
         status = Status.INACTIVE;
         metadata = new String[0];
@@ -244,6 +239,15 @@ public class History {
      */
     public boolean doesExist() {
         return exists;
+    }
+
+    /**
+     * Set if the History object exists in the database
+     *
+     * @param exists
+     */
+    public void setExists(boolean exists) {
+        this.exists = exists;
     }
 
     /**
