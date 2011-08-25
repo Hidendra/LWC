@@ -3,9 +3,10 @@
   "authors": ["Hidendra"],
   "maintainer": "Hidendra",
   "description": "LWC is a protection plugin that individually protects blocks & inventories such as Chests, Furnaces, Dispensers, Doors, Signs, and more.",
-  "website": "http://www.griefcraft.com/",
+  "website": "http://griefcraft.com/",
   "categories": ["SEC", "MECH"],
-  "versions": [{
+  "versions": [
+  {
     "version": "3.31",
     "required_dependencies": [],
     "optional_dependencies": [],
