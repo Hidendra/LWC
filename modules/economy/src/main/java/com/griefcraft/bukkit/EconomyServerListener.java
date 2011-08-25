@@ -17,30 +17,30 @@
 
 package com.griefcraft.bukkit;
 
+import com.griefcraft.lwc.LWCPlugin;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.Plugin;
 
 public class EconomyServerListener extends ServerListener {
 
-    private LWCEconomyPlugin plugin;
+    private LWCEconomyPlugin economyPlugin;
 
-    public EconomyServerListener(LWCEconomyPlugin plugin) {
-        this.plugin = plugin;
+    public EconomyServerListener(LWCEconomyPlugin economyPlugin) {
+        this.economyPlugin = economyPlugin;
     }
 
     @Override
     public void onPluginEnable(PluginEnableEvent event) {
-        if (plugin.isInitialized()) {
+        if (economyPlugin.isInitialized()) {
             return;
         }
 
-        Plugin lwcPlugin = plugin.getServer().getPluginManager().getPlugin("LWC");
+        Plugin plugin = event.getPlugin();
+        System.out.println("plugin=" + plugin.getDescription().getName());
 
-        if (lwcPlugin != null) {
-            if (lwcPlugin.isEnabled()) {
-                plugin.init();
-            }
+        if (plugin.isEnabled() && (plugin instanceof LWCPlugin)) {
+            economyPlugin.init();
         }
     }
 
