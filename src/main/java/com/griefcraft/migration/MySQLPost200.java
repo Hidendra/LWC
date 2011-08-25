@@ -19,6 +19,7 @@ package com.griefcraft.migration;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
+import com.griefcraft.model.History;
 import com.griefcraft.model.Protection;
 import com.griefcraft.sql.Database.Type;
 import com.griefcraft.sql.PhysDB;
@@ -79,17 +80,19 @@ public class MySQLPost200 implements MigrationUtility {
             logger.info("Preliminary scan...............");
             int startProtections = physicalDatabase.getProtectionCount();
 
-            int protections = sqliteDatabase.getProtectionCount();
-            int rights = sqliteDatabase.getRightsCount();
+            int protectionCount = sqliteDatabase.getProtectionCount();
+            int rightsCount = sqliteDatabase.getRightsCount();
+            int historyCount = sqliteDatabase.getHistoryCount();
 
-            int expectedProtections = protections + startProtections;
+            int expectedProtections = protectionCount + startProtections;
 
             logger.info("TO CONVERT:");
-            logger.info("Protections:\t" + protections);
-            logger.info("Rights:\t\t" + rights);
+            logger.info("Protections:\t" + protectionCount);
+            logger.info("Rights:\t\t" + rightsCount);
+            logger.info("History:\t" + historyCount);
             logger.info("");
 
-            if (protections > 0) {
+            if (protectionCount > 0) {
                 logger.info("Converting: PROTECTIONS");
 
                 List<Protection> tmp = sqliteDatabase.loadProtections();
@@ -112,17 +115,32 @@ public class MySQLPost200 implements MigrationUtility {
                     for (AccessRight right : tmpRights) {
                         physicalDatabase.registerProtectionRights(registered.getId(), right.getName(), right.getRights(), right.getType());
                     }
-
                 }
 
                 logger.info("COMMITTING");
                 physicalDatabase.getConnection().commit();
                 logger.info("OK , expecting: " + expectedProtections);
-                if (expectedProtections == (protections = physicalDatabase.getProtectionCount())) {
+                if (expectedProtections == (protectionCount = physicalDatabase.getProtectionCount())) {
                     logger.info("OK.");
                 } else {
-                    logger.info("Weird, only " + protections + " protections are in the database? Continuing...");
+                    logger.info("Weird, only " + protectionCount + " protections are in the database? Continuing...");
                 }
+            }
+
+            if(historyCount > 0) {
+                logger.info("Converting: HISTORY");
+
+                List<History> tmp = sqliteDatabase.loadHistory();
+
+                for(History history : tmp) {
+                    // make sure it's assumed it does not exist in the database
+                    history.setExists(false);
+
+                    // sync the history object with the active database (ala MySQL)
+                    history.sync();
+                }
+
+                logger.info("OK");
             }
 
             logger.info("Closing SQLite");

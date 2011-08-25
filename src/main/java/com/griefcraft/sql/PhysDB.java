@@ -165,7 +165,11 @@ public class PhysDB extends Database {
      * @return the number of protected chests
      */
     public int getProtectionCount() {
-        return Integer.decode(fetch("SELECT COUNT(*) AS count FROM " + prefix + "protections", "count") + "");
+        return Integer.decode(fetch("SELECT COUNT(*) AS count FROM " + prefix + "protections", "count").toString());
+    }
+
+    public int getHistoryCount() {
+        return Integer.decode(fetch("SELECT COUNT(*) AS count FROM " + prefix + "history", "count").toString());
     }
 
     /**
@@ -1044,6 +1048,52 @@ public class PhysDB extends Database {
                 history.setProtectionId(protectionId);
                 history.setType(type);
                 history.setPlayer(player.getName());
+                history.setStatus(status);
+                history.setMetaData(metadata);
+                history.setTimestamp(timestamp);
+
+                // seems ok
+                temp.add(history);
+            }
+
+        } catch (SQLException e) {
+            printException(e);
+        }
+
+        return temp;
+    }
+
+    /**
+     * Load all protection history
+     *
+     * @return
+     */
+    public List<History> loadHistory() {
+        List<History> temp = new ArrayList<History>();
+
+        try {
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history");
+
+            ResultSet set = statement.executeQuery();
+
+            while (set.next()) {
+                int historyId = set.getInt("id");
+                int protectionId = set.getInt("protectionId");
+                String player = set.getString("player");
+                int type_ord = set.getInt("type");
+                int status_ord = set.getInt("status");
+                String[] metadata = set.getString("metadata").split(",");
+                long timestamp = set.getLong("timestamp");
+
+                History.Type type = History.Type.values()[type_ord];
+                History.Status status = History.Status.values()[status_ord];
+
+                History history = new History();
+
+                history.setId(historyId);
+                history.setProtectionId(protectionId);
+                history.setType(type);
+                history.setPlayer(player);
                 history.setStatus(status);
                 history.setMetaData(metadata);
                 history.setTimestamp(timestamp);
