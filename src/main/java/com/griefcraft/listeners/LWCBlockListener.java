@@ -25,6 +25,7 @@ import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.ModuleLoader.Event;
 import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
+import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
 import com.griefcraft.scripting.event.LWCRedstoneEvent;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -239,8 +240,13 @@ public class LWCBlockListener extends BlockListener {
             }
 
             // All good!
-            lwc.getPhysicalDatabase().registerProtection(block.getTypeId(), type, block.getWorld().getName(), player.getName(), "", block.getX(), block.getY(), block.getZ());
+            Protection protection = lwc.getPhysicalDatabase().registerProtection(block.getTypeId(), type, block.getWorld().getName(), player.getName(), "", block.getX(), block.getY(), block.getZ());
             lwc.sendLocale(player, "protection.onplace.create.finalize", "type", lwc.getLocale(autoRegisterType.toLowerCase()), "block", LWC.materialToString(block));
+
+            if (protection != null) {
+                lwc.getModuleLoader().dispatchEvent(Event.POST_REGISTRATION, protection);
+                lwc.getModuleLoader().dispatchEvent(new LWCProtectionRegistrationPostEvent(protection));
+            }
         } catch (Exception e) {
             lwc.sendLocale(player, "protection.internalerror", "id", "PLAYER_INTERACT");
             e.printStackTrace();
