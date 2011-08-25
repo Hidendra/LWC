@@ -9,7 +9,6 @@ description: >
 softdepend:
     - 'Permissions'
     - 'PermissionsBukkit'
-load: STARTUP
 
 commands:
   lwc:
