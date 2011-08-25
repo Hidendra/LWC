@@ -177,6 +177,7 @@ public class LWC {
         }
 
         configuration = Configuration.load("core.yml");
+        moduleLoader = new ModuleLoader();
         caches = new CacheSet();
 
         bug656workaround = configuration.getBoolean("core.bukkitBug656workaround", false);
@@ -1044,7 +1045,6 @@ public class LWC {
      */
     public void load() {
         configuration = Configuration.load("core.yml");
-        moduleLoader = new ModuleLoader();
         registerCoreModules();
 
         // check for upgrade before everything else
