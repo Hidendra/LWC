@@ -29,7 +29,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.logging.Logger;
 
 public class LWCEconomyPlugin extends JavaPlugin {
-    private Logger logger = Logger.getLogger("LWC-iConomy");
+    private Logger logger = Logger.getLogger("LWC-Economy");
 
     /**
      * The LWC object
