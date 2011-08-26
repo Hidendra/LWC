@@ -156,6 +156,10 @@ public class DropTransferModule extends JavaModule {
             return;
         }
 
+        if(event.isCancelled()) {
+            return;
+        }
+
         LWC lwc = event.getLWC();
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
