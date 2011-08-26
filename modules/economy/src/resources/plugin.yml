@@ -1,6 +1,6 @@
 name: LWC-Economy
 main: com.griefcraft.bukkit.LWCEconomyPlugin
-version: 1.20
+version: 1.21
 website: http://griefcraft.com
 author: Hidendra
 description: Economy module for LWC to allow protections to be purchased using currency.
