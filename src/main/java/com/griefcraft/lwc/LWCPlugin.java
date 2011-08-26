@@ -353,12 +353,7 @@ public class LWCPlugin extends JavaPlugin {
         registerEvents();
 
         // update LWC and/or download missing libs
-        try {
-            updater.check();
-            updater.update();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+        updater.loadVersions(true);
 
         lwc.load();
 
