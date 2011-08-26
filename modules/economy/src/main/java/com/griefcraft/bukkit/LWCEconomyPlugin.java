@@ -56,13 +56,13 @@ public class LWCEconomyPlugin extends JavaPlugin {
     public void onEnable() {
         Plugin lwc = getServer().getPluginManager().getPlugin("LWC");
 
-        if (lwc != null && lwc.isEnabled()) {
+        if (lwc != null) {
             init();
         } else {
             // register the server listener
             getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, serverListener, Priority.Monitor, this);
 
-            info("Waiting for LWC & iConomy to be enabled...");
+            info("Waiting for LWC to be enabled...");
         }
     }
 
