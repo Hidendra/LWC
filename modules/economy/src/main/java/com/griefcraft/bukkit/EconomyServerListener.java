@@ -37,9 +37,8 @@ public class EconomyServerListener extends ServerListener {
         }
 
         Plugin plugin = event.getPlugin();
-        System.out.println("plugin=" + plugin.getDescription().getName());
 
-        if (plugin.isEnabled() && (plugin instanceof LWCPlugin)) {
+        if (plugin instanceof LWCPlugin) {
             economyPlugin.init();
         }
     }
