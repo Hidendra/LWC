@@ -95,6 +95,17 @@ public class UpdateThread implements Runnable {
         protectionUpdateQueue.put(protection.getId(), protection);
     }
 
+    /**
+     * Unqueue a protection to be updated to the database if it's already queued
+     *
+     * @param protection
+     */
+    public void unqueueProtectionUpdate(Protection protection) {
+       if(protectionUpdateQueue.containsKey(protection.getId())) {
+           protectionUpdateQueue.remove(protection.getId());
+       }
+    }
+
     public void run() {
         while (running) {
             if (flush) {
@@ -130,7 +141,7 @@ public class UpdateThread implements Runnable {
     }
 
     /**
-     * Flush any caches to the database TODO
+     * Flush any caches to the database
      */
     private void _flush() {
         // periodically update protections in the database if a non-critical change was made

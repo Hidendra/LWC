@@ -107,29 +107,54 @@ public class CreditsModule extends JavaModule {
     @Override
     public void load(LWC lwc) {
         credits = new String[]{
-                Colors.Green + "LWC, a Protection mod",
+                Colors.Green + "LWC, a Protection mod developed by Hidendra ....",
+                "Serving Minecraft loyally since September 2010 ....",
                 " ",
 
-                Colors.Red + "Plugin core",
-                "Hidendra",
+                Colors.Red + "Core contributions",
                 "angelsl",
                 "morganm",
                 " ",
 
                 Colors.Red + "Translations",
-                "Dawodo - German",
-                "Geoning - Polish",
-                "dudsonowa - Polish",
-                "andrewkm - Polish",
-                "cehel - French",
-                "Madzero - Dutch",
-                "aoa2003 - Dutch",
-                "hofec - Czech",
-                "christley - Swedish",
-                "IlyaGulya - Russian",
-                "Raul \"RME\" Martinez - Spanish",
-                "David \"DME\" Martinez - Spanish",
-                "TCarlsen - Danish",
+                Colors.Green + "German",
+                "Dawodo",
+                " ",
+
+                Colors.Green + "Polish",
+                "Geoning",
+                "dudsonowa",
+                "andrewkm",
+                " ",
+
+                Colors.Green + "French",
+                "cehel",
+                " ",
+
+                Colors.Green + "Dutch",
+                "Madzero",
+                "aoa2003",
+                " ",
+
+                Colors.Green + "Czech",
+                "hofec",
+                " ",
+
+                Colors.Green + "Swedish",
+                "christley",
+                " ",
+
+                Colors.Green + "Russian",
+                "IlyaGulya",
+                " ",
+
+                Colors.Green + "Spanish",
+                "Raul \"RME\" Martinez",
+                "David \"DME\" Martinez",
+                " ",
+
+                Colors.Green + "Danish",
+                "TCarlsen",
                 " ",
 
                 Colors.Red + "Donations",
@@ -137,12 +162,11 @@ public class CreditsModule extends JavaModule {
                 "darknavi",
                 "Vetyver",
                 "pablo0713",
-                "IrishSailor & Land of Legend server",
+                "IrishSailor & Land of Legend server" + Colors.Red + " X2",
                 "aidan",
-                "Monstertke",
+                "MonsterTKE" + Colors.Red + " X2",
                 "wokka",
                 "Andreoli3",
-                "IrishSailor (again!)",
                 " ",
 
                 Colors.Red + "And....",
@@ -175,7 +199,7 @@ public class CreditsModule extends JavaModule {
                 "Zalastri",
                 " ",
 
-                "To everyone else and anyone I missed....",
+                Colors.Yellow + "To everyone else and anyone I missed....",
                 "LWC would not be the awesome plugin it is today if not also for those not listed",
                 " ",
                 Colors.Blue + "THANK YOU!"
