@@ -40,6 +40,10 @@ public class DestroyModule extends JavaModule {
         if (isOwner) {
             // bind the player who destroyed the protection
             for(History history : protection.getRelatedHistory(History.Type.TRANSACTION)) {
+                if(history.getStatus() != History.Status.ACTIVE) {
+                    continue;
+                }
+                
                 history.addMetaData("destroyer=" + player.getName());
                 history.sync();
             }

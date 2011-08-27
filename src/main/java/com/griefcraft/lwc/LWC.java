@@ -682,8 +682,6 @@ public class LWC {
             return null;
         }
 
-//        log("findProtection: world="+world+",x="+x+",y="+y+"z="+z);
-
         Block block = world.getBlockAt(x, y, z);
 
         if (block == null) {
@@ -1774,6 +1772,21 @@ public class LWC {
         return value;
     }
 
+    /**
+     * @return true if history logging is enabled
+     */
+    public boolean isHistoryEnabled() {
+        return ! configuration.getBoolean("core.disableHistory", false);
+    }
+
+    /**
+     * Remove protections very quickly with raw SQL calls
+     *
+     * @param sender
+     * @param where
+     * @param shouldRemoveBlocks
+     * @return
+     */
     public int fastRemoveProtections(CommandSender sender, String where, boolean shouldRemoveBlocks) {
         List<Integer> toRemove = new LinkedList<Integer>();
         List<Block> removeBlocks = null;

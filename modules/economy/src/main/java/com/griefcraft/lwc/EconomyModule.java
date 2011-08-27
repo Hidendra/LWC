@@ -69,6 +69,10 @@ public class EconomyModule extends JavaModule {
             return;
         }
 
+        if(!LWC.getInstance().isHistoryEnabled()) {
+            return;
+        }
+
         Protection protection = event.getProtection();
 
         // we need to inject the iconomy price into the transaction!
@@ -117,6 +121,10 @@ public class EconomyModule extends JavaModule {
     @Override
     public void onPostRemoval(LWCProtectionRemovePostEvent event) {
         if (!configuration.getBoolean("iConomy.enabled", true)) {
+            return;
+        }
+
+        if(!LWC.getInstance().isHistoryEnabled()) {
             return;
         }
 
@@ -214,8 +222,10 @@ public class EconomyModule extends JavaModule {
         Location location = block.getLocation();
 
         // cache the charge momentarily
-        priceCache.put(location, (usedDiscount ? "d" : "") + charge);
-
+        if(lwc.isHistoryEnabled()) {
+            priceCache.put(location, (usedDiscount ? "d" : "") + charge);
+        }
+        
         // It's free!
         if (charge == 0) {
             player.sendMessage(Colors.Green + "This one's on us!");
