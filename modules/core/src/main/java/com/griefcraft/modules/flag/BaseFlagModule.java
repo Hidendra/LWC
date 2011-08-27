@@ -73,7 +73,7 @@ public class BaseFlagModule extends JavaModule {
             lwc.sendLocale(player, "protection.interact.flag.remove", "flag", StringUtils.capitalizeFirstLetter(flagName));
         }
 
-        protection.saveNow();
+        protection.save();
         lwc.removeModes(player);
         return;
     }
@@ -113,17 +113,23 @@ public class BaseFlagModule extends JavaModule {
         }
 
         // verify the flag name
-        boolean match = false;
+        Protection.Flag match = null;
         for (Protection.Flag flag : Protection.Flag.values()) {
-            if (flag.toString().equalsIgnoreCase(flagName)) {
-                match = true;
+            if (flag.toString().equalsIgnoreCase(flagName) || flag.toString().toLowerCase().startsWith(flagName.toLowerCase())) {
+                match = flag;
                 flagName = flag.toString(); // get the case-correct name while we're there
                 break;
             }
         }
 
-        if (!match) {
+        if (match == null) {
             lwc.sendLocale(sender, "protection.flag.invalidflag", "flag", flagName);
+            return;
+        }
+
+        // ensure it is not a restricted flag
+        if (match.isRestricted() && !lwc.isAdmin(player)) {
+            lwc.sendLocale(player, "protection.accessdenied");
             return;
         }
 

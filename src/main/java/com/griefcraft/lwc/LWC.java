@@ -1781,6 +1781,9 @@ public class LWC {
         int completed = 0;
         int count = 0;
 
+        // flush all changes to the database before working on the live database
+        updateThread.flush();
+
         if (shouldRemoveBlocks) {
             removeBlocks = new LinkedList<Block>();
         }
@@ -1793,7 +1796,10 @@ public class LWC {
 
         try {
             Statement resultStatement = physicalDatabase.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-            resultStatement.setFetchSize(Integer.MIN_VALUE);
+
+            if(physicalDatabase.getType() == Database.Type.MySQL) {
+                resultStatement.setFetchSize(Integer.MIN_VALUE);
+            }
 
             String prefix = physicalDatabase.getPrefix();
             ResultSet result = resultStatement.executeQuery("SELECT " + prefix + "protections.id AS protectionId, " + prefix + "protections.type AS protectionType, x, y, z, flags, blockId, world, owner, password, date, last_accessed FROM " + prefix + "protections" + where);
@@ -1801,6 +1807,11 @@ public class LWC {
             while (result.next()) {
                 Protection protection = physicalDatabase.resolveProtectionNoRights(result);
                 World world = protection.getBukkitWorld();
+
+                // check if the protection is exempt from being removed
+                if (protection.hasFlag(Protection.Flag.EXEMPTION)) {
+                    continue;
+                }
 
                 count++;
 

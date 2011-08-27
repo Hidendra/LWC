@@ -47,7 +47,7 @@ public class AdminForceOwner extends JavaModule {
         String newOwner = action.getData();
 
         protection.setOwner(newOwner);
-        protection.saveNow();
+        protection.save();
 
         lwc.sendLocale(player, "protection.interact.forceowner.finalize", "player", newOwner);
         lwc.removeModes(player);
