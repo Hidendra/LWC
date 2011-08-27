@@ -949,7 +949,7 @@ public class PhysDB extends Database {
                 statement = prepare("REPLACE INTO " + prefix + "history (id, protectionId, player, type, status, metadata) VALUES (?, ?, ?, ?, ?, ?)");
                 statement.setInt(index++, history.getId());
             } else {
-                statement = prepare("INSERT INTO " + prefix + "history (protectionId, player, type, status, metadata, timestamp) VALUES (?, ?, ?, ?, ?, ?)");
+                statement = prepare("INSERT INTO " + prefix + "history (protectionId, player, type, status, metadata, timestamp) VALUES (?, ?, ?, ?, ?, ?)", true);
             }
 
             statement.setInt(index++, history.getProtectionId());
@@ -962,7 +962,21 @@ public class PhysDB extends Database {
                 statement.setLong(index++, System.currentTimeMillis() / 1000L);
             }
 
-            statement.executeUpdate();
+            int affectedRows = statement.executeUpdate();
+
+            // set the history id if inserting
+            if(!history.doesExist()) {
+                if(affectedRows > 0) {
+                    ResultSet generatedKeys = statement.getGeneratedKeys();
+
+                    // get the key inserted
+                    if(generatedKeys.next()) {
+                        history.setId(generatedKeys.getInt(1));
+                    }
+
+                    generatedKeys.close();
+                }
+            }
         } catch (SQLException e) {
             printException(e);
         }
