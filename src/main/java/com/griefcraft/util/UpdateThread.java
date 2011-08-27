@@ -23,7 +23,9 @@ import com.griefcraft.model.Protection;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class UpdateThread implements Runnable {
@@ -31,7 +33,7 @@ public class UpdateThread implements Runnable {
     /**
      * Queue that protections can be added to to update them in the database periodically in a seperate thread
      */
-    private ConcurrentLinkedQueue<Protection> protectionUpdateQueue = new ConcurrentLinkedQueue<Protection>();
+    private Map<Integer, Protection> protectionUpdateQueue = Collections.synchronizedMap(new HashMap<Integer, Protection>());
 
     /**
      * True begins the flush
@@ -78,12 +80,19 @@ public class UpdateThread implements Runnable {
     }
 
     /**
+     * @return the size of the waiting queue
+     */
+    public int size() {
+        return protectionUpdateQueue.size();
+    }
+
+    /**
      * Add a protection to be updated to the top of the queue (JUST block ids!!)
      *
      * @param protection
      */
     public void queueProtectionUpdate(Protection protection) {
-        protectionUpdateQueue.offer(protection);
+        protectionUpdateQueue.put(protection.getId(), protection);
     }
 
     public void run() {
@@ -127,7 +136,6 @@ public class UpdateThread implements Runnable {
         // periodically update protections in the database if a non-critical change was made
         if (protectionUpdateQueue.size() > 0) {
             Connection connection = lwc.getPhysicalDatabase().getConnection();
-            Protection protection = null;
 
             try {
                 connection.setAutoCommit(false);
@@ -135,10 +143,15 @@ public class UpdateThread implements Runnable {
                 e.printStackTrace();
             }
 
-            // save all of the protections now
-            while ((protection = protectionUpdateQueue.poll()) != null) {
+            // save all of the protections
+            for(Map.Entry<Integer, Protection> entry : protectionUpdateQueue.entrySet()) {
+                Protection protection = entry.getValue();
+
                 protection.saveNow();
             }
+
+            // clear the queue
+            protectionUpdateQueue.clear();
 
             // commit
             try {

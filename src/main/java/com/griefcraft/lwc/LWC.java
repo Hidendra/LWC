@@ -453,12 +453,14 @@ public class LWC {
         moduleLoader.shutdown();
         moduleLoader = null;
 
-        log("Freeing " + Database.DefaultType);
+        log("Flushing final updates (" + updateThread.size() + ")");
 
         if (updateThread != null) {
             updateThread.stop();
             updateThread = null;
         }
+
+        log("Freeing " + Database.DefaultType);
 
         if (physicalDatabase != null) {
             physicalDatabase.dispose();
