@@ -54,16 +54,35 @@ public class Protection {
         /**
          * Attracts dropped items into the inventory
          */
-        MAGNET(0x03);
+        MAGNET(0x03),
+
+        /**
+         * Protection is exempt from -remove; e.g /lwc admin expire -remove 2 weeks
+         */
+        EXEMPTION(0x08, true);
 
         Flag(int bit) {
+            this(bit, false);
+        }
+
+        Flag(int bit, boolean restricted) {
             this.bit = bit;
+            this.restricted = restricted;
         }
 
         private int bit;
 
+        /**
+         * If the flag is restricted to lwc admins
+         */
+        private boolean restricted;
+
         public int getBit() {
             return bit;
+        }
+
+        public boolean isRestricted() {
+            return restricted;
         }
     }
 
@@ -241,10 +260,9 @@ public class Protection {
             return false;
         }
 
-        modified = true;
-
         if (!hasFlag(flag)) {
             flags |= flag.getBit();
+            modified = true;
             return true;
         }
 

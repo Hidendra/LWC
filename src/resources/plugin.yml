@@ -70,6 +70,10 @@ commands:
     description: Toggle the ability to hide protection creation messages
     usage: /<command>
     permission: lwc.mode.nospam
+  cexempt:
+    description: Toggle protection exemption on an existing protection; disallows it from being removed by -remove, e.g /lwc admin expire -remove 2 weeks
+    usage: /<command>
+    permission: lwc.admin
 
 permissions:
 
