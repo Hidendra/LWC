@@ -17,6 +17,8 @@ core:
     # and protect any x,y,z registered block, regardless of if Bukkit says it's something else (like Air).
     bukkitBug656workaround: false
 
+    disableHistory: false
+
 database:
     adapter: sqlite
     path: 'plugins/LWC/lwc.db'
