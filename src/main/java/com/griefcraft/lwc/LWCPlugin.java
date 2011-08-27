@@ -177,6 +177,8 @@ public class LWCPlugin extends JavaPlugin {
             return true;
         } else if (name.equals("cnospam")) {
             return true;
+        } else if (name.equals("cexempt")) {
+            return true;
         } else return name.equals("cadmin");
     }
 
@@ -244,6 +246,9 @@ public class LWCPlugin extends JavaPlugin {
             } else if (commandName.equals("cmagnet")) {
                 aliasCommand = "flag";
                 aliasArgs = ("magnet " + argString).split(" ");
+            } else if (commandName.equals("cexempt")) {
+                aliasCommand = "flag";
+                aliasArgs = ("exemption " + argString).split(" ");
             }
 
             // Mode aliases

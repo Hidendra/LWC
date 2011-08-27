@@ -32,6 +32,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
@@ -46,7 +47,7 @@ public class Updater {
     /**
      * List of files to download
      */
-    private List<UpdaterFile> needsUpdating = new ArrayList<UpdaterFile>();
+    private final List<UpdaterFile> needsUpdating = Collections.synchronizedList(new ArrayList<UpdaterFile>());
 
     /**
      * The folder where libraries are stored
@@ -265,35 +266,34 @@ public class Updater {
         folder = new File(DEST_LIBRARY_FOLDER + "lib/");
         folder.mkdirs();
 
-        logger.info("Need to download " + needsUpdating.size() + " file(s)");
+        synchronized (needsUpdating) {
+            Iterator<UpdaterFile> iterator = needsUpdating.iterator();
 
-        Iterator<UpdaterFile> iterator = needsUpdating.iterator();
+            while (iterator.hasNext()) {
+                UpdaterFile item = iterator.next();
 
-        while (iterator.hasNext()) {
-            UpdaterFile item = iterator.next();
+                String fileName = item.getRemoteLocation();
+                fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
 
-            String fileName = item.getRemoteLocation();
-            fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
+                URL url = new URL(item.getRemoteLocation());
+                File file = new File(item.getLocalLocation());
 
-            logger.info(" - Downloading file: " + fileName);
+                logger.info("Downloading: " + item.getRemoteLocation());
 
-            URL url = new URL(item.getRemoteLocation());
-            File file = new File(item.getLocalLocation());
+                if (file.exists()) {
+                    file.delete();
+                }
 
-            if (file.exists()) {
-                file.delete();
+                InputStream inputStream = url.openStream();
+                OutputStream outputStream = new FileOutputStream(file);
+
+                saveTo(inputStream, outputStream);
+
+                inputStream.close();
+                outputStream.close();
+
+                iterator.remove();
             }
-
-            InputStream inputStream = url.openStream();
-            OutputStream outputStream = new FileOutputStream(file);
-
-            saveTo(inputStream, outputStream);
-
-            inputStream.close();
-            outputStream.close();
-
-            logger.info("  + Download complete");
-            iterator.remove();
         }
     }
 
