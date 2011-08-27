@@ -9,7 +9,7 @@
   {
     "version": "3.41",
     "required_dependencies": [],
-    "optional_dependencies": [],
+    "optional_dependencies": [ "Permissions", "PermissionsBukkit", "iConomy", "BOSEconomy" ],
     "conflicts": [],
     "location": "http://griefcraft.com/bukkit/lwc/release/LWC.jar",
     "checksum": "399e9b590e1c0c9b04ee38a1c21b54c7",
@@ -18,12 +18,13 @@
       "engine": "craftbukkit",
       "build_min": 800,
       "build_max": 1060
+    }]
   },
 
   {
     "version": "3.31",
     "required_dependencies": [],
-    "optional_dependencies": [],
+    "optional_dependencies": [ "Permissions", "PermissionsBukkit", "iConomy" ],
     "conflicts": [],
     "location": "http://griefcraft.com/bukkit/lwc/release/LWC.jar",
     "checksum": "1e9a91cc88d07bb21e6f77d84cc8b7d9",
@@ -31,8 +32,7 @@
     "engines": [{
       "engine": "craftbukkit",
       "build_min": 800,
-      "build_max": 1000
-  }
-    ]
-  }]
+      "build_max": 1060
+    }]
+  } ]
 }
