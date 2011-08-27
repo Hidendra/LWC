@@ -7,6 +7,20 @@
   "categories": ["SEC", "MECH"],
   "versions": [
   {
+    "version": "3.41",
+    "required_dependencies": [],
+    "optional_dependencies": [],
+    "conflicts": [],
+    "location": "http://griefcraft.com/bukkit/lwc/release/LWC.jar",
+    "checksum": "399e9b590e1c0c9b04ee38a1c21b54c7",
+    "branch": "stable",
+    "engines": [{
+      "engine": "craftbukkit",
+      "build_min": 800,
+      "build_max": 1060
+  },
+
+  {
     "version": "3.31",
     "required_dependencies": [],
     "optional_dependencies": [],
@@ -18,6 +32,7 @@
       "engine": "craftbukkit",
       "build_min": 800,
       "build_max": 1000
-    }]
+  }
+    ]
   }]
 }
