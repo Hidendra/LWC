@@ -12,7 +12,7 @@
     "optional_dependencies": [ "Permissions", "PermissionsBukkit", "iConomy", "BOSEconomy" ],
     "conflicts": [],
     "location": "http://griefcraft.com/bukkit/lwc/release/LWC.jar",
-    "checksum": "399e9b590e1c0c9b04ee38a1c21b54c7",
+    "checksum": "39a9d6afeed32b194e598f72c19b774f",
     "branch": "stable",
     "engines": [{
       "engine": "craftbukkit",
