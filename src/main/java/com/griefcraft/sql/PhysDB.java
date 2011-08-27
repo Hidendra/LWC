@@ -914,7 +914,7 @@ public class PhysDB extends Database {
             Protection protection = loadProtection(world, x, y, z);
 
             // if history logging is enabled, create it
-            if(LWC.getInstance().isHistoryEnabled()) {
+            if(LWC.getInstance().isHistoryEnabled() && protection != null) {
                 History transaction = protection.createHistoryObject();
 
                 transaction.setPlayer(player);
