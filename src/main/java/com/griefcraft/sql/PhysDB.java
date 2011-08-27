@@ -913,16 +913,20 @@ public class PhysDB extends Database {
             // this transaction is viewable and modifiable during POST_REGISTRATION
             Protection protection = loadProtection(world, x, y, z);
 
-            History transaction = protection.createHistoryObject();
-            transaction.setPlayer(player);
-            transaction.setType(History.Type.TRANSACTION);
-            transaction.setStatus(History.Status.ACTIVE);
-            
-            // store the player that created the protection
-            transaction.addMetaData("creator=" + player);
+            // if history logging is enabled, create it
+            if(LWC.getInstance().isHistoryEnabled()) {
+                History transaction = protection.createHistoryObject();
 
-            // now sync the history object to the database
-            transaction.sync();
+                transaction.setPlayer(player);
+                transaction.setType(History.Type.TRANSACTION);
+                transaction.setStatus(History.Status.ACTIVE);
+
+                // store the player that created the protection
+                transaction.addMetaData("creator=" + player);
+
+                // now sync the history object to the database
+                transaction.sync();
+            }
 
             // return the newly created protection
             return protection;
@@ -991,6 +995,10 @@ public class PhysDB extends Database {
     public List<History> loadHistory(Protection protection) {
         List<History> temp = new ArrayList<History>();
 
+        if(!LWC.getInstance().isHistoryEnabled()) {
+            return temp;
+        }
+
         try {
             PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE protectionId = ?");
             statement.setInt(1, protection.getId());
@@ -1039,6 +1047,10 @@ public class PhysDB extends Database {
         List<History> temp = new ArrayList<History>();
         LWCPlayer lwcPlayer = LWC.getInstance().wrapPlayer(player);
 
+        if(!LWC.getInstance().isHistoryEnabled()) {
+            return temp;
+        }
+
         try {
             PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE player = ?");
             statement.setString(1, player.getName());
@@ -1084,6 +1096,10 @@ public class PhysDB extends Database {
      */
     public List<History> loadHistory() {
         List<History> temp = new ArrayList<History>();
+
+        if(!LWC.getInstance().isHistoryEnabled()) {
+            return temp;
+        }
 
         try {
             PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history");
