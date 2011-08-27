@@ -249,6 +249,10 @@ public abstract class Database {
      * @return
      */
     public PreparedStatement prepare(String sql) {
+        return prepare(sql, false);
+    }
+
+    public PreparedStatement prepare(String sql, boolean returnGeneratedKeys) {
         if (connection == null) {
             return null;
         }
@@ -259,7 +263,14 @@ public abstract class Database {
         }
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement;
+
+            if(returnGeneratedKeys) {
+                preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            } else {
+                preparedStatement = connection.prepareCall(sql);
+            }
+
             statementCache.put(sql, preparedStatement);
             postPrepare();
 

@@ -30,8 +30,11 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 public class Protection {
@@ -65,9 +68,14 @@ public class Protection {
     }
 
     /**
-     * List of the access rights for the protection
+     * List of the accessRightCache rights for the protection
      */
-    private List<AccessRight> access = new ArrayList<AccessRight>();
+    private final List<AccessRight> accessRightCache = new ArrayList<AccessRight>();
+
+    /**
+     * All of the history items associated with this protection
+     */
+    private final Set<History> historyCache = new HashSet<History>();
 
     /**
      * The block id
@@ -136,6 +144,22 @@ public class Protection {
     private boolean removed = false;
 
     /**
+     * True when the protection has been modified and should be saved
+     */
+    private boolean modified = false;
+
+    /**
+     * Ensure a history object is located in our cache
+     * 
+     * @param history
+     */
+    public void checkHistory(History history) {
+        if(!historyCache.contains(history)) {
+            historyCache.add(history);
+        }
+    }
+
+    /**
      * Check if a player is the owner of the protection
      *
      * @param player
@@ -158,14 +182,23 @@ public class Protection {
         history.setProtectionId(id);
         history.setStatus(History.Status.INACTIVE);
 
+        // add it to the cache
+        historyCache.add(history);
+
         return history;
     }
 
     /**
-     * @return the related history for this protection
+     * @return the related history for this protection, which is immutable
      */
-    public List<History> getRelatedHistory() {
-        return LWC.getInstance().getPhysicalDatabase().loadHistory(this);
+    public Set<History> getRelatedHistory() {
+        // cache the database's history if we don't have any yet
+        if(historyCache.size() == 0) {
+            historyCache.addAll(LWC.getInstance().getPhysicalDatabase().loadHistory(this));
+        }
+
+        // now we can return an immutable cache
+        return Collections.unmodifiableSet(historyCache);
     }
 
     /**
@@ -176,7 +209,7 @@ public class Protection {
      */
     public List<History> getRelatedHistory(History.Type type) {
         List<History> matches = new ArrayList<History>();
-        List<History> relatedHistory = getRelatedHistory();
+        Set<History> relatedHistory = getRelatedHistory();
 
         for (History history : relatedHistory) {
             if (history.getType() == type) {
@@ -208,6 +241,8 @@ public class Protection {
             return false;
         }
 
+        modified = true;
+
         if (!hasFlag(flag)) {
             flags |= flag.getBit();
             return true;
@@ -228,6 +263,8 @@ public class Protection {
             return;
         }
 
+        this.modified = true;
+
         if (!hasFlag(flag)) {
             return;
         }
@@ -242,14 +279,14 @@ public class Protection {
     }
 
     /**
-     * Check if the entity + access type exists, and if so return the rights (-1 if it does not exist)
+     * Check if the entity + accessRightCache type exists, and if so return the rights (-1 if it does not exist)
      *
      * @param type
      * @param name
-     * @return the access the player has
+     * @return the accessRightCache the player has
      */
     public int getAccess(int type, String name) {
-        for (AccessRight right : access) {
+        for (AccessRight right : accessRightCache) {
             if (right.getType() == type && right.getName().equalsIgnoreCase(name)) {
                 return right.getRights();
             }
@@ -259,17 +296,17 @@ public class Protection {
     }
 
     /**
-     * @return the list of access rights
+     * @return the list of accessRightCache rights
      */
     public List<AccessRight> getAccessRights() {
-        return access;
+        return accessRightCache;
     }
 
     /**
-     * Remove temporary access rights from the protection
+     * Remove temporary accessRightCache rights from the protection
      */
     public void removeTemporaryAccessRights() {
-        Iterator<AccessRight> iter = access.iterator();
+        Iterator<AccessRight> iter = accessRightCache.iterator();
 
         while (iter.hasNext()) {
             AccessRight right = iter.next();
@@ -281,7 +318,7 @@ public class Protection {
     }
 
     /**
-     * Add an access right to the stored list
+     * Add an accessRightCache right to the stored list
      *
      * @param right
      */
@@ -290,7 +327,7 @@ public class Protection {
             return;
         }
 
-        access.add(right);
+        accessRightCache.add(right);
     }
 
     public int getFlags() {
@@ -348,6 +385,7 @@ public class Protection {
         }
 
         this.blockId = blockId;
+        this.modified = true;
     }
 
     public void setData(String data) {
@@ -356,6 +394,7 @@ public class Protection {
         }
 
         this.data = data;
+        this.modified = true;
     }
 
     public void setDate(String date) {
@@ -364,6 +403,7 @@ public class Protection {
         }
 
         this.date = date;
+        this.modified = true;
     }
 
     public void setId(int id) {
@@ -372,6 +412,7 @@ public class Protection {
         }
 
         this.id = id;
+        this.modified = true;
     }
 
     public void setFlags(int flags) {
@@ -380,6 +421,7 @@ public class Protection {
         }
 
         this.flags = flags;
+        this.modified = true;
     }
 
     public void setOwner(String owner) {
@@ -388,6 +430,7 @@ public class Protection {
         }
 
         this.owner = owner;
+        this.modified = true;
     }
 
     public void setType(int type) {
@@ -396,6 +439,7 @@ public class Protection {
         }
 
         this.type = type;
+        this.modified = true;
     }
 
     public void setWorld(String world) {
@@ -404,6 +448,7 @@ public class Protection {
         }
 
         this.world = world;
+        this.modified = true;
     }
 
     public void setX(int x) {
@@ -412,6 +457,7 @@ public class Protection {
         }
 
         this.x = x;
+        this.modified = true;
     }
 
     public void setY(int y) {
@@ -420,6 +466,7 @@ public class Protection {
         }
 
         this.y = y;
+        this.modified = true;
     }
 
     public void setZ(int z) {
@@ -428,6 +475,7 @@ public class Protection {
         }
 
         this.z = z;
+        this.modified = true;
     }
 
     public void setLastAccessed(long lastAccessed) {
@@ -436,6 +484,7 @@ public class Protection {
         }
 
         this.lastAccessed = lastAccessed;
+        this.modified = true;
     }
 
     /**
@@ -448,7 +497,6 @@ public class Protection {
 
         LWC lwc = LWC.getInstance();
         removeTemporaryAccessRights();
-        removeCache();
 
         // make this protection immutable
         removed = true;
@@ -457,9 +505,6 @@ public class Protection {
         // we broadcast before actually removing to give them a chance to use any data that would be removed otherwise
         lwc.getModuleLoader().dispatchEvent(ModuleLoader.Event.POST_REMOVAL, this);
         lwc.getModuleLoader().dispatchEvent(new LWCProtectionRemovePostEvent(this));
-
-        // and now finally remove it from the database
-        lwc.getPhysicalDatabase().unregisterProtection(id);
 
         // mark related transactions as inactive
         for (History history : getRelatedHistory(History.Type.TRANSACTION)) {
@@ -470,16 +515,16 @@ public class Protection {
             history.setStatus(History.Status.INACTIVE);
             history.sync();
         }
+
+        // and now finally remove it from the database
+        lwc.getPhysicalDatabase().unregisterProtection(id);
+        removeCache();
     }
 
     /**
      * Remove the protection from cache
      */
     public void removeCache() {
-        if (removed) {
-            return;
-        }
-
         LWC lwc = LWC.getInstance();
         LRUCache<String, Protection> cache = lwc.getCaches().getProtections();
 
@@ -531,15 +576,26 @@ public class Protection {
     }
 
     /**
-     * Force a protection update in the live database
+     * Force a protection update to the live database
      */
     public void saveNow() {
         if (removed) {
             return;
         }
 
-        LWC.getInstance().getPhysicalDatabase().saveProtection(this);
-        update();
+        // only save the protection if it was modified
+        if(modified) {
+            LWC.getInstance().getPhysicalDatabase().saveProtection(this);
+            update();
+        }
+
+        // check the cache for history updates
+        for(History history : historyCache) {
+            // if the history object was modified we need to save it
+            if(history.wasModified()) {
+                history.saveNow();
+            }
+        }
     }
 
     /**

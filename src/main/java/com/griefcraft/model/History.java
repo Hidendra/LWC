@@ -101,10 +101,27 @@ public class History {
      */
     private boolean exists = false;
 
+    /**
+     * If the history object was modified
+     */
+    private boolean modified = false;
+
+    /**
+     * If the History object is waiting to be flushed to the database
+     */
+    private boolean saving = false;
+
     public History() {
         // set some defaults to account for stupidness
         status = Status.INACTIVE;
         metadata = new String[0];
+    }
+
+    /**
+     * @return true if the history object should be synced to the database
+     */
+    public boolean wasModified() {
+        return modified;
     }
 
     /**
@@ -133,6 +150,7 @@ public class History {
 
         // we're okey
         this.metadata = temp;
+        this.modified = true;
     }
 
     /**
@@ -230,6 +248,7 @@ public class History {
 
         // that went better than expected
         this.metadata = temp.toArray(new String[temp.size()]);
+        this.modified = true;
 
         return metadata.length == expected;
     }
@@ -248,6 +267,7 @@ public class History {
      */
     public void setExists(boolean exists) {
         this.exists = exists;
+        this.modified = true;
     }
 
     /**
@@ -258,10 +278,42 @@ public class History {
     }
 
     /**
-     * Sync this history object to the database
+     * Sync this history object to the database when possible
      */
     public void save() {
+        // if it was not modified, no point in saving it :-)
+        if(!modified || saving) {
+            return;
+        }
+
+        LWC lwc = LWC.getInstance();
+
+        // find the protection the history object is attached to
+        Protection protection = getProtection();
+
+        // no protection? weird, just sync anyway
+        if(protection == null) {
+            saveNow();
+            return;
+        }
+
+        // wait!
+        this.saving = true;
+
+        // ensure the protection knows about us
+        protection.checkHistory(this);
+
+        // save it when possible
+        protection.save();
+    }
+
+    /**
+     * Force the history object to be saved immediately
+     */
+    public void saveNow() {
         LWC.getInstance().getPhysicalDatabase().saveHistory(this);
+        this.modified = false;
+        this.saving = false;
     }
 
     /**
@@ -277,6 +329,7 @@ public class History {
      */
     public void remove() {
         LWC.getInstance().getPhysicalDatabase().unregisterHistory(id);
+        this.modified = false;
     }
 
     public int getId() {
@@ -310,30 +363,37 @@ public class History {
     public void setId(int id) {
         this.id = id;
         this.exists = true;
+        this.modified = true;
     }
 
     public void setProtectionId(int protectionId) {
         this.protectionId = protectionId;
+        this.modified = true;
     }
 
     public void setPlayer(String player) {
         this.player = player;
+        this.modified = true;
     }
 
     public void setType(Type type) {
         this.type = type;
+        this.modified = true;
     }
 
     public void setStatus(Status status) {
         this.status = status;
+        this.modified = true;
     }
 
     public void setMetaData(String[] metadata) {
         this.metadata = metadata;
+        this.modified = true;
     }
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+        this.modified = true;
     }
 
 }
