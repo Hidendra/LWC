@@ -516,8 +516,8 @@ public class Protection {
         LWC lwc = LWC.getInstance();
         removeTemporaryAccessRights();
 
-        // make this protection immutable
-        removed = true;
+        // we're removing it, so assume there are no changes
+        modified = false;
 
         // broadcast the removal event
         // we broadcast before actually removing to give them a chance to use any data that would be removed otherwise
@@ -531,10 +531,16 @@ public class Protection {
             }
 
             history.setStatus(History.Status.INACTIVE);
-            history.sync();
         }
 
+        // now perform final saving to ensure all history objects are saved immediately
+        saveNow();
+
+        // make the protection immutable
+        removed = true;
+
         // and now finally remove it from the database
+        lwc.getUpdateThread().unqueueProtectionUpdate(this);
         lwc.getPhysicalDatabase().unregisterProtection(id);
         removeCache();
     }

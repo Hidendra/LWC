@@ -59,6 +59,13 @@ public class LWCInfo {
             e.printStackTrace();
         }
 
-        FULL_VERSION = String.format("%.2f (%s)", VERSION, LWCPlugin.class.getPackage().getImplementationVersion());
+        String versionString = LWCPlugin.class.getPackage().getImplementationVersion();
+
+        // if it's not a manual build, prepend a b
+        if(!versionString.equals("MANUAL")) {
+            versionString = "b" + versionString;
+        }
+
+        FULL_VERSION = String.format("%.2f (%s)", VERSION, versionString);
     }
 }
