@@ -268,7 +268,7 @@ public abstract class Database {
             if(returnGeneratedKeys) {
                 preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             } else {
-                preparedStatement = connection.prepareCall(sql);
+                preparedStatement = connection.prepareStatement(sql);
             }
 
             statementCache.put(sql, preparedStatement);
