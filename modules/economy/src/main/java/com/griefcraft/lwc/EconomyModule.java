@@ -206,8 +206,19 @@ public class EconomyModule extends JavaModule {
                 double wouldCharge = Double.parseDouble(resolveValue(player, "discount.newCharge"));
 
                 if (discountedProtections > 0) {
-                    // int currentProtections = lwc.getPhysicalDatabase().getProtectionCount(player.getName());
-                    int currentProtections = getDiscountedProtections(lwc, player, wouldCharge);
+                    String discountType = resolveValue(player, "discount.type");
+                    int currentProtections = 0;
+                    boolean isExactDiscountType = true;
+
+                    if(discountType.equalsIgnoreCase("TOTAL")) {
+                        isExactDiscountType = false;
+                    }
+
+                    if(isExactDiscountType) {
+                        currentProtections = getDiscountedProtections(lwc, player, wouldCharge);
+                    } else {
+                        currentProtections = lwc.getPhysicalDatabase().getProtectionCount(player.getName());
+                    }
 
                     if (discountedProtections > currentProtections) {
                         charge = wouldCharge;
