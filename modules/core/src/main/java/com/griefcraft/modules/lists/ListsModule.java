@@ -31,7 +31,7 @@ import org.bukkit.plugin.Plugin;
 public class ListsModule extends JavaModule {
 
     /**
-     * The lists api
+     * The com.griefcraft.modules.lists api
      */
     private Lists lists = null;
 
