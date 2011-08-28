@@ -1,19 +1,14 @@
-## charge: is the default currency to charge
 
-# Otherwise, the charge value will take precedence in this order:
-# players.PLAYERNAME.charge
-# groups.GROUPNAME.charge
-# iConomy.charge
+# Precedence (order) for values LWC-Economy uses is:
+# PLAYER > GROUP > DEFAULT
 iConomy:
     enabled: true
+
+    # The default price to charge for protections, which can overridden for groups or players
     charge: 5.00
 
     # Discounted protections
-    # The discount will give exactly AMOUNT protections at NEWCHARGE price. If the price changes, players
-    # can utilize the discount again (or if the amount is raised.)
-    # E.g, if it's set to 5 (and charge = 0.00), while you have less than 5
-    # protections, they are free
-
+    # The discount will give exactly AMOUNT protections at NEWCHARGE price.
     # Discounts also have a 'type'. They can either be: EXACT or TOTAL
     # EXACT: The discount will give <amount> of protections at <newCharge> price: no more, no less.
     # TOTAL: The discount will charge <newCharge> price while the player has <amount> or lower total protections.
@@ -23,7 +18,7 @@ iConomy:
         amount: 5
         newCharge: 0.00
 
-# Overrides
+# Group overrides. Please note that these are CASE SENSITIVE
 groups:
     SomeGroup:
         charge: 5.00
