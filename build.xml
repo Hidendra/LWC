@@ -11,8 +11,6 @@
 
     <property name="modules" value="modules"/>
     <property name="core" value="${modules}/core/src/"/>
-    <property name="worldguard" value="${modules}/worldguard/src/"/>
-    <property name="lists" value="${modules}/lists/src/"/>
     <property name="economy" value="${modules}/economy/src/"/>
 
     <property name="build" value="build"/>
@@ -70,7 +68,7 @@
     <target name="compile" description="Compilation">
 
         <echo>${label}</echo>
-        <javac srcdir="${src}/main/java/;${core};${worldguard}/main/java/;${lists}/main/java/" destdir="${bin}/core/"
+        <javac srcdir="${src}/main/java/;${core};" destdir="${bin}/core/"
                debug="true" debuglevel="lines,vars,source" deprecation="true" includeantruntime="true">
             <classpath>
                 <fileset refid="libs"/>
