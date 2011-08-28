@@ -13,8 +13,13 @@ iConomy:
     # can utilize the discount again (or if the amount is raised.)
     # E.g, if it's set to 5 (and charge = 0.00), while you have less than 5
     # protections, they are free
+
+    # Discounts also have a 'type'. They can either be: EXACT or TOTAL
+    # EXACT: The discount will give <amount> of protections at <newCharge> price: no more, no less.
+    # TOTAL: The discount will charge <newCharge> price while the player has <amount> or lower total protections.
     discount:
         active: false
+        type: EXACT
         amount: 5
         newCharge: 0.00
 
@@ -24,6 +29,7 @@ groups:
         charge: 5.00
         discount:
             active: false
+            type: EXACT
             amount: 5
             newCharge: 0.00
 
