@@ -21,6 +21,7 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
+import com.griefcraft.sql.Database;
 import com.griefcraft.util.Colors;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -141,7 +142,10 @@ public class AdminCleanup extends JavaModule {
 
             try {
                 Statement resultStatement = lwc.getPhysicalDatabase().getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-                resultStatement.setFetchSize(Integer.MIN_VALUE);
+
+                if(lwc.getPhysicalDatabase().getType() == Database.Type.MySQL) {
+                    resultStatement.setFetchSize(Integer.MIN_VALUE);
+                }
 
                 String prefix = lwc.getPhysicalDatabase().getPrefix();
                 ResultSet result = resultStatement.executeQuery("SELECT " + prefix + "protections.id AS protectionId, " + prefix + "protections.type AS protectionType, x, y, z, flags, blockId, world, owner, password, date, last_accessed FROM " + prefix + "protections");
