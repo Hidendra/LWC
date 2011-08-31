@@ -47,6 +47,7 @@ public class AdminUpdate extends JavaModule {
         event.setCancelled(true);
 
         Updater updater = lwc.getPlugin().getUpdater();
+        updater.loadVersions(false);
 
         if (updater.checkDist()) {
             lwc.sendLocale(sender, "protection.admin.update.updated", "version", updater.getLatestPluginVersion());
