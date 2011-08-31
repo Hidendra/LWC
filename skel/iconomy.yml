@@ -1,4 +1,3 @@
-
 # Precedence (order) for values LWC-Economy uses is:
 # PLAYER > GROUP > DEFAULT
 iConomy:
@@ -28,6 +27,7 @@ groups:
             amount: 5
             newCharge: 0.00
 
+# Player overrides.
 players:
     Hidendra:
         charge: 5.00
