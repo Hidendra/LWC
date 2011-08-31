@@ -27,6 +27,7 @@ import com.griefcraft.integration.currency.iConomyCurrency;
 import com.griefcraft.integration.permissions.BukkitPermissions;
 import com.griefcraft.integration.permissions.NijiPermissions;
 import com.griefcraft.integration.permissions.NoPermissions;
+import com.griefcraft.integration.permissions.PEXPermissions;
 import com.griefcraft.migration.ConfigPost300;
 import com.griefcraft.migration.MySQLPost200;
 import com.griefcraft.model.AccessRight;
@@ -1062,6 +1063,8 @@ public class LWC {
 
         if (resolvePlugin("PermissionsBukkit") != null) {
             permissions = new BukkitPermissions();
+        } else if (resolvePlugin("PermissionsEx") != null) {
+            permissions = new PEXPermissions();
         } else if (resolvePlugin("Permissions") != null) {
             permissions = new NijiPermissions();
         }

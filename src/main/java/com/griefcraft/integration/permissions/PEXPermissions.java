@@ -19,22 +19,31 @@ package com.griefcraft.integration.permissions;
 
 import com.griefcraft.integration.IPermissions;
 import org.bukkit.entity.Player;
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class NoPermissions implements IPermissions {
+public class PEXPermissions implements IPermissions {
 
     public boolean isActive() {
-        return false;
+        return true;
     }
 
     public boolean permission(Player player, String node) {
-        return false;
+        return PermissionsEx.getPermissionManager().has(player, node);
     }
 
     public List<String> getGroups(Player player) {
-        return new ArrayList<String>();
+        PermissionUser user = PermissionsEx.getPermissionManager().getUser(player);
+
+        if(user == null) {
+            return new ArrayList<String>();
+        }
+
+        return Arrays.asList(user.getGroupsNames());
     }
 
 }
