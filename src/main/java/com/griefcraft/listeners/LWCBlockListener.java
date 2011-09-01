@@ -30,6 +30,7 @@ import com.griefcraft.scripting.event.LWCRedstoneEvent;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockListener;
@@ -37,6 +38,8 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.material.MaterialData;
+import org.bukkit.material.PistonBaseMaterial;
 
 public class LWCBlockListener extends BlockListener {
 
@@ -156,7 +159,16 @@ public class LWCBlockListener extends BlockListener {
         }
 
         LWC lwc = plugin.getLWC();
-        Block block = event.getBlock().getRelative(event.getDirection());
+        Block piston = event.getBlock();
+        BlockState state = piston.getState();
+        MaterialData data = state.getData();
+
+        if(!(data instanceof PistonBaseMaterial)) {
+            return;
+        }
+
+        BlockFace direction = ((PistonBaseMaterial) data).getFacing();
+        Block block = event.getBlock().getRelative(direction);
 
         Protection protection = lwc.findProtection(block);
 
