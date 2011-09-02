@@ -18,7 +18,6 @@
 package com.griefcraft.modules.admin;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import org.bukkit.command.CommandSender;
@@ -55,18 +54,14 @@ public class AdminPurgeBanned extends JavaModule {
         // we have the right command
         event.setCancelled(true);
 
+        boolean shouldRemoveBlocks = args.length > 1 ? args[1].endsWith("remove") : false;
         List<String> players = loadBannedPlayers();
 
         for (String toRemove : players) {
-            // load all of their protections
-            for (Protection protection : lwc.getPhysicalDatabase().loadProtectionsByPlayer(toRemove, 0, 100000)) {
-                protection.remove();
-            }
+            lwc.fastRemoveProtections(sender, "owner = '" + toRemove + "'", shouldRemoveBlocks);
 
             lwc.sendLocale(sender, "protection.admin.purge.finalize", "player", toRemove);
         }
-
-        return;
     }
 
     /**
