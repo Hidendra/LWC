@@ -124,6 +124,11 @@ public class EconomyModule extends JavaModule {
             return;
         }
 
+        // is refunding enabled?
+        if (!configuration.getBoolean("iConomy.refunds", true)) {
+            return;
+        }
+
         if(!LWC.getInstance().isHistoryEnabled()) {
             return;
         }
