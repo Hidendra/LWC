@@ -3,6 +3,10 @@
 iConomy:
     enabled: true
 
+    # If LWC-Economy should refund money paid for a protection when a player removes it.
+    # If a player gets a discount, they will be refunded the discount, not the full purchase price!
+    refunds: true
+
     # The default price to charge for protections, which can overridden for groups or players
     charge: 5.00
 
