@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 public class ConfigPost300 implements MigrationUtility {
     private static Logger logger = Logger.getLogger("Patcher");
 
-    // contains the core config equivilent keypairs
+    // contains the core config equivalent key pairs
     // e.g locale->core.locale
     private static Map<String, String> mappings = null;
 
