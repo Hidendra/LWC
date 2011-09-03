@@ -1631,7 +1631,7 @@ public class LWC {
      *
      * @param str
      */
-    public void log(String str) {
+    private void log(String str) {
         str = "LWC: " + str;
 
         if (console != null) {
@@ -1926,7 +1926,7 @@ public class LWC {
      * @param sender
      * @param toRemove
      */
-    public void fullRemoveProtections(CommandSender sender, List<Integer> toRemove) throws SQLException {
+    private void fullRemoveProtections(CommandSender sender, List<Integer> toRemove) throws SQLException {
         final StringBuilder builder = new StringBuilder();
         final int total = toRemove.size();
         int count = 0;
