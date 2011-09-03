@@ -23,11 +23,6 @@ package com.griefcraft.lwc;
 public class LWCInfo {
 
     /**
-     * Location of the properties file relative to the root Minecraft directory
-     */
-    public static final String CONF_FILE = "plugins/LWC/lwc.properties";
-
-    /**
      * Full LWC version with git commit & CI build (unless manually built.)
      */
     public static String FULL_VERSION;
