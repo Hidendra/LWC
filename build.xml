@@ -20,17 +20,7 @@
 
     <!-- Libraries used by LWC & modules -->
     <fileset dir="${lib}" id="libs">
-        <include name="CraftBukkit.jar"/>
-        <include name="Permissions.jar"/>
-        <include name="PermissionsBukkit.jar"/>
-        <include name="PermissionsEx.jar"/>
-        <include name="WorldGuard.jar"/>
-        <include name="WorldEdit.jar"/>
-        <include name="Lists.jar"/>
-        <include name="iConomy.jar"/>
-        <include name="mcbans.jar"/>
-        <include name="junit.jar"/>
-        <include name="BOSEconomy.jar"/>
+        <include name="*.jar"/>
     </fileset>
 
     <!-- JUnit testing -->

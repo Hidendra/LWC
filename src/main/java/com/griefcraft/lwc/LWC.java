@@ -22,6 +22,7 @@ import com.griefcraft.cache.CacheSet;
 import com.griefcraft.integration.ICurrency;
 import com.griefcraft.integration.IPermissions;
 import com.griefcraft.integration.currency.BOSECurrency;
+import com.griefcraft.integration.currency.EssentialsCurrency;
 import com.griefcraft.integration.currency.NoCurrency;
 import com.griefcraft.integration.currency.iConomyCurrency;
 import com.griefcraft.integration.permissions.BukkitPermissions;
@@ -1076,6 +1077,8 @@ public class LWC {
             currency = new iConomyCurrency();
         } else if (resolvePlugin("BOSEconomy") != null) {
             currency = new BOSECurrency();
+        } else if (resolvePlugin("Essentials") != null) {
+            currency = new EssentialsCurrency();
         }
 
         log("Permissions API: " + Colors.Red + permissions.getClass().getSimpleName());
