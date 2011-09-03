@@ -1174,7 +1174,7 @@ public class LWC {
     }
 
     /**
-     * Get a plugin by the name and if it is disabled, enable the plugin
+     * Get a plugin by the name. Does not have to be enabled, and will remain disabled if it is disabled.
      *
      * @param name
      * @return
@@ -1184,10 +1184,6 @@ public class LWC {
 
         if (temp == null) {
             return null;
-        }
-
-        if (!temp.isEnabled()) {
-            plugin.getServer().getPluginManager().enablePlugin(temp);
         }
 
         return temp;
