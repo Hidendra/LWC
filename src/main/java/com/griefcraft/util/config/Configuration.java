@@ -78,6 +78,10 @@ public class Configuration extends ConfigurationNode {
      * @return
      */
     public static Configuration load(String config) {
+        if(loaded.containsKey(config)) {
+            return loaded.get(config);
+        }
+
         File file = new File(ModuleLoader.ROOT_PATH + config);
 
         // if it does not exist, attempt to download it if possible :-)

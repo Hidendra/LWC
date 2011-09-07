@@ -10,6 +10,11 @@ public interface ICurrency {
     public boolean isActive();
 
     /**
+     * @return true if the Economy plugin can support the server account feature
+     */
+    public boolean supportsServerAccount();
+
+    /**
      * Format money
      *
      * @param money
@@ -43,7 +48,16 @@ public interface ICurrency {
     public boolean canAfford(Player player, double money);
 
     /**
+     * Check if the server account can afford the amount of money given
+     *
+     * @param money
+     * @return true if the server account has a balance equal or greater to the money given
+     */
+    public boolean canServerAccountAfford(double money);
+
+    /**
      * Add money to a player's bank account
+     * If server account banking is enabled, the money is automatically withdrawn from the configured bank!
      *
      * @param player
      * @param money
@@ -53,6 +67,7 @@ public interface ICurrency {
 
     /**
      * Remove money from a player's bank account
+     * If server account banking is enabled, the money is automatically added to the configured bank!
      *
      * @param player
      * @param money
