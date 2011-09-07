@@ -22,6 +22,7 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
+import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -45,9 +46,14 @@ public class FreeModule extends JavaModule {
         event.setResult(Result.CANCEL);
 
         if (lwc.hasAdminPermission(player, "lwc.admin.remove") || protection.getOwner().equals(player.getName())) {
-            protection.remove();
-            lwc.sendLocale(player, "protection.interact.remove.finalize", "block", LWC.materialToString(protection.getBlockId()));
-            lwc.removeModes(player);
+            LWCProtectionDestroyEvent evt = new LWCProtectionDestroyEvent(player, protection, true, true);
+            lwc.getModuleLoader().dispatchEvent(evt);
+
+            if(!evt.isCancelled()) {
+                protection.remove();
+                lwc.sendLocale(player, "protection.interact.remove.finalize", "block", LWC.materialToString(protection.getBlockId()));
+                lwc.removeModes(player);
+            }
         } else {
             lwc.sendLocale(player, "protection.interact.error.notowner", "block", LWC.materialToString(protection.getBlockId()));
             lwc.removeModes(player);

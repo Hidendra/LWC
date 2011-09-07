@@ -23,6 +23,7 @@ import com.griefcraft.model.History;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
@@ -61,6 +62,64 @@ public class EconomyModule extends JavaModule {
 
     public EconomyModule(LWCEconomyPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @Override
+    public void onDestroyProtection(LWCProtectionDestroyEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
+        if (!configuration.getBoolean("iConomy.enabled", true)) {
+            return;
+        }
+
+        // is refunding enabled?
+        if (!configuration.getBoolean("iConomy.refunds", true)) {
+            return;
+        }
+
+        if(!LWC.getInstance().isHistoryEnabled()) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        Protection protection = event.getProtection();
+        Player player = event.getPlayer();
+
+        // first, do we still have a currency processor?
+        if (!lwc.getCurrency().isActive()) {
+            return;
+        }
+
+        // Does it support the server bank feature
+        if (!lwc.getCurrency().supportsServerAccount()) {
+            return;
+        }
+
+        // load the transactions so we can check the server bank
+        List<History> transactions = protection.getRelatedHistory(History.Type.TRANSACTION);
+
+        for (History history : transactions) {
+            if (history.getStatus() == History.Status.INACTIVE) {
+                continue;
+            }
+
+            // obtain the charge
+            double charge = history.getDouble("charge");
+
+            // No need to refund if it's negative or 0
+            if (charge <= 0) {
+                continue;
+            }
+
+            // check the server bank
+            if (!lwc.getCurrency().canServerAccountAfford(charge)) {
+                player.sendMessage(Colors.Red + "The Server's Bank does not contain enough funds to remove that protection!");
+                event.setCancelled(true);
+                return;
+            }
+        }
     }
 
     @Override
