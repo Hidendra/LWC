@@ -91,7 +91,6 @@ public class iConomyCurrency implements ICurrency {
             return true;
         }
 
-        // FIXME - is this valid?
         Account account = iConomy.getAccount(serverAccount);
 
         return account != null && account.getHoldings().hasEnough(money);
