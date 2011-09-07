@@ -44,6 +44,10 @@ public class EssentialsCurrency implements ICurrency {
     }
 
     public boolean isActive() {
+        return true;
+    }
+
+    public boolean supportsServerAccount() {
         return false;
     }
 
@@ -77,6 +81,10 @@ public class EssentialsCurrency implements ICurrency {
         } catch(UserDoesNotExistException e) {
             return false;
         }
+    }
+
+    public boolean canServerAccountAfford(double money) {
+        return false;
     }
 
     public double addMoney(Player player, double money) {

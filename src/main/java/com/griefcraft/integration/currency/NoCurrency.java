@@ -26,6 +26,10 @@ public class NoCurrency implements ICurrency {
         return false;
     }
 
+    public boolean supportsServerAccount() {
+        return false;
+    }
+
     public String format(double money) {
         return Double.toString(money);
     }
@@ -39,6 +43,10 @@ public class NoCurrency implements ICurrency {
     }
 
     public boolean canAfford(Player player, double money) {
+        return false;
+    }
+
+    public boolean canServerAccountAfford(double money) {
         return false;
     }
 
