@@ -182,7 +182,7 @@ public class DoorsModule extends JavaModule {
      * @return
      */
     private boolean isValid(Material material) {
-        return material == Material.IRON_DOOR_BLOCK; // || material == Material.WOODEN_DOOR;
+        return material == Material.IRON_DOOR_BLOCK || material == Material.WOODEN_DOOR;
     }
 
     @Override
@@ -201,6 +201,11 @@ public class DoorsModule extends JavaModule {
 
         // get the blocks for the door
         List<Block> blocks = lwc.getProtectionSet(protection.getBukkitWorld(), protection.getX(), protection.getY(), protection.getZ());
+
+        // ignore the door they clicked if it's a wooden door
+        if(protection.getBlockId() == Material.WOODEN_DOOR.getId()) {
+            blocks.clear();
+        }
 
         // only send them one message :-)
         boolean sentMessage = false;
