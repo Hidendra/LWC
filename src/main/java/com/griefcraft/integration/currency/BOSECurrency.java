@@ -50,7 +50,7 @@ public class BOSECurrency implements ICurrency {
     }
 
     public boolean supportsServerAccount() {
-        return true;
+        return !serverAccount.isEmpty();
     }
 
     public String format(double money) {
