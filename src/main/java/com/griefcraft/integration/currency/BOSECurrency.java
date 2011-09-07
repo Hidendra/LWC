@@ -43,13 +43,18 @@ public class BOSECurrency implements ICurrency {
     public BOSECurrency() {
         handler = (BOSEconomy) Bukkit.getServer().getPluginManager().getPlugin("BOSEconomy");
         serverAccount = configuration.getString("iConomy.serverBankAccount", "");
+
+        // create the bank if it does not exist
+        if (!serverAccount.isEmpty() && !handler.bankExists(serverAccount)) {
+            handler.createBank(serverAccount);
+        }
     }
 
     public boolean isActive() {
         return true;
     }
 
-    public boolean supportsServerAccount() {
+    public boolean usingCentralBank() {
         return !serverAccount.isEmpty();
     }
 
@@ -77,13 +82,22 @@ public class BOSECurrency implements ICurrency {
         return getBalance(player) >= money;
     }
 
-    public boolean canServerAccountAfford(double money) {
+    public boolean canCentralBankAfford(double money) {
         return handler.getBankMoneyDouble(serverAccount) >= money;
     }
 
     public double addMoney(Player player, double money) {
         if(player == null) {
             return 0;
+        }
+
+        // remove the money from the central bank if applicable
+        if(usingCentralBank()) {
+            if (!canCentralBankAfford(money)) {
+                return 0;
+            }
+
+            handler.addBankMoney(serverAccount, -money, true);
         }
 
         handler.addPlayerMoney(player.getName(), money, false);
@@ -95,6 +109,11 @@ public class BOSECurrency implements ICurrency {
         // we're removing money, so it should be positive
         if (money > 0) {
             money = -money;
+        }
+
+        // add the money to the central bank if applicable
+        if(usingCentralBank()) {
+            handler.addBankMoney(serverAccount, money, true);
         }
 
         handler.addPlayerMoney(player.getName(), money, false);

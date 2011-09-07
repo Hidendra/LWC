@@ -47,7 +47,7 @@ public class EssentialsCurrency implements ICurrency {
         return true;
     }
 
-    public boolean supportsServerAccount() {
+    public boolean usingCentralBank() {
         return false;
     }
 
@@ -83,7 +83,7 @@ public class EssentialsCurrency implements ICurrency {
         }
     }
 
-    public boolean canServerAccountAfford(double money) {
+    public boolean canCentralBankAfford(double money) {
         return false;
     }
 

@@ -39,13 +39,18 @@ public class iConomyCurrency implements ICurrency {
 
     public iConomyCurrency() {
         serverAccount = configuration.getString("iConomy.serverBankAccount", "");
+
+        // create the account in iConomy if needed
+        if(!serverAccount.isEmpty()) {
+            iConomy.getAccount(serverAccount);
+        }
     }
 
     public boolean isActive() {
         return true;
     }
 
-    public boolean supportsServerAccount() {
+    public boolean usingCentralBank() {
         return !serverAccount.isEmpty();
     }
 
@@ -81,7 +86,11 @@ public class iConomyCurrency implements ICurrency {
         return account != null && account.getHoldings().hasEnough(money);
     }
 
-    public boolean canServerAccountAfford(double money) {
+    public boolean canCentralBankAfford(double money) {
+        if (!usingCentralBank()) {
+            return true;
+        }
+
         // FIXME - is this valid?
         Account account = iConomy.getAccount(serverAccount);
 
@@ -91,6 +100,21 @@ public class iConomyCurrency implements ICurrency {
     public double addMoney(Player player, double money) {
         if(player == null) {
             return 0;
+        }
+
+        // remove the money from the central bank if applicable
+        if(usingCentralBank()) {
+            if (!canCentralBankAfford(money)) {
+                return 0;
+            }
+
+            Account central = iConomy.getAccount(serverAccount);
+
+            if(central == null) {
+                return 0;
+            }
+
+            central.getHoldings().subtract(money);
         }
 
         Account account = iConomy.getAccount(player.getName());
@@ -113,6 +137,17 @@ public class iConomyCurrency implements ICurrency {
         // we're removing money, so it should be positive
         if (money < 0) {
             money = -money;
+        }
+
+        // add the money to the central bank if applicable
+        if(usingCentralBank()) {
+            Account central = iConomy.getAccount(serverAccount);
+
+            if(central == null) {
+                return 0;
+            }
+
+            central.getHoldings().add(money);
         }
 
         Account account = iConomy.getAccount(player.getName());

@@ -26,7 +26,7 @@ public class NoCurrency implements ICurrency {
         return false;
     }
 
-    public boolean supportsServerAccount() {
+    public boolean usingCentralBank() {
         return false;
     }
 
@@ -46,7 +46,7 @@ public class NoCurrency implements ICurrency {
         return false;
     }
 
-    public boolean canServerAccountAfford(double money) {
+    public boolean canCentralBankAfford(double money) {
         return false;
     }
 

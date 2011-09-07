@@ -139,7 +139,7 @@ public class LWCBlockListener extends BlockListener {
 
         try {
             Result result = lwc.getModuleLoader().dispatchEvent(Event.DESTROY_PROTECTION, player, protection, block, canAccess, canAdmin);
-            LWCProtectionDestroyEvent evt = new LWCProtectionDestroyEvent(player, protection, canAccess, canAdmin);
+            LWCProtectionDestroyEvent evt = new LWCProtectionDestroyEvent(player, protection, LWCProtectionDestroyEvent.Method.BLOCK_DESTRUCTION, canAccess, canAdmin);
             lwc.getModuleLoader().dispatchEvent(evt);
 
             if (evt.isCancelled() || result == Result.CANCEL) {

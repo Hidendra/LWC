@@ -46,14 +46,15 @@ public class FreeModule extends JavaModule {
         event.setResult(Result.CANCEL);
 
         if (lwc.hasAdminPermission(player, "lwc.admin.remove") || protection.getOwner().equals(player.getName())) {
-            LWCProtectionDestroyEvent evt = new LWCProtectionDestroyEvent(player, protection, true, true);
+            LWCProtectionDestroyEvent evt = new LWCProtectionDestroyEvent(player, protection, LWCProtectionDestroyEvent.Method.COMMAND, true, true);
             lwc.getModuleLoader().dispatchEvent(evt);
 
             if(!evt.isCancelled()) {
                 protection.remove();
                 lwc.sendLocale(player, "protection.interact.remove.finalize", "block", LWC.materialToString(protection.getBlockId()));
-                lwc.removeModes(player);
             }
+            
+            lwc.removeModes(player);
         } else {
             lwc.sendLocale(player, "protection.interact.error.notowner", "block", LWC.materialToString(protection.getBlockId()));
             lwc.removeModes(player);
