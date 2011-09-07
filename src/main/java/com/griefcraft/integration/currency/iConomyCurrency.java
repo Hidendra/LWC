@@ -39,6 +39,10 @@ public class iConomyCurrency implements ICurrency {
     }
 
     public double getBalance(Player player) {
+        if(player == null) {
+            return 0;
+        }
+
         Account account = iConomy.getAccount(player.getName());
 
         if (account == null) {
@@ -49,6 +53,10 @@ public class iConomyCurrency implements ICurrency {
     }
 
     public boolean canAfford(Player player, double money) {
+        if(player == null) {
+            return false;
+        }
+
         Account account = iConomy.getAccount(player.getName());
 
         return account != null && account.getHoldings().hasEnough(money);
@@ -56,6 +64,10 @@ public class iConomyCurrency implements ICurrency {
     }
 
     public double addMoney(Player player, double money) {
+        if(player == null) {
+            return 0;
+        }
+
         Account account = iConomy.getAccount(player.getName());
 
         if (account == null) {
@@ -69,6 +81,10 @@ public class iConomyCurrency implements ICurrency {
     }
 
     public double removeMoney(Player player, double money) {
+        if(player == null) {
+            return 0;
+        }
+
         // we're removing money, so it should be positive
         if (money < 0) {
             money = -money;

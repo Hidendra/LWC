@@ -46,14 +46,26 @@ public class BOSECurrency implements ICurrency {
     }
 
     public double getBalance(Player player) {
+        if(player == null) {
+            return 0;
+        }
+
         return handler.getPlayerMoneyDouble(player.getName());
     }
 
     public boolean canAfford(Player player, double money) {
+        if(player == null) {
+            return false;
+        }
+
         return getBalance(player) >= money;
     }
 
     public double addMoney(Player player, double money) {
+        if(player == null) {
+            return 0;
+        }
+
         handler.addPlayerMoney(player.getName(), money, false);
 
         return getBalance(player);
