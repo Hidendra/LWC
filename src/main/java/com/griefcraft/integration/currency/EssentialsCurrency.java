@@ -56,6 +56,10 @@ public class EssentialsCurrency implements ICurrency {
     }
 
     public double getBalance(Player player) {
+        if(player == null) {
+            return 0;
+        }
+
         try {
             return Economy.getMoney(player.getName());
         } catch(UserDoesNotExistException e) {
@@ -64,6 +68,10 @@ public class EssentialsCurrency implements ICurrency {
     }
 
     public boolean canAfford(Player player, double money) {
+        if(player == null) {
+            return false;
+        }
+
         try {
             return Economy.hasEnough(player.getName(), money);
         } catch(UserDoesNotExistException e) {
@@ -72,6 +80,10 @@ public class EssentialsCurrency implements ICurrency {
     }
 
     public double addMoney(Player player, double money) {
+        if(player == null) {
+            return 0;
+        }
+
         try {
             Economy.add(player.getName(), money);
         } catch(UserDoesNotExistException e) {
