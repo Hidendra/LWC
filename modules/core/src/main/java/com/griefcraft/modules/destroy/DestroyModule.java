@@ -31,6 +31,10 @@ public class DestroyModule extends JavaModule {
             return;
         }
 
+        if (event.getMethod() != LWCProtectionDestroyEvent.Method.BLOCK_DESTRUCTION) {
+            return;
+        }
+
         LWC lwc = event.getLWC();
         Protection protection = event.getProtection();
         Player player = event.getPlayer();
@@ -54,7 +58,6 @@ public class DestroyModule extends JavaModule {
         }
 
         event.setCancelled(true);
-        return;
     }
 
 }

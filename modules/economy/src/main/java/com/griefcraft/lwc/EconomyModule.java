@@ -93,7 +93,7 @@ public class EconomyModule extends JavaModule {
         }
 
         // Does it support the server bank feature
-        if (!lwc.getCurrency().supportsServerAccount()) {
+        if (!lwc.getCurrency().usingCentralBank()) {
             return;
         }
 
@@ -114,7 +114,7 @@ public class EconomyModule extends JavaModule {
             }
 
             // check the server bank
-            if (!lwc.getCurrency().canServerAccountAfford(charge)) {
+            if (!lwc.getCurrency().canCentralBankAfford(charge)) {
                 player.sendMessage(Colors.Red + "The Server's Bank does not contain enough funds to remove that protection!");
                 event.setCancelled(true);
                 return;
