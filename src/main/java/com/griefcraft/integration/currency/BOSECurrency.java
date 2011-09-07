@@ -18,6 +18,7 @@
 package com.griefcraft.integration.currency;
 
 import com.griefcraft.integration.ICurrency;
+import com.griefcraft.util.config.Configuration;
 import cosine.boseconomy.BOSEconomy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -29,11 +30,26 @@ public class BOSECurrency implements ICurrency {
      */
     private BOSEconomy handler;
 
+    /**
+     * The economy configuration
+     */
+    private Configuration configuration = Configuration.load("iconomy.yml");
+
+    /**
+     * The server account to use
+     */
+    private String serverAccount;
+
     public BOSECurrency() {
         handler = (BOSEconomy) Bukkit.getServer().getPluginManager().getPlugin("BOSEconomy");
+        serverAccount = configuration.getString("iConomy.serverBankAccount", "");
     }
 
     public boolean isActive() {
+        return true;
+    }
+
+    public boolean supportsServerAccount() {
         return true;
     }
 
@@ -59,6 +75,10 @@ public class BOSECurrency implements ICurrency {
         }
 
         return getBalance(player) >= money;
+    }
+
+    public boolean canServerAccountAfford(double money) {
+        return handler.getBankMoneyDouble(serverAccount) >= money;
     }
 
     public double addMoney(Player player, double money) {

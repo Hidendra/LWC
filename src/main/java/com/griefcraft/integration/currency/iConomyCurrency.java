@@ -18,6 +18,7 @@
 package com.griefcraft.integration.currency;
 
 import com.griefcraft.integration.ICurrency;
+import com.griefcraft.util.config.Configuration;
 import com.iConomy.iConomy;
 import com.iConomy.system.Account;
 import com.iConomy.system.Holdings;
@@ -26,7 +27,25 @@ import org.bukkit.entity.Player;
 
 public class iConomyCurrency implements ICurrency {
 
+    /**
+     * The economy configuration
+     */
+    private Configuration configuration = Configuration.load("iconomy.yml");
+
+    /**
+     * The server account to use
+     */
+    private String serverAccount;
+
+    public iConomyCurrency() {
+        serverAccount = configuration.getString("iConomy.serverBankAccount", "");
+    }
+
     public boolean isActive() {
+        return true;
+    }
+
+    public boolean supportsServerAccount() {
         return true;
     }
 
@@ -60,7 +79,13 @@ public class iConomyCurrency implements ICurrency {
         Account account = iConomy.getAccount(player.getName());
 
         return account != null && account.getHoldings().hasEnough(money);
+    }
 
+    public boolean canServerAccountAfford(double money) {
+        // FIXME - is this valid?
+        Account account = iConomy.getAccount(serverAccount);
+
+        return account != null && account.getHoldings().hasEnough(money);
     }
 
     public double addMoney(Player player, double money) {
