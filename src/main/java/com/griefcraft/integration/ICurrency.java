@@ -12,7 +12,7 @@ public interface ICurrency {
     /**
      * @return true if the Economy plugin can support the server account feature
      */
-    public boolean supportsServerAccount();
+    public boolean usingCentralBank();
 
     /**
      * Format money
@@ -53,7 +53,7 @@ public interface ICurrency {
      * @param money
      * @return true if the server account has a balance equal or greater to the money given
      */
-    public boolean canServerAccountAfford(double money);
+    public boolean canCentralBankAfford(double money);
 
     /**
      * Add money to a player's bank account
