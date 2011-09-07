@@ -46,7 +46,7 @@ public class iConomyCurrency implements ICurrency {
     }
 
     public boolean supportsServerAccount() {
-        return true;
+        return !serverAccount.isEmpty();
     }
 
     public String format(double money) {

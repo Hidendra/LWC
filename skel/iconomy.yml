@@ -7,9 +7,9 @@ iConomy:
     # If a player gets a discount, they will be refunded the discount, not the full purchase price!
     refunds: true
 
-    # Configure a server bank account for all charges to be deposited into. When a protections is removed,
-    # money will be withdrawn from this account to refund the player. If the server account does not have
-    # enough money, the player will not be able to remove the protection (to get their refund!)
+    # Configure a server bank account for all charges to be deposited into (a central bank).
+    # When a protections is removed, money will be withdrawn from this account to refund the player.
+    # If the server account does not have  enough money, the player will not be able to remove the protection (to get their refund!)
     #
     # ! If blank, a server bank account will NOT be used
     # ! If the bank account has not already been created, no one will be able to create or remove protections
