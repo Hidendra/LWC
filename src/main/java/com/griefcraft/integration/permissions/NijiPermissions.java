@@ -25,6 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class NijiPermissions implements IPermissions {
@@ -58,18 +59,22 @@ public class NijiPermissions implements IPermissions {
         return handler != null && handler.permission(player, node);
     }
 
+    @SuppressWarnings("deprecation")
     public List<String> getGroups(Player player) {
         if (handler == null) {
             return null;
         }
 
         List<String> groups = new ArrayList<String>();
-        groups.add(handler.getGroup(player.getWorld().getName(), player.getName()));
 
-        // TODO: when semver comparator is done, check for >= 3.0.0 (if so, get all the player's group, otherwise
-        //       fallback onto single group methods)
+        // try Permissions 3 method
+        try {
+            groups.addAll(Arrays.asList(handler.getGroups(player.getWorld().getName(), player.getName())));
+        } catch (NoSuchMethodError e) {
+            // Permissions 2
+            groups.add(handler.getGroup(player.getWorld().getName(), player.getName()));
+        }
 
-        // return handler.getPrimaryGroup(player.getWorld().getName(), player.getName()); // perm 3.0+
         return groups;
     }
 
