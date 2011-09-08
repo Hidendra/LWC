@@ -21,7 +21,13 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
+import net.minecraft.server.Container;
+import net.minecraft.server.ContainerFurnace;
 import net.minecraft.server.EntityHuman;
+import net.minecraft.server.EntityPlayer;
+import net.minecraft.server.ICrafting;
+import net.minecraft.server.Packet100OpenWindow;
+import net.minecraft.server.TileEntityFurnace;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.ContainerBlock;
@@ -83,21 +89,34 @@ public class AdminView extends JavaModule {
 
         net.minecraft.server.World handle = ((CraftWorld) block.getWorld()).getHandle();
         EntityHuman human = ((CraftHumanEntity) player).getHandle();
+        EntityPlayer plr = (EntityPlayer) human;
+        ICrafting crafting = (ICrafting) plr;
         int x = block.getX();
         int y = block.getY();
         int z = block.getZ();
 
+        Container container = null;
+
         switch (block.getType()) {
             case CHEST:
-                net.minecraft.server.Block.CHEST.a(handle, x, y, z, human);
+                // net.minecraft.server.Block.CHEST.interact(handle, x, y, z, human);
                 break;
 
             case FURNACE:
-                net.minecraft.server.Block.FURNACE.a(handle, x, y, z, human);
+                // net.minecraft.server.Block.FURNACE.interact(handle, x, y, z, human);
+                // human.a((net.minecraft.server.TileEntityFurnace) handle.getTileEntity(x, y, z));
+
+                TileEntityFurnace furnace = (TileEntityFurnace) handle.getTileEntity(x, y, z);
+                container = new ContainerFurnace(plr.inventory, furnace);
+
+                plr.netServerHandler.sendPacket(new Packet100OpenWindow(42, 2, "LWC", 3));
+                crafting.a(container, 0, furnace.cookTime);
+                crafting.a(container, 1, furnace.burnTime);
+                crafting.a(container, 2, furnace.ticksForCurrentFuel);
                 break;
 
             case DISPENSER:
-                net.minecraft.server.Block.DISPENSER.a(handle, x, y, z, human);
+                net.minecraft.server.Block.DISPENSER.interact(handle, x, y, z, human);
                 break;
         }
 
