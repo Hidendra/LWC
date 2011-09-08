@@ -56,7 +56,6 @@ public class NijiPermissions implements IPermissions {
 
     public boolean permission(Player player, String node) {
         return handler != null && handler.permission(player, node);
-
     }
 
     public List<String> getGroups(Player player) {
