@@ -188,7 +188,7 @@ public class LWCPlugin extends JavaPlugin {
     public void loadDatabase() {
         String database = lwc.getConfiguration().getString("database.adapter");
 
-        if (database.equals("mysql")) {
+        if (database.equalsIgnoreCase("mysql")) {
             Database.DefaultType = Database.Type.MySQL;
         } else {
             Database.DefaultType = Database.Type.SQLite;

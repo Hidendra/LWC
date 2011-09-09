@@ -71,7 +71,7 @@ public class NijiPermissions implements IPermissions {
         try {
             groups.addAll(Arrays.asList(handler.getGroups(player.getWorld().getName(), player.getName())));
         } catch (NoSuchMethodError e) {
-            // Permissions 2
+            // Fallback to Permissions 2
             groups.add(handler.getGroup(player.getWorld().getName(), player.getName()));
         }
 
