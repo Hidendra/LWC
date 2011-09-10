@@ -61,6 +61,7 @@ import com.griefcraft.scripting.Module;
 import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.scripting.ModuleLoader.Event;
+import com.griefcraft.scripting.event.LWCSendLocaleEvent;
 import com.griefcraft.sql.Database;
 import com.griefcraft.sql.MemDB;
 import com.griefcraft.sql.PhysDB;
@@ -1272,9 +1273,11 @@ public class LWC {
         // broadcast an event if they are a player
         if (sender instanceof Player) {
             Result result = moduleLoader.dispatchEvent(Event.SEND_LOCALE, sender, key);
+            LWCSendLocaleEvent evt = new LWCSendLocaleEvent((Player) sender, key);
+            moduleLoader.dispatchEvent(evt);
 
             // did they cancel it?
-            if (result == Result.CANCEL) {
+            if (result == Result.CANCEL || evt.isCancelled()) {
                 return;
             }
         }
