@@ -22,7 +22,6 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCSendLocaleEvent;
-import net.minecraft.server.EntityPlayer;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
@@ -137,14 +136,27 @@ public class PasswordRequestModule extends JavaModule {
                     lwc.getMemoryDatabase().registerPlayer(player.getName(), protectionId);
                     player.getMainScreen().closePopup();
 
-                    // re-open the chest that they clicked :P
-                    // Un-safe code so we catch it just incase
+                    // open the chest that they clicked :P
+                    // Unsafe code so we catch it just incase
                     try {
                         Block block = protection.getBlock();
 
                         net.minecraft.server.World handle = ((CraftWorld) block.getWorld()).getHandle();
                         net.minecraft.server.EntityPlayer plr = (net.minecraft.server.EntityPlayer) ((CraftHumanEntity) player).getHandle();
-                        net.minecraft.server.Block.CHEST.interact(handle, block.getX(), block.getY(), block.getZ(), plr);
+
+                        switch(block.getType()) {
+                            case CHEST:
+                                net.minecraft.server.Block.CHEST.interact(handle, block.getX(), block.getY(), block.getZ(), plr);
+                                break;
+
+                            case FURNACE:
+                                net.minecraft.server.Block.FURNACE.interact(handle, block.getX(), block.getY(), block.getZ(), plr);
+                                break;
+
+                            case DISPENSER:
+                                net.minecraft.server.Block.DISPENSER.interact(handle, block.getX(), block.getY(), block.getZ(), plr);
+                                break;
+                        }
                     } catch(Throwable t) {
                         PasswordRequestModule.this.plugin.log("Warning: Open inventory via PasswordRequestModule is broken!");
                     }
