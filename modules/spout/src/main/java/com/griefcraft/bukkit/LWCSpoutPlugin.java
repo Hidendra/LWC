@@ -51,7 +51,7 @@ public class LWCSpoutPlugin extends JavaPlugin {
      *
      * @param message
      */
-    private void log(String message) {
+    public void log(String message) {
         logger.info("LWC-Spout: " + message);
     }
 
