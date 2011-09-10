@@ -208,6 +208,7 @@ public class PhysDB extends Database {
         doUpdate302();
         doUpdate330();
         doUpdate400_1();
+        doUpdate400_2();
 
         try {
             connection.setAutoCommit(false);
@@ -1362,4 +1363,67 @@ public class PhysDB extends Database {
             }
         }
     }
+
+    /**
+     * 4.0.0, update 2
+     */
+    private void doUpdate400_2() {
+        Statement statement = null;
+        try {
+            statement = connection.createStatement();
+            statement.execute("SELECT id FROM " + prefix + "rights");
+
+            // it exists ..!
+            Statement stmt = connection.createStatement();
+            ResultSet set = stmt.executeQuery("SELECT * FROM " + prefix + "rights");
+
+            // keep a mini-cache of protections, max size of 100k should be OK!
+            LRUCache<Integer, Protection> cache = new LRUCache<Integer, Protection>(1000 * 100);
+
+            while (set.next()) {
+                // load the data we will be using
+                int protectionId = set.getInt("chest");
+                String entity = set.getString("entity");
+                int rights = set.getInt("rights");
+                int type = set.getInt("type");
+
+                // begin loading the protection
+                Protection protection = null;
+
+                // check cache
+                if (cache.containsKey(protectionId)) {
+                    protection = cache.get(protectionId);
+                } else {
+                    // else, load it...
+                    protection = loadProtection(protectionId);
+                    cache.put(protectionId, protection);
+                }
+
+                // create the access right
+                AccessRight right = new AccessRight();
+                right.setProtectionId(protectionId);
+                right.setType(type);
+                right.setRights(rights);
+                right.setName(entity);
+
+                // add it to the protection and queue it for saving!
+                protection.addAccessRight(right);
+                protection.save();
+            }
+
+            // Good!
+            set.close();
+            stmt.close();
+        } catch (SQLException e) {
+            // already here!
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
+    }
+
 }
