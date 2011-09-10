@@ -18,7 +18,6 @@
 package com.griefcraft.migration;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.History;
 import com.griefcraft.model.Protection;
 import com.griefcraft.sql.Database.Type;
@@ -81,14 +80,12 @@ public class MySQLPost200 implements MigrationUtility {
             int startProtections = physicalDatabase.getProtectionCount();
 
             int protectionCount = sqliteDatabase.getProtectionCount();
-            int rightsCount = sqliteDatabase.getRightsCount();
             int historyCount = sqliteDatabase.getHistoryCount();
 
             int expectedProtections = protectionCount + startProtections;
 
             logger.info("TO CONVERT:");
             logger.info("Protections:\t" + protectionCount);
-            logger.info("Rights:\t\t" + rightsCount);
             logger.info("History:\t" + historyCount);
             logger.info("");
 
@@ -98,23 +95,8 @@ public class MySQLPost200 implements MigrationUtility {
                 List<Protection> tmp = sqliteDatabase.loadProtections();
 
                 for (Protection protection : tmp) {
-                    int x = protection.getX();
-                    int y = protection.getY();
-                    int z = protection.getZ();
-
-                    // register it
-                    physicalDatabase.registerProtection(protection.getBlockId(), protection.getType(), protection.getWorld(), protection.getOwner(), protection.getData(), x, y, z);
-
-                    // get the new protection, to retrieve the id
-                    Protection registered = physicalDatabase.loadProtection(protection.getWorld(), x, y, z);
-
-                    // get the rights in the world
-                    List<AccessRight> tmpRights = sqliteDatabase.loadRights(protection.getId());
-
-                    // register the new rights using the newly registered protection
-                    for (AccessRight right : tmpRights) {
-                        physicalDatabase.registerProtectionRights(registered.getId(), right.getName(), right.getRights(), right.getType());
-                    }
+                    // sync it to the live database
+                    protection.saveNow();
                 }
 
                 logger.info("COMMITTING");

@@ -170,11 +170,17 @@ public class CreateModule extends JavaModule {
                 String localeChild = AccessRight.typeToString(type).toLowerCase();
 
                 // register the rights
-                physDb.registerProtectionRights(protection.getId(), right, admin ? 1 : 0, type);
-                lwc.sendLocale(player, "protection.interact.rights.register." + localeChild, "name", right, "isadmin", (admin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : ""));
+                AccessRight accessRight = new AccessRight();
+                accessRight.setProtectionId(protection.getId());
+                accessRight.setName(right);
+                accessRight.setType(type);
+                accessRight.setRights(admin ? 1 : 0);
+                protection.addAccessRight(accessRight);
 
-                // remove the protection from the cache (we updated the rights)
-                protection.removeCache();
+                // queue the protection to be saved
+                protection.save();
+
+                lwc.sendLocale(player, "protection.interact.rights.register." + localeChild, "name", right, "isadmin", (admin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : ""));
             }
         } else if (protectionType.equals("trap")) {
             String[] splitData = protectionData.split(" ");

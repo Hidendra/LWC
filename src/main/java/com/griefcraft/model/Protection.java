@@ -28,6 +28,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONArray;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -87,14 +88,14 @@ public class Protection {
     }
 
     /**
-     * List of the accessRightCache rights for the protection
-     */
-    private final List<AccessRight> accessRightCache = new ArrayList<AccessRight>();
-
-    /**
      * All of the history items associated with this protection
      */
     private final Set<History> historyCache = new HashSet<History>();
+
+    /**
+     * List of the accessRights rights for the protection
+     */
+    private final List<AccessRight> accessRights = new ArrayList<AccessRight>();
 
     /**
      * The block id
@@ -166,6 +167,27 @@ public class Protection {
      * True when the protection has been modified and should be saved
      */
     private boolean modified = false;
+
+    /**
+     * Encode the AccessRights to JSON
+     *
+     * @return
+     */
+    public String encodeRightsToJSONString() {
+        if (accessRights.size() == 0) {
+            return "";
+        }
+
+        // create the root
+        JSONArray root = new JSONArray();
+
+        // add all of the access rights to the root
+        for (AccessRight right : accessRights) {
+            root.add(right.encodeToJSON());
+        }
+
+        return root.toJSONString();
+    }
 
     /**
      * Ensure a history object is located in our cache
@@ -297,14 +319,14 @@ public class Protection {
     }
 
     /**
-     * Check if the entity + accessRightCache type exists, and if so return the rights (-1 if it does not exist)
+     * Check if the entity + accessRights type exists, and if so return the rights (-1 if it does not exist)
      *
      * @param type
      * @param name
-     * @return the accessRightCache the player has
+     * @return the accessRights the player has
      */
     public int getAccess(int type, String name) {
-        for (AccessRight right : accessRightCache) {
+        for (AccessRight right : accessRights) {
             if (right.getType() == type && right.getName().equalsIgnoreCase(name)) {
                 return right.getRights();
             }
@@ -314,29 +336,21 @@ public class Protection {
     }
 
     /**
-     * @return the list of accessRightCache rights
+     * @return the list of access rights
      */
     public List<AccessRight> getAccessRights() {
-        return accessRightCache;
+        return Collections.unmodifiableList(accessRights);
     }
 
     /**
-     * Remove temporary accessRightCache rights from the protection
+     * Remove temporary accessRights rights from the protection
      */
     public void removeTemporaryAccessRights() {
-        Iterator<AccessRight> iter = accessRightCache.iterator();
-
-        while (iter.hasNext()) {
-            AccessRight right = iter.next();
-
-            if (right.getType() == AccessRight.TEMPORARY) {
-                iter.remove();
-            }
-        }
+        removeAccessRightsMatching("*", AccessRight.TEMPORARY);
     }
 
     /**
-     * Add an accessRightCache right to the stored list
+     * Add an accessRights right to the stored list
      *
      * @param right
      */
@@ -345,7 +359,35 @@ public class Protection {
             return;
         }
 
-        accessRightCache.add(right);
+        // remove any other rights with the same identity
+        removeAccessRightsMatching(right.getName(), right.getType());
+
+        // now we can safely add it
+        accessRights.add(right);
+        modified = true;
+    }
+
+    /**
+     * Remove access rights from the protection that match an entity AND type
+     * 
+     * @param entity
+     * @param type
+     */
+    public void removeAccessRightsMatching(String entity, int type) {
+        if (removed) {
+            return;
+        }
+
+        Iterator<AccessRight> iter = accessRights.iterator();
+
+        while(iter.hasNext()) {
+            AccessRight right = iter.next();
+
+            if((right.getName().equals(entity) || entity.equals("*")) && right.getType() == type) {
+                iter.remove();
+                modified = true;
+            }
+        }
     }
 
     public int getFlags() {
@@ -596,6 +638,7 @@ public class Protection {
             return;
         }
 
+        LWC.getInstance().getCaches().getProtections().put(getCacheKey(), this);
         LWC.getInstance().getUpdateThread().queueProtectionUpdate(this);
     }
 
