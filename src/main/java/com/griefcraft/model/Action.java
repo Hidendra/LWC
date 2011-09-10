@@ -21,7 +21,7 @@ public class Action {
 
     public int id;
     private String action;
-    private int chestID;
+    private int protectionId;
     private String data;
     private String player;
 
@@ -33,10 +33,10 @@ public class Action {
     }
 
     /**
-     * @return the chestID
+     * @return the protectionId
      */
-    public int getChestID() {
-        return chestID;
+    public int getProtectionId() {
+        return protectionId;
     }
 
     /**
@@ -49,7 +49,7 @@ public class Action {
     /**
      * @return the id
      */
-    public int getID() {
+    public int getId() {
         return id;
     }
 
@@ -68,10 +68,10 @@ public class Action {
     }
 
     /**
-     * @param chestID the chestID to set
+     * @param protectionId the protectionId to set
      */
-    public void setChestID(int chestID) {
-        this.chestID = chestID;
+    public void setProtectionId(int protectionId) {
+        this.protectionId = protectionId;
     }
 
     /**
@@ -84,7 +84,7 @@ public class Action {
     /**
      * @param id the id to set
      */
-    public void setID(int id) {
+    public void setId(int id) {
         this.id = id;
     }
 
