@@ -44,23 +44,21 @@ public class LWCInfo {
      */
     public static void setVersion(String version) {
         try {
-            // account for dev bilds
-            if (version.endsWith("-dev")) {
-                version = version.substring(0, version.length() - "-dev".length());
-            }
-
             VERSION = Double.parseDouble(version);
         } catch (NumberFormatException e) {
-            e.printStackTrace();
         }
 
-        String versionString = LWCPlugin.class.getPackage().getImplementationVersion();
+        String implemementationVersion = LWCPlugin.class.getPackage().getImplementationVersion();
 
         // if it's not a manual build, prepend a b
-        if(!versionString.equals("MANUAL")) {
-            versionString = "b" + versionString;
+        if(!implemementationVersion.equals("MANUAL")) {
+            implemementationVersion = "b" + implemementationVersion;
         }
 
-        FULL_VERSION = String.format("%.2f (%s)", VERSION, versionString);
+        if (VERSION > 0d) {
+            FULL_VERSION = String.format("%.2f (%s)", VERSION, implemementationVersion);
+        } else {
+            FULL_VERSION = String.format("%s (%s)", version, implemementationVersion);
+        }
     }
 }
