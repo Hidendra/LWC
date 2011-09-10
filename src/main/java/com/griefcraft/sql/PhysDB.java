@@ -27,6 +27,10 @@ import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.scripting.Module;
 import com.griefcraft.util.Performance;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,9 +39,15 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 public class PhysDB extends Database {
+
+    /**
+     * The JSON Parser object
+     */
+    private final JSONParser jsonParser = new JSONParser();
 
     public PhysDB() {
         super();
@@ -50,16 +60,6 @@ public class PhysDB extends Database {
     @Override
     protected void postPrepare() {
         Performance.addPhysDBQuery();
-    }
-
-    /**
-     * Count the rights
-     *
-     * @param protectionId
-     * @return
-     */
-    public int countRightsForProtection(int protectionId) {
-        return Integer.decode(fetch("SELECT COUNT(*) AS count FROM " + prefix + "rights WHERE chest=?", "count", protectionId) + "");
     }
 
     /**
@@ -120,45 +120,6 @@ public class PhysDB extends Database {
         }
 
         return LWC.getInstance().getConfiguration().getString("core.defaultMenuStyle");
-    }
-
-    /**
-     * Get the access level of a player to a chest -1 = no access 0 = normal access 1 = chest admin
-     *
-     * @param type
-     * @param protectionId
-     * @return the player's access level
-     */
-    @Deprecated
-    public int getPrivateAccess(int type, int protectionId, String... entities) {
-        int access = -1;
-
-        try {
-            PreparedStatement statement = prepare("SELECT entity, rights FROM " + prefix + "rights WHERE type = ? AND chest = ?");
-            statement.setInt(1, type);
-            statement.setInt(2, protectionId);
-
-            ResultSet set = statement.executeQuery();
-
-            _main:
-            while (set.next()) {
-                String entity = set.getString("entity");
-
-                for (String str : entities) {
-                    if (str.equalsIgnoreCase(entity)) {
-                        access = set.getInt("rights");
-                        break _main;
-                    }
-                }
-            }
-
-            set.close();
-
-        } catch (SQLException e) {
-            printException(e);
-        }
-
-        return access;
     }
 
     /**
@@ -225,13 +186,6 @@ public class PhysDB extends Database {
         }
 
         return amount;
-    }
-
-    /**
-     * @return the number of limits
-     */
-    public int getRightsCount() {
-        return Integer.decode(fetch("SELECT COUNT(*) AS count FROM " + prefix + "rights", "count") + "");
     }
 
     /**
@@ -425,45 +379,6 @@ public class PhysDB extends Database {
     }
 
     /**
-     * Get the rights for a protection id ranging from start-max
-     *
-     * @param protectionId
-     * @param start
-     * @param max
-     * @return
-     */
-    public List<AccessRight> loadAccessRights(int protectionId, int start, int max) {
-        List<AccessRight> accessRights = new ArrayList<AccessRight>();
-
-        try {
-            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "rights WHERE chest = ? ORDER BY rights DESC LIMIT ?,?");
-            statement.setInt(1, protectionId);
-            statement.setInt(2, start);
-            statement.setInt(3, max);
-
-            ResultSet set = statement.executeQuery();
-
-            while (set.next()) {
-                AccessRight accessRight = new AccessRight();
-
-                accessRight.setId(set.getInt("id"));
-                accessRight.setProtectionId(protectionId);
-                accessRight.setName(set.getString("entity"));
-                accessRight.setRights(set.getInt("rights"));
-                accessRight.setType(set.getInt("type"));
-
-                accessRights.add(accessRight);
-            }
-
-            set.close();
-        } catch (Exception e) {
-            printException(e);
-        }
-
-        return accessRights;
-    }
-
-    /**
      * Load a protection with the given id
      *
      * @param protectionId
@@ -471,7 +386,7 @@ public class PhysDB extends Database {
      */
     public Protection loadProtection(int protectionId) {
         try {
-            PreparedStatement statement = prepare("SELECT " + prefix + "protections.id AS protectionId, " + prefix + "rights.id AS rightsId, " + prefix + "protections.type AS protectionType, " + prefix + "rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights, last_accessed FROM " + prefix + "protections LEFT OUTER JOIN " + prefix + "rights ON " + prefix + "protections.id = " + prefix + "rights.chest WHERE " + prefix + "protections.id = ?");
+            PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, flags, rights, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE id = ?");
             statement.setInt(1, protectionId);
 
             return resolveProtection(statement);
@@ -490,7 +405,7 @@ public class PhysDB extends Database {
      */
     public List<Protection> loadProtectionsUsingType(int type) {
         try {
-            PreparedStatement statement = prepare("SELECT " + prefix + "protections.id AS protectionId, " + prefix + "rights.id AS rightsId, " + prefix + "protections.type AS protectionType, " + prefix + "rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights, last_accessed FROM " + prefix + "protections LEFT OUTER JOIN " + prefix + "rights ON " + prefix + "protections.id = " + prefix + "rights.chest WHERE " + prefix + "protections.type = ?");
+            PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, flags, rights, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE type = ?");
             statement.setInt(1, type);
 
             return resolveProtections(statement);
@@ -555,80 +470,87 @@ public class PhysDB extends Database {
      */
     private List<Protection> resolveProtections(PreparedStatement statement) {
         List<Protection> protections = new ArrayList<Protection>();
-
-        int lastId = -1;
         ResultSet set = null;
-        Protection protection = null;
-        boolean init = true;
 
         try {
             set = statement.executeQuery();
 
             while (set.next()) {
-                int protectionId = set.getInt("protectionId");
+                Protection protection = new Protection();
 
-                if (lastId != protectionId) {
-                    // add the last found protection
-                    if (protection != null) {
-                        protections.add(protection);
-                    }
+                int protectionId = set.getInt("id");
+                int x = set.getInt("x");
+                int y = set.getInt("y");
+                int z = set.getInt("z");
+                int flags = set.getInt("flags");
+                int blockId = set.getInt("blockId");
+                int type = set.getInt("type");
+                String world = set.getString("world");
+                String owner = set.getString("owner");
+                String password = set.getString("password");
+                String date = set.getString("date");
+                long lastAccessed = set.getLong("last_accessed");
 
-                    lastId = protectionId;
-                    init = true;
-                    protection = new Protection();
-                }
+                protection.setId(protectionId);
+                protection.setX(x);
+                protection.setY(y);
+                protection.setZ(z);
+                protection.setFlags(flags);
+                protection.setBlockId(blockId);
+                protection.setType(type);
+                protection.setWorld(world);
+                protection.setOwner(owner);
+                protection.setData(password);
+                protection.setDate(date);
+                protection.setLastAccessed(lastAccessed);
 
-                // we only want to set the initial data first
-                if (init) {
-                    int x = set.getInt("x");
-                    int y = set.getInt("y");
-                    int z = set.getInt("z");
-                    int flags = set.getInt("flags");
-                    int blockId = set.getInt("blockId");
-                    int type = set.getInt("protectionType");
-                    String world = set.getString("world");
-                    String owner = set.getString("owner");
-                    String password = set.getString("password");
-                    String date = set.getString("date");
-                    long lastAccessed = set.getLong("last_accessed");
-
-                    protection.setId(protectionId);
-                    protection.setX(x);
-                    protection.setY(y);
-                    protection.setZ(z);
-                    protection.setFlags(flags);
-                    protection.setBlockId(blockId);
-                    protection.setType(type);
-                    protection.setWorld(world);
-                    protection.setOwner(owner);
-                    protection.setData(password);
-                    protection.setDate(date);
-                    protection.setLastAccessed(lastAccessed);
-                    init = false;
-                }
+                // add it to the list before starting to parse rights
+                protections.add(protection);
 
                 // check for oh so beautiful rights!
-                String entity = set.getString("entity");
+                String rights = set.getString("rights");
 
-                // we have joined in some rights! Rev up those accessors!
-                if (entity != null) {
-                    int rightsId = set.getInt("rightsId");
-                    int rights = set.getInt("rights");
-                    int type = set.getInt("rightsType");
-
-                    AccessRight right = new AccessRight();
-                    right.setId(rightsId);
-                    right.setProtectionId(protectionId);
-                    right.setName(entity);
-                    right.setRights(rights);
-                    right.setType(type);
-
-                    protection.addAccessRight(right);
+                if (rights == null || rights.trim().isEmpty()) {
+                    continue;
                 }
-            }
 
-            if (protection != null && !protections.contains(protection)) {
-                protections.add(protection);
+                // rev up them JSON parsers!
+                Object object = null;
+
+                try {
+                    object = jsonParser.parse(rights);
+                } catch (ParseException e) {
+                    continue;
+                }
+
+                if (!(object instanceof JSONArray)) {
+                    continue;
+                }
+
+                // obtain the root
+                JSONArray root = (JSONArray) object;
+
+                // we just want the seperate arrays
+                Iterator<Object> iter = root.iterator();
+
+                while (iter.hasNext()) {
+                    Object node = iter.next();
+
+                    // we only want to use the maps
+                    if (!(node instanceof JSONObject)) {
+                        continue;
+                    }
+
+                    JSONObject map = (JSONObject) node;
+
+                    // decode the map
+                    AccessRight right = AccessRight.decodeJSON(map);
+
+                    // bingo!
+                    if(right != null) {
+                        protection.addAccessRight(right);
+                    }
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -678,7 +600,7 @@ public class PhysDB extends Database {
         }
 
         try {
-            PreparedStatement statement = prepare("SELECT " + prefix + "protections.id AS protectionId, " + prefix + "rights.id AS rightsId, " + prefix + "protections.type AS protectionType, " + prefix + "rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights, last_accessed FROM " + prefix + "protections LEFT OUTER JOIN " + prefix + "rights ON " + prefix + "protections.id = " + prefix + "rights.chest ORDER BY " + prefix + "protections.id DESC LIMIT ?");
+            PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, flags, rights, blockId, world, password, date, last_accessed FROM " + prefix + "protections ORDER BY id DESC LIMIT ?");
             statement.setInt(1, precacheSize);
             statement.setFetchSize(10);
 
@@ -756,7 +678,7 @@ public class PhysDB extends Database {
         }
 
         try {
-            PreparedStatement statement = prepare("SELECT " + prefix + "protections.id AS protectionId, " + prefix + "rights.id AS rightsId, " + prefix + "protections.type AS protectionType, " + prefix + "rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights, last_accessed FROM " + prefix + "protections LEFT OUTER JOIN " + prefix + "rights ON " + prefix + "protections.id = " + prefix + "rights.chest WHERE " + prefix + "protections.x = ? AND " + prefix + "protections.y = ? AND " + prefix + "protections.z = ? AND " + prefix + "protections.world = ?");
+            PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, flags, rights, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE x = ? AND y = ? AND z = ? AND world = ?");
             statement.setInt(1, x);
             statement.setInt(2, y);
             statement.setInt(3, z);
@@ -782,7 +704,7 @@ public class PhysDB extends Database {
      */
     public List<Protection> loadProtections() {
         try {
-            PreparedStatement statement = prepare("SELECT " + prefix + "protections.id AS protectionId, " + prefix + "rights.id AS rightsId, " + prefix + "protections.type AS protectionType, " + prefix + "rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights, last_accessed FROM " + prefix + "protections LEFT OUTER JOIN " + prefix + "rights ON " + prefix + "protections.id = " + prefix + "rights.chest");
+            PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, flags, rights, blockId, world, password, date, last_accessed FROM " + prefix + "protections");
 
             return resolveProtections(statement);
         } catch (Exception e) {
@@ -804,7 +726,7 @@ public class PhysDB extends Database {
      */
     public List<Protection> loadProtections(String world, int x, int y, int z, int radius) {
         try {
-            PreparedStatement statement = prepare("SELECT " + prefix + "protections.id AS protectionId, " + prefix + "rights.id AS rightsId, " + prefix + "protections.type AS protectionType, " + prefix + "rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights, last_accessed FROM " + prefix + "protections LEFT OUTER JOIN " + prefix + "rights ON " + prefix + "protections.id = " + prefix + "rights.chest WHERE " + prefix + "protections.world = ? AND " + prefix + "protections.x >= ? AND " + prefix + "protections.x <= ? AND " + prefix + "protections.y >= ? AND " + prefix + "protections.y <= ? AND " + prefix + "protections.z >= ? AND " + prefix + "protections.z <= ?");
+            PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, flags, rights, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE world = ? AND x >= ? AND x <= ? AND y >= ? AND y <= ? AND z >= ? AND z <= ?");
 
             statement.setString(1, world);
             statement.setInt(2, x - radius);
@@ -834,7 +756,7 @@ public class PhysDB extends Database {
         List<Protection> protections = new ArrayList<Protection>();
 
         try {
-            PreparedStatement statement = prepare("SELECT " + prefix + "protections.id AS protectionId, " + prefix + "rights.id AS rightsId, " + prefix + "protections.type AS protectionType, " + prefix + "rights.type AS rightsType, x, y, z, flags, blockId, world, owner, password, date, entity, rights, last_accessed FROM " + prefix + "protections LEFT OUTER JOIN " + prefix + "rights ON " + prefix + "protections.id = " + prefix + "rights.chest WHERE " + prefix + "protections.owner = ? ORDER BY " + prefix + "protections.id DESC limit ?,?");
+            PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, flags, rights, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE owner = ? ORDER BY id DESC limit ?,?");
             statement.setString(1, player);
             statement.setInt(2, start);
             statement.setInt(3, count);
@@ -845,40 +767,6 @@ public class PhysDB extends Database {
         }
 
         return protections;
-    }
-
-    /**
-     * Get all access rights for a protection
-     *
-     * @return
-     */
-    public List<AccessRight> loadRights(int protectionId) {
-        List<AccessRight> accessRights = new ArrayList<AccessRight>();
-
-        try {
-            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "rights WHERE chest = ?");
-            statement.setInt(1, protectionId);
-
-            ResultSet set = statement.executeQuery();
-
-            while (set.next()) {
-                AccessRight accessRight = new AccessRight();
-
-                accessRight.setId(set.getInt("id"));
-                accessRight.setProtectionId(set.getInt("chest"));
-                accessRight.setName(set.getString("entity"));
-                accessRight.setRights(set.getInt("rights"));
-                accessRight.setType(set.getInt("type"));
-
-                accessRights.add(accessRight);
-            }
-
-            set.close();
-        } catch (Exception e) {
-            printException(e);
-        }
-
-        return accessRights;
     }
 
     /**
@@ -1144,49 +1032,27 @@ public class PhysDB extends Database {
     }
 
     /**
-     * Register rights to a chest
-     *
-     * @param protectionId the protectionId to add to
-     * @param entity       the entity to register
-     * @param rights       the rights to register
-     * @param type         the type to register
-     */
-    public void registerProtectionRights(int protectionId, String entity, int rights, int type) {
-        try {
-            PreparedStatement statement = prepare("INSERT INTO " + prefix + "rights (chest, entity, rights, type) VALUES (?, ?, ?, ?)");
-
-            statement.setInt(1, protectionId);
-            statement.setString(2, entity.toLowerCase());
-            statement.setInt(3, rights);
-            statement.setInt(4, type);
-
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            printException(e);
-        }
-    }
-
-    /**
      * Save a protection to the database
      *
      * @param protection
      */
     public void saveProtection(Protection protection) {
         try {
-            PreparedStatement statement = prepare("REPLACE INTO " + prefix + "protections (id, type, blockId, world, flags, owner, password, x, y, z, date, last_accessed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            PreparedStatement statement = prepare("REPLACE INTO " + prefix + "protections (id, type, blockId, world, flags, rights, owner, password, x, y, z, date, last_accessed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
             statement.setInt(1, protection.getId());
             statement.setInt(2, protection.getType());
             statement.setInt(3, protection.getBlockId());
             statement.setString(4, protection.getWorld());
             statement.setInt(5, protection.getFlags());
-            statement.setString(6, protection.getOwner());
-            statement.setString(7, protection.getData());
-            statement.setInt(8, protection.getX());
-            statement.setInt(9, protection.getY());
-            statement.setInt(10, protection.getZ());
-            statement.setString(11, protection.getDate());
-            statement.setLong(12, protection.getLastAccessed());
+            statement.setString(6, protection.encodeRightsToJSONString());
+            statement.setString(7, protection.getOwner());
+            statement.setString(8, protection.getData());
+            statement.setInt(9, protection.getX());
+            statement.setInt(10, protection.getY());
+            statement.setInt(11, protection.getZ());
+            statement.setString(12, protection.getDate());
+            statement.setLong(13, protection.getLastAccessed());
 
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -1227,7 +1093,6 @@ public class PhysDB extends Database {
             printException(e);
         }
 
-        unregisterProtectionRights(protectionId);
         // unregisterProtectionHistory(protectionId);
     }
 
@@ -1248,55 +1113,6 @@ public class PhysDB extends Database {
             statement.setInt(1, historyId);
 
             statement.executeUpdate();
-        } catch (SQLException e) {
-            printException(e);
-        }
-    }
-
-    /**
-     * Remove all protection rights
-     */
-    public void unregisterProtectionRights() {
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate("DELETE FROM " + prefix + "rights");
-            statement.close();
-        } catch (Exception e) {
-            printException(e);
-        }
-    }
-
-    /**
-     * Remove all of the rights from a chest
-     *
-     * @param chestID the chest ID
-     */
-    public void unregisterProtectionRights(int chestID) {
-        try {
-            PreparedStatement statement = prepare("DELETE FROM " + prefix + "rights WHERE chest = ?");
-
-            statement.setInt(1, chestID);
-            statement.executeUpdate();
-
-        } catch (SQLException e) {
-            printException(e);
-        }
-    }
-
-    /**
-     * Remove all of the rights from a chest
-     *
-     * @param chestID the chest ID
-     */
-    public void unregisterProtectionRights(int chestID, String entity) {
-        try {
-            PreparedStatement statement = prepare("DELETE FROM " + prefix + "rights WHERE chest = ? AND entity = ?");
-
-            statement.setInt(1, chestID);
-            statement.setString(2, entity.toLowerCase());
-
-            statement.executeUpdate();
-
         } catch (SQLException e) {
             printException(e);
         }
@@ -1326,11 +1142,9 @@ public class PhysDB extends Database {
 
             if (currentType == Type.SQLite) {
                 statement.executeUpdate("CREATE INDEX IF NOT EXISTS in1 ON " + prefix + "protections (owner, x, y, z)");
-                statement.executeUpdate("CREATE INDEX IF NOT EXISTS in3 ON " + prefix + "rights (chest, entity)");
                 statement.executeUpdate("CREATE INDEX IF NOT EXISTS in6 ON " + prefix + "protections (id)");
             } else {
                 statement.executeUpdate("CREATE INDEX in1 ON " + prefix + "protections (x, y, z)");
-                statement.executeUpdate("CREATE INDEX in3 ON " + prefix + "rights (chest)");
                 statement.executeUpdate("CREATE INDEX in6 ON " + prefix + "protections (id)");
             }
 

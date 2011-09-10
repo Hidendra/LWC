@@ -64,7 +64,7 @@ public class ModifyModule extends JavaModule {
             for (String rightsName : entities) {
                 boolean remove = false;
                 boolean isAdmin = false;
-                int chestType = AccessRight.PLAYER;
+                int type = AccessRight.PLAYER;
 
                 if (rightsName.startsWith("-")) {
                     remove = true;
@@ -77,33 +77,41 @@ public class ModifyModule extends JavaModule {
                 }
 
                 if (rightsName.toLowerCase().startsWith("g:")) {
-                    chestType = AccessRight.GROUP;
+                    type = AccessRight.GROUP;
                     rightsName = rightsName.substring(2);
                 }
 
                 if (rightsName.toLowerCase().startsWith("l:")) {
-                    chestType = AccessRight.LIST;
+                    type = AccessRight.LIST;
                     rightsName = rightsName.substring(2);
                 }
 
                 if (rightsName.toLowerCase().startsWith("list:")) {
-                    chestType = AccessRight.LIST;
+                    type = AccessRight.LIST;
                     rightsName = rightsName.substring(5);
                 }
 
-                int chestID = protection.getId();
-                String localeChild = AccessRight.typeToString(chestType).toLowerCase();
+                int protectionId = protection.getId();
+                String localeChild = AccessRight.typeToString(type).toLowerCase();
 
                 if (!remove) {
-                    lwc.getPhysicalDatabase().unregisterProtectionRights(chestID, rightsName);
-                    lwc.getPhysicalDatabase().registerProtectionRights(chestID, rightsName, isAdmin ? 1 : 0, chestType);
+                    AccessRight accessRight = new AccessRight();
+                    accessRight.setProtectionId(protectionId);
+                    accessRight.setRights(isAdmin ? 1 : 0);
+                    accessRight.setName(rightsName);
+                    accessRight.setType(type);
+
+                    // add it to the protection and queue it to be saved
+                    protection.addAccessRight(accessRight);
+                    protection.save();
+                    
                     lwc.sendLocale(player, "protection.interact.rights.register." + localeChild, "name", rightsName, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
                 } else {
-                    lwc.getPhysicalDatabase().unregisterProtectionRights(chestID, rightsName);
+                    protection.removeAccessRightsMatching(rightsName, type);
+                    protection.save();
+
                     lwc.sendLocale(player, "protection.interact.rights.remove." + localeChild, "name", rightsName, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
                 }
-
-                protection.update();
             }
         } else {
             lwc.sendLocale(player, "protection.interact.error.notowner", "block", LWC.materialToString(protection.getBlockId()));

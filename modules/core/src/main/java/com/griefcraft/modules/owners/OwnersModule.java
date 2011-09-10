@@ -58,8 +58,8 @@ public class OwnersModule extends JavaModule {
         int start = (accessPage - 1) * AccessRight.RESULTS_PER_PAGE;
         int max = start + AccessRight.RESULTS_PER_PAGE;
 
-        List<AccessRight> accessRights = lwc.getPhysicalDatabase().loadAccessRights(protection.getId(), start, max);
-        int numRights = lwc.getPhysicalDatabase().countRightsForProtection(protection.getId());
+        List<AccessRight> accessRights = protection.getAccessRights();
+        int numRights = accessRights.size();
 
         /*
          * May have only been 2 rows left, or something. Get the real max
@@ -67,12 +67,17 @@ public class OwnersModule extends JavaModule {
         int realMax = start + accessRights.size();
 
         player.sendMessage("");
-        player.sendMessage(Colors.Green + "   LWC Protection");
         player.sendMessage(Colors.Blue + "Showing results " + Colors.LightBlue + start + Colors.Blue + "-" + Colors.LightBlue + realMax + Colors.Blue + ". Total: " + Colors.LightBlue + numRights);
         player.sendMessage("");
         player.sendMessage("");
 
-        for (AccessRight accessRight : accessRights) {
+        for (int index = 0; index < max; index ++) {
+            if((start + index) >= numRights) {
+                break;
+            }
+
+            AccessRight accessRight = accessRights.get(start + index);
+
             StringBuilder builder = new StringBuilder();
             builder.append(Colors.LightBlue);
             builder.append(accessRight.getName());

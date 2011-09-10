@@ -46,7 +46,7 @@ public class AdminClear extends JavaModule {
         event.setCancelled(true);
 
         if (args.length < 2) {
-            lwc.sendSimpleUsage(sender, "/lwc admin clear <protections|rights>");
+            lwc.sendSimpleUsage(sender, "/lwc admin clear <protections>");
             return;
         }
 
@@ -54,9 +54,6 @@ public class AdminClear extends JavaModule {
 
         if (toClear.equals("protections")) {
             lwc.getPhysicalDatabase().unregisterProtections();
-            lwc.getPhysicalDatabase().unregisterProtectionRights();
-        } else if (toClear.equals("rights")) {
-            lwc.getPhysicalDatabase().unregisterProtectionRights();
         }
 
         lwc.sendLocale(sender, "protection.admin.clear." + toClear);

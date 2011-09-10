@@ -17,6 +17,8 @@
 
 package com.griefcraft.model;
 
+import org.json.simple.JSONObject;
+
 public class AccessRight {
 
     /**
@@ -60,24 +62,52 @@ public class AccessRight {
     public static final int RESULTS_PER_PAGE = 15;
 
     private String name;
-    private int id;
 
     private int protectionId;
 
     private int rights;
     private int type;
 
+    /**
+     * Encode the Access Right to a JSONObject
+     * 
+     * @return 
+     */
+    public JSONObject encodeToJSON() {
+        JSONObject object = new JSONObject();
+
+        object.put("protection", protectionId);
+        object.put("type", type);
+        object.put("name", name);
+        object.put("rights", rights);
+
+        return object;
+    }
+
+    /**
+     * Decode a JSONObject into an Access Right
+     * @param node
+     * @return
+     */
+    public static AccessRight decodeJSON(JSONObject node) {
+        AccessRight right = new AccessRight();
+
+        // The values are stored as longs internally, despite us passing an int
+        right.setProtectionId(((Long) node.get("protection")).intValue());
+        right.setType(((Long) node.get("type")).intValue());
+        right.setName((String) node.get("name"));
+        right.setRights(((Long) node.get("rights")).intValue());
+
+        return right;
+    }
+
     @Override
     public String toString() {
-        return String.format("AccessRight = %d { protection=%d name=%s rights=%d type=%s }", id, protectionId, name, rights, typeToString(rights));
+        return String.format("AccessRight = { protection=%d name=%s rights=%d type=%s }", protectionId, name, rights, typeToString(rights));
     }
 
     public String getName() {
         return name;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public int getProtectionId() {
@@ -94,10 +124,6 @@ public class AccessRight {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public void setProtectionId(int protectionId) {
