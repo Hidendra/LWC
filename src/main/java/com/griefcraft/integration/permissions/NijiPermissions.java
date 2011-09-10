@@ -31,11 +31,6 @@ import java.util.List;
 public class NijiPermissions implements IPermissions {
 
     /**
-     * The permissions plugin instance
-     */
-    private Permissions plugin;
-
-    /**
      * The Permissions handler
      */
     private PermissionHandler handler = null;
@@ -47,16 +42,7 @@ public class NijiPermissions implements IPermissions {
             return;
         }
 
-        plugin = (Permissions) permissionsPlugin;
-        handler = plugin.getHandler();
-    }
-
-    public boolean isActive() {
-        return handler != null;
-    }
-
-    public boolean permission(Player player, String node) {
-        return handler != null && handler.permission(player, node);
+        handler = ((Permissions) permissionsPlugin).getHandler();
     }
 
     @SuppressWarnings("deprecation")

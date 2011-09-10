@@ -365,11 +365,9 @@ public class LWC {
                     return true;
                 }
 
-                if (permissions.isActive()) {
-                    for (String groupName : permissions.getGroups(player)) {
-                        if (protection.getAccess(AccessRight.GROUP, groupName) >= 0) {
-                            return true;
-                        }
+                for (String groupName : permissions.getGroups(player)) {
+                    if (protection.getAccess(AccessRight.GROUP, groupName) >= 0) {
+                        return true;
                     }
                 }
 
@@ -435,11 +433,9 @@ public class LWC {
                     return true;
                 }
 
-                if (permissions.isActive()) {
-                    for (String groupName : permissions.getGroups(player)) {
-                        if (protection.getAccess(AccessRight.GROUP, groupName) == 1) {
-                            return true;
-                        }
+                for (String groupName : permissions.getGroups(player)) {
+                    if (protection.getAccess(AccessRight.GROUP, groupName) == 1) {
+                        return true;
                     }
                 }
 
@@ -916,7 +912,7 @@ public class LWC {
      * @return
      */
     public boolean hasAdminPermission(CommandSender sender, String node) {
-        return isAdmin(sender) || permissions.isActive() && hasPermission(sender, node, "lwc.admin");
+        return isAdmin(sender) || hasPermission(sender, node, "lwc.admin");
     }
 
     /**
@@ -927,7 +923,7 @@ public class LWC {
      * @return
      */
     public boolean hasPlayerPermission(CommandSender sender, String node) {
-        return !permissions.isActive() || hasPermission(sender, node, "lwc.protect");
+        return hasPermission(sender, node, "lwc.protect");
 
     }
 
@@ -966,11 +962,12 @@ public class LWC {
      * @return
      */
     public boolean hasPermission(Player player, String node) {
-        if (!permissions.isActive()) {
+        try {
+            return player.hasPermission(node);
+        } catch (NoSuchMethodError e) {
+            // their server does not support Superperms..
             return !node.contains("admin") && !node.contains("mod");
         }
-
-        return permissions.permission(player, node);
     }
 
     /**
@@ -986,13 +983,7 @@ public class LWC {
             }
         }
 
-        if (permissions.isActive()) {
-            if (hasPermission(player, "lwc.admin")) {
-                return true;
-            }
-        }
-
-        return false;
+        return hasPermission(player, "lwc.admin");
     }
 
     /**
@@ -1002,13 +993,7 @@ public class LWC {
      * @return true if the player is an LWC mod
      */
     public boolean isMod(Player player) {
-        if (permissions.isActive()) {
-            if (hasPermission(player, "lwc.mod")) {
-                return true;
-            }
-        }
-
-        return false;
+        return hasPermission(player, "lwc.mod");
     }
 
     /**
@@ -1028,7 +1013,7 @@ public class LWC {
      * @return
      */
     public boolean isModeWhitelisted(Player player, String mode) {
-        return permissions.isActive() && hasPermission(player, "lwc.mode." + mode, "lwc.allmodes");
+        return hasPermission(player, "lwc.mode." + mode, "lwc.allmodes");
 
     }
 
@@ -1070,13 +1055,8 @@ public class LWC {
             permissions = new BukkitPermissions();
         } else if (resolvePlugin("PermissionsEx") != null) {
             permissions = new PEXPermissions();
-        } else if (resolvePlugin("Permissions") != null) {
-            permissions = new NijiPermissions();
         } else {
             // check for SuperPerms
-            // I am aware this is fairly hack-y but doesn't introduce more bulky code to LWC.java
-            // Also, making LWC PREFER SuperPerms over (say) Permissions 2/3 would fully break compatibility with it,
-            // which is why I did it this way (since Perms 2/3 does not support superperms at the moment, 3 may[?])
             {
                 try {
                     Method method = CraftHumanEntity.class.getDeclaredMethod("hasPermission", String.class);
