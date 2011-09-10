@@ -26,10 +26,10 @@ import com.griefcraft.integration.currency.EssentialsCurrency;
 import com.griefcraft.integration.currency.NoCurrency;
 import com.griefcraft.integration.currency.iConomyCurrency;
 import com.griefcraft.integration.permissions.BukkitPermissions;
-import com.griefcraft.integration.permissions.NijiPermissions;
 import com.griefcraft.integration.permissions.NoPermissions;
 import com.griefcraft.integration.permissions.PEXPermissions;
 import com.griefcraft.integration.permissions.SuperPermsPermissions;
+import com.griefcraft.jobs.JobManager;
 import com.griefcraft.migration.ConfigPost300;
 import com.griefcraft.migration.MySQLPost200;
 import com.griefcraft.model.AccessRight;
@@ -126,6 +126,11 @@ public class LWC {
     private ModuleLoader moduleLoader;
 
     /**
+     * The job manager
+     */
+    private JobManager jobManager;
+
+    /**
      * Logging instance
      */
     private Logger logger = Logger.getLogger("LWC");
@@ -184,6 +189,7 @@ public class LWC {
 
         configuration = Configuration.load("core.yml");
         moduleLoader = new ModuleLoader();
+        jobManager = new JobManager(this);
         caches = new CacheSet();
 
         bug656workaround = configuration.getBoolean("core.bukkitBug656workaround", false);
@@ -227,6 +233,13 @@ public class LWC {
      */
     public ModuleLoader getModuleLoader() {
         return moduleLoader;
+    }
+
+    /**
+     * @return the job manager
+     */
+    public JobManager getJobManager() {
+        return jobManager;
     }
 
     /**

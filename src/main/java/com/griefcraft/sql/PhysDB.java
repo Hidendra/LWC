@@ -18,6 +18,7 @@
 package com.griefcraft.sql;
 
 import com.griefcraft.cache.LRUCache;
+import com.griefcraft.model.Job;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.History;
@@ -340,26 +341,31 @@ public class PhysDB extends Database {
                 history.add(column);
             }
 
-            Table tasks = new Table(this, "tasks");
+            Table jobs = new Table(this, "jobs");
             {
                 column = new Column("id");
                 column.setType("INTEGER");
                 column.setPrimary(true);
-                tasks.add(column);
+                jobs.add(column);
 
                 column = new Column("type");
                 column.setType("INTEGER");
-                tasks.add(column);
+                jobs.add(column);
 
                 column = new Column("data");
-                column.setType("VARCHAR(255)");
-                tasks.add(column);
+                column.setType("TEXT");
+                jobs.add(column);
+
+                column = new Column("nextRun");
+                column.setType("INTEGER");
+                jobs.add(column);
             }
 
             protections.execute();
             rights.execute();
             menuStyles.execute();
             history.execute();
+            jobs.execute();
 
             connection.commit();
 
@@ -1030,6 +1036,60 @@ public class PhysDB extends Database {
         }
 
         return temp;
+    }
+
+    /**
+     * Save a job to the database
+     *
+     * @param job
+     */
+    public void saveJob(Job job) {
+        try {
+            PreparedStatement statement = prepare("REPLACE INTO " + prefix + "jobs (id, type, data, nextRun) VALUES (?, ?, ?, ?)");
+
+            statement.setInt(1, job.getId());
+            statement.setInt(2, job.getType());
+            statement.setString(3, job.getData().toJSONString());
+            statement.setLong(4, job.getNextRun());
+        } catch (SQLException e) {
+            printException(e);
+        }
+    }
+
+    /**
+     * Load all of the jobs in the database
+     * 
+     * @return a List of the jobs in the database
+     */
+    public List<Job> loadJobs() {
+        List<Job> jobs = new ArrayList<Job>();
+
+        try {
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "jobs");
+            ResultSet set = statement.executeQuery();
+
+            while(set.next()) {
+                Job job = new Job();
+
+                int id = set.getInt("id");
+                int type = set.getInt("type");
+                String data = set.getString("data");
+                long nextRun = set.getLong("nextRun");
+
+                job.setId(id);
+                job.setType(type);
+                job.setData(Job.decodeJSON(data));
+                job.setNextRun(nextRun);
+
+                jobs.add(job);
+            }
+
+            set.close();
+        } catch (SQLException e) {
+            printException(e);
+        }
+
+        return jobs;
     }
 
     /**
