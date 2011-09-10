@@ -1374,12 +1374,7 @@ public class PhysDB extends Database {
             statement.execute("SELECT id FROM " + prefix + "rights");
 
             // it exists ..!
-            Statement stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-
-            if (currentType == Database.Type.MySQL) {
-                stmt.setFetchSize(Integer.MIN_VALUE);
-            }
-
+            Statement stmt = connection.createStatement();
             ResultSet set = stmt.executeQuery("SELECT * FROM " + prefix + "rights");
 
             // keep a mini-cache of protections, max size of 100k should be OK!
