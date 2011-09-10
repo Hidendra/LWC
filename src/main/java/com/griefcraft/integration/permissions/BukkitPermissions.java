@@ -47,14 +47,6 @@ public class BukkitPermissions implements IPermissions {
         handler = (PermissionsPlugin) plugin;
     }
 
-    public boolean isActive() {
-        return handler != null;
-    }
-
-    public boolean permission(Player player, String node) {
-        return player.hasPermission(node);
-    }
-
     public List<String> getGroups(Player player) {
         if (handler == null) {
             return null;

@@ -39,14 +39,6 @@ public class SuperPermsPermissions implements IPermissions {
         groupPrefix = LWC.getInstance().getConfiguration().getString("core.groupPrefix", "lwc.group.");
     }
 
-    public boolean isActive() {
-        return true;
-    }
-
-    public boolean permission(Player player, String node) {
-        return player.hasPermission(node);
-    }
-
     // modified implementation by ZerothAngel ( https://github.com/Hidendra/LWC/issues/88#issuecomment-2017807 )
     public List<String> getGroups(Player player) {
         List<String> groups = new ArrayList<String>();
