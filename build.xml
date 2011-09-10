@@ -4,6 +4,7 @@
     <!-- Name of the jar to create -->
     <property name="jar.core" value="LWC.jar"/>
     <property name="jar.economy" value="LWC-Economy.jar"/>
+    <property name="jar.spout" value="LWC-Spout.jar"/>
 
     <property name="lib" value="lib"/>
     <property name="src" value="src"/>
@@ -12,6 +13,7 @@
     <property name="modules" value="modules"/>
     <property name="core" value="${modules}/core/src/"/>
     <property name="economy" value="${modules}/economy/src/"/>
+    <property name="spout" value="${modules}/spout/src/"/>
 
     <property name="build" value="build"/>
 
@@ -28,6 +30,7 @@
     <path id="test.classpath">
         <pathelement location="${bin}/core/"/>
         <pathelement location="${bin}/economy/"/>
+        <pathelement location="${bin}/spout/"/>
         <pathelement location="${bin}/test/"/>
         <fileset refid="libs"/>
     </path>
@@ -42,17 +45,19 @@
         <isset property="env.GIT_COMMIT"/>
     </condition>
 
-    <target name="all" depends="clean,compile,build,lwc,economy" description="Main target"/>
+    <target name="all" depends="clean,compile,build,lwc,economy,spout" description="Build LWC and all modules"/>
 
     <target name="clean">
         <!-- Delete the previous folders -->
         <delete dir="${bin}/core/"/>
         <delete dir="${bin}/economy/"/>
+        <delete dir="${bin}/spout/"/>
         <delete dir="${bin}/test/"/>
 
         <!-- create some folders -->
         <mkdir dir="${bin}/core/"/>
         <mkdir dir="${bin}/economy/"/>
+        <mkdir dir="${bin}/spout/"/>
         <mkdir dir="${bin}/test/"/>
     </target>
 
@@ -68,6 +73,15 @@
 
         <echo>Compiling LWC-Economy</echo>
         <javac srcdir="${economy}/main/java/" destdir="${bin}/economy/" deprecation="true" debug="true"
+               debuglevel="lines,vars,source" includeantruntime="true">
+            <classpath>
+                <fileset refid="libs"/>
+                <dirset dir="${bin}/core/"/>
+            </classpath>
+        </javac>
+
+        <echo>Compiling LWC-Spout</echo>
+        <javac srcdir="${spout}/main/java/" destdir="${bin}/spout/" deprecation="true" debug="true"
                debuglevel="lines,vars,source" includeantruntime="true">
             <classpath>
                 <fileset refid="libs"/>
@@ -110,7 +124,7 @@
         </jar>
     </target>
 
-    <target name="economy" description="Build LWC-economy.jar">
+    <target name="economy" description="Build LWC-Economy.jar">
         <echo>Building LWC-Economy.jar</echo>
 
         <jar jarfile="${build}/${jar.economy}">
@@ -121,11 +135,27 @@
                 <attribute name="Class-Path" value="LWC.jar"/>
                 <attribute name="Implementation-Title" value="LWC"/>
                 <attribute name="Implementation-Vendor" value="Hidendra"/>
-                <!-- <attribute name="Implementation-Version" value="git-LWC-${GIT_COMMIT}-b${BUILD_NUMBER}jnks" /> -->
                 <attribute name="Implementation-Version" value="${BUILD_NUMBER}"/>
             </manifest>
         </jar>
     </target>
+
+    <target name="spout" description="Build LWC-Spout.jar">
+        <echo>Building LWC-Spout.jar</echo>
+
+        <jar jarfile="${build}/${jar.spout}">
+            <fileset dir="${spout}/resources/" includes="plugin.yml"/>
+            <fileset dir="${bin}/spout/"/>
+
+            <manifest>
+                <attribute name="Class-Path" value="LWC.jar"/>
+                <attribute name="Implementation-Title" value="LWC"/>
+                <attribute name="Implementation-Vendor" value="Hidendra"/>
+                <attribute name="Implementation-Version" value="${BUILD_NUMBER}"/>
+            </manifest>
+        </jar>
+    </target>
+
 
     <target name="test">
         <mkdir dir="${build}/test-reports/"/>
@@ -133,6 +163,7 @@
         <!-- Prevent the already packaged classes from interfering -->
         <delete dir="${bin}/core/"/>
         <delete dir="${bin}/economy/"/>
+        <delete dir="${bin}/spout/"/>
 
         <junit fork="yes" haltonfailure="yes">
             <batchtest fork="yes" todir="${build}/test-reports/">

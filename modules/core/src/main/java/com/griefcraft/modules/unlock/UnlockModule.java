@@ -69,14 +69,14 @@ public class UnlockModule extends JavaModule {
             player.sendMessage(Colors.Red + "Nothing selected. Open a locked protection first.");
             return;
         } else {
-            int chestID = lwc.getMemoryDatabase().getUnlockID(player.getName());
+            int protectionId = lwc.getMemoryDatabase().getUnlockID(player.getName());
 
-            if (chestID == -1) {
-                lwc.sendLocale(player, "protection.internalerror", "id", "ulock");
+            if (protectionId == -1) {
+                lwc.sendLocale(player, "protection.internalerror", "id", "unlock");
                 return;
             }
 
-            Protection entity = lwc.getPhysicalDatabase().loadProtection(chestID);
+            Protection entity = lwc.getPhysicalDatabase().loadProtection(protectionId);
 
             if (entity.getType() != ProtectionTypes.PASSWORD) {
                 lwc.sendLocale(player, "protection.unlock.notpassword");
@@ -85,7 +85,7 @@ public class UnlockModule extends JavaModule {
 
             if (entity.getData().equals(password)) {
                 lwc.getMemoryDatabase().unregisterUnlock(player.getName());
-                lwc.getMemoryDatabase().registerPlayer(player.getName(), chestID);
+                lwc.getMemoryDatabase().registerPlayer(player.getName(), protectionId);
                 lwc.sendLocale(player, "protection.unlock.password.valid");
             } else {
                 lwc.sendLocale(player, "protection.unlock.password.invalid");
