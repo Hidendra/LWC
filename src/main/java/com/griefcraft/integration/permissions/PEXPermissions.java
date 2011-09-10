@@ -28,14 +28,6 @@ import java.util.List;
 
 public class PEXPermissions implements IPermissions {
 
-    public boolean isActive() {
-        return true;
-    }
-
-    public boolean permission(Player player, String node) {
-        return PermissionsEx.getPermissionManager().has(player, node);
-    }
-
     public List<String> getGroups(Player player) {
         PermissionUser user = PermissionsEx.getPermissionManager().getUser(player);
 
