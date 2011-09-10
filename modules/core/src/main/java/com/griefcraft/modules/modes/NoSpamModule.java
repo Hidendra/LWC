@@ -77,12 +77,9 @@ public class NoSpamModule extends JavaModule {
         }
 
         // hide all of the creation messages
-        if (locale.endsWith("create.finalize")) {
-            return;
+        if ((locale.endsWith("create.finalize") && !locale.equals("protection.create.finalize")) || locale.endsWith("notice.protected")) {
+            event.setCancelled(true);
         }
-
-        event.setCancelled(true);
-        return;
     }
 
 }
