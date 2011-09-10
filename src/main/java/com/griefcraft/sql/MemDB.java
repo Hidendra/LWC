@@ -58,10 +58,10 @@ public class MemDB extends Database {
                 final String data = set.getString("data");
 
                 final Action act = new Action();
-                act.setID(id);
+                act.setId(id);
                 act.setAction(actionString);
                 act.setPlayer(playerString);
-                act.setChestID(chestID);
+                act.setProtectionId(chestID);
                 act.setData(data);
 
                 return act;
