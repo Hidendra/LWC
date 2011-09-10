@@ -48,17 +48,17 @@ public class LWCInfo {
         } catch (NumberFormatException e) {
         }
 
-        String implemementationVersion = LWCPlugin.class.getPackage().getImplementationVersion();
+        String implementationVersion = LWCPlugin.class.getPackage().getImplementationVersion();
 
         // if it's not a manual build, prepend a b
-        if(!implemementationVersion.equals("MANUAL")) {
-            implemementationVersion = "b" + implemementationVersion;
+        if(!implementationVersion.equals("MANUAL")) {
+            implementationVersion = "b" + implementationVersion;
         }
 
         if (VERSION > 0d) {
-            FULL_VERSION = String.format("%.2f (%s)", VERSION, implemementationVersion);
+            FULL_VERSION = String.format("%.2f (%s)", VERSION, implementationVersion);
         } else {
-            FULL_VERSION = String.format("%s (%s)", version, implemementationVersion);
+            FULL_VERSION = String.format("%s (%s)", version, implementationVersion);
         }
     }
 }
