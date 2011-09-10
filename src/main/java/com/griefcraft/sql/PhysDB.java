@@ -253,7 +253,7 @@ public class PhysDB extends Database {
         doUpdate301();
         doUpdate302();
         doUpdate330();
-        doBetaUpdate340();
+        doUpdate400_1();
 
         try {
             connection.setAutoCommit(false);
@@ -267,28 +267,12 @@ public class PhysDB extends Database {
                 column.setPrimary(true);
                 protections.add(column);
 
-                column = new Column("type");
-                column.setType("INTEGER");
-                protections.add(column);
-
-                column = new Column("flags");
-                column.setType("INTEGER");
-                protections.add(column);
-
-                column = new Column("blockId");
-                column.setType("INTEGER");
-                protections.add(column);
-
-                column = new Column("world");
-                column.setType("VARCHAR(255)");
-                protections.add(column);
-
                 column = new Column("owner");
                 column.setType("VARCHAR(255)");
                 protections.add(column);
 
-                column = new Column("password");
-                column.setType("VARCHAR(255)");
+                column = new Column("type");
+                column.setType("INTEGER");
                 protections.add(column);
 
                 column = new Column("x");
@@ -301,6 +285,26 @@ public class PhysDB extends Database {
 
                 column = new Column("z");
                 column.setType("INTEGER");
+                protections.add(column);
+
+                column = new Column("flags");
+                column.setType("INTEGER");
+                protections.add(column);
+
+                column = new Column("rights");
+                column.setType("TEXT");
+                protections.add(column);
+
+                column = new Column("blockId");
+                column.setType("INTEGER");
+                protections.add(column);
+
+                column = new Column("world");
+                column.setType("VARCHAR(255)");
+                protections.add(column);
+
+                column = new Column("password");
+                column.setType("VARCHAR(255)");
                 protections.add(column);
 
                 column = new Column("date");
@@ -1512,26 +1516,6 @@ public class PhysDB extends Database {
     }
 
     /**
-     * TODO this is temporary
-     */
-    private void doBetaUpdate340() {
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
-            statement.execute("SELECT player FROM " + prefix + "history");
-        } catch (SQLException e) {
-            dropTable(prefix + "history");
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
-    }
-
-    /**
      * Update to 2.20, altered a table
      */
     private void doUpdate220() {
@@ -1542,6 +1526,26 @@ public class PhysDB extends Database {
 
         } catch (Exception e) {
             addColumn("protections", "flags", "INTEGER");
+        }
+    }
+
+    /**
+     * 4.0.0, update 1
+     */
+    private void doUpdate400_1() {
+        Statement statement = null;
+        try {
+            statement = connection.createStatement();
+            statement.execute("SELECT rights FROM " + prefix + "protections");
+        } catch (SQLException e) {
+            addColumn(prefix + "protections", "rights", "TEXT");
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                }
+            }
         }
     }
 }
