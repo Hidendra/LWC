@@ -18,10 +18,13 @@
 package com.griefcraft.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 public class LWCResourceBundle extends ResourceBundle {
 
@@ -49,7 +52,15 @@ public class LWCResourceBundle extends ResourceBundle {
 
     @Override
     public Enumeration<String> getKeys() {
-        return parent.getKeys();
+        Set<String> keys = new HashSet<String>();
+        keys.addAll(parent.keySet());
+
+        // add the extension bundles' keys as well
+        for (ResourceBundle bundle : extensionBundles) {
+            keys.addAll(bundle.keySet());
+        }
+
+        return Collections.enumeration(keys);
     }
 
     /**
