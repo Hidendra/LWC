@@ -24,7 +24,10 @@ import com.griefcraft.util.Colors;
 import org.bukkit.entity.Player;
 import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.event.screen.ButtonClickEvent;
+import org.getspout.spoutapi.gui.GenericLabel;
+import org.getspout.spoutapi.gui.Label;
 import org.getspout.spoutapi.gui.PopupScreen;
+import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 public class ManagementModule extends JavaModule {
@@ -41,8 +44,12 @@ public class ManagementModule extends JavaModule {
     class ManagementPopup extends LWCPopupScreen {
 
         public ManagementPopup() {
-            
-            
+            Label label = new GenericLabel("LWC");
+            label.setAnchor(WidgetAnchor.TOP_CENTER);
+            label.setAlign(WidgetAnchor.TOP_CENTER);
+            label.shiftYPos(10);
+
+            attachWidget(ManagementModule.this.plugin, label);
             ManagementModule.this.plugin.bindLogo(this);
         }
 
