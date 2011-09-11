@@ -96,6 +96,7 @@ public class PasswordRequestModule extends JavaModule {
             attachWidget(PasswordRequestModule.this.plugin, textField);
             attachWidget(PasswordRequestModule.this.plugin, unlock);
             attachWidget(PasswordRequestModule.this.plugin, cancel);
+            PasswordRequestModule.this.plugin.bindLogo(this);
         }
 
         @Override

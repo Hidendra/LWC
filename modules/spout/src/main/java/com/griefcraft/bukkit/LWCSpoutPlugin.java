@@ -18,12 +18,19 @@
 package com.griefcraft.bukkit;
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.lwc.LWCInfo;
+import com.griefcraft.lwc.ManagementModule;
 import com.griefcraft.lwc.PasswordRequestModule;
 import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.spout.SpoutInputListener;
 import com.griefcraft.spout.SpoutScreenListener;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.getspout.spoutapi.gui.Color;
+import org.getspout.spoutapi.gui.GenericLabel;
+import org.getspout.spoutapi.gui.RenderPriority;
+import org.getspout.spoutapi.gui.Screen;
+import org.getspout.spoutapi.gui.WidgetAnchor;
 
 import java.util.logging.Logger;
 
@@ -33,6 +40,7 @@ public class LWCSpoutPlugin extends JavaPlugin {
     public void onEnable() {
         // register events into LWC
         ModuleLoader moduleLoader = LWC.getInstance().getModuleLoader();
+        moduleLoader.registerModule(this, new ManagementModule(this));
         moduleLoader.registerModule(this, new PasswordRequestModule(this));
 
         // register events into Bukkit
@@ -53,6 +61,30 @@ public class LWCSpoutPlugin extends JavaPlugin {
      */
     public void log(String message) {
         logger.info("LWC-Spout: " + message);
+    }
+
+    /**
+     * Put the LWC name and author on the screen
+     *
+     * @param screen
+     */
+    public void bindLogo(Screen screen) {
+        GenericLabel name = new GenericLabel("LWC " + LWCInfo.FULL_VERSION);
+        name.setAlign(WidgetAnchor.BOTTOM_LEFT);
+        name.setAnchor(WidgetAnchor.BOTTOM_LEFT);
+        name.setTextColor(new Color(0.31f, 0.78f, 0.47f)); // Emerald
+        name.shiftXPos(5).shiftYPos(-10);
+        name.setPriority(RenderPriority.Highest);
+
+        GenericLabel author = new GenericLabel("by Hidendra");
+        author.setAlign(WidgetAnchor.BOTTOM_LEFT);
+        author.setAnchor(WidgetAnchor.BOTTOM_LEFT);
+        author.setTextColor(new Color(0.31f, 0.78f, 0.47f));
+        author.shiftXPos(5);
+        author.setPriority(RenderPriority.Highest);
+        
+        screen.attachWidget(this, name);
+        screen.attachWidget(this, author);
     }
 
 }
