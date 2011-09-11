@@ -43,7 +43,7 @@ public class ManagementModule extends JavaModule {
 
     class ManagementPopup extends LWCPopupScreen {
 
-        public ManagementPopup() {
+        public ManagementPopup(SpoutPlayer player) {
             Label label = new GenericLabel("LWC");
             label.setAnchor(WidgetAnchor.TOP_CENTER);
             label.setAlign(WidgetAnchor.TOP_CENTER);
@@ -81,11 +81,12 @@ public class ManagementModule extends JavaModule {
         event.setCancelled(true);
 
         if (!player.isSpoutCraftEnabled()) {
-            player.sendMessage(Colors.Red + "Spout client required.");
+            player.sendMessage(Colors.Red + "Spout client is required.");
+            return;
         }
 
         // they have spout, so give them what they want
-        PopupScreen managementPopup = new ManagementPopup();
+        PopupScreen managementPopup = new ManagementPopup(player);
         player.getMainScreen().attachPopupScreen(managementPopup);
     }
 
