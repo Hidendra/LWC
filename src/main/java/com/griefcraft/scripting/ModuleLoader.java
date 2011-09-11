@@ -32,6 +32,7 @@ import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
+import com.griefcraft.scripting.event.LWCRedstoneEvent;
 import com.griefcraft.scripting.event.LWCSendLocaleEvent;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -194,6 +195,8 @@ public class ModuleLoader {
                         module.onPostRegistration((LWCProtectionRegistrationPostEvent) event);
                     } else if (event instanceof LWCSendLocaleEvent) {
                         module.onSendLocale((LWCSendLocaleEvent) event);
+                    } else if (event instanceof LWCRedstoneEvent) {
+                        module.onRedstone((LWCRedstoneEvent) event);
                     }
                 }
             }
