@@ -24,7 +24,8 @@ import com.griefcraft.integration.IPermissions;
 import com.griefcraft.integration.currency.BOSECurrency;
 import com.griefcraft.integration.currency.EssentialsCurrency;
 import com.griefcraft.integration.currency.NoCurrency;
-import com.griefcraft.integration.currency.iConomyCurrency;
+import com.griefcraft.integration.currency.iConomy5Currency;
+import com.griefcraft.integration.currency.iConomy6Currency;
 import com.griefcraft.integration.permissions.BukkitPermissions;
 import com.griefcraft.integration.permissions.NijiPermissions;
 import com.griefcraft.integration.permissions.NoPermissions;
@@ -1075,7 +1076,19 @@ public class LWC {
         currency = new NoCurrency();
 
         if (resolvePlugin("iConomy") != null) {
-            currency = new iConomyCurrency();
+            // We need to figure out which iConomy plugin we have...
+            Plugin plugin = resolvePlugin("iConomy");
+
+            // get the class name
+            String className = plugin.getClass().getName();
+
+            // check for the iConomy5 package
+            if (className.startsWith("com.iConomy")) {
+                currency = new iConomy5Currency();
+            } else {
+                // iConomy 6!
+                currency = new iConomy6Currency();
+            }
         } else if (resolvePlugin("BOSEconomy") != null) {
             currency = new BOSECurrency();
         } else if (resolvePlugin("Essentials") != null) {
