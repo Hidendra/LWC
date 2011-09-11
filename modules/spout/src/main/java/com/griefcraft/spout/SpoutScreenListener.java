@@ -20,12 +20,7 @@ package com.griefcraft.spout;
 import com.griefcraft.bukkit.LWCSpoutPlugin;
 import com.griefcraft.lwc.LWCPopupScreen;
 import org.getspout.spoutapi.event.screen.ButtonClickEvent;
-import org.getspout.spoutapi.event.screen.ScreenCloseEvent;
 import org.getspout.spoutapi.event.screen.ScreenListener;
-import org.getspout.spoutapi.event.screen.ScreenOpenEvent;
-import org.getspout.spoutapi.gui.Screen;
-import org.getspout.spoutapi.gui.ScreenType;
-import org.getspout.spoutapi.player.SpoutPlayer;
 
 public class SpoutScreenListener extends ScreenListener {
 
@@ -36,24 +31,6 @@ public class SpoutScreenListener extends ScreenListener {
 
     public SpoutScreenListener(LWCSpoutPlugin plugin) {
         this.plugin = plugin;
-    }
-
-    @Override
-    public void onScreenOpen(ScreenOpenEvent event) {
-        if(event.getScreenType() != ScreenType.CHEST_INVENTORY && event.getScreenType() != ScreenType.FURNACE_INVENTORY &&
-                event.getScreenType() != ScreenType.DISPENSER_INVENTORY) {
-            return;
-        }
-
-        SpoutPlayer player = event.getPlayer();
-        Screen screen = player.getMainScreen();
-        plugin.bindLogo(screen);
-    }
-
-    @Override
-    public void onScreenClose(ScreenCloseEvent event) {
-        // remove any stale widgets
-        event.getPlayer().getMainScreen().removeWidgets(plugin);
     }
 
     @Override
