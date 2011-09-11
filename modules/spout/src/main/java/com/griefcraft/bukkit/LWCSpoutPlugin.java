@@ -28,7 +28,6 @@ import org.bukkit.event.Event;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.getspout.spoutapi.gui.Color;
 import org.getspout.spoutapi.gui.GenericLabel;
-import org.getspout.spoutapi.gui.RenderPriority;
 import org.getspout.spoutapi.gui.Screen;
 import org.getspout.spoutapi.gui.WidgetAnchor;
 
@@ -74,14 +73,12 @@ public class LWCSpoutPlugin extends JavaPlugin {
         name.setAnchor(WidgetAnchor.BOTTOM_LEFT);
         name.setTextColor(new Color(0.31f, 0.78f, 0.47f)); // Emerald
         name.shiftXPos(5).shiftYPos(-10);
-        name.setPriority(RenderPriority.Highest);
 
         GenericLabel author = new GenericLabel("by Hidendra");
         author.setAlign(WidgetAnchor.BOTTOM_LEFT);
         author.setAnchor(WidgetAnchor.BOTTOM_LEFT);
         author.setTextColor(new Color(0.31f, 0.78f, 0.47f));
         author.shiftXPos(5);
-        author.setPriority(RenderPriority.Highest);
         
         screen.attachWidget(this, name);
         screen.attachWidget(this, author);
