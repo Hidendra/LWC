@@ -25,7 +25,7 @@ import com.iConomy.system.Holdings;
 import com.iConomy.util.Constants;
 import org.bukkit.entity.Player;
 
-public class iConomyCurrency implements ICurrency {
+public class iConomy5Currency implements ICurrency {
 
     /**
      * The economy configuration
@@ -37,7 +37,7 @@ public class iConomyCurrency implements ICurrency {
      */
     private String serverAccount;
 
-    public iConomyCurrency() {
+    public iConomy5Currency() {
         serverAccount = configuration.getString("iConomy.serverBankAccount", "");
 
         // create the account in iConomy if needed
