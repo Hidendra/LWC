@@ -160,6 +160,11 @@ public class EconomyModule extends JavaModule {
             // refund them :)
             Player owner = Bukkit.getServer().getPlayer(history.getPlayer());
 
+            // we can't pay them ..
+            if (owner == null) {
+                continue;
+            }
+
             // the currency to use
             ICurrency currency = lwc.getCurrency();
 
