@@ -31,7 +31,7 @@ public class ExpireJobHandler implements IJobHandler {
             arguments = (String) job.getData().get("arguments");
         }
 
-        // call the cleanup command
+        // call the expire command
         lwc.getPlugin().onCommand(sender, lwc.getPlugin().getCommand("lwc"), "lwc", ("admin expire " + arguments).split(" "));
     }
 
