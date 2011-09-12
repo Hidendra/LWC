@@ -1157,7 +1157,6 @@ public class LWC {
         registerModule(new AdminCleanup());
         registerModule(new AdminClear());
         registerModule(new AdminConfig());
-        registerModule(new AdminDebug());
         registerModule(new AdminFind());
         registerModule(new AdminFlush());
         registerModule(new AdminForceOwner());
