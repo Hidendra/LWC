@@ -210,6 +210,7 @@ public class PhysDB extends Database {
         doUpdate330();
         doUpdate400_1();
         doUpdate400_2();
+        doUpdate400_3();
 
         try {
             connection.setAutoCommit(false);
@@ -346,6 +347,10 @@ public class PhysDB extends Database {
                 column = new Column("id");
                 column.setType("INTEGER");
                 column.setPrimary(true);
+                jobs.add(column);
+
+                column = new Column("name");
+                column.setType("VARCHAR(64)");
                 jobs.add(column);
 
                 column = new Column("type");
@@ -1002,7 +1007,6 @@ public class PhysDB extends Database {
 
         try {
             PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history");
-
             ResultSet set = statement.executeQuery();
 
             while (set.next()) {
@@ -1030,7 +1034,6 @@ public class PhysDB extends Database {
                 // seems ok
                 temp.add(history);
             }
-
         } catch (SQLException e) {
             printException(e);
         }
@@ -1045,12 +1048,42 @@ public class PhysDB extends Database {
      */
     public void saveJob(Job job) {
         try {
-            PreparedStatement statement = prepare("REPLACE INTO " + prefix + "jobs (id, type, data, nextRun) VALUES (?, ?, ?, ?)");
+            PreparedStatement statement = null;
+            int index = 1;
+
+            if (job.doesExist()) {
+                statement = prepare("REPLACE INTO " + prefix + "jobs (id, name, type, data, nextRun) VALUES (?, ?, ?, ?, ?)");
+                statement.setInt(index ++, job.getId());
+            } else {
+                statement = prepare("INSERT INTO " + prefix + "jobs (name, type, data, nextRun) VALUES (?, ?, ?, ?)");
+            }
+
+            statement.setString(index ++, job.getName());
+            statement.setInt(index ++, job.getType());
+            statement.setString(index ++, job.getData().toJSONString());
+            statement.setLong(index ++, job.getNextRun());
+            statement.executeUpdate();
+
+            // check if it was inserted correctly
+            if (!job.doesExist()) {
+                ResultSet keys = statement.getGeneratedKeys();
+
+                if (keys != null && keys.next()) {
+                    job.setId(keys.getInt(1));
+                    keys.close();
+                }
+            }
+        } catch (SQLException e) {
+            printException(e);
+        }
+    }
+
+    public void removeJob(Job job) {
+        try {
+            PreparedStatement statement = prepare("DELETE FROM " + prefix + "jobs WHERE id = ?");
 
             statement.setInt(1, job.getId());
-            statement.setInt(2, job.getType());
-            statement.setString(3, job.getData().toJSONString());
-            statement.setLong(4, job.getNextRun());
+            statement.executeUpdate();
         } catch (SQLException e) {
             printException(e);
         }
@@ -1072,11 +1105,13 @@ public class PhysDB extends Database {
                 Job job = new Job();
 
                 int id = set.getInt("id");
+                String name = set.getString("name");
                 int type = set.getInt("type");
                 String data = set.getString("data");
                 long nextRun = set.getLong("nextRun");
 
                 job.setId(id);
+                job.setName(name);
                 job.setType(type);
                 job.setData(Job.decodeJSON(data));
                 job.setNextRun(nextRun);
@@ -1476,6 +1511,26 @@ public class PhysDB extends Database {
             stmt.close();
         } catch (SQLException e) {
             // no need to convert!
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
+    }
+
+    /**
+     * 4.0.0, update 3
+     */
+    private void doUpdate400_3() {
+        Statement statement = null;
+        try {
+            statement = connection.createStatement();
+            statement.execute("SELECT name FROM " + prefix + "jobs");
+        } catch (SQLException e) {
+            addColumn(prefix + "jobs", "name", "VARCHAR(64)");
         } finally {
             if (statement != null) {
                 try {

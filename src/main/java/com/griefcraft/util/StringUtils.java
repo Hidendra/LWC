@@ -127,24 +127,15 @@ public class StringUtils {
             return str.toUpperCase();
         }
 
-        /*
-           * First cast it all to lower case and get the char array
-           */
         char[] string = str.toLowerCase().toCharArray();
 
-        /*
-           * First letter -- capitalize it
-           */
+        // First letter - capatalize it
         string[0] = Character.toUpperCase(string[0]);
 
-        /*
-           * Scan for spaces
-           */
+        // scan for spaces
         for (int index = 0; index < string.length; index++) {
             if (string[index] == ' ' && index != string.length) {
-                /*
-                     * convert chars after spaces to upper case
-                     */
+                // convert chars after found spaces to uppercase
                 string[index + 1] = Character.toUpperCase(string[index + 1]);
             }
         }
@@ -198,7 +189,17 @@ public class StringUtils {
     }
 
     /**
-     * Join an array command into a String
+     * Join an array into a String, where the array values are delimited by spaces.
+     * 
+     * @param arr
+     * @return
+     */
+    public static String join(String[] arr) {
+        return join(arr, 0);
+    }
+
+    /**
+     * Join an array into a String, where the array values are delimited by spaces, starting at the given offset.
      *
      * @param arr
      * @param offset
@@ -209,7 +210,7 @@ public class StringUtils {
     }
 
     /**
-     * Join an array command into a String
+     * Join an array into a String, where the array values are delimited by the given string, starting at the given offset.
      *
      * @param arr
      * @param offset

@@ -57,6 +57,7 @@ import com.griefcraft.modules.modes.PersistModule;
 import com.griefcraft.modules.modify.ModifyModule;
 import com.griefcraft.modules.owners.OwnersModule;
 import com.griefcraft.modules.redstone.RedstoneModule;
+import com.griefcraft.modules.schedule.ScheduleModule;
 import com.griefcraft.modules.unlock.UnlockModule;
 import com.griefcraft.modules.worldguard.WorldGuardModule;
 import com.griefcraft.scripting.Module;
@@ -1129,8 +1130,9 @@ public class LWC {
         // precache lots of protections
         physicalDatabase.precache();
 
-        // tell all modules we're loaded
+        // We are now done loading!
         moduleLoader.loadAll();
+        jobManager.load();
     }
 
     /**
@@ -1150,6 +1152,7 @@ public class LWC {
         registerModule(new DoorsModule());
         registerModule(new DebugModule());
         registerModule(new CreditsModule());
+        registerModule(new ScheduleModule());
 
         // admin commands
         registerModule(new BaseAdminModule());

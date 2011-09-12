@@ -19,6 +19,7 @@ package com.griefcraft.jobs;
 
 import com.griefcraft.jobs.impl.CleanupJobHandler;
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Job;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,7 +32,12 @@ public class JobManager {
     private LWC lwc;
 
     /**
-     * The list of job handlers to use
+     * The set of loaded Jobs
+     */
+    private final Set<Job> jobs = new HashSet<Job>();
+
+    /**
+     * The set of job handlers to use
      */
     private final Set<IJobHandler> handlers = new HashSet<IJobHandler>();
 
@@ -45,14 +51,107 @@ public class JobManager {
     }
 
     /**
+     * Load all jobs
+     */
+    public void load() {
+        jobs.clear();
+        jobs.addAll(lwc.getPhysicalDatabase().loadJobs());
+    }
+
+    /**
+     * Add a job to the set
+     *
+     * @param job
+     */
+    public void addJob(Job job) {
+        jobs.add(job);
+    }
+
+    /**
+     * Remove a job from the set
+     * 
+     * @param job
+     */
+    public void removeJob(Job job) {
+        jobs.remove(job);
+    }
+
+    /**
+     * Execute a job
+     * 
+     * @param job
+     */
+    public void execute(Job job) {
+        if (job == null) {
+            return;
+        }
+
+        IJobHandler handler = getJobHandler(job.getType());
+
+        if (handler == null) {
+            return; // throw?
+        }
+
+        handler.run(lwc, job);
+    }
+
+    /**
+     * Get a job
+     * 
+     * @param name case insensitive
+     * @return
+     */
+    public Job getJob(String name) {
+        for (Job job : jobs) {
+            if (job.getName().equalsIgnoreCase(name)) {
+                return job;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get a job handler by its name
+     *
+     * @param name case insensitive
+     * @return
+     */
+    public IJobHandler getJobHandler(String name) {
+        for (IJobHandler handler : handlers) {
+            if(handler.getName().equalsIgnoreCase(name)) {
+                return handler;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get a job handler by its unique type
+     *
+     * @param type the job handler's unique type
+     * @return
+     */
+    public IJobHandler getJobHandler(int type) {
+        for (IJobHandler handler : handlers) {
+            if(handler.getType() == type) {
+                return handler;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Check if a job handler exists
      *
-     * @param name
+     * @param name case insensitive
      * @return
      */
     public boolean hasJobHandler(String name) {
         for (IJobHandler handler : handlers) {
-            if(handler.getName().equals(name)) {
+            if(handler.getName().equalsIgnoreCase(name)) {
                 return true;
             }
         }

@@ -17,6 +17,7 @@
 
 package com.griefcraft.model;
 
+import com.griefcraft.lwc.LWC;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -34,6 +35,11 @@ public class Job {
     private int id;
 
     /**
+     * Unique name for the job
+     */
+    private String name;
+
+    /**
      * The job type - essentially, the function it will perform
      */
     private int type;
@@ -41,12 +47,17 @@ public class Job {
     /**
      * JSON data
      */
-    private JSONObject data;
+    private JSONObject data = new JSONObject();
 
     /**
      * The epoch time to next run the job
      */
     private long nextRun;
+
+    /**
+     * True if the Job exists in the database
+     */
+    private boolean exists = false;
 
     /**
      * Decode the Job data (which uses JSON) into a usable Map
@@ -76,6 +87,13 @@ public class Job {
     }
 
     /**
+     * @return the job's name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
      * @return the job type - essentially, the function it will perform
      */
     public int getType() {
@@ -101,6 +119,14 @@ public class Job {
      */
     public void setId(int id) {
         this.id = id;
+        this.exists = true;
+    }
+
+    /**
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -122,6 +148,29 @@ public class Job {
      */
     public void setNextRun(long nextRun) {
         this.nextRun = nextRun;
+    }
+
+    /**
+     * Immediately save the job to the database
+     */
+    public void save() {
+        LWC.getInstance().getPhysicalDatabase().saveJob(this);
+        LWC.getInstance().getJobManager().addJob(this);
+    }
+
+    /**
+     * Remove the job from the database
+     */
+    public void remove() {
+        LWC.getInstance().getPhysicalDatabase().removeJob(this);
+        LWC.getInstance().getJobManager().removeJob(this);
+    }
+
+    /**
+     * @return true if the protection exists in the database
+     */
+    public boolean doesExist() {
+        return exists;
     }
 
 }
