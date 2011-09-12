@@ -17,6 +17,7 @@
 
 package com.griefcraft.model;
 
+import com.griefcraft.jobs.IJobHandler;
 import com.griefcraft.lwc.LWC;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -80,6 +81,13 @@ public class Job {
     }
 
     /**
+     * @return the Job handler assigned to this job
+     */
+    public IJobHandler getJobHandler() {
+        return LWC.getInstance().getJobManager().getJobHandler(type);
+    }
+
+    /**
      * @return the job's id
      */
     public int getId() {
@@ -108,10 +116,28 @@ public class Job {
     }
 
     /**
+     * @return true if the job should automatically run when it is polled
+     */
+    public boolean shouldRun() {
+        if (nextRun == 0) {
+            return false;
+        }
+
+        return nextRun == 1 || getTimeRemaining() <= 0;
+    }
+
+    /**
      * @return get the epoch time the job will next run at
      */
     public long getNextRun() {
         return nextRun;
+    }
+
+    /**
+     * @return the time in milliseconds until the job should be ran
+     */
+    public long getTimeRemaining() {
+        return nextRun <= 0 ? 1 : nextRun - System.currentTimeMillis();
     }
 
     /**

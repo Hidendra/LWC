@@ -21,10 +21,17 @@ import com.griefcraft.jobs.impl.CleanupJobHandler;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Job;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 public class JobManager {
+
+    /**
+     * The amount of server ticks to wait before polling
+     */
+    private final static int POLL_TICKS = 50;
 
     /**
      * The parent LWC instance
@@ -34,12 +41,58 @@ public class JobManager {
     /**
      * The set of loaded Jobs
      */
-    private final Set<Job> jobs = new HashSet<Job>();
+    private final Set<Job> jobs = Collections.synchronizedSet(new HashSet<Job>());
 
     /**
      * The set of job handlers to use
      */
     private final Set<IJobHandler> handlers = new HashSet<IJobHandler>();
+
+    /**
+     * The executor that is used to poll jobs for updates
+     */
+    private final Runnable executor = new JobExecutor();
+
+    /**
+     * Polls for jobs and executes them
+     */
+    class JobExecutor implements Runnable {
+
+        public void run() {
+            synchronized(jobs) {
+                Iterator<Job> iter = jobs.iterator();
+
+                while (iter.hasNext()) {
+                    Job job = iter.next();
+
+                    // we don't want the job if we aren't running it
+                    if (!job.shouldRun()) {
+                        continue;
+                    }
+
+                    // TODO: store previous run times (in MS) a few back
+                    // Run the job
+                    execute(job);
+
+                    // check for auto run
+                    if (job.getData().containsKey("autoRun")) {
+                        // we need to update the next point in time to run
+                        long intervalMillis = (Long) job.getData().get("autoRun");
+
+                        // update the job and save it
+                        job.setNextRun(System.currentTimeMillis() + intervalMillis);
+                    }
+
+                    // check if it was one-time, and if so, remove it
+                    if (job.getData().containsKey("one-use")) {
+                        lwc.getPhysicalDatabase().removeJob(job);
+                        iter.remove();
+                    }
+                }
+            }
+        }
+
+    }
 
     public JobManager(LWC lwc) {
         this.lwc = lwc;
@@ -54,8 +107,21 @@ public class JobManager {
      * Load all jobs
      */
     public void load() {
+        // load jobs from the database
         jobs.clear();
         jobs.addAll(lwc.getPhysicalDatabase().loadJobs());
+
+        // create the executor
+        lwc.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(lwc.getPlugin(), executor, POLL_TICKS, POLL_TICKS);
+    }
+
+    /**
+     * Get an UNMODIFIABLE Set of the jobs. If you wish to modify it, please use the provided methods.
+     *
+     * @return
+     */
+    public Set<Job> getJobs() {
+        return Collections.unmodifiableSet(jobs);
     }
 
     /**

@@ -301,6 +301,9 @@ public class LWCPlugin extends JavaPlugin {
         if (lwc != null) {
             lwc.destruct();
         }
+
+        // cancel all tasks we created
+        getServer().getScheduler().cancelTasks(this);
     }
 
     public void onEnable() {

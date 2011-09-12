@@ -25,7 +25,7 @@ public class StringUtils {
     /**
      * Parse a time string (e.g 2 hours)
      *
-     * @param str
+     * @param time
      * @return the result in seconds
      */
     public static long parseTime(String time) {
@@ -80,18 +80,18 @@ public class StringUtils {
     public static String timeToString(long time) {
         String str = "";
 
-        if ((System.currentTimeMillis() / 1000L) - time == 0L) {
+        if ((System.currentTimeMillis() / 1000L) - time <= 0) {
             return "Not yet known";
         }
 
         long days = time / 86400;
-        time = time - (days * 86400);
+        time -= days * 86400;
 
         long hours = time / 3600;
-        time = time - (hours * 3600);
+        time -= hours * 3600;
 
         long minutes = time / 60;
-        time = time - (minutes * 60);
+        time -= minutes * 60;
 
         long seconds = time;
 
@@ -109,6 +109,10 @@ public class StringUtils {
 
         if (seconds > 0) {
             str += seconds + " second" + (seconds == 1 ? "" : "s") + " ";
+        }
+
+        if (str.equals("")) {
+            return "less than a second";
         }
 
         return str.trim();
