@@ -30,12 +30,12 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
     /**
      * Amount of reads performed on the cache
      */
-    private int reads = 0;
+    private long reads = 0;
 
     /**
      * Amount of writes performed on the cache
      */
-    private int writes = 0;
+    private long writes = 0;
 
     public LRUCache(int maxCapacity) {
         super(maxCapacity, 0.75f, true);
@@ -62,14 +62,14 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
     /**
      * @return amount of reads on the cache
      */
-    public int getReads() {
+    public long getReads() {
         return reads;
     }
 
     /**
      * @return amount of writes on the cache
      */
-    public int getWrites() {
+    public long getWrites() {
         return writes;
     }
 
