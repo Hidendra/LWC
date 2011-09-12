@@ -18,6 +18,7 @@
 package com.griefcraft.jobs;
 
 import com.griefcraft.jobs.impl.CleanupJobHandler;
+import com.griefcraft.jobs.impl.ExpireJobHandler;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Job;
 
@@ -100,6 +101,7 @@ public class JobManager {
         // setup default handlers
         {
             handlers.add(new CleanupJobHandler());
+            handlers.add(new ExpireJobHandler());
         }
     }
 
