@@ -27,14 +27,50 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
      */
     private int maxCapacity;
 
+    /**
+     * Amount of reads performed on the cache
+     */
+    private int reads = 0;
+
+    /**
+     * Amount of writes performed on the cache
+     */
+    private int writes = 0;
+
     public LRUCache(int maxCapacity) {
         super(maxCapacity, 0.75f, true);
         this.maxCapacity = maxCapacity;
     }
 
     @Override
+    public V get(Object key) {
+        reads ++;
+        return super.get(key);
+    }
+
+    @Override
+    public V put(K key, V value) {
+        writes ++;
+        return super.put(key, value);
+    }
+
+    @Override
     protected boolean removeEldestEntry(java.util.Map.Entry<K, V> eldest) {
         return size() > maxCapacity;
+    }
+
+    /**
+     * @return amount of reads on the cache
+     */
+    public int getReads() {
+        return reads;
+    }
+
+    /**
+     * @return amount of writes on the cache
+     */
+    public int getWrites() {
+        return writes;
     }
 
 }

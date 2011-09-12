@@ -17,13 +17,17 @@
 
 package com.griefcraft.util;
 
-import com.griefcraft.cache.CacheSet;
+import com.griefcraft.cache.LRUCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
+import com.griefcraft.scripting.MetaData;
+import com.griefcraft.sql.Database;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class Performance {
@@ -60,44 +64,49 @@ public class Performance {
     }
 
     /**
-     * @return the average amount of queries per second
+     * @return the average of a value
      */
-    public static double getAverage(int queries) {
-        return (double) queries / getTimeRunningSeconds();
+    public static double getAverage(int value) {
+        return (double) value / getTimeRunningSeconds();
     }
 
     /**
-     * Generate a new report
+     * Send a performance report to a Console Sender
      *
-     * @return
+     * @param sender
      */
-    public static List<String> generateReport() {
-        List<String> report = new ArrayList<String>();
+    public static void sendReport(CommandSender sender) {
         LWC lwc = LWC.getInstance();
-        CacheSet caches = lwc.getCaches();
+        
+        sender.sendMessage(" ");
+        sender.sendMessage(Colors.Red + "LWC Report");
+        sender.sendMessage("  Version: " + Colors.Green + LWCInfo.FULL_VERSION);
+        sender.sendMessage("  Running time: " + Colors.Green + StringUtils.timeToString(getTimeRunningSeconds()));
+        sender.sendMessage("  Players: " + Colors.Green + Bukkit.getServer().getOnlinePlayers().length + "/" + Bukkit.getServer().getMaxPlayers());
+        sender.sendMessage(" ");
+        sender.sendMessage(Colors.Red + " ==== Modules ====");
+        
+        for (Map.Entry<Plugin, List<MetaData>> entry : lwc.getModuleLoader().getRegisteredModules().entrySet()) {
+            Plugin plugin = entry.getKey();
+            List<MetaData> modules = entry.getValue();
 
-        report.add(" ");
+            sender.sendMessage("  " + Colors.Green + plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion() + Colors.Yellow + " -> " + Colors.Green + modules.size() + Colors.Yellow + " registered modules");
+        }
+        sender.sendMessage(" ");
 
-        report.add(" + Version:\t" + Colors.Gray + LWCInfo.FULL_VERSION);
-        report.add(" + Engine:\t" + Colors.Gray + lwc.getPhysicalDatabase().getType());
-        report.add(" + Date:\t" + Colors.Gray + new Date());
-        report.add(" + Time:\t" + Colors.Gray + getTimeRunningSeconds() + " seconds");
-        report.add(" + Players:\t" + Colors.Gray + lwc.getPlugin().getServer().getOnlinePlayers().length);
-        report.add(" + Protections:\t" + Colors.Gray + lwc.getPhysicalDatabase().getProtectionCount());
-        report.add(" + Cache:\t" + Colors.Gray + caches.getProtections().size() + Colors.Yellow + "/" + Colors.Gray + lwc.getConfiguration().getInt("core.cacheSize", 10000));
+        sender.sendMessage(Colors.Red + " ==== Database ====");
+        sender.sendMessage("  Engine: " + Colors.Green + Database.DefaultType);
+        sender.sendMessage("  Protections: " + Colors.Green + lwc.getPhysicalDatabase().getProtectionCount());
+        sender.sendMessage("  Physical Database: " + Colors.Green + physDBQueries + " queries | " + String.format("%.2f", getAverage(physDBQueries)) + " / second");
+        sender.sendMessage("  Memory Database: " + Colors.Green + memDBQueries + " queries | " + String.format("%.2f", getAverage(memDBQueries)) + " / second");
+        sender.sendMessage(" ");
 
-        report.add(" ");
-        report.add(" - Physical database");
-        report.add("  + Queries:\t" + Colors.Gray + physDBQueries);
-        report.add("  + Average:\t" + Colors.Gray + getAverage(physDBQueries) + Colors.Yellow + " /second");
-        report.add(" ");
-        report.add(" - Memory database");
-        report.add("  + Queries:\t" + Colors.Gray + memDBQueries);
-        report.add("  + Average:\t" + Colors.Gray + getAverage(memDBQueries) + Colors.Yellow + " /second");
+        sender.sendMessage(Colors.Red + " ==== Cache ==== ");
+        sender.sendMessage("  Size: " + lwc.getCaches().getProtections().size() + "/" + lwc.getConfiguration().getInt("core.cacheSize", 10000));
 
-        report.add(" ");
-
-        return report;
+        LRUCache protections = lwc.getCaches().getProtections();
+        sender.sendMessage("  Reads: " + protections.getReads()  + " | " + String.format("%.2f", getAverage(protections.getReads())) + " / second");
+        sender.sendMessage("  Writes: " + protections.getWrites()  + " | " + String.format("%.2f", getAverage(protections.getWrites())) + " / second");
     }
 
     /**
