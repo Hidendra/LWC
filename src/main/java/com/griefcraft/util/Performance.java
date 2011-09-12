@@ -66,7 +66,7 @@ public class Performance {
     /**
      * @return the average of a value
      */
-    public static double getAverage(int value) {
+    public static double getAverage(long value) {
         return (double) value / getTimeRunningSeconds();
     }
 
