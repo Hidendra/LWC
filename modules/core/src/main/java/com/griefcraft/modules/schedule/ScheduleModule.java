@@ -244,6 +244,22 @@ public class ScheduleModule extends JavaModule {
                 sender.sendMessage(Colors.Green + "The job " + job.getName() + " will be executed in " + StringUtils.timeToString(timeRemaining / 1000L));
             }
         }
+
+        else if (action.equals("arguments")) {
+            if (job == null) {
+                sender.sendMessage(Colors.Red + "Invalid job specified.");
+                return;
+            }
+
+            if (joinedArguments.isEmpty()) {
+                sender.sendMessage(Colors.Red + "No arguments given.");
+                return;
+            }
+
+            job.getData().put("arguments", joinedArguments);
+            job.save();
+            sender.sendMessage(Colors.Green + "The job " + job.getName() + " now has the arguments: \"" + joinedArguments + "\"  (excluding the quotes)");
+        }
     }
 
 }
