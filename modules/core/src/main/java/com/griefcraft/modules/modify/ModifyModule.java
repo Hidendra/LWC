@@ -20,6 +20,7 @@ package com.griefcraft.modules.modify;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Action;
+import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
@@ -46,11 +47,11 @@ public class ModifyModule extends JavaModule {
 
         LWC lwc = event.getLWC();
         Protection protection = event.getProtection();
-        Player player = event.getPlayer();
+        LWCPlayer player = lwc.wrapPlayer(event.getPlayer());
         event.setResult(Result.CANCEL);
 
-        if (lwc.canAdminProtection(player, protection)) {
-            Action action = lwc.getMemoryDatabase().getAction("modify", player.getName());
+        if (lwc.canAdminProtection(player.getBukkitPlayer(), protection)) {
+            Action action = player.getAction("modify");
 
             final String defaultEntities = action.getData();
             String[] entities = new String[0];
@@ -172,10 +173,16 @@ public class ModifyModule extends JavaModule {
         }
 
         String full = join(args, 0);
-        Player player = (Player) sender;
+        LWCPlayer player = lwc.wrapPlayer(sender);
 
-        lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-        lwc.getMemoryDatabase().registerAction("modify", player.getName(), full);
+        Action action = new Action();
+        action.setName("modify");
+        action.setPlayer(player);
+        action.setData(full);
+
+        player.removeAllActions();
+        player.addAction(action);
+
         lwc.sendLocale(sender, "protection.modify.finalize");
         return;
     }

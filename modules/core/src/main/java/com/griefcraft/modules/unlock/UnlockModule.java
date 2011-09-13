@@ -18,6 +18,8 @@
 package com.griefcraft.modules.unlock;
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Action;
+import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.scripting.JavaModule;
@@ -61,38 +63,35 @@ public class UnlockModule extends JavaModule {
             return;
         }
 
-        Player player = (Player) sender;
+        LWCPlayer player = lwc.wrapPlayer(sender);
         String password = join(args, 0);
         password = encrypt(password);
 
-        if (!lwc.getMemoryDatabase().hasPendingUnlock(player.getName())) {
-            player.sendMessage(Colors.Red + "Nothing selected. Open a locked protection first.");
-            return;
-        } else {
-            int protectionId = lwc.getMemoryDatabase().getUnlockID(player.getName());
+        // see if they have the protection interaction action
+        Action action = player.getAction("interacted");
 
-            if (protectionId == -1) {
+        if (action == null) {
+            player.sendMessage(Colors.Red + "Nothing selected. Open a locked protection first.");
+        } else {
+            Protection protection = action.getProtection();
+
+            if (protection == null) {
                 lwc.sendLocale(player, "protection.internalerror", "id", "unlock");
                 return;
             }
 
-            Protection entity = lwc.getPhysicalDatabase().loadProtection(protectionId);
-
-            if (entity.getType() != ProtectionTypes.PASSWORD) {
+            if (protection.getType() != ProtectionTypes.PASSWORD) {
                 lwc.sendLocale(player, "protection.unlock.notpassword");
                 return;
             }
 
-            if (entity.getData().equals(password)) {
-                lwc.getMemoryDatabase().unregisterUnlock(player.getName());
-                lwc.getMemoryDatabase().registerPlayer(player.getName(), protectionId);
+            if (protection.getData().equals(password)) {
+                player.addAccessibleProtection(protection);
                 lwc.sendLocale(player, "protection.unlock.password.valid");
             } else {
                 lwc.sendLocale(player, "protection.unlock.password.invalid");
             }
         }
-
-        return;
     }
 
 }

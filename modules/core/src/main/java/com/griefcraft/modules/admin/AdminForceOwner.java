@@ -19,6 +19,7 @@ package com.griefcraft.modules.admin;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Action;
+import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
@@ -41,9 +42,9 @@ public class AdminForceOwner extends JavaModule {
 
         LWC lwc = event.getLWC();
         Protection protection = event.getProtection();
-        Player player = event.getPlayer();
+        LWCPlayer player = lwc.wrapPlayer(event.getPlayer());
 
-        Action action = lwc.getMemoryDatabase().getAction("forceowner", player.getName());
+        Action action = player.getAction("forceowner");
         String newOwner = action.getData();
 
         protection.setOwner(newOwner);
@@ -106,10 +107,15 @@ public class AdminForceOwner extends JavaModule {
             return;
         }
 
-        Player player = (Player) sender;
+        LWCPlayer player = lwc.wrapPlayer(sender);
         String newOwner = args[1];
 
-        lwc.getMemoryDatabase().registerAction("forceowner", player.getName(), newOwner);
+        Action action = new Action();
+        action.setName("forceowner");
+        action.setPlayer(player);
+        action.setData(newOwner);
+        player.addAction(action);
+
         lwc.sendLocale(sender, "protection.admin.forceowner.finalize", "player", newOwner);
 
         return;

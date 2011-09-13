@@ -18,6 +18,8 @@
 package com.griefcraft.modules.free;
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Action;
+import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
@@ -110,19 +112,19 @@ public class FreeModule extends JavaModule {
         }
 
         String type = args[0].toLowerCase();
-        Player player = (Player) sender;
+        LWCPlayer player = lwc.wrapPlayer(sender);
 
         if (type.equals("protection") || type.equals("chest") || type.equals("furnace") || type.equals("dispenser")) {
-            if (lwc.getMemoryDatabase().hasPendingChest(player.getName())) {
-                lwc.sendLocale(sender, "protection.general.pending");
-                return;
-            }
+            Action action = new Action();
+            action.setName("free");
+            action.setPlayer(player);
 
-            lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-            lwc.getMemoryDatabase().registerAction("free", player.getName());
+            player.removeAllActions();
+            player.addAction(action);
+
             lwc.sendLocale(sender, "protection.remove.protection.finalize");
         } else if (type.equals("modes")) {
-            lwc.getMemoryDatabase().unregisterAllModes(player.getName());
+            player.disableAllModes();
             lwc.sendLocale(sender, "protection.remove.modes.finalize");
         } else {
             lwc.sendSimpleUsage(sender, "/lwc -r <protection|modes>");

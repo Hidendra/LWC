@@ -18,6 +18,8 @@
 package com.griefcraft.modules.info;
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Action;
+import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
@@ -99,7 +101,7 @@ public class InfoModule extends JavaModule {
             return;
         }
 
-        Player player = (Player) sender;
+        LWCPlayer player = lwc.wrapPlayer(sender);
         String type = "info";
 
         if (args.length > 0) {
@@ -107,8 +109,13 @@ public class InfoModule extends JavaModule {
         }
 
         if (type.equals("info")) {
-            lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-            lwc.getMemoryDatabase().registerAction("info", player.getName());
+            Action action = new Action();
+            action.setName("info");
+            action.setPlayer(player);
+
+            player.removeAllActions();
+            player.addAction(action);
+            
             lwc.sendLocale(player, "protection.info.finalize");
         }
 
