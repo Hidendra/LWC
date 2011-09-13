@@ -112,7 +112,7 @@
 
         <jar jarfile="${build}/${jar.core}">
             <fileset dir="${src}" includes="lang/*"/>
-            <fileset dir="${src}/resources/" includes="plugin.yml"/>
+            <fileset dir="${src}/resources/" includes="**/*"/>
             <fileset dir="${bin}/core/"/>
 
             <manifest>

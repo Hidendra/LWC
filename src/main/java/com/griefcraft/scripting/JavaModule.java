@@ -38,7 +38,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public abstract class JavaModule implements Module {
+public class JavaModule implements Module {
 
     /**
      * Allow the event to occur (e.g allow the redstone, allow a protection destruction, and so on)
