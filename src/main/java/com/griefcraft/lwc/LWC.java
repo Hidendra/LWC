@@ -157,11 +157,6 @@ public class LWC {
     private UpdateThread updateThread;
 
     /**
-     * Allow output to be coloured
-     */
-    private ColouredConsoleSender console;
-
-    /**
      * The permissions handler
      */
     private IPermissions permissions;
@@ -189,11 +184,6 @@ public class LWC {
         caches = new CacheSet();
 
         bug656workaround = configuration.getBoolean("core.bukkitBug656workaround", false);
-
-        try {
-            console = new ColouredConsoleSender((CraftServer) Bukkit.getServer());
-        } catch (Exception e) {
-        }
     }
 
     /**
@@ -1653,12 +1643,7 @@ public class LWC {
      */
     private void log(String str) {
         str = "LWC: " + str;
-
-        if (console != null) {
-            console.sendMessage(str);
-        } else {
-            logger.info(ChatColor.stripColor(str));
-        }
+        logger.info(ChatColor.stripColor(str));
     }
 
     /**
