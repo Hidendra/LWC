@@ -19,13 +19,13 @@ package com.griefcraft.modules.flag;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Action;
+import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.util.StringUtils;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class BaseFlagModule extends JavaModule {
 
@@ -37,9 +37,9 @@ public class BaseFlagModule extends JavaModule {
 
         LWC lwc = event.getLWC();
         Protection protection = event.getProtection();
-        Player player = event.getPlayer();
+        LWCPlayer player = lwc.wrapPlayer(event.getPlayer());
 
-        Action action = lwc.getMemoryDatabase().getAction("flag", player.getName());
+        Action action = player.getAction("flag");
         String data = action.getData();
         event.setResult(Result.CANCEL);
 
@@ -99,7 +99,7 @@ public class BaseFlagModule extends JavaModule {
             return;
         }
 
-        Player player = (Player) sender;
+        LWCPlayer player = lwc.wrapPlayer(sender);
         String flagName = args[0];
         String type = args[1].toLowerCase();
         String internalType; // + or -
@@ -142,8 +142,14 @@ public class BaseFlagModule extends JavaModule {
             return;
         }
 
-        lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-        lwc.getMemoryDatabase().registerAction("flag", player.getName(), internalType + flagName);
+        Action action = new Action();
+        action.setName("flag");
+        action.setPlayer(player);
+        action.setData(internalType + flagName);
+
+        player.removeAllActions();
+        player.addAction(action);
+        
         lwc.sendLocale(sender, "protection.flag.finalize");
 
         return;

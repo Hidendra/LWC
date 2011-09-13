@@ -20,6 +20,7 @@ package com.griefcraft.modules.create;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Action;
+import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.scripting.JavaModule;
@@ -29,7 +30,6 @@ import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
-import com.griefcraft.sql.MemDB;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
@@ -76,16 +76,15 @@ public class CreateModule extends JavaModule {
 
         LWC lwc = event.getLWC();
         Block block = event.getBlock();
-        Player player = event.getPlayer();
+        LWCPlayer player = lwc.wrapPlayer(event.getPlayer());
 
         if (!lwc.isProtectable(block)) {
             return;
         }
 
         PhysDB physDb = lwc.getPhysicalDatabase();
-        MemDB memDb = lwc.getMemoryDatabase();
 
-        Action action = memDb.getAction("create", player.getName());
+        Action action = player.getAction("create");
         String actionData = action.getData();
         String[] split = actionData.split(" ");
         String protectionType = split[0].toLowerCase();
@@ -107,8 +106,8 @@ public class CreateModule extends JavaModule {
         int blockZ = block.getZ();
 
         lwc.removeModes(player);
-        Result registerProtection = lwc.getModuleLoader().dispatchEvent(Event.REGISTER_PROTECTION, player, block);
-        LWCProtectionRegisterEvent evt = new LWCProtectionRegisterEvent(player, block);
+        Result registerProtection = lwc.getModuleLoader().dispatchEvent(Event.REGISTER_PROTECTION, player.getBukkitPlayer(), block);
+        LWCProtectionRegisterEvent evt = new LWCProtectionRegisterEvent(player.getBukkitPlayer(), block);
         lwc.getModuleLoader().dispatchEvent(evt);
 
         // another plugin cancelled the registration
@@ -126,7 +125,7 @@ public class CreateModule extends JavaModule {
             String password = lwc.encrypt(protectionData);
 
             protection = physDb.registerProtection(block.getTypeId(), ProtectionTypes.PASSWORD, worldName, playerName, password, blockX, blockY, blockZ);
-            memDb.registerPlayer(playerName, protection.getId());
+            player.addAccessibleProtection(protection);
 
             lwc.sendLocale(player, "protection.interact.create.finalize");
             lwc.sendLocale(player, "protection.interact.create.password");
@@ -234,7 +233,7 @@ public class CreateModule extends JavaModule {
             return;
         }
 
-        Player player = (Player) sender;
+        LWCPlayer player = lwc.wrapPlayer(sender);
 
         String full = StringUtils.join(args, 0);
         String type = args[0].toLowerCase();
@@ -272,12 +271,15 @@ public class CreateModule extends JavaModule {
             return;
         }
 
-        MemDB db = lwc.getMemoryDatabase();
-        db.unregisterAllActions(player.getName());
-        db.registerAction("create", player.getName(), full);
+        Action action = new Action();
+        action.setName("create");
+        action.setPlayer(player);
+        action.setData(full);
+
+        player.removeAllActions();
+        player.addAction(action);
 
         lwc.sendLocale(player, "protection.create.finalize", "type", lwc.getLocale(type));
-        return;
     }
 
 }

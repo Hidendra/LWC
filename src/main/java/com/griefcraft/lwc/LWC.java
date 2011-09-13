@@ -66,7 +66,6 @@ import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.scripting.ModuleLoader.Event;
 import com.griefcraft.scripting.event.LWCSendLocaleEvent;
 import com.griefcraft.sql.Database;
-import com.griefcraft.sql.MemDB;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.Performance;
@@ -143,11 +142,6 @@ public class LWC {
     private CacheSet caches;
 
     /**
-     * Memory database instance
-     */
-    private MemDB memoryDatabase;
-
-    /**
      * Physical database instance
      */
     private PhysDB physicalDatabase;
@@ -205,11 +199,19 @@ public class LWC {
     /**
      * Create an LWCPlayer object for a player
      *
-     * @param player
+     * @param sender
      * @return
      */
-    public LWCPlayer wrapPlayer(Player player) {
-        return new LWCPlayer(this, player);
+    public LWCPlayer wrapPlayer(CommandSender sender) {
+        if (sender instanceof LWCPlayer) {
+            return (LWCPlayer) sender;
+        }
+
+        if (!(sender instanceof Player)) {
+            return null;
+        }
+
+        return LWCPlayer.getPlayer((Player) sender);
     }
 
     /**
@@ -254,11 +256,17 @@ public class LWC {
     /**
      * Remove all modes if the player is not in persistent mode
      *
-     * @param player
+     * @param sender
      */
-    public void removeModes(Player player) {
-        if (notInPersistentMode(player.getName())) {
-            memoryDatabase.unregisterAllActions(player.getName());
+    public void removeModes(CommandSender sender) {
+        if (sender instanceof Player) {
+            Player bPlayer = (Player) sender;
+
+            if (notInPersistentMode(bPlayer.getName())) {
+                wrapPlayer(bPlayer).getActions().clear();
+            }
+        } else if (sender instanceof LWCPlayer) {
+            removeModes(((LWCPlayer) sender).getBukkitPlayer());
         }
     }
 
@@ -369,7 +377,7 @@ public class LWC {
                 return true;
 
             case ProtectionTypes.PASSWORD:
-                return memoryDatabase.hasAccess(player.getName(), protection);
+                return wrapPlayer(player).getAccessibleProtections().contains(protection);
 
             case ProtectionTypes.PRIVATE:
                 if (playerName.equalsIgnoreCase(protection.getOwner())) {
@@ -437,7 +445,7 @@ public class LWC {
                 return player.getName().equalsIgnoreCase(protection.getOwner());
 
             case ProtectionTypes.PASSWORD:
-                return player.getName().equalsIgnoreCase(protection.getOwner()) && memoryDatabase.hasAccess(player.getName(), protection);
+                return player.getName().equalsIgnoreCase(protection.getOwner()) && wrapPlayer(player).getAccessibleProtections().contains(protection);
 
             case ProtectionTypes.PRIVATE:
                 if (playerName.equalsIgnoreCase(protection.getOwner())) {
@@ -483,12 +491,7 @@ public class LWC {
             physicalDatabase.dispose();
         }
 
-        if (memoryDatabase != null) {
-            memoryDatabase.dispose();
-        }
-
         physicalDatabase = null;
-        memoryDatabase = null;
     }
 
     /**
@@ -576,8 +579,7 @@ public class LWC {
         switch (protection.getType()) {
             case ProtectionTypes.PASSWORD:
                 if (!hasAccess) {
-                    getMemoryDatabase().unregisterUnlock(player.getName());
-                    getMemoryDatabase().registerUnlock(player.getName(), protection.getId());
+                    wrapPlayer(player).addAccessibleProtection(protection);
 
                     sendLocale(player, "protection.general.locked.password", "block", materialToString(block));
                 }
@@ -776,13 +778,6 @@ public class LWC {
         }
 
         return value;
-    }
-
-    /**
-     * @return memory database object
-     */
-    public MemDB getMemoryDatabase() {
-        return memoryDatabase;
     }
 
     /**
@@ -1060,7 +1055,6 @@ public class LWC {
         Performance.init();
 
         physicalDatabase = new PhysDB();
-        memoryDatabase = new MemDB();
         updateThread = new UpdateThread(this);
 
         // Permissions init
@@ -1114,10 +1108,7 @@ public class LWC {
         log("Loading " + Database.DefaultType);
         try {
             physicalDatabase.connect();
-            memoryDatabase.connect();
-
             physicalDatabase.load();
-            memoryDatabase.load();
 
             log("Using: " + StringUtils.capitalizeFirstLetter(physicalDatabase.getConnection().getMetaData().getDriverVersion()));
         } catch (Exception e) {
@@ -1257,7 +1248,7 @@ public class LWC {
      * @return true if the player is NOT in persistent mode
      */
     public boolean notInPersistentMode(String player) {
-        return !memoryDatabase.hasMode(player, "persist");
+        return !wrapPlayer(Bukkit.getServer().getPlayer(player)).hasMode("persist");
     }
 
     /**

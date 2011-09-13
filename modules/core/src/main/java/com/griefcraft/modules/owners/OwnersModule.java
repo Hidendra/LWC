@@ -20,6 +20,7 @@ package com.griefcraft.modules.owners;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Action;
+import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
@@ -46,10 +47,10 @@ public class OwnersModule extends JavaModule {
 
         LWC lwc = event.getLWC();
         Protection protection = event.getProtection();
-        Player player = event.getPlayer();
+        LWCPlayer player = lwc.wrapPlayer(event.getPlayer());
         event.setResult(Result.CANCEL);
 
-        Action action = lwc.getMemoryDatabase().getAction("owners", player.getName());
+        Action action = player.getAction("owners");
         int accessPage = Integer.parseInt(action.getData());
 
         /*
@@ -142,7 +143,7 @@ public class OwnersModule extends JavaModule {
             return;
         }
 
-        Player player = (Player) sender;
+        LWCPlayer player = lwc.wrapPlayer(sender);
         int page = 1;
 
         if (args.length > 0) {
@@ -154,8 +155,14 @@ public class OwnersModule extends JavaModule {
             }
         }
 
-        lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-        lwc.getMemoryDatabase().registerAction("owners", player.getName(), page + "");
+        Action action = new Action();
+        action.setName("owners");
+        action.setPlayer(player);
+        action.setData(page + "");
+
+        player.removeAllActions();
+        player.addAction(action);
+
         lwc.sendLocale(sender, "protection.owners.finalize");
         return;
     }

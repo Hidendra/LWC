@@ -18,6 +18,9 @@
 package com.griefcraft.modules.modes;
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Action;
+import com.griefcraft.model.LWCPlayer;
+import com.griefcraft.model.Mode;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
@@ -48,8 +51,8 @@ public class DropTransferModule extends JavaModule {
      * @param player
      * @return
      */
-    private boolean isPlayerDropTransferring(String player) {
-        return lwc.getMemoryDatabase().hasMode(player, "+dropTransfer");
+    private boolean isPlayerDropTransferring(LWCPlayer player) {
+        return player.hasMode("+dropTransfer");
     }
 
     /**
@@ -58,8 +61,9 @@ public class DropTransferModule extends JavaModule {
      * @param player
      * @return
      */
-    private int getPlayerDropTransferTarget(String player) {
-        String target = lwc.getMemoryDatabase().getModeData(player, "dropTransfer");
+    private int getPlayerDropTransferTarget(LWCPlayer player) {
+        Mode mode = player.getMode("dropTransfer");
+        String target = mode.getData();
 
         try {
             return Integer.parseInt(target);
@@ -70,14 +74,15 @@ public class DropTransferModule extends JavaModule {
     }
 
     @Override
-    public Result onDropItem(LWC lwc, Player player, Item item, ItemStack itemStack) {
-        int protectionId = getPlayerDropTransferTarget(player.getName());
+    public Result onDropItem(LWC lwc, Player bPlayer, Item item, ItemStack itemStack) {
+        LWCPlayer player = lwc.wrapPlayer(bPlayer);
+        int protectionId = getPlayerDropTransferTarget(player);
 
         if (protectionId == -1) {
             return DEFAULT;
         }
 
-        if (!isPlayerDropTransferring(player.getName())) {
+        if (!isPlayerDropTransferring(player)) {
             return DEFAULT;
         }
 
@@ -85,7 +90,7 @@ public class DropTransferModule extends JavaModule {
 
         if (protection == null) {
             player.sendMessage(Colors.Red + "Protection no longer exists");
-            lwc.getMemoryDatabase().unregisterMode(player.getName(), "dropTransfer");
+            player.disableMode(player.getMode("dropTransfer"));
             return DEFAULT;
         }
 
@@ -94,7 +99,7 @@ public class DropTransferModule extends JavaModule {
 
         if (world == null) {
             player.sendMessage(Colors.Red + "Invalid world!");
-            lwc.getMemoryDatabase().unregisterMode(player.getName(), "dropTransfer");
+            player.disableMode(player.getMode("dropTransfer"));
             return DEFAULT;
         }
 
@@ -105,36 +110,46 @@ public class DropTransferModule extends JavaModule {
             player.sendMessage("Chest could not hold all the items! Have the remaining items back.");
 
             for (ItemStack temp : remaining.values()) {
-                player.getInventory().addItem(temp);
+                bPlayer.getInventory().addItem(temp);
             }
         }
-        player.updateInventory(); // if they're in the chest and dropping items, this is required
+        bPlayer.updateInventory(); // if they're in the chest and dropping items, this is required
         item.remove();
 
         return DEFAULT;
     }
 
     @Override
-    public Result onProtectionInteract(LWC lwc, Player player, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin) {
+    public Result onProtectionInteract(LWC lwc, Player bPlayer, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin) {
         if (!actions.contains("dropTransferSelect")) {
             return DEFAULT;
         }
+
+        LWCPlayer player = lwc.wrapPlayer(bPlayer);
 
         if (!canAccess) {
             lwc.sendLocale(player, "protection.interact.dropxfer.noaccess");
         } else {
             if (protection.getBlockId() != Material.CHEST.getId()) {
                 lwc.sendLocale(player, "protection.interact.dropxfer.notchest");
-                lwc.getMemoryDatabase().unregisterAllActions(player.getName());
+                player.removeAllActions();
                 return CANCEL;
             }
 
-            lwc.getMemoryDatabase().registerMode(player.getName(), "dropTransfer", protection.getId() + "");
-            lwc.getMemoryDatabase().registerMode(player.getName(), "+dropTransfer");
+            Mode mode = new Mode();
+            mode.setName("dropTransfer");
+            mode.setData(protection.getId() + "");
+            mode.setPlayer(bPlayer);
+            player.enableMode(mode);
+            mode = new Mode();
+            mode.setName("+dropTransfer");
+            mode.setPlayer(bPlayer);
+            player.enableMode(mode);
+
             lwc.sendLocale(player, "protection.interact.dropxfer.finalize");
         }
 
-        lwc.getMemoryDatabase().unregisterAllActions(player.getName()); // ignore the persist mode
+        player.removeAllActions(); // ignore the persist mode
         return DEFAULT;
     }
 
@@ -145,7 +160,7 @@ public class DropTransferModule extends JavaModule {
         }
 
         lwc.sendLocale(player, "protection.interact.dropxfer.notprotected");
-        lwc.getMemoryDatabase().unregisterAllActions(player.getName());
+        lwc.removeModes(player);
 
         return DEFAULT;
     }
@@ -164,7 +179,7 @@ public class DropTransferModule extends JavaModule {
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
 
-        Player player = (Player) sender;
+        LWCPlayer player = lwc.wrapPlayer(sender);
         String mode = args[0].toLowerCase();
 
         if (!mode.equals("droptransfer")) {
@@ -185,40 +200,48 @@ public class DropTransferModule extends JavaModule {
         String playerName = player.getName();
 
         if (action.equals("select")) {
-            if (isPlayerDropTransferring(playerName)) {
+            if (isPlayerDropTransferring(player)) {
                 lwc.sendLocale(player, "protection.modes.dropxfer.select.error");
                 return;
             }
 
-            lwc.getMemoryDatabase().unregisterMode(playerName, mode);
-            lwc.getMemoryDatabase().registerAction("dropTransferSelect", playerName, "");
+            player.disableMode(player.getMode(mode));
 
+            Action temp = new Action();
+            temp.setName("dropTransferSelect");
+            temp.setPlayer(player);
+
+            player.addAction(temp);
             lwc.sendLocale(player, "protection.modes.dropxfer.select.finalize");
         } else if (action.equals("on")) {
-            int target = getPlayerDropTransferTarget(playerName);
+            int target = getPlayerDropTransferTarget(player);
 
             if (target == -1) {
                 lwc.sendLocale(player, "protection.modes.dropxfer.selectchest");
                 return;
             }
 
-            lwc.getMemoryDatabase().registerMode(playerName, "+dropTransfer");
+            Mode temp = new Mode();
+            temp.setName("+dropTransfer");
+            temp.setPlayer(player.getBukkitPlayer());
+
+            player.enableMode(temp);
             lwc.sendLocale(player, "protection.modes.dropxfer.on.finalize");
         } else if (action.equals("off")) {
-            int target = getPlayerDropTransferTarget(playerName);
+            int target = getPlayerDropTransferTarget(player);
 
             if (target == -1) {
                 lwc.sendLocale(player, "protection.modes.dropxfer.selectchest");
                 return;
             }
 
-            lwc.getMemoryDatabase().unregisterMode(playerName, "+dropTransfer");
+            player.disableMode(player.getMode("+dropTransfer"));
             lwc.sendLocale(player, "protection.modes.dropxfer.off.finalize");
         } else if (action.equals("status")) {
-            if (getPlayerDropTransferTarget(playerName) == -1) {
+            if (getPlayerDropTransferTarget(player) == -1) {
                 lwc.sendLocale(player, "protection.modes.dropxfer.status.off");
             } else {
-                if (isPlayerDropTransferring(playerName)) {
+                if (isPlayerDropTransferring(player)) {
                     lwc.sendLocale(player, "protection.modes.dropxfer.status.active");
                 } else {
                     lwc.sendLocale(player, "protection.modes.dropxfer.status.inactive");
