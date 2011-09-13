@@ -63,6 +63,11 @@ public class DropTransferModule extends JavaModule {
      */
     private int getPlayerDropTransferTarget(LWCPlayer player) {
         Mode mode = player.getMode("dropTransfer");
+
+        if (mode == null) {
+            return -1;
+        }
+
         String target = mode.getData();
 
         try {

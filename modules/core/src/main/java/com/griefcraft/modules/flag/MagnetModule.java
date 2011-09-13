@@ -21,6 +21,7 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.config.Configuration;
+import de.moritzschmale.Showcase.ShowcaseMain;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -81,7 +82,7 @@ public class MagnetModule extends JavaModule {
                 String worldName = world.getName();
 
                 if (entities == null || entities.size() == 0) {
-                    entities = world.getEntities();
+                    entities = new ArrayList<Entity>(world.getEntities());
                 }
 
                 Iterator<Entity> iterator = entities.iterator();
@@ -111,6 +112,12 @@ public class MagnetModule extends JavaModule {
                     int x = location.getBlockX();
                     int y = location.getBlockY();
                     int z = location.getBlockZ();
+
+                    if (isShowcaseItem(item)) {
+                        // it's being used by the Showcase plugin ... ignore it
+                        iterator.remove();
+                        continue;
+                    }
 
                     List<Protection> protections = lwc.getPhysicalDatabase().loadProtections(worldName, x, y, z, radius);
                     Block block;
@@ -164,6 +171,29 @@ public class MagnetModule extends JavaModule {
      * The BukkitScheduler task id
      */
     private int taskId;
+
+    /**
+     * Check for the Showcase plugin and if it exists we also want to make sure the block doesn't have a showcase
+     * on it.
+     *
+     * @param item
+     * @return
+     */
+    private boolean isShowcaseItem(Item item) {
+        if (item == null) {
+            return false;
+        }
+
+        // check for the showcase plugin
+        boolean hasShowcase = Bukkit.getServer().getPluginManager().getPlugin("Showcase") != null;
+
+        if (hasShowcase) {
+            // Now we can check for the showcase item
+            return ShowcaseMain.instance.getItemByDrop(item) != null;
+        }
+
+        return false;
+    }
 
     @Override
     public void load(LWC lwc) {
