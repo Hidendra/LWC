@@ -1,4 +1,5 @@
 ### 4.00-alpha3
+* Out of sync doubledoors can be fixed with the `/lwc fix` or `/lwc fixdoor` commands.
 * Fixes a duplication exploit related to the Magnet feature and the Showcase plugin
 * The database is no longer used for LWC's in-memory database. It is now stored in-memory objects and even if the database connection is lost, LWC won't be totally unusable.
 * Job scheduler. At the moment, it only supports Cleanup, but will support more in the future. It allows you to manually run specific jobs or automatically run them at a given time (they can be provided by outside sources, too.)

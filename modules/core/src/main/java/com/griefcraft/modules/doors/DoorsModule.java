@@ -18,9 +18,12 @@
 package com.griefcraft.modules.doors;
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
+import com.griefcraft.util.Colors;
 import com.griefcraft.util.config.Configuration;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -202,6 +205,7 @@ public class DoorsModule extends JavaModule {
         LWC lwc = event.getLWC();
         Protection protection = event.getProtection();
         Player player = event.getPlayer();
+        LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
 
         // get the blocks for the door
         List<Block> blocks = lwc.getProtectionSet(protection.getBukkitWorld(), protection.getX(), protection.getY(), protection.getZ());
@@ -213,9 +217,16 @@ public class DoorsModule extends JavaModule {
 
         // only send them one message :-)
         boolean sentMessage = false;
+        boolean fixDoor = false;
+
+        // check for the doorfix
+        if (lwcPlayer.hasAction("fixdoor")) {
+            lwcPlayer.removeAction(lwcPlayer.getAction("fixdoor"));
+            fixDoor = true;
+        }
 
         // search around for iron doors if enabled
-        if (configuration.getBoolean("doors.doubleDoors", true)) {
+        if (configuration.getBoolean("doors.doubleDoors", true) && !fixDoor) {
             Block protectionBlock = protection.getBlock();
             Block temp;
 
@@ -303,6 +314,32 @@ public class DoorsModule extends JavaModule {
         }
 
         return;
+    }
+
+    @Override
+    public void onCommand(LWCCommandEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
+        if (!(event.getSender() instanceof Player)) {
+            return;
+        }
+
+        if (!event.hasFlag("fix") && !event.hasFlag("fixdoor")) {
+            return;
+        }
+
+        LWCPlayer player = event.getLWC().wrapPlayer(event.getSender());
+
+        // create the action
+        com.griefcraft.model.Action action = new com.griefcraft.model.Action();
+        action.setName("fixdoor");
+        action.setPlayer(player);
+
+        player.addAction(action);
+        player.sendMessage(Colors.Green + "Click on the door to fix it.");
+        event.setCancelled(true);
     }
 
 }
