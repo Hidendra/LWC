@@ -19,24 +19,23 @@ package com.griefcraft.model;
 
 public class Action {
 
-    public int id;
-    private String action;
-    private int protectionId;
+    private String name;
+    private Protection protection;
     private String data;
-    private String player;
+    private LWCPlayer player;
 
     /**
-     * @return the action
+     * @return the name
      */
-    public String getAction() {
-        return action;
+    public String getName() {
+        return name;
     }
 
     /**
-     * @return the protectionId
+     * @return the Protection associated with this action
      */
-    public int getProtectionId() {
-        return protectionId;
+    public Protection getProtection() {
+        return protection;
     }
 
     /**
@@ -47,31 +46,24 @@ public class Action {
     }
 
     /**
-     * @return the id
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
      * @return the player
      */
-    public String getPlayer() {
+    public LWCPlayer getPlayer() {
         return player;
     }
 
     /**
-     * @param action the action to set
+     * @param name the name to set
      */
-    public void setAction(String action) {
-        this.action = action;
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
-     * @param protectionId the protectionId to set
+     * @param protection the Protection to set
      */
-    public void setProtectionId(int protectionId) {
-        this.protectionId = protectionId;
+    public void setProtection(Protection protection) {
+        this.protection = protection;
     }
 
     /**
@@ -82,16 +74,9 @@ public class Action {
     }
 
     /**
-     * @param id the id to set
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    /**
      * @param player the player to set
      */
-    public void setPlayer(String player) {
+    public void setPlayer(LWCPlayer player) {
         this.player = player;
     }
 

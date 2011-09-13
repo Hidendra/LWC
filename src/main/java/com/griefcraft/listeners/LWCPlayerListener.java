@@ -19,6 +19,7 @@ package com.griefcraft.listeners;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
+import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.Module;
 import com.griefcraft.scripting.Module.Result;
@@ -43,6 +44,7 @@ import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LWCPlayerListener extends PlayerListener {
@@ -103,6 +105,7 @@ public class LWCPlayerListener extends PlayerListener {
 
         LWC lwc = plugin.getLWC();
         Player player = event.getPlayer();
+        LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
         Block clickedBlock = event.getClickedBlock();
         Location location = clickedBlock.getLocation();
 
@@ -122,11 +125,21 @@ public class LWCPlayerListener extends PlayerListener {
         }
 
         try {
-            List<String> actions = lwc.getMemoryDatabase().getActions(player.getName());
+            List<String> actions = new ArrayList<String>(lwcPlayer.getActionNames());
             Protection protection = lwc.findProtection(block);
             Module.Result result = Module.Result.CANCEL;
             boolean canAccess = lwc.canAccessProtection(player, protection);
             boolean canAdmin = lwc.canAdminProtection(player, protection);
+
+            // register in an action what protection they interacted with (if applicable.)
+            if (protection != null) {
+                com.griefcraft.model.Action action = new com.griefcraft.model.Action();
+                action.setName("interacted");
+                action.setPlayer(lwcPlayer);
+                action.setProtection(protection);
+
+                lwcPlayer.addAction(action);
+            }
 
             if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
                 boolean ignoreLeftClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreLeftClick"));
@@ -188,14 +201,10 @@ public class LWCPlayerListener extends PlayerListener {
             return;
         }
 
-        LWC lwc = plugin.getLWC();
-        String player = event.getPlayer().getName();
-
-        lwc.getMemoryDatabase().unregisterPlayer(player);
-        lwc.getMemoryDatabase().unregisterUnlock(player);
-        lwc.getMemoryDatabase().unregisterPendingLock(player);
-        lwc.getMemoryDatabase().unregisterAllActions(player);
-        lwc.getMemoryDatabase().unregisterAllModes(player);
+        LWCPlayer player = LWC.getInstance().wrapPlayer(event.getPlayer());
+        player.removeAllAccessibleProtections();
+        player.removeAllActions();
+        player.disableAllModes();
     }
 
 }

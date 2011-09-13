@@ -18,12 +18,11 @@
 package com.griefcraft.modules.modes;
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.LWCPlayer;
+import com.griefcraft.model.Mode;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-import java.util.List;
 
 public class PersistModule extends JavaModule {
 
@@ -41,25 +40,26 @@ public class PersistModule extends JavaModule {
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
 
-        Player player = (Player) sender;
+        LWCPlayer player = lwc.wrapPlayer(sender);
         String mode = args[0].toLowerCase();
 
         if (!mode.equals("persist")) {
             return;
         }
 
-        List<String> modes = lwc.getMemoryDatabase().getModes(player.getName());
+        if (!player.hasMode(mode)) {
+            Mode temp = new Mode();
+            temp.setName(mode);
+            temp.setPlayer(player.getBukkitPlayer());
 
-        if (!modes.contains(mode)) {
-            lwc.getMemoryDatabase().registerMode(player.getName(), mode);
+            player.enableMode(temp);
             lwc.sendLocale(player, "protection.modes.persist.finalize");
         } else {
-            lwc.getMemoryDatabase().unregisterMode(player.getName(), mode);
+            player.disableMode(player.getMode(mode));
             lwc.sendLocale(player, "protection.modes.persist.off");
         }
 
         event.setCancelled(true);
-        return;
     }
 
 }

@@ -18,6 +18,8 @@
 package com.griefcraft.lwc;
 
 import com.griefcraft.bukkit.LWCSpoutPlugin;
+import com.griefcraft.model.Action;
+import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.scripting.JavaModule;
@@ -104,9 +106,12 @@ public class PasswordRequestModule extends JavaModule {
             Button button = event.getButton();
             SpoutPlayer player = event.getPlayer();
             LWC lwc = LWC.getInstance();
+            LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
+
+            Action action = lwcPlayer.getAction("interacted");
 
             // if they don't have an unlock req, why is the screen open?
-            if (!lwc.getMemoryDatabase().hasPendingUnlock(player.getName())) {
+            if (action == null) {
                 player.getMainScreen().closePopup();
                 return;
             }
@@ -117,15 +122,13 @@ public class PasswordRequestModule extends JavaModule {
                 // check their password
                 String password = lwc.encrypt(textField.getText().trim());
 
-                int protectionId = lwc.getMemoryDatabase().getUnlockID(player.getName());
+                // load the protection they had clicked
+                Protection protection = action.getProtection();
 
-                if (protectionId == -1) {
+                if (protection == null) {
                     lwc.sendLocale(player, "protection.internalerror", "id", "unlock");
                     return;
                 }
-
-                // load the protection they had clicked
-                Protection protection = lwc.getPhysicalDatabase().loadProtection(protectionId);
 
                 if (protection.getType() != ProtectionTypes.PASSWORD) {
                     lwc.sendLocale(player, "protection.unlock.notpassword");
@@ -133,8 +136,7 @@ public class PasswordRequestModule extends JavaModule {
                 }
 
                 if (protection.getData().equals(password)) {
-                    lwc.getMemoryDatabase().unregisterUnlock(player.getName());
-                    lwc.getMemoryDatabase().registerPlayer(player.getName(), protectionId);
+                    lwcPlayer.addAccessibleProtection(protection);
                     player.getMainScreen().closePopup();
 
                     // open the chest that they clicked :P
