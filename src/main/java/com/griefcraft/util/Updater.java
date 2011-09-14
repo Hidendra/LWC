@@ -39,6 +39,33 @@ import java.util.logging.Logger;
 
 public class Updater {
 
+    public enum UpdateScheme {
+
+        /**
+         * Long release schedules and is recommended on any server that wishes to have stable LWC features
+         * but does not necessarily want the very latest LWC has to offer in features, bug fixes, and
+         * performance.
+         */
+        RELEASE,
+
+        /**
+         * The best middle-ground between getting the newest features and having a stable build. Builds received
+         * from the CURRENT branch should never totally break LWC, but the possibility still exists. Builds in
+         * this scheme will almost always display -alphaX or -betaX in /lwc admin version but may also display -rcX
+         * for builds that are nearing a full release.
+         */
+        CURRENT,
+
+        /**
+         * The most volatile scheme. Should not be used on production servers but offers the most up to date features
+         * but testing may not have been performed all around. Performance may also not have been rounded out and
+         * any features may be removed at any time. Versioning for this scheme is based off of the current and latest
+         * build number.
+         */
+        BLEEDING_EDGE
+
+    }
+
     /**
      * The logging object for this class
      */
