@@ -17,15 +17,17 @@
 
 package com.griefcraft.lwc;
 
+import com.griefcraft.util.Version;
+
 /**
  * Temporary, just need to get version info, etc into a packaged class
  */
 public class LWCInfo {
 
     /**
-     * Full LWC version with git commit & CI build (unless manually built.)
+     * Full LWC version
      */
-    public static String FULL_VERSION;
+    public static Version FULL_VERSION;
 
     /**
      * LWC's version.
@@ -43,11 +45,6 @@ public class LWCInfo {
      * @author morganm
      */
     public static void setVersion(String version) {
-        try {
-            VERSION = Double.parseDouble(version);
-        } catch (NumberFormatException e) {
-        }
-
         String implementationVersion = LWCPlugin.class.getPackage().getImplementationVersion();
 
         // if it's not a manual build, prepend a b
@@ -55,10 +52,6 @@ public class LWCInfo {
             implementationVersion = "b" + implementationVersion;
         }
 
-        if (VERSION > 0d) {
-            FULL_VERSION = String.format("%.2f (%s)", VERSION, implementationVersion);
-        } else {
-            FULL_VERSION = String.format("%s (%s)", version, implementationVersion);
-        }
+        FULL_VERSION = new Version(version + " " + implementationVersion);
     }
 }
