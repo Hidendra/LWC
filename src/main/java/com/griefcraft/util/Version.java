@@ -276,6 +276,8 @@ public final class Version implements Comparable {
             } else {
                 this.releaseLevelWeight = 1;
             }
+            
+            break;
         }
 
         // search for build number
