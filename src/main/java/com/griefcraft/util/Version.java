@@ -84,6 +84,26 @@ public final class Version implements Comparable {
         calculateWeights();
     }
 
+    /**
+     * Check if this version is newer than the given version
+     *
+     * @param version
+     * @return
+     */
+    public boolean newerThan(Version version) {
+        return compareTo(version) > 0;
+    }
+
+    /**
+     * Check i this version is older than the given version
+     *
+     * @param version
+     * @return
+     */
+    public boolean olderThan(Version version) {
+        return compareTo(version) < 0;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
