@@ -1,5 +1,7 @@
 ### 4.00-alpha3
-* Out of sync doubledoors can be fixed with the `/lwc fix` or `/lwc fixdoor` commands.
+* Double wooden doors will now function properly
+* The openAndClose feature of double doors has been fixed
+* Out of sync double doors can be fixed with the `/lwc fix` or `/lwc fixdoor` commands
 * Fixes a duplication exploit related to the Magnet feature and the Showcase plugin
 * The database is no longer used for LWC's in-memory database. It is now stored in-memory objects and even if the database connection is lost, LWC won't be totally unusable.
 * Job scheduler. At the moment, it only supports Cleanup, but will support more in the future. It allows you to manually run specific jobs or automatically run them at a given time (they can be provided by outside sources, too.)
@@ -13,6 +15,6 @@
 
 ### 4.00-alpha2
 * `/lwc admin report` has had a makeover and now also shows cache read/writes
-* Protection rights have been inlined with the main protections table.
+* Protection rights have been inlined with the main protections table
 * Multi-group support has been added for Permissions 3.0+
 * Permissions support has been modified to always depend on Superperms, while LWC's own implementations will only be used for groups. This **breaks Permissions 2/3 support** unless you have SuperpermsBridge!
