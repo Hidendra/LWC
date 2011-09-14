@@ -30,12 +30,17 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.material.Door;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Unused localized nodes that are already in LWC:
+ *  - protection.doors.open "The door creaks open...."
+ *  - protection.doors.close "The door slams shut!"
+ */
 public class DoorsModule extends JavaModule {
 
     class DoorAction {
@@ -83,24 +88,16 @@ public class DoorsModule extends JavaModule {
     private class DoorTask implements Runnable {
         public void run() {
             Iterator<DoorAction> iter = doors.iterator();
+
             while (iter.hasNext()) {
                 DoorAction doorAction = iter.next();
                 Location location = doorAction.location;
 
                 if (System.currentTimeMillis() > doorAction.triggerTime) {
-                    Block block = location.getBlock();
-
-                    Door door = new Door(block.getType(), block.getData());
-                    byte data = initializeDoorData(door);
-
-                    // Close the door
-                    if (isDoorOpen(door)) {
-                        if ((block.getData() & 0x4) != 0x4) {
-                            data |= 0x4;
-                        }
+                    for (Block block : getDoorBlocks(location.getBlock())) {
+                        toggleDoor(block);
                     }
-
-                    block.setData(data);
+                    
                     iter.remove();
                 }
             }
@@ -133,52 +130,6 @@ public class DoorsModule extends JavaModule {
     }
 
     /**
-     * Scrape data from a doot
-     *
-     * @param door
-     * @return
-     */
-    private byte initializeDoorData(Door door) {
-        byte data = 0x00;
-
-        // get the hinge position
-        switch (door.getHingeCorner()) {
-            case NORTH_EAST:
-                data |= 0x0;
-                break;
-
-            case SOUTH_EAST:
-                data |= 0x1;
-                break;
-
-            case SOUTH_WEST:
-                data |= 0x2;
-                break;
-
-            case NORTH_WEST:
-                data |= 0x3;
-                break;
-        }
-
-        if (door.isTopHalf()) {
-            data |= 0x8;
-        }
-
-        return data;
-    }
-
-    /**
-     * @param door
-     * @return
-     */
-    private boolean isDoorOpen(Door door) {
-        switch (door.getHingeCorner()) {
-            default:
-                return door.isOpen();
-        }
-    }
-
-    /**
      * Check if a material is usable by this (doors.)
      *
      * @param material
@@ -186,6 +137,49 @@ public class DoorsModule extends JavaModule {
      */
     private boolean isValid(Material material) {
         return material == Material.IRON_DOOR_BLOCK || material == Material.WOODEN_DOOR;
+    }
+
+    /**
+     * Toggle a door between open and closed
+     *
+     * @param block
+     */
+    private void toggleDoor(Block block) {
+        if (block == null || !isValid(block.getType())) {
+            return;
+        }
+
+        block.setData((byte) (block.getData() ^ 0x4));
+    }
+
+    /**
+     * Find both pieces of a door
+     *
+     * @param block
+     * @return
+     */
+    private List<Block> getDoorBlocks(Block block) {
+        List<Block> door = new ArrayList<Block>();
+        Block temp;
+
+        if (!isValid(block.getType())) {
+            return door;
+        }
+
+        // ...
+        door.add(block);
+
+        // check the block above it, which is by default the bottom half of the door is normally ALWAYS given
+        if (isValid((temp = block.getRelative(BlockFace.UP)).getType())) {
+            door.add(temp);
+        }
+
+        // and now check below it, just incase
+        else if (isValid((temp = block.getRelative(BlockFace.DOWN)).getType())) {
+            door.add(temp);
+        }
+
+        return door;
     }
 
     @Override
@@ -207,16 +201,21 @@ public class DoorsModule extends JavaModule {
         Player player = event.getPlayer();
         LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
 
-        // get the blocks for the door
-        List<Block> blocks = lwc.getProtectionSet(protection.getBukkitWorld(), protection.getX(), protection.getY(), protection.getZ());
-
-        // ignore the door they clicked if it's a wooden door
-        if(protection.getBlockId() == Material.WOODEN_DOOR.getId()) {
-            blocks.clear();
+        // make sure we actually want this protection
+        if (!isValid(Material.getMaterial(protection.getBlockId()))) {
+            return;
         }
 
-        // only send them one message :-)
-        boolean sentMessage = false;
+        // get the blocks for the door
+        List<Block> blocks = new ArrayList<Block>();
+
+        // the door they clicked on
+        Block clickedDoor = lwc.getProtectionSet(protection.getBukkitWorld(), protection.getX(), protection.getY(), protection.getZ()).get(0);
+
+        // add the bottom half of the door to the set
+        blocks.add(clickedDoor);
+
+        // if /lwc fix | /lwc fixdoor is being used
         boolean fixDoor = false;
 
         // check for the doorfix
@@ -226,7 +225,7 @@ public class DoorsModule extends JavaModule {
         }
 
         // search around for iron doors if enabled
-        if (configuration.getBoolean("doors.doubleDoors", true) && !fixDoor) {
+        if (configuration.getBoolean("doors.doubleDoors", true)) {
             Block protectionBlock = protection.getBlock();
             Block temp;
 
@@ -243,8 +242,8 @@ public class DoorsModule extends JavaModule {
                     }
 
                     if (lwc.canAccessProtection(player, found)) {
-                        // we can access it, add it to the blocks
-                        blocks.addAll(lwc.getProtectionSet(found.getBukkitWorld(), found.getX(), found.getY(), found.getZ()));
+                        // we can access it, add the bottom half of the found door
+                        blocks.add(lwc.getProtectionSet(found.getBukkitWorld(), found.getX(), found.getY(), found.getZ()).get(0));
                     }
                 }
             }
@@ -255,65 +254,36 @@ public class DoorsModule extends JavaModule {
                 continue;
             }
 
-            // create the door instance
-            Door door = new Door(block.getType(), block.getData());
+            // iterate through both door blocks
+            int index = 0;
+            
+            for (Block door : getDoorBlocks(block)) {
+                if ((block != clickedDoor && !fixDoor) || (block == clickedDoor && block.getType() == Material.IRON_DOOR_BLOCK)) {
+                    toggleDoor(door);
+                }
 
-            // process the current door's data
-            byte data = initializeDoorData(door);
+                switch (this.action) {
+                    case TOGGLE:
+                        break;
 
-            switch (this.action) {
-                case TOGGLE:
+                    case OPEN_AND_CLOSE:
+                        // if we are fixing the door, we shouldn't toggle it again
+                        if (index == 0 && !fixDoor) {
+                            Location location = new Location(block.getWorld(), block.getX(), block.getY(), block.getZ());
 
-                    if ((block.getData() & 0x4) != 0x4) {
-                        data |= 0x4;
-                    }
+                            DoorAction doorAction = new DoorAction();
+                            doorAction.location = location;
+                            doorAction.triggerTime = System.currentTimeMillis() + (interval * 1000L);
 
-                    if (!sentMessage) {
-                        sentMessage = true;
-
-                        if (isDoorOpen(door)) {
-                            // lwc.sendLocale(player, "protection.doors.open");
-                        } else {
-                            // lwc.sendLocale(player, "protection.doors.close");
+                            doors.push(doorAction);
                         }
-                    }
 
-                    break;
+                        break;
+                }
 
-                case OPEN_AND_CLOSE:
-
-                    if ((block.getData() & 0x4) != 0x4) {
-                        data |= 0x4;
-                    }
-
-                    if (!sentMessage) {
-                        sentMessage = true;
-
-                        if (isDoorOpen(door)) {
-                            // lwc.sendLocale(player, "protection.doors.open");
-                        } else {
-                            // lwc.sendLocale(player, "protection.doors.close");
-                        }
-                    }
-
-                    if (!isDoorOpen(door)) {
-                        Location location = new Location(block.getWorld(), block.getX(), block.getY(), block.getZ());
-
-                        DoorAction doorAction = new DoorAction();
-                        doorAction.location = location;
-                        doorAction.triggerTime = System.currentTimeMillis() + (interval * 1000L);
-
-                        doors.push(doorAction);
-                    }
-
-                    break;
+                index ++;
             }
-
-            // update the door
-            block.setData(data);
         }
-
-        return;
     }
 
     @Override
