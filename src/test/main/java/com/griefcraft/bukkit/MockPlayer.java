@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+@SuppressWarnings("deprecation")
 public class MockPlayer implements Player {
 
     private String playerName;
@@ -514,99 +515,83 @@ public class MockPlayer implements Player {
 
     }
 
-    @Override
     public long getPlayerTime() {
         // TODO Auto-generated method stub
         return 0;
     }
 
-    @Override
     public long getPlayerTimeOffset() {
         // TODO Auto-generated method stub
         return 0;
     }
 
-    @Override
     public boolean isPlayerTimeRelative() {
         // TODO Auto-generated method stub
         return false;
     }
 
-    @Override
     public void playNote(Location arg0, Instrument arg1, Note arg2) {
         // TODO Auto-generated method stub
 
     }
 
-    @Override
     public void resetPlayerTime() {
         // TODO Auto-generated method stub
 
     }
 
-    @Override
     public void setPlayerTime(long arg0, boolean arg1) {
         // TODO Auto-generated method stub
 
     }
 
-    @Override
     public PermissionAttachment addAttachment(Plugin arg0) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
     public PermissionAttachment addAttachment(Plugin arg0, int arg1) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
     public PermissionAttachment addAttachment(Plugin arg0, String arg1,
                                               boolean arg2) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
     public PermissionAttachment addAttachment(Plugin arg0, String arg1,
                                               boolean arg2, int arg3) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
     public Set<PermissionAttachmentInfo> getEffectivePermissions() {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
     public boolean hasPermission(Permission arg0) {
         // TODO Auto-generated method stub
         return false;
     }
 
-    @Override
     public boolean isPermissionSet(String arg0) {
         // TODO Auto-generated method stub
         return false;
     }
 
-    @Override
     public boolean isPermissionSet(Permission arg0) {
         // TODO Auto-generated method stub
         return false;
     }
 
-    @Override
     public void recalculatePermissions() {
         // TODO Auto-generated method stub
 
     }
 
-    @Override
     public void removeAttachment(PermissionAttachment arg0) {
         // TODO Auto-generated method stub
 

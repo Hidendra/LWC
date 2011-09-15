@@ -18,7 +18,6 @@
 package com.griefcraft.scripting;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.event.LWCAccessEvent;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
@@ -30,13 +29,6 @@ import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.scripting.event.LWCRedstoneEvent;
 import com.griefcraft.scripting.event.LWCSendLocaleEvent;
-import org.bukkit.block.Block;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.List;
 
 /**
  * This interface defines methods that modules may implement
@@ -58,7 +50,7 @@ public interface Module {
      *
      * @param event
      */
-    public void protectionAccessRequest(LWCAccessEvent event);
+    public void onAccessRequest(LWCAccessEvent event);
 
     /**
      * Called when a player drops an item
@@ -129,138 +121,5 @@ public interface Module {
      * @param event
      */
     public void onSendLocale(LWCSendLocaleEvent event);
-
-    /**
-     * See if a player can access a protection
-     *
-     * @param lwc
-     * @param player
-     * @param protection
-     * @return
-     */
-    @Deprecated
-    public Result canAccessProtection(LWC lwc, Player player, Protection protection);
-
-    /**
-     * See if a player can administrate a protection (i.e modify it)
-     *
-     * @param lwc
-     * @param player
-     * @param protection
-     * @return
-     */
-    @Deprecated
-    public Result canAdminProtection(LWC lwc, Player player, Protection protection);
-
-    /**
-     * Called when a player drops an item
-     *
-     * @param lwc
-     * @param player
-     * @param item
-     * @param itemStack
-     * @return
-     */
-    @Deprecated
-    public Result onDropItem(LWC lwc, Player player, Item item, ItemStack itemStack);
-
-    /**
-     * Player or console command
-     *
-     * @param lwc
-     * @param sender
-     * @param command does not include "lwc", eg. /lwc info = "info"
-     * @param args
-     * @return
-     */
-    @Deprecated
-    public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args);
-
-    /**
-     * Called when redstone is passed to a valid protection
-     *
-     * @param lwc
-     * @param protection
-     * @param block
-     * @param current    the old current
-     * @return
-     */
-    @Deprecated
-    public Result onRedstone(LWC lwc, Protection protection, Block block, int current);
-
-    /**
-     * Called when a protection is destroyed
-     *
-     * @param lwc
-     * @param protection
-     * @param block
-     * @return
-     */
-    @Deprecated
-    public Result onDestroyProtection(LWC lwc, Player player, Protection protection, Block block, boolean canAccess, boolean canAdmin);
-
-    /**
-     * Called when a player left interacts with a valid protection
-     *
-     * @param lwc
-     * @param player
-     * @param protection
-     * @param canAccess
-     * @return
-     */
-    @Deprecated
-    public Result onProtectionInteract(LWC lwc, Player player, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin);
-
-    /**
-     * Called when a player interacts with a block
-     *
-     * @param lwc
-     * @param player
-     * @param block
-     * @param actions
-     * @return
-     */
-    @Deprecated
-    public Result onBlockInteract(LWC lwc, Player player, Block block, List<String> actions);
-
-    /**
-     * Called just before a protection registration is finalized, after all post-checks are passed.
-     *
-     * @param lwc
-     * @param player
-     * @param block
-     * @return
-     */
-    @Deprecated
-    public Result onRegisterProtection(LWC lwc, Player player, Block block);
-
-    /**
-     * Called after a protection is registered
-     *
-     * @param lwc
-     * @param protection
-     */
-    @Deprecated
-    public void onPostRegistration(LWC lwc, Protection protection);
-
-    /**
-     * Called after a protection is removed (at this point, the protection is IMMUTABLE.)
-     *
-     * @param lwc
-     * @param protection
-     */
-    @Deprecated
-    public void onPostRemoval(LWC lwc, Protection protection);
-
-    /**
-     * Called when a localized message is sent to a player (e.g lwc.accessdenied)
-     *
-     * @param lwc
-     * @param player
-     * @param locale
-     * @since LWC 3.40
-     */
-    @Deprecated
-    public Result onSendLocale(LWC lwc, Player player, String locale);
 
 }
