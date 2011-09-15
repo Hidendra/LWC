@@ -565,7 +565,7 @@ public class PhysDB extends Database {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            printException(e);
         } finally {
             if (set != null) {
                 try {
