@@ -23,7 +23,10 @@ import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Mode;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
+import com.griefcraft.scripting.event.LWCDropItemEvent;
+import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.util.Colors;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -79,16 +82,21 @@ public class DropTransferModule extends JavaModule {
     }
 
     @Override
-    public Result onDropItem(LWC lwc, Player bPlayer, Item item, ItemStack itemStack) {
+    @SuppressWarnings("deprecation")
+    public void onDropItem(LWCDropItemEvent event) {
+        Player bPlayer = event.getPlayer();
+        Item item = event.getEvent().getItemDrop();
+        ItemStack itemStack = item.getItemStack();
+
         LWCPlayer player = lwc.wrapPlayer(bPlayer);
         int protectionId = getPlayerDropTransferTarget(player);
 
         if (protectionId == -1) {
-            return DEFAULT;
+            return;
         }
 
         if (!isPlayerDropTransferring(player)) {
-            return DEFAULT;
+            return;
         }
 
         Protection protection = lwc.getPhysicalDatabase().loadProtection(protectionId);
@@ -96,7 +104,7 @@ public class DropTransferModule extends JavaModule {
         if (protection == null) {
             player.sendMessage(Colors.Red + "Protection no longer exists");
             player.disableMode(player.getMode("dropTransfer"));
-            return DEFAULT;
+            return;
         }
 
         // load the world and the inventory
@@ -105,7 +113,7 @@ public class DropTransferModule extends JavaModule {
         if (world == null) {
             player.sendMessage(Colors.Red + "Invalid world!");
             player.disableMode(player.getMode("dropTransfer"));
-            return DEFAULT;
+            return;
         }
 
         Block block = world.getBlockAt(protection.getX(), protection.getY(), protection.getZ());
@@ -118,19 +126,24 @@ public class DropTransferModule extends JavaModule {
                 bPlayer.getInventory().addItem(temp);
             }
         }
+
         bPlayer.updateInventory(); // if they're in the chest and dropping items, this is required
         item.remove();
-
-        return DEFAULT;
     }
 
     @Override
-    public Result onProtectionInteract(LWC lwc, Player bPlayer, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin) {
-        if (!actions.contains("dropTransferSelect")) {
-            return DEFAULT;
-        }
+    public void onProtectionInteract(LWCProtectionInteractEvent event) {
+        LWC lwc = event.getLWC();
+        Protection protection = event.getProtection();
+        List<String> actions = event.getActions();
+        boolean canAccess = event.canAccess();
 
+        Player bPlayer = event.getPlayer();
         LWCPlayer player = lwc.wrapPlayer(bPlayer);
+
+        if (!actions.contains("dropTransferSelect")) {
+            return;
+        }
 
         if (!canAccess) {
             lwc.sendLocale(player, "protection.interact.dropxfer.noaccess");
@@ -138,7 +151,9 @@ public class DropTransferModule extends JavaModule {
             if (protection.getBlockId() != Material.CHEST.getId()) {
                 lwc.sendLocale(player, "protection.interact.dropxfer.notchest");
                 player.removeAllActions();
-                return CANCEL;
+                event.setResult(Result.CANCEL);
+
+                return;
             }
 
             Mode mode = new Mode();
@@ -155,19 +170,19 @@ public class DropTransferModule extends JavaModule {
         }
 
         player.removeAllActions(); // ignore the persist mode
-        return DEFAULT;
     }
 
     @Override
-    public Result onBlockInteract(LWC lwc, Player player, Block block, List<String> actions) {
+    public void onBlockInteract(LWCBlockInteractEvent event) {
+        Player player = event.getPlayer();
+        List<String> actions = event.getActions();
+
         if (!actions.contains("dropTransferSelect")) {
-            return DEFAULT;
+            return;
         }
 
         lwc.sendLocale(player, "protection.interact.dropxfer.notprotected");
         lwc.removeModes(player);
-
-        return DEFAULT;
     }
 
     @Override

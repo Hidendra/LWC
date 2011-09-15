@@ -20,8 +20,6 @@ package com.griefcraft.scripting;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
-import com.griefcraft.model.Protection;
-import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.event.LWCAccessEvent;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
@@ -34,14 +32,8 @@ import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.scripting.event.LWCRedstoneEvent;
 import com.griefcraft.scripting.event.LWCSendLocaleEvent;
-import org.bukkit.block.Block;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import javax.naming.OperationNotSupportedException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -176,7 +168,7 @@ public class ModuleLoader {
                     Module module = metaData.getModule();
 
                     if (event instanceof LWCAccessEvent) {
-                        module.protectionAccessRequest((LWCAccessEvent) event);
+                        module.onAccessRequest((LWCAccessEvent) event);
                     } else if (event instanceof LWCBlockInteractEvent) {
                         module.onBlockInteract((LWCBlockInteractEvent) event);
                     } else if (event instanceof LWCCommandEvent) {
@@ -203,101 +195,6 @@ public class ModuleLoader {
         } catch (Throwable throwable) {
             throw new ModuleException("LWC Module threw an uncaught exception! LWC version: " + LWCInfo.FULL_VERSION, throwable);
         }
-    }
-
-    /**
-     * Dispatch an event
-     *
-     * @param event
-     * @param args
-     * @deprecated
-     */
-    public Result dispatchEvent(Event event, Object... args) {
-        if (event.getExpectedArguments() > args.length) {
-            return Result.DEFAULT;
-        }
-
-        LWC lwc = LWC.getInstance();
-        Result result = Result.DEFAULT;
-
-        try {
-            for (List<MetaData> modules : pluginModules.values()) {
-                for (MetaData metaData : modules) {
-                    Module module = metaData.getModule();
-                    Result temp = Result.DEFAULT;
-
-                    switch (event) {
-
-                        case COMMAND:
-                            temp = module.onCommand(lwc, (CommandSender) args[0], (String) args[1], (String[]) args[2]);
-                            break;
-
-                        case REDSTONE:
-                            temp = module.onRedstone(lwc, (Protection) args[0], (Block) args[1], (Integer) args[2]);
-                            break;
-
-                        case DESTROY_PROTECTION:
-                            temp = module.onDestroyProtection(lwc, (Player) args[0], (Protection) args[1], (Block) args[2], (Boolean) args[3], (Boolean) args[4]);
-                            break;
-
-                        case INTERACT_PROTECTION:
-                            temp = module.onProtectionInteract(lwc, (Player) args[0], (Protection) args[1], (List<String>) args[2], (Boolean) args[3], (Boolean) args[4]);
-                            break;
-
-                        case INTERACT_BLOCK:
-                            temp = module.onBlockInteract(lwc, (Player) args[0], (Block) args[1], (List<String>) args[2]);
-                            break;
-
-                        case REGISTER_PROTECTION:
-                            temp = module.onRegisterProtection(lwc, (Player) args[0], (Block) args[1]);
-                            break;
-
-                        case ACCESS_PROTECTION:
-                            temp = module.canAccessProtection(lwc, (Player) args[0], (Protection) args[1]);
-                            break;
-
-                        case ADMIN_PROTECTION:
-                            temp = module.canAdminProtection(lwc, (Player) args[0], (Protection) args[1]);
-                            break;
-
-                        case DROP_ITEM:
-                            temp = module.onDropItem(lwc, (Player) args[0], (Item) args[1], (ItemStack) args[2]);
-                            break;
-
-                        case POST_REGISTRATION:
-                            module.onPostRegistration(lwc, (Protection) args[0]);
-                            break;
-
-                        case POST_REMOVAL:
-                            module.onPostRemoval(lwc, (Protection) args[0]);
-                            break;
-
-                        case SEND_LOCALE:
-                            temp = module.onSendLocale(lwc, (Player) args[0], (String) args[1]);
-                            break;
-
-                        case ACCESS_REQUEST:
-                            throw new OperationNotSupportedException("ACCESS_REQUEST");
-                    }
-
-                    if (temp != Result.DEFAULT) {
-                        result = temp;
-                    }
-
-                    if (result == Result.CANCEL) {
-                        return result;
-                    }
-                }
-            }
-        } catch (Throwable throwable) {
-            throw new ModuleException("LWC Module threw an uncaught exception! LWC version: " + LWCInfo.FULL_VERSION, throwable);
-        }
-
-        if (result == null) {
-            result = Result.DEFAULT;
-        }
-
-        return result;
     }
 
     /**

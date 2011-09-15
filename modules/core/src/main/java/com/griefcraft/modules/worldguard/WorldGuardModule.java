@@ -19,6 +19,7 @@ package com.griefcraft.modules.worldguard;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.config.Configuration;
 import com.sk89q.worldedit.Vector;
@@ -55,49 +56,43 @@ public class WorldGuardModule extends JavaModule {
     }
 
     @Override
-    public Result onRegisterProtection(LWC lwc, Player player, Block block) {
+    public void onRegisterProtection(LWCProtectionRegisterEvent event) {
         if (worldGuard == null) {
-            return DEFAULT;
+            return;
         }
 
         if (!configuration.getBoolean("worldguard.enabled", false)) {
-            return DEFAULT;
+            return;
         }
 
+        Player player = event.getPlayer();
+        Block block = event.getBlock();
+
         try {
-            /*
-                * Now get the region manager
-                */
+            // Get the region manager
             GlobalRegionManager regions = worldGuard.getGlobalRegionManager();
             RegionManager regionManager = regions.get(player.getWorld());
 
-            /*
-                * We need to reflect into BukkitUtil.toVector
-                */
+            // Reflect into BukkitUtil.toVector ...
             Class<?> bukkitUtil = worldGuard.getClass().getClassLoader().loadClass("com.sk89q.worldguard.bukkit.BukkitUtil");
             Method toVector = bukkitUtil.getMethod("toVector", Block.class);
             Vector blockVector = (Vector) toVector.invoke(null, block);
 
-            /*
-                * Now let's get the list of regions at the block we're clicking
-                */
+            // Now let's get the list of regions at the block we're clicking
             List<String> regionSet = regionManager.getApplicableRegionsIDs(blockVector);
             List<String> allowedRegions = configuration.getStringList("worldguard.regions", new ArrayList<String>());
 
             boolean deny = true;
 
-            /*
-                * Check for *
-                */
+            // check for *
             if (allowedRegions.contains("*")) {
                 if (regionSet.size() > 0) {
-                    return ALLOW;
+                    // Yeah!
+                    return;
                 }
             }
 
-            /*
-                * If there are no regions, we need to deny them
-                */
+            // if they aren't in any of the regions we need to deny them
             for (String region : regionSet) {
                 if (allowedRegions.contains(region)) {
                     deny = false;
@@ -107,13 +102,11 @@ public class WorldGuardModule extends JavaModule {
 
             if (deny) {
                 player.sendMessage(Colors.Red + "You cannot protect that " + LWC.materialToString(block) + " outside of WorldGuard regions");
-                return CANCEL;
+                event.setCancelled(true);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return DEFAULT;
     }
 
     /**

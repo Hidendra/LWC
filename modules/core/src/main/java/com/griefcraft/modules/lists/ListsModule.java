@@ -22,6 +22,7 @@ import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCAccessEvent;
 import com.herocraftonline.dthielke.lists.Lists;
 import com.herocraftonline.dthielke.lists.PrivilegedList;
 import com.herocraftonline.dthielke.lists.PrivilegedList.PrivilegeLevel;
@@ -45,9 +46,12 @@ public class ListsModule extends JavaModule {
     }
 
     @Override
-    public Result canAccessProtection(LWC lwc, Player player, Protection protection) {
+    public void onAccessRequest(LWCAccessEvent event) {
+        Player player = event.getPlayer();
+        Protection protection = event.getProtection();
+        
         if (protection.getType() != ProtectionTypes.PRIVATE) {
-            return DEFAULT;
+            return;
         }
 
         if (lists != null) {
@@ -66,13 +70,11 @@ public class ListsModule extends JavaModule {
 
                     // they have access in some way or another, let's allow them in
                     if (privilegeLevel != null) {
-                        return ALLOW;
+                        event.setAccess(AccessRight.RIGHT_PLAYER);
                     }
                 }
             }
         }
-
-        return DEFAULT;
     }
 
 }
