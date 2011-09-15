@@ -158,18 +158,40 @@ public class LWCBlockListener extends BlockListener {
         Block piston = event.getBlock();
         BlockState state = piston.getState();
         MaterialData data = state.getData();
+        BlockFace direction = null;
 
-        if(!(data instanceof PistonBaseMaterial)) {
+        // Check the block it pushed directly
+        if(data instanceof PistonBaseMaterial) {
+            direction = ((PistonBaseMaterial) data).getFacing();
+            Block block = event.getBlock().getRelative(direction);
+
+            Protection protection = lwc.findProtection(block);
+
+            if (protection != null) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+
+        // if no direction was found, no point in going on
+        if (direction == null) {
             return;
         }
 
-        BlockFace direction = ((PistonBaseMaterial) data).getFacing();
-        Block block = event.getBlock().getRelative(direction);
+        // Check the affected blocks
+        for (int i = 0; i < event.getLength() + 2; i++) {
+            Block block = piston.getRelative(direction, i);
+            Protection protection = lwc.findProtection(block);
 
-        Protection protection = lwc.findProtection(block);
+            // We don't want that!
+            if(block.getType() == Material.AIR) {
+                break;
+            }
 
-        if (protection != null) {
-            event.setCancelled(true);
+            if (protection != null) {
+                event.setCancelled(true);
+                break;
+            }
         }
     }
 
