@@ -1,6 +1,6 @@
 name: LWC
 main: com.griefcraft.lwc.LWCPlugin
-version: 3.47
+version: 3.48
 website: http://griefcraft.com
 author: Hidendra
 description: >
@@ -85,6 +85,7 @@ permissions:
 
   lwc.protect:
       description: Gives the ability to basic LWC usage (almost everything except LWC admin.)
+      default: true
       children:
           lwc.create.*: true
           lwc.modify: true
@@ -111,7 +112,6 @@ permissions:
 
   lwc.create.*:
       description: Allows you to create every basic protection (public, private, password.)
-      default: false
       children:
           lwc.create.public: true
           lwc.create.password: true
