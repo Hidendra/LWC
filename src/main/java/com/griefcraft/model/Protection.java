@@ -20,7 +20,6 @@ package com.griefcraft.model;
 import com.griefcraft.cache.CacheSet;
 import com.griefcraft.cache.LRUCache;
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
@@ -563,7 +562,6 @@ public class Protection {
 
         // broadcast the removal event
         // we broadcast before actually removing to give them a chance to use any data that would be removed otherwise
-        lwc.getModuleLoader().dispatchEvent(ModuleLoader.Event.POST_REMOVAL, this);
         lwc.getModuleLoader().dispatchEvent(new LWCProtectionRemovePostEvent(this));
 
         // mark related transactions as inactive

@@ -24,7 +24,6 @@ import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.scripting.JavaModule;
-import com.griefcraft.scripting.ModuleLoader.Event;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
@@ -106,12 +105,11 @@ public class CreateModule extends JavaModule {
         int blockZ = block.getZ();
 
         lwc.removeModes(player);
-        Result registerProtection = lwc.getModuleLoader().dispatchEvent(Event.REGISTER_PROTECTION, player.getBukkitPlayer(), block);
         LWCProtectionRegisterEvent evt = new LWCProtectionRegisterEvent(player.getBukkitPlayer(), block);
         lwc.getModuleLoader().dispatchEvent(evt);
 
         // another plugin cancelled the registration
-        if (evt.isCancelled() || registerProtection == Result.CANCEL) {
+        if (evt.isCancelled()) {
             return;
         }
 
@@ -202,7 +200,6 @@ public class CreateModule extends JavaModule {
 
         // tell the modules that a protection was registered
         if (protection != null) {
-            lwc.getModuleLoader().dispatchEvent(Event.POST_REGISTRATION, protection);
             lwc.getModuleLoader().dispatchEvent(new LWCProtectionRegistrationPostEvent(protection));
         }
 

@@ -64,6 +64,7 @@ import com.griefcraft.scripting.Module;
 import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.scripting.ModuleLoader.Event;
+import com.griefcraft.scripting.event.LWCAccessEvent;
 import com.griefcraft.scripting.event.LWCSendLocaleEvent;
 import com.griefcraft.sql.Database;
 import com.griefcraft.sql.PhysDB;
@@ -81,8 +82,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.command.ColouredConsoleSender;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -338,10 +337,11 @@ public class LWC {
         }
 
         // call the canAccessProtection hook
-        Result canAccess = moduleLoader.dispatchEvent(Event.ACCESS_PROTECTION, player, protection);
+        LWCAccessEvent event = new LWCAccessEvent(player, protection, AccessRight.RIGHT_NOACCESS);
+        moduleLoader.dispatchEvent(event);
 
-        if (canAccess != Result.DEFAULT) {
-            return canAccess == Result.ALLOW;
+        if (event.getAccess() != AccessRight.RIGHT_NOACCESS) {
+            return event.getAccess() >= AccessRight.RIGHT_PLAYER;
         }
 
         if (isAdmin(player)) {
@@ -418,10 +418,11 @@ public class LWC {
         }
 
         // call the canAccessProtection hook
-        Result canAdmin = moduleLoader.dispatchEvent(Event.ADMIN_PROTECTION, player, protection);
+        LWCAccessEvent event = new LWCAccessEvent(player, protection, AccessRight.RIGHT_NOACCESS);
+        moduleLoader.dispatchEvent(event);
 
-        if (canAdmin != Result.DEFAULT) {
-            return canAdmin == Result.ALLOW;
+        if (event.getAccess() != AccessRight.RIGHT_NOACCESS) {
+            return event.getAccess() == AccessRight.RIGHT_ADMIN;
         }
 
         if (isAdmin(player)) {
@@ -1279,12 +1280,11 @@ public class LWC {
 
         // broadcast an event if they are a player
         if (sender instanceof Player) {
-            Result result = moduleLoader.dispatchEvent(Event.SEND_LOCALE, sender, key);
             LWCSendLocaleEvent evt = new LWCSendLocaleEvent((Player) sender, key);
             moduleLoader.dispatchEvent(evt);
 
             // did they cancel it?
-            if (result == Result.CANCEL || evt.isCancelled()) {
+            if (evt.isCancelled()) {
                 return;
             }
         }

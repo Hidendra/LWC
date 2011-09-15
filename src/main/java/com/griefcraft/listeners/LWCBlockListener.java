@@ -21,8 +21,6 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
-import com.griefcraft.scripting.Module.Result;
-import com.griefcraft.scripting.ModuleLoader.Event;
 import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
@@ -71,11 +69,10 @@ public class LWCBlockListener extends BlockListener {
             return;
         }
 
-        Result result = lwc.getModuleLoader().dispatchEvent(Event.REDSTONE, protection, block, event.getOldCurrent());
         LWCRedstoneEvent evt = new LWCRedstoneEvent(event, protection);
         lwc.getModuleLoader().dispatchEvent(evt);
 
-        if (evt.isCancelled() || result == Result.CANCEL) {
+        if (evt.isCancelled()) {
             event.setNewCurrent(event.getOldCurrent());
         }
     }
@@ -138,11 +135,10 @@ public class LWCBlockListener extends BlockListener {
         boolean canAdmin = lwc.canAdminProtection(player, protection);
 
         try {
-            Result result = lwc.getModuleLoader().dispatchEvent(Event.DESTROY_PROTECTION, player, protection, block, canAccess, canAdmin);
             LWCProtectionDestroyEvent evt = new LWCProtectionDestroyEvent(player, protection, LWCProtectionDestroyEvent.Method.BLOCK_DESTRUCTION, canAccess, canAdmin);
             lwc.getModuleLoader().dispatchEvent(evt);
 
-            if (evt.isCancelled() || result == Result.CANCEL) {
+            if (evt.isCancelled()) {
                 event.setCancelled(true);
             }
         } catch (Exception e) {
@@ -242,12 +238,11 @@ public class LWCBlockListener extends BlockListener {
         }
 
         try {
-            Result registerProtection = lwc.getModuleLoader().dispatchEvent(Event.REGISTER_PROTECTION, player, block);
             LWCProtectionRegisterEvent evt = new LWCProtectionRegisterEvent(player, block);
             lwc.getModuleLoader().dispatchEvent(evt);
 
             // something cancelled registration
-            if (evt.isCancelled() || registerProtection == Result.CANCEL) {
+            if (evt.isCancelled()) {
                 return;
             }
 
@@ -256,7 +251,6 @@ public class LWCBlockListener extends BlockListener {
             lwc.sendLocale(player, "protection.onplace.create.finalize", "type", lwc.getLocale(autoRegisterType.toLowerCase()), "block", LWC.materialToString(block));
 
             if (protection != null) {
-                lwc.getModuleLoader().dispatchEvent(Event.POST_REGISTRATION, protection);
                 lwc.getModuleLoader().dispatchEvent(new LWCProtectionRegistrationPostEvent(protection));
             }
         } catch (Exception e) {
