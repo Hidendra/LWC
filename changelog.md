@@ -1,4 +1,5 @@
 ### 4.00-alpha3
+* Towny integration. Protections cannot be made outside of Towns, e.g the wild. Set `core.townyBorders` to true
 * Double wooden doors will now function properly
 * The openAndClose feature of double doors has been fixed
 * Out of sync double doors can be fixed with the `/lwc fix` or `/lwc fixdoor` commands
