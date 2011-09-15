@@ -47,6 +47,9 @@ core:
     # and protect any x,y,z registered block, regardless of if Bukkit says it's something else (like Air).
     bukkitBug656workaround: false
 
+    # if true, LWC will only allow protections to be created inside of Towns via the Towny plugin
+    townyBorders: false
+
 # Database information for LWC
 database:
 

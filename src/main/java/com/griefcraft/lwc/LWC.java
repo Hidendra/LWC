@@ -58,12 +58,11 @@ import com.griefcraft.modules.modify.ModifyModule;
 import com.griefcraft.modules.owners.OwnersModule;
 import com.griefcraft.modules.redstone.RedstoneModule;
 import com.griefcraft.modules.schedule.ScheduleModule;
+import com.griefcraft.modules.towny.TownyModule;
 import com.griefcraft.modules.unlock.UnlockModule;
 import com.griefcraft.modules.worldguard.WorldGuardModule;
 import com.griefcraft.scripting.Module;
-import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.ModuleLoader;
-import com.griefcraft.scripting.ModuleLoader.Event;
 import com.griefcraft.scripting.event.LWCAccessEvent;
 import com.griefcraft.scripting.event.LWCSendLocaleEvent;
 import com.griefcraft.sql.Database;
@@ -1169,6 +1168,7 @@ public class LWC {
         // non-core modules but are included with LWC anyway
         registerModule(new ListsModule());
         registerModule(new WorldGuardModule());
+        registerModule(new TownyModule());
     }
 
     /**
