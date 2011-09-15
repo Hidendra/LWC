@@ -570,8 +570,6 @@ public class LWC {
         switch (protection.getType()) {
             case ProtectionTypes.PASSWORD:
                 if (!hasAccess) {
-                    wrapPlayer(player).addAccessibleProtection(protection);
-
                     sendLocale(player, "protection.general.locked.password", "block", materialToString(block));
                 }
 
