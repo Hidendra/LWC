@@ -355,10 +355,11 @@ public class LWCPlugin extends JavaPlugin {
             registerEvents();
         } catch(NoSuchFieldError e) { }
 
+        // Load the rest of LWC
         lwc.load();
 
-        // update LWC and/or download missing libs
-        updater.loadVersions(true);
+        // let the updater do its thang
+        updater.init();
 
         log("At version: " + LWCInfo.FULL_VERSION);
     }

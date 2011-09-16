@@ -1,0 +1,140 @@
+# Core configurable options for LWC
+core:
+
+    # The language LWC will use, specified by the shortname. For example, English = en, French = fr, German = de,
+    # and so on
+    locale: en
+
+    # If set to true, LWC will automatically download new updates as they become available
+    autoUpdate: false
+
+    # How often updates are batched to the database (in seconds). If set to a higher value than 10, you may have
+    # some unexpected results, especially if your server is prone to crashing.
+    flushInterval: 10
+
+    # LWC regularly caches protections locally to prevent the database from being queried as often. The default is 10000
+    # and for most servers is OK. LWC will also fill up to <precache> when the server is started automatically.
+    cacheSize: 10000
+
+    # How many protections are precached on startup. If set to -1, it will use the cacheSize value instead and precache
+    # as much as possible
+    precache: -1
+
+    # The default menu style presented to players. Possible options are basic and advanced. Basic prefers to use
+    # aliases such as /cprivate over its advanced counterpart, /lwc -c private or /lwc create private
+    defaultMenuStyle: basic
+
+    # If true, players will be sent a notice in their chat box when they open a protection they have access to, but
+    # not their own unless <showMyNotices> is set to true
+    showNotices: true
+
+    # If true, players will be sent a notice in their chat box when they open a protection they own.
+    showMyNotices: false
+
+    # If true, ops will be considered LWC admins (e.g with a Permissions plugin, considered to have lwc.admin) and thus
+    # will have very destructive LWC commands.
+    opIsLWCAdmin: true
+
+    # If true, LWC will not log history about protections. If you are using LWC-Economy and this is disabled, you will
+    # NOT receive refunds for purchased protections
+    disableHistory: false
+    
+    # If you're having an issue where chest locks randomly stop working, and if you type '/lwc -o' and hit
+    # one of these "not workin" chests and see something like 'That Air is not registered!', you may be
+    # experiencing bukkit bug #656: http://leaky.bukkit.org/issues/656
+    # If so, set this flag to true, and to avoid a performance hit, be sure to set 'cacheSize' above to
+    # more than whatever number of active protections you have.  LWC will cache all protections in memory
+    # and protect any x,y,z registered block, regardless of if Bukkit says it's something else (like Air).
+    bukkitBug656workaround: false
+
+    # if true, LWC will only allow protections to be created inside of Towns via the Towny plugin
+    townyBorders: false
+
+# Database information for LWC
+database:
+
+    # The database adapter to use, for example sqlite (default) or mysql
+    adapter: sqlite
+
+    # This is strictly for SQLite only and should be left alone. When changing to MySQL and this is left intact,
+    # LWC will automatically convert your protections from SQLite to MySQL
+    path: 'plugins/LWC/lwc.db'
+
+    # The MySQL host. You can specify a non-default port (3306) by adding :port, e.g host: 'localhost:3307'
+    host: 'localhost'
+
+    # The database LWC should use to store data (not necessary for SQLite)
+    database: 'lwc'
+
+    # The username LWC should use to connect to the server with (not necessary for SQLite)
+    username: ''
+
+    # The password LWC should use to connect to the server with (not necessary for SQLite)
+    password: ''
+
+    # The prefix for LWC tables. For example, a prefix of 'lwc_' will make
+    # the protections table show up as lwc_protections
+    prefix: 'lwc_'
+
+# The protections nodes allows you to define, remove and modify which blocks LWC is allowed to protect
+# This means that you could make any block you want protectable, or remove existing protectable blocks
+# (e.g trap doors, etc.)
+protections:
+    # These values serve as default values for the protections defined under blocks
+
+    # If true, the default behaviour will be to BLOCK redstone to protections, and /credstone on (Protection Flag)
+    # will ALLOW redstone to the protection
+    # If false, the default behaviour will be to ALLOW redstone to protections, and /credstone on will
+    # BLOCK redstone to the protection
+    denyRedstone: false
+
+    # Settable to private, public, or off. It defines what protections are registered as when you place them on
+    # the ground
+    autoRegister: off
+
+    # Used in very specific use-cases: makes LWC ignore block destruction for the given block or all blocks, allowing
+    # players to remove the block and resulting protection.
+    ignoreBlockDestruction: false
+
+    # If left clicking should be ignored by LWC. An example of this would be to add ignoreLeftClick under a note block
+    # protection to allow players to play the note block's note, but not change the note (which is done via right click,
+    # which would be blocked by LWC.)
+    ignoreLeftClick: false
+
+    # If right clicking should be ignored by LWC.
+    ignoreRightClick: false
+
+    # If LWC should ignore explosions to the protection. For example, you could allow Doors to be blown by explosions,
+    # but not chests.
+    ignoreExplosions: false
+
+    # Current and custom protections are defined here by their block name or id
+    # If you use the Id, you MUST encase it in quotes, for example (chest):
+    # '54':
+    #     enabled: true
+    # The custom protection must also have enabled: true under it for it to function in the world
+    blocks:
+        chest:
+            enabled: true
+            autoRegister: private
+        furnace:
+            enabled: true
+            autoRegister: private
+        dispenser:
+            enabled: true
+            autoRegister: private
+        sign:
+            enabled: true
+            autoRegister: private
+        wooden_door:
+            enabled: true
+        iron_door:
+            enabled: true
+        trap_door:
+            enabled: true
+
+modes:
+    droptransfer:
+        enabled: true
+    persist:
+        enabled: true
