@@ -30,8 +30,13 @@ public class UpdaterFile {
     private String remoteLocation;
 
     public UpdaterFile(String location) {
-        remoteLocation = location;
-        localLocation = location;
+        this.remoteLocation = location;
+        this.localLocation = location;
+    }
+
+    public UpdaterFile(String localLocation, String remoteLocation) {
+        this.localLocation = localLocation;
+        this.remoteLocation = remoteLocation;
     }
 
     @Override
