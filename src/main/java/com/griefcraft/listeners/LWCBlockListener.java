@@ -33,6 +33,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
@@ -145,6 +146,20 @@ public class LWCBlockListener extends BlockListener {
             event.setCancelled(true);
             lwc.sendLocale(player, "protection.internalerror", "id", "BLOCK_BREAK");
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onBlockPistonRetract(BlockPistonRetractEvent event) {
+        if (!LWC.ENABLED) {
+            return;
+        }
+
+        LWC lwc = plugin.getLWC();
+        Block moved = event.getRetractLocation().getBlock();
+
+        if (lwc.findProtection(moved) != null) {
+            event.setCancelled(true);
         }
     }
 
