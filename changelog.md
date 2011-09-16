@@ -1,4 +1,8 @@
+### 4.00-alpha4
+* New updater + downloader. Currently, the default method of updating is via BLEEDING_EDGE. This is a build-by-build update and is currently set to manual by default. You can check your version with `/lwc admin version` and/or update to the latest with `/lwc admin update`. If you want automatic updating, in core.yml set core.updateMethod to: `updateMethod: AUTOMATIC`
+
 ### 4.00-alpha3
+* **FIX:** Protected blocks could be pulled with a sticky piston
 * **FIX:** Piston exploit that allowed protections such as Doors to be destroyed via:  PISTON -> BLOCK -> PROTECTED DOOR
 * Towny integration. Protections cannot be made outside of Towns, e.g the wild. Set `core.townyBorders` to true
 * Double wooden doors will now function properly
