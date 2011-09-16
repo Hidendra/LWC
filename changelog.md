@@ -10,7 +10,9 @@
 * Out of sync double doors can be fixed with the `/lwc fix` or `/lwc fixdoor` commands
 * Fixes a duplication exploit related to the Magnet feature and the Showcase plugin
 * The database is no longer used for LWC's in-memory database. It is now stored in-memory objects and even if the database connection is lost, LWC won't be totally unusable.
-* Job scheduler. At the moment, it only supports Cleanup, but will support more in the future. It allows you to manually run specific jobs or automatically run them at a given time (they can be provided by outside sources, too.)
+* Added the Expire job. It allows you to automatically expire protections - equivilent to `/lwc admin expire`. If you want to expire protections every week, that haven't been accessed in at least 2 weeks, do this: `/lwc schedule create test expire` `/lwc schedule arguments test 2 weeks` `/lwc schedule autoRun test 1 week`  Done! If you want the block + inventory contents of the block to also be removed, you can add -remove after arguments, e.g: `/lwc schedule arguments test -remove 2 weeks`
+* Added the Cleanup job. Allows you to automatically run `/lwc admin cleanup`
+* Job scheduler. It allows you to manually run specific jobs or automatically run them at a given time (they can be provided by outside sources, too.)
 * `/lwc schedule create JOBNAME TYPE` - Creates a job, for example: `/lwc schedule create weekly cleanup`
 * `/lwc schedule run JOBNAME` - Manually run a job, for example: `/lwc schedule run weekly`
 * `/lwc schedule check JOBNAME` - Look up when the job will next run, if it's to be automatically ran. It will tell you how long until the job runs.
