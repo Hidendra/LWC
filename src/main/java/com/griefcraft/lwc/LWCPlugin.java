@@ -419,6 +419,7 @@ public class LWCPlugin extends JavaPlugin {
 
         // post-1.7 event
         registerEvent(blockListener, Type.BLOCK_PISTON_EXTEND);
+        registerEvent(blockListener, Type.BLOCK_PISTON_RETRACT);
     }
 
 }
