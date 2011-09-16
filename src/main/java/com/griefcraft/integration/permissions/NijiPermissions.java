@@ -45,6 +45,10 @@ public class NijiPermissions implements IPermissions {
         handler = ((Permissions) permissionsPlugin).getHandler();
     }
 
+    public boolean permission(Player player, String node) {
+        return handler.has(player, node);
+    }
+
     @SuppressWarnings("deprecation")
     public List<String> getGroups(Player player) {
         if (handler == null) {

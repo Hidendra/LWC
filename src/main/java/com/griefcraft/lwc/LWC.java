@@ -27,6 +27,7 @@ import com.griefcraft.integration.currency.NoCurrency;
 import com.griefcraft.integration.currency.iConomy5Currency;
 import com.griefcraft.integration.currency.iConomy6Currency;
 import com.griefcraft.integration.permissions.BukkitPermissions;
+import com.griefcraft.integration.permissions.NijiPermissions;
 import com.griefcraft.integration.permissions.NoPermissions;
 import com.griefcraft.integration.permissions.PEXPermissions;
 import com.griefcraft.integration.permissions.SuperPermsPermissions;
@@ -960,12 +961,23 @@ public class LWC {
      * @return
      */
     public boolean hasPermission(Player player, String node) {
+        boolean result = false;
+
         try {
-            return player.hasPermission(node);
+            result = player.hasPermission(node);
         } catch (NoSuchMethodError e) {
             // their server does not support Superperms..
             return !node.contains("admin") && !node.contains("mod");
         }
+
+        if (!result) {
+            // Temporary .. (?)
+            if (permissions instanceof NijiPermissions) {
+                result = ((NijiPermissions) permissions).permission(player, node);
+            }
+        }
+
+        return result;
     }
 
     /**
