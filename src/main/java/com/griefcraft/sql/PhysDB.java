@@ -1494,6 +1494,10 @@ public class PhysDB extends Database {
                     cache.put(protectionId, protection);
                 }
 
+                if (protection == null) {
+                    continue;
+                }
+
                 // create the access right
                 AccessRight right = new AccessRight();
                 right.setProtectionId(protectionId);
