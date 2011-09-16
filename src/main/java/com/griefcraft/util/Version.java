@@ -40,7 +40,7 @@ public final class Version implements Comparable {
     /**
      * The regex to match the build number
      */
-    private final static Pattern REGEX_BUILD_NUMBER = Pattern.compile(".*\\(b(\\d+)\\).*");
+    private final static Pattern REGEX_BUILD_NUMBER = Pattern.compile(".*b(\\d+).*");
 
     /**
      * The raw version string
@@ -109,11 +109,13 @@ public final class Version implements Comparable {
         StringBuilder builder = new StringBuilder();
 
         // add the initial version - major.minor.patch
-        builder.append(major);
-        builder.append(".");
-        builder.append(minor);
-        builder.append(".");
-        builder.append(patch);
+        if (major > 0) {
+            builder.append(major);
+            builder.append(".");
+            builder.append(minor);
+            builder.append(".");
+            builder.append(patch);
+        }
 
         // are we using a different release level than release?
         if (releaseLevel > 0) {
@@ -126,10 +128,15 @@ public final class Version implements Comparable {
 
         // How about a build number ?
         if (buildNumber > 0) {
-            builder.append(" ");
-            builder.append("(b");
-            builder.append(buildNumber);
-            builder.append(")");
+            if (major > 0) {
+                builder.append(" ");
+                builder.append("(b");
+                builder.append(buildNumber);
+                builder.append(")");
+            } else {
+                builder.append("b");
+                builder.append(buildNumber);
+            }
         }
 
         return builder.toString();
@@ -155,6 +162,15 @@ public final class Version implements Comparable {
     }
 
     public int compareTo(Version o) {
+        // Easiest way to know immediately if they are different is if their build number differs!
+        if (buildNumber > 0 && o.getBuildNumber() > 0) {
+            if (buildNumber > o.getBuildNumber()) {
+                return 1;
+            } else if(buildNumber < o.getBuildNumber()) {
+                return -1;
+            }
+        }
+
         // check for major version changes
         if (major > o.getMajor()) {
             return 1;
@@ -194,15 +210,6 @@ public final class Version implements Comparable {
             if (releaseLevelWeight > o.getReleaseLevelWeight()) {
                 return 1;
             } else if(releaseLevelWeight < o.getReleaseLevelWeight()) {
-                return -1;
-            }
-        }
-
-        // Finally, we can take into account the build number ..
-        if (buildNumber > 0 && o.getBuildNumber() > 0) {
-            if (buildNumber > o.getBuildNumber()) {
-                return 1;
-            } else if(buildNumber < o.getBuildNumber()) {
                 return -1;
             }
         }

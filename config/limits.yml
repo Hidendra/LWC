@@ -1,0 +1,29 @@
+# type:
+#    default = LIMIT counts ALL default protections (IGNORES chest:, furnace:, Etc)
+#    custom   = LIMIT becomes a default PER-BLOCK limit, while chest:, furance:, etc is the PER-BLOCK limit (e.g 0 protected furnaces, 2 chests)
+
+# chest: unlimited, etc is just shown in master block to make it
+# clear they can be used here
+master:
+    limit: unlimited
+    type: custom
+    chest: unlimited
+    furnace: unlimited
+    dispenser: unlimited
+    wooden_door: unlimited
+    iron_door: unlimited
+
+# Overrides for Permissions groups
+groups:
+    # Gives the group Example limits of 5 chests, 2 furnaces, and 1 dispenser, and 0 of everything else
+    Example:
+        limit: 0
+        type: custom
+        chest: 5
+        furnace: 2
+        dispenser: 1
+
+players:
+    # Gives Notch unlimited protections
+    Notch:
+        limit: unlimited
