@@ -161,6 +161,11 @@ public class LWC {
     private IPermissions permissions;
 
     /**
+     * Sigh
+     */
+    private NijiPermissions removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose;
+
+    /**
      * The currency handler
      */
     private ICurrency currency;
@@ -972,8 +977,8 @@ public class LWC {
 
         if (!result) {
             // Temporary .. (?)
-            if (permissions instanceof NijiPermissions) {
-                result = ((NijiPermissions) permissions).permission(player, node);
+            if (removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose != null) {
+                result = removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose.permission(player, node);
             }
         }
 
@@ -1077,6 +1082,10 @@ public class LWC {
                     // server does not support SuperPerms
                 }
             }
+        }
+
+        if (resolvePlugin("Permissions") != null) {
+            removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose = new NijiPermissions();
         }
 
         // Currency init
