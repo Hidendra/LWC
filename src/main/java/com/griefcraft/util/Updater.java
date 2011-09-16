@@ -254,12 +254,13 @@ public class Updater {
             }
         }
 
-        // we shouldn't update if the current version is equal to the latest
-        if (LWCInfo.FULL_VERSION.equals(latestVersion)) {
+        // we shouldn't update if the current version is the same as the latest, or their build numbers are equal
+        Version current = LWCInfo.FULL_VERSION;
+        if (current.equals(latestVersion) || (current.getBuildNumber() > 0 && latestVersion.getBuildNumber() > 0 && current.getBuildNumber() == latestVersion.getBuildNumber())) {
             return false;
         }
 
-        logger.info("LWC: Updating found!");
+        logger.info(Colors.Red + "LWC update found!");
 
         // update_site/download/LWC.jar
         UpdaterFile file = new UpdaterFile("plugins/LWC.jar", getLatestDownloadURL());
