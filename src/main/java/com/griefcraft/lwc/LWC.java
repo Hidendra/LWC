@@ -71,7 +71,6 @@ import com.griefcraft.util.Performance;
 import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.UpdateThread;
 import com.griefcraft.util.config.Configuration;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -80,8 +79,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.command.ColouredConsoleSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -154,11 +151,6 @@ public class LWC {
     private UpdateThread updateThread;
 
     /**
-     * Allow output to be coloured
-     */
-    private ColouredConsoleSender console;
-
-    /**
      * The permissions handler
      */
     private IPermissions permissions;
@@ -185,11 +177,6 @@ public class LWC {
         caches = new CacheSet();
 
         bug656workaround = configuration.getBoolean("core.bukkitBug656workaround", false);
-
-        try {
-            console = new ColouredConsoleSender((CraftServer) Bukkit.getServer());
-        } catch (Exception e) {
-        }
     }
 
     /**
@@ -1648,13 +1635,7 @@ public class LWC {
      * @param str
      */
     private void log(String str) {
-        str = "LWC: " + str;
-
-        if (console != null) {
-            console.sendMessage(str);
-        } else {
-            logger.info(ChatColor.stripColor(str));
-        }
+        logger.info(ChatColor.stripColor("LWC: " + str));
     }
 
     /**
