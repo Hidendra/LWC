@@ -1099,12 +1099,14 @@ public class LWC {
             String className = plugin.getClass().getName();
 
             // check for the iConomy5 package
-            if (className.startsWith("com.iConomy")) {
-                currency = new iConomy5Currency();
-            } else {
-                // iConomy 6!
-                currency = new iConomy6Currency();
-            }
+            try {
+                if (className.startsWith("com.iConomy")) {
+                    currency = new iConomy5Currency();
+                } else {
+                    // iConomy 6!
+                    currency = new iConomy6Currency();
+                }
+            } catch (NoClassDefFoundError e) { }
         } else if (resolvePlugin("BOSEconomy") != null) {
             currency = new BOSECurrency();
         } else if (resolvePlugin("Essentials") != null) {
