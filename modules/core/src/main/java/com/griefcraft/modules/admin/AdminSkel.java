@@ -46,9 +46,6 @@ class AdminSkel extends JavaModule {
 
         // we have the right command
         event.setCancelled(true);
-
-
-        return;
     }
 
 }
