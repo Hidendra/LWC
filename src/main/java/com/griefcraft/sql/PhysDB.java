@@ -764,6 +764,38 @@ public class PhysDB extends Database {
     }
 
     /**
+     * Load all protections in the coordinate ranges
+     *
+     * @param world
+     * @param x1
+     * @param x2
+     * @param y1
+     * @param y2
+     * @param z1
+     * @param z2
+     * @return list of Protection objects found
+     */
+    public List<Protection> loadProtections(String world, int x1, int x2, int y1, int y2, int z1, int z2) {
+        try {
+            PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, flags, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE world = ? AND x >= ? AND x <= ? AND y >= ? AND y <= ? AND z >= ? AND z <= ?");
+
+            statement.setString(1, world);
+            statement.setInt(2, x1);
+            statement.setInt(3, x2);
+            statement.setInt(4, y1);
+            statement.setInt(5, y2);
+            statement.setInt(6, z1);
+            statement.setInt(7, z2);
+
+            return resolveProtections(statement);
+        } catch (Exception e) {
+            printException(e);
+        }
+
+        return new ArrayList<Protection>();
+    }
+
+    /**
      * Load protections by a player
      *
      * @param player
