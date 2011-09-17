@@ -156,7 +156,22 @@ public class LWCBlockListener extends BlockListener {
         }
 
         LWC lwc = plugin.getLWC();
-        Block moved = event.getRetractLocation().getBlock();
+        Block piston = event.getBlock();
+        BlockState state = piston.getState();
+        MaterialData data = state.getData();
+        BlockFace direction = null;
+
+        // Check the block it pushed directly
+        if(data instanceof PistonBaseMaterial) {
+            direction = ((PistonBaseMaterial) data).getFacing();
+        }
+
+        if (direction == null) {
+            return;
+        }
+
+        // the block that the piston moved
+        Block moved = piston.getRelative(direction, 2);
 
         if (lwc.findProtection(moved) != null) {
             event.setCancelled(true);
