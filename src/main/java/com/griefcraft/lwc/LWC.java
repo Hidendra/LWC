@@ -589,7 +589,7 @@ public class LWC {
 
             case ProtectionTypes.TRAP_KICK:
                 if (!hasAccess) {
-                    player.kickPlayer(protection.getData());
+                    player.kickPlayer(protection.getPassword());
                     log(player.getName() + " triggered the kick trap: " + protection.toString());
                 }
                 break;
@@ -603,7 +603,7 @@ public class LWC {
                         mcbans mcbans = (mcbans) mcbansPlugin;
 
                         // ban then locally
-                        mcbans.mcb_handler.ban(player.getName(), "LWC", protection.getData(), "");
+                        mcbans.mcb_handler.ban(player.getName(), "LWC", protection.getPassword(), "");
                     }
 
                     log(player.getName() + " triggered the ban trap: " + protection.toString());

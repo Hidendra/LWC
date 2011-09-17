@@ -306,6 +306,16 @@ public abstract class Database {
     }
 
     /**
+     * Add a column to a table
+     *
+     * @param table
+     * @param column
+     */
+    public boolean dropColumn(String table, String column) {
+        return executeUpdateNoException("ALTER TABLE " + table + " DROP COLUMN " + column);
+    }
+
+    /**
      * Rename a table
      *
      * @param table

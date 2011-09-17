@@ -28,6 +28,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -104,12 +105,17 @@ public class Protection {
     /**
      * The password for the chest
      */
-    private String data;
+    private String password;
 
     /**
      * The date created
      */
     private String date;
+
+    /**
+     * JSON data for the protection
+     */
+    private final JSONObject data = new JSONObject();
 
     /**
      * Unique id (in sql)
@@ -172,11 +178,7 @@ public class Protection {
      *
      * @return
      */
-    public String encodeRightsToJSONString() {
-        if (accessRights.size() == 0) {
-            return "";
-        }
-
+    public void encodeRights() {
         // create the root
         JSONArray root = new JSONArray();
 
@@ -185,7 +187,7 @@ public class Protection {
             root.add(right.encodeToJSON());
         }
 
-        return root.toJSONString();
+        data.put("rights", root);
     }
 
     /**
@@ -389,6 +391,10 @@ public class Protection {
         }
     }
 
+    public JSONObject getData() {
+        return data;
+    }
+
     public int getFlags() {
         return flags;
     }
@@ -397,8 +403,8 @@ public class Protection {
         return blockId;
     }
 
-    public String getData() {
-        return data;
+    public String getPassword() {
+        return password;
     }
 
     public String getDate() {
@@ -408,7 +414,6 @@ public class Protection {
     public int getId() {
         return id;
     }
-
 
     public String getOwner() {
         return owner;
@@ -447,12 +452,12 @@ public class Protection {
         this.modified = true;
     }
 
-    public void setData(String data) {
+    public void setPassword(String password) {
         if (removed) {
             return;
         }
 
-        this.data = data;
+        this.password = password;
         this.modified = true;
     }
 
@@ -561,7 +566,7 @@ public class Protection {
         modified = false;
 
         // broadcast the removal event
-        // we broadcast before actually removing to give them a chance to use any data that would be removed otherwise
+        // we broadcast before actually removing to give them a chance to use any password that would be removed otherwise
         lwc.getModuleLoader().dispatchEvent(new LWCProtectionRemovePostEvent(this));
 
         // mark related transactions as inactive
@@ -647,6 +652,9 @@ public class Protection {
         if (removed) {
             return;
         }
+
+        // encode the rights to the data array to ensure they saved
+        encodeRights();
 
         // only save the protection if it was modified
         if(modified) {
