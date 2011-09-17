@@ -76,7 +76,7 @@ public class AccessRight {
     public JSONObject encodeToJSON() {
         JSONObject object = new JSONObject();
 
-        object.put("protection", protectionId);
+        // object.put("protection", protectionId);
         object.put("type", type);
         object.put("name", name);
         object.put("rights", rights);
@@ -93,7 +93,7 @@ public class AccessRight {
         AccessRight right = new AccessRight();
 
         // The values are stored as longs internally, despite us passing an int
-        right.setProtectionId(((Long) node.get("protection")).intValue());
+        // right.setProtectionId(((Long) node.get("protection")).intValue());
         right.setType(((Long) node.get("type")).intValue());
         right.setName((String) node.get("name"));
         right.setRights(((Long) node.get("rights")).intValue());
