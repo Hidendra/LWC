@@ -14,66 +14,51 @@ commands:
   lwc:
     description: LWC's hub command to access everything
     usage: /<command>
-    permission: lwc.protect
   cadmin:
     description: Administrate LWC
     usage: /<command>
-    permission: lwc.admin
   cpublic:
     description: Create a protection that is accessible by anyone but protectable by no one.
     usage: /<command>
-    permission: lwc.create.public
   cpassword:
     description: Create a protection that required a password to access it.
     usage: /<command> <password>
-    permission: lwc.create.password
   cprivate:
     description: Create a protection that only you and specific groups or people can access.
     usage: /<command> <Users/Groups>
-    permission: lwc.create.private
   cmodify:
     description: Modify an existing private protection.
     usage: /<command> <Modifications>
-    permission: lwc.modify
   cunlock:
     description: Unlock a password-protected protection.
     usage: /<command> <password>
-    permission: lwc.unlock
   cinfo:
     description: View info on an existing protection.
     usage: /<command>
-    permission: lwc.info
   cremove:
     description: Remove an existing protection.
     usage: /<command>
-    permission: lwc.remove
   climits:
     description: View your current protection limits.
     usage: /<command>
   credstone:
     description: Enable or disable redstone on a protection
     usage: /<command> <on|off>
-    permission: lwc.flag.redstone
   cmagnet:
     description: Enable or disable the magnet flag on an inventory protection, which makes it pick up items automatically around it.
     usage: /<command> <on|off>
-    permission: lwc.flag.magnet
   cdroptransfer:
     description: Configure drop transferring (allows you to transfer to a selected chest by dropping items.)
     usage: /<command> <select|on|off>
-    permission: lwc.mode.droptransfer
   cpersist:
     description: Toggle command persistence which allows you to use commands without retyping the command (e.g /cprivate)
     usage: /<command>
-    permission: lwc.mode.persist
   cnospam:
     description: Toggle the ability to hide protection creation messages
     usage: /<command>
-    permission: lwc.mode.nospam
   cexempt:
     description: Toggle protection exemption on an existing protection; disallows it from being removed by -remove, e.g /lwc admin expire -remove 2 weeks
     usage: /<command>
-    permission: lwc.admin
 
 permissions:
 
@@ -129,7 +114,7 @@ permissions:
   lwc.unlock:
       description: Allows you to unlock password-protected protections.
   lwc.info:
-      description: Allows you to view the owner and other misc data on a protection.
+      description: Allows you to view the owner and other misc password on a protection.
   lwc.remove:
       description: Allows you to remove protections you own.
 

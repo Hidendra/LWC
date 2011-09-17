@@ -135,7 +135,7 @@ public class PasswordRequestModule extends JavaModule {
                     return;
                 }
 
-                if (protection.getData().equals(password)) {
+                if (protection.getPassword().equals(password)) {
                     lwcPlayer.addAccessibleProtection(protection);
                     player.getMainScreen().closePopup();
 
