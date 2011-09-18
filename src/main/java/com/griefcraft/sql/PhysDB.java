@@ -18,11 +18,11 @@
 package com.griefcraft.sql;
 
 import com.griefcraft.cache.LRUCache;
-import com.griefcraft.model.Flag;
-import com.griefcraft.model.Job;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
+import com.griefcraft.model.Flag;
 import com.griefcraft.model.History;
+import com.griefcraft.model.Job;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.modules.limits.LimitsModule;
@@ -32,7 +32,6 @@ import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -433,6 +432,121 @@ public class PhysDB extends Database {
     }
 
     /**
+     * Resolve one protection from a ResultSet. The ResultSet is not closed.
+     *
+     * @param set
+     * @return
+     */
+    public Protection resolveProtection(ResultSet set) {
+        try {
+            Protection protection = new Protection();
+
+            int protectionId = set.getInt("id");
+            int x = set.getInt("x");
+            int y = set.getInt("y");
+            int z = set.getInt("z");
+            int blockId = set.getInt("blockId");
+            int type = set.getInt("type");
+            String world = set.getString("world");
+            String owner = set.getString("owner");
+            String password = set.getString("password");
+            String date = set.getString("date");
+            long lastAccessed = set.getLong("last_accessed");
+
+            protection.setId(protectionId);
+            protection.setX(x);
+            protection.setY(y);
+            protection.setZ(z);
+            protection.setBlockId(blockId);
+            protection.setType(type);
+            protection.setWorld(world);
+            protection.setOwner(owner);
+            protection.setPassword(password);
+            protection.setDate(date);
+            protection.setLastAccessed(lastAccessed);
+
+            // check for oh so beautiful data!
+            String data = set.getString("data");
+
+            if (data == null || data.trim().isEmpty()) {
+                return protection;
+            }
+
+            // rev up them JSON parsers!
+            Object object = null;
+
+            try {
+                object = jsonParser.parse(data);
+            } catch (Exception e) {
+                return protection;
+            }
+
+            if (!(object instanceof JSONObject)) {
+                return protection;
+            }
+
+            // obtain the root
+            JSONObject root = (JSONObject) object;
+            protection.getData().putAll(root);
+
+            // Attempt to parse rights
+            Object rights = root.get("rights");
+
+            if (rights != null && (rights instanceof JSONArray)) {
+                JSONArray array = (JSONArray) rights;
+                Iterator<Object> iter = array.iterator();
+
+                while (iter.hasNext()) {
+                    Object node = iter.next();
+
+                    // we only want to use the maps
+                    if (!(node instanceof JSONObject)) {
+                        continue;
+                    }
+
+                    JSONObject map = (JSONObject) node;
+
+                    // decode the map
+                    AccessRight right = AccessRight.decodeJSON(map);
+
+                    // bingo!
+                    if (right != null) {
+                        protection.addAccessRight(right);
+                    }
+                }
+            }
+
+            // Attempt to parse flags
+            Object flags = root.get("flags");
+            if (flags != null && (rights instanceof JSONArray)) {
+                JSONArray array = (JSONArray) flags;
+                Iterator<Object> iter = array.iterator();
+
+                while (iter.hasNext()) {
+                    Object node = iter.next();
+
+                    if (!(node instanceof JSONObject)) {
+                        continue;
+                    }
+
+                    JSONObject map = (JSONObject) node;
+
+                    Flag flag = Flag.decodeJSON(map);
+
+                    if (flag != null) {
+                        protection.addFlag(flag);
+                    }
+                }
+            }
+
+            return protection;
+        } catch (SQLException e) {
+            printException(e);
+            return null;
+        }
+    }
+
+    /**
      * Resolve every protection from a result set
      *
      * @param set
@@ -443,107 +557,10 @@ public class PhysDB extends Database {
 
         try {
             while (set.next()) {
-                Protection protection = new Protection();
+                Protection protection = resolveProtection(set);
 
-                int protectionId = set.getInt("id");
-                int x = set.getInt("x");
-                int y = set.getInt("y");
-                int z = set.getInt("z");
-                int blockId = set.getInt("blockId");
-                int type = set.getInt("type");
-                String world = set.getString("world");
-                String owner = set.getString("owner");
-                String password = set.getString("password");
-                String date = set.getString("date");
-                long lastAccessed = set.getLong("last_accessed");
-
-                protection.setId(protectionId);
-                protection.setX(x);
-                protection.setY(y);
-                protection.setZ(z);
-                protection.setBlockId(blockId);
-                protection.setType(type);
-                protection.setWorld(world);
-                protection.setOwner(owner);
-                protection.setPassword(password);
-                protection.setDate(date);
-                protection.setLastAccessed(lastAccessed);
-
-                // add it to the list before starting to parse rights
-                protections.add(protection);
-
-                // check for oh so beautiful data!
-                String data = set.getString("data");
-
-                if (data == null || data.trim().isEmpty()) {
-                    continue;
-                }
-
-                // rev up them JSON parsers!
-                Object object = null;
-
-                try {
-                    object = jsonParser.parse(data);
-                } catch (Exception e) {
-                    continue;
-                }
-
-                if (!(object instanceof JSONObject)) {
-                    continue;
-                }
-
-                // obtain the root
-                JSONObject root = (JSONObject) object;
-                protection.getData().putAll(root);
-
-                // Attempt to parse rights
-                Object rights = root.get("rights");
-
-                if (rights != null && (rights instanceof JSONArray)) {
-                    JSONArray array = (JSONArray) rights;
-                    Iterator<Object> iter = array.iterator();
-
-                    while (iter.hasNext()) {
-                        Object node = iter.next();
-
-                        // we only want to use the maps
-                        if (!(node instanceof JSONObject)) {
-                            continue;
-                        }
-
-                        JSONObject map = (JSONObject) node;
-
-                        // decode the map
-                        AccessRight right = AccessRight.decodeJSON(map);
-
-                        // bingo!
-                        if(right != null) {
-                            protection.addAccessRight(right);
-                        }
-                    }
-                }
-
-                // Attempt to parse flags
-                Object flags = root.get("flags");
-                if (flags != null && (rights instanceof JSONArray)) {
-                    JSONArray array = (JSONArray) flags;
-                    Iterator<Object> iter = array.iterator();
-
-                    while (iter.hasNext()) {
-                        Object node = iter.next();
-
-                        if (!(node instanceof JSONObject)) {
-                            continue;
-                        }
-
-                        JSONObject map = (JSONObject) node;
-
-                        Flag flag = Flag.decodeJSON(map);
-
-                        if (flag != null) {
-                            protection.addFlag(flag);
-                        }
-                    }
+                if (protection != null) {
+                    protections.add(protection);
                 }
             }
         } catch (SQLException e) {
@@ -578,22 +595,6 @@ public class PhysDB extends Database {
         }
 
         return protections;
-    }
-
-    /**
-     * Resolve the first protection from a ResultSet. The ResultSet is not closed.
-     *
-     * @param set
-     * @return
-     */
-    public Protection resolveProtection(ResultSet set) {
-        List<Protection> protections = resolveProtections(set);
-
-        if (protections.size() == 0) {
-            return null;
-        }
-
-        return protections.get(0);
     }
 
     /**
@@ -868,7 +869,7 @@ public class PhysDB extends Database {
             Protection protection = loadProtection(world, x, y, z);
 
             // if history logging is enabled, create it
-            if(LWC.getInstance().isHistoryEnabled() && protection != null) {
+            if (LWC.getInstance().isHistoryEnabled() && protection != null) {
                 History transaction = protection.createHistoryObject();
 
                 transaction.setPlayer(player);
@@ -923,12 +924,12 @@ public class PhysDB extends Database {
             int affectedRows = statement.executeUpdate();
 
             // set the history id if inserting
-            if(!history.doesExist()) {
-                if(affectedRows > 0) {
+            if (!history.doesExist()) {
+                if (affectedRows > 0) {
                     ResultSet generatedKeys = statement.getGeneratedKeys();
 
                     // get the key inserted
-                    if(generatedKeys.next()) {
+                    if (generatedKeys.next()) {
                         history.setId(generatedKeys.getInt(1));
                     }
 
@@ -949,7 +950,7 @@ public class PhysDB extends Database {
     public List<History> loadHistory(Protection protection) {
         List<History> temp = new ArrayList<History>();
 
-        if(!LWC.getInstance().isHistoryEnabled()) {
+        if (!LWC.getInstance().isHistoryEnabled()) {
             return temp;
         }
 
@@ -993,7 +994,7 @@ public class PhysDB extends Database {
 
     /**
      * Load all protection history that the given player created
-     * 
+     *
      * @param player
      * @return
      */
@@ -1001,7 +1002,7 @@ public class PhysDB extends Database {
         List<History> temp = new ArrayList<History>();
         LWCPlayer lwcPlayer = LWC.getInstance().wrapPlayer(player);
 
-        if(!LWC.getInstance().isHistoryEnabled()) {
+        if (!LWC.getInstance().isHistoryEnabled()) {
             return temp;
         }
 
@@ -1051,7 +1052,7 @@ public class PhysDB extends Database {
     public List<History> loadHistory() {
         List<History> temp = new ArrayList<History>();
 
-        if(!LWC.getInstance().isHistoryEnabled()) {
+        if (!LWC.getInstance().isHistoryEnabled()) {
             return temp;
         }
 
@@ -1103,15 +1104,15 @@ public class PhysDB extends Database {
 
             if (job.doesExist()) {
                 statement = prepare("REPLACE INTO " + prefix + "jobs (id, name, type, data, nextRun) VALUES (?, ?, ?, ?, ?)");
-                statement.setInt(index ++, job.getId());
+                statement.setInt(index++, job.getId());
             } else {
                 statement = prepare("INSERT INTO " + prefix + "jobs (name, type, data, nextRun) VALUES (?, ?, ?, ?)");
             }
 
-            statement.setString(index ++, job.getName());
-            statement.setInt(index ++, job.getType());
-            statement.setString(index ++, job.getData().toJSONString());
-            statement.setLong(index ++, job.getNextRun());
+            statement.setString(index++, job.getName());
+            statement.setInt(index++, job.getType());
+            statement.setString(index++, job.getData().toJSONString());
+            statement.setLong(index++, job.getNextRun());
             statement.executeUpdate();
 
             // check if it was inserted correctly
@@ -1141,7 +1142,7 @@ public class PhysDB extends Database {
 
     /**
      * Load all of the jobs in the database
-     * 
+     *
      * @return a List of the jobs in the database
      */
     public List<Job> loadJobs() {
@@ -1151,7 +1152,7 @@ public class PhysDB extends Database {
             PreparedStatement statement = prepare("SELECT * FROM " + prefix + "jobs");
             ResultSet set = statement.executeQuery();
 
-            while(set.next()) {
+            while (set.next()) {
                 Job job = new Job();
 
                 int id = set.getInt("id");
