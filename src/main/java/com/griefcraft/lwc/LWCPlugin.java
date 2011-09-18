@@ -303,7 +303,7 @@ public class LWCPlugin extends JavaPlugin {
         String version = getDescription().getVersion();
         LWCInfo.setVersion(version);
         LWC.ENABLED = true;
-        String localization = lwc.getConfiguration().getString("core.locale");
+        String localization = lwc.getConfiguration().getString("core.locale", "en");
 
         try {
             ResourceBundle defaultBundle = null;
