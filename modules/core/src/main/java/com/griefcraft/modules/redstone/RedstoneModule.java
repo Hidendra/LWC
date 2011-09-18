@@ -18,6 +18,7 @@
 package com.griefcraft.modules.redstone;
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Flag;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCRedstoneEvent;
@@ -33,7 +34,7 @@ public class RedstoneModule extends JavaModule {
         LWC lwc = event.getLWC();
         Protection protection = event.getProtection();
 
-        boolean hasFlag = protection.hasFlag(Protection.Flag.REDSTONE);
+        boolean hasFlag = protection.hasFlag(Flag.Type.REDSTONE);
         boolean denyRedstone = lwc.getConfiguration().getBoolean("protections.denyRedstone", false);
 
         if ((!hasFlag && denyRedstone) || (hasFlag && !denyRedstone)) {

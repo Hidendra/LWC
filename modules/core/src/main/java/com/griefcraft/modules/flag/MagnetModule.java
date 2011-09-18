@@ -18,6 +18,7 @@
 package com.griefcraft.modules.flag;
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Flag;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.config.Configuration;
@@ -132,7 +133,7 @@ public class MagnetModule extends JavaModule {
                             continue;
                         }
 
-                        if (!protection.hasFlag(Protection.Flag.MAGNET)) {
+                        if (!protection.hasFlag(Flag.Type.MAGNET)) {
                             continue;
                         }
 

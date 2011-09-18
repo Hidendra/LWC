@@ -35,6 +35,7 @@ import com.griefcraft.jobs.JobManager;
 import com.griefcraft.migration.ConfigPost300;
 import com.griefcraft.migration.MySQLPost200;
 import com.griefcraft.model.AccessRight;
+import com.griefcraft.model.Flag;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
@@ -1333,6 +1334,7 @@ public class LWC {
 
             message = message.replace(replace, getLocale(localeName));
         }
+        
         // split the lines
         for (String line : message.split("\\n")) {
             if (line.isEmpty()) {
@@ -1846,11 +1848,11 @@ public class LWC {
             ResultSet result = resultStatement.executeQuery("SELECT " + prefix + "protections.id AS protectionId, " + prefix + "protections.type AS protectionType, x, y, z, flags, blockId, world, owner, password, date, last_accessed FROM " + prefix + "protections" + where);
 
             while (result.next()) {
-                Protection protection = physicalDatabase.resolveProtectionNoRights(result);
+                Protection protection = physicalDatabase.resolveProtection(result);
                 World world = protection.getBukkitWorld();
 
                 // check if the protection is exempt from being removed
-                if (protection.hasFlag(Protection.Flag.EXEMPTION)) {
+                if (protection.hasFlag(Flag.Type.EXEMPTION)) {
                     continue;
                 }
 

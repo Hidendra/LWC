@@ -49,7 +49,7 @@ public class LWCPlayer implements CommandSender {
     /**
      * Cache of LWCPlayer objects
      */
-    private final static Map<Player, LWCPlayer> players = new HashMap<Player, LWCPlayer>();
+    private final static Map<Player, LWCPlayer> playerCache = new HashMap<Player, LWCPlayer>();
 
     /**
      * The modes bound to all players
@@ -78,11 +78,30 @@ public class LWCPlayer implements CommandSender {
      * @return
      */
     public static LWCPlayer getPlayer(Player player) {
-        if (!players.containsKey(player)) {
-            players.put(player, new LWCPlayer(LWC.getInstance(), player));
+        if (!playerCache.containsKey(player)) {
+            playerCache.put(player, new LWCPlayer(LWC.getInstance(), player));
         }
 
-        return players.get(player);
+        return playerCache.get(player);
+    }
+
+    /**
+     * Remove a player from the player cache
+     * 
+     * @param player
+     */
+    public static void removePlayer(Player player) {
+        LWCPlayer lwcPlayer = getPlayer(player);
+
+        // remove everything accessible by them
+        if (lwcPlayer != null) {
+            modes.remove(lwcPlayer);
+            actions.remove(lwcPlayer);
+            accessibleProtections.remove(lwcPlayer);
+        }
+
+        // uncache them
+        playerCache.remove(player);
     }
 
     /**
