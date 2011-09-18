@@ -30,6 +30,7 @@ import com.griefcraft.integration.permissions.BukkitPermissions;
 import com.griefcraft.integration.permissions.NijiPermissions;
 import com.griefcraft.integration.permissions.NoPermissions;
 import com.griefcraft.integration.permissions.PEXPermissions;
+import com.griefcraft.integration.permissions.SuperPermsPermissions;
 import com.griefcraft.migration.ConfigPost300;
 import com.griefcraft.migration.MySQLPost200;
 import com.griefcraft.model.AccessRight;
@@ -79,11 +80,13 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -1055,8 +1058,24 @@ public class LWC {
             permissions = new BukkitPermissions();
         } else if (resolvePlugin("PermissionsEx") != null) {
             permissions = new PEXPermissions();
-        } else if (resolvePlugin("Permissions") != null) {
-            permissions = new NijiPermissions();
+        } else {
+            // Default to Permissions over SuperPermissions, except with SuperpermsBridge
+            Plugin legacy = resolvePlugin("Permissions");
+            if(legacy != null &&
+                    legacy instanceof com.nijikokun.bukkit.Permissions.Permissions &&
+                    // Don't use SuperpermsBridge
+                    !(((com.nijikokun.bukkit.Permissions.Permissions)legacy).getHandler() instanceof com.platymuus.bukkit.permcompat.PermissionHandler)) {
+                permissions = new NijiPermissions();
+            } else {
+                try {
+                    Method method = CraftHumanEntity.class.getDeclaredMethod("hasPermission", String.class);
+                    if (method != null) {
+                        permissions = new SuperPermsPermissions();
+                    }
+                } catch(NoSuchMethodException e) {
+                    // server does not support SuperPerms
+                }
+            }
         }
 
         // Currency init
