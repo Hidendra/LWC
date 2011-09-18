@@ -484,7 +484,7 @@ public class PhysDB extends Database {
 
                 try {
                     object = jsonParser.parse(data);
-                } catch (ParseException e) {
+                } catch (Exception e) {
                     continue;
                 }
 
