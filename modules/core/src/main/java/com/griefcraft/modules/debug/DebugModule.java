@@ -2,8 +2,7 @@ package com.griefcraft.modules.debug;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
-import com.griefcraft.model.Protection;
-import com.griefcraft.model.Protection.Flag;
+import com.griefcraft.model.Flag;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.util.Colors;
@@ -81,8 +80,8 @@ public class DebugModule extends JavaModule {
         doPlayerPermission(player, "lwc.modify");
         doPlayerPermission(player, "lwc.unlock");
 
-        for (Flag flag : Protection.Flag.values()) {
-            doPlayerPermission(player, "lwc.flag." + flag.toString().toLowerCase());
+        for (Flag.Type type : Flag.Type.values()) {
+            doPlayerPermission(player, "lwc.flag." + type.toString().toLowerCase());
         }
 
         player.sendMessage(" ");
