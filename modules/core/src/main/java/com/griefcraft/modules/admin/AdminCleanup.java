@@ -148,7 +148,7 @@ public class AdminCleanup extends JavaModule {
                 }
 
                 String prefix = lwc.getPhysicalDatabase().getPrefix();
-                ResultSet result = resultStatement.executeQuery("SELECT " + prefix + "protections.id AS protectionId, " + prefix + "protections.type AS protectionType, x, y, z, flags, blockId, world, owner, password, date, last_accessed FROM " + prefix + "protections");
+                ResultSet result = resultStatement.executeQuery("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections");
 
                 while (result.next()) {
                     Protection protection = lwc.getPhysicalDatabase().resolveProtection(result);
