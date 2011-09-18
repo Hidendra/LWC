@@ -190,10 +190,8 @@ public class LWCPlayerListener extends PlayerListener {
             return;
         }
 
-        LWCPlayer player = LWC.getInstance().wrapPlayer(event.getPlayer());
-        player.removeAllAccessibleProtections();
-        player.removeAllActions();
-        player.disableAllModes();
+        // remove the place from the player cache and reset anything they can access
+        LWCPlayer.removePlayer(event.getPlayer());
     }
 
 }

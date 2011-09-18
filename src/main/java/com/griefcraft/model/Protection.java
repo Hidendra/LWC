@@ -44,49 +44,6 @@ public class Protection {
     @SuppressWarnings("unused")
     private Logger logger = Logger.getLogger("LWC");
 
-    // just a footnote, if a flag is "on", it is SET in the database, however if it's set to "off"
-    // it is REMOVED from the database if it is in it!
-    public enum Flag {
-        /**
-         * If set, redstone use is DISABLED if protections.denyRedstone = FALSE
-         */
-        REDSTONE(0x02),
-
-        /**
-         * Attracts dropped items into the inventory
-         */
-        MAGNET(0x03),
-
-        /**
-         * Protection is exempt from -remove; e.g /lwc admin expire -remove 2 weeks
-         */
-        EXEMPTION(0x08, true);
-
-        Flag(int bit) {
-            this(bit, false);
-        }
-
-        Flag(int bit, boolean restricted) {
-            this.bit = bit;
-            this.restricted = restricted;
-        }
-
-        private int bit;
-
-        /**
-         * If the flag is restricted to lwc admins
-         */
-        private boolean restricted;
-
-        public int getBit() {
-            return bit;
-        }
-
-        public boolean isRestricted() {
-            return restricted;
-        }
-    }
-
     /**
      * All of the history items associated with this protection
      */
@@ -96,6 +53,11 @@ public class Protection {
      * List of the accessRights rights for the protection
      */
     private final List<AccessRight> accessRights = new ArrayList<AccessRight>();
+
+    /**
+     * List of flags enabled on the protection
+     */
+    private final List<Flag> flags = new ArrayList<Flag>();
 
     /**
      * The block id
@@ -121,11 +83,6 @@ public class Protection {
      * Unique id (in sql)
      */
     private int id;
-
-    /**
-     * Bit-packed flags
-     */
-    private int flags;
 
     /**
      * The owner of the chest
@@ -188,6 +145,19 @@ public class Protection {
         }
 
         data.put("rights", root);
+    }
+
+    /**
+     * Encode the protection flags to JSON
+     */
+    public void encodeFlags() {
+        JSONArray root = new JSONArray();
+
+        for (Flag flag : flags) {
+            root.add(flag.getData());
+        }
+
+        data.put("flags", root);
     }
 
     /**
@@ -263,13 +233,35 @@ public class Protection {
     }
 
     /**
-     * Check if a flag is toggled
+     * Check if a flag is enabled
      *
-     * @param flag
+     * @param type
      * @return
      */
-    public boolean hasFlag(Flag flag) {
-        return (flags & flag.getBit()) == flag.getBit();
+    public boolean hasFlag(Flag.Type type) {
+        for (Flag flag : flags) {
+            if (flag.getType() == type) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the enabled flag for the corresponding type
+     *
+     * @param type
+     * @return
+     */
+    public Flag getFlag(Flag.Type type) {
+        for (Flag flag : flags) {
+            if (flag.getType() == type) {
+                return flag;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -283,8 +275,8 @@ public class Protection {
             return false;
         }
 
-        if (!hasFlag(flag)) {
-            flags |= flag.getBit();
+        if (!flags.contains(flag)) {
+            flags.add(flag);
             modified = true;
             return true;
         }
@@ -304,19 +296,8 @@ public class Protection {
             return;
         }
 
+        flags.remove(flag);
         this.modified = true;
-
-        if (!hasFlag(flag)) {
-            return;
-        }
-
-        flags = 0;
-
-        for (Flag tmp : Flag.values()) {
-            if (flag != tmp) {
-                addFlag(tmp);
-            }
-        }
     }
 
     /**
@@ -393,10 +374,6 @@ public class Protection {
 
     public JSONObject getData() {
         return data;
-    }
-
-    public int getFlags() {
-        return flags;
     }
 
     public int getBlockId() {
@@ -476,15 +453,6 @@ public class Protection {
         }
 
         this.id = id;
-        this.modified = true;
-    }
-
-    public void setFlags(int flags) {
-        if (removed) {
-            return;
-        }
-
-        this.flags = flags;
         this.modified = true;
     }
 
@@ -653,8 +621,9 @@ public class Protection {
             return;
         }
 
-        // encode the rights to the data array to ensure they saved
+        // encode JSON objects
         encodeRights();
+        encodeFlags();
 
         // only save the protection if it was modified
         if(modified) {
@@ -715,16 +684,14 @@ public class Protection {
     @Override
     public String toString() {
         // format the flags prettily
-        String flags = "";
+        String flagStr = "";
 
-        for (Flag flag : Flag.values()) {
-            if (hasFlag(flag)) {
-                flags += flag.toString() + ",";
-            }
+        for (Flag flag : flags) {
+            flagStr += flag.toString() + ",";
         }
 
-        if (flags.endsWith(",")) {
-            flags = flags.substring(0, flags.length() - 1);
+        if (flagStr.endsWith(",")) {
+            flagStr = flagStr.substring(0, flagStr.length() - 1);
         }
 
         // format the last accessed time
@@ -734,7 +701,7 @@ public class Protection {
             lastAccessed += " ago";
         }
 
-        return String.format("%s %s" + Colors.White + " " + Colors.Green + "Id=%d Owner=%s Location=[%s %d,%d,%d] Created=%s Flags=%s LastAccessed=%s", typeToString(), (blockId > 0 ? (LWC.materialToString(blockId)) : "Not yet cached"), id, owner, world, x, y, z, date, flags, lastAccessed);
+        return String.format("%s %s" + Colors.White + " " + Colors.Green + "Id=%d Owner=%s Location=[%s %d,%d,%d] Created=%s Flags=%s LastAccessed=%s", typeToString(), (blockId > 0 ? (LWC.materialToString(blockId)) : "Not yet cached"), id, owner, world, x, y, z, date, flagStr, lastAccessed);
     }
 
     /**

@@ -19,6 +19,7 @@ package com.griefcraft.modules.flag;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Action;
+import com.griefcraft.model.Flag;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
@@ -51,19 +52,22 @@ public class BaseFlagModule extends JavaModule {
         boolean shouldAdd = data.substring(0, 1).equals("+");
         String flagName = data.substring(1);
 
-        Protection.Flag flag = null;
+        Flag.Type type = null;
 
-        for (Protection.Flag tmp : Protection.Flag.values()) {
+        for (Flag.Type tmp : Flag.Type.values()) {
             if (tmp.toString().equalsIgnoreCase(flagName)) {
-                flag = tmp;
+                type = tmp;
                 break;
             }
         }
 
-        if (flag == null) {
+        if (type == null) {
             lwc.sendLocale(player, "protection.internalerror", "id", "flg");
             return;
         }
+
+        //////// FIXME - needs to allow data somehow
+        Flag flag = protection.getFlag(type);
 
         if (shouldAdd) {
             protection.addFlag(flag);
@@ -75,7 +79,6 @@ public class BaseFlagModule extends JavaModule {
 
         protection.save();
         lwc.removeModes(player);
-        return;
     }
 
     @Override
@@ -113,8 +116,8 @@ public class BaseFlagModule extends JavaModule {
         }
 
         // verify the flag name
-        Protection.Flag match = null;
-        for (Protection.Flag flag : Protection.Flag.values()) {
+        Flag.Type match = null;
+        for (Flag.Type flag : Flag.Type.values()) {
             if (flag.toString().equalsIgnoreCase(flagName) || flag.toString().toLowerCase().startsWith(flagName.toLowerCase())) {
                 match = flag;
                 flagName = flag.toString(); // get the case-correct name while we're there
@@ -151,8 +154,6 @@ public class BaseFlagModule extends JavaModule {
         player.addAction(action);
         
         lwc.sendLocale(sender, "protection.flag.finalize");
-
-        return;
     }
 
 }
