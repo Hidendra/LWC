@@ -30,7 +30,6 @@ import org.bukkit.command.CommandSender;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -198,20 +197,6 @@ public class AdminCleanup extends JavaModule {
             float timeInSeconds = (finish - start) / 1000.0f;
 
             lwc.sendLocale(sender, "protection.admin.cleanup.complete", "count", completed, "seconds", timeInSeconds);
-        }
-
-        private List<Protection> getAll(List<Protection> protections, String world, int x, int y, int z) {
-            List<Protection> tmp = new ArrayList<Protection>();
-
-            for (Protection protection : protections) {
-                if (protection.getWorld() != null && world != null && protection.getWorld().equals(world)) {
-                    if (protection.getX() == x && protection.getY() == y && protection.getZ() == z) {
-                        tmp.add(protection);
-                    }
-                }
-            }
-
-            return tmp;
         }
 
     }
