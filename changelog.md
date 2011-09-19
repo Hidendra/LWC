@@ -1,11 +1,14 @@
-### 4.00-alpha4
+### 4.0.0-alpha5
+* New LWC versions or builds can now be reloaded in without having to restart the server
+
+### 4.0.0-alpha4
 * `/lwc admin reload` will now also reload the loaded locale file (including the one in `plugins/LWC/locale/`)
 * Added the `/lwc admin dump locale` utility - it dumps the current locale file into `plugins/LWC/locale/lwc.properties`
 * Flags now support data. No utility to set data yet, however.
 * The command `/lwc admin purgeregion <RegionName> [WorldName]` has been added to the WorldGuard module. If you are using it from the console, you must also specify the world that the region is in. If the region is in a different world than the player you use the command from, you must again also provide the world name.
 * New updater + downloader. Currently, the default method of updating is via BLEEDING_EDGE. This is a build-by-build update and is currently set to manual by default. You can check your version with `/lwc admin version` and/or update to the latest with `/lwc admin update`. If you want automatic updating, in core.yml set core.updateMethod to: `updateMethod: AUTOMATIC`
 
-### 4.00-alpha3
+### 4.0.0-alpha3
 * **FIX:** Protected blocks could be pulled with a sticky piston
 * **FIX:** Piston exploit that allowed protections such as Doors to be destroyed via:  PISTON -> BLOCK -> PROTECTED DOOR
 * Towny integration. Protections cannot be made outside of Towns, e.g the wild. Set `core.townyBorders` to true
@@ -25,7 +28,7 @@
 * `/lwc schedule arguments JOBNAME ARGUMENTS` - for example: `/lwc create JOBNAME expire` , `/lwc schedule arguments JOBNAME -remove 2 weeks` makes the job JOBNAME which removes protections + blocks of protections that have not be accessed in at least 2 weeks.
 * `/lwc tasks` can be used instead of `/lwc schedule`
 
-### 4.00-alpha2
+### 4.0.0-alpha2
 * `/lwc admin report` has had a makeover and now also shows cache read/writes
 * Protection rights have been inlined with the main protections table
 * Multi-group support has been added for Permissions 3.0+
