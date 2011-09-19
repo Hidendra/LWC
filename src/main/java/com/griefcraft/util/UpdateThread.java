@@ -146,30 +146,31 @@ public class UpdateThread implements Runnable {
     private void _flush() {
         // periodically update protections in the database if a non-critical change was made
         if (protectionUpdateQueue.size() > 0) {
-            Connection connection = lwc.getPhysicalDatabase().getConnection();
+            synchronized (protectionUpdateQueue) {
+                Connection connection = lwc.getPhysicalDatabase().getConnection();
 
-            try {
-                connection.setAutoCommit(false);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+                try {
+                    connection.setAutoCommit(false);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
 
-            // save all of the protections
-            for(Map.Entry<Integer, Protection> entry : protectionUpdateQueue.entrySet()) {
-                Protection protection = entry.getValue();
+                // save all of the protections
+                for(Map.Entry<Integer, Protection> entry : protectionUpdateQueue.entrySet()) {
+                    Protection protection = entry.getValue();
+                    protection.saveNow();
+                }
 
-                protection.saveNow();
-            }
+                // clear the queue
+                protectionUpdateQueue.clear();
 
-            // clear the queue
-            protectionUpdateQueue.clear();
-
-            // commit
-            try {
-                connection.commit();
-                connection.setAutoCommit(true);
-            } catch (SQLException e) {
-                e.printStackTrace();
+                // commit
+                try {
+                    connection.commit();
+                    connection.setAutoCommit(true);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

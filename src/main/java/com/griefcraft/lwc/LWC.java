@@ -1845,7 +1845,7 @@ public class LWC {
             }
 
             String prefix = physicalDatabase.getPrefix();
-            ResultSet result = resultStatement.executeQuery("SELECT " + prefix + "protections.id AS protectionId, " + prefix + "protections.type AS protectionType, x, y, z, flags, blockId, world, owner, password, date, last_accessed FROM " + prefix + "protections" + where);
+            ResultSet result = resultStatement.executeQuery("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections" + where);
 
             while (result.next()) {
                 Protection protection = physicalDatabase.resolveProtection(result);
