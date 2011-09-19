@@ -178,10 +178,7 @@ public class LWC {
 
     public LWC(LWCPlugin plugin) {
         this.plugin = plugin;
-
-        if (instance == null) {
-            instance = this;
-        }
+        LWC.instance = this;
 
         configuration = Configuration.load("core.yml");
         moduleLoader = new ModuleLoader();
