@@ -1,4 +1,6 @@
 ### 4.00-alpha4
+* `/lwc admin reload` will now also reload the loaded locale file (including the one in `plugins/LWC/locale/`)
+* Added the `/lwc admin dump locale` utility - it dumps the current locale file into `plugins/LWC/locale/lwc.properties`
 * Flags now support data. No utility to set data yet, however.
 * The command `/lwc admin purgeregion <RegionName> [WorldName]` has been added to the WorldGuard module. If you are using it from the console, you must also specify the world that the region is in. If the region is in a different world than the player you use the command from, you must again also provide the world name.
 * New updater + downloader. Currently, the default method of updating is via BLEEDING_EDGE. This is a build-by-build update and is currently set to manual by default. You can check your version with `/lwc admin version` and/or update to the latest with `/lwc admin update`. If you want automatic updating, in core.yml set core.updateMethod to: `updateMethod: AUTOMATIC`
