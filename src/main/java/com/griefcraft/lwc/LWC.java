@@ -1177,6 +1177,7 @@ public class LWC {
         registerModule(new AdminQuery());
         registerModule(new AdminPurgeBanned());
         registerModule(new AdminExpire());
+        registerModule(new AdminDump());
 
         // flags
         registerModule(new BaseFlagModule());
@@ -1189,7 +1190,7 @@ public class LWC {
         registerModule(new DropTransferModule());
         registerModule(new NoSpamModule());
 
-        // non-core modules but are included with LWC anyway
+        // non-core modules but are included with LWC anyway (not a lot of functionality in them, generally ..)
         registerModule(new ListsModule());
         registerModule(new WorldGuardModule());
         registerModule(new TownyModule());
