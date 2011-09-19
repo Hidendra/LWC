@@ -54,7 +54,6 @@ public class AdminConfig extends JavaModule {
         String value = args[2];
 
         lwc.getConfiguration().setProperty(path, value);
-        return;
     }
 
 }
