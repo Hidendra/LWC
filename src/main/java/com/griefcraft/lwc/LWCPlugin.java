@@ -320,10 +320,17 @@ public class LWCPlugin extends JavaPlugin {
     }
 
     /**
+     * @return the current locale in use
+     */
+    public String getCurrentLocale() {
+        return lwc.getConfiguration().getString("core.locale", "en");
+    }
+
+    /**
      * Load LWC localizations
      */
     public void loadLocales() {
-        String localization = lwc.getConfiguration().getString("core.locale", "en");
+        String localization = getCurrentLocale();
 
         try {
             ResourceBundle defaultBundle = null;
