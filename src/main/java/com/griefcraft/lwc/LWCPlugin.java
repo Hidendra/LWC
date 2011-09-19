@@ -41,8 +41,11 @@ import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Locale;
 import java.util.MissingResourceException;
+import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
@@ -337,12 +340,13 @@ public class LWCPlugin extends JavaPlugin {
             ResourceBundle optionalBundle = null;
 
             // load the default locale first
-            defaultBundle = ResourceBundle.getBundle("lang.lwc", new Locale("en"), new UTF8Control());
+            defaultBundle = new PropertyResourceBundle(new InputStreamReader(getClass().getResourceAsStream("/lang/lwc_en.properties"), "UTF-8"));
 
             // and now check if a bundled locale the same as the server's locale exists
             try {
-                optionalBundle = ResourceBundle.getBundle("lang.lwc", new Locale(localization), new UTF8Control());
+                optionalBundle = new PropertyResourceBundle(new InputStreamReader(getClass().getResourceAsStream("/lang/lwc_" + localization + ".properties"), "UTF-8"));
             } catch (MissingResourceException e) {
+            } catch (IOException e) {
             }
 
             // ensure both bundles aren't the same
@@ -358,6 +362,8 @@ public class LWCPlugin extends JavaPlugin {
         } catch (MissingResourceException e) {
             log("We are missing the default locale in LWC.jar.. What happened to it? :-(");
             throw e;
+        } catch (IOException e) {
+            log("We are missing the default locale in LWC.jar.. What happened to it? :-(");
         }
 
         // located in plugins/LWC/locale/, values in that overrides the ones in the default :-)
