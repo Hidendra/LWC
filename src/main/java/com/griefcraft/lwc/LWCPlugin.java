@@ -303,6 +303,26 @@ public class LWCPlugin extends JavaPlugin {
         String version = getDescription().getVersion();
         LWCInfo.setVersion(version);
         LWC.ENABLED = true;
+
+        loadLocales();
+        loadDatabase();
+        try {
+            registerEvents();
+        } catch(NoSuchFieldError e) { }
+
+        // Load the rest of LWC
+        lwc.load();
+
+        // let the updater do its thang
+        updater.init();
+
+        log("At version: " + LWCInfo.FULL_VERSION);
+    }
+
+    /**
+     * Load LWC localizations
+     */
+    public void loadLocales() {
         String localization = lwc.getConfiguration().getString("core.locale", "en");
 
         try {
@@ -348,19 +368,6 @@ public class LWCPlugin extends JavaPlugin {
 
         int overrides = optionalBundle != null ? optionalBundle.keySet().size() : 0;
         log("Loaded " + locale.keySet().size() + " locale strings (" + overrides + " overrides)");
-
-        loadDatabase();
-        try {
-            registerEvents();
-        } catch(NoSuchFieldError e) { }
-
-        // Load the rest of LWC
-        lwc.load();
-
-        // let the updater do its thang
-        updater.init();
-
-        log("At version: " + LWCInfo.FULL_VERSION);
     }
 
     /**

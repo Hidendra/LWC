@@ -47,9 +47,9 @@ public class AdminReload extends JavaModule {
         event.setCancelled(true);
 
         Configuration.reload();
+        lwc.getPlugin().loadLocales();
 
         lwc.sendLocale(sender, "protection.admin.reload.finalize");
-        return;
     }
 
 }
