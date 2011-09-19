@@ -347,7 +347,6 @@ public class LWCPlugin extends JavaPlugin {
         }
 
         int overrides = optionalBundle != null ? optionalBundle.keySet().size() : 0;
-
         log("Loaded " + locale.keySet().size() + " locale strings (" + overrides + " overrides)");
 
         loadDatabase();
