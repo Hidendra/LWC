@@ -1061,12 +1061,18 @@ public class LWC {
         } else {
             // Default to Permissions over SuperPermissions, except with SuperpermsBridge
             Plugin legacy = resolvePlugin("Permissions");
-            if(legacy != null &&
-                    legacy instanceof com.nijikokun.bukkit.Permissions.Permissions &&
-                    // Don't use SuperpermsBridge
-                    !(((com.nijikokun.bukkit.Permissions.Permissions)legacy).getHandler() instanceof com.platymuus.bukkit.permcompat.PermissionHandler)) {
-                permissions = new NijiPermissions();
-            } else {
+
+            try {
+                // super perms bridge
+                if (((com.nijikokun.bukkit.Permissions.Permissions)legacy).getHandler() instanceof com.platymuus.bukkit.permcompat.PermissionHandler) {
+                    permissions = new SuperPermsPermissions();
+                } else {
+                    permissions = new NijiPermissions();
+                }
+            } catch (NoClassDefFoundError e) { }
+
+            // attempt super perms if we still have nothing
+            if (permissions.getClass() == NoPermissions.class) {
                 try {
                     Method method = CraftHumanEntity.class.getDeclaredMethod("hasPermission", String.class);
                     if (method != null) {
