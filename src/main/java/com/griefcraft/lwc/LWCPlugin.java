@@ -350,6 +350,8 @@ public class LWCPlugin extends JavaPlugin {
             try {
                 optionalBundle = new PropertyResourceBundle(new InputStreamReader(file.getInputStream(file.getJarEntry("lang/lwc_" + localization + ".properties")), "UTF-8"));
             } catch (MissingResourceException e) {
+            } catch (NullPointerException e) {
+                // file wasn't found :p - that's ok
             }
 
             // ensure both bundles aren't the same
