@@ -70,7 +70,7 @@ permissions:
 
   lwc.protect:
       description: Gives the ability to basic LWC usage (almost everything except LWC admin.)
-      default: true
+      default: false
       children:
           lwc.create.*: true
           lwc.modify: true
