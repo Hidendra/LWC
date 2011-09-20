@@ -1063,13 +1063,18 @@ public class LWC {
             Plugin legacy = resolvePlugin("Permissions");
 
             try {
-                // super perms bridge
-                if (((com.nijikokun.bukkit.Permissions.Permissions)legacy).getHandler() instanceof com.platymuus.bukkit.permcompat.PermissionHandler) {
-                    permissions = new SuperPermsPermissions();
-                } else {
+                // super perms bridge, will throw exception if it's not it
+                if (legacy != null) {
+                    if (((com.nijikokun.bukkit.Permissions.Permissions)legacy).getHandler() instanceof com.platymuus.bukkit.permcompat.PermissionHandler) {
+                        permissions = new SuperPermsPermissions();
+                    }
+                }
+            } catch (NoClassDefFoundError e) {
+                // Permissions 2/3 or some other bridge
+                if (legacy != null) {
                     permissions = new NijiPermissions();
                 }
-            } catch (NoClassDefFoundError e) { }
+            }
 
             // attempt super perms if we still have nothing
             if (permissions.getClass() == NoPermissions.class) {
