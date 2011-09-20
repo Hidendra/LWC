@@ -141,7 +141,9 @@ public class Protection {
 
         // add all of the access rights to the root
         for (AccessRight right : accessRights) {
-            root.add(right.encodeToJSON());
+            if (right != null) {
+                root.add(right.encodeToJSON());
+            }
         }
 
         data.put("rights", root);
@@ -154,7 +156,9 @@ public class Protection {
         JSONArray root = new JSONArray();
 
         for (Flag flag : flags) {
-            root.add(flag.getData());
+            if (flag != null) {
+                root.add(flag.getData());
+            }
         }
 
         data.put("flags", root);
