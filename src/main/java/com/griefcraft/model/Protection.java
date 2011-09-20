@@ -52,12 +52,12 @@ public class Protection {
     /**
      * List of the accessRights rights for the protection
      */
-    private final List<AccessRight> accessRights = new ArrayList<AccessRight>();
+    private final Set<AccessRight> accessRights = new HashSet<AccessRight>();
 
     /**
      * List of flags enabled on the protection
      */
-    private final List<Flag> flags = new ArrayList<Flag>();
+    private final Set<Flag> flags = new HashSet<Flag>();
 
     /**
      * The block id
@@ -271,7 +271,7 @@ public class Protection {
      * @return
      */
     public boolean addFlag(Flag flag) {
-        if (removed) {
+        if (removed || flag == null) {
             return false;
         }
 
@@ -321,7 +321,7 @@ public class Protection {
      * @return the list of access rights
      */
     public List<AccessRight> getAccessRights() {
-        return Collections.unmodifiableList(accessRights);
+        return Collections.unmodifiableList(new ArrayList<AccessRight>(accessRights));
     }
 
     /**
@@ -337,7 +337,7 @@ public class Protection {
      * @param right
      */
     public void addAccessRight(AccessRight right) {
-        if (removed) {
+        if (removed || right == null) {
             return;
         }
 
