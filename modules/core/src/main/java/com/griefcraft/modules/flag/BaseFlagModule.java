@@ -69,6 +69,10 @@ public class BaseFlagModule extends JavaModule {
         //////// FIXME - needs to allow data somehow
         Flag flag = protection.getFlag(type);
 
+        if (flag == null) {
+            flag = new Flag(type);
+        }
+
         if (shouldAdd) {
             protection.addFlag(flag);
             lwc.sendLocale(player, "protection.interact.flag.add", "flag", StringUtils.capitalizeFirstLetter(flagName));

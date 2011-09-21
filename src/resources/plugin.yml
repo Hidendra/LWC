@@ -59,6 +59,9 @@ commands:
   cexempt:
     description: Toggle protection exemption on an existing protection; disallows it from being removed by -remove, e.g /lwc admin expire -remove 2 weeks
     usage: /<command>
+  cautoclose:
+    description: Flag a door to automatically close after the configured value (default: 3 seconds)
+    usage: /<command>
 
 permissions:
 
@@ -127,6 +130,7 @@ permissions:
       children:
            lwc.flag.redstone: true
            lwc.flag.magnet: true
+           lwc.flag.autoclose: true
   lwc.flag.redstone:
       description: Allows you to use the redstone flag, which enables or disables the use of redstone on a protection depending on plugin settings.
   lwc.flag.magnet:

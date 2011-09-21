@@ -42,7 +42,12 @@ public class Flag {
         /**
          * Protection is exempt from being auto removed from LWC - e.g /lwc admin expire -remove 2 weeks
          */
-        EXEMPTION(true);
+        EXEMPTION(true),
+        
+        /**
+         * The door will automatically close after the time configured in plugins/LWC/doors.yml
+         */
+        AUTOCLOSE;
 
         Type() {
             this(false);

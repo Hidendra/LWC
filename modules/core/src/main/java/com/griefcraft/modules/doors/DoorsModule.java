@@ -18,6 +18,7 @@
 package com.griefcraft.modules.doors;
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Flag;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
@@ -110,7 +111,7 @@ public class DoorsModule extends JavaModule {
         doors = new LinkedList<DoorAction>();
         enabled = configuration.getBoolean("doors.enabled", true);
 
-        String action = configuration.getString("doors.action");
+        String action = configuration.getString("doors.action", "toggle");
 
         if (action == null) {
             this.action = Action.NULL;
@@ -119,10 +120,10 @@ public class DoorsModule extends JavaModule {
 
         if (action.equalsIgnoreCase("openAndClose")) {
             this.action = Action.OPEN_AND_CLOSE;
-            this.interval = configuration.getInt("doors.interval", 3);
         } else if (action.equalsIgnoreCase("toggle")) {
             this.action = Action.TOGGLE;
         }
+        this.interval = configuration.getInt("doors.interval", 3);
 
         // start the task
         DoorTask doorTask = new DoorTask();
@@ -188,10 +189,6 @@ public class DoorsModule extends JavaModule {
             return;
         }
 
-        if (!enabled || action == Action.NULL) {
-            return;
-        }
-
         if (!event.canAccess()) {
             return;
         }
@@ -200,9 +197,24 @@ public class DoorsModule extends JavaModule {
         Protection protection = event.getProtection();
         Player player = event.getPlayer();
         LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
+        Action usingAction = this.action;
 
         // make sure we actually want this protection
         if (!isValid(Material.getMaterial(protection.getBlockId()))) {
+            return;
+        }
+
+        // Should we go forward?
+        if (!enabled && !protection.hasFlag(Flag.Type.AUTOCLOSE)) {
+            return;
+        }
+
+        // if the protect has the flag, we want to close it after the interval, even if action = toggle
+        if (protection.hasFlag(Flag.Type.AUTOCLOSE)) {
+            usingAction = Action.OPEN_AND_CLOSE;
+        }
+
+        if (action == Action.NULL) {
             return;
         }
 
@@ -262,7 +274,7 @@ public class DoorsModule extends JavaModule {
                     toggleDoor(door);
                 }
 
-                switch (this.action) {
+                switch (usingAction) {
                     case TOGGLE:
                         break;
 
