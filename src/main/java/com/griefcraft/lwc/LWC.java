@@ -189,6 +189,13 @@ public class LWC {
     }
 
     /**
+     * @return
+     */
+    public NijiPermissions getRemoveMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose() {
+        return removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose;
+    }
+
+    /**
      * Create an LWCPlayer object for a player
      *
      * @param sender
