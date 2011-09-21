@@ -135,6 +135,8 @@ permissions:
       description: Allows you to use the redstone flag, which enables or disables the use of redstone on a protection depending on plugin settings.
   lwc.flag.magnet:
       description: Allows you to use the magnet flag, which makes a protection such as a chest suck up dropped items in a specific radius around it.
+  lwc.flag.autoclose:
+      description: Allows a door to automatically close itself after 3 seconds (configurable.)
 
   lwc.mode.*:
       description: Gives you access to every usable mode, provided they are already disabled.
