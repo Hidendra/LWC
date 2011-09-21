@@ -75,10 +75,6 @@ public class MagnetModule extends JavaModule {
             Server server = Bukkit.getServer();
             LWC lwc = LWC.getInstance();
 
-            if (!LWC.ENABLED) {
-                server.getScheduler().cancelTask(taskId);
-            }
-
             for (World world : server.getWorlds()) {
                 String worldName = world.getName();
 
@@ -169,11 +165,6 @@ public class MagnetModule extends JavaModule {
     }
 
     /**
-     * The BukkitScheduler task id
-     */
-    private int taskId;
-
-    /**
      * Check for the Showcase plugin and if it exists we also want to make sure the block doesn't have a showcase
      * on it.
      *
@@ -220,7 +211,7 @@ public class MagnetModule extends JavaModule {
 
         // register our search thread schedule
         MagnetTask searchThread = new MagnetTask();
-        taskId = lwc.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(lwc.getPlugin(), searchThread, 50, 50);
+        lwc.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(lwc.getPlugin(), searchThread, 50, 50);
     }
 
 }
