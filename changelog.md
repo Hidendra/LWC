@@ -1,4 +1,5 @@
 ### 4.0.0-alpha5
+* New `AUTOCLOSE` flag, which allows doors to automatically close themselves after 3 seconds. Both sides of a double door must have this flag or doors may become out of sync.
 * New LWC versions or builds can now be reloaded in without having to restart the server
 
 ### 4.0.0-alpha4
