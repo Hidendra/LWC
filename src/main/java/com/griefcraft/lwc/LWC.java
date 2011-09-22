@@ -1325,6 +1325,10 @@ public class LWC {
             return;
         }
 
+        if (message.equals("null")) {
+            return;
+        }
+
         String[] aliasvars = new String[]{"cprivate", "cpublic", "cpassword", "cmodify", "cunlock", "cinfo", "cremove"};
 
         // apply command name modification depending on menu style
