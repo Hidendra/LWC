@@ -164,6 +164,11 @@ public class LWC {
     private ICurrency currency;
 
     /**
+     * Sigh
+     */
+    private NijiPermissions removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose;
+
+    /**
      * Whether or not we utilize logic to work around the Bukkit 656 bug.  http://leaky.bukkit.org/issues/656
      */
     private boolean bug656workaround;
@@ -180,6 +185,13 @@ public class LWC {
         caches = new CacheSet();
 
         bug656workaround = configuration.getBoolean("core.bukkitBug656workaround", false);
+    }
+
+    /**
+     * @return
+     */
+    public NijiPermissions getRemoveMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose() {
+        return removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose;
     }
 
     /**
@@ -353,11 +365,9 @@ public class LWC {
                     return true;
                 }
 
-                if (permissions.isActive()) {
-                    for (String groupName : permissions.getGroups(player)) {
-                        if (protection.getAccess(AccessRight.GROUP, groupName) >= 0) {
-                            return true;
-                        }
+                for (String groupName : permissions.getGroups(player)) {
+                    if (protection.getAccess(AccessRight.GROUP, groupName) >= 0) {
+                        return true;
                     }
                 }
 
@@ -423,11 +433,9 @@ public class LWC {
                     return true;
                 }
 
-                if (permissions.isActive()) {
-                    for (String groupName : permissions.getGroups(player)) {
-                        if (protection.getAccess(AccessRight.GROUP, groupName) == 1) {
-                            return true;
-                        }
+                for (String groupName : permissions.getGroups(player)) {
+                    if (protection.getAccess(AccessRight.GROUP, groupName) == 1) {
+                        return true;
                     }
                 }
 
@@ -904,7 +912,7 @@ public class LWC {
      * @return
      */
     public boolean hasAdminPermission(CommandSender sender, String node) {
-        return isAdmin(sender) || permissions.isActive() && hasPermission(sender, node, "lwc.admin");
+        return isAdmin(sender) || hasPermission(sender, node, "lwc.admin");
     }
 
     /**
@@ -915,7 +923,7 @@ public class LWC {
      * @return
      */
     public boolean hasPlayerPermission(CommandSender sender, String node) {
-        return !permissions.isActive() || hasPermission(sender, node, "lwc.protect");
+        return hasPermission(sender, node, "lwc.protect");
 
     }
 
@@ -954,11 +962,17 @@ public class LWC {
      * @return
      */
     public boolean hasPermission(Player player, String node) {
-        if (!permissions.isActive()) {
-            return !node.contains("admin") && !node.contains("mod");
+        // if Permissions 2/3 is found, don't use anything else
+        if (removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose != null) {
+            return removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose.permission(player, node);
         }
 
-        return permissions.permission(player, node);
+        try {
+            return player.hasPermission(node);
+        } catch (NoSuchMethodError e) {
+            // their server does not support Superperms..
+            return !node.contains("admin") && !node.contains("mod");
+        }
     }
 
     /**
@@ -974,13 +988,7 @@ public class LWC {
             }
         }
 
-        if (permissions.isActive()) {
-            if (hasPermission(player, "lwc.admin")) {
-                return true;
-            }
-        }
-
-        return false;
+        return hasPermission(player, "lwc.admin");
     }
 
     /**
@@ -990,13 +998,7 @@ public class LWC {
      * @return true if the player is an LWC mod
      */
     public boolean isMod(Player player) {
-        if (permissions.isActive()) {
-            if (hasPermission(player, "lwc.mod")) {
-                return true;
-            }
-        }
-
-        return false;
+        return hasPermission(player, "lwc.mod");
     }
 
     /**
@@ -1016,7 +1018,7 @@ public class LWC {
      * @return
      */
     public boolean isModeWhitelisted(Player player, String mode) {
-        return permissions.isActive() && hasPermission(player, "lwc.mode." + mode, "lwc.allmodes");
+        return hasPermission(player, "lwc.mode." + mode, "lwc.allmodes");
 
     }
 
@@ -1087,6 +1089,10 @@ public class LWC {
                     // server does not support SuperPerms
                 }
             }
+        }
+
+        if (resolvePlugin("Permissions") != null) {
+            removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose = new NijiPermissions();
         }
 
         // Currency init
