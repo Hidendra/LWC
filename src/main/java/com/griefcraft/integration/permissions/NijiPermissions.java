@@ -25,14 +25,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class NijiPermissions implements IPermissions {
-
-    /**
-     * The permissions plugin instance
-     */
-    private Permissions plugin;
 
     /**
      * The Permissions handler
@@ -46,8 +42,7 @@ public class NijiPermissions implements IPermissions {
             return;
         }
 
-        plugin = (Permissions) permissionsPlugin;
-        handler = plugin.getHandler();
+        handler = ((Permissions) permissionsPlugin).getHandler();
     }
 
     public boolean isActive() {

@@ -289,9 +289,6 @@ public class EconomyModule extends JavaModule {
     private String resolveValue(Player player, String node) {
         LWC lwc = LWC.getInstance();
 
-        // check if we have a permissions plugin
-        boolean hasPermissions = lwc.getPermissions().isActive();
-
         // resolve the limits type
         String value;
 
@@ -299,7 +296,7 @@ public class EconomyModule extends JavaModule {
         value = configuration.getString("players." + player.getName() + "." + node);
 
         // try permissions
-        if (value == null && hasPermissions) {
+        if (value == null) {
             for (String groupName : lwc.getPermissions().getGroups(player)) {
                 if (groupName != null && !groupName.isEmpty() && value == null) {
                     value = map("groups." + groupName + "." + node);
