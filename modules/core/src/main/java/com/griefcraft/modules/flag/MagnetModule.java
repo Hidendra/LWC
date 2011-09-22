@@ -156,29 +156,6 @@ public class MagnetModule extends JavaModule {
         }
     }
 
-    /**
-     * Check for the Showcase plugin and if it exists we also want to make sure the block doesn't have a showcase
-     * on it.
-     *
-     * @param item
-     * @return
-     */
-    private boolean isShowcaseItem(Item item) {
-        if (item == null) {
-            return false;
-        }
-
-        // check for the showcase plugin
-        boolean hasShowcase = Bukkit.getServer().getPluginManager().getPlugin("Showcase") != null;
-
-        if (hasShowcase) {
-            // Now we can check for the showcase item
-            return ShowcaseMain.instance.getItemByDrop(item) != null;
-        }
-
-        return false;
-    }
-
     @Override
     public void load(LWC lwc) {
         enabled = configuration.getBoolean("magnet.enabled", false);
