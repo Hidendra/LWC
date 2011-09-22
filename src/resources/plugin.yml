@@ -81,7 +81,7 @@ permissions:
 
   lwc.admin:
       description: Gives you absolutely power over LWC. As an LWC admin, you have no restrictions.
-      default: op
+      default: false
       children:
           lwc.allcommands: true
 
