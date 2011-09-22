@@ -60,6 +60,7 @@ import com.griefcraft.modules.modify.ModifyModule;
 import com.griefcraft.modules.owners.OwnersModule;
 import com.griefcraft.modules.redstone.RedstoneModule;
 import com.griefcraft.modules.schedule.ScheduleModule;
+import com.griefcraft.modules.setup.BaseSetupModule;
 import com.griefcraft.modules.towny.TownyModule;
 import com.griefcraft.modules.unlock.UnlockModule;
 import com.griefcraft.modules.worldguard.WorldGuardModule;
@@ -1182,6 +1183,9 @@ public class LWC {
         registerModule(new AdminPurgeBanned());
         registerModule(new AdminExpire());
         registerModule(new AdminDump());
+
+        // /lwc setup
+        registerModule(new BaseSetupModule());
 
         // flags
         registerModule(new BaseFlagModule());
