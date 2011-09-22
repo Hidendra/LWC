@@ -15,14 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.griefcraft.modules.admin;
+package com.griefcraft.modules.setup;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import org.bukkit.command.CommandSender;
 
-public class BaseAdminModule extends JavaModule {
+public class BaseSetupModule extends JavaModule {
 
     @Override
     public void onCommand(LWCCommandEvent event) {
@@ -30,7 +30,7 @@ public class BaseAdminModule extends JavaModule {
             return;
         }
 
-        if (!event.hasFlag("a", "admin")) {
+        if (!event.hasFlag("s", "setup")) {
             return;
         }
 
@@ -38,17 +38,18 @@ public class BaseAdminModule extends JavaModule {
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
 
+        if (!lwc.isAdmin(sender)) {
+            lwc.sendLocale(sender, "protection.accessdenied");
+            event.setCancelled(true);
+            return;
+        }
+
         if (args.length == 0) {
             if (lwc.isAdmin(sender)) {
-                lwc.sendLocale(sender, "help.admin");
+                lwc.sendLocale(sender, "help.setup");
             }
 
             event.setCancelled(true);
-        } else if (args.length > 0) {
-            // check for permissions
-            if (!lwc.hasAdminPermission(sender, "lwc.admin." + args[0].toLowerCase())) {
-                event.setCancelled(true);
-            }
         }
     }
 
