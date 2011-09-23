@@ -18,14 +18,20 @@
 package com.griefcraft.modules.towny;
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.AccessRight;
+import com.griefcraft.model.Protection;
+import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCAccessEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.util.Colors;
 import com.palmergames.bukkit.towny.Towny;
 import com.palmergames.bukkit.towny.object.Coord;
+import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.TownBlock;
 import com.palmergames.bukkit.towny.object.TownyWorld;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class TownyModule extends JavaModule {
@@ -66,6 +72,53 @@ public class TownyModule extends JavaModule {
     private void trigger(LWCProtectionRegisterEvent event) {
         event.getPlayer().sendMessage(Colors.Red + "You can only protect blocks using LWC inside of a Town!");
         event.setCancelled(true);
+    }
+
+    @Override
+    public void onAccessRequest(LWCAccessEvent event) {
+        Player player = event.getPlayer();
+        Protection protection = event.getProtection();
+
+        if (protection.getType() != ProtectionTypes.PRIVATE) {
+            return;
+        }
+
+        if (towny == null) {
+            return;
+        }
+
+        for (AccessRight right : protection.getAccessRights()) {
+            if (right.getType() != AccessRight.TOWN) {
+                continue;
+            }
+
+            String townName = right.getName();
+
+            // Does the town exist?
+            try {
+                Town town = towny.getTownyUniverse().getTown(townName);
+
+                if (town == null) {
+                    return;
+                }
+
+                // check if the player is a resident of said town
+                if (!town.hasResident(player.getName())) {
+                    // Uh-oh!
+                    event.setAccess(AccessRight.RIGHT_NOACCESS);
+                } else {
+                    // They're in the town :-)
+                    event.setAccess(AccessRight.RIGHT_PLAYER);
+                }
+
+                // If they're the major, let them admin the protection
+                if (town.getMayor().getName().equalsIgnoreCase(player.getName())) {
+                    event.setAccess(AccessRight.RIGHT_ADMIN);
+                }
+            } catch (Exception e) {
+
+            }
+        }
     }
 
     /**

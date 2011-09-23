@@ -92,6 +92,16 @@ public class ModifyModule extends JavaModule {
                     rightsName = rightsName.substring(5);
                 }
 
+                if (rightsName.toLowerCase().startsWith("t:")) {
+                    type = AccessRight.TOWN;
+                    rightsName = rightsName.substring(2);
+                }
+
+                if (rightsName.toLowerCase().startsWith("town:")) {
+                    type = AccessRight.TOWN;
+                    rightsName = rightsName.substring(5);
+                }
+
                 int protectionId = protection.getId();
                 String localeChild = AccessRight.typeToString(type).toLowerCase();
 

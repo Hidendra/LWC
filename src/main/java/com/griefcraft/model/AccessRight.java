@@ -47,9 +47,14 @@ public class AccessRight {
     public static final int PLAYER = 1;
 
     /**
-     * Used in conjuction with HeroList
+     * Used in conjuction with Lists
      */
     public static final int LIST = 2;
+
+    /**
+     * Used in conjunction with Towny
+     */
+    public static final int TOWN = 3;
 
     /**
      * Not saved to the database
@@ -145,6 +150,8 @@ public class AccessRight {
             return "Player";
         } else if (type == LIST) {
             return "List";
+        } else if (type == TOWN) {
+            return "Towny";
         } else if (type == TEMPORARY) {
             return "Temporary";
         }

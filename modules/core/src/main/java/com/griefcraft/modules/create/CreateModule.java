@@ -164,6 +164,16 @@ public class CreateModule extends JavaModule {
                     right = right.substring(5);
                 }
 
+                if (lowered.startsWith("t:")) {
+                    type = AccessRight.TOWN;
+                    right = right.substring(2);
+                }
+
+                if (lowered.startsWith("town:")) {
+                    type = AccessRight.TOWN;
+                    right = right.substring(5);
+                }
+
                 String localeChild = AccessRight.typeToString(type).toLowerCase();
 
                 // register the rights
