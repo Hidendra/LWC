@@ -133,6 +133,10 @@ public class History {
      * @return the Protection this history value is associated with
      */
     public Protection getProtection() {
+        if (protection != null) {
+            return protection;
+        }
+
         if (protectionId < 0) {
             return null;
         }
@@ -142,7 +146,7 @@ public class History {
             this.protection = LWC.getInstance().getPhysicalDatabase().loadProtection(protectionId);
         }
 
-        return protection;
+        return null;
     }
 
     /**
@@ -274,6 +278,7 @@ public class History {
         }
 
         this.protection = protection;
+        this.protectionId = protection.getId();
     }
 
     /**
