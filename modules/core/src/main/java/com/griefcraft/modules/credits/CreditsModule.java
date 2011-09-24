@@ -198,7 +198,6 @@ public class CreditsModule extends JavaModule {
                 "Kerazene",
                 "spunkiie",
                 "Zalastri",
-                "spunkiie",
                 "MonsterTKE",
                 "Tyrope",
                 " ",
