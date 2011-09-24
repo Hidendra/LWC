@@ -169,7 +169,12 @@ public class LWCPlayerListener extends PlayerListener {
             }
 
             if (result == Module.Result.DEFAULT) {
-                lwc.enforceAccess(player, protection != null ? protection.getBlock() : block);
+                canAccess = lwc.enforceAccess(player, protection != null ? protection.getBlock() : block);
+            }
+
+            // Fix a bug where pre-1.8 chests were flipped directions in 1.8
+            if (canAccess && block.getType() == Material.CHEST && block.getData() == 0) {
+                lwc.adjustChestDirection(block, event.getBlockFace());
             }
 
             if (!canAccess || result == Module.Result.CANCEL) {

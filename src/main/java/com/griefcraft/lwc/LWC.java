@@ -621,6 +621,48 @@ public class LWC {
     }
 
     /**
+     * Restore the direction the block is facing for when 1.8 broke it
+     *
+     * @param block
+     */
+    public void adjustChestDirection(Block block, BlockFace face) {
+        if (block.getType() != Material.CHEST) {
+            return;
+        }
+
+        // Is there a double chest?
+        Block doubleChest = findAdjacentDoubleChest(block);
+
+        // Calculate the data byte to set
+        byte data = 0;
+
+        switch(face) {
+            case NORTH:
+                data = 4;
+                break;
+
+            case SOUTH:
+                data = 5;
+                break;
+
+            case EAST:
+                data = 2;
+                break;
+
+            case WEST:
+                data = 3;
+                break;
+        }
+
+        // set the data for both sides of the chest
+        block.setData(data);
+
+        if (doubleChest != null) {
+            doubleChest.setData(data);
+        }
+    }
+
+    /**
      * Find a block that is adjacent to another block given a Material
      *
      * @param block
