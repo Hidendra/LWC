@@ -167,6 +167,7 @@ public class CreditsModule extends JavaModule {
                 "MonsterTKE" + Colors.Red + " X2",
                 "wokka",
                 "Andreoli3",
+                "andrewkm",
                 " ",
 
                 Colors.Red + "And....",
@@ -197,6 +198,9 @@ public class CreditsModule extends JavaModule {
                 "Kerazene",
                 "spunkiie",
                 "Zalastri",
+                "spunkiie",
+                "MonsterTKE",
+                "Tyrope",
                 " ",
 
                 Colors.Yellow + "To everyone else and anyone I missed....",
