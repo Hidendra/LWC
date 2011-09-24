@@ -196,6 +196,7 @@ public class Protection {
         History history = new History();
 
         history.setProtectionId(id);
+        history.setProtection(this);
         history.setStatus(History.Status.INACTIVE);
 
         // add it to the cache

@@ -70,6 +70,11 @@ public class History {
     private int protectionId;
 
     /**
+     * The protection known for this history object
+     */
+    private Protection protection;
+
+    /**
      * The player that caused the history action to be created
      */
     private String player;
@@ -132,7 +137,12 @@ public class History {
             return null;
         }
 
-        return LWC.getInstance().getPhysicalDatabase().loadProtection(protectionId);
+        // attempt to load the protection if it hasn't been loaded yet
+        if (protection == null) {
+            this.protection = LWC.getInstance().getPhysicalDatabase().loadProtection(protectionId);
+        }
+
+        return protection;
     }
 
     /**
@@ -251,6 +261,19 @@ public class History {
         this.modified = true;
 
         return metadata.length == expected;
+    }
+
+    /**
+     * Set the cached protection this History object belongs to save a query or two later on
+     *
+     * @param protection
+     */
+    public void setProtection(Protection protection) {
+        if (protection == null) {
+            return;
+        }
+
+        this.protection = protection;
     }
 
     /**
