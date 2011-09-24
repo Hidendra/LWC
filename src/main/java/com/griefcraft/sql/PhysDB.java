@@ -881,8 +881,8 @@ public class PhysDB extends Database {
                 // store the player that created the protection
                 transaction.addMetaData("creator=" + player);
 
-                // now sync the history object to the database immediately
-                transaction.saveNow();
+                // now sync the history object to the database
+                transaction.sync();
             }
 
             // return the newly created protection
