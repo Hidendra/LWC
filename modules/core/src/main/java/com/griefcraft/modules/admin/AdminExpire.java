@@ -61,7 +61,6 @@ public class AdminExpire extends JavaModule {
         }
 
         int threshold = (int) ((System.currentTimeMillis() / 1000L) - time);
-        int count = 0;
 
         // remove the protections
         int completed = lwc.fastRemoveProtections(sender, "last_accessed <= " + threshold + " AND last_accessed >= 0", shouldRemoveBlocks);
@@ -71,7 +70,7 @@ public class AdminExpire extends JavaModule {
             LWC.getInstance().getPhysicalDatabase().precache();
         }
 
-        lwc.sendLocale(sender, "protection.admin.expire.removed", "count", count);
+        lwc.sendLocale(sender, "protection.admin.expire.removed", "count", completed);
 
         return;
     }
