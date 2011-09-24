@@ -497,7 +497,6 @@ public class LWC {
         return "";
     }
 
-
     /**
      * Restore the direction the block is facing for when 1.8 broke it
      * 
