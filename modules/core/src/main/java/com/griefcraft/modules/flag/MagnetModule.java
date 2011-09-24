@@ -84,7 +84,14 @@ public class MagnetModule extends JavaModule {
                             continue;
                         }
 
-                        items.offer((Item) entity);
+                        Item item = (Item) entity;
+
+                        // check if it is in the blacklist
+                        if (itemBlacklist.contains(item.getItemStack().getTypeId())) {
+                            continue;
+                        }
+
+                        items.offer(item);
                     }
                 }
             }
@@ -96,11 +103,6 @@ public class MagnetModule extends JavaModule {
             while ((item = items.poll()) != null) {
                 World world = item.getWorld();
                 ItemStack itemStack = item.getItemStack();
-
-                // check if it is in the blacklist
-                if (itemBlacklist.contains(itemStack.getTypeId())) {
-                    continue;
-                }
 
                 Location location = item.getLocation();
                 int x = location.getBlockX();
