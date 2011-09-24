@@ -258,7 +258,7 @@ public class LWCBlockListener extends BlockListener {
         String autoRegisterType = plugin.getLWC().resolveProtectionConfiguration(block.getType(), "autoRegister");
 
         // is it auto registerable?
-        if (!lwc.hasPermission(player, "lwc.autoprotect") && !autoRegisterType.equalsIgnoreCase("private") && !autoRegisterType.equalsIgnoreCase("public")) {
+        if (/* !lwc.hasPermission(player, "lwc.autoprotect") && */ !autoRegisterType.equalsIgnoreCase("private") && !autoRegisterType.equalsIgnoreCase("public")) {
             return;
         }
 
@@ -267,7 +267,7 @@ public class LWCBlockListener extends BlockListener {
         }
 
         // set the auto register type if they have the perm node
-        if (lwc.hasPermission(player, "lwc.autoprotect")) {
+        if (lwc.hasPermission(player, "lwc.autoprotect") && false) {
             autoRegisterType = "private";
         }
 
