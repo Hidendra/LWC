@@ -15,19 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.griefcraft.modules.info;
+package com.griefcraft.modules.fix;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
-import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
+import com.griefcraft.util.Colors;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class InfoModule extends JavaModule {
+public class FixModule extends JavaModule {
 
     @Override
     public void onProtectionInteract(LWCProtectionInteractEvent event) {
@@ -35,41 +36,30 @@ public class InfoModule extends JavaModule {
             return;
         }
 
-        if (!event.hasAction("info")) {
+        if (!event.canAccess()) {
+            return;
+        }
+
+        if (!event.hasAction("fix")) {
             return;
         }
 
         LWC lwc = event.getLWC();
         Protection protection = event.getProtection();
+        Block block = protection.getBlock();
         Player player = event.getPlayer();
+
         event.setResult(Result.CANCEL);
 
-        lwc.sendLocale(player, "protection.interact.info.finalize", "type", lwc.getLocale(protection.typeToString().toLowerCase()), "owner", protection.getOwner(), "access", lwc.getLocale((event.canAccess() ? "yes" : "no")));
 
-        if (lwc.isAdmin(player)) {
-            lwc.sendLocale(player, "protection.interact.info.raw", "raw", protection.toString());
+        // Is it a chest?
+        if (block.getType() == Material.CHEST) {
+            // Fix it!
+            lwc.adjustChestDirection(block, event.getEvent().getBlockFace());
+            player.sendMessage(Colors.Green + "Fixed the block face");
         }
 
-        lwc.removeModes(player);
-    }
-
-    @Override
-    public void onBlockInteract(LWCBlockInteractEvent event) {
-        if (event.getResult() != Result.DEFAULT) {
-            return;
-        }
-
-        if (!event.hasAction("info")) {
-            return;
-        }
-
-        LWC lwc = event.getLWC();
-        Block block = event.getBlock();
-        Player player = event.getPlayer();
-        event.setResult(Result.CANCEL);
-
-        lwc.sendLocale(player, "protection.interact.error.notregistered", "block", LWC.materialToString(block));
-        lwc.removeModes(player);
+        lwc.getMemoryDatabase().unregisterAction("fix", player.getName());
     }
 
     @Override
@@ -78,9 +68,10 @@ public class InfoModule extends JavaModule {
             return;
         }
 
-        if (!event.hasFlag("i", "info")) {
+        if (!event.hasFlag("fix")) {
             return;
         }
+
 
         LWC lwc = event.getLWC();
         CommandSender sender = event.getSender();
@@ -92,23 +83,10 @@ public class InfoModule extends JavaModule {
 
         event.setCancelled(true);
 
-        if (!lwc.hasPlayerPermission(sender, "lwc.info")) {
-            lwc.sendLocale(sender, "protection.accessdenied");
-            return;
-        }
-
         Player player = (Player) sender;
-        String type = "info";
-
-        if (args.length > 0) {
-            type = args[0].toLowerCase();
-        }
-
-        if (type.equals("info")) {
-            lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-            lwc.getMemoryDatabase().registerAction("info", player.getName());
-            lwc.sendLocale(player, "protection.info.finalize");
-        }
+        
+        lwc.getMemoryDatabase().registerAction("fix", player.getName());
+        player.sendMessage(Colors.Green + "Click on a block to fix it");
     }
 
 }

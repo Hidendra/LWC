@@ -43,6 +43,7 @@ import com.griefcraft.modules.credits.CreditsModule;
 import com.griefcraft.modules.debug.DebugModule;
 import com.griefcraft.modules.destroy.DestroyModule;
 import com.griefcraft.modules.doors.DoorsModule;
+import com.griefcraft.modules.fix.FixModule;
 import com.griefcraft.modules.flag.BaseFlagModule;
 import com.griefcraft.modules.flag.MagnetModule;
 import com.griefcraft.modules.free.FreeModule;
@@ -494,6 +495,49 @@ public class LWC {
         }
 
         return "";
+    }
+
+
+    /**
+     * Restore the direction the block is facing for when 1.8 broke it
+     * 
+     * @param block
+     */
+    public void adjustChestDirection(Block block, BlockFace face) {
+        if (block.getType() != Material.CHEST) {
+            return;
+        }
+
+        // Is there a double chest?
+        Block doubleChest = findAdjacentDoubleChest(block);
+
+        // Calculate the data byte to set
+        byte data = 0;
+
+        switch(face) {
+            case NORTH:
+                data = 4;
+                break;
+
+            case SOUTH:
+                data = 5;
+                break;
+
+            case EAST:
+                data = 2;
+                break;
+
+            case WEST:
+                data = 3;
+                break;
+        }
+
+        // set the data for both sides of the chest
+        block.setData(data);
+
+        if (doubleChest != null) {
+            doubleChest.setData(data);
+        }
     }
 
     /**
@@ -1163,6 +1207,7 @@ public class LWC {
         registerModule(new DoorsModule());
         registerModule(new DebugModule());
         registerModule(new CreditsModule());
+        registerModule(new FixModule());
 
         // admin commands
         registerModule(new BaseAdminModule());
