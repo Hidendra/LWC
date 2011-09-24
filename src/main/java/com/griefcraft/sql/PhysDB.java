@@ -573,7 +573,7 @@ public class PhysDB extends Database {
     }
 
     /**
-     * Resolve a list of n protections from a statement
+     * Resolve a list of protections from a statement
      *
      * @param statement
      * @return
@@ -881,8 +881,8 @@ public class PhysDB extends Database {
                 // store the player that created the protection
                 transaction.addMetaData("creator=" + player);
 
-                // now sync the history object to the database
-                transaction.sync();
+                // now sync the history object to the database immediately
+                transaction.saveNow();
             }
 
             // return the newly created protection
