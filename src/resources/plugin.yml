@@ -151,6 +151,6 @@ permissions:
   lwc.mode.droptransfer:
       description: Allows you to use the drop transfer flag, which allows you to "drop" items into your chest from far away.
 
-  lwc.autoprotect
+  lwc.autoprotect:
       default: false
       description: Allows you to auto protect LWC protections regardless of how LWC is configured
