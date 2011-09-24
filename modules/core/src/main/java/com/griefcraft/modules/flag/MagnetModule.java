@@ -35,9 +35,10 @@ import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 public class MagnetModule extends JavaModule {
 
@@ -66,7 +67,7 @@ public class MagnetModule extends JavaModule {
     /**
      * The current entity queue
      */
-    private List<Entity> entities = null;
+    private final Queue<Item> items = new LinkedList<Item>();
 
     // does all of the work
     // searches the worlds for items and magnet chests nearby
@@ -75,91 +76,89 @@ public class MagnetModule extends JavaModule {
             Server server = Bukkit.getServer();
             LWC lwc = LWC.getInstance();
 
-            for (World world : server.getWorlds()) {
-                String worldName = world.getName();
-
-                if (entities == null || entities.size() == 0) {
-                    entities = new ArrayList<Entity>(world.getEntities());
-                }
-
-                Iterator<Entity> iterator = entities.iterator();
-                int count = 0;
-
-                while (iterator.hasNext()) {
-                    Entity entity = iterator.next();
-                    if (!(entity instanceof Item)) {
-                        iterator.remove();
-                        continue;
-                    }
-
-                    if (count > perSweep) {
-                        break;
-                    }
-
-                    Item item = (Item) entity;
-                    ItemStack itemStack = item.getItemStack();
-
-                    // check if it is in the blacklist
-                    if (itemBlacklist.contains(itemStack.getTypeId())) {
-                        iterator.remove();
-                        continue;
-                    }
-
-                    Location location = item.getLocation();
-                    int x = location.getBlockX();
-                    int y = location.getBlockY();
-                    int z = location.getBlockZ();
-
-                    if (isShowcaseItem(item)) {
-                        // it's being used by the Showcase plugin ... ignore it
-                        iterator.remove();
-                        continue;
-                    }
-
-                    List<Protection> protections = lwc.getPhysicalDatabase().loadProtections(worldName, x, y, z, radius);
-                    Block block;
-                    Protection protection;
-
-                    for (Protection temp : protections) {
-                        protection = temp;
-                        block = world.getBlockAt(protection.getX(), protection.getY(), protection.getZ());
-
-                        // we only want inventory blocks
-                        if (!(block.getState() instanceof ContainerBlock)) {
+            // Do we need to requeue?
+            if (items.size() == 0) {
+                for (World world : server.getWorlds()) {
+                    for (Entity entity : world.getEntities()) {
+                        if (!(entity instanceof Item)) {
                             continue;
                         }
 
-                        if (!protection.hasFlag(Flag.Type.MAGNET)) {
-                            continue;
-                        }
+                        items.offer((Item) entity);
+                    }
+                }
+            }
 
-                        // Remove the items and suck them up :3
-                        Map<Integer, ItemStack> remaining = lwc.depositItems(block, itemStack);
+            // Throttle amount of items polled
+            int count = 0;
+            Item item;
 
-                        if (remaining.size() == 1) {
-                            ItemStack other = remaining.values().iterator().next();
+            while ((item = items.poll()) != null) {
+                World world = item.getWorld();
+                ItemStack itemStack = item.getItemStack();
 
-                            if (itemStack.getTypeId() == other.getTypeId() && itemStack.getAmount() == other.getAmount()) {
-                                continue;
-                            }
-                        }
+                // check if it is in the blacklist
+                if (itemBlacklist.contains(itemStack.getTypeId())) {
+                    continue;
+                }
 
-                        // remove the item on the ground
-                        item.remove();
+                Location location = item.getLocation();
+                int x = location.getBlockX();
+                int y = location.getBlockY();
+                int z = location.getBlockZ();
 
-                        // if we have a remainder, we need to drop them
-                        if (remaining.size() > 0) {
-                            for (ItemStack stack : remaining.values()) {
-                                world.dropItemNaturally(location, stack);
-                            }
-                        }
+                if (isShowcaseItem(item)) {
+                    // it's being used by the Showcase plugin ... ignore it
+                    continue;
+                }
 
-                        break;
+                List<Protection> protections = lwc.getPhysicalDatabase().loadProtections(world.getName(), x, y, z, radius);
+                Block block;
+                Protection protection;
+
+                for (Protection temp : protections) {
+                    protection = temp;
+                    block = world.getBlockAt(protection.getX(), protection.getY(), protection.getZ());
+
+                    // we only want inventory blocks
+                    if (!(block.getState() instanceof ContainerBlock)) {
+                        continue;
                     }
 
-                    count++;
-                    iterator.remove();
+                    if (!protection.hasFlag(Flag.Type.MAGNET)) {
+                        continue;
+                    }
+
+                    // Remove the items and suck them up :3
+                    Map<Integer, ItemStack> remaining = lwc.depositItems(block, itemStack);
+
+                    if (remaining.size() == 1) {
+                        ItemStack other = remaining.values().iterator().next();
+
+                        if (itemStack.getTypeId() == other.getTypeId() && itemStack.getAmount() == other.getAmount()) {
+                            continue;
+                        }
+                    }
+
+                    // remove the item on the ground
+                    item.remove();
+
+                    // if we have a remainder, we need to drop them
+                    if (remaining.size() > 0) {
+                        for (ItemStack stack : remaining.values()) {
+                            world.dropItemNaturally(location, stack);
+                        }
+                    }
+
+                    break;
                 }
+
+                // Time to throttle?
+                if (count > perSweep) {
+                    break;
+                }
+
+                count++;
             }
         }
     }
