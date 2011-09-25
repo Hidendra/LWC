@@ -47,8 +47,6 @@ import java.net.URLConnection;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Updater {
 
@@ -402,26 +400,10 @@ public class Updater {
                      */
                     case BLEEDING_EDGE:
                         try {
-                            URL url = new URL(JENKINS + "lastSuccessfulBuild/");
+                            URL url = new URL(JENKINS + "lastSuccessfulBuild/buildNumber");
                             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-                            Pattern pattern = Pattern.compile(".*<title>.* #(\\d+) .*");
-
-                            // begin parsing
-                            String line;
-
-                            while ((line = reader.readLine()) != null) {
-                                Matcher matcher = pattern.matcher(line);
-
-                                if (!matcher.matches()) {
-                                    continue;
-                                }
-
-                                // We found the build number!
-                                int buildNumber = Integer.parseInt(matcher.group(1));
-
-                                // parse the version
-                                latestVersion = new Version("b" + buildNumber);
-                            }
+                            latestVersion = new Version("b" + reader.readLine());
+                            reader.close();
                         } catch (MalformedURLException e) {
                             e.printStackTrace();
                         } catch (IOException e) {
