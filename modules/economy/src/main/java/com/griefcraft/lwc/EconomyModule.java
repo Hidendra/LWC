@@ -178,10 +178,17 @@ public class EconomyModule extends JavaModule {
         // was it a discount?
         if(usedDiscount) {
             history.addMetaData("discount=true");
+            
+            // Was the discount's id non-null?
+            String discountId = resolveValue(protection.getBukkitOwner(), "discount.id");
+
+            if (!discountId.isEmpty()) {
+                history.addMetaData("discountId=" + discountId);
+            }
         }
 
-        // save it
-        history.sync();
+        // save it immediately
+        history.saveNow();
 
         // we no longer need the value in the price cache :)
         priceCache.remove(location);
@@ -282,7 +289,7 @@ public class EconomyModule extends JavaModule {
 
             if (isDiscountActive) {
                 int discountedProtections = Integer.parseInt(resolveValue(player, "discount.amount"));
-                double wouldCharge = Double.parseDouble(resolveValue(player, "discount.newCharge"));
+                double discountPrice = Double.parseDouble(resolveValue(player, "discount.newCharge"));
 
                 if (discountedProtections > 0) {
                     String discountType = resolveValue(player, "discount.type");
@@ -294,13 +301,15 @@ public class EconomyModule extends JavaModule {
                     }
 
                     if(isExactDiscountType) {
-                        currentProtections = getDiscountedProtections(lwc, player, wouldCharge);
+                        String discountId = resolveValue(player, "discount.id");
+
+                        currentProtections = getDiscountedProtections(lwc, player, discountPrice, discountId.isEmpty() ? null : discountId);
                     } else {
                         currentProtections = lwc.getPhysicalDatabase().getProtectionCount(player.getName());
                     }
 
                     if (discountedProtections > currentProtections) {
-                        charge = wouldCharge;
+                        charge = discountPrice;
                         usedDiscount = true;
                     }
                 }
@@ -406,21 +415,25 @@ public class EconomyModule extends JavaModule {
      * @param lwc
      * @param player
      * @param discountPrice
+     * @param discountId
      * @return
      */
-    private int getDiscountedProtections(LWC lwc, Player player, double discountPrice) {
+    private int getDiscountedProtections(LWC lwc, Player player, double discountPrice, String discountId) {
         LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
         List<History> related = lwcPlayer.getRelatedHistory(History.Type.TRANSACTION);
-
-        if(related.size() == 0) {
-            return 0;
-        }
 
         int amount = 0;
 
         for(History history : related) {
             if(!history.getBoolean("discount")) {
                 continue;
+            }
+
+            // if the discount id is defined, we'll use that
+            if (discountId != null) {
+                if(!history.hasKey("discountId") || !history.getString("discountId").equals(discountId)) {
+                    break;
+                }
             }
 
             // obtain the charge

@@ -119,6 +119,7 @@ public class HistoryModule extends JavaModule {
 
         if (history.hasKey("discount")) {
             sender.sendMessage(Colors.Yellow + "(discounted price)");
+            sender.sendMessage("Discount Id: " + Colors.Yellow + (history.hasKey("discountId") ? history.getString("discountId") : "n/a"));
         }
 
         String creation = null;
