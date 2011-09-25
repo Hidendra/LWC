@@ -552,7 +552,6 @@ public class LWC {
         // boolean canAdmin = canAdminProtection(player, protection);
 
         if (protection == null || block == null) {
-            player.sendMessage(Colors.Red + "Uh-oh?");
             return true;
         }
 
