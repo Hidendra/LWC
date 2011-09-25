@@ -24,9 +24,11 @@ import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.util.Colors;
+import com.griefcraft.util.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Date;
 import java.util.List;
 
 public class HistoryModule extends JavaModule {
@@ -47,6 +49,77 @@ public class HistoryModule extends JavaModule {
         String[] args = event.getArgs();
         event.setCancelled(true);
 
+        // We MUST have an argument ..!
+        if (args.length < 1) {
+            lwc.sendSimpleUsage(sender, "/lwc details <HistoryId>");
+            return;
+        }
+
+        // Load it ..
+        int historyId;
+
+        try {
+            historyId = Integer.parseInt(args[0]);
+        } catch (NumberFormatException e) {
+            sender.sendMessage(Colors.Red + "No results found.");
+            return;
+        }
+
+        // Try and load the history object
+        History history = lwc.getPhysicalDatabase().loadHistory(historyId);
+
+        if (history == null) {
+            sender.sendMessage(Colors.Red + "No results found.");
+            return;
+        }
+
+        // Can they access it?
+        if (!lwc.isAdmin(sender)) {
+            if (sender instanceof Player) {
+                // verify they actually OWN the history object
+                if (!history.getPlayer().equalsIgnoreCase(((Player) sender).getName())) {
+                    // Make them think no results were found
+                    sender.sendMessage(Colors.Red + "No results found.");
+                    return;
+                }
+            }
+        }
+
+        // Now we can start telling them about it! wee
+        Protection protection = history.getProtection(); // If the protection still exists, that is
+
+        sender.sendMessage(" ");
+        sender.sendMessage("Created by: " + Colors.Yellow + history.getPlayer());
+        sender.sendMessage("Status: " + Colors.Yellow + history.getStatus());
+        sender.sendMessage("Type: " + Colors.Yellow + history.getType());
+        
+        sender.sendMessage(" ");
+        sender.sendMessage("Protection: " + Colors.Yellow + (protection == null ? "Removed" : protection));
+        sender.sendMessage("Created by: " + Colors.Yellow + history.getString("creator"));
+
+        // if its been removed, it most likely will have this key
+        if (history.hasKey("destroyer")) {
+            sender.sendMessage("Removed by: " + Colors.Yellow + history.getString("destroyer"));
+        }
+
+        // If it had an economy charge, show it
+        if (history.hasKey("charge")) {
+            sender.sendMessage("Economy charge: " + Colors.Yellow + history.getDouble("charge") + " " + lwc.getCurrency().getMoneyName());
+        }
+
+        String creation = null;
+
+        if (history.getTimestamp() > 0) {
+            creation = new Date(history.getTimestamp() * 1000L).toString();
+        }
+
+        sender.sendMessage(" ");
+        sender.sendMessage("Created on: " + Colors.Yellow + (creation == null ? "Unknown" : creation));
+
+        // Only show how long ago it was if we know when it was created
+        if (creation != null) {
+            sender.sendMessage(Colors.Yellow + StringUtils.timeToString((System.currentTimeMillis() / 1000L) - history.getTimestamp()) + " ago");
+        }
     }
 
     /**

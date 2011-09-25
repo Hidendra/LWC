@@ -133,20 +133,12 @@ public class History {
      * @return the Protection this history value is associated with
      */
     public Protection getProtection() {
-        if (protection != null) {
-            return protection;
-        }
-
-        if (protectionId < 0) {
-            return null;
-        }
-
         // attempt to load the protection if it hasn't been loaded yet
         if (protection == null) {
             this.protection = LWC.getInstance().getPhysicalDatabase().loadProtection(protectionId);
         }
 
-        return null;
+        return protection;
     }
 
     /**
@@ -165,6 +157,16 @@ public class History {
         // we're okey
         this.metadata = temp;
         this.modified = true;
+    }
+
+    /**
+     * Check if the metadata contains a given key
+     *
+     * @param key
+     * @return
+     */
+    public boolean hasKey(String key) {
+        return getMetaDataStartsWith(key + "=") != null;
     }
 
     /**
