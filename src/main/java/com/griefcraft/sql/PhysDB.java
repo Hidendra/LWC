@@ -922,7 +922,7 @@ public class PhysDB extends Database {
                 transaction.addMetaData("creator=" + player);
 
                 // now sync the history object to the database
-                transaction.sync();
+                transaction.saveNow();
             }
 
             // return the newly created protection
