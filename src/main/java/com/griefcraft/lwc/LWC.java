@@ -49,6 +49,7 @@ import com.griefcraft.modules.fix.FixModule;
 import com.griefcraft.modules.flag.BaseFlagModule;
 import com.griefcraft.modules.flag.MagnetModule;
 import com.griefcraft.modules.free.FreeModule;
+import com.griefcraft.modules.history.HistoryModule;
 import com.griefcraft.modules.info.InfoModule;
 import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.modules.lists.ListsModule;
@@ -1205,6 +1206,7 @@ public class LWC {
         registerModule(new CreditsModule());
         registerModule(new ScheduleModule());
         registerModule(new FixModule());
+        registerModule(new HistoryModule());
 
         // admin commands
         registerModule(new BaseAdminModule());
