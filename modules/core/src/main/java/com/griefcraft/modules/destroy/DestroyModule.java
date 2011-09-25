@@ -22,10 +22,32 @@ import com.griefcraft.model.History;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
+import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import org.bukkit.entity.Player;
 
 public class DestroyModule extends JavaModule {
 
+    @Override
+    public void onPostRemoval(LWCProtectionRemovePostEvent event) {
+        Protection protection = event.getProtection();
+        Player player = event.getPlayer();
+
+        boolean isOwner = protection.isOwner(player);
+
+        if (isOwner) {
+            // bind the player of destroyed the protection
+            // We don't need to save the history we modify because it will be saved anyway immediately after this
+            for(History history : protection.getRelatedHistory(History.Type.TRANSACTION)) {
+                if(history.getStatus() != History.Status.ACTIVE) {
+                    continue;
+                }
+
+                history.addMetaData("destroyer=" + player.getName());
+            }
+        }
+    }
+
+    @Override
     public void onDestroyProtection(LWCProtectionDestroyEvent event) {
         if (event.isCancelled()) {
             return;
@@ -42,16 +64,6 @@ public class DestroyModule extends JavaModule {
         boolean isOwner = protection.isOwner(player);
 
         if (isOwner) {
-            // bind the player who destroyed the protection
-            for(History history : protection.getRelatedHistory(History.Type.TRANSACTION)) {
-                if(history.getStatus() != History.Status.ACTIVE) {
-                    continue;
-                }
-                
-                history.addMetaData("destroyer=" + player.getName());
-                history.sync();
-            }
-
             protection.remove();
             lwc.sendLocale(player, "protection.unregistered", "block", LWC.materialToString(protection.getBlockId()));
             return;
