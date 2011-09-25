@@ -139,7 +139,6 @@ public class EconomyModule extends JavaModule {
 
         // Uh-oh! This REALLY should never happen ... !
         if (block == null || !priceCache.containsKey(block.getLocation())) {
-            logger.severe("LWC-iConomy POST_REGISTRATION has encountered a severe problem!");
             return;
         }
 
