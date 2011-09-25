@@ -1,3 +1,6 @@
+### 4.0.0-alpha6
+* LWC is now licensed under the **2-clause BSD license**. All code prior to this point is still GPL, however.
+
 ### 4.0.0-alpha5
 * Add `/lwc details <HistoryId>` which allows you to view specific information on a history item.
 * Add `/lwc history` - used to view history items for a specific player or all latest ones. To be used hand in hand with `/lwc details` which views specific information on any given history item. The arguments for `/lwc history` are dynamic and as such, all of the following uses are valid: `/lwc history` `/lwc history *` `/lwc history 2` (page 2) `/lwc history 2 *` `/lwc history * 2` `/lwc history Hidendra` `/lwc history Hidendra`  ... and so on!
