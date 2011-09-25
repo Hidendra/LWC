@@ -250,12 +250,23 @@ public class DoorsModule extends JavaModule {
             Block protectionBlock = protection.getBlock();
             Block temp;
 
+            if (protectionBlock == null) {
+                // Weird..
+                return;
+            }
+
             BlockFace[] faces = new BlockFace[]{
                     BlockFace.NORTH, BlockFace.WEST, BlockFace.EAST, BlockFace.SOUTH
             };
 
             for (BlockFace face : faces) {
-                if (isValid((temp = protectionBlock.getRelative(face)).getType())) {
+                temp = protectionBlock.getRelative(face);
+
+                if (temp == null) {
+                    continue;
+                }
+                
+                if (isValid(temp.getType())) {
                     Protection found = lwc.findProtection(temp);
 
                     if (found == null) {
