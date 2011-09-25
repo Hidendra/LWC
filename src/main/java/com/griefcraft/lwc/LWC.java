@@ -86,6 +86,7 @@ import com.griefcraft.sql.Database;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.Performance;
+import com.griefcraft.util.StopWatch;
 import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.UpdateThread;
 import com.griefcraft.util.config.Configuration;
@@ -1117,8 +1118,31 @@ public class LWC {
         return isProtectable(block.getType());
     }
 
+    /**
+     * Check if a material is protectable
+     *
+     * @param material
+     * @return
+     */
     public boolean isProtectable(Material material) {
         return Boolean.parseBoolean(resolveProtectionConfiguration(material, "enabled"));
+    }
+
+    /**
+     * Complete a stopwatch and send the player the results if they're in developer mode
+     *
+     * @param stopWatch
+     * @param player
+     */
+    public void completeStopwatch(StopWatch stopWatch, Player player) {
+        if (wrapPlayer(player).isDevMode()) {
+            if (stopWatch.isRunning()) {
+                stopWatch.stop();
+            }
+
+            // send the summary
+            player.sendMessage(stopWatch.shortSummary());
+        }
     }
 
     /**

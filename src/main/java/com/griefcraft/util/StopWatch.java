@@ -243,7 +243,7 @@ public class StopWatch {
      * Return a short description of the total running time.
      */
     public String shortSummary() {
-        return "StopWatch '" + this.id + "': running time (millis) = " + getTotalTimeMillis();
+        return "" + this.id + " took " + Colors.Yellow + getTotalTimeMillis() + " ms";
     }
 
     /**
