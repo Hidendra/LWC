@@ -162,9 +162,6 @@ public class LWCPlayerListener extends PlayerListener {
                 }
             }
 
-            if (player.getName().equalsIgnoreCase("Hidendra"))
-                player.sendMessage("Result = " + result);
-
             if (result == Module.Result.ALLOW) {
                 return;
             }
