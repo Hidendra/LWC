@@ -530,22 +530,18 @@ public class LWC {
     }
 
     /**
-     * Enforce access to a protection block
+     * Enforce access to a protected block
      *
      * @param player
+     * @param protection
      * @param block
      * @return true if the player was granted access
      */
-    public boolean enforceAccess(Player player, Block block) {
-        if (block == null) {
-            return true;
-        }
-
-        Protection protection = findProtection(block);
+    public boolean enforceAccess(Player player, Protection protection, Block block) {
         boolean hasAccess = canAccessProtection(player, protection);
         // boolean canAdmin = canAdminProtection(player, protection);
 
-        if (protection == null) {
+        if (block == null || protection == null) {
             return true;
         }
 
