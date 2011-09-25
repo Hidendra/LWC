@@ -1004,7 +1004,6 @@ public class PhysDB extends Database {
                 History.Status status = History.Status.values()[status_ord];
 
                 History history = protection.createHistoryObject();
-
                 history.setId(historyId);
                 history.setType(type);
                 history.setPlayer(player);
@@ -1064,8 +1063,56 @@ public class PhysDB extends Database {
                 History.Status status = History.Status.values()[status_ord];
 
                 History history = new History();
+                history.setId(historyId);
+                history.setProtectionId(protectionId);
+                history.setType(type);
                 history.setPlayer(player);
+                history.setStatus(status);
+                history.setMetaData(metadata);
+                history.setTimestamp(timestamp);
 
+                // seems ok
+                temp.add(history);
+            }
+
+        } catch (SQLException e) {
+            printException(e);
+        }
+
+        return temp;
+    }
+
+    /**
+     * Load all protection history that has the given history id
+     *
+     * @param historyId
+     * @return
+     */
+    public List<History> loadHistory(int historyId) {
+        List<History> temp = new ArrayList<History>();
+
+        if (!LWC.getInstance().isHistoryEnabled()) {
+            return temp;
+        }
+
+        try {
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE id = ?");
+            statement.setInt(1, historyId);
+
+            ResultSet set = statement.executeQuery();
+
+            while (set.next()) {
+                int protectionId = set.getInt("protectionId");
+                String player = set.getString("player");
+                int type_ord = set.getInt("type");
+                int status_ord = set.getInt("status");
+                String[] metadata = set.getString("metadata").split(",");
+                long timestamp = set.getLong("timestamp");
+
+                History.Type type = History.Type.values()[type_ord];
+                History.Status status = History.Status.values()[status_ord];
+
+                History history = new History();
                 history.setId(historyId);
                 history.setProtectionId(protectionId);
                 history.setType(type);
@@ -1132,8 +1179,6 @@ public class PhysDB extends Database {
                 History.Status status = History.Status.values()[status_ord];
 
                 History history = new History();
-                history.setPlayer(player);
-
                 history.setId(historyId);
                 history.setProtectionId(protectionId);
                 history.setType(type);
@@ -1182,7 +1227,6 @@ public class PhysDB extends Database {
                 History.Status status = History.Status.values()[status_ord];
 
                 History history = new History();
-
                 history.setId(historyId);
                 history.setProtectionId(protectionId);
                 history.setType(type);
@@ -1233,7 +1277,6 @@ public class PhysDB extends Database {
                 History.Status status = History.Status.values()[status_ord];
 
                 History history = new History();
-
                 history.setId(historyId);
                 history.setProtectionId(protectionId);
                 history.setType(type);
