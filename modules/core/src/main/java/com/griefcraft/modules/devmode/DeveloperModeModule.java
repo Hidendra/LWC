@@ -42,9 +42,9 @@ import java.util.WeakHashMap;
 public class DeveloperModeModule extends JavaModule {
 
     /**
-     * CommandSender, Enabling for
+     * CommandSender, PlayerName
      */
-    private final Map<CommandSender, String> cache = new WeakHashMap<CommandSender, String>();
+    private final Map<CommandSender, String> pending = new WeakHashMap<CommandSender, String>();
 
     @Override
     public void onCommand(LWCCommandEvent event) {
@@ -116,7 +116,7 @@ public class DeveloperModeModule extends JavaModule {
                 }
 
                 // ok, wait for them to confirm
-                cache.put(sender, playerName);
+                pending.put(sender, playerName);
                 sender.sendMessage("You are about to " + Colors.Red + "enable Developer Mode" + Colors.White + " on " + Colors.Red + temp.getName());
                 sender.sendMessage("Developer Mode will give them " + Colors.Red + "absolute control over LWC until they log out" + Colors.White + " or " + Colors.Yellow + "/lwc dev disable " + temp.getName() + Colors.White + " is used");
                 sender.sendMessage("Please confirm you wish to do this by using the command " + Colors.Yellow + "/lwc confirm");
@@ -173,14 +173,14 @@ public class DeveloperModeModule extends JavaModule {
 
         } else if (event.hasFlag("confirm")) {
 
-            if (!cache.containsKey(sender)) {
+            if (!pending.containsKey(sender)) {
                 // Ignore it incase another module is hooking into /lwc confirm ..
                 event.setCancelled(false);
                 return;
             }
 
             // Get the player they're confirming
-            String playerName = cache.get(sender);
+            String playerName = pending.get(sender);
 
             // Wonder if the player logged out?
             Player otherPlayer = lwc.getPlugin().getServer().getPlayer(playerName);
@@ -200,8 +200,8 @@ public class DeveloperModeModule extends JavaModule {
 
             // Enable dev mode
             lwcOtherPlayer.setDevMode(true);
-            sender.sendMessage(Colors.Green + "Enabled Developer Mode on " + otherPlayer.getName() + "!");
-            otherPlayer.sendMessage(Colors.Green + "Developer Mode enabled.");
+            sender.sendMessage(Colors.Green + "Successfully enabled Developer Mode on " + otherPlayer.getName());
+            otherPlayer.sendMessage(Colors.Green + "Developer Mode received");
         }
     }
 
