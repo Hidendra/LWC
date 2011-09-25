@@ -19,7 +19,6 @@ package com.griefcraft.modules.history;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.History;
-import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
@@ -37,16 +36,25 @@ public class HistoryModule extends JavaModule {
      */
     public static final int ITEMS_PER_PAGE = 15;
 
-    @Override
-    public void onCommand(LWCCommandEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
+    /**
+     * Called when /lwc details or /lwc d is used.
+     * 
+     * @param event
+     */
+    private void doDetailsCommand(LWCCommandEvent event) {
+        LWC lwc = event.getLWC();
+        CommandSender sender = event.getSender();
+        String[] args = event.getArgs();
+        event.setCancelled(true);
 
-        if (!event.hasFlag("h", "history")) {
-            return;
-        }
+    }
 
+    /**
+     * Called when /lwc history or /lwc h is used.
+     *
+     * @param event
+     */
+    private void doHistoryCommand(LWCCommandEvent event) {
         LWC lwc = event.getLWC();
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
@@ -142,7 +150,7 @@ public class HistoryModule extends JavaModule {
             sender.sendMessage(Colors.Red + "No results found.");
             return;
         }
-        
+
         // Is it a valid page? (this normally will NOT happen, with the previous statement in place!)
         if (page > pageCount) {
             sender.sendMessage(Colors.Red + "Page not found.");
@@ -162,6 +170,19 @@ public class HistoryModule extends JavaModule {
         // Send all that is found to them
         for (History history : relatedHistory) {
             sender.sendMessage(String.format(format, ("" + history.getId()), history.getPlayer(), history.getType(), history.getStatus()));
+        }
+    }
+
+    @Override
+    public void onCommand(LWCCommandEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
+        if (event.hasFlag("h", "history")) {
+            doHistoryCommand(event);
+        } else if (event.hasFlag("d", "details")) {
+            doDetailsCommand(event);
         }
     }
 
