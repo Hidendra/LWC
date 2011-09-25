@@ -117,9 +117,10 @@ public class DeveloperModeModule extends JavaModule {
 
                 // ok, wait for them to confirm
                 pending.put(sender, playerName);
-                sender.sendMessage("You are about to " + Colors.Red + "enable Developer Mode" + Colors.White + " on " + Colors.Red + temp.getName());
+                sender.sendMessage("You are about to " + Colors.Red + "enable Developer Mode" + Colors.White + " onto " + Colors.Red + temp.getName());
                 sender.sendMessage("Developer Mode will give them " + Colors.Red + "absolute control over LWC until they log out" + Colors.White + " or " + Colors.Yellow + "/lwc dev disable " + temp.getName() + Colors.White + " is used");
-                sender.sendMessage("Please confirm you wish to do this by using the command " + Colors.Yellow + "/lwc confirm");
+                sender.sendMessage("Please confirm you wish to do this by using the command ");
+                sender.sendMessage(Colors.Yellow + "/lwc confirm");
             } else if (command.equals("disable")) {
                 // Don't let players in dev mode disable it on other players
                 if (lwcPlayer != null && lwcPlayer.isDevMode()) {
