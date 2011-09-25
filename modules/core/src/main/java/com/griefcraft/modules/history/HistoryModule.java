@@ -117,6 +117,10 @@ public class HistoryModule extends JavaModule {
             sender.sendMessage("Economy charge: " + Colors.Yellow + history.getDouble("charge") + " " + lwc.getCurrency().getMoneyName());
         }
 
+        if (history.hasKey("discount")) {
+            sender.sendMessage(Colors.Yellow + "(discounted price)");
+        }
+
         String creation = null;
 
         if (history.getTimestamp() > 0) {
