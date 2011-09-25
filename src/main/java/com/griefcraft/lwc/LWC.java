@@ -546,13 +546,13 @@ public class LWC {
         }
 
         // support for old protection dbs that do not contain the block id
-        if (protection.getBlockId() == 0) {
+        if (block != null && (protection.getBlockId() == 0 || block.getTypeId() != protection.getBlockId())) {
             protection.setBlockId(block.getTypeId());
             protection.save();
         }
 
         // multi-world, update old protections
-        if (protection.getWorld() == null || protection.getWorld().isEmpty()) {
+        if (block != null && (protection.getWorld() == null || !block.getWorld().getName().equals(protection.getWorld()))) {
             protection.setWorld(block.getWorld().getName());
             protection.save();
         }
