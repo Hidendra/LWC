@@ -19,6 +19,7 @@ package com.griefcraft.modules.free;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Action;
+import com.griefcraft.model.History;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
@@ -52,6 +53,16 @@ public class FreeModule extends JavaModule {
             lwc.getModuleLoader().dispatchEvent(evt);
 
             if(!evt.isCancelled()) {
+                // bind the player of destroyed the protection
+                // We don't need to save the history we modify because it will be saved anyway immediately after this
+                for(History history : protection.getRelatedHistory(History.Type.TRANSACTION)) {
+                    if(history.getStatus() != History.Status.ACTIVE) {
+                        continue;
+                    }
+
+                    history.addMetaData("destroyer=" + player.getName());
+                }
+
                 protection.remove();
                 lwc.sendLocale(player, "protection.interact.remove.finalize", "block", LWC.materialToString(protection.getBlockId()));
             }
@@ -61,8 +72,6 @@ public class FreeModule extends JavaModule {
             lwc.sendLocale(player, "protection.interact.error.notowner", "block", LWC.materialToString(protection.getBlockId()));
             lwc.removeModes(player);
         }
-
-        return;
     }
 
     @Override

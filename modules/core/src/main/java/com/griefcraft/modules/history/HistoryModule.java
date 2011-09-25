@@ -22,7 +22,6 @@ import com.griefcraft.model.History;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
-import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
 import org.bukkit.command.CommandSender;
@@ -256,26 +255,6 @@ public class HistoryModule extends JavaModule {
             doHistoryCommand(event);
         } else if (event.hasFlag("d", "details")) {
             doDetailsCommand(event);
-        }
-    }
-
-    @Override
-    public void onPostRemoval(LWCProtectionRemovePostEvent event) {
-        Protection protection = event.getProtection();
-        Player player = event.getPlayer();
-
-        boolean isOwner = protection.isOwner(player);
-
-        if (isOwner) {
-            // bind the player of destroyed the protection
-            // We don't need to save the history we modify because it will be saved anyway immediately after this
-            for(History history : protection.getRelatedHistory(History.Type.TRANSACTION)) {
-                if(history.getStatus() != History.Status.ACTIVE) {
-                    continue;
-                }
-
-                history.addMetaData("destroyer=" + player.getName());
-            }
         }
     }
     
