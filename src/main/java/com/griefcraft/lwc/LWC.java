@@ -1018,18 +1018,16 @@ public class LWC {
     public boolean hasPermission(Player player, String node) {
         boolean result = false;
 
+        // Temporary .. (?)
+        if (removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose != null) {
+            return removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose.permission(player, node);
+        }
+
         try {
             result = player.hasPermission(node);
         } catch (NoSuchMethodError e) {
             // their server does not support Superperms..
             return !node.contains("admin") && !node.contains("mod");
-        }
-
-        if (!result) {
-            // Temporary .. (?)
-            if (removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose != null) {
-                result = removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose.permission(player, node);
-            }
         }
 
         return result;
