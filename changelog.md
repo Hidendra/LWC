@@ -1,4 +1,9 @@
 ### 4.0.0-alpha5
+* The way chests were facing were broken when upgrading from a pre-1.8 map to 1.8. The first time you click a protected chest you can access, it will reorient itself. Alternatively, you can use `/lwc fix` after this to manually orient a chest.
+* **FIX:** Limits will now use the highest group limit instead of the first one found.
+* **FIX:** The magnet module would sometimes not work as expected when used across multiple worlds.
+* Added `t:TownName` and `town:TownName` to `/cmodify` and `/cprivate` for Towny integration. Allows residents of the town named to access that protection.
+* Locale messages defined as `null` will now not send the message to the player
 * New `AUTOCLOSE` flag, which allows doors to automatically close themselves after 3 seconds. Both sides of a double door must have this flag or doors may become out of sync.
 * New LWC versions or builds can now be reloaded in without having to restart the server
 
