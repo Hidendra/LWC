@@ -540,33 +540,29 @@ public class LWC {
     }
 
     /**
-     * Enforce access to a protection block
+     * Enforce access to a protected block
      *
      * @param player
+     * @param protection
      * @param block
      * @return true if the player was granted access
      */
-    public boolean enforceAccess(Player player, Block block) {
+    public boolean enforceAccess(Player player, Protection protection, Block block) {
+        boolean hasAccess = canAccessProtection(player, protection);
+        // boolean canAdmin = canAdminProtection(player, protection);
+
         if (block == null) {
             return true;
         }
 
-        Protection protection = findProtection(block);
-        boolean hasAccess = canAccessProtection(player, protection);
-        // boolean canAdmin = canAdminProtection(player, protection);
-
-        if (protection == null) {
-            return true;
-        }
-
         // support for old protection dbs that do not contain the block id
-        if (protection.getBlockId() == 0) {
-            protection.setBlockId(block.getTypeId());
+        if (protection.getBlockId() == 0 && protection.getBlock() != null) {
+            protection.setBlockId(protection.getBlock().getTypeId());
             protection.save();
         }
 
         // multi-world, update old protections
-        if (protection.getWorld() == null || protection.getWorld().isEmpty()) {
+        if (protection.getWorld() == null || !block.getWorld().getName().equals(protection.getWorld())) {
             protection.setWorld(block.getWorld().getName());
             protection.save();
         }
