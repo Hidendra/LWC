@@ -1037,6 +1037,9 @@ public class LWC {
                 case PLAYER:
                     return !node.contains("admin") && !node.contains("mod");
 
+                case MOD:
+                    return !node.contains("admin");
+
                 case ADMIN:
                     return true;
             }
