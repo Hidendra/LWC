@@ -23,7 +23,6 @@ import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Flag;
 import com.griefcraft.model.History;
 import com.griefcraft.model.Job;
-import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.scripting.Module;
@@ -130,6 +129,9 @@ public class PhysDB extends Database {
         return Integer.decode(fetch("SELECT COUNT(*) AS count FROM " + prefix + "protections", "count").toString());
     }
 
+    /**
+     * @return the number of history items stored
+     */
     public int getHistoryCount() {
         return Integer.decode(fetch("SELECT COUNT(*) AS count FROM " + prefix + "history", "count").toString());
     }
@@ -141,16 +143,16 @@ public class PhysDB extends Database {
      * @return the amount of protections they have
      */
     public int getProtectionCount(String player) {
-        int amount = 0;
+        int count = 0;
 
         try {
-            PreparedStatement statement = prepare("SELECT id FROM " + prefix + "protections WHERE owner = ?");
+            PreparedStatement statement = prepare("SELECT COUNT(*) as count FROM " + prefix + "protections WHERE owner = ?");
             statement.setString(1, player);
 
             ResultSet set = statement.executeQuery();
 
-            while (set.next()) {
-                amount++;
+            if (set.next()) {
+                count = set.getInt("count");
             }
 
             set.close();
@@ -158,7 +160,34 @@ public class PhysDB extends Database {
             printException(e);
         }
 
-        return amount;
+        return count;
+    }
+
+    /**
+     * Get the amount of protections a player has
+     *
+     * @param player
+     * @return the amount of protections they have
+     */
+    public int getHistoryCount(String player) {
+        int count = 0;
+
+        try {
+            PreparedStatement statement = prepare("SELECT COUNT(*) AS count FROM " + prefix + "history WHERE LOWER(player) = LOWER(?)");
+            statement.setString(1, player);
+
+            ResultSet set = statement.executeQuery();
+
+            if (set.next()) {
+                count = set.getInt("count");
+            }
+
+            set.close();
+        } catch (SQLException e) {
+            printException(e);
+        }
+
+        return count;
     }
 
     /**
@@ -168,17 +197,17 @@ public class PhysDB extends Database {
      * @return the amount of protections they have of blockId
      */
     public int getProtectionCount(String player, int blockId) {
-        int amount = 0;
+        int count = 0;
 
         try {
-            PreparedStatement statement = prepare("SELECT id FROM " + prefix + "protections WHERE owner = ? AND blockId = ?");
+            PreparedStatement statement = prepare("SELECT COUNT(*) AS count FROM " + prefix + "protections WHERE owner = ? AND blockId = ?");
             statement.setString(1, player);
             statement.setInt(2, blockId);
 
             ResultSet set = statement.executeQuery();
 
-            while (set.next()) {
-                amount++;
+            if (set.next()) {
+                count = set.getInt("count");
             }
 
             set.close();
@@ -186,7 +215,7 @@ public class PhysDB extends Database {
             printException(e);
         }
 
-        return amount;
+        return count;
     }
 
     /**
@@ -957,7 +986,7 @@ public class PhysDB extends Database {
         }
 
         try {
-            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE protectionId = ?");
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE protectionId = ? ORDER BY id DESC");
             statement.setInt(1, protection.getId());
 
             ResultSet set = statement.executeQuery();
@@ -1001,16 +1030,25 @@ public class PhysDB extends Database {
      * @return
      */
     public List<History> loadHistory(Player player) {
+        return loadHistory(player.getName());
+    }
+
+    /**
+     * Load all protection history that the given player created
+     *
+     * @param player
+     * @return
+     */
+    public List<History> loadHistory(String player) {
         List<History> temp = new ArrayList<History>();
-        LWCPlayer lwcPlayer = LWC.getInstance().wrapPlayer(player);
 
         if (!LWC.getInstance().isHistoryEnabled()) {
             return temp;
         }
 
         try {
-            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE player = ?");
-            statement.setString(1, player.getName());
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE LOWER(player) = LOWER(?) ORDER BY id DESC");
+            statement.setString(1, player);
 
             ResultSet set = statement.executeQuery();
 
@@ -1025,12 +1063,81 @@ public class PhysDB extends Database {
                 History.Type type = History.Type.values()[type_ord];
                 History.Status status = History.Status.values()[status_ord];
 
-                History history = lwcPlayer.createHistoryObject();
+                History history = new History();
+                history.setPlayer(player);
 
                 history.setId(historyId);
                 history.setProtectionId(protectionId);
                 history.setType(type);
-                history.setPlayer(player.getName());
+                history.setPlayer(player);
+                history.setStatus(status);
+                history.setMetaData(metadata);
+                history.setTimestamp(timestamp);
+
+                // seems ok
+                temp.add(history);
+            }
+
+        } catch (SQLException e) {
+            printException(e);
+        }
+
+        return temp;
+    }
+
+    /**
+     * Load all protection history that the given player created for a given page, getting count history items.
+     *
+     * @param player
+     * @param start
+     * @param count
+     * @return
+     */
+    public List<History> loadHistory(Player player, int start, int count) {
+        return loadHistory(player.getName(), start, count);
+    }
+
+    /**
+     * Load all protection history that the given player created for a given page, getting count history items.
+     *
+     * @param player
+     * @param start
+     * @param count
+     * @return
+     */
+    public List<History> loadHistory(String player, int start, int count) {
+        List<History> temp = new ArrayList<History>();
+
+        if (!LWC.getInstance().isHistoryEnabled()) {
+            return temp;
+        }
+
+        try {
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE LOWER(player) = LOWER(?) ORDER BY id DESC LIMIT ?,?");
+            statement.setString(1, player);
+            statement.setInt(2, start);
+            statement.setInt(3, count);
+
+            ResultSet set = statement.executeQuery();
+
+            while (set.next()) {
+                int historyId = set.getInt("id");
+                int protectionId = set.getInt("protectionId");
+                int type_ord = set.getInt("type");
+                int status_ord = set.getInt("status");
+                String[] metadata = set.getString("metadata").split(",");
+                long timestamp = set.getLong("timestamp");
+
+                History.Type type = History.Type.values()[type_ord];
+                History.Status status = History.Status.values()[status_ord];
+
+                History history = new History();
+                history.setPlayer(player);
+
+                history.setId(historyId);
+                history.setProtectionId(protectionId);
+                history.setType(type);
+                history.setPlayer(player);
                 history.setStatus(status);
                 history.setMetaData(metadata);
                 history.setTimestamp(timestamp);
@@ -1059,7 +1166,58 @@ public class PhysDB extends Database {
         }
 
         try {
-            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history");
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history ORDER BY id DESC");
+            ResultSet set = statement.executeQuery();
+
+            while (set.next()) {
+                int historyId = set.getInt("id");
+                int protectionId = set.getInt("protectionId");
+                String player = set.getString("player");
+                int type_ord = set.getInt("type");
+                int status_ord = set.getInt("status");
+                String[] metadata = set.getString("metadata").split(",");
+                long timestamp = set.getLong("timestamp");
+
+                History.Type type = History.Type.values()[type_ord];
+                History.Status status = History.Status.values()[status_ord];
+
+                History history = new History();
+
+                history.setId(historyId);
+                history.setProtectionId(protectionId);
+                history.setType(type);
+                history.setPlayer(player);
+                history.setStatus(status);
+                history.setMetaData(metadata);
+                history.setTimestamp(timestamp);
+
+                // seems ok
+                temp.add(history);
+            }
+        } catch (SQLException e) {
+            printException(e);
+        }
+
+        return temp;
+    }
+
+    /**
+     * Load all protection history
+     *
+     * @return
+     */
+    public List<History> loadHistory(int start, int count) {
+        List<History> temp = new ArrayList<History>();
+
+        if (!LWC.getInstance().isHistoryEnabled()) {
+            return temp;
+        }
+
+        try {
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history ORDER BY id DESC LIMIT ?,?");
+            statement.setInt(1, start);
+            statement.setInt(2, count);
+
             ResultSet set = statement.executeQuery();
 
             while (set.next()) {

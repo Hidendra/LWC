@@ -18,6 +18,7 @@
 package com.griefcraft.model;
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.modules.history.HistoryModule;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -331,6 +332,16 @@ public class LWCPlayer implements CommandSender {
      */
     public List<History> getRelatedHistory() {
         return lwc.getPhysicalDatabase().loadHistory(player);
+    }
+
+    /**
+     * Get the player's history for a given page
+     *
+     * @param page
+     * @return
+     */
+    public List<History> getRelatedHistory(int page) {
+        return lwc.getPhysicalDatabase().loadHistory(player, (page - 1) * HistoryModule.ITEMS_PER_PAGE, HistoryModule.ITEMS_PER_PAGE);
     }
 
     /**
