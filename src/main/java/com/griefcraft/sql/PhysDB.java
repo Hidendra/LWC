@@ -1088,11 +1088,9 @@ public class PhysDB extends Database {
      * @param historyId
      * @return
      */
-    public List<History> loadHistory(int historyId) {
-        List<History> temp = new ArrayList<History>();
-
+    public History loadHistory(int historyId) {
         if (!LWC.getInstance().isHistoryEnabled()) {
-            return temp;
+            return null;
         }
 
         try {
@@ -1101,7 +1099,7 @@ public class PhysDB extends Database {
 
             ResultSet set = statement.executeQuery();
 
-            while (set.next()) {
+            if (set.next()) {
                 int protectionId = set.getInt("protectionId");
                 String player = set.getString("player");
                 int type_ord = set.getInt("type");
@@ -1121,15 +1119,16 @@ public class PhysDB extends Database {
                 history.setMetaData(metadata);
                 history.setTimestamp(timestamp);
 
-                // seems ok
-                temp.add(history);
+                set.close();
+                return history;
             }
 
+            set.close();
         } catch (SQLException e) {
             printException(e);
         }
 
-        return temp;
+        return null;
     }
 
     /**
@@ -1191,6 +1190,7 @@ public class PhysDB extends Database {
                 temp.add(history);
             }
 
+            set.close();
         } catch (SQLException e) {
             printException(e);
         }
@@ -1238,6 +1238,8 @@ public class PhysDB extends Database {
                 // seems ok
                 temp.add(history);
             }
+
+            set.close();
         } catch (SQLException e) {
             printException(e);
         }
@@ -1288,6 +1290,8 @@ public class PhysDB extends Database {
                 // seems ok
                 temp.add(history);
             }
+
+            set.close();
         } catch (SQLException e) {
             printException(e);
         }
