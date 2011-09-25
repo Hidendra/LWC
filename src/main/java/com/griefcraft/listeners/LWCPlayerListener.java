@@ -36,6 +36,7 @@ import com.griefcraft.scripting.Module;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCDropItemEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
+import com.griefcraft.util.StopWatch;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -111,6 +112,10 @@ public class LWCPlayerListener extends PlayerListener {
             return;
         }
 
+        // Timing start
+        StopWatch stopWatch = new StopWatch("PLAYER_INTERACT");
+        stopWatch.start();
+
         LWC lwc = plugin.getLWC();
         Player player = event.getPlayer();
         LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
@@ -153,12 +158,14 @@ public class LWCPlayerListener extends PlayerListener {
                 boolean ignoreLeftClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreLeftClick"));
 
                 if (ignoreLeftClick) {
+                    lwc.completeStopwatch(stopWatch, player);
                     return;
                 }
             } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 boolean ignoreRightClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreRightClick"));
 
                 if (ignoreRightClick) {
+                    lwc.completeStopwatch(stopWatch, player);
                     return;
                 }
             }
@@ -176,6 +183,7 @@ public class LWCPlayerListener extends PlayerListener {
             }
 
             if (result == Module.Result.ALLOW) {
+                lwc.completeStopwatch(stopWatch, player);
                 return;
             }
 
@@ -198,6 +206,8 @@ public class LWCPlayerListener extends PlayerListener {
             lwc.sendLocale(player, "protection.internalerror", "id", "PLAYER_INTERACT");
             e.printStackTrace();
         }
+
+        lwc.completeStopwatch(stopWatch, player);
     }
 
     @Override
