@@ -102,7 +102,7 @@ public class LimitsModule extends JavaModule {
             return false;
         }
 
-        Type type = Type.resolve(resolveValue(player, "type"));
+        Type type = Type.resolve(resolveString(player, "type"));
         int protections; // 0 = *
 
         switch (type) {
@@ -129,37 +129,33 @@ public class LimitsModule extends JavaModule {
      * @return
      */
     private int mapProtectionLimit(Player player, int blockId) {
-        String limit = null;
-        Type type = Type.resolve(resolveValue(player, "type"));
+        int limit = -1;
+        Type type = Type.resolve(resolveString(player, "type"));
 
         if (type == Type.DEFAULT) {
-            limit = resolveValue(player, "limit");
+            limit = resolveInteger(player, "limit");
         } else if (type == Type.CUSTOM) {
             // first try the block id
-            limit = resolveValue(player, blockId + "");
+            limit = resolveInteger(player, blockId + "");
 
             // and now try the name
-            if (limit == null && blockId > 0) {
+            if (limit == -1 && blockId > 0) {
                 String name = Material.getMaterial(blockId).toString().toLowerCase().replaceAll("block", "");
 
                 if (name.endsWith("_")) {
                     name = name.substring(0, name.length() - 1);
                 }
 
-                limit = resolveValue(player, name);
+                limit = resolveInteger(player, name);
             }
 
             // if it's STILL null, fall back
-            if (limit == null) {
-                limit = resolveValue(player, "limit");
+            if (limit == -1) {
+                limit = resolveInteger(player, "limit");
             }
         }
 
-        if (limit == null || limit.equalsIgnoreCase("unlimited")) {
-            return UNLIMITED;
-        }
-
-        return !limit.isEmpty() ? Integer.parseInt(limit) : UNLIMITED;
+        return limit == -1 ? UNLIMITED : limit;
     }
 
     /**
@@ -174,7 +170,7 @@ public class LimitsModule extends JavaModule {
      * @param node
      * @return
      */
-    private String resolveValue(Player player, String node) {
+    private String resolveString(Player player, String node) {
         LWC lwc = LWC.getInstance();
 
         // resolve the limits type
@@ -198,6 +194,71 @@ public class LimitsModule extends JavaModule {
         }
 
         return value != null && !value.isEmpty() ? value : null;
+    }
+
+    /**
+     * Resolve an integer for a player
+     *
+     * @param player
+     * @param node
+     * @return
+     */
+    private int resolveInteger(Player player, String node) {
+        LWC lwc = LWC.getInstance();
+
+        // resolve the limits type
+        int value = -1;
+
+        // try the player
+        String temp = configuration.getString("players." + player.getName() + "." + node);
+
+        if (temp != null && !temp.isEmpty()) {
+            value = parseInt(temp);
+        }
+
+        // try the player's groups
+        if (value == -1) {
+            for (String groupName : lwc.getPermissions().getGroups(player)) {
+                if (groupName != null && !groupName.isEmpty()) {
+                    temp = map("groups." + groupName + "." + node);
+
+                    if (temp != null && !temp.isEmpty()) {
+                        int resolved = parseInt(temp);
+
+                        // Is it higher than what we already have?
+                        if (resolved > value) {
+                            value = resolved;
+                        }
+                    }
+                }
+            }
+        }
+
+        // if all else fails, use master
+        if (value == -1) {
+            temp = map("master." + node);
+
+            if (temp != null && !temp.isEmpty()) {
+                value = parseInt(temp);
+            }
+        }
+
+        // Default to 0, not -1 if it is still -1
+        return value;
+    }
+
+    /**
+     * Parse an int
+     *
+     * @param input
+     * @return
+     */
+    private int parseInt(String input) {
+        if (input.equalsIgnoreCase("unlimited")) {
+            return UNLIMITED;
+        }
+
+        return Integer.parseInt(input);
     }
 
     /**
@@ -278,7 +339,7 @@ public class LimitsModule extends JavaModule {
             return;
         }
 
-        Type type = Type.resolve(resolveValue(player, "type"));
+        Type type = Type.resolve(resolveString(player, "type"));
         int limit = mapProtectionLimit(player, 0);
         String limitShow = limit + "";
         int current = lwc.getPhysicalDatabase().getProtectionCount(playerName);
@@ -296,7 +357,6 @@ public class LimitsModule extends JavaModule {
         }
 
         lwc.sendLocale(sender, "protection.limits", "type", StringUtils.capitalizeFirstLetter(type.toString()), "player", playerName, "limit", limitShow, "protected", (currColour + current));
-        return;
     }
 
 }
