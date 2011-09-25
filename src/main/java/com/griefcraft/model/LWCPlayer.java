@@ -49,6 +49,33 @@ import java.util.Set;
 public class LWCPlayer implements CommandSender {
 
     /**
+     * Permission modes that a player in dev mode can set for themselves for testing
+     */
+    public enum PermissionMode {
+
+        /**
+         * The player will have no access to LWC
+         */
+        NONE,
+
+        /**
+         * The player will be considered to have lwc.protect
+         */
+        PLAYER,
+
+        /**
+         * The player will be considered an LWC Mod
+         */
+        MOD,
+
+        /**
+         * The player will be considered and LWC Admin
+         */
+        ADMIN
+
+    }
+
+    /**
      * The LWC instance
      */
     private LWC lwc;
@@ -77,6 +104,16 @@ public class LWCPlayer implements CommandSender {
      * Map of protections a player can temporarily access
      */
     private final static Map<LWCPlayer, Set<Protection>> accessibleProtections = Collections.synchronizedMap(new HashMap<LWCPlayer, Set<Protection>>());
+
+    /**
+     * The player's permission mode
+     */
+    private PermissionMode permissionMode = PermissionMode.NONE;
+
+    /**
+     * If the player is in dev mode
+     */
+    private boolean devMode = false;
 
     public LWCPlayer(LWC lwc, Player player) {
         this.lwc = lwc;
@@ -371,6 +408,43 @@ public class LWCPlayer implements CommandSender {
         }
 
         return related;
+    }
+
+    /**
+     * Set the devmode flag
+     * 
+     * @param devMode
+     */
+    public void setDevMode(boolean devMode) {
+        this.devMode = devMode;
+
+        // Reset any old vars just incase
+        if (!devMode) {
+            this.permissionMode = PermissionMode.NONE;
+        }
+    }
+
+    /**
+     * @return true if the player is in devmode
+     */
+    public boolean isDevMode() {
+        return devMode;
+    }
+
+    /**
+     * Set the player's permission mode
+     *
+     * @param permissionMode
+     */
+    public void setPermissionMode(PermissionMode permissionMode) {
+        this.permissionMode = permissionMode;
+    }
+
+    /**
+     * @return the player's permission mode
+     */
+    public PermissionMode getPermissionMode() {
+        return permissionMode;
     }
 
     public void sendMessage(String s) {

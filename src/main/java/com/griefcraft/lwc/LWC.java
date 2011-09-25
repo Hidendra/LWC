@@ -55,6 +55,7 @@ import com.griefcraft.modules.create.CreateModule;
 import com.griefcraft.modules.credits.CreditsModule;
 import com.griefcraft.modules.debug.DebugModule;
 import com.griefcraft.modules.destroy.DestroyModule;
+import com.griefcraft.modules.devmode.DeveloperModeModule;
 import com.griefcraft.modules.doors.DoorsModule;
 import com.griefcraft.modules.fix.FixModule;
 import com.griefcraft.modules.flag.BaseFlagModule;
@@ -1025,6 +1026,22 @@ public class LWC {
     public boolean hasPermission(Player player, String node) {
         boolean result = false;
 
+        // Dev mode
+        LWCPlayer lwcPlayer = wrapPlayer(player);
+
+        if (lwcPlayer.isDevMode()) {
+            switch (lwcPlayer.getPermissionMode()) {
+                case NONE:
+                    return false;
+
+                case PLAYER:
+                    return !node.contains("admin") && !node.contains("mod");
+
+                case ADMIN:
+                    return true;
+            }
+        }
+
         // Temporary .. (?)
         if (removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose != null) {
             return removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose.permission(player, node);
@@ -1212,6 +1229,7 @@ public class LWC {
         registerModule(new ScheduleModule());
         registerModule(new FixModule());
         registerModule(new HistoryModule());
+        registerModule(new DeveloperModeModule());
 
         // admin commands
         registerModule(new BaseAdminModule());
