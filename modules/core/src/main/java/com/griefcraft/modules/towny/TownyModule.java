@@ -90,6 +90,10 @@ public class TownyModule extends JavaModule {
         Player player = event.getPlayer();
         Protection protection = event.getProtection();
 
+        if (event.getAccess() != AccessRight.RIGHT_NOACCESS) {
+            return;
+        }
+
         if (protection.getType() != ProtectionTypes.PRIVATE) {
             return;
         }
