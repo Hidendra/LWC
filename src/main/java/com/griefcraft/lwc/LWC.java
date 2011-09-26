@@ -362,14 +362,6 @@ public class LWC {
             return true;
         }
 
-        // call the canAccessProtection hook
-        LWCAccessEvent event = new LWCAccessEvent(player, protection, AccessRight.RIGHT_NOACCESS);
-        moduleLoader.dispatchEvent(event);
-
-        if (event.getAccess() != AccessRight.RIGHT_NOACCESS) {
-            return event.getAccess() >= AccessRight.RIGHT_PLAYER;
-        }
-
         if (isAdmin(player)) {
             return true;
         }
@@ -386,6 +378,9 @@ public class LWC {
             }
         }
 
+        // Their access level
+        int accessLevel = AccessRight.RIGHT_NOACCESS;
+
         String playerName = player.getName();
 
         switch (protection.getType()) {
@@ -393,7 +388,11 @@ public class LWC {
                 return true;
 
             case ProtectionTypes.PASSWORD:
-                return wrapPlayer(player).getAccessibleProtections().contains(protection);
+                if (wrapPlayer(player).getAccessibleProtections().contains(protection)) {
+                    return true;
+                }
+
+                break;
 
             case ProtectionTypes.PRIVATE:
                 if (playerName.equalsIgnoreCase(protection.getOwner())) {
@@ -410,11 +409,19 @@ public class LWC {
                     }
                 }
 
-                return false;
-
-            default:
-                return false;
+                break;
         }
+
+        // is it still just NOACCESS?
+        if (accessLevel == AccessRight.RIGHT_NOACCESS) {
+            // call the canAccessProtection hook
+            LWCAccessEvent event = new LWCAccessEvent(player, protection, accessLevel);
+            moduleLoader.dispatchEvent(event);
+
+            accessLevel = event.getAccess();
+        }
+
+        return accessLevel >= AccessRight.RIGHT_PLAYER;
     }
 
     /**
@@ -443,26 +450,29 @@ public class LWC {
             return true;
         }
 
-        // call the canAccessProtection hook
-        LWCAccessEvent event = new LWCAccessEvent(player, protection, AccessRight.RIGHT_NOACCESS);
-        moduleLoader.dispatchEvent(event);
-
-        if (event.getAccess() != AccessRight.RIGHT_NOACCESS) {
-            return event.getAccess() == AccessRight.RIGHT_ADMIN;
-        }
-
         if (isAdmin(player)) {
             return true;
         }
+
+        // Their access level
+        int accessLevel = AccessRight.RIGHT_NOACCESS;
 
         String playerName = player.getName();
 
         switch (protection.getType()) {
             case ProtectionTypes.PUBLIC:
-                return player.getName().equalsIgnoreCase(protection.getOwner());
+                if (player.getName().equalsIgnoreCase(protection.getOwner())) {
+                    return true;
+                }
+                
+                break;
 
             case ProtectionTypes.PASSWORD:
-                return player.getName().equalsIgnoreCase(protection.getOwner()) && wrapPlayer(player).getAccessibleProtections().contains(protection);
+                if (player.getName().equalsIgnoreCase(protection.getOwner()) && wrapPlayer(player).getAccessibleProtections().contains(protection)) {
+                    return true;
+                }
+
+                break;
 
             case ProtectionTypes.PRIVATE:
                 if (playerName.equalsIgnoreCase(protection.getOwner())) {
@@ -479,11 +489,19 @@ public class LWC {
                     }
                 }
 
-                return false;
-
-            default:
-                return false;
+                break;
         }
+
+        // is it still just NOACCESS?
+        if (accessLevel == AccessRight.RIGHT_NOACCESS) {
+            // call the canAccessProtection hook
+            LWCAccessEvent event = new LWCAccessEvent(player, protection, accessLevel);
+            moduleLoader.dispatchEvent(event);
+
+            accessLevel = event.getAccess();
+        }
+
+        return accessLevel >= AccessRight.RIGHT_PLAYER;
     }
 
     /**
