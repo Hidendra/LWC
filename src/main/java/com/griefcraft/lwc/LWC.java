@@ -783,6 +783,11 @@ public class LWC {
 
         // loop through and check for protected blocks
         for (Block protectableBlock : protections) {
+            // Is the block actually protectable?
+            if (!bug656workaround && !isProtectable(protectableBlock)) {
+                continue;
+            }
+
 //            log("findProtection: checking protectableBlock world="+world.getName()+",x="+protectableBlock.getX()+",y="+protectableBlock.getY()+"z="+protectableBlock.getZ());
             Protection protection = physicalDatabase.loadProtection(world.getName(), protectableBlock.getX(), protectableBlock.getY(), protectableBlock.getZ());
 
