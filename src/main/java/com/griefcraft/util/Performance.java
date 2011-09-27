@@ -34,7 +34,10 @@ import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.scripting.MetaData;
 import com.griefcraft.sql.Database;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
@@ -82,6 +85,30 @@ public class Performance {
     }
 
     /**
+     * Obtain an entity count of a Entity class.
+     *
+     * @param clazz If null, all entities are counted
+     * @return
+     */
+    public static int getEntityCount(Class<? extends Entity> clazz) {
+        int count = 0;
+
+        for (World world : Bukkit.getServer().getWorlds()) {
+            if (clazz == null) {
+                count += world.getEntities().size();
+            } else {
+                for (Entity entity : world.getEntities()) {
+                    if (entity != null && clazz.isInstance(entity)) {
+                        count ++;
+                    }
+                }
+            }
+        }
+
+        return count;
+    }
+
+    /**
      * Send a performance report to a Console Sender
      *
      * @param sender
@@ -94,6 +121,7 @@ public class Performance {
         sender.sendMessage("  Version: " + Colors.Green + LWCInfo.FULL_VERSION);
         sender.sendMessage("  Running time: " + Colors.Green + StringUtils.timeToString(getTimeRunningSeconds()));
         sender.sendMessage("  Players: " + Colors.Green + Bukkit.getServer().getOnlinePlayers().length + "/" + Bukkit.getServer().getMaxPlayers());
+        sender.sendMessage("  Item entities: " + Colors.Green + getEntityCount(Item.class) + "/" + getEntityCount(null));
         sender.sendMessage(" ");
         sender.sendMessage(Colors.Red + " ==== Modules ====");
         
@@ -109,7 +137,6 @@ public class Performance {
         sender.sendMessage("  Engine: " + Colors.Green + Database.DefaultType);
         sender.sendMessage("  Protections: " + Colors.Green + lwc.getPhysicalDatabase().getProtectionCount());
         sender.sendMessage("  Physical Database: " + Colors.Green + physDBQueries + " queries | " + String.format("%.2f", getAverage(physDBQueries)) + " / second");
-        sender.sendMessage("  Memory Database: " + Colors.Green + memDBQueries + " queries | " + String.format("%.2f", getAverage(memDBQueries)) + " / second");
         sender.sendMessage(" ");
 
         sender.sendMessage(Colors.Red + " ==== Cache ==== ");
