@@ -59,7 +59,7 @@ public class LWCEntityListener extends EntityListener {
         boolean ignoreExplosions = plugin.getLWC().getConfiguration().getBoolean("core.ignoreExplosions", false);
 
         for (Block block : event.blockList()) {
-            Protection protection = plugin.getLWC().getPhysicalDatabase().loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
+            Protection protection = plugin.getLWC().findProtection(block);
 
             if (protection != null) {
                 if (ignoreExplosions) {
