@@ -64,12 +64,12 @@ public class AdminCache extends JavaModule {
                 lwc.getCaches().getProtections().clear();
                 sender.sendMessage(Colors.Green + "Caches cleared.");
             }
+        } else {
+            int size = lwc.getCaches().getProtections().size();
+            int max = lwc.getConfiguration().getInt("core.cacheSize", 10000);
+
+            sender.sendMessage(Colors.Green + size + Colors.Yellow + "/" + Colors.Green + max);
         }
-
-        int size = lwc.getCaches().getProtections().size();
-        int max = lwc.getConfiguration().getInt("core.cacheSize", 10000);
-
-        sender.sendMessage(Colors.Green + size + Colors.Yellow + "/" + Colors.Green + max);
     }
 
 }
