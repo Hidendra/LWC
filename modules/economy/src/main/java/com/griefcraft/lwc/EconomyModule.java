@@ -34,16 +34,15 @@ import com.griefcraft.model.History;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
-import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
-import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
-import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
-import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
+import com.griefcraft.scripting.event.*;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.config.Configuration;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -73,6 +72,63 @@ public class EconomyModule extends JavaModule {
 
     public EconomyModule(LWCEconomyPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @Override
+    public void onProtectionInteract(LWCProtectionInteractEvent event) {
+        if (event.getResult() != Result.DEFAULT) {
+            return;
+        }
+
+        if (!configuration.getBoolean("iConomy.enabled", true)) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        Protection protection = event.getProtection();
+        Player player = event.getPlayer();
+
+        // first, do we still have a currency processor?
+        if (!lwc.getCurrency().isActive()) {
+            return;
+        }
+
+        // is it actually a container? :p
+        if (!(protection.getBlock().getState() instanceof ContainerBlock)) {
+            return;
+        }
+
+        // Are they right clicking the chest (aka open) ?
+        if (event.getEvent().getAction() != Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
+
+        // grab the fee
+        String fee = resolveValue(player, "usageFee");
+
+        if (fee == null || fee.isEmpty()) {
+            return;
+        }
+
+        // Usage fee
+        double usageFee = Double.parseDouble(fee);
+
+        // No fee! :D
+        if (usageFee <= 0) {
+            return;
+        }
+
+        // Can they afford it?
+        if (!lwc.getCurrency().canAfford(player, usageFee)) {
+            // Nope!
+            player.sendMessage(Colors.Red + "You need " + lwc.getCurrency().format(usageFee) + " to open your protection!");
+            event.setResult(Result.CANCEL);
+            return;
+        }
+
+        // Charge them!
+        lwc.getCurrency().removeMoney(player, usageFee);
+        player.sendMessage(Colors.Green + "You have been charged " + lwc.getCurrency().format(usageFee) + " to open your protection.");
     }
 
     @Override

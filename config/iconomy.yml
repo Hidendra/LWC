@@ -20,6 +20,10 @@ iConomy:
     # The default price to charge for protections, which can overridden for groups or players
     charge: 5.00
 
+    # The amount of money the player is charged to ACCESS AND OPEN an inventory of a block that has been
+    # protected. e.g chest, furnace, etc. This can be overridden by groups and/or player nodes
+    usageFee: 0.00
+
     # Discounted protections
     # The discount will give exactly AMOUNT protections at NEWCHARGE price.
     # Discounts also have a 'type'. They can either be: EXACT or TOTAL
