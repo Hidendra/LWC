@@ -1297,7 +1297,6 @@ public class LWC {
         registerModule(new AdminReport());
         registerModule(new AdminUpdate());
         registerModule(new AdminVersion());
-        registerModule(new AdminView());
         registerModule(new AdminQuery());
         registerModule(new AdminPurgeBanned());
         registerModule(new AdminExpire());
