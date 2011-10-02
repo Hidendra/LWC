@@ -56,11 +56,11 @@ public class FixModule extends JavaModule {
         Protection protection = event.getProtection();
         Block block = protection.getBlock();
 
-        // Is it a chest, yo?
-        if (block.getType() == Material.CHEST) {
+        // Should we fix orientation?
+        if (block.getType() == Material.CHEST || block.getType() == Material.FURNACE || block.getType() == Material.DISPENSER) {
             // Fix it!
             lwc.adjustChestDirection(block, event.getEvent().getBlockFace());
-            player.sendMessage(Colors.Green + "Fixed the chest!");
+            player.sendMessage(Colors.Green + "Fixed the " + block.getType().toString().toLowerCase() + "!");
             player.removeAction(player.getAction("fix"));
         }
     }
