@@ -155,50 +155,6 @@ public class LWCPlugin extends JavaPlugin {
     }
 
     /**
-     * Verify a command name
-     *
-     * @param name
-     * @return
-     */
-    public boolean isValidCommand(String name) {
-        name = name.toLowerCase();
-
-        if (name.equals("lwc")) {
-            return true;
-        } else if (name.equals("cpublic")) {
-            return true;
-        } else if (name.equals("cpassword")) {
-            return true;
-        } else if (name.equals("cprivate")) {
-            return true;
-        } else if (name.equals("cinfo")) {
-            return true;
-        } else if (name.equals("cmodify")) {
-            return true;
-        } else if (name.equals("cunlock")) {
-            return true;
-        } else if (name.equals("cremove")) {
-            return true;
-        } else if (name.equals("climits")) {
-            return true;
-        } else if (name.equals("credstone")) {
-            return true;
-        } else if (name.equals("cmagnet")) {
-            return true;
-        } else if (name.equals("cdroptransfer")) {
-            return true;
-        } else if (name.equals("cpersist")) {
-            return true;
-        } else if (name.equals("cnospam")) {
-            return true;
-        } else if (name.equals("cexempt")) {
-            return true;
-        } else if (name.equals("cautoclose")) {
-            return true;
-        } else return name.equals("cadmin");
-    }
-
-    /**
      * Load the database
      */
     public void loadDatabase() {
@@ -217,10 +173,6 @@ public class LWCPlugin extends JavaPlugin {
         String argString = StringUtils.join(args, 0);
         boolean isPlayer = (sender instanceof Player); // check if they're a player
 
-        if (!isValidCommand(commandName)) {
-            return false;
-        }
-
         // Timing
         StopWatch stopWatch = new StopWatch("onCommand");
         stopWatch.start();
@@ -237,7 +189,7 @@ public class LWCPlugin extends JavaPlugin {
             } else if (commandName.equals("cpassword")) {
                 aliasCommand = "create";
                 aliasArgs = ("password " + argString).split(" ");
-            } else if (commandName.equals("cprivate")) {
+            } else if (commandName.equals("cprivate") || commandName.equals("lock")) {
                 aliasCommand = "create";
                 aliasArgs = ("private " + argString).split(" ");
             } else if (commandName.equals("cmodify")) {
@@ -248,7 +200,7 @@ public class LWCPlugin extends JavaPlugin {
             } else if (commandName.equals("cunlock")) {
                 aliasCommand = "unlock";
                 aliasArgs = argString.isEmpty() ? new String[0] : argString.split(" ");
-            } else if (commandName.equals("cremove")) {
+            } else if (commandName.equals("cremove") || commandName.equals("unlock")) {
                 aliasCommand = "remove";
                 aliasArgs = new String[]{"protection"};
             } else if (commandName.equals("climits")) {
