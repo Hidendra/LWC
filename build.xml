@@ -8,7 +8,7 @@
 
     <property name="lib" value="lib"/>
     <property name="src" value="src"/>
-    <property name="bin" value="bin"/>
+    <property name="bin" value="build/classes/"/>
 
     <property name="modules" value="modules"/>
     <property name="core" value="${modules}/core/src/"/>
@@ -25,16 +25,6 @@
         <include name="*.jar"/>
     </fileset>
 
-    <!-- JUnit testing -->
-    <property name="test.classname" value="com.griefcraft.LWCTestSuite"/>
-    <path id="test.classpath">
-        <pathelement location="${bin}/core/"/>
-        <pathelement location="${bin}/economy/"/>
-        <pathelement location="${bin}/spout/"/>
-        <pathelement location="${bin}/test/"/>
-        <fileset refid="libs"/>
-    </path>
-
     <!-- Jenkins integration -->
     <property environment="env"/>
 
@@ -45,23 +35,13 @@
         <isset property="env.GIT_COMMIT"/>
     </condition>
 
-    <target name="all" depends="clean,compile,build,lwc,economy,spout" description="Build LWC and all modules"/>
-
-    <target name="clean">
-        <!-- Delete the previous folders -->
-        <delete dir="${bin}/core/"/>
-        <delete dir="${bin}/economy/"/>
-        <delete dir="${bin}/spout/"/>
-        <delete dir="${bin}/test/"/>
-
-        <!-- create some folders -->
-        <mkdir dir="${bin}/core/"/>
-        <mkdir dir="${bin}/economy/"/>
-        <mkdir dir="${bin}/spout/"/>
-        <mkdir dir="${bin}/test/"/>
-    </target>
+    <target name="all" depends="buildall" description="Build LWC and all modules"/>
 
     <target name="compile" description="Compilation">
+        <mkdir dir="${bin}" />
+        <mkdir dir="${bin}/core/" />
+        <mkdir dir="${bin}/economy/" />
+        <mkdir dir="${bin}/spout/" />
 
         <echo>${label}</echo>
         <javac srcdir="${src}/main/java/;${core};" destdir="${bin}/core/"
@@ -88,22 +68,9 @@
                 <dirset dir="${bin}/core/"/>
             </classpath>
         </javac>
-
-        <echo>Compiling LWC Unit Tests</echo>
-        <javac srcdir="${src}/test/main/java/" destdir="${bin}/test/" deprecation="true" debug="true"
-               debuglevel="lines,vars,source" includeantruntime="true">
-            <classpath>
-                <fileset refid="libs"/>
-                <dirset dir="${bin}/core/"/>
-                <dirset dir="${bin}/economy/"/>
-            </classpath>
-        </javac>
     </target>
 
-    <target name="build" description="Build the distribution files">
-        <delete dir="${build}"/>
-        <mkdir dir="${build}"/>
-
+    <target name="buildall" description="Build the distribution files" depends="compile,lwc,economy,spout">
         <copy tofile="${build}/VERSION" file="VERSION" overwrite="yes"/>
     </target>
 
@@ -154,26 +121,5 @@
                 <attribute name="Implementation-Version" value="${BUILD_NUMBER}"/>
             </manifest>
         </jar>
-    </target>
-
-
-    <target name="test">
-        <mkdir dir="${build}/test-reports/"/>
-
-        <!-- Prevent the already packaged classes from interfering -->
-        <delete dir="${bin}/core/"/>
-        <delete dir="${bin}/economy/"/>
-        <delete dir="${bin}/spout/"/>
-
-        <junit fork="yes" haltonfailure="yes">
-            <batchtest fork="yes" todir="${build}/test-reports/">
-                <fileset dir="${bin}/test/">
-                    <include name="**/*Test.class"/>
-                </fileset>
-            </batchtest>
-
-            <formatter type="xml"/>
-            <classpath refid="test.classpath"/>
-        </junit>
     </target>
 </project>
