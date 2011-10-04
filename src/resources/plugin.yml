@@ -14,6 +14,12 @@ commands:
   lwc:
     description: LWC's hub command to access everything
     usage: /<command>
+  lock:
+    description: Lock a block using LWC that only you can access
+    usage: /<command>
+  unlock:
+    description: Remove a protection that was protected by LWC
+    usage: /<command>
   cadmin:
     description: Administrate LWC
     usage: /<command>
