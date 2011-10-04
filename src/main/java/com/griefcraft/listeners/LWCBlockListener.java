@@ -253,14 +253,6 @@ public class LWCBlockListener extends BlockListener {
         Player player = event.getPlayer();
         Block block = event.getBlockPlaced();
 
-        // water exploit (placing 3+ chests in a row inside water, fire, etc)
-        if (block.getType() == Material.CHEST) {
-            if (lwc.findAdjacentDoubleChest(block) != null) {
-                event.setCancelled(true);
-                return;
-            }
-        }
-
         // The placable block must be protectable
         if (!lwc.isProtectable(block)) {
             return;
