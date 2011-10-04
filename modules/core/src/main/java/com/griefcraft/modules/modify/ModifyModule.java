@@ -42,9 +42,17 @@ import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static com.griefcraft.util.StringUtils.join;
 
 public class ModifyModule extends JavaModule {
+
+    /**
+     * Used to match an id parameter in /cmodify id:##
+     */
+    private final Pattern ID_MATCHER = Pattern.compile(".*id:(\\d+).*");
 
     @Override
     public void onProtectionInteract(LWCProtectionInteractEvent event) {
@@ -114,12 +122,8 @@ public class ModifyModule extends JavaModule {
         LWC lwc = event.getLWC();
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
+        String full = join(args, 0);
         event.setCancelled(true);
-
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(Colors.Red + "Console not supported.");
-            return;
-        }
 
         if (!lwc.hasPlayerPermission(sender, "lwc.modify")) {
             lwc.sendLocale(sender, "protection.accessdenied");
@@ -131,7 +135,38 @@ public class ModifyModule extends JavaModule {
             return;
         }
 
-        String full = join(args, 0);
+        // Check for ID parameter
+        Matcher matcher = ID_MATCHER.matcher(full);
+        if (matcher.matches()) {
+            int protectionId = Integer.parseInt(matcher.group(1));
+
+            // load the protection
+            Protection protection = lwc.getPhysicalDatabase().loadProtection(protectionId);
+
+            // Does it even exist?
+            if (protection == null) {
+                sender.sendMessage(Colors.Red + "Protection not found.");
+                return;
+            }
+
+            // Can they admin it? (if they're console, they can!)
+            if (sender instanceof Player) {
+                if (!lwc.canAdminProtection((Player) sender, protection)) {
+                    lwc.sendLocale(sender, "protection.accessdenied");
+                    return;
+                }
+            }
+
+            // process it
+            lwc.processRightsModifications(sender, protection, args);
+            return;
+        }
+
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(Colors.Red + "Console not supported.");
+            return;
+        }
+
         LWCPlayer player = lwc.wrapPlayer(sender);
 
         Action action = new Action();

@@ -1391,11 +1391,23 @@ public class LWC {
         return !wrapPlayer(Bukkit.getServer().getPlayer(player)).hasMode("persist");
     }
 
+    /**
+     * Process rights inputted for a protection and add or remove them to the given protection
+     *
+     * @param sender
+     * @param protection
+     * @param arguments
+     */
     public void processRightsModifications(CommandSender sender, Protection protection, String... arguments) {
         for (String rightsName : arguments) {
                 boolean remove = false;
                 boolean isAdmin = false;
                 int type = AccessRight.PLAYER;
+
+                // Gracefully ignore id
+                if (rightsName.startsWith("id:")) {
+                    continue;
+                }
 
                 if (rightsName.startsWith("-")) {
                     remove = true;
