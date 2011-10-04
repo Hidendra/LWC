@@ -144,62 +144,7 @@ public class CreateModule extends JavaModule {
             protection = physDb.registerProtection(block.getTypeId(), ProtectionTypes.PRIVATE, worldName, playerName, "", blockX, blockY, blockZ);
 
             lwc.sendLocale(player, "protection.interact.create.finalize");
-
-            for (String right : rights) {
-                boolean admin = false;
-                int type = AccessRight.PLAYER;
-
-                if (right.isEmpty()) {
-                    continue;
-                }
-
-                if (right.startsWith("@")) {
-                    admin = true;
-                    right = right.substring(1);
-                }
-
-                String lowered = right.toLowerCase();
-
-                if (lowered.startsWith("g:")) {
-                    type = AccessRight.GROUP;
-                    right = right.substring(2);
-                }
-
-                if (lowered.startsWith("l:")) {
-                    type = AccessRight.LIST;
-                    right = right.substring(2);
-                }
-
-                if (lowered.startsWith("list:")) {
-                    type = AccessRight.LIST;
-                    right = right.substring(5);
-                }
-
-                if (lowered.startsWith("t:")) {
-                    type = AccessRight.TOWN;
-                    right = right.substring(2);
-                }
-
-                if (lowered.startsWith("town:")) {
-                    type = AccessRight.TOWN;
-                    right = right.substring(5);
-                }
-
-                String localeChild = AccessRight.typeToString(type).toLowerCase();
-
-                // register the rights
-                AccessRight accessRight = new AccessRight();
-                accessRight.setProtectionId(protection.getId());
-                accessRight.setName(right);
-                accessRight.setType(type);
-                accessRight.setRights(admin ? 1 : 0);
-                protection.addAccessRight(accessRight);
-
-                // queue the protection to be saved
-                protection.save();
-
-                lwc.sendLocale(player, "protection.interact.rights.register." + localeChild, "name", right, "isadmin", (admin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : ""));
-            }
+            lwc.processRightsModifications(player, protection, rights);
         } else if (protectionType.equals("trap")) {
             String[] splitData = protectionData.split(" ");
             String type = splitData[0].toLowerCase();
