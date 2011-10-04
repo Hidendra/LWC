@@ -1391,6 +1391,71 @@ public class LWC {
         return !wrapPlayer(Bukkit.getServer().getPlayer(player)).hasMode("persist");
     }
 
+    public void processRightsModifications(CommandSender sender, Protection protection, String... arguments) {
+        for (String rightsName : arguments) {
+                boolean remove = false;
+                boolean isAdmin = false;
+                int type = AccessRight.PLAYER;
+
+                if (rightsName.startsWith("-")) {
+                    remove = true;
+                    rightsName = rightsName.substring(1);
+                }
+
+                if (rightsName.startsWith("@")) {
+                    isAdmin = true;
+                    rightsName = rightsName.substring(1);
+                }
+
+                if (rightsName.toLowerCase().startsWith("g:")) {
+                    type = AccessRight.GROUP;
+                    rightsName = rightsName.substring(2);
+                }
+
+                if (rightsName.toLowerCase().startsWith("l:")) {
+                    type = AccessRight.LIST;
+                    rightsName = rightsName.substring(2);
+                }
+
+                if (rightsName.toLowerCase().startsWith("list:")) {
+                    type = AccessRight.LIST;
+                    rightsName = rightsName.substring(5);
+                }
+
+                if (rightsName.toLowerCase().startsWith("t:")) {
+                    type = AccessRight.TOWN;
+                    rightsName = rightsName.substring(2);
+                }
+
+                if (rightsName.toLowerCase().startsWith("town:")) {
+                    type = AccessRight.TOWN;
+                    rightsName = rightsName.substring(5);
+                }
+
+                int protectionId = protection.getId();
+                String localeChild = AccessRight.typeToString(type).toLowerCase();
+
+                if (!remove) {
+                    AccessRight accessRight = new AccessRight();
+                    accessRight.setProtectionId(protectionId);
+                    accessRight.setRights(isAdmin ? 1 : 0);
+                    accessRight.setName(rightsName);
+                    accessRight.setType(type);
+
+                    // add it to the protection and queue it to be saved
+                    protection.addAccessRight(accessRight);
+                    protection.save();
+
+                    sendLocale(sender, "protection.interact.rights.register." + localeChild, "name", rightsName, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
+                } else {
+                    protection.removeAccessRightsMatching(rightsName, type);
+                    protection.save();
+
+                    sendLocale(sender, "protection.interact.rights.remove." + localeChild, "name", rightsName, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
+                }
+            }
+    }
+
     /**
      * Send the full help to a player
      *
