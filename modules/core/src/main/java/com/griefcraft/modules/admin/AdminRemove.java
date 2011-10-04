@@ -78,9 +78,6 @@ public class AdminRemove extends JavaModule {
         }
 
         lwc.sendLocale(sender, "protection.admin.remove.finalize");
-
-
-        return;
     }
 
 }

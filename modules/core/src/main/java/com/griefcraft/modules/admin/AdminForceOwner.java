@@ -36,6 +36,7 @@ import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
+import com.griefcraft.util.Colors;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -109,8 +110,34 @@ public class AdminForceOwner extends JavaModule {
         event.setCancelled(true);
 
         if (args.length < 2) {
-            lwc.sendSimpleUsage(sender, "/lwc admin forceowner <player>");
+            lwc.sendSimpleUsage(sender, "/lwc admin forceowner <Player> [ProtectionID]");
             return;
+        }
+
+        String newOwner = args[1];
+
+        // did they provide an ID?
+        if (args.length > 2) {
+            try {
+                int protectionId = Integer.parseInt(args[2]);
+
+                Protection protection = lwc.getPhysicalDatabase().loadProtection(protectionId);
+
+                // No protection found
+                if (protection == null) {
+                    sender.sendMessage(Colors.Red + "Protection not found.");
+                    return;
+                }
+
+                protection.setOwner(newOwner);
+                protection.save();
+
+                lwc.sendLocale(sender, "protection.interact.forceowner.finalize", "player", newOwner);
+                return;
+            } catch (NumberFormatException e) {
+                sender.sendMessage(Colors.Red + "Invalid protection ID");
+                return;
+            }
         }
 
         if (!(sender instanceof Player)) {
@@ -118,9 +145,8 @@ public class AdminForceOwner extends JavaModule {
             return;
         }
 
-        LWCPlayer player = lwc.wrapPlayer(sender);
-        String newOwner = args[1];
 
+        LWCPlayer player = lwc.wrapPlayer(sender);
         Action action = new Action();
         action.setName("forceowner");
         action.setPlayer(player);
@@ -128,8 +154,6 @@ public class AdminForceOwner extends JavaModule {
         player.addAction(action);
 
         lwc.sendLocale(sender, "protection.admin.forceowner.finalize", "player", newOwner);
-
-        return;
     }
 
 }
