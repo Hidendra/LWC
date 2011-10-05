@@ -44,7 +44,7 @@ public class EconomyServerListener extends ServerListener {
     @Override
     public void onPluginEnable(PluginEnableEvent event) {
         if (economyPlugin.isInitialized()) {
-            return; 
+            return;
         }
 
         Plugin plugin = event.getPlugin();
