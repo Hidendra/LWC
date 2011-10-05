@@ -1,3 +1,6 @@
+### 4.0.0-alpha7
+* It is now **no longer possible (!!)** to easily downgrade to 3.5x without losing some data.
+
 ### 4.0.0-alpha6
 * LWC is now licensed under the **2-clause BSD license**. All code prior to this point is still GPL, however.
 

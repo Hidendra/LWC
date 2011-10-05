@@ -1774,6 +1774,9 @@ public class PhysDB extends Database {
                 protection.save();
             }
 
+            // drop the rights table
+            dropTable(prefix + "rights");
+
             // Good!
             set.close();
             stmt.close();
