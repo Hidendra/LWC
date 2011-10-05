@@ -103,7 +103,7 @@ public class EconomyModule extends JavaModule {
 
     @Override
     public void onProtectionInteract(LWCProtectionInteractEvent event) {
-        if (event.getResult() != Result.DEFAULT) {
+        if (event.getResult() != Result.DEFAULT || !event.canAccess()) {
             return;
         }
 
