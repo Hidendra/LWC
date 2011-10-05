@@ -34,22 +34,49 @@
     <condition property="GIT_COMMIT" value="${env.GIT_COMMIT}" else="MANUAL">
         <isset property="env.GIT_COMMIT"/>
     </condition>
+    <condition property="label" value="${label}" else="Compiling LWC">
+        <isset property="label"/>
+    </condition>
 
     <target name="all" depends="buildall" description="Build LWC and all modules"/>
 
-    <target name="compile" description="Compilation">
-        <mkdir dir="${bin}" />
-        <mkdir dir="${bin}/core/" />
-        <mkdir dir="${bin}/economy/" />
-        <mkdir dir="${bin}/spout/" />
+    <!-- if the changes file does not exist, force the build to go on -->
+    <target name="test-changes-file">
+        <available file="${build}/.flagcore" property="file.exists" value="true"/>
+    </target>
+
+    <target name="test-changes-file-apply" depends="test-changes-file" unless="file.exists">
+        <property name="build.core" value="true"/>
+        <property name="build.economy" value="true"/>
+        <property name="build.spout" value="true"/>
+    </target>
+
+    <target name="check-for-changes-core" depends="test-changes-file-apply">
+        <available file="${build}/.buildcore" property="build.core" value="true"/>
+    </target>
+
+    <target name="compile-core" description="Compile core LWC" depends="check-for-changes-core" if="build.core">
+        <mkdir dir="${bin}"/>
+        <mkdir dir="${bin}/core/"/>
+        <delete file="${build}/.buildcore" />
 
         <echo>${label}</echo>
-        <javac srcdir="${src}/main/java/;${core};" destdir="${bin}/core/"
+        <javac srcdir="${src}/main/java/:${core}" destdir="${bin}/core/"
                debug="true" debuglevel="lines,vars,source" deprecation="true" includeantruntime="true">
             <classpath>
                 <fileset refid="libs"/>
             </classpath>
         </javac>
+    </target>
+
+    <target name="check-for-changes-economy">
+        <available file="${build}/.buildeconomy" property="build.economy" value="true"/>
+    </target>
+
+    <target name="compile-economy" description="Compile LWC-Economy" depends="check-for-changes-economy" if="build.economy">
+        <mkdir dir="${bin}"/>
+        <mkdir dir="${bin}/economy/"/>
+        <delete file="${build}/.buildeconomy" />
 
         <echo>Compiling LWC-Economy</echo>
         <javac srcdir="${economy}/main/java/" destdir="${bin}/economy/" deprecation="true" debug="true"
@@ -59,6 +86,16 @@
                 <dirset dir="${bin}/core/"/>
             </classpath>
         </javac>
+    </target>
+
+    <target name="check-for-changes-spout">
+        <available file="${build}/.buildspout" property="build.spout" value="true"/>
+    </target>
+
+    <target name="compile-spout" description="Compile LWC-Spout" depends="check-for-changes-spout" if="build.spout">
+        <mkdir dir="${bin}"/>
+        <mkdir dir="${bin}/spout/"/>
+        <delete file="${build}/.buildspot" />
 
         <echo>Compiling LWC-Spout</echo>
         <javac srcdir="${spout}/main/java/" destdir="${bin}/spout/" deprecation="true" debug="true"
@@ -70,11 +107,11 @@
         </javac>
     </target>
 
-    <target name="buildall" description="Build the distribution files" depends="compile,lwc,economy,spout">
+    <target name="buildall" description="Build the distribution files" depends="lwc,economy,spout">
         <copy tofile="${build}/VERSION" file="VERSION" overwrite="yes"/>
     </target>
 
-    <target name="lwc" description="Build LWC.jar">
+    <target name="lwc" description="Build LWC.jar" depends="compile-core" if="build.core">
         <echo>Building LWC.jar</echo>
 
         <jar jarfile="${build}/${jar.core}">
@@ -91,7 +128,7 @@
         </jar>
     </target>
 
-    <target name="economy" description="Build LWC-Economy.jar">
+    <target name="economy" description="Build LWC-Economy.jar" depends="compile-economy" if="build.economy">
         <echo>Building LWC-Economy.jar</echo>
 
         <jar jarfile="${build}/${jar.economy}">
@@ -107,7 +144,7 @@
         </jar>
     </target>
 
-    <target name="spout" description="Build LWC-Spout.jar">
+    <target name="spout" description="Build LWC-Spout.jar" depends="compile-spout" if="build.spout">
         <echo>Building LWC-Spout.jar</echo>
 
         <jar jarfile="${build}/${jar.spout}">
