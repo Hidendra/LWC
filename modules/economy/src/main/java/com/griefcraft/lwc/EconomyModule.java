@@ -52,6 +52,28 @@ import java.util.logging.Logger;
 
 public class EconomyModule extends JavaModule {
 
+    public enum DiscountType {
+
+        /**
+         * The discount will apply while the player has under X protections total.
+         */
+        TOTAL,
+
+        /**
+         * The discount will only give the player X discounted protections - no more.
+         */
+        EXACT,
+
+        /**
+         * The discount will apply while the player has under X DISCOUNTED protections total.
+         * This is different from TOTAL because if they have 5 free protections, they get 5
+         * for free, and if they remove one of the free ones, they will get 1 protection
+         * for free.
+         */
+        IN_USE
+
+    }
+
     private Logger logger = Logger.getLogger("LWC");
 
     /**
@@ -63,6 +85,11 @@ public class EconomyModule extends JavaModule {
      * The bukkit plugin
      */
     private LWCEconomyPlugin plugin;
+
+    /**
+     * The discount type to use
+     */
+    private DiscountType discountType;
 
     /**
      * A cache of prices. When a value is inputted, it stays in memory for milliseconds at best.
@@ -348,20 +375,27 @@ public class EconomyModule extends JavaModule {
                 double discountPrice = Double.parseDouble(resolveValue(player, "discount.newCharge"));
 
                 if (discountedProtections > 0) {
-                    String discountType = resolveValue(player, "discount.type");
                     int currentProtections = 0;
-                    boolean isExactDiscountType = true;
 
-                    if(discountType.equalsIgnoreCase("TOTAL")) {
-                        isExactDiscountType = false;
-                    }
+                    // Match the discount type
+                    DiscountType discountType = DiscountType.valueOf(resolveValue(player, "discount.type").toUpperCase());
 
-                    if(isExactDiscountType) {
-                        String discountId = resolveValue(player, "discount.id");
+                    // The unique id of the discount, by default they are shared between discounts if not set
+                    String discountId = resolveValue(player, "discount.id");
 
-                        currentProtections = getDiscountedProtections(lwc, player, discountPrice, discountId.isEmpty() ? null : discountId);
-                    } else {
-                        currentProtections = lwc.getPhysicalDatabase().getProtectionCount(player.getName());
+                    // Count the protections
+                    switch (discountType) {
+                        case EXACT:
+                            currentProtections = countDiscountedProtections(lwc, player, discountPrice, discountId.isEmpty() ? null : discountId, false);
+                            break;
+
+                        case TOTAL:
+                            currentProtections = lwc.getPhysicalDatabase().getProtectionCount(player.getName());
+                            break;
+
+                        case IN_USE:
+                            currentProtections = countDiscountedProtections(lwc, player, discountPrice, discountId.isEmpty() ? null : discountId, true);
+                            break;
                     }
 
                     if (discountedProtections > currentProtections) {
@@ -472,9 +506,10 @@ public class EconomyModule extends JavaModule {
      * @param player
      * @param discountPrice
      * @param discountId
+     * @param onlyCountActiveTransactions
      * @return
      */
-    private int getDiscountedProtections(LWC lwc, Player player, double discountPrice, String discountId) {
+    private int countDiscountedProtections(LWC lwc, Player player, double discountPrice, String discountId, boolean onlyCountActiveTransactions) {
         LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
         List<History> related = lwcPlayer.getRelatedHistory(History.Type.TRANSACTION);
 
@@ -485,11 +520,16 @@ public class EconomyModule extends JavaModule {
                 continue;
             }
 
-            // if the discount id is defined, we'll use that
+            // Check the other discount id
             if (discountId != null) {
                 if(!history.hasKey("discountId") || !history.getString("discountId").equals(discountId)) {
-                    break;
+                    continue;
                 }
+            }
+
+            // Are we only looking for valid transactions?
+            if (onlyCountActiveTransactions && history.getStatus() == History.Status.INACTIVE) {
+                continue;
             }
 
             // obtain the charge

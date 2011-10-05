@@ -648,7 +648,7 @@ public class Protection {
         }
 
         // check the cache for history updates
-        for(History history : historyCache) {
+        for(History history : getRelatedHistory()) {
             // if the history object was modified we need to save it
             if(history.wasModified()) {
                 history.saveNow();
@@ -718,6 +718,24 @@ public class Protection {
         }
 
         return String.format("%s %s" + Colors.White + " " + Colors.Green + "Id=%d Owner=%s Location=[%s %d,%d,%d] Created=%s Flags=%s LastAccessed=%s", typeToString(), (blockId > 0 ? (LWC.materialToString(blockId)) : "Not yet cached"), id, owner, world, x, y, z, date, flagStr, lastAccessed);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 17;
+
+        // the identifier is normally unique, but in SQLite ids may be quickly reused so we use other data
+        hash *= 37 + id;
+
+        // coordinates
+        hash *= 37 + x;
+        hash *= 37 + y;
+        hash *= 37 + z;
+
+        // and for good measure, to *guarantee* no collisions
+        hash *= 37 + date.hashCode();
+
+        return hash;
     }
 
     /**
