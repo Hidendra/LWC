@@ -119,13 +119,7 @@ public class LWCPlayerListener extends PlayerListener {
         LWC lwc = plugin.getLWC();
         Player player = event.getPlayer();
         LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
-        Block clickedBlock = event.getClickedBlock();
-        Location location = clickedBlock.getLocation();
-
-        CraftWorld craftWorld = (CraftWorld) clickedBlock.getWorld();
-        Block block = new CraftBlock((CraftChunk) craftWorld.getChunkAt(location), location.getBlockX(), location.getBlockY(), location.getBlockZ());
-        block.setTypeId(craftWorld.getBlockTypeIdAt(location));
-
+        Block block = event.getClickedBlock();
         Material material = block.getType();
 
         // Prevent players with lwc.deny from interacting
@@ -140,7 +134,7 @@ public class LWCPlayerListener extends PlayerListener {
         try {
             List<String> actions = new ArrayList<String>(lwcPlayer.getActionNames());
             Protection protection = lwc.findProtection(block);
-            Module.Result result = Module.Result.CANCEL;
+            Module.Result result;
             boolean canAccess = lwc.canAccessProtection(player, protection);
             boolean canAdmin = lwc.canAdminProtection(player, protection);
 
