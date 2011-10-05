@@ -1444,6 +1444,10 @@ public class LWC {
                     rightsName = rightsName.substring(5);
                 }
 
+                if (rightsName.trim().isEmpty()) {
+                    continue;
+                }
+
                 int protectionId = protection.getId();
                 String localeChild = AccessRight.typeToString(type).toLowerCase();
 
