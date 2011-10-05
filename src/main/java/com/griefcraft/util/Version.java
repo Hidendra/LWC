@@ -91,7 +91,12 @@ public final class Version implements Comparable {
     private int buildNumber;
 
     public Version(String version) {
-        this.rawVersion = version;
+        if (version.contains("-git-")) {
+            rawVersion = version.substring(0, version.indexOf("-git-"));
+        } else {
+            rawVersion = version;
+        }
+
         calculateWeights();
     }
 
