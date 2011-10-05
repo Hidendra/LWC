@@ -34,17 +34,15 @@ import com.griefcraft.model.Protection;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class UpdateThread implements Runnable {
 
     /**
-     * Queue that protections can be added to to update them in the database periodically in a seperate thread
+     * Queue used to update protections on a seperate thread (the updates that aren't immediately required)
      */
-    private Map<Integer, Protection> protectionUpdateQueue = Collections.synchronizedMap(new HashMap<Integer, Protection>());
+    private Set<Protection> protectionUpdateQueue = Collections.synchronizedSet(new LinkedHashSet<Protection>(1000));
 
     /**
      * True begins the flush
@@ -103,7 +101,7 @@ public class UpdateThread implements Runnable {
      * @param protection
      */
     public void queueProtectionUpdate(Protection protection) {
-        protectionUpdateQueue.put(protection.getId(), protection);
+        protectionUpdateQueue.add(protection);
     }
 
     /**
@@ -112,9 +110,7 @@ public class UpdateThread implements Runnable {
      * @param protection
      */
     public void unqueueProtectionUpdate(Protection protection) {
-       if(protectionUpdateQueue.containsKey(protection.getId())) {
-           protectionUpdateQueue.remove(protection.getId());
-       }
+       protectionUpdateQueue.remove(protection);
     }
 
     public void run() {
@@ -167,13 +163,14 @@ public class UpdateThread implements Runnable {
                 }
 
                 // save all of the protections
-                for(Map.Entry<Integer, Protection> entry : protectionUpdateQueue.entrySet()) {
-                    Protection protection = entry.getValue();
+                Iterator<Protection> iter = protectionUpdateQueue.iterator();
+                while (iter.hasNext()) {
+                    Protection protection = iter.next();
+                    iter.remove();
+
+                    // Save it !
                     protection.saveNow();
                 }
-
-                // clear the queue
-                protectionUpdateQueue.clear();
 
                 // commit
                 try {
