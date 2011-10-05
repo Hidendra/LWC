@@ -37,7 +37,7 @@ public class LWCPopupScreen extends GenericPopup {
      * Called when this popup screen receives a button click
      */
     public void onButtonClicked(ButtonClickEvent event) {
-        
+         
     }
 
 }
