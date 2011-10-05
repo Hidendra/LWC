@@ -58,11 +58,6 @@ public class LWCInfo {
     public static void setVersion(String version) {
         String implementationVersion = LWCPlugin.class.getPackage().getImplementationVersion();
 
-        // if it's not a manual build, prepend a b
-        if(!implementationVersion.equals("MANUAL")) {
-            implementationVersion = "b" + implementationVersion;
-        }
-
         FULL_VERSION = new Version(version + " " + implementationVersion);
     }
 }

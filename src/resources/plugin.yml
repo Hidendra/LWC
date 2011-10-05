@@ -1,6 +1,6 @@
 name: LWC
 main: com.griefcraft.lwc.LWCPlugin
-version: 4.0.0-alpha6
+version: @VERSION@
 website: http://griefcraft.com
 author: Hidendra
 description: >
