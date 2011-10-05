@@ -137,6 +137,11 @@ public class Protection {
     private boolean removed = false;
 
     /**
+     * If the protection is pending removal. Only used internally.
+     */
+    private boolean removing = false;
+
+    /**
      * True when the protection has been modified and should be saved
      */
     private boolean modified = false;
@@ -548,6 +553,7 @@ public class Protection {
 
         // we're removing it, so assume there are no changes
         modified = false;
+        removing = true;
 
         // broadcast the removal event
         // we broadcast before actually removing to give them a chance to use any password that would be removed otherwise
@@ -642,7 +648,7 @@ public class Protection {
         encodeFlags();
 
         // only save the protection if it was modified
-        if(modified) {
+        if(modified && !removing) {
             LWC.getInstance().getPhysicalDatabase().saveProtection(this);
             update();
         }
