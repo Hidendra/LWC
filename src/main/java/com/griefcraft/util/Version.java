@@ -51,7 +51,7 @@ public final class Version implements Comparable {
     /**
      * The regex to match the build number
      */
-    private final static Pattern REGEX_BUILD_NUMBER = Pattern.compile(".*b(\\d+)-.*");
+    private final static Pattern REGEX_BUILD_NUMBER = Pattern.compile(".*b(\\d+).*");
 
     /**
      * The raw version string
