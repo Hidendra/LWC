@@ -198,7 +198,7 @@ public class CreateModule extends JavaModule {
 
         LWCPlayer player = lwc.wrapPlayer(sender);
 
-        String full = StringUtils.join(args, 0);
+        String full = StringUtils.join(args, 0).trim();
         String type = args[0].toLowerCase();
         String data = StringUtils.join(args, 1);
         event.setCancelled(true);

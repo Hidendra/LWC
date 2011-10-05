@@ -122,7 +122,7 @@ public class ModifyModule extends JavaModule {
         LWC lwc = event.getLWC();
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
-        String full = join(args, 0);
+        String full = join(args, 0).trim();
         event.setCancelled(true);
 
         if (!lwc.hasPlayerPermission(sender, "lwc.modify")) {
