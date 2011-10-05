@@ -28,15 +28,35 @@
     <!-- Jenkins integration -->
     <property environment="env"/>
 
-    <condition property="BUILD_NUMBER" value="${env.BUILD_NUMBER}" else="MANUAL">
+    <condition property="BUILD_NUMBER" value="b${env.BUILD_NUMBER}" else="MANUAL">
         <isset property="env.BUILD_NUMBER"/>
     </condition>
-    <condition property="GIT_COMMIT" value="${env.GIT_COMMIT}" else="MANUAL">
+    <condition property="GIT_COMMIT_FULL" value="b${env.GIT_COMMIT}" else="MANUAL">
         <isset property="env.GIT_COMMIT"/>
     </condition>
     <condition property="label" value="${label}" else="Compiling LWC">
         <isset property="label"/>
     </condition>
+
+    <!-- Substring script -->
+    <scriptdef name="substring" language="javascript">
+        <attribute name="text"/>
+        <attribute name="start"/>
+        <attribute name="end"/>
+        <attribute name="property"/>
+
+        <![CDATA[
+                var text = attributes.get("text");
+                var start = attributes.get("start") || 0;
+                var end = attributes.get("end") || text.length();
+
+                if (end > text.length()) {
+                    end = text.length()
+                }
+
+                project.setProperty(attributes.get("property"), text.substring(start, end));
+            ]]>
+    </scriptdef>
 
     <target name="all" depends="buildall" description="Build LWC and all modules"/>
 
@@ -58,7 +78,22 @@
     <target name="compile-core" description="Compile core LWC" depends="check-for-changes-core" if="build.core">
         <mkdir dir="${bin}"/>
         <mkdir dir="${bin}/core/"/>
-        <delete file="${build}/.buildcore" />
+        <mkdir dir="${bin}/core/resources/"/>
+        <delete file="${build}/.buildcore"/>
+
+        <!-- Load the version -->
+        <loadfile srcfile="VERSION" property="VERSION"/>
+
+        <!-- Trim the git commit -->
+        <substring text="${GIT_COMMIT_FULL}" start="0" end="8" property="GIT_COMMIT" />
+
+        <!-- Copy plugin.yml to ${bin}/core/resources -->
+        <copy file="${src}/resources/plugin.yml" todir="${bin}/core/resources/" overwrite="true" />
+
+        <!-- Replace ${VERSION} with the version number in plugin.yml -->
+        <replace file="${bin}/core/resources/plugin.yml" value="${VERSION} (b${BUILD_NUMBER}-git-${GIT_COMMIT})">
+            <replacefilter token="@VERSION@" />
+        </replace>
 
         <echo>${label}</echo>
         <javac srcdir="${src}/main/java/:${core}" destdir="${bin}/core/"
@@ -73,10 +108,11 @@
         <available file="${build}/.buildeconomy" property="build.economy" value="true"/>
     </target>
 
-    <target name="compile-economy" description="Compile LWC-Economy" depends="check-for-changes-economy" if="build.economy">
+    <target name="compile-economy" description="Compile LWC-Economy" depends="check-for-changes-economy"
+            if="build.economy">
         <mkdir dir="${bin}"/>
         <mkdir dir="${bin}/economy/"/>
-        <delete file="${build}/.buildeconomy" />
+        <delete file="${build}/.buildeconomy"/>
 
         <echo>Compiling LWC-Economy</echo>
         <javac srcdir="${economy}/main/java/" destdir="${bin}/economy/" deprecation="true" debug="true"
@@ -95,7 +131,7 @@
     <target name="compile-spout" description="Compile LWC-Spout" depends="check-for-changes-spout" if="build.spout">
         <mkdir dir="${bin}"/>
         <mkdir dir="${bin}/spout/"/>
-        <delete file="${build}/.buildspot" />
+        <delete file="${build}/.buildspot"/>
 
         <echo>Compiling LWC-Spout</echo>
         <javac srcdir="${spout}/main/java/" destdir="${bin}/spout/" deprecation="true" debug="true"
@@ -116,14 +152,14 @@
 
         <jar jarfile="${build}/${jar.core}">
             <fileset dir="${src}" includes="lang/*"/>
-            <fileset dir="${src}/resources/" includes="**/*"/>
-            <fileset dir="${bin}/core/"/>
+            <fileset dir="${bin}/core/resources/" includes="**/*"/>
+            <fileset dir="${bin}/core/" excludes="resources/**"/>
 
             <manifest>
                 <attribute name="Implementation-Title" value="LWC"/>
                 <attribute name="Implementation-Vendor" value="Hidendra"/>
                 <!-- <attribute name="Implementation-Version" value="git-LWC-${GIT_COMMIT}-b${BUILD_NUMBER}jnks" /> -->
-                <attribute name="Implementation-Version" value="${BUILD_NUMBER}"/>
+                <attribute name="Implementation-Version" value="b${BUILD_NUMBER}-git-${GIT_COMMIT}"/>
             </manifest>
         </jar>
     </target>
