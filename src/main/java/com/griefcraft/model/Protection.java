@@ -588,20 +588,6 @@ public class Protection {
         LRUCache<String, Protection> cache = lwc.getCaches().getProtections();
 
         cache.remove(getCacheKey());
-
-        /* For Bug 656 workaround we record in-memory any double-chests/etc we find as
-        * we find them, since we can't count on Bukkit to reliably return that info later.
-        * As a result, when we are removing a protection (and therefore LWC calls this method
-        * to remove it's cache object), we need to remove the adjacent block from memory also.
-        */
-        if (lwc.isBug656WorkAround()) {
-            World worldObject = lwc.getPlugin().getServer().getWorld(world);
-            List<Block> blocks = lwc.getRelatedBlocks(worldObject, x, y, z);
-            for (Block b : blocks) {
-                String cacheKey = b.getWorld().getName() + ":" + b.getX() + ":" + b.getY() + ":" + b.getZ();
-                cache.remove(cacheKey);
-            }
-        }
     }
 
     /**
