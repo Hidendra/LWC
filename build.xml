@@ -28,10 +28,10 @@
     <!-- Jenkins integration -->
     <property environment="env"/>
 
-    <condition property="BUILD_NUMBER" value="b${env.BUILD_NUMBER}" else="MANUAL">
+    <condition property="BUILD_NUMBER" value="${env.BUILD_NUMBER}" else="MANUAL">
         <isset property="env.BUILD_NUMBER"/>
     </condition>
-    <condition property="GIT_COMMIT_FULL" value="b${env.GIT_COMMIT}" else="MANUAL">
+    <condition property="GIT_COMMIT_FULL" value="${env.GIT_COMMIT}" else="MANUAL">
         <isset property="env.GIT_COMMIT"/>
     </condition>
     <condition property="label" value="${label}" else="Compiling LWC">
