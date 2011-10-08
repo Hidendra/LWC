@@ -64,6 +64,7 @@ permissions:
 
   lwc.*:
       description: Full administrative access to LWC
+      default: false
       children:
           lwc.protect: true
           lwc.admin: true
@@ -87,10 +88,11 @@ permissions:
 
   lwc.allcommands:
       description: Gives you access to every LWC command. Without lwc.admin or lwc.mod, you cannot open protections you do not own.
+      default: false
 
   lwc.mod:
       description: Allows you to open anyone's protection but not remove them
-      default: op
+      default: false
 
   lwc.deny:
       description: Denys you access to any block LWC can protect. For example, with this permission set, you cannot open even unprotected chests (if protectable.)
