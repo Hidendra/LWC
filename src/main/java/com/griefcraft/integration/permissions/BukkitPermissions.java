@@ -24,13 +24,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * BukkitPermissions is supported by the CraftBukkit Recommended Build #1000+ ONLY
  */
-public class BukkitPermissions implements IPermissions {
+public class BukkitPermissions extends SuperPermsPermissions implements IPermissions {
 
     /**
      * The PermissionsBukkit handler
@@ -48,12 +47,12 @@ public class BukkitPermissions implements IPermissions {
     }
 
     public List<String> getGroups(Player player) {
+        List<String> groups = super.getGroups(player);
         if (handler == null) {
-            return null;
+            return groups;
         }
 
         List<Group> found = handler.getGroups(player.getName());
-        List<String> groups = new ArrayList<String>(found.size());
 
         if (found.size() == 0) {
             return groups;
