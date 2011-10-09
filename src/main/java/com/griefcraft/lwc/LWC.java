@@ -1082,29 +1082,26 @@ public class LWC {
 
         // Permissions init
         permissions = new NoPermissions();
-
-        if (resolvePlugin("PermissionsBukkit") != null) {
-            permissions = new BukkitPermissions();
-        } else if (resolvePlugin("PermissionsEx") != null) {
-            permissions = new PEXPermissions();
-        } else {
-            // Default to Permissions over SuperPermissions, except with SuperpermsBridge
-            Plugin legacy = resolvePlugin("Permissions");
-
-            if (legacy != null) {
-                try {
-                    // super perms bridge, will throw exception if it's not it
-                    if (!(((com.nijikokun.bukkit.Permissions.Permissions)legacy).getHandler() instanceof com.platymuus.bukkit.permcompat.PermissionHandler)) {
-                        permissions = new NijiPermissions();
-                    }
-                } catch (NoClassDefFoundError e) {
-                    // Permissions 2/3 or some other bridge
+        // Default to Permissions, except with SuperpermsBridge
+        Plugin legacy = resolvePlugin("Permissions");
+        if (legacy != null) {
+            try {
+                // super perms bridge, will throw exception if it's not it
+                if (!(((com.nijikokun.bukkit.Permissions.Permissions)legacy).getHandler() instanceof com.platymuus.bukkit.permcompat.PermissionHandler)) {
                     permissions = new NijiPermissions();
                 }
+            } catch (NoClassDefFoundError e) {
+                // Permissions 2/3 or some other bridge
+                permissions = new NijiPermissions();
             }
-
-            // attempt super perms if we still have nothing
-            if (permissions.getClass() == NoPermissions.class) {
+        }
+        
+        if(permissions.getClass() == NoPermissions.class) {
+            if (resolvePlugin("PermissionsBukkit") != null) {
+                permissions = new BukkitPermissions();
+            } else if (resolvePlugin("PermissionsEx") != null) {
+                permissions = new PEXPermissions();
+            } else {
                 try {
                     Method method = CraftHumanEntity.class.getDeclaredMethod("hasPermission", String.class);
                     if (method != null) {
