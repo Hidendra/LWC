@@ -36,6 +36,7 @@ import com.griefcraft.scripting.Module;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCDropItemEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
+import com.griefcraft.util.Colors;
 import com.griefcraft.util.StopWatch;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -113,9 +114,7 @@ public class LWCPlayerListener extends PlayerListener {
         LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
 
         // Send the block action to the player if they're in dev mode
-        if (lwcPlayer.isDevMode()) {
-            player.sendMessage("Block Action: " + event.getAction());
-        }
+        lwcPlayer.debug("Block Action: " + event.getAction());
 
         if (event.getAction() != Action.LEFT_CLICK_BLOCK && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
@@ -139,7 +138,7 @@ public class LWCPlayerListener extends PlayerListener {
 
         try {
             List<String> actions = new ArrayList<String>(lwcPlayer.getActionNames());
-            Protection protection = lwc.findProtection(block);
+            Protection protection = lwc.findProtection(block, lwcPlayer);
             Module.Result result;
             boolean canAccess = lwc.canAccessProtection(player, protection);
             boolean canAdmin = lwc.canAdminProtection(player, protection);
@@ -158,6 +157,7 @@ public class LWCPlayerListener extends PlayerListener {
                 boolean ignoreLeftClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreLeftClick"));
 
                 if (ignoreLeftClick) {
+                    lwcPlayer.debug("ignoreLeftClick!");
                     lwc.completeStopwatch(stopWatch, player);
                     return;
                 }
@@ -165,6 +165,7 @@ public class LWCPlayerListener extends PlayerListener {
                 boolean ignoreRightClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreRightClick"));
 
                 if (ignoreRightClick) {
+                    lwcPlayer.debug("ignoreRightClick!");
                     lwc.completeStopwatch(stopWatch, player);
                     return;
                 }
@@ -181,6 +182,9 @@ public class LWCPlayerListener extends PlayerListener {
 
                 result = evt.getResult();
             }
+
+            // debugging
+            lwcPlayer.debug(Colors.LightBlue + "Result => " + Colors.Yellow + result + Colors.LightBlue + "  Protection => " + Colors.Yellow +  protection + Colors.LightBlue + "  Access/Admin => " + Colors.Yellow + canAccess + "/" + canAdmin + Colors.LightBlue + "  Actions => " + Colors.Yellow + actions);
 
             if (result == Module.Result.ALLOW) {
                 lwc.completeStopwatch(stopWatch, player);

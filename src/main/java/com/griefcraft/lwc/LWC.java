@@ -734,12 +734,13 @@ public class LWC {
     }
 
     /**
-     * Find a protection linked to the block
+     * Find a protection linked to the block, using the player to debug if they have debug mode
      *
      * @param block
+     * @param debugger
      * @return
      */
-    public Protection findProtection(Block block) {
+    public Protection findProtection(Block block, LWCPlayer debugger) {
         // If the block type is AIR, then we have a problem .. but attempt to load a protection anyway
         if (block.getType() == Material.AIR) {
             // We won't be able to match any other blocks anyway, so the least we can do is attempt to load a protection
@@ -749,10 +750,22 @@ public class LWC {
         // get the possible protections for the selected block
         List<Block> protections = getProtectionSet(block.getWorld(), block.getX(), block.getY(), block.getZ());
 
+        if (debugger != null) {
+            debugger.debug(Colors.LightBlue + "ProtectionSet: " + Colors.Yellow + protections.size());
+        }
+
         // loop through and check for protected blocks
         for (Block protectableBlock : protections) {
+            boolean protectable = isProtectable(protectableBlock);
+
+            // send debug info to the debugger
+            if (debugger != null) {
+                debugger.debug(Colors.LightBlue + "MATCH: " + Colors.Yellow + protectableBlock.getType() + " => " + protectableBlock
+                        + " " + Colors.LightBlue + "Protectable: " + Colors.Yellow + protectable);
+            }
+
             // Is the block actually protectable?
-            if (!isProtectable(protectableBlock)) {
+            if (!protectable) {
                 continue;
             }
 
@@ -765,6 +778,16 @@ public class LWC {
         }
 
         return null;
+    }
+
+    /**
+     * Find a protection linked to the block
+     *
+     * @param block
+     * @return
+     */
+    public Protection findProtection(Block block) {
+        return findProtection(block, null);
     }
 
     /**
@@ -1111,14 +1134,11 @@ public class LWC {
      * @param player
      */
     public void completeStopwatch(StopWatch stopWatch, Player player) {
-        if (wrapPlayer(player).isDevMode()) {
-            if (stopWatch.isRunning()) {
-                stopWatch.stop();
-            }
-
-            // send the summary
-            player.sendMessage(stopWatch.shortSummary());
+        if (stopWatch.isRunning()) {
+            stopWatch.stop();
         }
+
+        wrapPlayer(player).debug(stopWatch.shortSummary());
     }
 
     /**
