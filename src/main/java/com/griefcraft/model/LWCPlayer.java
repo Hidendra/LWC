@@ -432,6 +432,17 @@ public class LWCPlayer implements CommandSender {
     }
 
     /**
+     * Send a debug message to the player if they are in dev mode
+     *
+     * @param message
+     */
+    public void debug(String message) {
+       if (isDevMode()) {
+           player.sendMessage(message);
+       }
+    }
+
+    /**
      * Set the player's permission mode
      *
      * @param permissionMode

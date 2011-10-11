@@ -96,8 +96,6 @@ public class AdminFind extends JavaModule {
         for (Protection protection : protections) {
             sender.sendMessage(protection.toString());
         }
-
-        return;
     }
 
 }
