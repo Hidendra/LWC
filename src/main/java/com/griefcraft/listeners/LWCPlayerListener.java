@@ -111,17 +111,18 @@ public class LWCPlayerListener extends PlayerListener {
         LWC lwc = plugin.getLWC();
         Player player = event.getPlayer();
         LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
-        Block block = event.getClickedBlock();
-        Material material = block.getType();
 
         // Send the block action to the player if they're in dev mode
         if (lwcPlayer.isDevMode()) {
             player.sendMessage("Block Action: " + event.getAction());
         }
-        
+
         if (event.getAction() != Action.LEFT_CLICK_BLOCK && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
+        
+        Block block = event.getClickedBlock();
+        Material material = block.getType();
 
         // Timing start
         StopWatch stopWatch = new StopWatch(String.format("PLAYER_INTERACT Block=%s Location=[%d %d %d]", material, block.getX(), block.getY(), block.getZ()));
