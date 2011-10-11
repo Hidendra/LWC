@@ -1700,8 +1700,6 @@ public class LWC {
             if (!entities.contains(block)) {
                 entities.add(block);
             }
-        } else if (isProtectable(block) && isBaseBlock) {
-            entities.add(block);
         } else if (isBaseBlock && (up.getType() == Material.WOODEN_DOOR || up.getType() == Material.IRON_DOOR_BLOCK || type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK)) {
             // check if they're clicking the block under the door
             if (type != Material.WOODEN_DOOR && type != Material.IRON_DOOR_BLOCK) {
@@ -1808,6 +1806,11 @@ public class LWC {
 
                 }
             }
+        }
+
+        // Add the block if it's protectable and the one they clicked
+        if (isProtectable(block) && isBaseBlock && !entities.contains(block)) {
+            entities.add(block);
         }
 
         return entities;
