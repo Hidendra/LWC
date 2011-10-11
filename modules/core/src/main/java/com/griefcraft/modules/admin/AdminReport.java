@@ -24,6 +24,7 @@ import com.griefcraft.util.Colors;
 import com.griefcraft.util.Performance;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.command.ColouredConsoleSender;
 import org.bukkit.entity.Player;
@@ -51,11 +52,11 @@ public class AdminReport extends JavaModule {
         // we have the right command
         event.setCancelled(true);
 
-        ColouredConsoleSender console = null;
+        ConsoleCommandSender console = null;
         boolean replaceTabs = false;
 
         if (sender instanceof Player) {
-            console = new ColouredConsoleSender((CraftServer) Bukkit.getServer());
+            console = Bukkit.getServer().getConsoleSender();
             replaceTabs = true;
         }
 
@@ -68,8 +69,6 @@ public class AdminReport extends JavaModule {
                 console.sendMessage(line);
             }
         }
-
-        return;
     }
 
 }
