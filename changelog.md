@@ -1,4 +1,5 @@
 ### 4.0.0-alpha7
+* Startup time has been dramatically increased for those with a very large amount of protections.
 * The bug 656 workaround has been replaced with a feature that is automatically used when chunk bug are detected.
 * It is now **no longer possible (!!)** to easily downgrade to 3.5x without losing some data.
 

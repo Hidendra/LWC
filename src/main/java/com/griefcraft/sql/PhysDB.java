@@ -48,10 +48,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class PhysDB extends Database {
 
@@ -316,30 +313,6 @@ public class PhysDB extends Database {
                 protections.add(column);
             }
 
-            Table rights = new Table(this, "rights");
-            {
-                column = new Column("id");
-                column.setType("INTEGER");
-                column.setPrimary(true);
-                rights.add(column);
-
-                column = new Column("chest");
-                column.setType("INTEGER");
-                rights.add(column);
-
-                column = new Column("entity");
-                column.setType("TEXT");
-                rights.add(column);
-
-                column = new Column("rights");
-                column.setType("INTEGER");
-                rights.add(column);
-
-                column = new Column("type");
-                column.setType("INTEGER");
-                rights.add(column);
-            }
-
             Table menuStyles = new Table(this, "menu_styles");
             {
                 column = new Column("player");
@@ -410,13 +383,13 @@ public class PhysDB extends Database {
             }
 
             protections.execute();
-            rights.execute();
             menuStyles.execute();
             history.execute();
             jobs.execute();
 
             connection.commit();
 
+            // Add or indexes
             doIndexes();
         } catch (SQLException e) {
             printException(e);
@@ -1563,7 +1536,7 @@ public class PhysDB extends Database {
     private void doUpdate100() {
         try {
             Statement statement = connection.createStatement();
-            statement.executeQuery("SELECT type FROM protections");
+            statement.executeQuery("SELECT type FROM protections LIMIT 1");
             statement.close();
         } catch (SQLException e) {
             addColumn("protections", "type", "INTEGER");
@@ -1577,7 +1550,7 @@ public class PhysDB extends Database {
     private void doUpdate140() {
         try {
             Statement statement = connection.createStatement();
-            statement.executeQuery("SELECT id FROM protections");
+            statement.executeQuery("SELECT id FROM protections LIMIT 1");
             statement.close();
         } catch (Exception e) {
             renameTable("chests", "protections");
@@ -1590,7 +1563,7 @@ public class PhysDB extends Database {
     private void doUpdate150() {
         try {
             Statement statement = connection.createStatement();
-            statement.executeQuery("SELECT blockId FROM protections");
+            statement.executeQuery("SELECT blockId FROM protections LIMIT 1");
             statement.close();
         } catch (Exception e) {
             addColumn("protections", "blockId", "INTEGER");
@@ -1603,7 +1576,7 @@ public class PhysDB extends Database {
     private void doUpdate170() {
         try {
             Statement statement = connection.createStatement();
-            statement.executeQuery("SELECT world FROM protections");
+            statement.executeQuery("SELECT world FROM protections LIMIT 1");
             statement.close();
         } catch (Exception e) {
             addColumn("protections", "world", "TEXT");
@@ -1708,7 +1681,7 @@ public class PhysDB extends Database {
         Statement statement = null;
         try {
             statement = connection.createStatement();
-            statement.execute("SELECT last_accessed FROM " + prefix + "protections");
+            statement.execute("SELECT last_accessed FROM " + prefix + "protections LIMIT 1");
         } catch (SQLException e) {
             addColumn(prefix + "protections", "last_accessed", "INTEGER");
         } finally {
@@ -1727,7 +1700,7 @@ public class PhysDB extends Database {
     private void doUpdate220() {
         try {
             Statement statement = connection.createStatement();
-            statement.executeQuery("SELECT flags FROM protections");
+            statement.executeQuery("SELECT flags FROM protections LIMIT 1");
             statement.close();
 
         } catch (Exception e) {
@@ -1742,7 +1715,7 @@ public class PhysDB extends Database {
         Statement statement = null;
         try {
             statement = connection.createStatement();
-            statement.execute("SELECT rights FROM " + prefix + "protections");
+            statement.execute("SELECT rights FROM " + prefix + "protections LIMIT 1");
         } catch (SQLException e) {
             addColumn(prefix + "protections", "rights", "TEXT");
         } finally {
@@ -1762,7 +1735,7 @@ public class PhysDB extends Database {
         Statement statement = null;
         try {
             statement = connection.createStatement();
-            statement.execute("SELECT id FROM " + prefix + "rights");
+            statement.execute("SELECT id FROM " + prefix + "rights LIMIT 1");
 
             // it exists ..!
             Statement stmt = connection.createStatement();
@@ -1831,7 +1804,7 @@ public class PhysDB extends Database {
         Statement statement = null;
         try {
             statement = connection.createStatement();
-            statement.execute("SELECT name FROM " + prefix + "jobs");
+            statement.execute("SELECT name FROM " + prefix + "jobs LIMIT 1");
         } catch (SQLException e) {
             addColumn(prefix + "jobs", "name", "VARCHAR(64)");
         } finally {
@@ -1851,7 +1824,7 @@ public class PhysDB extends Database {
         Statement statement = null;
         try {
             statement = connection.createStatement();
-            statement.execute("SELECT data FROM " + prefix + "protections");
+            statement.execute("SELECT data FROM " + prefix + "protections LIMIT 1");
         } catch (SQLException e) {
             dropColumn(prefix + "protections", "rights");
             addColumn(prefix + "protections", "data", "TEXT");
@@ -1872,7 +1845,7 @@ public class PhysDB extends Database {
         Statement statement = null;
         try {
             statement = connection.createStatement();
-            statement.execute("SELECT flags FROM " + prefix + "protections");
+            statement.executeQuery("SELECT flags FROM " + prefix + "protections LIMIT 1");
 
             // The flags column is still there ..!
             // instead of looping through every protection, let's do this a better way
