@@ -1498,28 +1498,62 @@ public class PhysDB extends Database {
      * Instead of "updating indexes", let's just use IF NOT EXISTS each time
      */
     private void doIndexes() {
+        dropIndex("protections", "in1"); // Old index
+
+        doIndex("protections", "in10", "x, y, z, world");
+        doIndex("protections", "in7", "owner");
+        doIndex("history", "in8", "protectionId");
+        doIndex("history", "in9", "player");
+    }
+
+    /**
+     * Attempt to create an index on the table
+     *
+     * @param table
+     * @param indexName
+     * @param columns
+     */
+    private void doIndex(String table, String indexName, String columns) {
+        Statement statement = null;
+
         try {
-            connection.setAutoCommit(false);
-            Statement statement = connection.createStatement();
+            statement = connection.createStatement();
+            statement.executeUpdate("CREATE INDEX" + (currentType == Type.SQLite ? " IF NOT EXISTS" : "") + " " + indexName + " ON " + prefix + table + " (" + columns + ")");
+        } catch (Exception e) {
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
+    }
+
+    /**
+     * Attempt to create an index on the table
+     *
+     * @param indexName
+     */
+    private void dropIndex(String table, String indexName) {
+        Statement statement = null;
+
+        try {
+            statement = connection.createStatement();
 
             if (currentType == Type.SQLite) {
-                statement.executeUpdate("CREATE INDEX IF NOT EXISTS in1 ON " + prefix + "protections (owner, x, y, z)");
-                statement.executeUpdate("CREATE INDEX IF NOT EXISTS in6 ON " + prefix + "protections (id)");
+                statement.executeUpdate("DROP INDEX IF EXISTS " + indexName);
             } else {
-                statement.executeUpdate("CREATE INDEX in1 ON " + prefix + "protections (x, y, z)");
-                statement.executeUpdate("CREATE INDEX in6 ON " + prefix + "protections (id)");
+                statement.executeUpdate("DROP INDEX " + indexName + " ON " + prefix + table);
             }
-
-            connection.commit();
-
-            statement.close();
         } catch (Exception e) {
-            // printException(e);
-        }
-
-        try {
-            connection.setAutoCommit(true);
-        } catch (Exception e) {
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                }
+            }
         }
     }
 
