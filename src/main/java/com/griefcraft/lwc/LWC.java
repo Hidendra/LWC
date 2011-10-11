@@ -887,9 +887,7 @@ public class LWC {
 
         Block baseBlock = world.getBlockAt(x, y, z);
 
-        /*
-          * First check the block they clicked either way -- incase that chunk isn't affected by bug 656
-          */
+        // First check the block they clicked either way -- incase that chunk isn't affected by bug 656
         entities = _validateBlock(entities, baseBlock, true);
 
         int dev = -1;
@@ -1698,7 +1696,7 @@ public class LWC {
             if (!entities.contains(block)) {
                 entities.add(block);
             }
-        } else if (isProtectable(block) && isBaseBlock && !isComplexBlock(block)) {
+        } else if (isProtectable(block) && isBaseBlock) {
             entities.add(block);
         } else if (isBaseBlock && (up.getType() == Material.WOODEN_DOOR || up.getType() == Material.IRON_DOOR_BLOCK || type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK)) {
             // check if they're clicking the block under the door
@@ -1823,25 +1821,6 @@ public class LWC {
             formatter.format("%02x", b);
         }
         return formatter.toString();
-    }
-
-    /**
-     * Check if a block is more than just protectable blocks (i.e signs, doors)
-     *
-     * @param block
-     * @return
-     */
-    private boolean isComplexBlock(Block block) {
-        switch (block.getTypeId()) {
-            case 63: // sign post
-            case 64: // wood door
-            case 68: // wall sign
-            case 71: // iron door
-
-                return true;
-        }
-
-        return false;
     }
 
     /**
