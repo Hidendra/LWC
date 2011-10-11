@@ -98,6 +98,11 @@ public class HistoryModule extends JavaModule {
         // Now we can start telling them about it! wee
         Protection protection = history.getProtection(); // If the protection still exists, that is
 
+        // if it was removed, hide the protection (if they're using SQLite, primary keys are reused)
+        if (history.hasKey("destroyer")) {
+            protection = null;
+        }
+
         sender.sendMessage(" ");
         sender.sendMessage("Created by: " + Colors.Yellow + history.getPlayer());
         sender.sendMessage("Status: " + Colors.Yellow + history.getStatus());

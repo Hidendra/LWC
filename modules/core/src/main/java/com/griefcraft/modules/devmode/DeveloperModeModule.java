@@ -201,6 +201,8 @@ public class DeveloperModeModule extends JavaModule {
 
             // Enable dev mode
             lwcOtherPlayer.setDevMode(true);
+            lwcOtherPlayer.setPermissionMode(LWCPlayer.PermissionMode.ADMIN);
+
             sender.sendMessage(Colors.Green + "Successfully enabled Developer Mode on " + otherPlayer.getName());
             otherPlayer.sendMessage(Colors.Green + "Developer Mode received");
         }
