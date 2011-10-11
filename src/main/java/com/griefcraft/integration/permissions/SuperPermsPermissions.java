@@ -46,26 +46,8 @@ public class SuperPermsPermissions implements IPermissions {
         return true;
     }
 
-    public boolean permission(Player player, String node) {
-        try {
-            Method method = CraftHumanEntity.class.getDeclaredMethod("hasPermission", String.class);
-            if (method != null) {
-                return player.hasPermission(node);
-            }
-        } catch(NoSuchMethodException e) {
-            // server does not support SuperPerms
-        }
-        return false;
-    }
-
     // modified implementation by ZerothAngel ( https://github.com/Hidendra/LWC/issues/88#issuecomment-2017807 )
     public List<String> getGroups(Player player) {
-        LWC lwc = LWC.getInstance();
-        // Haters are gonna hate, yo
-        if (lwc.getRemoveMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose() != null) {
-            return lwc.getRemoveMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose().getGroups(player);
-        }
-
         List<String> groups = new ArrayList<String>();
         try {
             Method method = CraftHumanEntity.class.getDeclaredMethod("getEffectivePermissions");
