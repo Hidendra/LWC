@@ -943,24 +943,22 @@ public class PhysDB extends Database {
         try {
             PreparedStatement statement;
 
-            // prepared statement index
-            int index = 1;
-
             if (history.doesExist()) {
-                statement = prepare("REPLACE INTO " + prefix + "history (id, protectionId, player, type, status, metadata) VALUES (?, ?, ?, ?, ?, ?)");
-                statement.setInt(index++, history.getId());
+                statement = prepare("UPDATE " + prefix + "history SET protectionId = ?, player = ?, type = ?, status = ?, metadata = ?, timestamp = ? WHERE id = ?");
             } else {
                 statement = prepare("INSERT INTO " + prefix + "history (protectionId, player, type, status, metadata, timestamp) VALUES (?, ?, ?, ?, ?, ?)", true);
+                history.setTimestamp(System.currentTimeMillis() / 1000L);
             }
 
-            statement.setInt(index++, history.getProtectionId());
-            statement.setString(index++, history.getPlayer());
-            statement.setInt(index++, history.getType().ordinal());
-            statement.setInt(index++, history.getStatus().ordinal());
-            statement.setString(index++, history.getSafeMetaData());
+            statement.setInt(1, history.getProtectionId());
+            statement.setString(2, history.getPlayer());
+            statement.setInt(3, history.getType().ordinal());
+            statement.setInt(4, history.getStatus().ordinal());
+            statement.setString(5, history.getSafeMetaData());
+            statement.setLong(6, history.getTimestamp());
 
-            if (!history.doesExist()) {
-                statement.setLong(index++, System.currentTimeMillis() / 1000L);
+            if (history.doesExist()) {
+                statement.setInt(7, history.getId());
             }
 
             int affectedRows = statement.executeUpdate();

@@ -112,15 +112,15 @@ public class LWCPlayerListener extends PlayerListener {
             return;
         }
 
-        // Timing start
-        StopWatch stopWatch = new StopWatch("PLAYER_INTERACT");
-        stopWatch.start();
-
         LWC lwc = plugin.getLWC();
         Player player = event.getPlayer();
         LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
         Block block = event.getClickedBlock();
         Material material = block.getType();
+
+        // Timing start
+        StopWatch stopWatch = new StopWatch(String.format("PLAYER_INTERACT Block=%s Location=[%d %d %d]", material, block.getX(), block.getY(), block.getZ()));
+        stopWatch.start();
 
         // Prevent players with lwc.deny from interacting
         if (block.getState() instanceof ContainerBlock) {
