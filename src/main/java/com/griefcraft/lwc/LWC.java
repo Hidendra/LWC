@@ -1209,9 +1209,13 @@ public class LWC {
         log("Permissions API: " + Colors.Red + permissions.getClass().getSimpleName());
         log("Currency API: " + Colors.Red + currency.getClass().getSimpleName());
 
-        log("Loading " + Database.DefaultType);
+        log("Connecting to " + Database.DefaultType);
         try {
             physicalDatabase.connect();
+
+            // We're connected, perform any necessary database changes
+            log("Performing any necessary database updates");
+
             physicalDatabase.load();
 
             log("Using: " + StringUtils.capitalizeFirstLetter(physicalDatabase.getConnection().getMetaData().getDriverVersion()));
