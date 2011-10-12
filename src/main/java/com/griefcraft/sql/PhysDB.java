@@ -238,10 +238,6 @@ public class PhysDB extends Database {
         /**
          * Updates that alter or rename a table go here
          */
-        doUpdate140();
-        doUpdate150();
-        doUpdate170();
-        doUpdate220();
         doUpdate301();
         doUpdate302();
         doUpdate330();
@@ -252,156 +248,140 @@ public class PhysDB extends Database {
         doUpdate400_4();
         doUpdate400_5();
 
-        try {
-            connection.setAutoCommit(false);
+        Column column;
 
-            Column column;
+        Table protections = new Table(this, "protections");
+        {
+            column = new Column("id");
+            column.setType("INTEGER");
+            column.setPrimary(true);
+            protections.add(column);
 
-            Table protections = new Table(this, "protections");
-            {
-                column = new Column("id");
-                column.setType("INTEGER");
-                column.setPrimary(true);
-                protections.add(column);
+            column = new Column("owner");
+            column.setType("VARCHAR(255)");
+            protections.add(column);
 
-                column = new Column("owner");
-                column.setType("VARCHAR(255)");
-                protections.add(column);
+            column = new Column("type");
+            column.setType("INTEGER");
+            protections.add(column);
 
-                column = new Column("type");
-                column.setType("INTEGER");
-                protections.add(column);
+            column = new Column("x");
+            column.setType("INTEGER");
+            protections.add(column);
 
-                column = new Column("x");
-                column.setType("INTEGER");
-                protections.add(column);
+            column = new Column("y");
+            column.setType("INTEGER");
+            protections.add(column);
 
-                column = new Column("y");
-                column.setType("INTEGER");
-                protections.add(column);
+            column = new Column("z");
+            column.setType("INTEGER");
+            protections.add(column);
 
-                column = new Column("z");
-                column.setType("INTEGER");
-                protections.add(column);
+            column = new Column("flags");
+            column.setType("INTEGER");
+            protections.add(column);
 
-                column = new Column("flags");
-                column.setType("INTEGER");
-                protections.add(column);
+            column = new Column("data");
+            column.setType("TEXT");
+            protections.add(column);
 
-                column = new Column("data");
-                column.setType("TEXT");
-                protections.add(column);
+            column = new Column("blockId");
+            column.setType("INTEGER");
+            protections.add(column);
 
-                column = new Column("blockId");
-                column.setType("INTEGER");
-                protections.add(column);
+            column = new Column("world");
+            column.setType("VARCHAR(255)");
+            protections.add(column);
 
-                column = new Column("world");
-                column.setType("VARCHAR(255)");
-                protections.add(column);
+            column = new Column("password");
+            column.setType("VARCHAR(255)");
+            protections.add(column);
 
-                column = new Column("password");
-                column.setType("VARCHAR(255)");
-                protections.add(column);
+            column = new Column("date");
+            column.setType("VARCHAR(255)");
+            protections.add(column);
 
-                column = new Column("date");
-                column.setType("VARCHAR(255)");
-                protections.add(column);
-
-                column = new Column("last_accessed");
-                column.setType("INTEGER");
-                protections.add(column);
-            }
-
-            Table menuStyles = new Table(this, "menu_styles");
-            {
-                column = new Column("player");
-                column.setType("VARCHAR(255)");
-                column.setPrimary(true);
-                column.setAutoIncrement(false);
-                menuStyles.add(column);
-
-                column = new Column("menu");
-                column.setType("VARCHAR(255)");
-                menuStyles.add(column);
-            }
-
-            Table history = new Table(this, "history");
-            {
-                column = new Column("id");
-                column.setType("INTEGER");
-                column.setPrimary(true);
-                history.add(column);
-
-                column = new Column("protectionId");
-                column.setType("INTEGER");
-                history.add(column);
-
-                column = new Column("player");
-                column.setType("VARCHAR(255)");
-                history.add(column);
-
-                column = new Column("type");
-                column.setType("INTEGER");
-                history.add(column);
-
-                column = new Column("status");
-                column.setType("INTEGER");
-                history.add(column);
-
-                column = new Column("metadata");
-                column.setType("VARCHAR(255)");
-                history.add(column);
-
-                column = new Column("timestamp");
-                column.setType("long");
-                history.add(column);
-            }
-
-            Table jobs = new Table(this, "jobs");
-            {
-                column = new Column("id");
-                column.setType("INTEGER");
-                column.setPrimary(true);
-                jobs.add(column);
-
-                column = new Column("name");
-                column.setType("VARCHAR(64)");
-                jobs.add(column);
-
-                column = new Column("type");
-                column.setType("INTEGER");
-                jobs.add(column);
-
-                column = new Column("data");
-                column.setType("TEXT");
-                jobs.add(column);
-
-                column = new Column("nextRun");
-                column.setType("INTEGER");
-                jobs.add(column);
-            }
-
-            protections.execute();
-            menuStyles.execute();
-            history.execute();
-            jobs.execute();
-
-            connection.commit();
-
-            // Add or indexes
-            doIndexes();
-        } catch (SQLException e) {
-            printException(e);
+            column = new Column("last_accessed");
+            column.setType("INTEGER");
+            protections.add(column);
         }
 
-        try {
-            connection.setAutoCommit(true);
-        } catch (Exception e) {
-            printException(e);
+        Table menuStyles = new Table(this, "menu_styles");
+        {
+            column = new Column("player");
+            column.setType("VARCHAR(255)");
+            column.setPrimary(true);
+            column.setAutoIncrement(false);
+            menuStyles.add(column);
+
+            column = new Column("menu");
+            column.setType("VARCHAR(255)");
+            menuStyles.add(column);
         }
 
-        doUpdate100();
+        Table history = new Table(this, "history");
+        {
+            column = new Column("id");
+            column.setType("INTEGER");
+            column.setPrimary(true);
+            history.add(column);
+
+            column = new Column("protectionId");
+            column.setType("INTEGER");
+            history.add(column);
+
+            column = new Column("player");
+            column.setType("VARCHAR(255)");
+            history.add(column);
+
+            column = new Column("type");
+            column.setType("INTEGER");
+            history.add(column);
+
+            column = new Column("status");
+            column.setType("INTEGER");
+            history.add(column);
+
+            column = new Column("metadata");
+            column.setType("VARCHAR(255)");
+            history.add(column);
+
+            column = new Column("timestamp");
+            column.setType("long");
+            history.add(column);
+        }
+
+        Table jobs = new Table(this, "jobs");
+        {
+            column = new Column("id");
+            column.setType("INTEGER");
+            column.setPrimary(true);
+            jobs.add(column);
+
+            column = new Column("name");
+            column.setType("VARCHAR(64)");
+            jobs.add(column);
+
+            column = new Column("type");
+            column.setType("INTEGER");
+            jobs.add(column);
+
+            column = new Column("data");
+            column.setType("TEXT");
+            jobs.add(column);
+
+            column = new Column("nextRun");
+            column.setType("INTEGER");
+            jobs.add(column);
+        }
+
+        protections.execute();
+        menuStyles.execute();
+        history.execute();
+        jobs.execute();
+
+        // Add or remove indexes
+        doIndexes();
 
         loaded = true;
     }
@@ -1471,12 +1451,12 @@ public class PhysDB extends Database {
      * Instead of "updating indexes", let's just use IF NOT EXISTS each time
      */
     private void doIndexes() {
-        dropIndex("protections", "in1"); // Old index
+        dropIndex("protections", "in1"); // Old indexes
 
-        doIndex("protections", "in10", "x, y, z, world");
-        doIndex("protections", "in7", "owner");
-        doIndex("history", "in8", "protectionId");
-        doIndex("history", "in9", "player");
+        doIndex("protections", "in14", "x, y, z, world");
+        doIndex("protections", "in11", "owner");
+        doIndex("history", "in12", "protectionId");
+        doIndex("history", "in13", "player");
     }
 
     /**
@@ -1491,7 +1471,7 @@ public class PhysDB extends Database {
 
         try {
             statement = connection.createStatement();
-            statement.executeUpdate("CREATE INDEX" + (currentType == Type.SQLite ? " IF NOT EXISTS" : "") + " " + indexName + " ON " + prefix + table + " (" + columns + ")");
+            statement.executeUpdate("CREATE UNIQUE INDEX" + (currentType == Type.SQLite ? " IF NOT EXISTS" : "") + " " + indexName + " ON " + prefix + table + " (" + columns + ")");
         } catch (Exception e) {
         } finally {
             if (statement != null) {
@@ -1527,59 +1507,6 @@ public class PhysDB extends Database {
                 } catch (SQLException e) {
                 }
             }
-        }
-    }
-
-    /**
-     * Update process from 1.00 -> 1.10
-     */
-    private void doUpdate100() {
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeQuery("SELECT type FROM protections LIMIT 1");
-            statement.close();
-        } catch (SQLException e) {
-            addColumn("protections", "type", "INTEGER");
-            executeUpdateNoException("UPDATE protections SET type='1'");
-        }
-    }
-
-    /**
-     * Upgrade process for 1.40, rename table protections to protections
-     */
-    private void doUpdate140() {
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeQuery("SELECT id FROM protections LIMIT 1");
-            statement.close();
-        } catch (Exception e) {
-            renameTable("chests", "protections");
-        }
-    }
-
-    /**
-     * Update to 150, altered a table
-     */
-    private void doUpdate150() {
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeQuery("SELECT blockId FROM protections LIMIT 1");
-            statement.close();
-        } catch (Exception e) {
-            addColumn("protections", "blockId", "INTEGER");
-        }
-    }
-
-    /**
-     * Update to 1.70, altered a table
-     */
-    private void doUpdate170() {
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeQuery("SELECT world FROM protections LIMIT 1");
-            statement.close();
-        } catch (Exception e) {
-            addColumn("protections", "world", "TEXT");
         }
     }
 
@@ -1691,20 +1618,6 @@ public class PhysDB extends Database {
                 } catch (SQLException e) {
                 }
             }
-        }
-    }
-
-    /**
-     * Update to 2.20, altered a table
-     */
-    private void doUpdate220() {
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeQuery("SELECT flags FROM protections LIMIT 1");
-            statement.close();
-
-        } catch (Exception e) {
-            addColumn("protections", "flags", "INTEGER");
         }
     }
 
