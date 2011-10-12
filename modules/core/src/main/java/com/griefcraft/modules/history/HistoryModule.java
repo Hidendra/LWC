@@ -37,7 +37,6 @@ import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -108,7 +107,7 @@ public class HistoryModule extends JavaModule {
             protection = null;
         }
 
-        sender.sendMessage(" ");
+        sender.sendMessage(Colors.Red + "History ID: " + history.getId());
         sender.sendMessage("Created by: " + Colors.Yellow + history.getPlayer());
         sender.sendMessage("Location: " + Colors.Yellow + String.format("[%d %d %d]", history.getX(), history.getY(), history.getZ()));
         sender.sendMessage("Status: " + Colors.Yellow + history.getStatus());
@@ -117,22 +116,20 @@ public class HistoryModule extends JavaModule {
         sender.sendMessage(" ");
         sender.sendMessage("Protection: " + Colors.Yellow + (protection == null ? "Removed" : protection));
         sender.sendMessage("Created by: " + Colors.Yellow + history.getString("creator"));
-
-        // if its been removed, it most likely will have this key
         if (history.hasKey("destroyer")) {
             sender.sendMessage("Removed by: " + Colors.Yellow + history.getString("destroyer"));
         }
 
+        // New line!
+        sender.sendMessage(" ");
+
         // If it had an economy charge, show it
         if (history.hasKey("charge")) {
-            sender.sendMessage("Economy charge: " + Colors.Yellow + history.getDouble("charge") + " " + lwc.getCurrency().getMoneyName());
+            sender.sendMessage("Economy charge: " + Colors.Red + history.getDouble("charge") + " " + lwc.getCurrency().getMoneyName());
+            sender.sendMessage("Discounted?: " + (history.hasKey("discount") ? (Colors.Red + "Yes") : (Colors.Yellow + "No")) + Colors.Yellow + " " + /* Discount id */ (history.hasKey("discountId") ? ("(" + history.getString("discountId") + ")") : ""));
         }
 
-        if (history.hasKey("discount")) {
-            sender.sendMessage(Colors.Yellow + "(discounted price)");
-            sender.sendMessage("Discount Id: " + Colors.Yellow + (history.hasKey("discountId") ? history.getString("discountId") : "n/a"));
-        }
-
+        // Show the creation date
         String creation = null;
 
         if (history.getTimestamp() > 0) {
@@ -140,11 +137,36 @@ public class HistoryModule extends JavaModule {
         }
 
         sender.sendMessage(" ");
+        sender.sendMessage(Colors.Red + "Dates");
         sender.sendMessage("Created on: " + Colors.Yellow + (creation == null ? "Unknown" : creation));
 
         // Only show how long ago it was if we know when it was created
         if (creation != null) {
             sender.sendMessage(Colors.Yellow + StringUtils.timeToString((System.currentTimeMillis() / 1000L) - history.getTimestamp()) + " ago");
+        }
+
+        // if its been removed, it most likely will have this key
+        if (history.hasKey("destroyer")) {
+            // When it was removed
+            String destroyerTime = history.getString("destroyerTime");
+            long destroyed = 0L;
+
+            // parse it if it's found
+            if (!destroyerTime.isEmpty()) {
+                destroyed = Long.parseLong(destroyerTime);
+            }
+
+            // Parse a date to show
+            String absoluteDestroyDate = destroyed > 0 ? new Date(destroyed * 1000L).toString() : "Unknown";
+            String relativeDestroyDate = destroyed > 0 ? StringUtils.timeToString((System.currentTimeMillis() / 1000L) - destroyed) : "Unknown";
+
+            // Send the exact time if known
+            sender.sendMessage("Removed on: " + Colors.Yellow + absoluteDestroyDate);
+
+            // If there's a relative date available, display it :D
+            if (destroyed > 0) {
+                sender.sendMessage(Colors.Yellow + relativeDestroyDate + " ago");
+            }
         }
     }
 
