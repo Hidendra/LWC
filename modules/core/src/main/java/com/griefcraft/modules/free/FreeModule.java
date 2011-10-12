@@ -72,6 +72,7 @@ public class FreeModule extends JavaModule {
                     }
 
                     history.addMetaData("destroyer=" + player.getName());
+                    history.addMetaData("destroyerTime=" + System.currentTimeMillis() / 1000L);
                 }
 
                 protection.remove();
