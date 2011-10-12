@@ -55,13 +55,13 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
 
     @Override
     public V get(Object key) {
-        reads ++;
+        reads++;
         return super.get(key);
     }
 
     @Override
     public V put(K key, V value) {
-        writes ++;
+        writes++;
         return super.put(key, value);
     }
 

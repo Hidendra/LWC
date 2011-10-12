@@ -60,7 +60,7 @@ public class ListsModule extends JavaModule {
     public void onAccessRequest(LWCAccessEvent event) {
         Player player = event.getPlayer();
         Protection protection = event.getProtection();
-        
+
         if (protection.getType() != ProtectionTypes.PRIVATE) {
             return;
         }

@@ -202,7 +202,7 @@ public class History {
     public String getString(String key) {
         String metadata = getMetaDataStartsWith(key + "=");
 
-        if(metadata == null) {
+        if (metadata == null) {
             return "";
         }
 
@@ -218,7 +218,7 @@ public class History {
     public int getInteger(String key) {
         String metadata = getMetaDataStartsWith(key + "=");
 
-        if(metadata == null) {
+        if (metadata == null) {
             return 0;
         }
 
@@ -234,7 +234,7 @@ public class History {
     public double getDouble(String key) {
         String metadata = getMetaDataStartsWith(key + "=");
 
-        if(metadata == null) {
+        if (metadata == null) {
             return 0;
         }
 
@@ -320,7 +320,7 @@ public class History {
      */
     public void save() {
         // if it was not modified, no point in saving it :-)
-        if(!modified || saving) {
+        if (!modified || saving) {
             return;
         }
 
@@ -330,7 +330,7 @@ public class History {
         Protection protection = getProtection();
 
         // no protection? weird, just sync anyway
-        if(protection == null) {
+        if (protection == null) {
             saveNow();
             return;
         }

@@ -90,7 +90,7 @@ public class LWCSpoutPlugin extends JavaPlugin {
         author.setAnchor(WidgetAnchor.BOTTOM_LEFT);
         author.setTextColor(new Color(0.31f, 0.78f, 0.47f));
         author.shiftXPos(5);
-        
+
         screen.attachWidget(this, name);
         screen.attachWidget(this, author);
     }

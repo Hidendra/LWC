@@ -33,18 +33,18 @@ import java.util.regex.Pattern;
 
 /**
  * The version class is an immutable object representation of a semantic version (semver.org)
- *
+ * <p/>
  * Some (valid) test cases:
- *   1.0.1 > 1.0.0
- *   1.0.0 > 1.0.0-beta2
- *   1.0.0-beta2 > 1.0.0-alpha3
+ * 1.0.1 > 1.0.0
+ * 1.0.0 > 1.0.0-beta2
+ * 1.0.0-beta2 > 1.0.0-alpha3
  */
 public final class Version implements Comparable {
 
     /**
      * Release levels that can be used
      */
-    public final static String[] releaseLevels = new String[] {
+    public final static String[] releaseLevels = new String[]{
             "release", "alpha", "beta", "rc"
     };
 
@@ -182,7 +182,7 @@ public final class Version implements Comparable {
         if (buildNumber > 0 && o.getBuildNumber() > 0) {
             if (buildNumber > o.getBuildNumber()) {
                 return 1;
-            } else if(buildNumber < o.getBuildNumber()) {
+            } else if (buildNumber < o.getBuildNumber()) {
                 return -1;
             }
         }
@@ -225,7 +225,7 @@ public final class Version implements Comparable {
             // they are both the same release state, ...!
             if (releaseLevelWeight > o.getReleaseLevelWeight()) {
                 return 1;
-            } else if(releaseLevelWeight < o.getReleaseLevelWeight()) {
+            } else if (releaseLevelWeight < o.getReleaseLevelWeight()) {
                 return -1;
             }
         }
@@ -319,7 +319,7 @@ public final class Version implements Comparable {
             } else {
                 this.releaseLevelWeight = 1;
             }
-            
+
             break;
         }
 
@@ -344,7 +344,8 @@ public final class Version implements Comparable {
         // is it actually a number?
         try {
             return Integer.parseInt(str);
-        } catch (NumberFormatException e) { }
+        } catch (NumberFormatException e) {
+        }
 
         int found = 0;
         int index = 1;
@@ -354,7 +355,7 @@ public final class Version implements Comparable {
 
             try {
                 found = Integer.parseInt(peek);
-                index ++;
+                index++;
             } catch (NumberFormatException e) {
                 return found;
             }

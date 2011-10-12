@@ -78,7 +78,7 @@ public class BOSECurrency implements ICurrency {
     }
 
     public double getBalance(Player player) {
-        if(player == null) {
+        if (player == null) {
             return 0;
         }
 
@@ -95,12 +95,12 @@ public class BOSECurrency implements ICurrency {
     }
 
     public double addMoney(Player player, double money) {
-        if(player == null) {
+        if (player == null) {
             return 0;
         }
 
         // remove the money from the central bank if applicable
-        if(usingCentralBank()) {
+        if (usingCentralBank()) {
             if (!canCentralBankAfford(money)) {
                 return 0;
             }
@@ -120,7 +120,7 @@ public class BOSECurrency implements ICurrency {
         }
 
         // add the money to the central bank if applicable
-        if(usingCentralBank()) {
+        if (usingCentralBank()) {
             handler.addBankMoney(serverAccount, money, true);
         }
 

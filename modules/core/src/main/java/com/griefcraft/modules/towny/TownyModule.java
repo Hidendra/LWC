@@ -138,7 +138,7 @@ public class TownyModule extends JavaModule {
 
     /**
      * Just a note: catching NotRegisteredException (which where an Exception is caught is where its thrown)
-     *              will throw a ClassNotFoundException when Towny is not installed.
+     * will throw a ClassNotFoundException when Towny is not installed.
      */
     @Override
     public void onRegisterProtection(LWCProtectionRegisterEvent event) {

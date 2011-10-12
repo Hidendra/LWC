@@ -167,7 +167,7 @@ public class BaseFlagModule extends JavaModule {
 
         player.removeAllActions();
         player.addAction(action);
-        
+
         lwc.sendLocale(sender, "protection.flag.finalize");
     }
 

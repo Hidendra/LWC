@@ -291,7 +291,8 @@ public class LWCPlugin extends JavaPlugin {
         loadDatabase();
         try {
             registerEvents();
-        } catch(NoSuchFieldError e) { }
+        } catch (NoSuchFieldError e) {
+        }
 
         // Load the rest of LWC
         lwc.load();

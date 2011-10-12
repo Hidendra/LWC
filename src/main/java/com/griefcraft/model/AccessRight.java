@@ -86,8 +86,8 @@ public class AccessRight {
 
     /**
      * Encode the Access Right to a JSONObject
-     * 
-     * @return 
+     *
+     * @return
      */
     public JSONObject encodeToJSON() {
         JSONObject object = new JSONObject();
@@ -102,6 +102,7 @@ public class AccessRight {
 
     /**
      * Decode a JSONObject into an Access Right
+     *
      * @param node
      * @return
      */

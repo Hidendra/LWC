@@ -124,7 +124,7 @@ public class InfoModule extends JavaModule {
 
             player.removeAllActions();
             player.addAction(action);
-            
+
             lwc.sendLocale(player, "protection.info.finalize");
         }
     }

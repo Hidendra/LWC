@@ -38,13 +38,9 @@ import com.griefcraft.scripting.event.LWCDropItemEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StopWatch;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.ContainerBlock;
-import org.bukkit.craftbukkit.CraftChunk;
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -119,7 +115,7 @@ public class LWCPlayerListener extends PlayerListener {
         if (event.getAction() != Action.LEFT_CLICK_BLOCK && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
-        
+
         Block block = event.getClickedBlock();
         Material material = block.getType();
 
@@ -184,7 +180,7 @@ public class LWCPlayerListener extends PlayerListener {
             }
 
             // debugging
-            lwcPlayer.debug(Colors.LightBlue + "Result => " + Colors.Yellow + result + Colors.LightBlue + "  Protection => " + Colors.Yellow +  protection + Colors.LightBlue + "  Access/Admin => " + Colors.Yellow + canAccess + "/" + canAdmin + Colors.LightBlue + "  Actions => " + Colors.Yellow + actions);
+            lwcPlayer.debug(Colors.LightBlue + "Result => " + Colors.Yellow + result + Colors.LightBlue + "  Protection => " + Colors.Yellow + protection + Colors.LightBlue + "  Access/Admin => " + Colors.Yellow + canAccess + "/" + canAdmin + Colors.LightBlue + "  Actions => " + Colors.Yellow + actions);
 
             if (result == Module.Result.ALLOW) {
                 lwc.completeStopwatch(stopWatch, player);

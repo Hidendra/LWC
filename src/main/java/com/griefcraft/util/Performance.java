@@ -99,7 +99,7 @@ public class Performance {
             } else {
                 for (Entity entity : world.getEntities()) {
                     if (entity != null && clazz.isInstance(entity)) {
-                        count ++;
+                        count++;
                     }
                 }
             }
@@ -115,7 +115,7 @@ public class Performance {
      */
     public static void sendReport(CommandSender sender) {
         LWC lwc = LWC.getInstance();
-        
+
         sender.sendMessage(" ");
         sender.sendMessage(Colors.Red + "LWC Report");
         sender.sendMessage("  Version: " + Colors.Green + LWCInfo.FULL_VERSION);
@@ -124,7 +124,7 @@ public class Performance {
         sender.sendMessage("  Item entities: " + Colors.Green + getEntityCount(Item.class) + "/" + getEntityCount(null));
         sender.sendMessage(" ");
         sender.sendMessage(Colors.Red + " ==== Modules ====");
-        
+
         for (Map.Entry<Plugin, List<MetaData>> entry : lwc.getModuleLoader().getRegisteredModules().entrySet()) {
             Plugin plugin = entry.getKey();
             List<MetaData> modules = entry.getValue();
@@ -143,8 +143,8 @@ public class Performance {
         sender.sendMessage("  Size: " + lwc.getCaches().getProtections().size() + "/" + lwc.getConfiguration().getInt("core.cacheSize", 10000));
 
         LRUCache protections = lwc.getCaches().getProtections();
-        sender.sendMessage("  Reads: " + protections.getReads()  + " | " + String.format("%.2f", getAverage(protections.getReads())) + " / second");
-        sender.sendMessage("  Writes: " + protections.getWrites()  + " | " + String.format("%.2f", getAverage(protections.getWrites())) + " / second");
+        sender.sendMessage("  Reads: " + protections.getReads() + " | " + String.format("%.2f", getAverage(protections.getReads())) + " / second");
+        sender.sendMessage("  Writes: " + protections.getWrites() + " | " + String.format("%.2f", getAverage(protections.getWrites())) + " / second");
     }
 
     /**

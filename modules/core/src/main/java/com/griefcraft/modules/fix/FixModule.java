@@ -90,5 +90,5 @@ public class FixModule extends JavaModule {
         player.sendMessage(Colors.Green + "Click on an object to fix it.");
         event.setCancelled(true);
     }
-    
+
 }

@@ -141,14 +141,14 @@ public abstract class Database {
      */
     protected void printException(Exception exception) {
         // check for disconnect
-        if(exception instanceof CommunicationsException) {
+        if (exception instanceof CommunicationsException) {
             // reconnect!
             try {
                 connect();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 throw new ModuleException(e);
             }
-            
+
             return;
         }
 
@@ -289,7 +289,7 @@ public abstract class Database {
         try {
             PreparedStatement preparedStatement;
 
-            if(returnGeneratedKeys) {
+            if (returnGeneratedKeys) {
                 preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             } else {
                 preparedStatement = connection.prepareStatement(sql);

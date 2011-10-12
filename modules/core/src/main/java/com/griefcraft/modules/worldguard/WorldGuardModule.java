@@ -131,7 +131,7 @@ public class WorldGuardModule extends JavaModule {
         }
 
         GlobalRegionManager regions = worldGuard.getGlobalRegionManager();
-        
+
         // get the region manager for the world
         RegionManager regionManager = regions.get(world);
 

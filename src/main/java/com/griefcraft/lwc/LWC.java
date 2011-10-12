@@ -50,7 +50,25 @@ import com.griefcraft.model.Flag;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
-import com.griefcraft.modules.admin.*;
+import com.griefcraft.modules.admin.AdminCache;
+import com.griefcraft.modules.admin.AdminCleanup;
+import com.griefcraft.modules.admin.AdminClear;
+import com.griefcraft.modules.admin.AdminConfig;
+import com.griefcraft.modules.admin.AdminDump;
+import com.griefcraft.modules.admin.AdminExpire;
+import com.griefcraft.modules.admin.AdminFind;
+import com.griefcraft.modules.admin.AdminFlush;
+import com.griefcraft.modules.admin.AdminForceOwner;
+import com.griefcraft.modules.admin.AdminLocale;
+import com.griefcraft.modules.admin.AdminPurge;
+import com.griefcraft.modules.admin.AdminPurgeBanned;
+import com.griefcraft.modules.admin.AdminQuery;
+import com.griefcraft.modules.admin.AdminReload;
+import com.griefcraft.modules.admin.AdminRemove;
+import com.griefcraft.modules.admin.AdminReport;
+import com.griefcraft.modules.admin.AdminUpdate;
+import com.griefcraft.modules.admin.AdminVersion;
+import com.griefcraft.modules.admin.BaseAdminModule;
 import com.griefcraft.modules.create.CreateModule;
 import com.griefcraft.modules.credits.CreditsModule;
 import com.griefcraft.modules.debug.DebugModule;
@@ -448,7 +466,7 @@ public class LWC {
                 if (player.getName().equalsIgnoreCase(protection.getOwner())) {
                     return true;
                 }
-                
+
                 break;
 
             case ProtectionTypes.PASSWORD:
@@ -649,7 +667,7 @@ public class LWC {
         // Calculate the data byte to set
         byte data = 0;
 
-        switch(face) {
+        switch (face) {
             case NORTH:
                 data = 4;
                 break;
@@ -1171,7 +1189,7 @@ public class LWC {
                     if (method != null) {
                         permissions = new SuperPermsPermissions();
                     }
-                } catch(NoSuchMethodException e) {
+                } catch (NoSuchMethodException e) {
                     // server does not support SuperPerms
                 }
             }
@@ -1199,7 +1217,8 @@ public class LWC {
                     // iConomy 6!
                     currency = new iConomy6Currency();
                 }
-            } catch (NoClassDefFoundError e) { }
+            } catch (NoClassDefFoundError e) {
+            }
         } else if (resolvePlugin("BOSEconomy") != null) {
             currency = new BOSECurrency();
         } else if (resolvePlugin("Essentials") != null) {
@@ -1375,76 +1394,76 @@ public class LWC {
      */
     public void processRightsModifications(CommandSender sender, Protection protection, String... arguments) {
         for (String rightsName : arguments) {
-                boolean remove = false;
-                boolean isAdmin = false;
-                int type = AccessRight.PLAYER;
+            boolean remove = false;
+            boolean isAdmin = false;
+            int type = AccessRight.PLAYER;
 
-                // Gracefully ignore id
-                if (rightsName.startsWith("id:")) {
-                    continue;
-                }
-
-                if (rightsName.startsWith("-")) {
-                    remove = true;
-                    rightsName = rightsName.substring(1);
-                }
-
-                if (rightsName.startsWith("@")) {
-                    isAdmin = true;
-                    rightsName = rightsName.substring(1);
-                }
-
-                if (rightsName.toLowerCase().startsWith("g:")) {
-                    type = AccessRight.GROUP;
-                    rightsName = rightsName.substring(2);
-                }
-
-                if (rightsName.toLowerCase().startsWith("l:")) {
-                    type = AccessRight.LIST;
-                    rightsName = rightsName.substring(2);
-                }
-
-                if (rightsName.toLowerCase().startsWith("list:")) {
-                    type = AccessRight.LIST;
-                    rightsName = rightsName.substring(5);
-                }
-
-                if (rightsName.toLowerCase().startsWith("t:")) {
-                    type = AccessRight.TOWN;
-                    rightsName = rightsName.substring(2);
-                }
-
-                if (rightsName.toLowerCase().startsWith("town:")) {
-                    type = AccessRight.TOWN;
-                    rightsName = rightsName.substring(5);
-                }
-
-                if (rightsName.trim().isEmpty()) {
-                    continue;
-                }
-
-                int protectionId = protection.getId();
-                String localeChild = AccessRight.typeToString(type).toLowerCase();
-
-                if (!remove) {
-                    AccessRight accessRight = new AccessRight();
-                    accessRight.setProtectionId(protectionId);
-                    accessRight.setRights(isAdmin ? 1 : 0);
-                    accessRight.setName(rightsName);
-                    accessRight.setType(type);
-
-                    // add it to the protection and queue it to be saved
-                    protection.addAccessRight(accessRight);
-                    protection.save();
-
-                    sendLocale(sender, "protection.interact.rights.register." + localeChild, "name", rightsName, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
-                } else {
-                    protection.removeAccessRightsMatching(rightsName, type);
-                    protection.save();
-
-                    sendLocale(sender, "protection.interact.rights.remove." + localeChild, "name", rightsName, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
-                }
+            // Gracefully ignore id
+            if (rightsName.startsWith("id:")) {
+                continue;
             }
+
+            if (rightsName.startsWith("-")) {
+                remove = true;
+                rightsName = rightsName.substring(1);
+            }
+
+            if (rightsName.startsWith("@")) {
+                isAdmin = true;
+                rightsName = rightsName.substring(1);
+            }
+
+            if (rightsName.toLowerCase().startsWith("g:")) {
+                type = AccessRight.GROUP;
+                rightsName = rightsName.substring(2);
+            }
+
+            if (rightsName.toLowerCase().startsWith("l:")) {
+                type = AccessRight.LIST;
+                rightsName = rightsName.substring(2);
+            }
+
+            if (rightsName.toLowerCase().startsWith("list:")) {
+                type = AccessRight.LIST;
+                rightsName = rightsName.substring(5);
+            }
+
+            if (rightsName.toLowerCase().startsWith("t:")) {
+                type = AccessRight.TOWN;
+                rightsName = rightsName.substring(2);
+            }
+
+            if (rightsName.toLowerCase().startsWith("town:")) {
+                type = AccessRight.TOWN;
+                rightsName = rightsName.substring(5);
+            }
+
+            if (rightsName.trim().isEmpty()) {
+                continue;
+            }
+
+            int protectionId = protection.getId();
+            String localeChild = AccessRight.typeToString(type).toLowerCase();
+
+            if (!remove) {
+                AccessRight accessRight = new AccessRight();
+                accessRight.setProtectionId(protectionId);
+                accessRight.setRights(isAdmin ? 1 : 0);
+                accessRight.setName(rightsName);
+                accessRight.setType(type);
+
+                // add it to the protection and queue it to be saved
+                protection.addAccessRight(accessRight);
+                protection.save();
+
+                sendLocale(sender, "protection.interact.rights.register." + localeChild, "name", rightsName, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
+            } else {
+                protection.removeAccessRightsMatching(rightsName, type);
+                protection.save();
+
+                sendLocale(sender, "protection.interact.rights.remove." + localeChild, "name", rightsName, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
+            }
+        }
     }
 
     /**
@@ -1521,7 +1540,7 @@ public class LWC {
 
             message = message.replace(replace, getLocale(localeName));
         }
-        
+
         // split the lines
         for (String line : message.split("\\n")) {
             if (line.isEmpty()) {
@@ -1977,7 +1996,7 @@ public class LWC {
      * @return true if history logging is enabled
      */
     public boolean isHistoryEnabled() {
-        return ! configuration.getBoolean("core.disableHistory", false);
+        return !configuration.getBoolean("core.disableHistory", false);
     }
 
     /**
@@ -2011,7 +2030,7 @@ public class LWC {
         try {
             Statement resultStatement = physicalDatabase.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
-            if(physicalDatabase.getType() == Database.Type.MySQL) {
+            if (physicalDatabase.getType() == Database.Type.MySQL) {
                 resultStatement.setFetchSize(Integer.MIN_VALUE);
             }
 

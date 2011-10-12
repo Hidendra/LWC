@@ -34,7 +34,11 @@ import com.griefcraft.model.History;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
-import com.griefcraft.scripting.event.*;
+import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
+import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
+import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
+import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
+import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.config.Configuration;
 import org.bukkit.Bukkit;
@@ -173,7 +177,7 @@ public class EconomyModule extends JavaModule {
             return;
         }
 
-        if(!LWC.getInstance().isHistoryEnabled()) {
+        if (!LWC.getInstance().isHistoryEnabled()) {
             return;
         }
 
@@ -222,7 +226,7 @@ public class EconomyModule extends JavaModule {
             return;
         }
 
-        if(!LWC.getInstance().isHistoryEnabled()) {
+        if (!LWC.getInstance().isHistoryEnabled()) {
             return;
         }
 
@@ -259,9 +263,9 @@ public class EconomyModule extends JavaModule {
         history.addMetaData("charge=" + charge);
 
         // was it a discount?
-        if(usedDiscount) {
+        if (usedDiscount) {
             history.addMetaData("discount=true");
-            
+
             // Was the discount's id non-null?
             String discountId = resolveValue(protection.getBukkitOwner(), "discount.id");
 
@@ -288,7 +292,7 @@ public class EconomyModule extends JavaModule {
             return;
         }
 
-        if(!LWC.getInstance().isHistoryEnabled()) {
+        if (!LWC.getInstance().isHistoryEnabled()) {
             return;
         }
 
@@ -411,10 +415,10 @@ public class EconomyModule extends JavaModule {
         Location location = block.getLocation();
 
         // cache the charge momentarily
-        if(lwc.isHistoryEnabled()) {
+        if (lwc.isHistoryEnabled()) {
             priceCache.put(location, (usedDiscount ? "d" : "") + charge);
         }
-        
+
         // It's free!
         if (charge == 0) {
             player.sendMessage(Colors.Green + "This one's on us!");
@@ -514,14 +518,14 @@ public class EconomyModule extends JavaModule {
 
         int amount = 0;
 
-        for(History history : related) {
-            if(!history.getBoolean("discount")) {
+        for (History history : related) {
+            if (!history.getBoolean("discount")) {
                 continue;
             }
 
             // Check the other discount id
             if (discountId != null) {
-                if(!history.hasKey("discountId") || !history.getString("discountId").equals(discountId)) {
+                if (!history.hasKey("discountId") || !history.getString("discountId").equals(discountId)) {
                     continue;
                 }
             }
@@ -534,8 +538,8 @@ public class EconomyModule extends JavaModule {
             // obtain the charge
             double charge = history.getDouble("charge");
 
-            if(charge == discountPrice) {
-                amount ++;
+            if (charge == discountPrice) {
+                amount++;
             }
         }
 
