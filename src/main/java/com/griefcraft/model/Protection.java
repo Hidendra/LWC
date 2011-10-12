@@ -214,6 +214,9 @@ public class Protection {
         history.setProtectionId(id);
         history.setProtection(this);
         history.setStatus(History.Status.INACTIVE);
+        history.setX(x);
+        history.setY(y);
+        history.setZ(z);
 
         // add it to the cache
         historyCache.add(history);
