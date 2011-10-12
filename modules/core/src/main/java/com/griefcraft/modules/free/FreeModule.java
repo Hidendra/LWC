@@ -98,7 +98,6 @@ public class FreeModule extends JavaModule {
 
         lwc.sendLocale(player, "protection.interact.error.notregistered", "block", LWC.materialToString(block));
         lwc.removeModes(player);
-        return;
     }
 
     @Override
@@ -150,7 +149,6 @@ public class FreeModule extends JavaModule {
             lwc.sendSimpleUsage(sender, "/lwc -r <protection|modes>");
         }
 
-        return;
     }
 
 }

@@ -81,11 +81,8 @@ public class MockPlayer implements Player {
     }
 
     public boolean hasPermission(String node) {
-        if (op) {
-            return true;
-        }
+        return op;
 
-        return false;
     }
 
 

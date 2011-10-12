@@ -189,11 +189,8 @@ public class History {
     public boolean getBoolean(String key) {
         String metadata = getMetaDataStartsWith(key + "=");
 
-        if(metadata == null) {
-            return false;
-        }
+        return metadata != null && Boolean.parseBoolean(metadata.substring((key + "=").length()));
 
-        return Boolean.parseBoolean(metadata.substring((key + "=").length()));
     }
 
     /**

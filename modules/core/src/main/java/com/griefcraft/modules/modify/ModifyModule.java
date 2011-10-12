@@ -86,7 +86,6 @@ public class ModifyModule extends JavaModule {
             lwc.removeModes(player);
         }
 
-        return;
     }
 
     @Override
@@ -106,7 +105,6 @@ public class ModifyModule extends JavaModule {
 
         lwc.sendLocale(player, "protection.interact.error.notregistered", "block", LWC.materialToString(block));
         lwc.removeModes(player);
-        return;
     }
 
     @Override
@@ -178,7 +176,6 @@ public class ModifyModule extends JavaModule {
         player.addAction(action);
 
         lwc.sendLocale(sender, "protection.modify.finalize");
-        return;
     }
 
 }

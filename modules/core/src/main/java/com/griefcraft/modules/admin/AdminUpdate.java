@@ -66,7 +66,6 @@ public class AdminUpdate extends JavaModule {
             lwc.sendLocale(sender, "protection.admin.update.noupdate");
         }
 
-        return;
     }
 
 }

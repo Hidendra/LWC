@@ -66,7 +66,6 @@ public class AdminForceOwner extends JavaModule {
         lwc.removeModes(player);
         event.setResult(Result.CANCEL);
 
-        return;
     }
 
     @Override
@@ -85,7 +84,6 @@ public class AdminForceOwner extends JavaModule {
         lwc.sendLocale(player, "protection.interact.error.notregistered", "block", LWC.materialToString(event.getBlock()));
         lwc.removeModes(player);
         event.setResult(Result.CANCEL);
-        return;
     }
 
     @Override

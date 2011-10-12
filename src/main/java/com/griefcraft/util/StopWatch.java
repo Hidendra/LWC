@@ -267,9 +267,9 @@ public class StopWatch {
             pf.setMinimumIntegerDigits(3);
             pf.setGroupingUsed(false);
             for (TaskInfo task : tasks) {
-                sb.append(nf.format(task.getTimeMillis()) + "  ");
-                sb.append(pf.format(task.getTimeSeconds() / getTotalTimeSeconds()) + "  ");
-                sb.append(task.getTaskName() + "\n");
+                sb.append(nf.format(task.getTimeMillis())).append("  ");
+                sb.append(pf.format(task.getTimeSeconds() / getTotalTimeSeconds())).append("  ");
+                sb.append(task.getTaskName()).append("\n");
             }
         }
         return sb.toString();
@@ -315,7 +315,7 @@ public class StopWatch {
         if (this.keepTaskList) {
             TaskInfo[] tasks = getTaskInfo();
             for (TaskInfo task : tasks) {
-                sb.append("; [" + task.getTaskName() + "] took " + task.getTimeMillis());
+                sb.append("; [").append(task.getTaskName()).append("] took ").append(task.getTimeMillis());
                 long percent = Math.round((100.0 * task.getTimeSeconds()) / getTotalTimeSeconds());
                 sb.append(" = ").append(percent).append("%");
             }

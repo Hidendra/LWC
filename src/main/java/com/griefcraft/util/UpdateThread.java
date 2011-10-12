@@ -42,7 +42,7 @@ public class UpdateThread implements Runnable {
     /**
      * Queue used to update protections on a seperate thread (the updates that aren't immediately required)
      */
-    private Set<Protection> protectionUpdateQueue = Collections.synchronizedSet(new LinkedHashSet<Protection>(1000));
+    private final Set<Protection> protectionUpdateQueue = Collections.synchronizedSet(new LinkedHashSet<Protection>(1000));
 
     /**
      * True begins the flush

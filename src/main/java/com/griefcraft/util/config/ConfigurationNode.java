@@ -34,9 +34,9 @@ import java.util.List;
 import java.util.Map;
 
 public class ConfigurationNode {
-    protected Map<String, Object> root;
+    Map<String, Object> root;
 
-    public ConfigurationNode(Map<String, Object> root) {
+    ConfigurationNode(Map<String, Object> root) {
         this.root = root;
     }
 
@@ -51,7 +51,7 @@ public class ConfigurationNode {
      * @return object or null
      */
     @SuppressWarnings("unchecked")
-    public Object getProperty(String path) {
+    Object getProperty(String path) {
         if (!path.contains(".")) {
             Object val = root.get(path);
             if (val == null) {
@@ -242,7 +242,7 @@ public class ConfigurationNode {
      * @return boolean or default
      */
     @SuppressWarnings("unchecked")
-    public List<Object> getList(String path) {
+    List<Object> getList(String path) {
         Object o = getProperty(path);
         if (o == null) {
             return null;

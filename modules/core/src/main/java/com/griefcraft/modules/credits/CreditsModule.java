@@ -247,7 +247,6 @@ public class CreditsModule extends JavaModule {
         }
 
         event.setCancelled(true);
-        return;
     }
 
 }

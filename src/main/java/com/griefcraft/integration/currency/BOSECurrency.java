@@ -86,11 +86,8 @@ public class BOSECurrency implements ICurrency {
     }
 
     public boolean canAfford(Player player, double money) {
-        if(player == null) {
-            return false;
-        }
+        return player != null && getBalance(player) >= money;
 
-        return getBalance(player) >= money;
     }
 
     public boolean canCentralBankAfford(double money) {

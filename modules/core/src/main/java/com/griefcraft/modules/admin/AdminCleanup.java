@@ -80,7 +80,6 @@ public class AdminCleanup extends JavaModule {
         // do the work in a separate thread so we don't fully lock the server
         // new Thread(new Admin_Cleanup_Thread(lwc, sender)).start();
         new Admin_Cleanup_Thread(lwc, sender, silent).run();
-        return;
     }
 
     /**
@@ -121,9 +120,9 @@ public class AdminCleanup extends JavaModule {
                 int protectionId = iter.next();
 
                 if (count % 100000 == 0) {
-                    builder.append("DELETE FROM " + prefix + "protections WHERE id IN (" + protectionId);
+                    builder.append("DELETE FROM ").append(prefix).append("protections WHERE id IN (").append(protectionId);
                 } else {
-                    builder.append("," + protectionId);
+                    builder.append(",").append(protectionId);
                 }
 
                 if (count % 100000 == 99999 || count == (total - 1)) {

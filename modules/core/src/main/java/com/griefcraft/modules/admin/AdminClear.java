@@ -68,7 +68,6 @@ public class AdminClear extends JavaModule {
         }
 
         lwc.sendLocale(sender, "protection.admin.clear." + toClear);
-        return;
     }
 
 }

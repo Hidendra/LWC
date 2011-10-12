@@ -292,7 +292,7 @@ public final class Version implements Comparable {
         this.minor = parseNumber(rawVersion.substring(minorIndex));
 
         // parse the patch version, which is optional
-        int patchIndex = minorIndex + new Integer(this.minor).toString().length() + 1;
+        int patchIndex = minorIndex + Integer.toString(this.minor).length() + 1;
 
         if (patchIndex < rawVersion.length()) {
             this.patch = parseNumber(rawVersion.substring(patchIndex));

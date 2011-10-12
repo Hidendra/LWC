@@ -130,11 +130,8 @@ public class Job {
      * @return true if the job should automatically run when it is polled
      */
     public boolean shouldRun() {
-        if (nextRun == 0) {
-            return false;
-        }
+        return nextRun != 0 && (nextRun == 1 || getTimeRemaining() <= 0);
 
-        return nextRun == 1 || getTimeRemaining() <= 0;
     }
 
     /**
