@@ -120,12 +120,12 @@ public class MySQLPost200 implements MigrationUtility {
                 }
             }
 
-            if(historyCount > 0) {
+            if (historyCount > 0) {
                 logger.info("Converting: HISTORY");
 
                 List<History> tmp = sqliteDatabase.loadHistory();
 
-                for(History history : tmp) {
+                for (History history : tmp) {
                     // make sure it's assumed it does not exist in the database
                     history.setExists(false);
 

@@ -47,7 +47,7 @@ public class EssentialsCurrency implements ICurrency {
     public EssentialsCurrency() {
         Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Essentials");
 
-        if(plugin == null) {
+        if (plugin == null) {
             return;
         }
 
@@ -71,25 +71,25 @@ public class EssentialsCurrency implements ICurrency {
     }
 
     public double getBalance(Player player) {
-        if(player == null) {
+        if (player == null) {
             return 0;
         }
 
         try {
             return Economy.getMoney(player.getName());
-        } catch(UserDoesNotExistException e) {
+        } catch (UserDoesNotExistException e) {
             return 0d;
         }
     }
 
     public boolean canAfford(Player player, double money) {
-        if(player == null) {
+        if (player == null) {
             return false;
         }
 
         try {
             return Economy.hasEnough(player.getName(), money);
-        } catch(UserDoesNotExistException e) {
+        } catch (UserDoesNotExistException e) {
             return false;
         }
     }
@@ -99,15 +99,15 @@ public class EssentialsCurrency implements ICurrency {
     }
 
     public double addMoney(Player player, double money) {
-        if(player == null) {
+        if (player == null) {
             return 0;
         }
 
         try {
             Economy.add(player.getName(), money);
-        } catch(UserDoesNotExistException e) {
+        } catch (UserDoesNotExistException e) {
             return 0;
-        } catch(NoLoanPermittedException e) {
+        } catch (NoLoanPermittedException e) {
             return 0;
         }
 
@@ -117,9 +117,9 @@ public class EssentialsCurrency implements ICurrency {
     public double removeMoney(Player player, double money) {
         try {
             Economy.subtract(player.getName(), money);
-        } catch(UserDoesNotExistException e) {
+        } catch (UserDoesNotExistException e) {
             return 0;
-        } catch(NoLoanPermittedException e) {
+        } catch (NoLoanPermittedException e) {
             return 0;
         }
 

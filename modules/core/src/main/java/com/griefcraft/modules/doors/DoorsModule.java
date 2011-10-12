@@ -48,8 +48,8 @@ import java.util.List;
 
 /**
  * Unused localized nodes that are already in LWC:
- *  - protection.doors.open "The door creaks open...."
- *  - protection.doors.close "The door slams shut!"
+ * - protection.doors.open "The door creaks open...."
+ * - protection.doors.close "The door slams shut!"
  */
 public class DoorsModule extends JavaModule {
 
@@ -107,7 +107,7 @@ public class DoorsModule extends JavaModule {
                     for (Block block : getDoorBlocks(location.getBlock())) {
                         toggleDoor(block);
                     }
-                    
+
                     iter.remove();
                 }
             }
@@ -194,7 +194,7 @@ public class DoorsModule extends JavaModule {
 
     @Override
     public void onProtectionInteract(LWCProtectionInteractEvent event) {
-        if(event.getResult() == Result.CANCEL) {
+        if (event.getResult() == Result.CANCEL) {
             return;
         }
 
@@ -265,7 +265,7 @@ public class DoorsModule extends JavaModule {
                 if (temp == null) {
                     continue;
                 }
-                
+
                 if (isValid(temp.getType())) {
                     Protection found = lwc.findProtection(temp);
 
@@ -288,7 +288,7 @@ public class DoorsModule extends JavaModule {
 
             // iterate through both door blocks
             int index = 0;
-            
+
             for (Block door : getDoorBlocks(block)) {
                 if ((block != clickedDoor && !fixDoor) || (block == clickedDoor && block.getType() == Material.IRON_DOOR_BLOCK)) {
                     toggleDoor(door);
@@ -313,7 +313,7 @@ public class DoorsModule extends JavaModule {
                         break;
                 }
 
-                index ++;
+                index++;
             }
         }
     }

@@ -71,7 +71,7 @@ public class JobManager {
     class JobExecutor implements Runnable {
 
         public void run() {
-            synchronized(jobs) {
+            synchronized (jobs) {
                 Iterator<Job> iter = jobs.iterator();
 
                 while (iter.hasNext()) {
@@ -148,7 +148,7 @@ public class JobManager {
 
     /**
      * Remove a job from the set
-     * 
+     *
      * @param job
      */
     public void removeJob(Job job) {
@@ -157,7 +157,7 @@ public class JobManager {
 
     /**
      * Execute a job
-     * 
+     *
      * @param job
      */
     public void execute(Job job) {
@@ -176,7 +176,7 @@ public class JobManager {
 
     /**
      * Get a job
-     * 
+     *
      * @param name case insensitive
      * @return
      */
@@ -198,7 +198,7 @@ public class JobManager {
      */
     public IJobHandler getJobHandler(String name) {
         for (IJobHandler handler : handlers) {
-            if(handler.getName().equalsIgnoreCase(name)) {
+            if (handler.getName().equalsIgnoreCase(name)) {
                 return handler;
             }
         }
@@ -214,7 +214,7 @@ public class JobManager {
      */
     public IJobHandler getJobHandler(int type) {
         for (IJobHandler handler : handlers) {
-            if(handler.getType() == type) {
+            if (handler.getType() == type) {
                 return handler;
             }
         }
@@ -230,7 +230,7 @@ public class JobManager {
      */
     public boolean hasJobHandler(String name) {
         for (IJobHandler handler : handlers) {
-            if(handler.getName().equalsIgnoreCase(name)) {
+            if (handler.getName().equalsIgnoreCase(name)) {
                 return true;
             }
         }

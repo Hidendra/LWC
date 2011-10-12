@@ -152,7 +152,7 @@ public class AdminCleanup extends JavaModule {
             try {
                 Statement resultStatement = lwc.getPhysicalDatabase().getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
-                if(lwc.getPhysicalDatabase().getType() == Database.Type.MySQL) {
+                if (lwc.getPhysicalDatabase().getType() == Database.Type.MySQL) {
                     resultStatement.setFetchSize(Integer.MIN_VALUE);
                 }
 

@@ -54,7 +54,7 @@ public class Flag {
          * Protection is exempt from being auto removed from LWC - e.g /lwc admin expire -remove 2 weeks
          */
         EXEMPTION(true),
-        
+
         /**
          * The door will automatically close after the time configured in plugins/LWC/doors.yml
          */
@@ -113,7 +113,7 @@ public class Flag {
 
         try {
             ordinal = Integer.parseInt(node.get("id").toString());
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return null;
         }
 

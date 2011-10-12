@@ -50,7 +50,7 @@ public class HistoryModule extends JavaModule {
 
     /**
      * Called when /lwc details or /lwc d is used.
-     * 
+     *
      * @param event
      */
     private void doDetailsCommand(LWCCommandEvent event) {
@@ -107,7 +107,7 @@ public class HistoryModule extends JavaModule {
         sender.sendMessage("Created by: " + Colors.Yellow + history.getPlayer());
         sender.sendMessage("Status: " + Colors.Yellow + history.getStatus());
         sender.sendMessage("Type: " + Colors.Yellow + history.getType());
-        
+
         sender.sendMessage(" ");
         sender.sendMessage("Protection: " + Colors.Yellow + (protection == null ? "Removed" : protection));
         sender.sendMessage("Created by: " + Colors.Yellow + history.getString("creator"));
@@ -234,7 +234,7 @@ public class HistoryModule extends JavaModule {
 
             // compensate for what's left
             while ((pageCount * ITEMS_PER_PAGE) < historyCount) {
-                pageCount ++;
+                pageCount++;
             }
         }
 
@@ -278,5 +278,5 @@ public class HistoryModule extends JavaModule {
             doDetailsCommand(event);
         }
     }
-    
+
 }

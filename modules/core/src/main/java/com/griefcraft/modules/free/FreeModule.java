@@ -63,11 +63,11 @@ public class FreeModule extends JavaModule {
             LWCProtectionDestroyEvent evt = new LWCProtectionDestroyEvent(player, protection, LWCProtectionDestroyEvent.Method.COMMAND, true, true);
             lwc.getModuleLoader().dispatchEvent(evt);
 
-            if(!evt.isCancelled()) {
+            if (!evt.isCancelled()) {
                 // bind the player of destroyed the protection
                 // We don't need to save the history we modify because it will be saved anyway immediately after this
-                for(History history : protection.getRelatedHistory(History.Type.TRANSACTION)) {
-                    if(history.getStatus() != History.Status.ACTIVE) {
+                for (History history : protection.getRelatedHistory(History.Type.TRANSACTION)) {
+                    if (history.getStatus() != History.Status.ACTIVE) {
                         continue;
                     }
 
@@ -77,7 +77,7 @@ public class FreeModule extends JavaModule {
                 protection.remove();
                 lwc.sendLocale(player, "protection.interact.remove.finalize", "block", LWC.materialToString(protection.getBlockId()));
             }
-            
+
             lwc.removeModes(player);
         } else {
             lwc.sendLocale(player, "protection.interact.error.notowner", "block", LWC.materialToString(protection.getBlockId()));
