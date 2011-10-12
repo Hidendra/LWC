@@ -53,11 +53,6 @@ public class SuperPermsPermissions implements IPermissions {
     // modified implementation by ZerothAngel ( https://github.com/Hidendra/LWC/issues/88#issuecomment-2017807 )
     public List<String> getGroups(Player player) {
         LWC lwc = LWC.getInstance();
-        // Haters are gonna hate, yo
-        if (lwc.getRemoveMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose() != null) {
-            return lwc.getRemoveMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose().getGroups(player);
-        }
-
         List<String> groups = new ArrayList<String>();
 
         for (PermissionAttachmentInfo pai : player.getEffectivePermissions()) {
