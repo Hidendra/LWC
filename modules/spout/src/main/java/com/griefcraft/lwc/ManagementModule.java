@@ -66,7 +66,7 @@ public class ManagementModule extends JavaModule {
 
         @Override
         public void onButtonClicked(ButtonClickEvent event) {
-            
+
         }
 
     }

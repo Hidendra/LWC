@@ -136,7 +136,7 @@ public class LWCPlayer implements CommandSender {
 
     /**
      * Remove a player from the player cache
-     * 
+     *
      * @param player
      */
     public static void removePlayer(Player player) {
@@ -234,7 +234,7 @@ public class LWCPlayer implements CommandSender {
 
     /**
      * Remove an action
-     * 
+     *
      * @param action
      * @return
      */
@@ -365,7 +365,7 @@ public class LWCPlayer implements CommandSender {
 
     /**
      * Send a locale to the player
-     * 
+     *
      * @param key
      * @param args
      */
@@ -401,8 +401,8 @@ public class LWCPlayer implements CommandSender {
     public List<History> getRelatedHistory(History.Type type) {
         List<History> related = new ArrayList<History>();
 
-        for(History history : getRelatedHistory()) {
-            if(history.getType() == type) {
+        for (History history : getRelatedHistory()) {
+            if (history.getType() == type) {
                 related.add(history);
             }
         }
@@ -412,7 +412,7 @@ public class LWCPlayer implements CommandSender {
 
     /**
      * Set the devmode flag
-     * 
+     *
      * @param devMode
      */
     public void setDevMode(boolean devMode) {
@@ -437,9 +437,9 @@ public class LWCPlayer implements CommandSender {
      * @param message
      */
     public void debug(String message) {
-       if (isDevMode()) {
-           player.sendMessage(message);
-       }
+        if (isDevMode()) {
+            player.sendMessage(message);
+        }
     }
 
     /**

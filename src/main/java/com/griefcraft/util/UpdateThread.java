@@ -34,7 +34,10 @@ import com.griefcraft.model.Protection;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 public class UpdateThread implements Runnable {
@@ -110,7 +113,7 @@ public class UpdateThread implements Runnable {
      * @param protection
      */
     public void unqueueProtectionUpdate(Protection protection) {
-       protectionUpdateQueue.remove(protection);
+        protectionUpdateQueue.remove(protection);
     }
 
     public void run() {

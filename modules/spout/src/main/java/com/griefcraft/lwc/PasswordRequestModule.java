@@ -158,7 +158,7 @@ public class PasswordRequestModule extends JavaModule {
                         net.minecraft.server.World handle = ((CraftWorld) block.getWorld()).getHandle();
                         net.minecraft.server.EntityPlayer plr = (net.minecraft.server.EntityPlayer) ((CraftHumanEntity) player).getHandle();
 
-                        switch(block.getType()) {
+                        switch (block.getType()) {
                             case CHEST:
                                 net.minecraft.server.Block.CHEST.interact(handle, block.getX(), block.getY(), block.getZ(), plr);
                                 break;
@@ -171,7 +171,7 @@ public class PasswordRequestModule extends JavaModule {
                                 net.minecraft.server.Block.DISPENSER.interact(handle, block.getX(), block.getY(), block.getZ(), plr);
                                 break;
                         }
-                    } catch(Throwable t) {
+                    } catch (Throwable t) {
                         PasswordRequestModule.this.plugin.log("Warning: Open inventory via PasswordRequestModule is broken!");
                     }
 
@@ -215,7 +215,7 @@ public class PasswordRequestModule extends JavaModule {
 
     /**
      * Create a popup screen that shows the password request interface
-     * 
+     *
      * @return
      */
     private PopupScreen createPopup() {

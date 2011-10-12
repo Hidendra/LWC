@@ -83,8 +83,8 @@ public class OwnersModule extends JavaModule {
         player.sendMessage("");
         player.sendMessage("");
 
-        for (int index = 0; index < max; index ++) {
-            if((start + index) >= numRights) {
+        for (int index = 0; index < max; index++) {
+            if ((start + index) >= numRights) {
                 break;
             }
 

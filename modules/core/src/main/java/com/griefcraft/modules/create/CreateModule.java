@@ -29,7 +29,6 @@
 package com.griefcraft.modules.create;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Action;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
@@ -41,7 +40,6 @@ import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
 import com.griefcraft.sql.PhysDB;
-import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;

@@ -28,8 +28,8 @@
 
 package com.griefcraft.jobs;
 
-import com.griefcraft.model.Job;
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Job;
 
 public interface IJobHandler {
 

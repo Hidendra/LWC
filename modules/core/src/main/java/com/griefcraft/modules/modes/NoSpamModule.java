@@ -44,7 +44,7 @@ public class NoSpamModule extends JavaModule {
             return;
         }
 
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             return;
         }
 

@@ -89,7 +89,7 @@ public class Configuration extends ConfigurationNode {
      * @return
      */
     public static Configuration load(String config) {
-        if(loaded.containsKey(config)) {
+        if (loaded.containsKey(config)) {
             return loaded.get(config);
         }
 

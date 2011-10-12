@@ -338,7 +338,7 @@ public class Updater {
             return "";
         }
 
-        switch(updateScheme) {
+        switch (updateScheme) {
             case BLEEDING_EDGE:
                 return JENKINS + latestVersion.getBuildNumber() + "/artifact/build/LWC.jar";
 

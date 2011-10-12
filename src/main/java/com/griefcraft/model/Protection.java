@@ -182,11 +182,11 @@ public class Protection {
 
     /**
      * Ensure a history object is located in our cache
-     * 
+     *
      * @param history
      */
     public void checkHistory(History history) {
-        if(!historyCache.contains(history)) {
+        if (!historyCache.contains(history)) {
             historyCache.add(history);
         }
     }
@@ -226,7 +226,7 @@ public class Protection {
      */
     public Set<History> getRelatedHistory() {
         // cache the database's history if we don't have any yet
-        if(historyCache.size() == 0) {
+        if (historyCache.size() == 0) {
             historyCache.addAll(LWC.getInstance().getPhysicalDatabase().loadHistory(this));
         }
 
@@ -372,7 +372,7 @@ public class Protection {
 
     /**
      * Remove access rights from the protection that match an entity AND type
-     * 
+     *
      * @param entity
      * @param type
      */
@@ -383,10 +383,10 @@ public class Protection {
 
         Iterator<AccessRight> iter = accessRights.iterator();
 
-        while(iter.hasNext()) {
+        while (iter.hasNext()) {
             AccessRight right = iter.next();
 
-            if((right.getName().equals(entity) || entity.equals("*")) && right.getType() == type) {
+            if ((right.getName().equals(entity) || entity.equals("*")) && right.getType() == type) {
                 iter.remove();
                 modified = true;
             }
@@ -634,15 +634,15 @@ public class Protection {
         encodeFlags();
 
         // only save the protection if it was modified
-        if(modified && !removing) {
+        if (modified && !removing) {
             LWC.getInstance().getPhysicalDatabase().saveProtection(this);
             update();
         }
 
         // check the cache for history updates
-        for(History history : getRelatedHistory()) {
+        for (History history : getRelatedHistory()) {
             // if the history object was modified we need to save it
-            if(history.wasModified()) {
+            if (history.wasModified()) {
                 history.saveNow();
             }
         }

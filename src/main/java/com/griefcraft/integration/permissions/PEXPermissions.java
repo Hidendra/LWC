@@ -42,7 +42,7 @@ public class PEXPermissions implements IPermissions {
     public List<String> getGroups(Player player) {
         PermissionUser user = PermissionsEx.getPermissionManager().getUser(player);
 
-        if(user == null) {
+        if (user == null) {
             return new ArrayList<String>();
         }
 

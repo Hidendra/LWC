@@ -29,7 +29,6 @@
 package com.griefcraft.modules.modify;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Action;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;

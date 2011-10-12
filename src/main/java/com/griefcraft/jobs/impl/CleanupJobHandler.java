@@ -29,8 +29,8 @@
 package com.griefcraft.jobs.impl;
 
 import com.griefcraft.jobs.IJobHandler;
-import com.griefcraft.model.Job;
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Job;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 

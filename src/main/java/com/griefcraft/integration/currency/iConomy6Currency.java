@@ -58,7 +58,7 @@ public class iConomy6Currency implements ICurrency {
         serverAccount = configuration.getString("iConomy.serverBankAccount", "");
 
         // create the account in iConomy if needed
-        if(!serverAccount.isEmpty()) {
+        if (!serverAccount.isEmpty()) {
             accounts.get(serverAccount);
         }
     }
@@ -80,7 +80,7 @@ public class iConomy6Currency implements ICurrency {
     }
 
     public double getBalance(Player player) {
-        if(player == null) {
+        if (player == null) {
             return 0;
         }
 
@@ -94,7 +94,7 @@ public class iConomy6Currency implements ICurrency {
     }
 
     public boolean canAfford(Player player, double money) {
-        if(player == null) {
+        if (player == null) {
             return false;
         }
 
@@ -114,19 +114,19 @@ public class iConomy6Currency implements ICurrency {
     }
 
     public double addMoney(Player player, double money) {
-        if(player == null) {
+        if (player == null) {
             return 0;
         }
 
         // remove the money from the central bank if applicable
-        if(usingCentralBank()) {
+        if (usingCentralBank()) {
             if (!canCentralBankAfford(money)) {
                 return 0;
             }
 
             Account central = accounts.get(serverAccount);
 
-            if(central == null) {
+            if (central == null) {
                 return 0;
             }
 
@@ -146,7 +146,7 @@ public class iConomy6Currency implements ICurrency {
     }
 
     public double removeMoney(Player player, double money) {
-        if(player == null) {
+        if (player == null) {
             return 0;
         }
 
@@ -156,10 +156,10 @@ public class iConomy6Currency implements ICurrency {
         }
 
         // add the money to the central bank if applicable
-        if(usingCentralBank()) {
+        if (usingCentralBank()) {
             Account central = accounts.get(serverAccount);
 
-            if(central == null) {
+            if (central == null) {
                 return 0;
             }
 

@@ -120,9 +120,7 @@ public class ScheduleModule extends JavaModule {
             // save it to the database
             job.save();
             sender.sendMessage(Colors.Green + "Created the job " + name + " successfully using the handler " + handler.getName());
-        }
-
-        else if (action.equals("run")) {
+        } else if (action.equals("run")) {
             if (args.length < 2) {
                 lwc.sendSimpleUsage(sender, "/lwc schedule <Action> [JobName] [...]");
                 return;
@@ -143,9 +141,7 @@ public class ScheduleModule extends JavaModule {
             long timeMillis = System.currentTimeMillis() - start;
 
             sender.sendMessage("Successfully ran the job (" + timeMillis + " ms)");
-        }
-
-        else if (action.equals("remove") || action.equals("delete")) {
+        } else if (action.equals("remove") || action.equals("delete")) {
             if (args.length < 2) {
                 lwc.sendSimpleUsage(sender, "/lwc schedule <Action> [JobName] [...]");
                 return;
@@ -158,9 +154,7 @@ public class ScheduleModule extends JavaModule {
 
             job.remove();
             sender.sendMessage(Colors.Green + "Removed job successfully!");
-        }
-
-        else if (action.equals("list")) {
+        } else if (action.equals("list")) {
             // force a reload of jobs
             lwc.getJobManager().load();
 
@@ -178,7 +172,7 @@ public class ScheduleModule extends JavaModule {
             sender.sendMessage(Colors.Blue + String.format(format, "Name", "Handler", "Creator"));
             sender.sendMessage(" ");
 
-            for(Job foundJob : jobs) {
+            for (Job foundJob : jobs) {
                 IJobHandler handler = foundJob.getJobHandler();
                 String lineColour = "";
 
@@ -195,9 +189,7 @@ public class ScheduleModule extends JavaModule {
 
                 sender.sendMessage(lineColour + String.format(format, foundJob.getName(), handler.getName(), foundJob.getData().get("creator")));
             }
-        }
-
-        else if (action.equals("autorun")) {
+        } else if (action.equals("autorun")) {
             if (args.length < 2) {
                 lwc.sendSimpleUsage(sender, "/lwc schedule <Action> [JobName] [...]");
                 return;
@@ -232,9 +224,7 @@ public class ScheduleModule extends JavaModule {
             job.save();
             sender.sendMessage(Colors.Green + "The job will " + job.getName() + " run again in " + StringUtils.timeToString(parsedTimeSeconds));
             sender.sendMessage(Colors.Green + "In server time, that is at " + new Date(job.getNextRun()).toString());
-        }
-
-        else if (action.equals("check")) {
+        } else if (action.equals("check")) {
             if (job == null) {
                 sender.sendMessage(Colors.Red + "Invalid job specified.");
                 return;
@@ -254,9 +244,7 @@ public class ScheduleModule extends JavaModule {
 
                 sender.sendMessage(Colors.Green + "The job " + job.getName() + " will be executed in " + StringUtils.timeToString(timeRemaining / 1000L));
             }
-        }
-
-        else if (action.equals("arguments")) {
+        } else if (action.equals("arguments")) {
             if (job == null) {
                 sender.sendMessage(Colors.Red + "Invalid job specified.");
                 return;

@@ -41,7 +41,7 @@ public class SuperPermsPermissions implements IPermissions {
     /**
      * The group prefix to use to lookup in Permissions - can be overrided in core.yml with groupPrefix: 'new.prefix.'
      * Must include leading period (.)
-     * 
+     * <p/>
      * Default: lwc.group.
      */
     private String groupPrefix;
@@ -61,7 +61,7 @@ public class SuperPermsPermissions implements IPermissions {
         List<String> groups = new ArrayList<String>();
 
         for (PermissionAttachmentInfo pai : player.getEffectivePermissions()) {
-            if(pai.getPermission().startsWith(groupPrefix)) {
+            if (pai.getPermission().startsWith(groupPrefix)) {
                 groups.add(pai.getPermission().substring(groupPrefix.length()));
             }
         }

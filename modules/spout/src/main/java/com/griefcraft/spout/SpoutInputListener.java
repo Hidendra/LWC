@@ -45,7 +45,7 @@ public class SpoutInputListener extends InputListener {
 
     @Override
     public void onKeyPressedEvent(KeyPressedEvent event) {
-        
+
     }
 
 }
