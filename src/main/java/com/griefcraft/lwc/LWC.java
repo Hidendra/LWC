@@ -196,11 +196,6 @@ public class LWC {
     private IPermissions permissions;
 
     /**
-     * Sigh
-     */
-    private NijiPermissions removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose;
-
-    /**
      * The currency handler
      */
     private ICurrency currency;
@@ -213,13 +208,6 @@ public class LWC {
         moduleLoader = new ModuleLoader();
         jobManager = new JobManager(this);
         caches = new CacheSet();
-    }
-
-    /**
-     * @return
-     */
-    public NijiPermissions getRemoveMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose() {
-        return removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose;
     }
 
     /**
@@ -1040,7 +1028,10 @@ public class LWC {
      * @return
      */
     public boolean hasPermission(Player player, String node) {
-        boolean result = false;
+        // if Permissions 2/3 is found, don't use anything else
+        if (permissions instanceof NijiPermissions) {
+            return ((NijiPermissions)permissions).permission(player, node);
+        }
 
         // Dev mode
         LWCPlayer lwcPlayer = wrapPlayer(player);
@@ -1061,19 +1052,12 @@ public class LWC {
             }
         }
 
-        // Temporary .. (?)
-        if (removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose != null) {
-            return removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose.permission(player, node);
-        }
-
         try {
-            result = player.hasPermission(node);
+            return player.hasPermission(node);
         } catch (NoSuchMethodError e) {
             // their server does not support Superperms..
             return !node.contains("admin") && !node.contains("mod");
         }
-
-        return result;
     }
 
     /**
@@ -1175,28 +1159,36 @@ public class LWC {
 
         // Permissions init
         permissions = new NoPermissions();
-
-        if (resolvePlugin("PermissionsBukkit") != null) {
-            permissions = new BukkitPermissions();
-        } else if (resolvePlugin("PermissionsEx") != null) {
-            permissions = new PEXPermissions();
-        } else {
-            // check for SuperPerms
-            {
-                try {
-                    Method method = CraftHumanEntity.class.getDeclaredMethod("hasPermission", String.class);
-
-                    if (method != null) {
-                        permissions = new SuperPermsPermissions();
-                    }
-                } catch (NoSuchMethodException e) {
-                    // server does not support SuperPerms
+        
+        // Default to Permissions, except with SuperpermsBridge
+        Plugin legacy = resolvePlugin("Permissions");
+        if (legacy != null) {
+            try {
+                // super perms bridge, will throw exception if it's not it
+                if (!(((com.nijikokun.bukkit.Permissions.Permissions)legacy).getHandler() instanceof com.platymuus.bukkit.permcompat.PermissionHandler)) {
+                    permissions = new NijiPermissions();
                 }
+            } catch (NoClassDefFoundError e) {
+                // Permissions 2/3 or some other bridge
+                permissions = new NijiPermissions();
             }
         }
 
-        if (resolvePlugin("Permissions") != null) {
-            removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose = new NijiPermissions();
+        if(permissions.getClass() == NoPermissions.class) {
+            if (resolvePlugin("PermissionsBukkit") != null) {
+                permissions = new BukkitPermissions();
+            } else if (resolvePlugin("PermissionsEx") != null) {
+                permissions = new PEXPermissions();
+            } else {
+                try {
+                    Method method = CraftHumanEntity.class.getDeclaredMethod("hasPermission", String.class);
+                    if (method != null) {
+                        permissions = new SuperPermsPermissions();
+                    }
+                } catch(NoSuchMethodException e) {
+                    // server does not support SuperPerms
+                }
+            }
         }
 
         // Currency init

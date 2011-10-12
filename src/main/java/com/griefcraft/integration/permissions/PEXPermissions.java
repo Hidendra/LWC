@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PEXPermissions implements IPermissions {
+public class PEXPermissions extends SuperPermsPermissions {
 
     public List<String> getGroups(Player player) {
         PermissionUser user = PermissionsEx.getPermissionManager().getUser(player);
