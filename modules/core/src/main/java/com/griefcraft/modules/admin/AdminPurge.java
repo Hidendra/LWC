@@ -77,7 +77,6 @@ public class AdminPurge extends JavaModule {
         // reload the cache!
         LWC.getInstance().getPhysicalDatabase().precache();
 
-        return;
     }
 
 }

@@ -71,7 +71,6 @@ public class CreateModule extends JavaModule {
 
         lwc.removeModes(player);
         event.setResult(Result.CANCEL);
-        return;
     }
 
     @Override
@@ -170,7 +169,6 @@ public class CreateModule extends JavaModule {
         }
 
         event.setResult(Result.CANCEL);
-        return;
     }
 
     @Override

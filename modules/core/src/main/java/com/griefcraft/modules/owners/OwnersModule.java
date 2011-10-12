@@ -111,7 +111,6 @@ public class OwnersModule extends JavaModule {
         }
 
         lwc.removeModes(player);
-        return;
     }
 
     @Override
@@ -130,7 +129,6 @@ public class OwnersModule extends JavaModule {
 
         lwc.sendLocale(player, "protection.interact.error.notregistered", "block", LWC.materialToString(block));
         lwc.removeModes(player);
-        return;
     }
 
     @Override
@@ -175,7 +173,6 @@ public class OwnersModule extends JavaModule {
         player.addAction(action);
 
         lwc.sendLocale(sender, "protection.owners.finalize");
-        return;
     }
 
 }

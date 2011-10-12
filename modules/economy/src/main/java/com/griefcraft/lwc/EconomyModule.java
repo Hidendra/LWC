@@ -439,7 +439,6 @@ public class EconomyModule extends JavaModule {
             return;
         }
 
-        return;
     }
 
     /**

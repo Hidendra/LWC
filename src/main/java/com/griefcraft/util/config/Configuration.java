@@ -54,7 +54,7 @@ public class Configuration extends ConfigurationNode {
      */
     private static Map<String, Configuration> loaded = new HashMap<String, Configuration>();
 
-    public Configuration(File file) {
+    private Configuration(File file) {
         super(new HashMap<String, Object>());
 
         DumperOptions options = new DumperOptions();
@@ -111,7 +111,7 @@ public class Configuration extends ConfigurationNode {
     /**
      * Loads the configuration file. All errors are thrown away.
      */
-    public void load() {
+    void load() {
         FileInputStream stream = null;
 
         try {

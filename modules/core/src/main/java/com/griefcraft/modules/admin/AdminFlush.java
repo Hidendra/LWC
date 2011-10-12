@@ -60,7 +60,6 @@ public class AdminFlush extends JavaModule {
         sender.sendMessage(Colors.Green + "Flushing Update Thread..");
         lwc.getUpdateThread().flush();
         sender.sendMessage(Colors.Green + "Done.");
-        return;
     }
 
 }
