@@ -165,11 +165,6 @@ public class LWC {
     private ICurrency currency;
 
     /**
-     * Sigh
-     */
-    private NijiPermissions removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose;
-
-    /**
      * Whether or not we utilize logic to work around the Bukkit 656 bug.  http://leaky.bukkit.org/issues/656
      */
     private boolean bug656workaround;
@@ -186,13 +181,6 @@ public class LWC {
         caches = new CacheSet();
 
         bug656workaround = configuration.getBoolean("core.bukkitBug656workaround", false);
-    }
-
-    /**
-     * @return
-     */
-    public NijiPermissions getRemoveMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose() {
-        return removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose;
     }
 
     /**
@@ -1002,8 +990,8 @@ public class LWC {
      */
     public boolean hasPermission(Player player, String node) {
         // if Permissions 2/3 is found, don't use anything else
-        if (removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose != null) {
-            return removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose.permission(player, node);
+        if (permissions instanceof NijiPermissions) {
+            return ((NijiPermissions)permissions).permission(player, node);
         }
 
         try {
@@ -1094,31 +1082,26 @@ public class LWC {
 
         // Permissions init
         permissions = new NoPermissions();
-
-        if (resolvePlugin("PermissionsBukkit") != null) {
-            permissions = new BukkitPermissions();
-        } else if (resolvePlugin("PermissionsEx") != null) {
-            permissions = new PEXPermissions();
-        } else {
-            // Default to Permissions over SuperPermissions, except with SuperpermsBridge
-            Plugin legacy = resolvePlugin("Permissions");
-
+        // Default to Permissions, except with SuperpermsBridge
+        Plugin legacy = resolvePlugin("Permissions");
+        if (legacy != null) {
             try {
                 // super perms bridge, will throw exception if it's not it
-                if (legacy != null) {
-                    if (((com.nijikokun.bukkit.Permissions.Permissions)legacy).getHandler() instanceof com.platymuus.bukkit.permcompat.PermissionHandler) {
-                        permissions = new SuperPermsPermissions();
-                    }
+                if (!(((com.nijikokun.bukkit.Permissions.Permissions)legacy).getHandler() instanceof com.platymuus.bukkit.permcompat.PermissionHandler)) {
+                    permissions = new NijiPermissions();
                 }
             } catch (NoClassDefFoundError e) {
                 // Permissions 2/3 or some other bridge
-                if (legacy != null) {
-                    permissions = new NijiPermissions();
-                }
+                permissions = new NijiPermissions();
             }
-
-            // attempt super perms if we still have nothing
-            if (permissions.getClass() == NoPermissions.class) {
+        }
+        
+        if(permissions.getClass() == NoPermissions.class) {
+            if (resolvePlugin("PermissionsBukkit") != null) {
+                permissions = new BukkitPermissions();
+            } else if (resolvePlugin("PermissionsEx") != null) {
+                permissions = new PEXPermissions();
+            } else {
                 try {
                     Method method = CraftHumanEntity.class.getDeclaredMethod("hasPermission", String.class);
                     if (method != null) {
@@ -1128,10 +1111,6 @@ public class LWC {
                     // server does not support SuperPerms
                 }
             }
-        }
-
-        if (resolvePlugin("Permissions") != null) {
-            removeMeAndRemoveNijiPermissionsButIfItIsRemovedAllHellBreaksLoose = new NijiPermissions();
         }
 
         // Currency init
