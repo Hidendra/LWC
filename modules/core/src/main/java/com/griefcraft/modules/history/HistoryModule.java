@@ -30,13 +30,16 @@ package com.griefcraft.modules.history;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.History;
+import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
+import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Date;
 import java.util.List;
@@ -47,6 +50,101 @@ public class HistoryModule extends JavaModule {
      * Amount of history items to show per page
      */
     public static final int ITEMS_PER_PAGE = 15;
+
+    /**
+     * History tool
+     */
+    @Override
+    public void onProtectionInteract(LWCProtectionInteractEvent event) {
+        if (event.getResult() != DEFAULT) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        LWCPlayer lwcPlayer = lwc.wrapPlayer(event.getPlayer());
+        PlayerInteractEvent bukkitEvent = event.getEvent(); // the bukkit event
+
+        // are they already checking history?
+    }
+
+    /**
+     * Send the history list to a player
+     *
+     * @param sender
+     * @param relatedHistory
+     * @param page
+     * @param maxPages
+     * @param historyCount
+     */
+    public void sendHistoryList(CommandSender sender, List<History> relatedHistory, int page, int maxPages, int historyCount) {
+        String format = "%4s%12s%12s%12s";
+
+        // Header
+        sender.sendMessage(" ");
+        sender.sendMessage("To view extended details on a history item, use " + Colors.Yellow + "/lwc details <HistoryId>");
+        sender.sendMessage(" ");
+        sender.sendMessage(Colors.Yellow + String.format(format, "Id", "Player", "Type", "Status"));
+        sender.sendMessage(Colors.Yellow + "Showing " + relatedHistory.size() + " results on page: " + page + "/" + maxPages + " (" + historyCount + " total)");
+
+        // Send all that is found to them
+        for (History history : relatedHistory) {
+            sender.sendMessage(String.format(format, ("" + history.getId()), history.getPlayer(), history.getType(), history.getStatus()));
+        }
+    }
+
+    /**
+     * Send history details to a player
+     *
+     * @param sender
+     * @param history
+     */
+    private void sendDetails(CommandSender sender, History history) {
+        LWC lwc = LWC.getInstance();
+        Protection protection = history.getProtection(); // If the protection still exists, that is
+
+        // if it was removed, hide the protection (if they're using SQLite, primary keys are reused)
+        if (history.hasKey("destroyer")) {
+            protection = null;
+        }
+
+        sender.sendMessage(" ");
+        sender.sendMessage("Created by: " + Colors.Yellow + history.getPlayer());
+        sender.sendMessage("Status: " + Colors.Yellow + history.getStatus());
+        sender.sendMessage("Type: " + Colors.Yellow + history.getType());
+
+        sender.sendMessage(" ");
+        sender.sendMessage("Protection: " + Colors.Yellow + (protection == null ? "Removed" : protection));
+        sender.sendMessage("Created by: " + Colors.Yellow + history.getString("creator"));
+
+        // if its been removed, it most likely will have this key
+        if (history.hasKey("destroyer")) {
+            sender.sendMessage("Removed by: " + Colors.Yellow + history.getString("destroyer"));
+        }
+
+        // If it had an economy charge, show it
+        if (history.hasKey("charge")) {
+            sender.sendMessage("Economy charge: " + Colors.Yellow + history.getDouble("charge") + " " + lwc.getCurrency().getMoneyName());
+        }
+
+        if (history.hasKey("discount")) {
+            sender.sendMessage(Colors.Yellow + "(discounted price)");
+            sender.sendMessage("Discount Id: " + Colors.Yellow + (history.hasKey("discountId") ? history.getString("discountId") : "n/a"));
+        }
+
+        String creation = null;
+
+        if (history.getTimestamp() > 0) {
+            creation = new Date(history.getTimestamp() * 1000L).toString();
+        }
+
+        sender.sendMessage(" ");
+        sender.sendMessage("Created on: " + Colors.Yellow + (creation == null ? "Unknown" : creation));
+
+        // Only show how long ago it was if we know when it was created
+        if (creation != null) {
+            sender.sendMessage(Colors.Yellow + StringUtils.timeToString((System.currentTimeMillis() / 1000L) - history.getTimestamp()) + " ago");
+        }
+    }
 
     /**
      * Called when /lwc details or /lwc d is used.
@@ -95,51 +193,8 @@ public class HistoryModule extends JavaModule {
             }
         }
 
-        // Now we can start telling them about it! wee
-        Protection protection = history.getProtection(); // If the protection still exists, that is
-
-        // if it was removed, hide the protection (if they're using SQLite, primary keys are reused)
-        if (history.hasKey("destroyer")) {
-            protection = null;
-        }
-
-        sender.sendMessage(" ");
-        sender.sendMessage("Created by: " + Colors.Yellow + history.getPlayer());
-        sender.sendMessage("Status: " + Colors.Yellow + history.getStatus());
-        sender.sendMessage("Type: " + Colors.Yellow + history.getType());
-
-        sender.sendMessage(" ");
-        sender.sendMessage("Protection: " + Colors.Yellow + (protection == null ? "Removed" : protection));
-        sender.sendMessage("Created by: " + Colors.Yellow + history.getString("creator"));
-
-        // if its been removed, it most likely will have this key
-        if (history.hasKey("destroyer")) {
-            sender.sendMessage("Removed by: " + Colors.Yellow + history.getString("destroyer"));
-        }
-
-        // If it had an economy charge, show it
-        if (history.hasKey("charge")) {
-            sender.sendMessage("Economy charge: " + Colors.Yellow + history.getDouble("charge") + " " + lwc.getCurrency().getMoneyName());
-        }
-
-        if (history.hasKey("discount")) {
-            sender.sendMessage(Colors.Yellow + "(discounted price)");
-            sender.sendMessage("Discount Id: " + Colors.Yellow + (history.hasKey("discountId") ? history.getString("discountId") : "n/a"));
-        }
-
-        String creation = null;
-
-        if (history.getTimestamp() > 0) {
-            creation = new Date(history.getTimestamp() * 1000L).toString();
-        }
-
-        sender.sendMessage(" ");
-        sender.sendMessage("Created on: " + Colors.Yellow + (creation == null ? "Unknown" : creation));
-
-        // Only show how long ago it was if we know when it was created
-        if (creation != null) {
-            sender.sendMessage(Colors.Yellow + StringUtils.timeToString((System.currentTimeMillis() / 1000L) - history.getTimestamp()) + " ago");
-        }
+        // Tell them about it!
+        sendDetails(sender, history);
     }
 
     /**
@@ -251,19 +306,7 @@ public class HistoryModule extends JavaModule {
         }
 
         // Send it to them
-        String format = "%4s%12s%12s%12s";
-
-        // Header
-        sender.sendMessage(" ");
-        sender.sendMessage("To view extended details on a history item, use " + Colors.Yellow + "/lwc details <HistoryId>");
-        sender.sendMessage(" ");
-        sender.sendMessage(Colors.Yellow + String.format(format, "Id", "Player", "Type", "Status"));
-        sender.sendMessage(Colors.Yellow + "Showing " + relatedHistory.size() + " results on page: " + page + "/" + pageCount + " (" + historyCount + " total)");
-
-        // Send all that is found to them
-        for (History history : relatedHistory) {
-            sender.sendMessage(String.format(format, ("" + history.getId()), history.getPlayer(), history.getType(), history.getStatus()));
-        }
+        sendHistoryList(sender, relatedHistory, page, pageCount, historyCount);
     }
 
     @Override
