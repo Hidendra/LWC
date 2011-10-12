@@ -73,7 +73,6 @@ public class LWCPlayerListener extends PlayerListener {
 
         Player player = event.getPlayer();
         Item item = event.getItemDrop();
-        ItemStack itemStack = item.getItemStack();
 
         LWCDropItemEvent evt = new LWCDropItemEvent(player, event);
         plugin.getLWC().getModuleLoader().dispatchEvent(evt);
@@ -89,13 +88,12 @@ public class LWCPlayerListener extends PlayerListener {
             return;
         }
 
-        /**
-         * We want to block messages starting with cunlock incase someone screws up /cunlock password.
-         */
+        // We want to block messages starting with cunlock incase someone screws up /cunlock password.
         String message = event.getMessage();
 
-        if (message.startsWith("cunlock")) {
+        if (message.startsWith("cunlock") || message.startsWith("lcunlock") || message.startsWith(".cunlock")) {
             event.setCancelled(true);
+            event.getPlayer().sendMessage(Colors.Red + "LWC has blocked your message that potentially contained your password in it!");
         }
     }
 
