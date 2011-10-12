@@ -59,6 +59,11 @@ public class PhysDB extends Database {
      */
     private final JSONParser jsonParser = new JSONParser();
 
+    /**
+     * The database version
+     */
+    private int databaseVersion = 0;
+
     public PhysDB() {
         super();
     }
@@ -249,6 +254,7 @@ public class PhysDB extends Database {
         doUpdate400_3();
         doUpdate400_4();
         doUpdate400_5();
+        doUpdate400_6();
 
         Column column;
 
@@ -336,6 +342,18 @@ public class PhysDB extends Database {
             column.setType("VARCHAR(255)");
             history.add(column);
 
+            column = new Column("x");
+            column.setType("INTEGER");
+            history.add(column);
+
+            column = new Column("y");
+            column.setType("INTEGER");
+            history.add(column);
+
+            column = new Column("z");
+            column.setType("INTEGER");
+            history.add(column);
+
             column = new Column("type");
             column.setType("INTEGER");
             history.add(column);
@@ -377,15 +395,117 @@ public class PhysDB extends Database {
             jobs.add(column);
         }
 
+        Table internal = new Table(this, "internal");
+        {
+            column = new Column("name");
+            column.setType("VARCHAR(40)");
+            column.setPrimary(true);
+            column.setAutoIncrement(false);
+            internal.add(column);
+
+            column = new Column("value");
+            column.setType("VARCHAR(40)");
+            internal.add(column);
+        }
+
         protections.execute();
         menuStyles.execute();
         history.execute();
         jobs.execute();
+        internal.execute();
 
-        // Add or remove indexes
-        doIndexes();
+        // Load the database version
+        loadDatabaseVersion();
+
+        // perform database upgrades
+        performDatabaseUpdates();
 
         loaded = true;
+    }
+
+    /**
+     * Perform any database updates
+     */
+    public void performDatabaseUpdates() {
+
+        // Indexes
+        if (databaseVersion == 0) {
+            // Drop old, old indexes
+            log("Dropping old indexes (One time, may take a while!)");
+            dropIndex("protections", "in1");
+            dropIndex("protections", "in6");
+            dropIndex("protections", "in7");
+            dropIndex("history", "in8");
+            dropIndex("history", "in9");
+            dropIndex("protections", "in10");
+            dropIndex("history", "in12");
+            dropIndex("history", "in13");
+            dropIndex("history", "in14");
+
+            // Create our updated (good) indexes
+            log("Creating new indexes (One time, may take a while!)");
+            doIndex("protections", "protections_main", "x, y, z, world");
+            doIndex("protections", "protections_utility", "owner");
+            doIndex("history", "history_main", "protectionId");
+            doIndex("history", "history_utility", "player");
+            doIndex("history", "history_utility2", "x, y, z");
+
+            // increment the database version
+            incrementDatabaseVersion();
+        }
+
+    }
+
+    /**
+     * Increment the database version
+     */
+    public void incrementDatabaseVersion() {
+        setDatabaseVersion(databaseVersion++);
+    }
+
+    /**
+     * Set the database version and sync it to the database
+     * 
+     * @param databaseVersion
+     */
+    public void setDatabaseVersion(int databaseVersion) {
+        // set it locally
+        this.databaseVersion = databaseVersion;
+
+        // ship it to the database
+        try {
+            PreparedStatement statement = connection.prepareStatement("UPDATE " + prefix + "internal SET value = ? WHERE name = ?");
+            statement.setInt(1, databaseVersion);
+            statement.setString(2, "version");
+
+            // ok
+            statement.executeUpdate();
+            statement.close();
+        } catch (SQLException e) { }
+    }
+
+    /**
+     * Load the database internal version
+     *
+     * @return
+     */
+    public int loadDatabaseVersion() {
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT value FROM " + prefix + "internal WHERE name = ?");
+            statement.setString(1, "version");
+
+            // Execute it
+            ResultSet set = statement.executeQuery();
+
+            // load the version
+            databaseVersion = set.getInt("version");
+
+            // close everything
+            set.close();
+            statement.close();
+        } catch (SQLException e) { }
+
+        return databaseVersion;
     }
 
     /**
@@ -893,21 +1013,24 @@ public class PhysDB extends Database {
             PreparedStatement statement;
 
             if (history.doesExist()) {
-                statement = prepare("UPDATE " + prefix + "history SET protectionId = ?, player = ?, type = ?, status = ?, metadata = ?, timestamp = ? WHERE id = ?");
+                statement = prepare("UPDATE " + prefix + "history SET protectionId = ?, player = ?, x = ?, y = ?, z = ?, type = ?, status = ?, metadata = ?, timestamp = ? WHERE id = ?");
             } else {
-                statement = prepare("INSERT INTO " + prefix + "history (protectionId, player, type, status, metadata, timestamp) VALUES (?, ?, ?, ?, ?, ?)", true);
+                statement = prepare("INSERT INTO " + prefix + "history (protectionId, player, x, y, z, type, status, metadata, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", true);
                 history.setTimestamp(System.currentTimeMillis() / 1000L);
             }
 
             statement.setInt(1, history.getProtectionId());
             statement.setString(2, history.getPlayer());
-            statement.setInt(3, history.getType().ordinal());
-            statement.setInt(4, history.getStatus().ordinal());
-            statement.setString(5, history.getSafeMetaData());
-            statement.setLong(6, history.getTimestamp());
+            statement.setInt(3, history.getX());
+            statement.setInt(4, history.getY());
+            statement.setInt(5, history.getZ());
+            statement.setInt(6, history.getType().ordinal());
+            statement.setInt(7, history.getStatus().ordinal());
+            statement.setString(8, history.getSafeMetaData());
+            statement.setLong(9, history.getTimestamp());
 
             if (history.doesExist()) {
-                statement.setInt(7, history.getId());
+                statement.setInt(10, history.getId());
             }
 
             int affectedRows = statement.executeUpdate();
@@ -931,6 +1054,44 @@ public class PhysDB extends Database {
     }
 
     /**
+     * Resolve 1 history object from the result set but do not close it
+     *
+     * @return
+     */
+    public History resolveHistory(History history, ResultSet set) throws SQLException {
+        if (history == null) {
+            return null;
+        }
+
+        int historyId = set.getInt("id");
+        int protectionId = set.getInt("protectionId");
+        int x = set.getInt("x");
+        int y = set.getInt("y");
+        int z = set.getInt("z");
+        String player = set.getString("player");
+        int type_ord = set.getInt("type");
+        int status_ord = set.getInt("status");
+        String[] metadata = set.getString("metadata").split(",");
+        long timestamp = set.getLong("timestamp");
+
+        History.Type type = History.Type.values()[type_ord];
+        History.Status status = History.Status.values()[status_ord];
+
+        history.setId(historyId);
+        history.setProtectionId(protectionId);
+        history.setType(type);
+        history.setPlayer(player);
+        history.setX(x);
+        history.setY(y);
+        history.setZ(z);
+        history.setStatus(status);
+        history.setMetaData(metadata);
+        history.setTimestamp(timestamp);
+
+        return history;
+    }
+
+    /**
      * Load all of the History objects for a given protection
      *
      * @param protection
@@ -950,27 +1111,12 @@ public class PhysDB extends Database {
             ResultSet set = statement.executeQuery();
 
             while (set.next()) {
-                int historyId = set.getInt("id");
-                int protectionId = set.getInt("protectionId");
-                String player = set.getString("player");
-                int type_ord = set.getInt("type");
-                int status_ord = set.getInt("status");
-                String[] metadata = set.getString("metadata").split(",");
-                long timestamp = set.getLong("timestamp");
+                History history = resolveHistory(protection.createHistoryObject(), set);
 
-                History.Type type = History.Type.values()[type_ord];
-                History.Status status = History.Status.values()[status_ord];
-
-                History history = protection.createHistoryObject();
-                history.setId(historyId);
-                history.setType(type);
-                history.setPlayer(player);
-                history.setStatus(status);
-                history.setMetaData(metadata);
-                history.setTimestamp(timestamp);
-
-                // seems ok
-                temp.add(history);
+                if (history != null) {
+                    // seems ok
+                    temp.add(history);
+                }
             }
 
         } catch (SQLException e) {
@@ -1010,27 +1156,12 @@ public class PhysDB extends Database {
             ResultSet set = statement.executeQuery();
 
             while (set.next()) {
-                int historyId = set.getInt("id");
-                int protectionId = set.getInt("protectionId");
-                int type_ord = set.getInt("type");
-                int status_ord = set.getInt("status");
-                String[] metadata = set.getString("metadata").split(",");
-                long timestamp = set.getLong("timestamp");
+                History history = resolveHistory(new History(), set);
 
-                History.Type type = History.Type.values()[type_ord];
-                History.Status status = History.Status.values()[status_ord];
-
-                History history = new History();
-                history.setId(historyId);
-                history.setProtectionId(protectionId);
-                history.setType(type);
-                history.setPlayer(player);
-                history.setStatus(status);
-                history.setMetaData(metadata);
-                history.setTimestamp(timestamp);
-
-                // seems ok
-                temp.add(history);
+                if (history != null) {
+                    // seems ok
+                    temp.add(history);
+                }
             }
 
         } catch (SQLException e) {
@@ -1058,24 +1189,7 @@ public class PhysDB extends Database {
             ResultSet set = statement.executeQuery();
 
             if (set.next()) {
-                int protectionId = set.getInt("protectionId");
-                String player = set.getString("player");
-                int type_ord = set.getInt("type");
-                int status_ord = set.getInt("status");
-                String[] metadata = set.getString("metadata").split(",");
-                long timestamp = set.getLong("timestamp");
-
-                History.Type type = History.Type.values()[type_ord];
-                History.Status status = History.Status.values()[status_ord];
-
-                History history = new History();
-                history.setId(historyId);
-                history.setProtectionId(protectionId);
-                history.setType(type);
-                history.setPlayer(player);
-                history.setStatus(status);
-                history.setMetaData(metadata);
-                history.setTimestamp(timestamp);
+                History history = resolveHistory(new History(), set);
 
                 set.close();
                 return history;
@@ -1125,27 +1239,12 @@ public class PhysDB extends Database {
             ResultSet set = statement.executeQuery();
 
             while (set.next()) {
-                int historyId = set.getInt("id");
-                int protectionId = set.getInt("protectionId");
-                int type_ord = set.getInt("type");
-                int status_ord = set.getInt("status");
-                String[] metadata = set.getString("metadata").split(",");
-                long timestamp = set.getLong("timestamp");
+                History history = resolveHistory(new History(), set);
 
-                History.Type type = History.Type.values()[type_ord];
-                History.Status status = History.Status.values()[status_ord];
-
-                History history = new History();
-                history.setId(historyId);
-                history.setProtectionId(protectionId);
-                history.setType(type);
-                history.setPlayer(player);
-                history.setStatus(status);
-                history.setMetaData(metadata);
-                history.setTimestamp(timestamp);
-
-                // seems ok
-                temp.add(history);
+                if (history != null) {
+                    // seems ok
+                    temp.add(history);
+                }
             }
 
             set.close();
@@ -1173,28 +1272,52 @@ public class PhysDB extends Database {
             ResultSet set = statement.executeQuery();
 
             while (set.next()) {
-                int historyId = set.getInt("id");
-                int protectionId = set.getInt("protectionId");
-                String player = set.getString("player");
-                int type_ord = set.getInt("type");
-                int status_ord = set.getInt("status");
-                String[] metadata = set.getString("metadata").split(",");
-                long timestamp = set.getLong("timestamp");
+                History history = resolveHistory(new History(), set);
 
-                History.Type type = History.Type.values()[type_ord];
-                History.Status status = History.Status.values()[status_ord];
+                if (history != null) {
+                    // seems ok
+                    temp.add(history);
+                }
+            }
 
-                History history = new History();
-                history.setId(historyId);
-                history.setProtectionId(protectionId);
-                history.setType(type);
-                history.setPlayer(player);
-                history.setStatus(status);
-                history.setMetaData(metadata);
-                history.setTimestamp(timestamp);
+            set.close();
+        } catch (SQLException e) {
+            printException(e);
+        }
 
-                // seems ok
-                temp.add(history);
+        return temp;
+    }
+
+    /**
+     * Load all of the history at the given location
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    public List<History> loadHistory(int x, int y, int z) {
+        List<History> temp = new ArrayList<History>();
+
+        if (!LWC.getInstance().isHistoryEnabled()) {
+            return temp;
+        }
+
+        try {
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE x = ? AND y = ? AND z = ?");
+            statement.setInt(1, x);
+            statement.setInt(2, y);
+            statement.setInt(3, z);
+
+            ResultSet set = statement.executeQuery();
+
+            while (set.next()) {
+                History history = resolveHistory(new History(), set);
+
+                if (history != null) {
+                    // seems ok
+                    temp.add(history);
+                }
             }
 
             set.close();
@@ -1225,28 +1348,12 @@ public class PhysDB extends Database {
             ResultSet set = statement.executeQuery();
 
             while (set.next()) {
-                int historyId = set.getInt("id");
-                int protectionId = set.getInt("protectionId");
-                String player = set.getString("player");
-                int type_ord = set.getInt("type");
-                int status_ord = set.getInt("status");
-                String[] metadata = set.getString("metadata").split(",");
-                long timestamp = set.getLong("timestamp");
+                History history = resolveHistory(new History(), set);
 
-                History.Type type = History.Type.values()[type_ord];
-                History.Status status = History.Status.values()[status_ord];
-
-                History history = new History();
-                history.setId(historyId);
-                history.setProtectionId(protectionId);
-                history.setType(type);
-                history.setPlayer(player);
-                history.setStatus(status);
-                history.setMetaData(metadata);
-                history.setTimestamp(timestamp);
-
-                // seems ok
-                temp.add(history);
+                if (history != null) {
+                    // seems ok
+                    temp.add(history);
+                }
             }
 
             set.close();
@@ -1444,18 +1551,6 @@ public class PhysDB extends Database {
     }
 
     /**
-     * Instead of "updating indexes", let's just use IF NOT EXISTS each time
-     */
-    private void doIndexes() {
-        dropIndex("protections", "in1"); // Old indexes
-
-        doIndex("protections", "in14", "x, y, z, world");
-        doIndex("protections", "in11", "owner");
-        doIndex("history", "in12", "protectionId");
-        doIndex("history", "in13", "player");
-    }
-
-    /**
      * Attempt to create an index on the table
      *
      * @param table
@@ -1467,7 +1562,7 @@ public class PhysDB extends Database {
 
         try {
             statement = connection.createStatement();
-            statement.executeUpdate("CREATE UNIQUE INDEX" + (currentType == Type.SQLite ? " IF NOT EXISTS" : "") + " " + indexName + " ON " + prefix + table + " (" + columns + ")");
+            statement.executeUpdate("CREATE INDEX" + (currentType == Type.SQLite ? " IF NOT EXISTS" : "") + " " + indexName + " ON " + prefix + table + " (" + columns + ")");
         } catch (Exception e) {
         } finally {
             if (statement != null) {
@@ -1785,6 +1880,29 @@ public class PhysDB extends Database {
             dropColumn(prefix + "protections", "flags");
         } catch (SQLException e) {
 
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
+    }
+
+    /**
+     * 4.0.0, update 6 (alpha7)
+     */
+    private void doUpdate400_6() {
+        Statement statement = null;
+        try {
+            statement = connection.createStatement();
+            statement.executeQuery("SELECT x FROM " + prefix + "history LIMIT 1");
+        } catch (SQLException e) {
+            //  add x, y, z
+            addColumn("history", "x", "INTEGER");
+            addColumn("history", "y", "INTEGER");
+            addColumn("history", "z", "INTEGER");
         } finally {
             if (statement != null) {
                 try {
