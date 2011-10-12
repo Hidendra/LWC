@@ -91,6 +91,21 @@ public class History {
     private String player;
 
     /**
+     * The x coordinate of the history item
+     */
+    private int x;
+
+    /**
+     * The y coordinate of the history item
+     */
+    private int y;
+
+    /**
+     * The z coordinate of the history item
+     */
+    private int z;
+
+    /**
      * The history type, e.g TRANSACTION
      */
     private Type type;
@@ -382,6 +397,18 @@ public class History {
         return player;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getZ() {
+        return z;
+    }
+
     public Type getType() {
         return type;
     }
@@ -411,6 +438,21 @@ public class History {
 
     public void setPlayer(String player) {
         this.player = player;
+        this.modified = true;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+        this.modified = true;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+        this.modified = true;
+    }
+
+    public void setZ(int z) {
+        this.z = z;
         this.modified = true;
     }
 
