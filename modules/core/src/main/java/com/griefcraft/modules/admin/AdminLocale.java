@@ -75,7 +75,6 @@ public class AdminLocale extends JavaModule {
             lwc.sendLocale(sender, locale);
         }
 
-        return;
     }
 
 }

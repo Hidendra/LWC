@@ -68,7 +68,6 @@ public class BaseModeModule extends JavaModule {
         }
 
         event.setCancelled(false);
-        return;
     }
 
 }

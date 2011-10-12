@@ -280,7 +280,6 @@ public class DropTransferModule extends JavaModule {
             }
         }
 
-        return;
     }
 
 }

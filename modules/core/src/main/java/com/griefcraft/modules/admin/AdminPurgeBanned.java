@@ -65,7 +65,7 @@ public class AdminPurgeBanned extends JavaModule {
         // we have the right command
         event.setCancelled(true);
 
-        boolean shouldRemoveBlocks = args.length > 1 ? args[1].endsWith("remove") : false;
+        boolean shouldRemoveBlocks = args.length > 1 && args[1].endsWith("remove");
         List<String> players = loadBannedPlayers();
 
         for (String toRemove : players) {

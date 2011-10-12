@@ -63,7 +63,6 @@ public class MenuModule extends JavaModule {
 
         lwc.getPhysicalDatabase().setMenuStyle(player.getName(), newStyle);
         lwc.sendLocale(player, "protection.menu.finalize", "style", newStyle);
-        return;
     }
 
 }

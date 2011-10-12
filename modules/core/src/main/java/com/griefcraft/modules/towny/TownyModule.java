@@ -176,7 +176,6 @@ public class TownyModule extends JavaModule {
         } catch (Exception e) {
             // No world, don't let them protect it!
             trigger(event);
-            return;
         }
     }
 

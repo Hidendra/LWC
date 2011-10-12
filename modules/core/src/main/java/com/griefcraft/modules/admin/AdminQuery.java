@@ -71,7 +71,6 @@ public class AdminQuery extends JavaModule {
             sender.sendMessage(Colors.Red + "Err: " + e.getMessage());
         }
 
-        return;
     }
 
 }

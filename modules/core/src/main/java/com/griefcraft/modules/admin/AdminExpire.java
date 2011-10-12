@@ -83,7 +83,6 @@ public class AdminExpire extends JavaModule {
 
         lwc.sendLocale(sender, "protection.admin.expire.removed", "count", completed);
 
-        return;
     }
 
 }

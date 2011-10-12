@@ -31,7 +31,7 @@ package com.griefcraft.sql;
 /**
  * FIXME:
  */
-public class Column {
+class Column {
 
     /**
      * If the table should auto increment. Note: This is automatically set for SQLite with:

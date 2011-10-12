@@ -67,7 +67,7 @@ class DriverStub implements Driver {
         return driver.jdbcCompliant();
     }
 
-    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+    public Logger getParentLogger() {
         return Logger.getLogger("LWC");
     }
 }

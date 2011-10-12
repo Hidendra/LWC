@@ -53,7 +53,6 @@ public class RedstoneModule extends JavaModule {
             return;
         }
 
-        return;
     }
 
 }

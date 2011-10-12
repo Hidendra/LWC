@@ -222,7 +222,7 @@ public class MockServer implements Server {
                 matchedPlayers.add(iterPlayer);
                 break;
             }
-            if (iterPlayerName.toLowerCase().indexOf(arg0.toLowerCase()) != -1) {
+            if (iterPlayerName.toLowerCase().contains(arg0.toLowerCase())) {
                 // Partial match
                 matchedPlayers.add(iterPlayer);
             }

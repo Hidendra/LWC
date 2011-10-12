@@ -489,11 +489,8 @@ public class PhysDB extends Database {
 
             if (rights != null && (rights instanceof JSONArray)) {
                 JSONArray array = (JSONArray) rights;
-                Iterator<Object> iter = array.iterator();
 
-                while (iter.hasNext()) {
-                    Object node = iter.next();
-
+                for (Object node : array) {
                     // we only want to use the maps
                     if (!(node instanceof JSONObject)) {
                         continue;
@@ -515,11 +512,8 @@ public class PhysDB extends Database {
             Object flags = root.get("flags");
             if (flags != null && (rights instanceof JSONArray)) {
                 JSONArray array = (JSONArray) flags;
-                Iterator<Object> iter = array.iterator();
 
-                while (iter.hasNext()) {
-                    Object node = iter.next();
-
+                for (Object node : array) {
                     if (!(node instanceof JSONObject)) {
                         continue;
                     }

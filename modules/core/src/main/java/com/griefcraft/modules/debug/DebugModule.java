@@ -104,7 +104,6 @@ public class DebugModule extends JavaModule {
         doPermission(player, "lwc.admin");
 
 
-        return;
     }
 
     /**
