@@ -37,6 +37,7 @@ import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtils;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -109,6 +110,7 @@ public class HistoryModule extends JavaModule {
 
         sender.sendMessage(" ");
         sender.sendMessage("Created by: " + Colors.Yellow + history.getPlayer());
+        sender.sendMessage("Location: " + Colors.Yellow + String.format("[%d %d %d]", history.getX(), history.getY(), history.getZ()));
         sender.sendMessage("Status: " + Colors.Yellow + history.getStatus());
         sender.sendMessage("Type: " + Colors.Yellow + history.getType());
 
