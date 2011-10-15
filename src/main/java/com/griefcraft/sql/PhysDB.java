@@ -1900,9 +1900,9 @@ public class PhysDB extends Database {
             statement.executeQuery("SELECT x FROM " + prefix + "history LIMIT 1");
         } catch (SQLException e) {
             //  add x, y, z
-            addColumn("history", "x", "INTEGER");
-            addColumn("history", "y", "INTEGER");
-            addColumn("history", "z", "INTEGER");
+            addColumn(prefix + "history", "x", "INTEGER");
+            addColumn(prefix + "history", "y", "INTEGER");
+            addColumn(prefix + "history", "z", "INTEGER");
         } finally {
             if (statement != null) {
                 try {
