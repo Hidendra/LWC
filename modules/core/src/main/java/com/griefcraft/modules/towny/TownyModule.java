@@ -40,10 +40,13 @@ import com.palmergames.bukkit.towny.Towny;
 import com.palmergames.bukkit.towny.object.Coord;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.TownBlock;
+import com.palmergames.bukkit.towny.object.TownyUniverse;
 import com.palmergames.bukkit.towny.object.TownyWorld;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import java.lang.reflect.Method;
 
 public class TownyModule extends JavaModule {
 
@@ -157,7 +160,24 @@ public class TownyModule extends JavaModule {
         TownyWorld world = null;
 
         try {
-            world = towny.getTownyUniverse().getWorld(block.getWorld().getName());
+            try {
+                world = towny.getTownyUniverse().getWorld(block.getWorld().getName());
+            } catch (IncompatibleClassChangeError e) {
+                // Towny Advanced
+                try {
+                    // We need to use Reflection because of the two TownyUniverse instances
+                    // loaded (to retain Towny: CE support)
+                    Method method = TownyUniverse.class.getDeclaredMethod("getWorld", String.class);
+
+                    // resolve the world
+                    // the method is static!
+                    world = (TownyWorld) method.invoke(null, block.getWorld().getName());
+                } catch (Exception ex) {
+                    // no world or something bad happened
+                    trigger(event);
+                    return;
+                }
+            }
         } catch (Exception e) {
             // No world, don't let them protect it!
             trigger(event);
