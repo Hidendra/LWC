@@ -128,7 +128,7 @@ public class LimitsModule extends JavaModule {
      * @param blockId
      * @return
      */
-    private int mapProtectionLimit(Player player, int blockId) {
+    public int mapProtectionLimit(Player player, int blockId) {
         String limit = null;
         Type type = Type.resolve(resolveValue(player, "type"));
 
