@@ -229,6 +229,13 @@ public class LWCPlayer implements CommandSender {
      * @return
      */
     public boolean addAction(Action action) {
+        Action old = getAction(action.getName());
+
+        // remove the old action
+        if (old != null) {
+            removeAction(old);
+        }
+
         return getActions().add(action);
     }
 
