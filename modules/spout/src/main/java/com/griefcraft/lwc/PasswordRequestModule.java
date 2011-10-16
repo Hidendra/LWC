@@ -85,6 +85,8 @@ public class PasswordRequestModule extends JavaModule {
             label2.shiftYPos(25);
 
             textField = new GenericTextField();
+            textField.setPasswordField(true);
+            textField.setFocus(true);
             textField.setMaximumCharacters(50);
             textField.setAnchor(WidgetAnchor.CENTER_CENTER);
             textField.setHeight(20).setWidth(200);
