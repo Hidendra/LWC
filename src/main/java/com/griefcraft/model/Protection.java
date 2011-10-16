@@ -146,6 +146,36 @@ public class Protection {
      */
     private boolean modified = false;
 
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof Protection)) {
+            return false;
+        }
+
+        Protection other = (Protection) object;
+
+        return id == other.id && x == other.x && y == other.y && z == other.z && owner.equals(other.owner) &&
+                world.equals(other.world);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 17;
+
+        // the identifier is normally unique, but in SQLite ids may be quickly reused so we use other data
+        hash *= 37 + id;
+
+        // coordinates
+        hash *= 37 + x;
+        hash *= 37 + y;
+        hash *= 37 + z;
+
+        // and for good measure, to *guarantee* no collisions
+        hash *= 37 + date.hashCode();
+
+        return hash;
+    }
+
     /**
      * Encode the AccessRights to JSON
      *
@@ -713,24 +743,6 @@ public class Protection {
         }
 
         return String.format("%s %s" + Colors.White + " " + Colors.Green + "Id=%d Owner=%s Location=[%s %d,%d,%d] Created=%s Flags=%s LastAccessed=%s", typeToString(), (blockId > 0 ? (LWC.materialToString(blockId)) : "Not yet cached"), id, owner, world, x, y, z, date, flagStr, lastAccessed);
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 17;
-
-        // the identifier is normally unique, but in SQLite ids may be quickly reused so we use other data
-        hash *= 37 + id;
-
-        // coordinates
-        hash *= 37 + x;
-        hash *= 37 + y;
-        hash *= 37 + z;
-
-        // and for good measure, to *guarantee* no collisions
-        hash *= 37 + date.hashCode();
-
-        return hash;
     }
 
     /**
