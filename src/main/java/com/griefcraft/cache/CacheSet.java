@@ -42,12 +42,18 @@ public class CacheSet {
     private Logger logger = Logger.getLogger("Cache");
 
     /**
+     * The LWC instance this set belongs to
+     */
+    private LWC lwc;
+
+    /**
      * Caches protections to prevent abusing the database
      */
     private LRUCache<String, Protection> protectionCache;
 
-    public CacheSet() {
-        int maxCapacity = LWC.getInstance().getConfiguration().getInt("core.cacheSize", 10000);
+    public CacheSet(LWC lwc) {
+        this.lwc = lwc;
+        int maxCapacity = lwc.getConfiguration().getInt("core.cacheSize", 10000);
 
         protectionCache = new LRUCache<String, Protection>(maxCapacity);
         logger.info("LWC: Protection cache: 0/" + maxCapacity);

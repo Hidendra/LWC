@@ -153,27 +153,27 @@ public class LWC {
     /**
      * Core LWC configuration
      */
-    private Configuration configuration;
+    private Configuration configuration = Configuration.load("core.yml");
 
     /**
      * The module loader
      */
-    private ModuleLoader moduleLoader;
+    private final ModuleLoader moduleLoader = new ModuleLoader(this);
 
     /**
      * The job manager
      */
-    private JobManager jobManager;
+    private final JobManager jobManager = new JobManager(this);
+
+    /**
+     * The set of caches
+     */
+    private final CacheSet caches = new CacheSet(this);
 
     /**
      * Logging instance
      */
     private Logger logger = Logger.getLogger("LWC");
-
-    /**
-     * The set of caches
-     */
-    private CacheSet caches;
 
     /**
      * Physical database instance
@@ -203,11 +203,6 @@ public class LWC {
     public LWC(LWCPlugin plugin) {
         this.plugin = plugin;
         LWC.instance = this;
-
-        configuration = Configuration.load("core.yml");
-        moduleLoader = new ModuleLoader();
-        jobManager = new JobManager(this);
-        caches = new CacheSet();
     }
 
     /**
@@ -501,7 +496,6 @@ public class LWC {
 
         // destroy the modules
         moduleLoader.shutdown();
-        moduleLoader = null;
 
         log("Flushing final updates (" + updateThread.size() + ")");
 

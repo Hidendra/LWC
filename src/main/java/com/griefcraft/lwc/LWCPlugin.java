@@ -65,6 +65,11 @@ import java.util.logging.Logger;
 public class LWCPlugin extends JavaPlugin {
 
     /**
+     * The LWC instance
+     */
+    private LWC lwc = new LWC(this);
+
+    /**
      * The block listener
      */
     private BlockListener blockListener;
@@ -95,43 +100,9 @@ public class LWCPlugin extends JavaPlugin {
     private Logger logger = Logger.getLogger("LWC");
 
     /**
-     * The LWC instance
-     */
-    private LWC lwc;
-
-    /**
      * LWC updater
      */
     private Updater updater;
-
-    public LWCPlugin() {
-        log("Loading shared objects");
-
-        updater = new Updater();
-        lwc = new LWC(this);
-        playerListener = new LWCPlayerListener(this);
-        blockListener = new LWCBlockListener(this);
-        entityListener = new LWCEntityListener(this);
-        serverListener = new LWCServerListener(this);
-
-        /*
-           * Set the SQLite native library path
-           */
-        System.setProperty("org.sqlite.lib.path", updater.getOSSpecificFolder());
-
-        // we want to force people who used sqlite.purejava before to switch:
-        System.setProperty("sqlite.purejava", "");
-
-        // BUT, some can't use native, so we need to give them the option to use
-        // pure:
-        String isPureJava = System.getProperty("lwc.purejava");
-
-        if (isPureJava != null && isPureJava.equalsIgnoreCase("true")) {
-            System.setProperty("sqlite.purejava", "true");
-        }
-
-        log("Native library: " + updater.getFullNativeLibraryPath());
-    }
 
     /**
      * @return the locale
@@ -271,6 +242,35 @@ public class LWCPlugin extends JavaPlugin {
         return false;
     }
 
+    /**
+     * Load shared libraries and other misc things
+     */
+    private void preload() {
+        log("Loading shared objects");
+
+        updater = new Updater();
+        playerListener = new LWCPlayerListener(this);
+        blockListener = new LWCBlockListener(this);
+        entityListener = new LWCEntityListener(this);
+        serverListener = new LWCServerListener(this);
+
+        // Set the SQLite native library path
+        System.setProperty("org.sqlite.lib.path", updater.getOSSpecificFolder());
+
+        // we want to force people who used sqlite.purejava before to switch:
+        System.setProperty("sqlite.purejava", "");
+
+        // BUT, some can't use native, so we need to give them the option to use
+        // pure:
+        String isPureJava = System.getProperty("lwc.purejava");
+
+        if (isPureJava != null && isPureJava.equalsIgnoreCase("true")) {
+            System.setProperty("sqlite.purejava", "true");
+        }
+
+        log("Native library: " + updater.getFullNativeLibraryPath());
+    }
+
     public void onDisable() {
         LWC.ENABLED = false;
 
@@ -283,6 +283,8 @@ public class LWCPlugin extends JavaPlugin {
     }
 
     public void onEnable() {
+        preload();
+
         String version = getDescription().getVersion();
         LWCInfo.setVersion(version);
         LWC.ENABLED = true;

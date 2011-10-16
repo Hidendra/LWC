@@ -149,6 +149,11 @@ public class ModuleLoader {
     private static Logger logger = Logger.getLogger("Loader");
 
     /**
+     * The LWC instance this object belongs to
+     */
+    private LWC lwc;
+
+    /**
      * Path to the root of scripts
      */
     public final static String ROOT_PATH = "plugins/LWC/";
@@ -158,9 +163,11 @@ public class ModuleLoader {
      */
     private final Map<Plugin, List<MetaData>> pluginModules = new LinkedHashMap<Plugin, List<MetaData>>();
 
-    public ModuleLoader() {
+    public ModuleLoader(LWC lwc) {
+        this.lwc = lwc;
+
         // initialize the map with the LWC plugin
-        pluginModules.put(LWC.getInstance().getPlugin(), new ArrayList<MetaData>());
+        pluginModules.put(lwc.getPlugin(), new ArrayList<MetaData>());
     }
 
     /**
@@ -221,8 +228,6 @@ public class ModuleLoader {
      * Load all of the modules not marked as loaded
      */
     public void loadAll() {
-        LWC lwc = LWC.getInstance();
-
         for (List<MetaData> modules : pluginModules.values()) {
             for (MetaData metaData : modules) {
                 if (!metaData.isLoaded()) {
