@@ -520,17 +520,7 @@ public class LWC {
      * @return
      */
     public String encrypt(String text) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA");
-            md.update(text.getBytes("UTF-8"));
-
-            final byte[] raw = md.digest();
-            return byteArray2Hex(raw);
-        } catch (Exception e) {
-
-        }
-
-        return "";
+        return StringUtils.encrypt(text);
     }
 
     /**
@@ -1819,20 +1809,6 @@ public class LWC {
         }
 
         return entities;
-    }
-
-    /**
-     * Convert a byte array to hex
-     *
-     * @param hash the hash to convert
-     * @return the converted hash
-     */
-    private String byteArray2Hex(byte[] hash) {
-        final Formatter formatter = new Formatter();
-        for (final byte b : hash) {
-            formatter.format("%02x", b);
-        }
-        return formatter.toString();
     }
 
     /**
