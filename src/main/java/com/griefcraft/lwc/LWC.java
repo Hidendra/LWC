@@ -520,7 +520,7 @@ public class LWC {
      * @return
      */
     public String encrypt(String text) {
-        return StringUtils.encrypt(text);
+        return StringUtils.encrypt(text); 
     }
 
     /**
