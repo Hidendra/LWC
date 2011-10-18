@@ -68,6 +68,9 @@ commands:
   cautoclose:
     description: Flag a door to automatically close after 3 seconds (configurable.)
     usage: /<command>
+  cremoveall:
+    description: Remove all of the protections that you own
+    usage: /<command>
 
 permissions:
 

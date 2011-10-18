@@ -43,6 +43,7 @@ import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.scripting.event.LWCRedstoneEvent;
 import com.griefcraft.scripting.event.LWCSendLocaleEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -161,13 +162,10 @@ public class ModuleLoader {
     /**
      * Map of loaded modules
      */
-    private final Map<Plugin, List<MetaData>> pluginModules = new LinkedHashMap<Plugin, List<MetaData>>();
+    private final Map<Plugin, List<MetaData>> pluginModules = Collections.synchronizedMap(new LinkedHashMap<Plugin, List<MetaData>>());
 
     public ModuleLoader(LWC lwc) {
         this.lwc = lwc;
-
-        // initialize the map with the LWC plugin
-        pluginModules.put(lwc.getPlugin(), new ArrayList<MetaData>());
     }
 
     /**
@@ -228,6 +226,23 @@ public class ModuleLoader {
      * Load all of the modules not marked as loaded
      */
     public void loadAll() {
+        // Ensure LWC is at the head of the list
+        synchronized (pluginModules) {
+            Map<Plugin, List<MetaData>> newMap = new LinkedHashMap<Plugin, List<MetaData>>();
+
+            // Add LWC
+            newMap.put(lwc.getPlugin(), pluginModules.get(lwc.getPlugin()));
+
+            // Add the rest
+            newMap.putAll(pluginModules);
+
+            // Clear the old map
+            pluginModules.clear();
+
+            // Add the new values in
+            pluginModules.putAll(newMap);
+        }
+
         for (List<MetaData> modules : pluginModules.values()) {
             for (MetaData metaData : modules) {
                 if (!metaData.isLoaded()) {

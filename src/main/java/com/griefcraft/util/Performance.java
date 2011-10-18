@@ -129,6 +129,11 @@ public class Performance {
             Plugin plugin = entry.getKey();
             List<MetaData> modules = entry.getValue();
 
+            // Why?
+            if (plugin == null) {
+                continue;
+            }
+
             sender.sendMessage("  " + Colors.Green + plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion() + Colors.Yellow + " -> " + Colors.Green + modules.size() + Colors.Yellow + " registered modules");
         }
         sender.sendMessage(" ");
