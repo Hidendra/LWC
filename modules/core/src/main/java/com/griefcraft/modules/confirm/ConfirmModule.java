@@ -26,56 +26,49 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.modules.admin;
+package com.griefcraft.modules.confirm;
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Action;
+import com.griefcraft.model.ConfirmAction;
+import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
-import com.griefcraft.util.StringUtils;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
-public class AdminPurge extends JavaModule {
+public class ConfirmModule extends JavaModule {
 
-    @Override
     public void onCommand(LWCCommandEvent event) {
         if (event.isCancelled()) {
             return;
         }
 
-        if (!event.hasFlag("a", "admin")) {
+        if (!event.hasFlag("yes", "confirm", "accept")) {
             return;
         }
 
         LWC lwc = event.getLWC();
         CommandSender sender = event.getSender();
-        String[] args = event.getArgs();
-
-        if (!args[0].equals("purge")) {
-            return;
-        }
 
         // we have the right command
         event.setCancelled(true);
 
-        if (args.length < 2) {
-            lwc.sendSimpleUsage(sender, "/lwc admin purge <Players>");
+        // We only want players
+        if (!(sender instanceof Player)) {
             return;
         }
 
-        boolean shouldRemoveBlocks = args[1].endsWith("remove");
-        String players = StringUtils.join(args, shouldRemoveBlocks ? 2 : 1);
+        // Get the LWCPlayer
+        LWCPlayer lwcPlayer = lwc.wrapPlayer(sender);
 
-        for (String toRemove : players.split(" ")) {
-            if (toRemove.contains("'")) continue; // bad me
+        // Is the player waiting for /lwc confirm?
+        Action action = lwcPlayer.getAction("confirm");
 
-            // Remove all of them
-            lwc.fastRemoveProtections(sender, "owner = '" + toRemove + "'", shouldRemoveBlocks);
-
-            lwc.sendLocale(sender, "protection.admin.purge.finalize", "player", toRemove);
+        // They were!
+        if (action instanceof ConfirmAction) {
+            ((ConfirmAction) action).onConfirm();
         }
-
-        // reload the cache!
-        LWC.getInstance().getPhysicalDatabase().precache();
     }
 
 }

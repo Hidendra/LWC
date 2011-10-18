@@ -69,6 +69,7 @@ import com.griefcraft.modules.admin.AdminReport;
 import com.griefcraft.modules.admin.AdminUpdate;
 import com.griefcraft.modules.admin.AdminVersion;
 import com.griefcraft.modules.admin.BaseAdminModule;
+import com.griefcraft.modules.confirm.ConfirmModule;
 import com.griefcraft.modules.create.CreateModule;
 import com.griefcraft.modules.credits.CreditsModule;
 import com.griefcraft.modules.debug.DebugModule;
@@ -1250,6 +1251,7 @@ public class LWC {
         registerModule(new FixModule());
         registerModule(new HistoryModule());
         registerModule(new DeveloperModeModule());
+        registerModule(new ConfirmModule());
 
         // admin commands
         registerModule(new BaseAdminModule());

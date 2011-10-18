@@ -30,6 +30,7 @@ package com.griefcraft.modules.free;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Action;
+import com.griefcraft.model.ConfirmAction;
 import com.griefcraft.model.History;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
@@ -38,6 +39,7 @@ import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
+import com.griefcraft.util.Colors;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -111,7 +113,7 @@ public class FreeModule extends JavaModule {
             return;
         }
 
-        LWC lwc = event.getLWC();
+        final LWC lwc = event.getLWC();
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
 
@@ -132,7 +134,7 @@ public class FreeModule extends JavaModule {
         }
 
         String type = args[0].toLowerCase();
-        LWCPlayer player = lwc.wrapPlayer(sender);
+        final LWCPlayer player = lwc.wrapPlayer(sender);
 
         if (type.equals("protection") || type.equals("chest") || type.equals("furnace") || type.equals("dispenser")) {
             Action action = new Action();
@@ -146,8 +148,33 @@ public class FreeModule extends JavaModule {
         } else if (type.equals("modes")) {
             player.disableAllModes();
             lwc.sendLocale(sender, "protection.remove.modes.finalize");
+        } else if (type.equals("allprotections")) {
+            // Prompt them for /lwc confirm
+            player.sendMessage("You are about to " + Colors.Red + "PERMANENTLY REMOVE every protection you own.");
+            player.sendMessage("Are you " + Colors.Blue + "absolutely sure?" + Colors.White + " Please type " + Colors.Red + "/lwc confirm " + Colors.White + "to confirm you wish to do this.");
+
+            // our callback (remove all of their protections :p)
+            Runnable callback = new Runnable() {
+                public void run() {
+                    // Get all of the player's protections
+                    for (Protection protection : lwc.getPhysicalDatabase().loadProtectionsByPlayer(player.getName())) {
+                        // Remove the protection
+                        protection.remove();
+                    }
+
+                    // Notify them
+                    player.sendMessage(Colors.Green + "All of your protections have been removed.");
+                }
+            };
+
+            // Create the action
+            Action action = new ConfirmAction(callback);
+            action.setPlayer(player);
+
+            // bind it to the player
+            player.addAction(action);
         } else {
-            lwc.sendSimpleUsage(sender, "/lwc -r <protection|modes>");
+            lwc.sendSimpleUsage(sender, "/lwc -r <protection|allprotections|modes>");
         }
 
     }

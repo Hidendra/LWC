@@ -180,6 +180,9 @@ public class LWCPlugin extends JavaPlugin {
             } else if (commandName.equals("cadmin")) {
                 aliasCommand = "admin";
                 aliasArgs = argString.isEmpty() ? new String[0] : argString.split(" ");
+            } else if (commandName.equals("cremoveall")) {
+                aliasCommand = "remove";
+                aliasArgs = new String[]{"allprotections"};
             }
 
             // Flag aliases
