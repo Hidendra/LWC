@@ -454,13 +454,19 @@ public class PhysDB extends Database {
             incrementDatabaseVersion();
         }
 
+        if (databaseVersion == 1) {
+            log("Creating index on internal");
+            doIndex("internal", "internal_main", "name");
+            incrementDatabaseVersion();
+        }
+
     }
 
     /**
      * Increment the database version
      */
     public void incrementDatabaseVersion() {
-        setDatabaseVersion(databaseVersion++);
+        setDatabaseVersion(++databaseVersion);
     }
 
     /**
@@ -498,12 +504,27 @@ public class PhysDB extends Database {
             ResultSet set = statement.executeQuery();
 
             // load the version
-            databaseVersion = set.getInt("version");
+            if (set.next()) {
+                databaseVersion = Integer.parseInt(set.getString("value"));
+            } else {
+                throw new IllegalStateException("Internal is empty");
+            }
 
             // close everything
             set.close();
             statement.close();
-        } catch (SQLException e) { }
+        } catch (Exception e) {
+            // Doesn't exist, create it
+            try {
+                PreparedStatement statement = connection.prepareStatement("INSERT INTO " + prefix + "internal (name, value) VALUES(?, ?)");
+                statement.setString(1, "version");
+                statement.setInt(2, databaseVersion);
+
+                // ok
+                statement.executeUpdate();
+                statement.close();
+            } catch (SQLException ex) { }
+        }
 
         return databaseVersion;
     }
@@ -916,6 +937,27 @@ public class PhysDB extends Database {
         }
 
         return new ArrayList<Protection>();
+    }
+
+    /**
+     * Load protections by a player
+     *
+     * @param player
+     * @return
+     */
+    public List<Protection> loadProtectionsByPlayer(String player) {
+        List<Protection> protections = new ArrayList<Protection>();
+
+        try {
+            PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE owner = ?");
+            statement.setString(1, player);
+
+            return resolveProtections(statement);
+        } catch (Exception e) {
+            printException(e);
+        }
+
+        return protections;
     }
 
     /**

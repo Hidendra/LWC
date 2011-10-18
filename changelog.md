@@ -1,4 +1,7 @@
 ### 4.0.0-alpha7
+* The command 
+* **FIX:** `/lwc admin report` would throw an exception
+* **FIX:** Internal database version was not updating
 * Startup time has been dramatically increased for those with a very large amount of protections.
 * The bug 656 workaround has been replaced with a feature that is automatically used when chunk bug are detected.
 * It is now **no longer possible (!!)** to easily downgrade to 3.5x without losing some data.
