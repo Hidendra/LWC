@@ -39,8 +39,19 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 public class LimitsModule extends JavaModule {
+
+    /**
+     * The permission node for type: default protections
+     */
+    public static final String PERMISSION_NODE_GLOBAL = "lwc.limit.";
+
+    /**
+     * NODE.BLOCK.limit
+     */
+    public static final String PERMISSION_NODE_BLOCK = "lwc.limit.block.";
 
     /**
      * Limits type
@@ -133,6 +144,47 @@ public class LimitsModule extends JavaModule {
     }
 
     /**
+     * Search the player's permissions for a permission and return it
+     * Depending on this is used, this can become O(scary)
+     *
+     * @param player
+     * @param prefix
+     * @return
+     */
+    public PermissionAttachmentInfo searchPermissions(Player player, String prefix) {
+        for (PermissionAttachmentInfo attachment : player.getEffectivePermissions()) {
+            String permission = attachment.getPermission();
+
+            // check for the perm node
+            if (attachment.getValue() && permission.startsWith(prefix)) {
+                // Bingo!
+                return attachment;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Search permissions for an integer and if found, return it
+     *
+     * @param player
+     * @param prefix
+     * @return
+     */
+    public int searchPermissionsForInteger(Player player, String prefix) {
+        PermissionAttachmentInfo attachment = searchPermissions(player, prefix);
+
+        // Not found
+        if (attachment == null) {
+            return -1;
+        }
+
+        // Found
+        return Integer.parseInt(attachment.getPermission().substring(prefix.length()));
+    }
+
+    /**
      * Get the protection limits for a player
      *
      * @param player
@@ -143,27 +195,48 @@ public class LimitsModule extends JavaModule {
         int limit = -1;
         Type type = Type.resolve(resolveString(player, "type"));
 
-        if (type == Type.DEFAULT) {
-            limit = resolveInteger(player, "limit");
-        } else if (type == Type.CUSTOM) {
-            // first try the block id
-            limit = resolveInteger(player, blockId + "");
+        // Try permissions
+        int globalLimit = searchPermissionsForInteger(player, PERMISSION_NODE_GLOBAL);
 
-            // and now try the name
-            if (limit == -1 && blockId > 0) {
-                String name = Material.getMaterial(blockId).toString().toLowerCase().replaceAll("block", "");
+        // Was it found?
+        if (globalLimit >= 0) {
+            return globalLimit;
+        }
 
-                if (name.endsWith("_")) {
-                    name = name.substring(0, name.length() - 1);
+        // Try the block id now
+        int blockLimit = searchPermissionsForInteger(player, PERMISSION_NODE_BLOCK + blockId + ".");
+
+        if (blockLimit != -1) {
+            return blockLimit;
+        }
+
+        switch (type) {
+
+            case DEFAULT:
+                limit = resolveInteger(player, "limit");
+                break;
+
+            case CUSTOM:
+                // first try the block id
+                limit = resolveInteger(player, blockId + "");
+
+                // and now try the name
+                if (limit == -1 && blockId > 0) {
+                    String name = Material.getMaterial(blockId).toString().toLowerCase().replaceAll("block", "");
+
+                    if (name.endsWith("_")) {
+                        name = name.substring(0, name.length() - 1);
+                    }
+
+                    limit = resolveInteger(player, name);
                 }
 
-                limit = resolveInteger(player, name);
-            }
+                // if it's STILL null, fall back
+                if (limit == -1) {
+                    limit = resolveInteger(player, "limit");
+                }
+                break;
 
-            // if it's STILL null, fall back
-            if (limit == -1) {
-                limit = resolveInteger(player, "limit");
-            }
         }
 
         return limit == -1 ? UNLIMITED : limit;
