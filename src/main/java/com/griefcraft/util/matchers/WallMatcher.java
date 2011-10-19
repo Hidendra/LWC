@@ -49,10 +49,15 @@ public class WallMatcher implements ProtectionFinder.Matcher {
     private static final Set<Material> PROTECTABLES_WALL = EnumSet.of(Material.WALL_SIGN);
 
     /**
+     * Those evil levers and buttons have all different bits for directions. Gah!
+     */
+    private static final Set<Material> PROTECTABLES_LEVERS_ET_AL = EnumSet.of(Material.STONE_BUTTON, Material.LEVER);
+
+    /**
      * Same as PROTECTABLE_WALL, except the facing direction is reversed,
      * such as trap doors
      */
-    private static final Set<Material> PROTECTABLES_WALL_REVERSE = EnumSet.of(Material.TRAP_DOOR, Material.STONE_BUTTON, Material.LEVER);
+    private static final Set<Material> PROTECTABLES_WALL_REVERSE = EnumSet.of(Material.TRAP_DOOR);
 
     /**
      * Possible faces around the base block that protections could be at
@@ -92,6 +97,7 @@ public class WallMatcher implements ProtectionFinder.Matcher {
     private Block tryMatchBlock(Block block, BlockFace matchingFace) {
         byte direction = block.getData();
 
+        // Blocks such as wall signs
         if (PROTECTABLES_WALL.contains(block.getType())) {
             // Protect the wall the sign is attached to
             switch (direction) {
@@ -119,7 +125,28 @@ public class WallMatcher implements ProtectionFinder.Matcher {
                     }
                     break;
             }
-        } else if (PROTECTABLES_WALL_REVERSE.contains(block.getType())) {
+        }
+
+        // Levers, buttons
+        else if (PROTECTABLES_LEVERS_ET_AL.contains(block.getType())) {
+            byte EAST = 0x4;
+            byte WEST = 0x3;
+            byte SOUTH = 0x1;
+            byte NORTH = 0x2;
+
+            if (matchingFace == BlockFace.EAST && (direction & EAST) == EAST) {
+                return block;
+            } else if (matchingFace == BlockFace.WEST && (direction & WEST) == WEST) {
+                return block;
+            } else if (matchingFace == BlockFace.SOUTH && (direction & SOUTH) == SOUTH) {
+                return block;
+            } else if (matchingFace == BlockFace.NORTH && (direction & NORTH) == NORTH) {
+                return block;
+            }
+        }
+
+        // Blocks such as trap doors
+        else if (PROTECTABLES_WALL_REVERSE.contains(block.getType())) {
             switch (direction) {
                 case 0x00: // west
                     if (matchingFace == BlockFace.EAST) {
