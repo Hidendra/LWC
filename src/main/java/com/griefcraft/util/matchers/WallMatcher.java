@@ -99,31 +99,19 @@ public class WallMatcher implements ProtectionFinder.Matcher {
 
         // Blocks such as wall signs
         if (PROTECTABLES_WALL.contains(block.getType())) {
-            // Protect the wall the sign is attached to
-            switch (direction) {
-                case 0x02: // east
-                    if (matchingFace == BlockFace.EAST) {
-                        return block;
-                    }
-                    break;
+            byte EAST = 0x02;
+            byte WEST = 0x03;
+            byte SOUTH = 0x05;
+            byte NORTH = 0x04;
 
-                case 0x03: // west
-                    if (matchingFace == BlockFace.WEST) {
-                        return block;
-                    }
-                    break;
-
-                case 0x04: // north
-                    if (matchingFace == BlockFace.NORTH) {
-                        return block;
-                    }
-                    break;
-
-                case 0x05: // south
-                    if (matchingFace == BlockFace.SOUTH) {
-                        return block;
-                    }
-                    break;
+            if (matchingFace == BlockFace.EAST && (direction & EAST) == EAST) {
+                return block;
+            } else if (matchingFace == BlockFace.WEST && (direction & WEST) == WEST) {
+                return block;
+            } else if (matchingFace == BlockFace.SOUTH && (direction & SOUTH) == SOUTH) {
+                return block;
+            } else if (matchingFace == BlockFace.NORTH && (direction & NORTH) == NORTH) {
+                return block;
             }
         }
 
@@ -147,30 +135,19 @@ public class WallMatcher implements ProtectionFinder.Matcher {
 
         // Blocks such as trap doors
         else if (PROTECTABLES_WALL_REVERSE.contains(block.getType())) {
-            switch (direction) {
-                case 0x00: // west
-                    if (matchingFace == BlockFace.EAST) {
-                        return block;
-                    }
-                    break;
+            byte EAST = 0x01;
+            byte WEST = 0x00;
+            byte SOUTH = 0x02;
+            byte NORTH = 0x03;
 
-                case 0x01: // east
-                    if (matchingFace == BlockFace.WEST) {
-                        return block;
-                    }
-                    break;
-
-                case 0x02: // south
-                    if (matchingFace == BlockFace.NORTH) {
-                        return block;
-                    }
-                    break;
-
-                case 0x03: // north
-                    if (matchingFace == BlockFace.SOUTH) {
-                        return block;
-                    }
-                    break;
+            if (matchingFace == BlockFace.WEST && (direction & EAST) == EAST) {
+                return block;
+            } else if (matchingFace == BlockFace.EAST && (direction & WEST) == WEST) {
+                return block;
+            } else if (matchingFace == BlockFace.NORTH && (direction & SOUTH) == SOUTH) {
+                return block;
+            } else if (matchingFace == BlockFace.SOUTH && (direction & NORTH) == NORTH) {
+                return block;
             }
         }
 
