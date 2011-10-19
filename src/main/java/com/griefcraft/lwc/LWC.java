@@ -105,6 +105,7 @@ import com.griefcraft.sql.Database;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.Performance;
+import com.griefcraft.util.ProtectionFinder;
 import com.griefcraft.util.StopWatch;
 import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.UpdateThread;
@@ -738,37 +739,18 @@ public class LWC {
             return physicalDatabase.loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
         }
 
-        // get the possible protections for the selected block
-        List<Block> protections = getProtectionSet(block.getWorld(), block.getX(), block.getY(), block.getZ());
+        // Create a protection finder
+        ProtectionFinder finder = new ProtectionFinder(this);
+
+        // Search for a protection
+        boolean result = finder.matchBlocks(block);
 
         if (debugger != null) {
-            debugger.debug(Colors.LightBlue + "ProtectionSet: " + Colors.Yellow + protections.size());
+            debugger.debug(String.format("finder.matchBlocks(%s): %s", block.toString(), Boolean.toString(result)));
         }
 
-        // loop through and check for protected blocks
-        for (Block protectableBlock : protections) {
-            boolean protectable = isProtectable(protectableBlock);
-
-            // send debug info to the debugger
-            if (debugger != null) {
-                debugger.debug(Colors.LightBlue + "MATCH: " + Colors.Yellow + protectableBlock.getType() + " => " + protectableBlock
-                        + " " + Colors.LightBlue + "Protectable: " + Colors.Yellow + protectable);
-            }
-
-            // Is the block actually protectable?
-            if (!protectable) {
-                continue;
-            }
-
-//            log("findProtection: checking protectableBlock world="+world.getName()+",x="+protectableBlock.getX()+",y="+protectableBlock.getY()+"z="+protectableBlock.getZ());
-            Protection protection = physicalDatabase.loadProtection(block.getWorld().getName(), protectableBlock.getX(), protectableBlock.getY(), protectableBlock.getZ());
-
-            if (protection != null) {
-                return protection;
-            }
-        }
-
-        return null;
+        // We're done, load the possibly loaded protection
+        return finder.loadProtection();
     }
 
     /**
@@ -870,57 +852,21 @@ public class LWC {
      * @return the Chest[] array of chests
      */
     public List<Block> getProtectionSet(World world, int x, int y, int z) {
-        List<Block> entities = new ArrayList<Block>(3);
-
         if (world == null) {
-            return entities;
+            return new ArrayList<Block>();
         }
 
+        // Get the base block
         Block baseBlock = world.getBlockAt(x, y, z);
 
-        // First check the block they clicked either way -- incase that chunk isn't affected by bug 656
-        entities = _validateBlock(entities, baseBlock, true);
+        // Create a new protection finder
+        ProtectionFinder finder = new ProtectionFinder(this);
 
-        int dev = -1;
-        boolean isXDir = true;
+        // Look for blocks
+        finder.matchBlocks(baseBlock);
 
-        /* This loop checks each block in 1 direction on the X/Z axis, so it checks a total of
-         * four blocks: (X-1, Z); (X+1,Z); (X,Z-1); (X,Z+1)
-         * It is looking for any protectable blocks in that range, primarily looking for double chests.
-         * - comment by morganm 6/19/2011, code by Hidendra
-         */
-        while (true) {
-            Block block = world.getBlockAt(x + (isXDir ? dev : 0), y, z + (isXDir ? 0 : dev));
-            entities = _validateBlock(entities, block);
-
-            if (dev == 1) {
-                if (isXDir) {
-                    isXDir = false;
-                    dev = -1;
-                    continue;
-                } else {
-                    break;
-                }
-            }
-
-            dev = 1;
-        }
-
-//		log("getProtectionSet.preCache: entities.size()="+entities.size()+", baseblock="+baseBlock);
-
-        /* Normal logic is to check the block they clicked to see if it's a "valid" block.
-         * Since bug #656 doesn't accurately report block state, this results in valid blocks
-         * getting dropped from the protection list.  The workaround just applies the protection
-         * to the given x,y,z block regardless of what Bukkit says the state/material of that
-         * block is.
-         */
-        if (entities.isEmpty()) {
-            findCachedProtection(entities, baseBlock);
-        }
-
-//		log("getProtectionSet.exit: entities.size()="+entities.size()+", baseblock="+baseBlock);
-
-        return entities;
+        // return the matched blocks
+        return new ArrayList<Block>(finder.getBlocks());
     }
 
     /**
@@ -1539,278 +1485,6 @@ public class LWC {
         // player.sendMessage(Colors.Red + "Usage:" + Colors.Gold + " " +
         // command);
         sendLocale(player, "help.simpleusage", "command", command);
-    }
-
-    /**
-     * Ensure a chest/furnace is protectable where it's at
-     *
-     * @param entities
-     * @param block
-     * @return
-     */
-    private List<Block> _validateBlock(List<Block> entities, Block block) {
-        return _validateBlock(entities, block, false);
-    }
-
-    /**
-     * Used only when Bukkit #656 flag is enabled, this call will look for any cached protections
-     * related to the given block.
-     *
-     * @param block
-     * @return
-     */
-    private boolean findCachedProtection(List<Block> entities, Block block) {
-        boolean foundProtection = false;
-
-        if (physicalDatabase.getCachedProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ()) != null) {
-            // if the block isn't part of the list, see if it should be, and if so, add it
-            if (!entities.contains(block)) {
-                entities.add(block);
-            }
-
-            foundProtection = true;
-        }
-
-        return foundProtection;
-    }
-
-    /**
-     * This is very similar to _validateBlock(), except we return all blocks related to a given
-     * protection.  The primary difference is that for a door block, this will return both door
-     * blocks and the block underneath the door, whereas _validateBlock() will generally only
-     * return both door blocks unless the baseBlock happens to be the the underneath block.
-     * <p/>
-     * The primary purpose of this method is for the bug656 workaround, to make sure we accurately
-     * unlock all related "locked" blocks when /cremove is used.
-     *
-     * @param world
-     * @param x
-     * @param y
-     * @param z
-     * @return the blocks found related to the protection at the block passed in (if any)
-     */
-    public List<Block> getRelatedBlocks(World world, int x, int y, int z) {
-        Block block = world.getBlockAt(x, y, z);
-
-        // let getProtectionSet()/_validateBlock do most of the work
-        List<Block> entities = getProtectionSet(world, x, y, z);
-
-        // now check if it was a door, that we've included the block underneath the door also
-        switch (block.getTypeId()) {
-            case 64:    // wooden door
-            case 71:    // iron door
-                Block down = block.getRelative(BlockFace.DOWN);
-                if (down.getTypeId() == 64 || down.getTypeId() == 71) {
-                    down = down.getRelative(BlockFace.DOWN);
-                }
-
-                if (!entities.contains(down))
-                    entities.add(down);
-        }
-
-        return entities;
-    }
-
-    /**
-     * Check if a block is destroyed when the block below it is destroyed
-     *
-     * @param block
-     * @return
-     */
-    private boolean isDestroyedByGravity(Block block) {
-        switch (block.getType()) {
-            case SIGN_POST:
-            case RAILS:
-            case POWERED_RAIL:
-            case DETECTOR_RAIL:
-                return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Ensure a chest/furnace is protectable where it's at
-     *
-     * @param block
-     * @param block
-     * @param isBaseBlock
-     * @return
-     */
-    private List<Block> _validateBlock(List<Block> entities, Block block, boolean isBaseBlock) {
-        if (block == null) {
-            return entities;
-        }
-
-        if (entities.size() > 2) {
-            return entities;
-        }
-
-        Material type = block.getType();
-        Block up = block.getRelative(BlockFace.UP);
-
-        if (entities.size() == 1) {
-            Block other = entities.get(0);
-
-            switch (other.getTypeId()) {
-
-                // Furnace
-                case 61:
-                case 62:
-                    return entities;
-
-                // Dispenser
-                case 23:
-                    return entities;
-
-                // Sign / Wall sign
-                case 63:
-                case 68:
-                    return entities;
-
-                // Chest
-                case 54:
-                    if (type != Material.CHEST) {
-                        return entities;
-                    }
-
-                    break;
-
-                // Wooden door
-                case 64:
-                    if (type != Material.WOODEN_DOOR) {
-                        return entities;
-                    }
-
-                    break;
-
-                // Iron door
-                case 71:
-                    if (type != Material.IRON_DOOR_BLOCK) {
-                        return entities;
-                    }
-
-                    break;
-
-            }
-
-            if (!entities.contains(block)) {
-                entities.add(block);
-            }
-        } else if (isBaseBlock && (up.getType() == Material.WOODEN_DOOR || up.getType() == Material.IRON_DOOR_BLOCK || type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK)) {
-            // check if they're clicking the block under the door
-            if (type != Material.WOODEN_DOOR && type != Material.IRON_DOOR_BLOCK) {
-                entities.clear();
-                entities.add(block); // block under the door
-                entities.add(block.getRelative(BlockFace.UP)); // bottom half
-                entities.add(block.getWorld().getBlockAt(block.getX(), block.getY() + 2, block.getZ())); // top
-                // half
-            } else {
-                entities.clear();
-                if (up.getType() == Material.WOODEN_DOOR || up.getType() == Material.IRON_DOOR_BLOCK) {
-                    entities.add(block); // bottom half
-                    entities.add(up); // top half
-                } else {
-                    entities.add(block.getRelative(BlockFace.DOWN)); // bottom half
-                    entities.add(block); // top half
-                }
-            }
-        } else if (isBaseBlock && (isDestroyedByGravity(block) || isDestroyedByGravity(up))) {
-            // If it's a block that is destroyed when the block below it is destroyed, protect it!
-
-            if (entities.size() == 0) {
-                // Check if we're clicking on the special block itself, otherwise it's the block above it
-                if (isProtectable(block)) {
-                    entities.add(block);
-                } else {
-                    entities.add(up);
-                }
-            }
-        } else if (isBaseBlock && (type == Material.FURNACE || type == Material.DISPENSER || type == Material.JUKEBOX)) {
-            // protections that are just 1 block
-            if (entities.size() == 0) {
-                entities.add(block);
-            }
-
-            return entities;
-        } else if (isBaseBlock && !isProtectable(block)) {
-            // Look for a ronery wall sign
-            Block face;
-
-            // this shortens it quite a bit, just put the possible faces into an
-            // array
-            BlockFace[] faces = new BlockFace[]{BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
-
-            // Match wall signs to the wall it's attached to
-            for (BlockFace blockFace : faces) {
-                if ((face = block.getRelative(blockFace)) != null) {
-                    byte direction = face.getData();
-
-                    if (face.getType() == Material.WALL_SIGN) {
-                        // Protect the wall the sign is attached to
-                        switch (direction) {
-                            case 0x02: // east
-                                if (blockFace == BlockFace.EAST) {
-                                    entities.add(face);
-                                }
-                                break;
-
-                            case 0x03: // west
-                                if (blockFace == BlockFace.WEST) {
-                                    entities.add(face);
-                                }
-                                break;
-
-                            case 0x04: // north
-                                if (blockFace == BlockFace.NORTH) {
-                                    entities.add(face);
-                                }
-                                break;
-
-                            case 0x05: // south
-                                if (blockFace == BlockFace.SOUTH) {
-                                    entities.add(face);
-                                }
-                                break;
-                        }
-                    } else if (face.getType() == Material.TRAP_DOOR) {
-                        switch (direction) {
-                            case 0x00: // west
-                                if (blockFace == BlockFace.EAST) {
-                                    entities.add(face);
-                                }
-                                break;
-
-                            case 0x01: // east
-                                if (blockFace == BlockFace.WEST) {
-                                    entities.add(face);
-                                }
-                                break;
-
-                            case 0x02: // south
-                                if (blockFace == BlockFace.NORTH) {
-                                    entities.add(face);
-                                }
-                                break;
-
-                            case 0x03: // north
-                                if (blockFace == BlockFace.SOUTH) {
-                                    entities.add(face);
-                                }
-                                break;
-                        }
-                    }
-
-                }
-            }
-        }
-
-        // Add the block if it's protectable and the one they clicked
-        if (isProtectable(block) && isBaseBlock && !entities.contains(block)) {
-            entities.add(block);
-        }
-
-        return entities;
     }
 
     /**
