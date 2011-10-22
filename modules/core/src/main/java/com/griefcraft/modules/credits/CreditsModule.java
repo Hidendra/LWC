@@ -168,6 +168,10 @@ public class CreditsModule extends JavaModule {
                 "TCarlsen",
                 " ",
 
+                Colors.Green + "Italian",
+                "portaro",
+                "",
+
                 Colors.Red + "Donations",
                 Colors.Gray + "(chronological order)",
                 "darknavi",
@@ -181,6 +185,7 @@ public class CreditsModule extends JavaModule {
                 "andrewkm",
                 "Eric King", // todo
                 "Twizz",
+                "spunkiie",
                 " ",
 
                 Colors.Red + "And....",
