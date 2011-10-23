@@ -30,7 +30,7 @@ package com.griefcraft.sql;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.sql.Database.Type;
-import com.griefcraft.util.Performance;
+import com.griefcraft.util.Statistics;
 
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -155,9 +155,9 @@ public class Table {
 
         // add the query to performance
         if (memory) {
-            Performance.addMemDBQuery();
+            Statistics.addMemDBQuery();
         } else {
-            Performance.addPhysDBQuery();
+            Statistics.addPhysDBQuery();
         }
     }
 

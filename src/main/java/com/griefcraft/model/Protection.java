@@ -32,7 +32,8 @@ import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.util.Colors;
-import com.griefcraft.util.StringUtils;
+import com.griefcraft.util.StringUtil;
+import com.griefcraft.util.TimeUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -771,7 +772,7 @@ public class Protection {
         }
 
         // format the last accessed time
-        String lastAccessed = StringUtils.timeToString((System.currentTimeMillis() / 1000L) - this.lastAccessed);
+        String lastAccessed = TimeUtil.timeToString((System.currentTimeMillis() / 1000L) - this.lastAccessed);
 
         if (!lastAccessed.equals("Not yet known")) {
             lastAccessed += " ago";
@@ -784,7 +785,7 @@ public class Protection {
      * @return string representation of the protection type
      */
     public String typeToString() {
-        return StringUtils.capitalizeFirstLetter(type.toString());
+        return StringUtil.capitalizeFirstLetter(type.toString());
     }
 
 }

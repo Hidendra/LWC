@@ -35,11 +35,11 @@ import com.griefcraft.listeners.LWCServerListener;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.sql.Database;
 import com.griefcraft.util.Colors;
-import com.griefcraft.util.LWCResourceBundle;
-import com.griefcraft.util.LocaleClassLoader;
+import com.griefcraft.util.StringUtil;
+import com.griefcraft.util.locale.LWCResourceBundle;
+import com.griefcraft.util.locale.LocaleClassLoader;
 import com.griefcraft.util.StopWatch;
-import com.griefcraft.util.StringUtils;
-import com.griefcraft.util.UTF8Control;
+import com.griefcraft.util.locale.UTF8Control;
 import com.griefcraft.util.Updater;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -141,7 +141,7 @@ public class LWCPlugin extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
         String commandName = command.getName().toLowerCase();
-        String argString = StringUtils.join(args, 0);
+        String argString = StringUtil.join(args, 0);
         boolean isPlayer = (sender instanceof Player); // check if they're a player
 
         // Timing
@@ -225,7 +225,7 @@ public class LWCPlugin extends JavaPlugin {
         }
 
         ///// Dispatch command to modules
-        LWCCommandEvent evt = new LWCCommandEvent(sender, args[0].toLowerCase(), args.length > 1 ? StringUtils.join(args, 1).split(" ") : new String[0]);
+        LWCCommandEvent evt = new LWCCommandEvent(sender, args[0].toLowerCase(), args.length > 1 ? StringUtil.join(args, 1).split(" ") : new String[0]);
         lwc.getModuleLoader().dispatchEvent(evt);
 
         // Send timings if they're a player

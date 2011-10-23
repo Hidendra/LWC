@@ -29,7 +29,7 @@
 package com.griefcraft.scripting.event;
 
 import com.griefcraft.scripting.ModuleLoader;
-import com.griefcraft.util.StringUtils;
+import com.griefcraft.util.StringUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 
@@ -56,7 +56,7 @@ public class LWCCommandEvent extends LWCEvent implements Cancellable {
      */
     public boolean hasFlag(String... flags) {
         for (String flag : flags) {
-            if (StringUtils.hasFlag(command, flag)) {
+            if (StringUtil.hasFlag(command, flag)) {
                 return true;
             }
         }
@@ -72,7 +72,7 @@ public class LWCCommandEvent extends LWCEvent implements Cancellable {
      */
     public boolean hasArgumentFlag(String... flags) {
         for (String flag : flags) {
-            if (StringUtils.hasFlag(args, flag)) {
+            if (StringUtil.hasFlag(args, flag)) {
                 return true;
             }
         }

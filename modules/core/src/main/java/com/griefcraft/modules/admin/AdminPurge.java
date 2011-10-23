@@ -31,7 +31,7 @@ package com.griefcraft.modules.admin;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
-import com.griefcraft.util.StringUtils;
+import com.griefcraft.util.StringUtil;
 import org.bukkit.command.CommandSender;
 
 public class AdminPurge extends JavaModule {
@@ -63,7 +63,7 @@ public class AdminPurge extends JavaModule {
         }
 
         boolean shouldRemoveBlocks = args[1].endsWith("remove");
-        String players = StringUtils.join(args, shouldRemoveBlocks ? 2 : 1);
+        String players = StringUtil.join(args, shouldRemoveBlocks ? 2 : 1);
 
         for (String toRemove : players.split(" ")) {
             if (toRemove.contains("'")) continue; // bad me

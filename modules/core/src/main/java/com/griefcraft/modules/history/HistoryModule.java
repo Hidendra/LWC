@@ -36,7 +36,7 @@ import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.util.Colors;
-import com.griefcraft.util.StringUtils;
+import com.griefcraft.util.TimeUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -142,7 +142,7 @@ public class HistoryModule extends JavaModule {
 
         // Only show how long ago it was if we know when it was created
         if (creation != null) {
-            sender.sendMessage(Colors.Yellow + StringUtils.timeToString((System.currentTimeMillis() / 1000L) - history.getTimestamp()) + " ago");
+            sender.sendMessage(Colors.Yellow + TimeUtil.timeToString((System.currentTimeMillis() / 1000L) - history.getTimestamp()) + " ago");
         }
 
         // if its been removed, it most likely will have this key
@@ -158,7 +158,7 @@ public class HistoryModule extends JavaModule {
 
             // Parse a date to show
             String absoluteDestroyDate = destroyed > 0 ? new Date(destroyed * 1000L).toString() : "Unknown";
-            String relativeDestroyDate = destroyed > 0 ? StringUtils.timeToString((System.currentTimeMillis() / 1000L) - destroyed) : "Unknown";
+            String relativeDestroyDate = destroyed > 0 ? TimeUtil.timeToString((System.currentTimeMillis() / 1000L) - destroyed) : "Unknown";
 
             // Send the exact time if known
             sender.sendMessage("Removed on: " + Colors.Yellow + absoluteDestroyDate);

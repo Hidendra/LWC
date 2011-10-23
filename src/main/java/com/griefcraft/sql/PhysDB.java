@@ -38,7 +38,7 @@ import com.griefcraft.model.Job;
 import com.griefcraft.model.Protection;
 import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.scripting.Module;
-import com.griefcraft.util.Performance;
+import com.griefcraft.util.Statistics;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -75,7 +75,7 @@ public class PhysDB extends Database {
 
     @Override
     protected void postPrepare() {
-        Performance.addPhysDBQuery();
+        Statistics.addPhysDBQuery();
     }
 
     /**

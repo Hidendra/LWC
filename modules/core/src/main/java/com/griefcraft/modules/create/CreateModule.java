@@ -39,7 +39,7 @@ import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
 import com.griefcraft.sql.PhysDB;
-import com.griefcraft.util.StringUtils;
+import com.griefcraft.util.StringUtil;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -94,7 +94,7 @@ public class CreateModule extends JavaModule {
         String actionData = action.getData();
         String[] split = actionData.split(" ");
         String protectionType = split[0].toLowerCase();
-        String protectionData = StringUtils.join(split, 1);
+        String protectionData = StringUtil.join(split, 1);
 
         // check permissions again (DID THE LITTLE SHIT MOVE WORLDS??!?!?!?!?!?)
         if (!lwc.hasPermission(player, "lwc.create." + protectionType, "lwc.create", "lwc.protect")) {
@@ -147,7 +147,7 @@ public class CreateModule extends JavaModule {
             String reason = "";
 
             if (splitData.length > 1) {
-                reason = StringUtils.join(splitData, 1);
+                reason = StringUtil.join(splitData, 1);
             }
 
             Protection.Type tmpType = Protection.Type.TRAP_KICK;
@@ -193,9 +193,9 @@ public class CreateModule extends JavaModule {
 
         LWCPlayer player = lwc.wrapPlayer(sender);
 
-        String full = StringUtils.join(args, 0).trim();
+        String full = StringUtil.join(args, 0).trim();
         String type = args[0].toLowerCase();
-        String data = StringUtils.join(args, 1);
+        String data = StringUtil.join(args, 1);
         event.setCancelled(true);
 
         /**
@@ -222,7 +222,7 @@ public class CreateModule extends JavaModule {
                 return;
             }
 
-            String hiddenPass = StringUtils.transform(data, '*');
+            String hiddenPass = StringUtil.transform(data, '*');
             lwc.sendLocale(player, "protection.create.password", "password", hiddenPass);
         } else if (!type.equals("public") && !type.equals("private")) {
             lwc.sendLocale(player, "help.creation");
