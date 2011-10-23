@@ -28,8 +28,7 @@
 
 package com.griefcraft.model;
 
-import com.griefcraft.cache.CacheSet;
-import com.griefcraft.cache.LRUCache;
+import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.util.Colors;
@@ -656,9 +655,7 @@ public class Protection {
      */
     public void removeCache() {
         LWC lwc = LWC.getInstance();
-        LRUCache<String, Protection> cache = lwc.getCaches().getProtections();
-
-        cache.remove(getCacheKey());
+        lwc.getProtectionCache().remove(this);
     }
 
     /**
@@ -670,13 +667,13 @@ public class Protection {
             return;
         }
 
-        CacheSet caches = LWC.getInstance().getCaches();
+        ProtectionCache cache = LWC.getInstance().getProtectionCache();
         removeCache();
 
         Protection temp = LWC.getInstance().getPhysicalDatabase().loadProtection(id);
 
         if (temp != null) {
-            caches.getProtections().put(getCacheKey(), temp);
+            cache.add(temp);
         }
     }
 
@@ -688,7 +685,7 @@ public class Protection {
             return;
         }
 
-        LWC.getInstance().getCaches().getProtections().put(getCacheKey(), this);
+        LWC.getInstance().getProtectionCache().add(this);
         LWC.getInstance().getUpdateThread().queueProtectionUpdate(this);
     }
 

@@ -29,7 +29,7 @@
 package com.griefcraft.lwc;
 
 import com.firestar.mcbans.mcbans;
-import com.griefcraft.cache.CacheSet;
+import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.integration.ICurrency;
 import com.griefcraft.integration.IPermissions;
 import com.griefcraft.integration.currency.BOSECurrency;
@@ -165,9 +165,9 @@ public class LWC {
     private final JobManager jobManager = new JobManager(this);
 
     /**
-     * The set of caches
+     * The protection cache
      */
-    private final CacheSet caches = new CacheSet(this);
+    private final ProtectionCache protectionCache = new ProtectionCache(this);
 
     /**
      * Logging instance
@@ -246,10 +246,10 @@ public class LWC {
     }
 
     /**
-     * @return the caches
+     * @return the protection cache
      */
-    public CacheSet getCaches() {
-        return caches;
+    public ProtectionCache getProtectionCache() {
+        return protectionCache;
     }
 
     /**
@@ -1700,7 +1700,7 @@ public class LWC {
                 }
 
                 // Remove it from the cache if it's in there
-                caches.getProtections().remove(protection.getCacheKey());
+                protectionCache.remove(protection);
 
                 completed++;
             }

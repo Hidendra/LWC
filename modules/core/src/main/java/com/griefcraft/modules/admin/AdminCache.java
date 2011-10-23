@@ -28,6 +28,7 @@
 
 package com.griefcraft.modules.admin;
 
+import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
@@ -56,19 +57,20 @@ public class AdminCache extends JavaModule {
 
         // we have the right command
         event.setCancelled(true);
+        ProtectionCache cache = lwc.getProtectionCache();
 
         if (args.length > 1) {
             String cmd = args[1].toLowerCase();
 
             if (cmd.equals("clear")) {
-                lwc.getCaches().getProtections().clear();
+                cache.clear();
                 sender.sendMessage(Colors.Green + "Caches cleared.");
             }
         } else {
-            int size = lwc.getCaches().getProtections().size();
-            int max = lwc.getConfiguration().getInt("core.cacheSize", 10000);
+            int size = cache.size();
+            int capacity = cache.capacity();
 
-            sender.sendMessage(Colors.Green + size + Colors.Yellow + "/" + Colors.Green + max);
+            sender.sendMessage(Colors.Green + size + Colors.Yellow + "/" + Colors.Green + capacity);
         }
     }
 

@@ -32,7 +32,6 @@ import com.griefcraft.bukkit.LWCSpoutPlugin;
 import com.griefcraft.model.Action;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
-import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCSendLocaleEvent;
 import org.bukkit.block.Block;

@@ -28,7 +28,7 @@
 
 package com.griefcraft.util;
 
-import com.griefcraft.cache.LRUCache;
+import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.scripting.MetaData;
@@ -145,11 +145,10 @@ public class Performance {
         sender.sendMessage(" ");
 
         sender.sendMessage(Colors.Red + " ==== Cache ==== ");
-        sender.sendMessage("  Size: " + lwc.getCaches().getProtections().size() + "/" + lwc.getConfiguration().getInt("core.cacheSize", 10000));
-
-        LRUCache protections = lwc.getCaches().getProtections();
-        sender.sendMessage("  Reads: " + protections.getReads() + " | " + String.format("%.2f", getAverage(protections.getReads())) + " / second");
-        sender.sendMessage("  Writes: " + protections.getWrites() + " | " + String.format("%.2f", getAverage(protections.getWrites())) + " / second");
+        ProtectionCache cache = lwc.getProtectionCache();
+        sender.sendMessage("  Refs: " + cache.size() + "/" + cache.capacity());
+        sender.sendMessage("  Reads: " + cache.getReads() + " | " + String.format("%.2f", getAverage(cache.getReads())) + " / second");
+        sender.sendMessage("  Writes: " + cache.getWrites() + " | " + String.format("%.2f", getAverage(cache.getWrites())) + " / second");
     }
 
     /**

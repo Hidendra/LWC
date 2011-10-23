@@ -29,6 +29,7 @@
 package com.griefcraft.sql;
 
 import com.griefcraft.cache.LRUCache;
+import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Flag;
@@ -751,7 +752,7 @@ public class PhysDB extends Database {
      */
     public void precache() {
         LWC lwc = LWC.getInstance();
-        LRUCache<String, Protection> cache = lwc.getCaches().getProtections();
+        ProtectionCache cache = lwc.getProtectionCache();
 
         // clear the cache incase we're working on a dirty cache
         cache.clear();
@@ -772,8 +773,7 @@ public class PhysDB extends Database {
 
             // throw all of the protections in
             for (Protection protection : protections) {
-                String cacheKey = protection.getCacheKey();
-                cache.put(cacheKey, protection);
+                cache.add(protection);
             }
 
             log("Precached " + protections.size() + " protections.");
@@ -782,42 +782,6 @@ public class PhysDB extends Database {
         }
 
         // Cache them all
-    }
-
-    /**
-     * Used for the Bukkit #656 workaround to add a "cached" protection node when we find a
-     * 2-block chest. A protection normally only applies to one block, so this method will be
-     * called for the 2nd half of the chest to apply the same protection to the second block
-     * when it is first noticed.  In this way, even if Bukkit goes bonkers (as in bug #656),
-     * and starts returning bogus Blocks, we have already cached the double chest when
-     * we first noticed it and the Protection will still apply.
-     *
-     * @param worldName
-     * @param x
-     * @param y
-     * @param z
-     */
-    public void addCachedProtection(String worldName, int x, int y, int z, Protection p) {
-        String cacheKey = worldName + ":" + x + ":" + y + ":" + z;
-        LRUCache<String, Protection> cache = LWC.getInstance().getCaches().getProtections();
-
-        cache.put(cacheKey, p);
-    }
-
-    /**
-     * Return the cached Protection for a given block (if any).
-     *
-     * @param worldName
-     * @param x
-     * @param y
-     * @param z
-     * @return
-     */
-    public Protection getCachedProtection(String worldName, int x, int y, int z) {
-        String cacheKey = worldName + ":" + x + ":" + y + ":" + z;
-        LRUCache<String, Protection> cache = LWC.getInstance().getCaches().getProtections();
-
-        return cache.get(cacheKey);
     }
 
     /**
@@ -833,11 +797,12 @@ public class PhysDB extends Database {
         String cacheKey = worldName + ":" + x + ":" + y + ":" + z;
 
         // the protection cache
-        LRUCache<String, Protection> cache = LWC.getInstance().getCaches().getProtections();
+        ProtectionCache cache = LWC.getInstance().getProtectionCache();
 
         // check if the protection is already cached
-        if (cache.containsKey(cacheKey)) {
-            return cache.get(cacheKey);
+        Protection cached = cache.getProtection(cacheKey);
+        if (cached != null) {
+            return cached;
         }
 
         try {
@@ -850,7 +815,7 @@ public class PhysDB extends Database {
             Protection protection = resolveProtection(statement);
 
             // cache the protection
-            cache.put(cacheKey, protection);
+            cache.add(protection);
 
             return protection;
         } catch (SQLException e) {
@@ -1013,9 +978,6 @@ public class PhysDB extends Database {
             statement.setLong(10, System.currentTimeMillis() / 1000L);
 
             statement.executeUpdate();
-
-            // remove the null protection from cache if it's in there
-            LWC.getInstance().getCaches().getProtections().remove(world + ":" + x + ":" + y + ":" + z);
 
             // We need to create the initial transaction for this protection
             // this transaction is viewable and modifiable during POST_REGISTRATION
