@@ -49,8 +49,25 @@ import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Flag;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
-import com.griefcraft.model.ProtectionTypes;
-import com.griefcraft.modules.admin.*;
+import com.griefcraft.modules.admin.AdminCache;
+import com.griefcraft.modules.admin.AdminCleanup;
+import com.griefcraft.modules.admin.AdminClear;
+import com.griefcraft.modules.admin.AdminConfig;
+import com.griefcraft.modules.admin.AdminDump;
+import com.griefcraft.modules.admin.AdminExpire;
+import com.griefcraft.modules.admin.AdminFind;
+import com.griefcraft.modules.admin.AdminFlush;
+import com.griefcraft.modules.admin.AdminForceOwner;
+import com.griefcraft.modules.admin.AdminLocale;
+import com.griefcraft.modules.admin.AdminPurge;
+import com.griefcraft.modules.admin.AdminPurgeBanned;
+import com.griefcraft.modules.admin.AdminQuery;
+import com.griefcraft.modules.admin.AdminReload;
+import com.griefcraft.modules.admin.AdminRemove;
+import com.griefcraft.modules.admin.AdminReport;
+import com.griefcraft.modules.admin.AdminUpdate;
+import com.griefcraft.modules.admin.AdminVersion;
+import com.griefcraft.modules.admin.BaseAdminModule;
 import com.griefcraft.modules.confirm.ConfirmModule;
 import com.griefcraft.modules.create.CreateModule;
 import com.griefcraft.modules.credits.CreditsModule;
@@ -351,17 +368,17 @@ public class LWC {
         String playerName = player.getName();
 
         switch (protection.getType()) {
-            case ProtectionTypes.PUBLIC:
+            case PUBLIC:
                 return true;
 
-            case ProtectionTypes.PASSWORD:
+            case PASSWORD:
                 if (wrapPlayer(player).getAccessibleProtections().contains(protection)) {
                     return true;
                 }
 
                 break;
 
-            case ProtectionTypes.PRIVATE:
+            case PRIVATE:
                 if (playerName.equalsIgnoreCase(protection.getOwner())) {
                     return true;
                 }
@@ -427,21 +444,21 @@ public class LWC {
         String playerName = player.getName();
 
         switch (protection.getType()) {
-            case ProtectionTypes.PUBLIC:
+            case PUBLIC:
                 if (player.getName().equalsIgnoreCase(protection.getOwner())) {
                     return true;
                 }
 
                 break;
 
-            case ProtectionTypes.PASSWORD:
+            case PASSWORD:
                 if (player.getName().equalsIgnoreCase(protection.getOwner()) && wrapPlayer(player).getAccessibleProtections().contains(protection)) {
                     return true;
                 }
 
                 break;
 
-            case ProtectionTypes.PRIVATE:
+            case PRIVATE:
                 if (playerName.equalsIgnoreCase(protection.getOwner())) {
                     return true;
                 }
@@ -564,28 +581,28 @@ public class LWC {
         }
 
         switch (protection.getType()) {
-            case ProtectionTypes.PASSWORD:
+            case PASSWORD:
                 if (!hasAccess) {
                     sendLocale(player, "protection.general.locked.password", "block", materialToString(block));
                 }
 
                 break;
 
-            case ProtectionTypes.PRIVATE:
+            case PRIVATE:
                 if (!hasAccess) {
                     sendLocale(player, "protection.general.locked.private", "block", materialToString(block));
                 }
 
                 break;
 
-            case ProtectionTypes.TRAP_KICK:
+            case TRAP_KICK:
                 if (!hasAccess) {
                     player.kickPlayer(protection.getPassword());
                     log(player.getName() + " triggered the kick trap: " + protection.toString());
                 }
                 break;
 
-            case ProtectionTypes.TRAP_BAN:
+            case TRAP_BAN:
                 if (!hasAccess) {
                     Plugin mcbansPlugin;
 

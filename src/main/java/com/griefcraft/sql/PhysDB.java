@@ -554,10 +554,10 @@ public class PhysDB extends Database {
      * @param type
      * @return the Protection object
      */
-    public List<Protection> loadProtectionsUsingType(int type) {
+    public List<Protection> loadProtectionsUsingType(Protection.Type type) {
         try {
             PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE type = ?");
-            statement.setInt(1, type);
+            statement.setInt(1, type.ordinal());
 
             return resolveProtections(statement);
         } catch (SQLException e) {
@@ -594,7 +594,7 @@ public class PhysDB extends Database {
             protection.setY(y);
             protection.setZ(z);
             protection.setBlockId(blockId);
-            protection.setType(type);
+            protection.setType(Protection.Type.values()[type]);
             protection.setWorld(world);
             protection.setOwner(owner);
             protection.setPassword(password);
@@ -997,12 +997,12 @@ public class PhysDB extends Database {
      * @param y
      * @param z
      */
-    public Protection registerProtection(int blockId, int type, String world, String player, String data, int x, int y, int z) {
+    public Protection registerProtection(int blockId, Protection.Type type, String world, String player, String data, int x, int y, int z) {
         try {
             PreparedStatement statement = prepare("INSERT INTO " + prefix + "protections (blockId, type, world, owner, password, x, y, z, date, last_accessed) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
             statement.setInt(1, blockId);
-            statement.setInt(2, type);
+            statement.setInt(2, type.ordinal());
             statement.setString(3, world);
             statement.setString(4, player);
             statement.setString(5, data);
@@ -1502,7 +1502,7 @@ public class PhysDB extends Database {
             PreparedStatement statement = prepare("REPLACE INTO " + prefix + "protections (id, type, blockId, world, data, owner, password, x, y, z, date, last_accessed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
             statement.setInt(1, protection.getId());
-            statement.setInt(2, protection.getType());
+            statement.setInt(2, protection.getType().ordinal());
             statement.setInt(3, protection.getBlockId());
             statement.setString(4, protection.getWorld());
             statement.setString(5, protection.getData().toJSONString());
