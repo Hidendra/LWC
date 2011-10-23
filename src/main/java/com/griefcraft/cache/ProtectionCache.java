@@ -54,7 +54,7 @@ public class ProtectionCache {
     /**
      * Protections and their cache key (protection.getCacheKey())
      */
-    private final LRUCache<String, Protection> byCacheKey;
+    private final WeakLRUCache<String, Protection> byCacheKey;
 
     /**
      * The capacity of the cache
@@ -66,7 +66,7 @@ public class ProtectionCache {
         this.capacity = lwc.getConfiguration().getInt("core.cacheSize", 10000);
 
         this.references = new LRUCache<Protection, Object>(capacity);
-        this.byCacheKey = new LRUCache<String, Protection>(capacity);
+        this.byCacheKey = new WeakLRUCache<String, Protection>(capacity);
         logger.info("LWC: Protection cache: 0/" + capacity);
     }
 
