@@ -41,7 +41,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.Driver;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -179,8 +178,7 @@ public abstract class Database {
             classLoader = Bukkit.getServer().getClass().getClassLoader();
         }
 
-        // DatabaseClassLoader classLoader = DatabaseClassLoader.getInstance(new URL("jar:file:" + new File(Updater.DEST_LIBRARY_FOLDER + "lib/" + currentType.getDriver()).getAbsolutePath() + "!/"));
-
+        // What class should we try to load?
         String className = "";
         if (currentType == Type.MySQL) {
             className = "com.mysql.jdbc.Driver";
@@ -188,9 +186,10 @@ public abstract class Database {
             className = "org.sqlite.JDBC";
         }
 
+        // Load the driver class
         Driver driver = (Driver) classLoader.loadClass(className).newInstance();
-        DriverManager.registerDriver(new DriverStub(driver));
 
+        // Create the properties to pass to the driver
         Properties properties = new Properties();
 
         // if we're using mysql, append the database info
@@ -201,10 +200,15 @@ public abstract class Database {
             properties.put("password", lwc.getConfiguration().getString("database.password"));
         }
 
-        connection = DriverManager.getConnection("jdbc:" + currentType.toString().toLowerCase() + ":" + getDatabasePath(), properties);
-        connected = true;
-
-        return true;
+        // Connect to the database
+        try {
+            connection = driver.connect("jdbc:" + currentType.toString().toLowerCase() + ":" + getDatabasePath(), properties);
+            connected = true;
+            return true;
+        } catch (SQLException e) {
+            log("Failed to connect to " + currentType);
+            return false;
+        }
     }
 
     public void dispose() {
