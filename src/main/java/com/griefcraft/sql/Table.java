@@ -154,11 +154,7 @@ public class Table {
         // database.log("Synched table " + prefix + name + " (" + columns.size() + " columns)");
 
         // add the query to performance
-        if (memory) {
-            Statistics.addMemDBQuery();
-        } else {
-            Statistics.addPhysDBQuery();
-        }
+        Statistics.addQuery();
     }
 
     /**
