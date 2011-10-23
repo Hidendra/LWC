@@ -33,14 +33,19 @@ public class ProtectionTypes {
     /**
      * Creatable by anyone
      */
+    @Deprecated
     public static final int PUBLIC = 0;
+    @Deprecated
     public static final int PASSWORD = 1;
+    @Deprecated
     public static final int PRIVATE = 2;
 
     /**
      * Only creatable by lwc admins
      */
+    @Deprecated
     public static final int TRAP_KICK = 3;
+    @Deprecated
     public static final int TRAP_BAN = 4;
 
 }

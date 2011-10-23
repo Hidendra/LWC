@@ -31,11 +31,11 @@ package com.griefcraft.listeners;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
-import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
 import com.griefcraft.scripting.event.LWCRedstoneEvent;
+import com.griefcraft.util.Colors;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -274,11 +274,13 @@ public class LWCBlockListener extends BlockListener {
             autoRegisterType = "private";
         }
 
-        // default to public
-        int type = ProtectionTypes.PUBLIC;
+        // Parse the type
+        Protection.Type type = Protection.Type.valueOf(autoRegisterType.toUpperCase());
 
-        if (autoRegisterType.equalsIgnoreCase("private")) {
-            type = ProtectionTypes.PRIVATE;
+        // Is it okay?
+        if (type == null) {
+            player.sendMessage(Colors.Red + "LWC_INVALID_CONFIG_autoRegister");
+            return;
         }
 
         // If it's a chest, make sure they aren't placing it beside an already registered chest

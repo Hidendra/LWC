@@ -32,7 +32,6 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Action;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
-import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
@@ -125,12 +124,12 @@ public class CreateModule extends JavaModule {
         Protection protection = null;
 
         if (protectionType.equals("public")) {
-            protection = physDb.registerProtection(block.getTypeId(), ProtectionTypes.PUBLIC, worldName, playerName, "", blockX, blockY, blockZ);
+            protection = physDb.registerProtection(block.getTypeId(), Protection.Type.PUBLIC, worldName, playerName, "", blockX, blockY, blockZ);
             lwc.sendLocale(player, "protection.interact.create.finalize");
         } else if (protectionType.equals("password")) {
             String password = lwc.encrypt(protectionData);
 
-            protection = physDb.registerProtection(block.getTypeId(), ProtectionTypes.PASSWORD, worldName, playerName, password, blockX, blockY, blockZ);
+            protection = physDb.registerProtection(block.getTypeId(), Protection.Type.PASSWORD, worldName, playerName, password, blockX, blockY, blockZ);
             player.addAccessibleProtection(protection);
 
             lwc.sendLocale(player, "protection.interact.create.finalize");
@@ -138,7 +137,7 @@ public class CreateModule extends JavaModule {
         } else if (protectionType.equals("private")) {
             String[] rights = protectionData.split(" ");
 
-            protection = physDb.registerProtection(block.getTypeId(), ProtectionTypes.PRIVATE, worldName, playerName, "", blockX, blockY, blockZ);
+            protection = physDb.registerProtection(block.getTypeId(), Protection.Type.PRIVATE, worldName, playerName, "", blockX, blockY, blockZ);
 
             lwc.sendLocale(player, "protection.interact.create.finalize");
             lwc.processRightsModifications(player, protection, rights);
@@ -151,10 +150,10 @@ public class CreateModule extends JavaModule {
                 reason = StringUtils.join(splitData, 1);
             }
 
-            int tmpType = ProtectionTypes.TRAP_KICK;
+            Protection.Type tmpType = Protection.Type.TRAP_KICK;
 
             if (type.equals("ban")) {
-                tmpType = ProtectionTypes.TRAP_BAN;
+                tmpType = Protection.Type.TRAP_BAN;
             }
 
             protection = physDb.registerProtection(block.getTypeId(), tmpType, worldName, playerName, reason, blockX, blockY, blockZ);

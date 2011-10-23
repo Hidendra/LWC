@@ -31,7 +31,6 @@ package com.griefcraft.modules.lists;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Protection;
-import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCAccessEvent;
 import com.herocraftonline.dthielke.lists.Lists;
@@ -61,7 +60,7 @@ public class ListsModule extends JavaModule {
         Player player = event.getPlayer();
         Protection protection = event.getProtection();
 
-        if (protection.getType() != ProtectionTypes.PRIVATE) {
+        if (protection.getType() != Protection.Type.PRIVATE) {
             return;
         }
 

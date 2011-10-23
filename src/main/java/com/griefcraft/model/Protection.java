@@ -51,6 +51,49 @@ import java.util.logging.Logger;
 
 public class Protection {
 
+    /**
+     * The protection type
+     *
+     * <p>Ordering <b>must NOT change</b> as ordinal values are used</p>
+     */
+    public enum Type {
+
+        /**
+         * The protection is usable by anyone; the most common use would include community chests
+         * where anyone can use the chest but no one should be able to protect as their own.
+         */
+        PUBLIC,
+
+        /**
+         * The owner (and anyone else) must enter a set password entered onto the chest in order
+         * to be able to access it. Entering the correct password allows them to use the chest
+         * until they log out or the protection is removed.
+         */
+        PASSWORD,
+
+        /**
+         * The protection is only usable by the player who created it. Further access can be
+         * given to players, groups, and even more specific entities
+         * such as Towns in the "Towny" plugin, or access lists via the "Lists" plugin
+         */
+        PRIVATE,
+
+        /**
+         * Can only be created by LWC Admins. A kick reason is provided and the protection
+         * then acts as a honeypot. If anyone attempts to access it, they are kicked with
+         * the given reason.
+         */
+        TRAP_KICK,
+
+        /**
+         * Can only be created by LWC Admins. Same as TRAP_KICK, a ban reason is provided
+         * at creation. Any users that access this protection is <b>LOCAL BANNED</b> via
+         * MCBans. If the plugin is not on the server, they are not banned.
+         */
+        TRAP_BAN
+
+    }
+
     // re-use LWC logger
     @SuppressWarnings("unused")
     private Logger logger = Logger.getLogger("LWC");
@@ -101,9 +144,9 @@ public class Protection {
     private String owner;
 
     /**
-     * The chest type
+     * The protection type
      */
-    private int type;
+    private Type type;
 
     /**
      * The world this protection is in
@@ -450,7 +493,7 @@ public class Protection {
         return owner;
     }
 
-    public int getType() {
+    public Type getType() {
         return type;
     }
 
@@ -519,7 +562,7 @@ public class Protection {
         this.modified = true;
     }
 
-    public void setType(int type) {
+    public void setType(Type type) {
         if (removed) {
             return;
         }
@@ -749,24 +792,7 @@ public class Protection {
      * @return string representation of the protection type
      */
     public String typeToString() {
-        switch (type) {
-            case ProtectionTypes.PRIVATE:
-                return "Private";
-
-            case ProtectionTypes.PUBLIC:
-                return "Public";
-
-            case ProtectionTypes.PASSWORD:
-                return "Password";
-
-            case ProtectionTypes.TRAP_KICK:
-                return "Kick trap";
-
-            case ProtectionTypes.TRAP_BAN:
-                return "Ban trap";
-        }
-
-        return "Unknown(raw:" + type + ")";
+        return StringUtils.capitalizeFirstLetter(type.toString());
     }
 
 }
