@@ -598,7 +598,7 @@ public class PhysDB extends Database {
             protection.setWorld(world);
             protection.setOwner(owner);
             protection.setPassword(password);
-            protection.setDate(date);
+            protection.setCreation(date);
             protection.setLastAccessed(lastAccessed);
 
             // check for oh so beautiful data!
@@ -1511,7 +1511,7 @@ public class PhysDB extends Database {
             statement.setInt(8, protection.getX());
             statement.setInt(9, protection.getY());
             statement.setInt(10, protection.getZ());
-            statement.setString(11, protection.getDate());
+            statement.setString(11, protection.getCreation());
             statement.setLong(12, protection.getLastAccessed());
 
             statement.executeUpdate();
