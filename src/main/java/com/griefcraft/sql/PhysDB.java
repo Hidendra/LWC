@@ -1123,6 +1123,7 @@ public class PhysDB extends Database {
                 }
             }
 
+            set.close();
         } catch (SQLException e) {
             printException(e);
         }
@@ -1168,6 +1169,7 @@ public class PhysDB extends Database {
                 }
             }
 
+            set.close();
         } catch (SQLException e) {
             printException(e);
         }
