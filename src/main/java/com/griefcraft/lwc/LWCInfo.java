@@ -30,9 +30,6 @@ package com.griefcraft.lwc;
 
 import com.griefcraft.util.Version;
 
-/**
- * Temporary, just need to get version info, etc into a packaged class
- */
 public class LWCInfo {
 
     /**
@@ -41,23 +38,12 @@ public class LWCInfo {
     public static Version FULL_VERSION;
 
     /**
-     * LWC's version.
-     * <p/>
-     * Initialized to bogus value, but it will be set properly once the plugin starts up based
-     * on the version listed in plugin.xml.
-     */
-    public static double VERSION;
-
-    /**
-     * Rather than managing the version in multiple spots, I added this method which will be
-     * invoked from Plugin startup to set the version, which is pulled from the plugin.xml file.
-     *
+     * Sets LWC's version
+     * 
      * @param version
-     * @author morganm
      */
     public static void setVersion(String version) {
         String implementationVersion = LWCPlugin.class.getPackage().getImplementationVersion();
-
         FULL_VERSION = new Version(version + " " + implementationVersion);
     }
 }

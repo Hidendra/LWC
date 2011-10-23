@@ -57,8 +57,6 @@ public class UpdateThread implements Runnable {
      */
     private long lastUpdate = -1L;
 
-    private Logger logger = Logger.getLogger("Cache");
-
     /**
      * The LWC object
      */
