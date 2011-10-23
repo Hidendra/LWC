@@ -47,7 +47,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 public class Protection {
 
@@ -94,10 +93,6 @@ public class Protection {
 
     }
 
-    // re-use LWC logger
-    @SuppressWarnings("unused")
-    private Logger logger = Logger.getLogger("LWC");
-
     /**
      * All of the history items associated with this protection
      */
@@ -122,11 +117,6 @@ public class Protection {
      * The password for the chest
      */
     private String password;
-
-    /**
-     * The date created
-     */
-    private String date;
 
     /**
      * JSON data for the protection
@@ -174,6 +164,11 @@ public class Protection {
     private long lastAccessed;
 
     /**
+     * The time the protection was created
+     */
+    private String creation;
+
+    /**
      * Immutable flag for the protection. When removed, this bool is switched to true and any setters
      * will no longer work. However, everything is still intact and in memory at this point (for now.)
      */
@@ -214,7 +209,7 @@ public class Protection {
         hash *= 37 + z;
 
         // and for good measure, to *guarantee* no collisions
-        hash *= 37 + date.hashCode();
+        hash *= 37 + creation.hashCode();
 
         return hash;
     }
@@ -481,8 +476,8 @@ public class Protection {
         return password;
     }
 
-    public String getDate() {
-        return date;
+    public String getCreation() {
+        return creation;
     }
 
     public int getId() {
@@ -535,12 +530,12 @@ public class Protection {
         this.modified = true;
     }
 
-    public void setDate(String date) {
+    public void setCreation(String creation) {
         if (removed) {
             return;
         }
 
-        this.date = date;
+        this.creation = creation;
         this.modified = true;
     }
 
@@ -785,7 +780,7 @@ public class Protection {
             lastAccessed += " ago";
         }
 
-        return String.format("%s %s" + Colors.White + " " + Colors.Green + "Id=%d Owner=%s Location=[%s %d,%d,%d] Created=%s Flags=%s LastAccessed=%s", typeToString(), (blockId > 0 ? (LWC.materialToString(blockId)) : "Not yet cached"), id, owner, world, x, y, z, date, flagStr, lastAccessed);
+        return String.format("%s %s" + Colors.White + " " + Colors.Green + "Id=%d Owner=%s Location=[%s %d,%d,%d] Created=%s Flags=%s LastAccessed=%s", typeToString(), (blockId > 0 ? (LWC.materialToString(blockId)) : "Not yet cached"), id, owner, world, x, y, z, creation, flagStr, lastAccessed);
     }
 
     /**
