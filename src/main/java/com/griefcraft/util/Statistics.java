@@ -46,9 +46,9 @@ import java.util.Map;
 public class Statistics {
 
     /**
-     * Number of queries generated for phys db
+     * Number of queries executed on the database
      */
-    private static int physDBQueries = 0;
+    private static int queries = 0;
 
     /**
      * Time when LWC was started
@@ -58,8 +58,8 @@ public class Statistics {
     /**
      * Add a query
      */
-    public static void addPhysDBQuery() {
-        physDBQueries++;
+    public static void addQuery() {
+        queries++;
     }
 
     /**
@@ -126,7 +126,7 @@ public class Statistics {
         sender.sendMessage(Colors.Red + " ==== Database ====");
         sender.sendMessage("  Engine: " + Colors.Green + Database.DefaultType);
         sender.sendMessage("  Protections: " + Colors.Green + lwc.getPhysicalDatabase().getProtectionCount());
-        sender.sendMessage("  Physical Database: " + Colors.Green + physDBQueries + " queries | " + String.format("%.2f", getAverage(physDBQueries)) + " / second");
+        sender.sendMessage("  Physical Database: " + Colors.Green + queries + " queries | " + String.format("%.2f", getAverage(queries)) + " / second");
         sender.sendMessage(" ");
 
         sender.sendMessage(Colors.Red + " ==== Cache ==== ");

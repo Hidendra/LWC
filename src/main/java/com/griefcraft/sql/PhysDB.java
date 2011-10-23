@@ -75,7 +75,7 @@ public class PhysDB extends Database {
 
     @Override
     protected void postPrepare() {
-        Statistics.addPhysDBQuery();
+        Statistics.addQuery();
     }
 
     /**
