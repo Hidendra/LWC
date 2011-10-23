@@ -28,6 +28,7 @@
 
 package com.griefcraft.listeners;
 
+import com.griefcraft.integration.permissions.NijiPermissions;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
@@ -261,7 +262,7 @@ public class LWCBlockListener extends BlockListener {
         String autoRegisterType = plugin.getLWC().resolveProtectionConfiguration(block.getType(), "autoRegister");
 
         // is it auto registerable?
-        if (/* !lwc.hasPermission(player, "lwc.autoprotect") && */ !autoRegisterType.equalsIgnoreCase("private") && !autoRegisterType.equalsIgnoreCase("public")) {
+        if (!lwc.hasPermission(player, "lwc.autoprotect") && !autoRegisterType.equalsIgnoreCase("private") && !autoRegisterType.equalsIgnoreCase("public")) {
             return;
         }
 
@@ -270,7 +271,8 @@ public class LWCBlockListener extends BlockListener {
         }
 
         // set the auto register type if they have the perm node
-        if (lwc.hasPermission(player, "lwc.autoprotect") && false) {
+        // Only allow it in super perms, not legacy niji permissions
+        if (lwc.hasPermission(player, "lwc.autoprotect") && !(lwc.getPermissions() instanceof NijiPermissions)) {
             autoRegisterType = "private";
         }
 
