@@ -50,25 +50,7 @@ import com.griefcraft.model.Flag;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.ProtectionTypes;
-import com.griefcraft.modules.admin.AdminCache;
-import com.griefcraft.modules.admin.AdminCleanup;
-import com.griefcraft.modules.admin.AdminClear;
-import com.griefcraft.modules.admin.AdminConfig;
-import com.griefcraft.modules.admin.AdminDump;
-import com.griefcraft.modules.admin.AdminExpire;
-import com.griefcraft.modules.admin.AdminFind;
-import com.griefcraft.modules.admin.AdminFlush;
-import com.griefcraft.modules.admin.AdminForceOwner;
-import com.griefcraft.modules.admin.AdminLocale;
-import com.griefcraft.modules.admin.AdminPurge;
-import com.griefcraft.modules.admin.AdminPurgeBanned;
-import com.griefcraft.modules.admin.AdminQuery;
-import com.griefcraft.modules.admin.AdminReload;
-import com.griefcraft.modules.admin.AdminRemove;
-import com.griefcraft.modules.admin.AdminReport;
-import com.griefcraft.modules.admin.AdminUpdate;
-import com.griefcraft.modules.admin.AdminVersion;
-import com.griefcraft.modules.admin.BaseAdminModule;
+import com.griefcraft.modules.admin.*;
 import com.griefcraft.modules.confirm.ConfirmModule;
 import com.griefcraft.modules.create.CreateModule;
 import com.griefcraft.modules.credits.CreditsModule;
@@ -126,13 +108,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Method;
-import java.security.MessageDigest;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -1701,6 +1681,9 @@ public class LWC {
                 if (shouldRemoveBlocks) {
                     removeBlocks.add(protection.getBlock());
                 }
+
+                // Remove it from the cache if it's in there
+                caches.getProtections().remove(protection.getCacheKey());
 
                 completed++;
             }
