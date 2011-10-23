@@ -28,19 +28,28 @@
 
 package com.griefcraft.cache;
 
+import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Similar to LRUCache but instead uses WeakReferences.
  * The key must be a hard ref, while the value will be a weak reference
  */
-public class WeakLRUCache<K, V> {
+public class WeakLRUCache<K, V> implements Map<K, V> {
 
     /**
      * The backing linked hashmap for the cache
      */
-    private final LinkedHashMap<K, WeakReference<V>> weakCache;
+    private final LinkedHashMap<K, WeakValue<V, K>> weakCache;
+
+    /**
+     * The queue of references to be removed
+     */
+    private final ReferenceQueue<? super V> queue = new ReferenceQueue();
 
     /**
      * Amount of reads performed on the cache
@@ -53,55 +62,12 @@ public class WeakLRUCache<K, V> {
     private long writes = 0;
 
     public WeakLRUCache(final int maxCapacity) {
-        this.weakCache = new LinkedHashMap<K, WeakReference<V>>(maxCapacity) {
+        this.weakCache = new LinkedHashMap<K, WeakValue<V, K>>(maxCapacity) {
             @Override
-            protected boolean removeEldestEntry(java.util.Map.Entry<K, WeakReference<V>> eldest) {
+            protected boolean removeEldestEntry(java.util.Map.Entry<K, WeakValue<V, K>> eldest) {
                 return size() > maxCapacity;
             }
         };
-    }
-
-    /**
-     * Gets the size of the cache currently
-     * 
-     * @return
-     */
-    public int size() {
-        return weakCache.size();
-    }
-
-    /**
-     * Clear the cache
-     */
-    public void clear() {
-        weakCache.clear();
-    }
-
-    /**
-     * Get a value from the cache
-     *
-     * @param key
-     * @return
-     */
-    public V get(Object key) {
-        reads++;
-
-        WeakReference<V> weakRef = weakCache.get(key);
-        return weakRef != null ? weakRef.get() : null;
-    }
-
-    /**
-     * Put a value into the cache
-     *
-     * @param key
-     * @param value
-     * @return
-     */
-    public V put(K key, V value) {
-        writes++;
-
-        WeakReference<V> oldRef = weakCache.put(key, new WeakReference<V>(value));
-        return oldRef != null ? oldRef.get() : null;
     }
 
     /**
@@ -116,6 +82,113 @@ public class WeakLRUCache<K, V> {
      */
     public long getWrites() {
         return writes;
+    }
+
+    /**
+     * Processes the reference queue and removes any garbage collected values
+     */
+    private void processQueue() {
+        WeakValue<V, K> weakValue;
+        while ((weakValue = (WeakValue<V, K>) queue.poll()) != null) {
+            // remove it from the cache
+            weakCache.remove(weakValue.key);
+        }
+    }
+
+    /**
+     * Gets the size of the cache currently
+     *
+     * @return
+     */
+    public int size() {
+        processQueue();
+        return weakCache.size();
+    }
+
+    public boolean isEmpty() {
+        processQueue();
+        return weakCache.isEmpty();
+    }
+
+    public boolean containsKey(Object key) {
+        processQueue();
+        return weakCache.containsKey(key);
+    }
+
+    public boolean containsValue(Object value) {
+        processQueue();
+        return weakCache.containsValue(value);
+    }
+
+    public void clear() {
+        processQueue();
+        weakCache.clear();
+    }
+
+    public Set<K> keySet() {
+        processQueue();
+        return weakCache.keySet();
+    }
+
+    public V get(Object key) {
+        reads++;
+        processQueue();
+
+        WeakValue<V, K> weakRef = weakCache.get(key);
+        V result = weakRef.get();
+
+        // If the result is null, we should remove it!
+        if (result == null) {
+            weakCache.remove(key);
+        }
+
+        return result;
+    }
+
+    public V put(K key, V value) {
+        writes++;
+        processQueue();
+
+        WeakValue<V, K> oldRef = weakCache.put(key, new WeakValue<V, K>(value, key, queue));
+        return oldRef != null ? oldRef.get() : null;
+    }
+
+    public V remove(Object key) {
+        WeakValue<V, K> old = weakCache.remove(key);
+        return old != null ? old.get() : null;
+    }
+
+    public void putAll(Map<? extends K, ? extends V> m) {
+        throw new UnsupportedOperationException("putAll() is not supported by WeakLRUCache");
+    }
+
+    public Collection<V> values() {
+        throw new UnsupportedOperationException("values() is not supported by WeakLRUCache");
+    }
+
+    public Set<Entry<K, V>> entrySet() {
+        throw new UnsupportedOperationException("entrySet() is not supported by WeakLRUCache");
+    }
+
+    /**
+     * A WeakValue which stores the value of the weak reference and the key in the HashMap
+     * so it can be more quickly removed when GCd
+     *
+     * @param <V>
+     * @param <K>
+     */
+    private final class WeakValue<V, K> extends WeakReference<V> {
+
+        /**
+         * The key for the value
+         */
+        private final K key;
+
+        private WeakValue(V value, K key, ReferenceQueue<? super V> queue) {
+            super(value, queue);
+            this.key = key;
+        }
+
     }
 
 }
