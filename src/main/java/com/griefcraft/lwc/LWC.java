@@ -103,10 +103,10 @@ import com.griefcraft.scripting.event.LWCSendLocaleEvent;
 import com.griefcraft.sql.Database;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
-import com.griefcraft.util.Performance;
+import com.griefcraft.util.Statistics;
 import com.griefcraft.util.ProtectionFinder;
 import com.griefcraft.util.StopWatch;
-import com.griefcraft.util.StringUtils;
+import com.griefcraft.util.StringUtil;
 import com.griefcraft.util.UpdateThread;
 import com.griefcraft.util.config.Configuration;
 import org.bukkit.Bukkit;
@@ -519,7 +519,7 @@ public class LWC {
      * @return
      */
     public String encrypt(String text) {
-        return StringUtils.encrypt(text);
+        return StringUtil.encrypt(text);
     }
 
     /**
@@ -1080,7 +1080,7 @@ public class LWC {
         new ConfigPost300().run();
         plugin.loadDatabase();
 
-        Performance.init();
+        Statistics.init();
 
         physicalDatabase = new PhysDB();
         updateThread = new UpdateThread(this);
@@ -1157,7 +1157,7 @@ public class LWC {
 
             physicalDatabase.load();
 
-            log("Using: " + StringUtils.capitalizeFirstLetter(physicalDatabase.getConnection().getMetaData().getDriverVersion()));
+            log("Using: " + StringUtil.capitalizeFirstLetter(physicalDatabase.getConnection().getMetaData().getDriverVersion()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1560,7 +1560,7 @@ public class LWC {
                 locale = materialName;
             }
 
-            return StringUtils.capitalizeFirstLetter(locale);
+            return StringUtil.capitalizeFirstLetter(locale);
         }
 
         return "";

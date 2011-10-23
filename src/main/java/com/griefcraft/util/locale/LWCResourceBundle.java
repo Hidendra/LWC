@@ -26,7 +26,7 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.util;
+package com.griefcraft.util.locale;
 
 import java.util.ArrayList;
 import java.util.Collections;

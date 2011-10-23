@@ -33,7 +33,7 @@ import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.util.Colors;
-import com.griefcraft.util.StringUtils;
+import com.griefcraft.util.StringUtil;
 import com.griefcraft.util.config.Configuration;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -440,7 +440,7 @@ public class LimitsModule extends JavaModule {
             currColour = Colors.Yellow;
         }
 
-        lwc.sendLocale(sender, "protection.limits", "type", StringUtils.capitalizeFirstLetter(type.toString()), "player", playerName, "limit", limitShow, "protected", (currColour + current));
+        lwc.sendLocale(sender, "protection.limits", "type", StringUtil.capitalizeFirstLetter(type.toString()), "player", playerName, "limit", limitShow, "protected", (currColour + current));
     }
 
 }

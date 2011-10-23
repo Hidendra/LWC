@@ -36,7 +36,7 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
-import com.griefcraft.util.StringUtils;
+import com.griefcraft.util.StringUtil;
 import org.bukkit.command.CommandSender;
 
 public class BaseFlagModule extends JavaModule {
@@ -86,10 +86,10 @@ public class BaseFlagModule extends JavaModule {
 
         if (shouldAdd) {
             protection.addFlag(flag);
-            lwc.sendLocale(player, "protection.interact.flag.add", "flag", StringUtils.capitalizeFirstLetter(flagName));
+            lwc.sendLocale(player, "protection.interact.flag.add", "flag", StringUtil.capitalizeFirstLetter(flagName));
         } else {
             protection.removeFlag(flag);
-            lwc.sendLocale(player, "protection.interact.flag.remove", "flag", StringUtils.capitalizeFirstLetter(flagName));
+            lwc.sendLocale(player, "protection.interact.flag.remove", "flag", StringUtil.capitalizeFirstLetter(flagName));
         }
 
         protection.save();

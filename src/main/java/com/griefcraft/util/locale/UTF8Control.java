@@ -26,51 +26,46 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.modules.admin;
+package com.griefcraft.util.locale;
 
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.scripting.JavaModule;
-import com.griefcraft.scripting.event.LWCCommandEvent;
-import com.griefcraft.util.Colors;
-import com.griefcraft.util.StringUtil;
-import org.bukkit.command.CommandSender;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Locale;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
+import java.util.ResourceBundle.Control;
 
-import java.sql.Statement;
-
-public class AdminQuery extends JavaModule {
-
+public class UTF8Control extends Control {
     @Override
-    public void onCommand(LWCCommandEvent event) {
-        if (event.isCancelled()) {
-            return;
+    public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload) throws IllegalAccessException, InstantiationException, IOException {
+        // The below is a copy of the default implementation.
+        String bundleName = toBundleName(baseName, locale);
+        String resourceName = toResourceName(bundleName, "properties");
+        ResourceBundle bundle = null;
+        InputStream stream = null;
+        if (reload) {
+            URL url = loader.getResource(resourceName);
+            if (url != null) {
+                URLConnection connection = url.openConnection();
+                if (connection != null) {
+                    connection.setUseCaches(false);
+                    stream = connection.getInputStream();
+                }
+            }
+        } else {
+            stream = loader.getResourceAsStream(resourceName);
         }
-
-        if (!event.hasFlag("a", "admin")) {
-            return;
+        if (stream != null) {
+            try {
+                // Only this line is changed to make it to read properties files as UTF-8.
+                bundle = new PropertyResourceBundle(new InputStreamReader(stream, "UTF-8"));
+            } finally {
+                stream.close();
+            }
         }
-
-        LWC lwc = event.getLWC();
-        CommandSender sender = event.getSender();
-        String[] args = event.getArgs();
-
-        if (!args[0].equals("query")) {
-            return;
-        }
-
-        // we have the right command
-        event.setCancelled(true);
-
-        String query = StringUtil.join(args, 1);
-
-        try {
-            Statement statement = lwc.getPhysicalDatabase().getConnection().createStatement();
-            statement.executeUpdate(query);
-            statement.close();
-            sender.sendMessage(Colors.Green + "Done.");
-        } catch (Exception e) {
-            sender.sendMessage(Colors.Red + "Err: " + e.getMessage());
-        }
-
+        return bundle;
     }
-
 }

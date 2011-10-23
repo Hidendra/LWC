@@ -34,7 +34,8 @@ import com.griefcraft.model.Job;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.util.Colors;
-import com.griefcraft.util.StringUtils;
+import com.griefcraft.util.StringUtil;
+import com.griefcraft.util.TimeUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -68,13 +69,13 @@ public class ScheduleModule extends JavaModule {
         String action = args[0].toLowerCase();
         String name = args.length > 1 ? args[1].toLowerCase() : "";
         String[] jobArgs = new String[0];
-        String joinedArguments = ""; // equivilent to StringUtils.join(jobArgs);
+        String joinedArguments = ""; // equivilent to StringUtil.join(jobArgs);
 
         // get the job specific arguments found if they are there
         if (args.length > 2) {
             jobArgs = new String[args.length - 2];
             System.arraycopy(args, 2, jobArgs, 0, jobArgs.length);
-            joinedArguments = StringUtils.join(jobArgs).trim();
+            joinedArguments = StringUtil.join(jobArgs).trim();
         }
 
         // Attempt to load the job they named
@@ -206,7 +207,7 @@ public class ScheduleModule extends JavaModule {
             }
 
             // Attempt to parse the time ...
-            long parsedTimeSeconds = StringUtils.parseTime(joinedArguments);
+            long parsedTimeSeconds = TimeUtil.parseTime(joinedArguments);
             long parsedTimeMillis = parsedTimeSeconds * 1000L;
 
             if (parsedTimeSeconds == 0) {
@@ -222,7 +223,7 @@ public class ScheduleModule extends JavaModule {
 
             // save it to the database and notify the player
             job.save();
-            sender.sendMessage(Colors.Green + "The job will " + job.getName() + " run again in " + StringUtils.timeToString(parsedTimeSeconds));
+            sender.sendMessage(Colors.Green + "The job will " + job.getName() + " run again in " + TimeUtil.timeToString(parsedTimeSeconds));
             sender.sendMessage(Colors.Green + "In server time, that is at " + new Date(job.getNextRun()).toString());
         } else if (action.equals("check")) {
             if (job == null) {
@@ -242,7 +243,7 @@ public class ScheduleModule extends JavaModule {
                     return;
                 }
 
-                sender.sendMessage(Colors.Green + "The job " + job.getName() + " will be executed in " + StringUtils.timeToString(timeRemaining / 1000L));
+                sender.sendMessage(Colors.Green + "The job " + job.getName() + " will be executed in " + TimeUtil.timeToString(timeRemaining / 1000L));
             }
         } else if (action.equals("arguments")) {
             if (job == null) {

@@ -38,8 +38,8 @@ import com.griefcraft.util.Colors;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static com.griefcraft.util.StringUtils.encrypt;
-import static com.griefcraft.util.StringUtils.join;
+import static com.griefcraft.util.StringUtil.encrypt;
+import static com.griefcraft.util.StringUtil.join;
 
 public class UnlockModule extends JavaModule {
 

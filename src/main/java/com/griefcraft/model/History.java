@@ -29,7 +29,7 @@
 package com.griefcraft.model;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.util.StringUtils;
+import com.griefcraft.util.StringUtil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -327,7 +327,7 @@ public class History {
      * @return a STRING representation of the metadata for use in the database
      */
     public String getSafeMetaData() {
-        return StringUtils.join(metadata, 0, ",");
+        return StringUtil.join(metadata, 0, ",");
     }
 
     /**

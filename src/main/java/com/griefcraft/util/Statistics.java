@@ -42,16 +42,8 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
-public class Performance {
-
-    private static Logger logger = Logger.getLogger("Performance");
-
-    /**
-     * Number of queries generated for mem db
-     */
-    private static int memDBQueries = 0;
+public class Statistics {
 
     /**
      * Number of queries generated for phys db
@@ -62,13 +54,6 @@ public class Performance {
      * Time when LWC was started
      */
     private static long startTime = 0L;
-
-    /**
-     * Add a query
-     */
-    public static void addMemDBQuery() {
-        memDBQueries++;
-    }
 
     /**
      * Add a query
@@ -119,7 +104,7 @@ public class Performance {
         sender.sendMessage(" ");
         sender.sendMessage(Colors.Red + "LWC Report");
         sender.sendMessage("  Version: " + Colors.Green + LWCInfo.FULL_VERSION);
-        sender.sendMessage("  Running time: " + Colors.Green + StringUtils.timeToString(getTimeRunningSeconds()));
+        sender.sendMessage("  Running time: " + Colors.Green + TimeUtil.timeToString(getTimeRunningSeconds()));
         sender.sendMessage("  Players: " + Colors.Green + Bukkit.getServer().getOnlinePlayers().length + "/" + Bukkit.getServer().getMaxPlayers());
         sender.sendMessage("  Item entities: " + Colors.Green + getEntityCount(Item.class) + "/" + getEntityCount(null));
         sender.sendMessage(" ");
