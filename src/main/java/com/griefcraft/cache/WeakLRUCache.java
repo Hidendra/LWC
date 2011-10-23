@@ -135,11 +135,15 @@ public class WeakLRUCache<K, V> implements Map<K, V> {
         processQueue();
 
         WeakValue<V, K> weakRef = weakCache.get(key);
-        V result = weakRef.get();
+        V result = null;
 
-        // If the result is null, we should remove it!
-        if (result == null) {
-            weakCache.remove(key);
+        if (weakRef != null) {
+            result = weakRef.get();
+
+            // If the result is still null, we should remove it!
+            if (result == null) {
+                weakCache.remove(key);
+            }
         }
 
         return result;
