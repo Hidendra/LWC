@@ -31,7 +31,7 @@ package com.griefcraft.modules.admin;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
-import com.griefcraft.util.StringUtils;
+import com.griefcraft.util.StringUtil;
 import org.bukkit.command.CommandSender;
 
 public class AdminLocale extends JavaModule {
@@ -66,7 +66,7 @@ public class AdminLocale extends JavaModule {
         String[] localeArgs = new String[0];
 
         if (args.length > 3) {
-            localeArgs = StringUtils.join(args, 3).split(" ");
+            localeArgs = StringUtil.join(args, 3).split(" ");
         }
 
         if (localeArgs.length > 0) {

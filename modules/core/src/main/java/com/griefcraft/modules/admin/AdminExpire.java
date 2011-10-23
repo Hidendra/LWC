@@ -31,7 +31,8 @@ package com.griefcraft.modules.admin;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
-import com.griefcraft.util.StringUtils;
+import com.griefcraft.util.StringUtil;
+import com.griefcraft.util.TimeUtil;
 import org.bukkit.command.CommandSender;
 
 public class AdminExpire extends JavaModule {
@@ -63,8 +64,8 @@ public class AdminExpire extends JavaModule {
         }
 
         boolean shouldRemoveBlocks = args[1].endsWith("remove");
-        String toParse = StringUtils.join(args, shouldRemoveBlocks ? 2 : 1);
-        long time = StringUtils.parseTime(toParse);
+        String toParse = StringUtil.join(args, shouldRemoveBlocks ? 2 : 1);
+        long time = TimeUtil.parseTime(toParse);
 
         if (time == 0L) {
             lwc.sendLocale(sender, "protection.admin.expire.invalidtime");

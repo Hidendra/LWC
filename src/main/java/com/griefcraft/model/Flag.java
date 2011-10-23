@@ -28,7 +28,7 @@
 
 package com.griefcraft.model;
 
-import com.griefcraft.util.StringUtils;
+import com.griefcraft.util.StringUtil;
 import org.json.simple.JSONObject;
 
 public class Flag {
@@ -141,7 +141,7 @@ public class Flag {
 
     @Override
     public String toString() {
-        return StringUtils.capitalizeFirstLetter(type.toString());
+        return StringUtil.capitalizeFirstLetter(type.toString());
     }
 
     /**
