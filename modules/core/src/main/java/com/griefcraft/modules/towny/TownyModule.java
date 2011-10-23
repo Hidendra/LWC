@@ -31,7 +31,6 @@ package com.griefcraft.modules.towny;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Protection;
-import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCAccessEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
@@ -97,7 +96,7 @@ public class TownyModule extends JavaModule {
             return;
         }
 
-        if (protection.getType() != ProtectionTypes.PRIVATE) {
+        if (protection.getType() != Protection.Type.PRIVATE) {
             return;
         }
 

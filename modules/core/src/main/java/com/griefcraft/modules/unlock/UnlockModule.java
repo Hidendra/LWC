@@ -32,7 +32,6 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Action;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
-import com.griefcraft.model.ProtectionTypes;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.util.Colors;
@@ -91,7 +90,7 @@ public class UnlockModule extends JavaModule {
                 return;
             }
 
-            if (protection.getType() != ProtectionTypes.PASSWORD) {
+            if (protection.getType() != Protection.Type.PASSWORD) {
                 lwc.sendLocale(player, "protection.unlock.notpassword");
                 return;
             }
