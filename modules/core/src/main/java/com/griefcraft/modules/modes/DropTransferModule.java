@@ -127,6 +127,13 @@ public class DropTransferModule extends JavaModule {
             return;
         }
 
+        // Don't allow them to transfer items across worlds
+        if (bPlayer.getWorld() != world) {
+            player.sendMessage(Colors.Red + "You cannot transfer items across worlds!");
+            player.disableMode(player.getMode("dropTransfer"));
+            return;
+        }
+
         Block block = world.getBlockAt(protection.getX(), protection.getY(), protection.getZ());
         Map<Integer, ItemStack> remaining = lwc.depositItems(block, itemStack);
 
