@@ -979,6 +979,7 @@ public class PhysDB extends Database {
      * @param x
      * @param y
      * @param z
+     * @return
      */
     public Protection registerProtection(int blockId, Protection.Type type, String world, String player, String data, int x, int y, int z) {
         try {
