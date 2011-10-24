@@ -277,7 +277,14 @@ public class LWCBlockListener extends BlockListener {
         }
 
         // Parse the type
-        Protection.Type type = Protection.Type.valueOf(autoRegisterType.toUpperCase());
+        Protection.Type type = null;
+
+        try {
+            type = Protection.Type.valueOf(autoRegisterType.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            // No auto protect type found
+            return;
+        }
 
         // Is it okay?
         if (type == null) {
