@@ -961,6 +961,24 @@ public class PhysDB extends Database {
      * @param x
      * @param y
      * @param z
+     * @return
+     */
+    @Deprecated
+    public Protection registerProtection(int blockId, int type, String world, String player, String data, int x, int y, int z) {
+        return registerProtection(blockId, Protection.Type.values()[type], world, player, data, x, y, z);
+    }
+
+    /**
+     * Register a protection
+     *
+     * @param blockId
+     * @param type
+     * @param world
+     * @param player
+     * @param data
+     * @param x
+     * @param y
+     * @param z
      */
     public Protection registerProtection(int blockId, Protection.Type type, String world, String player, String data, int x, int y, int z) {
         try {
