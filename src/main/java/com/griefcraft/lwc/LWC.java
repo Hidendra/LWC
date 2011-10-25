@@ -152,22 +152,22 @@ public class LWC {
     /**
      * Core LWC configuration
      */
-    private Configuration configuration = Configuration.load("core.yml");
+    private Configuration configuration;
 
     /**
      * The module loader
      */
-    private final ModuleLoader moduleLoader = new ModuleLoader(this);
+    private final ModuleLoader moduleLoader;
 
     /**
      * The job manager
      */
-    private final JobManager jobManager = new JobManager(this);
+    private final JobManager jobManager;
 
     /**
      * The protection cache
      */
-    private final ProtectionCache protectionCache = new ProtectionCache(this);
+    private final ProtectionCache protectionCache;
 
     /**
      * Logging instance
@@ -202,6 +202,10 @@ public class LWC {
     public LWC(LWCPlugin plugin) {
         this.plugin = plugin;
         LWC.instance = this;
+        configuration = Configuration.load("core.yml");
+        protectionCache = new ProtectionCache(this);
+        jobManager = new JobManager(this);
+        moduleLoader = new ModuleLoader(this);
     }
 
     /**
