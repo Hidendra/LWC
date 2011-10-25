@@ -33,24 +33,24 @@ import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.Plugin;
 
-public class EconomyServerListener extends ServerListener {
+public class LWCSpoutServerListener extends ServerListener {
 
-    private LWCEconomyPlugin economyPlugin;
+    private LWCSpoutPlugin spoutPlugin;
 
-    public EconomyServerListener(LWCEconomyPlugin economyPlugin) {
-        this.economyPlugin = economyPlugin;
+    public LWCSpoutServerListener(LWCSpoutPlugin spoutPlugin) {
+        this.spoutPlugin = spoutPlugin;
     }
 
     @Override
     public void onPluginEnable(PluginEnableEvent event) {
-        if (economyPlugin.isInitialized()) {
+        if (spoutPlugin.isInitialized()) {
             return;
         }
 
         Plugin plugin = event.getPlugin();
 
         if (plugin instanceof LWCPlugin) {
-            economyPlugin.init();
+            spoutPlugin.init();
         }
     }
 

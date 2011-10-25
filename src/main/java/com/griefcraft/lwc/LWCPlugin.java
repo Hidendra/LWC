@@ -67,7 +67,7 @@ public class LWCPlugin extends JavaPlugin {
     /**
      * The LWC instance
      */
-    private LWC lwc = new LWC(this);
+    private LWC lwc;
 
     /**
      * The block listener
@@ -287,6 +287,7 @@ public class LWCPlugin extends JavaPlugin {
 
     public void onEnable() {
         preload();
+        lwc = new LWC(this);
 
         String version = getDescription().getVersion();
         LWCInfo.setVersion(version);
