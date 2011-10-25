@@ -140,8 +140,8 @@ public class ProtectionCache {
      * @param protection
      */
     public void remove(Protection protection) {
-        // Remove the reference, the weak references will remove themselves
         references.remove(protection);
+        byCacheKey.remove(protection.getCacheKey());
     }
 
     /**
