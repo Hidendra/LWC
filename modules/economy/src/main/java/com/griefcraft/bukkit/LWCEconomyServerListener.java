@@ -28,61 +28,30 @@
 
 package com.griefcraft.bukkit;
 
-
-import com.griefcraft.lwc.EconomyModule;
-import com.griefcraft.lwc.LWC;
-import org.bukkit.event.Event;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Listener;
+import com.griefcraft.lwc.LWCPlugin;
+import org.bukkit.event.server.PluginEnableEvent;
+import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.logging.Logger;
+public class LWCEconomyServerListener extends ServerListener {
 
-public class LWCEconomyPlugin extends JavaPlugin {
-    private Logger logger = Logger.getLogger("LWC-Economy");
+    private LWCEconomyPlugin economyPlugin;
 
-    /**
-     * The LWC object
-     */
-    private LWC lwc;
-
-    /**
-     * Our server listener, listens for iConomy to be loaded
-     */
-    private Listener serverListener = null;
-
-    public LWCEconomyPlugin() {
-        serverListener = new LWCEconomyServerListener(this);
+    public LWCEconomyServerListener(LWCEconomyPlugin economyPlugin) {
+        this.economyPlugin = economyPlugin;
     }
 
-    /**
-     * Initialize LWC-iConomy
-     */
-    public void init() {
-        LWC.getInstance().getModuleLoader().registerModule(this, new EconomyModule(this));
-        info("Registered Economy Module into LWC successfully! Version: " + getDescription().getVersion());
-    }
-
-    public void onEnable() {
-        Plugin lwc = getServer().getPluginManager().getPlugin("LWC");
-
-        if (lwc != null && lwc.isEnabled()) {
-            init();
-        } else {
-            // register the server listener
-            getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, serverListener, Priority.Monitor, this);
-
-            info("Waiting for LWC to be enabled...");
+    @Override
+    public void onPluginEnable(PluginEnableEvent event) {
+        if (economyPlugin.isInitialized()) {
+            return;
         }
-    }
 
-    public void onDisable() {
+        Plugin plugin = event.getPlugin();
 
-    }
-
-    private void info(String message) {
-        logger.info("LWC-Economy: " + message);
+        if (plugin instanceof LWCPlugin) {
+            economyPlugin.init();
+        }
     }
 
 }
