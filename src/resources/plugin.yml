@@ -31,6 +31,9 @@ commands:
   cprivate:
     description: Create a protection that only you and specific groups or people can access.
     usage: /<command> <Users/Groups>
+  cdonation:
+    description: Creates a chest that can be deposited into, but only removed by player with access. Requires Spout
+    usage: /<command>
   cmodify:
     description: Modify an existing private protection.
     usage: /<command> <Modifications>
@@ -115,6 +118,7 @@ permissions:
           lwc.create.public: true
           lwc.create.password: true
           lwc.create.private: true
+          lwc.create.donation: true
   lwc.create.public:
       description: Allows you to create a public protection.
   lwc.create.password:

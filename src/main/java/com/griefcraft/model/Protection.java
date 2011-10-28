@@ -94,7 +94,23 @@ public class Protection {
         /**
          * Allows players to deposit items into 
          */
-        DONATION
+        DONATION;
+
+        /**
+         * Match a protection type using its string form
+         *
+         * @param text
+         * @return
+         */
+        public static Type matchType(String text) {
+            for (Type type : values()) {
+                if (type.toString().equalsIgnoreCase(text)) {
+                    return type;
+                }
+            }
+
+            throw new IllegalArgumentException("No Protection Type found for given type: " + text);
+        }
 
     }
 

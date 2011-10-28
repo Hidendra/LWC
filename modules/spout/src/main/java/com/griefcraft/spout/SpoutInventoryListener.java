@@ -29,8 +29,13 @@
 package com.griefcraft.spout;
 
 import com.griefcraft.bukkit.LWCSpoutPlugin;
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Protection;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.inventory.CraftInventoryPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.event.inventory.InventoryClickEvent;
 import org.getspout.spoutapi.event.inventory.InventoryListener;
@@ -48,8 +53,12 @@ public class SpoutInventoryListener extends InventoryListener {
     }
 
     public void onInventoryClick(InventoryClickEvent event) {
+        LWC lwc = LWC.getInstance();
         // Player interacting with the inventory
         Player player = event.getPlayer();
+
+        // The inventory they are using
+        Inventory inventory = event.getInventory();
 
         // Location of the container
         Location location = event.getLocation();
@@ -57,8 +66,16 @@ public class SpoutInventoryListener extends InventoryListener {
         // Should be container
         InventorySlotType slotType = event.getSlotType();
 
+        // If they are left clicking
+        boolean leftClick = event.isLeftClick();
+
         // If it doesn't have a location we can't protect it :p
-        if (location == null) {
+        if (inventory == null || location == null) {
+            return;
+        }
+
+        // If it's the player's inventory, ignore it
+        if (inventory instanceof CraftInventoryPlayer) {
             return;
         }
 
@@ -73,13 +90,40 @@ public class SpoutInventoryListener extends InventoryListener {
         // Item their cursor has
         ItemStack cursor = event.getCursor();
 
-        // They are trying to take an item :p
-        if (item != null && cursor == null) {
-            // event.setCancelled(true);
-            // event.setResult(Event.Result.DENY);
+        // Are they inserting a stack?
+        if (item != null && cursor != null && item.getType() == cursor.getType()) {
+            // If they are clicking an item of the stack type, they are inserting it into the inventory,
+            // not switching it
+            // As long as the item isn't a degradable item, we can explicitly allow it if they have the same durability
+            if (item.getDurability() == cursor.getDurability()) {
+                return;
+            }
         }
 
-        // System.out.printf("Type: %s Location: %s Item: %s Cursor: %s\n", slotType.toString(), location.toString(), item, cursor);
+        // They are trying to take an item :p
+        if ((item != null && cursor == null) || (item != null && cursor != null)) {
+            // Attempt to load the protection at that location
+            Protection protection = lwc.findProtection(location.getBlock());
+
+            // If no protection was found we can safely ignore it
+            if (protection == null) {
+                return;
+            }
+
+            // If it's not a donation chest, ignore if
+            if (protection.getType() != Protection.Type.DONATION) {
+                return;
+            }
+
+            // Can they admin it? (remove items/etc)
+            boolean canAdmin = lwc.canAdminProtection(player, protection);
+
+            // nope.avi
+            if (!canAdmin) {
+                event.setCancelled(true);
+                event.setResult(Event.Result.DENY);
+            }
+        }
     }
 
 }
