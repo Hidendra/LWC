@@ -373,6 +373,7 @@ public class LWC {
 
         switch (protection.getType()) {
             case PUBLIC:
+            case DONATION:
                 return true;
 
             case PASSWORD:
@@ -463,6 +464,7 @@ public class LWC {
                 break;
 
             case PRIVATE:
+            case DONATION:
                 if (playerName.equalsIgnoreCase(protection.getOwner())) {
                     return true;
                 }
@@ -593,6 +595,7 @@ public class LWC {
                 break;
 
             case PRIVATE:
+            case DONATION:
                 if (!hasAccess) {
                     sendLocale(player, "protection.general.locked.private", "block", materialToString(block));
                 }
