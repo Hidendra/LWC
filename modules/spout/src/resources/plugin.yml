@@ -4,6 +4,4 @@ version: 0.0
 website: http://griefcraft.com
 author: Hidendra
 description: Adds Spout functionality to LWC
-load: POSTWORLD
-depend:
-    - Spout
+depend: [ 'LWC', 'Spout' ]

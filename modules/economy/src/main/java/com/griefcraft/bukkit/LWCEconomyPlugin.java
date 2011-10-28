@@ -61,13 +61,13 @@ public class LWCEconomyPlugin extends JavaPlugin {
      */
     public void init() {
         LWC.getInstance().getModuleLoader().registerModule(this, new EconomyModule(this));
-        info("Registered Economy Module into LWC successfully! Version: " + getDescription().getVersion());
+        info("Hooked into LWC!");
     }
 
     public void onEnable() {
         Plugin lwc = getServer().getPluginManager().getPlugin("LWC");
 
-        if (lwc != null && lwc.isEnabled()) {
+        if (lwc != null) {
             init();
         } else {
             // register the server listener
