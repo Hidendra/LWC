@@ -34,6 +34,7 @@ import com.griefcraft.lwc.ManagementModule;
 import com.griefcraft.lwc.PasswordRequestModule;
 import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.spout.SpoutInputListener;
+import com.griefcraft.spout.SpoutInventoryListener;
 import com.griefcraft.spout.SpoutScreenListener;
 import org.bukkit.event.Event;
 import org.bukkit.event.server.ServerListener;
@@ -59,20 +60,21 @@ public class LWCSpoutPlugin extends JavaPlugin {
         // register events into Bukkit
         getServer().getPluginManager().registerEvent(Event.Type.CUSTOM_EVENT, new SpoutScreenListener(this), Event.Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.CUSTOM_EVENT, new SpoutInputListener(this), Event.Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.CUSTOM_EVENT, new SpoutInventoryListener(this), Event.Priority.Normal, this);
 
-        log("[LWC-Spout] Hooked into LWC!");
+        log("Hooked into LWC!");
     }
 
     public void onEnable() {
         Plugin lwc = getServer().getPluginManager().getPlugin("LWC");
 
-        if (lwc != null && lwc.isEnabled()) {
+        if (lwc != null) {
             init();
         } else {
             // register the server listener
             getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, serverListener, Event.Priority.Monitor, this);
 
-            logger.info("Waiting for LWC to be enabled...");
+            log("Waiting for LWC to be enabled...");
         }
     }
 

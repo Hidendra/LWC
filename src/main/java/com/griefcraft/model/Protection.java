@@ -89,7 +89,12 @@ public class Protection {
          * at creation. Any users that access this protection is <b>LOCAL BANNED</b> via
          * MCBans. If the plugin is not on the server, they are not banned.
          */
-        TRAP_BAN
+        TRAP_BAN,
+
+        /**
+         * Allows players to deposit items into 
+         */
+        DONATION
 
     }
 
