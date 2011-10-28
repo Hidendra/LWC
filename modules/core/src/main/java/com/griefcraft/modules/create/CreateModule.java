@@ -134,10 +134,10 @@ public class CreateModule extends JavaModule {
 
             lwc.sendLocale(player, "protection.interact.create.finalize");
             lwc.sendLocale(player, "protection.interact.create.password");
-        } else if (protectionType.equals("private")) {
+        } else if (protectionType.equals("private") || protectionType.equals("donation")) {
             String[] rights = protectionData.split(" ");
 
-            protection = physDb.registerProtection(block.getTypeId(), Protection.Type.PRIVATE, worldName, playerName, "", blockX, blockY, blockZ);
+            protection = physDb.registerProtection(block.getTypeId(), Protection.Type.matchType(protectionType), worldName, playerName, "", blockX, blockY, blockZ);
 
             lwc.sendLocale(player, "protection.interact.create.finalize");
             lwc.processRightsModifications(player, protection, rights);
@@ -206,25 +206,33 @@ public class CreateModule extends JavaModule {
             return;
         }
 
-        if (type.equals("trap")) {
-            if (!lwc.isAdmin(player)) {
-                lwc.sendLocale(player, "protection.accessdenied");
-                return;
-            }
+        try {
+            switch (Protection.Type.matchType(type)) {
+                case TRAP_KICK:
+                case TRAP_BAN:
+                    if (!lwc.isAdmin(player)) {
+                        lwc.sendLocale(player, "protection.accessdenied");
+                        return;
+                    }
 
-            if (args.length < 2) {
-                lwc.sendSimpleUsage(player, "/lwc -c trap <kick/ban> [reason]");
-                return;
-            }
-        } else if (type.equals("password")) {
-            if (args.length < 2) {
-                lwc.sendSimpleUsage(player, "/lwc -c password <Password>");
-                return;
-            }
+                    if (args.length < 2) {
+                        lwc.sendSimpleUsage(player, "/lwc -c trap <kick/ban> [reason]");
+                        return;
+                    }
+                    break;
 
-            String hiddenPass = StringUtil.transform(data, '*');
-            lwc.sendLocale(player, "protection.create.password", "password", hiddenPass);
-        } else if (!type.equals("public") && !type.equals("private")) {
+                case PASSWORD:
+                    if (args.length < 2) {
+                        lwc.sendSimpleUsage(player, "/lwc -c password <Password>");
+                        return;
+                    }
+
+                    String hiddenPass = StringUtil.transform(data, '*');
+                    lwc.sendLocale(player, "protection.create.password", "password", hiddenPass);
+                    break;
+            }
+        } catch (IllegalArgumentException e) {
+            // Invalid protection type!
             lwc.sendLocale(player, "help.creation");
             return;
         }
