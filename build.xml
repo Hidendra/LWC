@@ -154,6 +154,7 @@
             <fileset dir="${src}" includes="lang/*"/>
             <fileset dir="${bin}/core/resources/" includes="**/*"/>
             <fileset dir="${bin}/core/" excludes="resources/**"/>
+            <fileset dir="." includes="config/**.yml" />
 
             <manifest>
                 <attribute name="Implementation-Title" value="LWC"/>

@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,7 +55,12 @@ public class Configuration extends ConfigurationNode {
      */
     private static Map<String, Configuration> loaded = new HashMap<String, Configuration>();
 
-    private Configuration(File file) {
+    /**
+     * The config updater for config files
+     */
+    private static final ConfigUpdater updater = new ConfigUpdater();
+
+    protected Configuration(File file) {
         super(new HashMap<String, Object>());
 
         DumperOptions options = new DumperOptions();
@@ -62,8 +68,16 @@ public class Configuration extends ConfigurationNode {
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 
         yaml = new Yaml(new SafeConstructor(), new Representer(), options);
-
         this.file = file;
+    }
+
+    /**
+     * Gets the file
+     * 
+     * @return
+     */
+    public File getFile() {
+        return file;
     }
 
     /**
@@ -71,7 +85,7 @@ public class Configuration extends ConfigurationNode {
      */
     public static void reload() {
         for (Configuration configuration : loaded.values()) {
-            configuration.load();
+            configuration.load(configuration.file);
         }
     }
 
@@ -102,32 +116,43 @@ public class Configuration extends ConfigurationNode {
         }
 
         Configuration configuration = new Configuration(file);
-        configuration.load();
+        configuration.load(file);
         loaded.put(config, configuration);
+
+        // Run the config updater
+        updater.update(configuration);
 
         return configuration;
     }
 
     /**
-     * Loads the configuration file. All errors are thrown away.
+     * Loads the configuration file with the given input stream
+     *
+     * @param inputStream
      */
-    void load() {
-        FileInputStream stream = null;
-
+    public void load(InputStream inputStream) {
         try {
-            stream = new FileInputStream(file);
-            read(yaml.load(new UnicodeReader(stream)));
-        } catch (IOException e) {
-            root = new HashMap<String, Object>();
+            read(yaml.load(new UnicodeReader(inputStream)));
         } catch (ConfigurationException e) {
             root = new HashMap<String, Object>();
         } finally {
             try {
-                if (stream != null) {
-                    stream.close();
+                if (inputStream != null) {
+                    inputStream.close();
                 }
             } catch (IOException e) {
             }
+        }
+    }
+
+    /**
+     * Loads the configuration file. All errors are thrown away.
+     */
+    public void load(File file) {
+        try {
+            load(new FileInputStream(file));
+        } catch (IOException e) {
+            root = new HashMap<String, Object>();
         }
     }
 
