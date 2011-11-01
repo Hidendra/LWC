@@ -145,6 +145,20 @@ public class ConfigUpdater {
         }
     }
 
+    /**
+     * Get all of the nodes in a configuration file up to 1 node down from the root
+     * <pre>
+     * root
+     *    -> node
+     *    -> node
+     *        -> subnode
+     *        -> subnode
+     * </pre>
+     * In this case, the subnodes are not returned (the root and nodes however, are)
+     *
+     * @param configuration
+     * @return
+     */
     private List<String> getKeysDepth2(Configuration configuration) {
         List<String> keys = new ArrayList<String>();
 
