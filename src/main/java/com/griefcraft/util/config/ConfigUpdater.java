@@ -29,6 +29,7 @@
 package com.griefcraft.util.config;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -71,7 +72,7 @@ public class ConfigUpdater {
         }
 
         // Load our jar file
-        ZipFile jarFile = new ZipFile(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+        ZipFile jarFile = new ZipFile(URLDecoder.decode(ConfigUpdater.class.getProtectionDomain().getCodeSource().getLocation().getPath(), "UTF-8"));
 
         // Begin loading the files
         Enumeration entries = jarFile.entries();
