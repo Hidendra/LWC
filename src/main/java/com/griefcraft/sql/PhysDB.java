@@ -1409,7 +1409,7 @@ public class PhysDB extends Database {
             statement.setString(index++, job.getName());
             statement.setInt(index++, job.getType());
             statement.setString(index++, job.getData().toJSONString());
-            statement.setLong(index++, job.getNextRun());
+            statement.setInt(index++, (int) job.getNextRun());
             statement.executeUpdate();
 
             // check if it was inserted correctly
