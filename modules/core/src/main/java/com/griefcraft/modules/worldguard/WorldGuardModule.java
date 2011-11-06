@@ -22,6 +22,7 @@ import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.config.Configuration;
 import com.sk89q.worldedit.Vector;
+import com.sk89q.worldguard.bukkit.BukkitPlayer;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.GlobalRegionManager;
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -83,25 +84,26 @@ public class WorldGuardModule extends JavaModule {
                 */
             List<String> regionSet = regionManager.getApplicableRegionsIDs(blockVector);
             List<String> allowedRegions = configuration.getStringList("worldguard.regions", new ArrayList<String>());
+            List<String> deniedRegions = configuration.getStringList("worldguard.blacklist", new ArrayList<String>());
+            boolean requireBuild = configuration.getBoolean("worldguard.requireBuild", false);
 
             boolean deny = true;
-
-            /*
-                * Check for *
-                */
-            if (allowedRegions.contains("*")) {
-                if (regionSet.size() > 0) {
-                    return ALLOW;
-                }
-            }
-
-            /*
-                * If there are no regions, we need to deny them
-                */
-            for (String region : regionSet) {
-                if (allowedRegions.contains(region)) {
+            if (!requireBuild
+                    || regionManager.getApplicableRegions(blockVector).canBuild(new BukkitPlayer(worldGuard, player))) {
+                if (allowedRegions.contains("*") && regionSet.size() > 0) {
                     deny = false;
-                    break;
+                    for (String deniedRegion : deniedRegions) {
+                        if (regionSet.contains(deniedRegion)) {
+                            deny = true;
+                        }
+                    }
+                } else {
+                    for (String region : regionSet) {
+                        if (allowedRegions.contains(region)) {
+                            deny = false;
+                            break;
+                        }
+                    }
                 }
             }
 
