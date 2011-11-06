@@ -1403,7 +1403,7 @@ public class PhysDB extends Database {
                 statement = prepare("REPLACE INTO " + prefix + "jobs (id, name, type, data, nextRun) VALUES (?, ?, ?, ?, ?)");
                 statement.setInt(index++, job.getId());
             } else {
-                statement = prepare("INSERT INTO " + prefix + "jobs (name, type, data, nextRun) VALUES (?, ?, ?, ?)");
+                statement = prepare("INSERT INTO " + prefix + "jobs (name, type, data, nextRun) VALUES (?, ?, ?, ?)", true);
             }
 
             statement.setString(index++, job.getName());
