@@ -29,21 +29,16 @@
 package com.griefcraft.modules.worldguard;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
-import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.config.Configuration;
-import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.Vector;
+import com.sk89q.worldguard.bukkit.BukkitPlayer;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.GlobalRegionManager;
 import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -73,91 +68,6 @@ public class WorldGuardModule extends JavaModule {
     }
 
     @Override
-    public void onCommand(LWCCommandEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-
-        if (!event.hasFlag("a", "admin")) {
-            return;
-        }
-
-        LWC lwc = event.getLWC();
-        CommandSender sender = event.getSender();
-        String[] args = event.getArgs();
-
-        if (!args[0].equals("purgeregion")) {
-            return;
-        }
-
-        // we have the right command
-        event.setCancelled(true);
-
-        // check for worldguard
-        if (worldGuard == null) {
-            sender.sendMessage(Colors.Red + "WorldGuard is not enabled.");
-            return;
-        }
-
-        if (args.length < 2) {
-            lwc.sendSimpleUsage(sender, "/lwc admin purgeregion <RegionName> [World]");
-            return;
-        }
-
-        if (!(sender instanceof Player) && args.length < 3) {
-            sender.sendMessage(Colors.Red + "You must specify the world name the region is in since you are not logged in as a player.");
-            return;
-        }
-
-        // the region
-        String regionName = args[1];
-
-        // the world the region is in
-        String worldName = args.length > 2 ? args[2] : "";
-
-        // get the world to use
-        World world = null;
-
-        if (!worldName.isEmpty()) {
-            world = lwc.getPlugin().getServer().getWorld(worldName);
-        } else {
-            world = ((Player) sender).getWorld();
-        }
-
-        // was the world found?
-        if (world == null) {
-            sender.sendMessage(Colors.Red + "Invalid world.");
-            return;
-        }
-
-        GlobalRegionManager regions = worldGuard.getGlobalRegionManager();
-
-        // get the region manager for the world
-        RegionManager regionManager = regions.get(world);
-
-        // try and get the region
-        ProtectedRegion region = regionManager.getRegion(regionName);
-
-        if (region == null) {
-            sender.sendMessage(Colors.Red + "Region not found. If you region is in a different world than you, please use: /lwc admin purgeregion " + regionName + " WorldName");
-            return;
-        }
-
-        BlockVector minimum = region.getMinimumPoint();
-        BlockVector maximum = region.getMaximumPoint();
-
-        // get all of the protections inside of the region
-        List<Protection> protections = lwc.getPhysicalDatabase().loadProtections(world.getName(), minimum.getBlockX(), maximum.getBlockX(), 0, 128, minimum.getBlockZ(), maximum.getBlockZ());
-
-        // remove all of them
-        for (Protection protection : protections) {
-            protection.remove();
-        }
-
-        sender.sendMessage(Colors.Green + "Removed " + protections.size() + " protections from the region " + regionName);
-    }
-
-    @Override
     public void onRegisterProtection(LWCProtectionRegisterEvent event) {
         if (worldGuard == null) {
             return;
@@ -171,11 +81,11 @@ public class WorldGuardModule extends JavaModule {
         Block block = event.getBlock();
 
         try {
-            // Get the region manager
+            // Now get the region manager
             GlobalRegionManager regions = worldGuard.getGlobalRegionManager();
             RegionManager regionManager = regions.get(player.getWorld());
 
-            // Reflect into BukkitUtil.toVector ...
+            // We need to reflect into BukkitUtil.toVector
             Class<?> bukkitUtil = worldGuard.getClass().getClassLoader().loadClass("com.sk89q.worldguard.bukkit.BukkitUtil");
             Method toVector = bukkitUtil.getMethod("toVector", Block.class);
             Vector blockVector = (Vector) toVector.invoke(null, block);
@@ -183,22 +93,26 @@ public class WorldGuardModule extends JavaModule {
             // Now let's get the list of regions at the block we're clicking
             List<String> regionSet = regionManager.getApplicableRegionsIDs(blockVector);
             List<String> allowedRegions = configuration.getStringList("worldguard.regions", new ArrayList<String>());
+            List<String> deniedRegions = configuration.getStringList("worldguard.blacklist", new ArrayList<String>());
+            boolean requireBuild = configuration.getBoolean("worldguard.requireBuild", false);
 
             boolean deny = true;
-
-            // check for *
-            if (allowedRegions.contains("*")) {
-                if (regionSet.size() > 0) {
-                    // Yeah!
-                    return;
-                }
-            }
-
-            // if they aren't in any of the regions we need to deny them
-            for (String region : regionSet) {
-                if (allowedRegions.contains(region)) {
+            if (!requireBuild
+                    || regionManager.getApplicableRegions(blockVector).canBuild(new BukkitPlayer(worldGuard, player))) {
+                if (allowedRegions.contains("*") && regionSet.size() > 0) {
                     deny = false;
-                    break;
+                    for (String deniedRegion : deniedRegions) {
+                        if (regionSet.contains(deniedRegion)) {
+                            deny = true;
+                        }
+                    }
+                } else {
+                    for (String region : regionSet) {
+                        if (allowedRegions.contains(region)) {
+                            deny = false;
+                            break;
+                        }
+                    }
                 }
             }
 
