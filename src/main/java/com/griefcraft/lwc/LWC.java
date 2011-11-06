@@ -1239,9 +1239,17 @@ public class LWC {
         registerModule(new NoSpamModule());
 
         // non-core modules but are included with LWC anyway (not a lot of functionality in them, generally ..)
-        registerModule(new ListsModule());
-        registerModule(new WorldGuardModule());
-        registerModule(new TownyModule());
+        if (resolvePlugin("Lists") != null) {
+            registerModule(new ListsModule());
+        }
+
+        if (resolvePlugin("WorldGuard") != null) {
+            registerModule(new WorldGuardModule());
+        }
+
+        if (resolvePlugin("Towny") != null) {
+            registerModule(new TownyModule());
+        }
     }
 
     /**
