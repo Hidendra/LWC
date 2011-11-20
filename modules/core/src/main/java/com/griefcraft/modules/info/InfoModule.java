@@ -73,7 +73,7 @@ public class InfoModule extends JavaModule {
         player.sendMessage("");
 
         if (protection.getType() == Protection.Type.PRIVATE || protection.getType() == Protection.Type.DONATION) {
-            player.sendMessage(Colors.Red + "ACL" + Colors.White + " (" + protection.getAccessRights().size() + ")");
+            player.sendMessage(Colors.Red + "Access Control List " + Colors.White + "(" + protection.getAccessRights().size() + ")");
             int index = 0;
             for (AccessRight accessRight : protection.getAccessRights()) {
                 if (index >= 9) {
