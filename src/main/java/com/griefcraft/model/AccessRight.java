@@ -122,19 +122,21 @@ public class AccessRight {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append(Colors.LightBlue);
+        builder.append(Colors.Yellow);
         builder.append(getName());
-        builder.append(Colors.Blue);
+        builder.append(Colors.White);
         builder.append(" (");
+        builder.append(Colors.Green);
         builder.append(AccessRight.typeToString(getType()));
+        builder.append(Colors.White);
         builder.append(") ");
 
         if (getRights() == 1) {
-            builder.append(Colors.LightBlue);
+        builder.append(Colors.White);
             builder.append("(");
             builder.append(Colors.Red);
             builder.append("ADMIN");
-            builder.append(Colors.LightBlue);
+        builder.append(Colors.White);
             builder.append(")");
         }
         return builder.toString();
