@@ -74,71 +74,11 @@ public class MySQLPost200 implements MigrationUtility {
         logger.info("######################################################");
         logger.info("SQLite to MySQL conversion required");
 
-        logger.info("Loading SQLite");
+        // rev up those sqlite databases because I sure am hungry for some data...
+        DatabaseMigrator migrator = new DatabaseMigrator();
 
-        // rev up those sqlite databases because I sure am hungry for some
-        // data...
-        PhysDB sqliteDatabase = new PhysDB(Type.SQLite);
-
-        try {
-            sqliteDatabase.connect();
-            sqliteDatabase.load();
-
-            logger.info("SQLite is good to go");
-            physicalDatabase.getConnection().setAutoCommit(false);
-
-            logger.info("Preliminary scan...............");
-            int startProtections = physicalDatabase.getProtectionCount();
-
-            int protectionCount = sqliteDatabase.getProtectionCount();
-            int historyCount = sqliteDatabase.getHistoryCount();
-
-            int expectedProtections = protectionCount + startProtections;
-
-            logger.info("TO CONVERT:");
-            logger.info("Protections:\t" + protectionCount);
-            logger.info("History:\t" + historyCount);
-            logger.info("");
-
-            if (protectionCount > 0) {
-                logger.info("Converting: PROTECTIONS");
-
-                List<Protection> tmp = sqliteDatabase.loadProtections();
-
-                for (Protection protection : tmp) {
-                    // sync it to the live database
-                    protection.saveNow();
-                }
-
-                logger.info("COMMITTING");
-                physicalDatabase.getConnection().commit();
-                logger.info("OK , expecting: " + expectedProtections);
-                if (expectedProtections == (protectionCount = physicalDatabase.getProtectionCount())) {
-                    logger.info("OK.");
-                } else {
-                    logger.info("Weird, only " + protectionCount + " protections are in the database? Continuing...");
-                }
-            }
-
-            if (historyCount > 0) {
-                logger.info("Converting: HISTORY");
-
-                List<History> tmp = sqliteDatabase.loadHistory();
-
-                for (History history : tmp) {
-                    // make sure it's assumed it does not exist in the database
-                    history.setExists(false);
-
-                    // sync the history object with the active database (ala MySQL)
-                    history.sync();
-                }
-
-                logger.info("OK");
-            }
-
-            logger.info("Closing SQLite");
-            sqliteDatabase.getConnection().close();
-
+        if (migrator.convertFrom(Type.SQLite)) {
+            logger.info("Successfully converted.");
             logger.info("Renaming \"" + database + "\" to \"" + database + ".old\"");
             if (!file.renameTo(new File(database + ".old"))) {
                 logger.info("NOTICE: FAILED TO RENAME lwc.db!! Please rename this manually!");
@@ -146,15 +86,8 @@ public class MySQLPost200 implements MigrationUtility {
 
             logger.info("SQLite to MySQL conversion is now complete!\n");
             logger.info("Thank you!");
-        } catch (Exception e) {
+        } else {
             logger.info("#### SEVERE ERROR: Something bad happened when converting the database (Oops!)");
-            e.printStackTrace();
-        }
-
-        try {
-            physicalDatabase.getConnection().setAutoCommit(true);
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
 
         logger.info("######################################################");
