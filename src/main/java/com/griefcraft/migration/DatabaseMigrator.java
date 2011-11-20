@@ -41,9 +41,9 @@ public class DatabaseMigrator {
     private static Logger logger = Logger.getLogger("LWCMigrator");
 
     /**
-     * Converts the given database to the current database
+     * Converts the current database to the given database type
      *
-     * @param type
+     * @param type the database to convert to
      * @return true if the conversion was most likely successful
      */
     public boolean convertFrom(Database.Type type) {
