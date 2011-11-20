@@ -93,6 +93,7 @@ import com.griefcraft.modules.owners.OwnersModule;
 import com.griefcraft.modules.redstone.RedstoneModule;
 import com.griefcraft.modules.schedule.ScheduleModule;
 import com.griefcraft.modules.setup.BaseSetupModule;
+import com.griefcraft.modules.setup.DatabaseSetupModule;
 import com.griefcraft.modules.towny.TownyModule;
 import com.griefcraft.modules.unlock.UnlockModule;
 import com.griefcraft.modules.worldguard.WorldGuardModule;
@@ -1077,6 +1078,22 @@ public class LWC {
     }
 
     /**
+     * Reload the database
+     */
+    public void reloadDatabase() {
+        try {
+            updateThread.flush();
+            updateThread.stop();
+            physicalDatabase = new PhysDB();
+            physicalDatabase.connect();
+            physicalDatabase.load();
+            updateThread = new UpdateThread(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Load sqlite (done only when LWC is loaded so memory isn't used unnecessarily)
      */
     public void load() {
@@ -1226,6 +1243,7 @@ public class LWC {
 
         // /lwc setup
         registerModule(new BaseSetupModule());
+        registerModule(new DatabaseSetupModule());
 
         // flags
         registerModule(new BaseFlagModule());
