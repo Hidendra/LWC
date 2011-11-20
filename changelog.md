@@ -1,4 +1,5 @@
 ### 4.0.0-alpha7
+* Added the commands: `/lwc admin updateprotections` `/lwc admin deleteprotections` `/lwc admin selectprotections` Delete/Select take a where argument and must be specified; e.g `/lwc admin deleteprotections world='World1'` and Update takes a Where and/or Set statement: `/lwc admin updateprotections set world='World2' where world='World1'`
 * On the fly database conversion using `/lwc setup database NewType` and does not require plugin reloads or server restarts. E.g if you're on MySQL and want to go back to SQLite: `/lwc setup database sqlite`
 * **FIX:** `/lwc admin report` would throw an exception
 * **FIX:** Internal database version was not updating
