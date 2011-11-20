@@ -1,5 +1,5 @@
 ### 4.0.0-alpha7
-* The command 
+* On the fly database conversion using `/lwc setup database NewType` and does not require plugin reloads or server restarts. E.g if you're on MySQL and want to go back to SQLite: `/lwc setup database sqlite`
 * **FIX:** `/lwc admin report` would throw an exception
 * **FIX:** Internal database version was not updating
 * Startup time has been dramatically increased for those with a very large amount of protections.
