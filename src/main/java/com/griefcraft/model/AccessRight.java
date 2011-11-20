@@ -28,6 +28,7 @@
 
 package com.griefcraft.model;
 
+import com.griefcraft.util.Colors;
 import org.json.simple.JSONObject;
 
 public class AccessRight {
@@ -120,7 +121,24 @@ public class AccessRight {
 
     @Override
     public String toString() {
-        return String.format("AccessRight = { protection=%d name=%s rights=%d type=%s }", protectionId, name, rights, typeToString(rights));
+        StringBuilder builder = new StringBuilder();
+        builder.append(Colors.LightBlue);
+        builder.append(getName());
+        builder.append(Colors.Blue);
+        builder.append(" (");
+        builder.append(AccessRight.typeToString(getType()));
+        builder.append(") ");
+
+        if (getRights() == 1) {
+            builder.append(Colors.LightBlue);
+            builder.append("(");
+            builder.append(Colors.Red);
+            builder.append("ADMIN");
+            builder.append(Colors.LightBlue);
+            builder.append(")");
+        }
+        return builder.toString();
+        // return String.format("AccessRight = { protection=%d name=%s rights=%d type=%s }", protectionId, name, rights, typeToString(rights));
     }
 
     public String getName() {
