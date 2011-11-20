@@ -92,7 +92,7 @@ public class LWCBlockListener extends BlockListener {
 
     @Override
     public void onSignChange(SignChangeEvent event) {
-        if (!LWC.ENABLED) {
+        if (!LWC.ENABLED || event.isCancelled()) {
             return;
         }
 
@@ -119,11 +119,7 @@ public class LWCBlockListener extends BlockListener {
 
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-
-        if (!LWC.ENABLED) {
+        if (!LWC.ENABLED || event.isCancelled()) {
             return;
         }
 
@@ -163,7 +159,7 @@ public class LWCBlockListener extends BlockListener {
 
     @Override
     public void onBlockPistonRetract(BlockPistonRetractEvent event) {
-        if (!LWC.ENABLED) {
+        if (!LWC.ENABLED || event.isCancelled()) {
             return;
         }
 
@@ -192,7 +188,7 @@ public class LWCBlockListener extends BlockListener {
 
     @Override
     public void onBlockPistonExtend(BlockPistonExtendEvent event) {
-        if (!LWC.ENABLED) {
+        if (!LWC.ENABLED || event.isCancelled()) {
             return;
         }
 
@@ -242,11 +238,7 @@ public class LWCBlockListener extends BlockListener {
      */
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-
-        if (!LWC.ENABLED) {
+        if (!LWC.ENABLED || event.isCancelled()) {
             return;
         }
 
