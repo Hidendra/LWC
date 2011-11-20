@@ -29,12 +29,16 @@
 package com.griefcraft.modules.admin;
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
+import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtil;
 import org.bukkit.command.CommandSender;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 public class AdminQuery extends JavaModule {
@@ -53,22 +57,63 @@ public class AdminQuery extends JavaModule {
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
 
-        if (!args[0].equals("query")) {
+        if (!args[0].equals("query") && !args[0].equals("updateprotections") && !args[0].equals("deleteprotections") && !args[0].equals("selectprotections")) {
             return;
         }
 
         // we have the right command
         event.setCancelled(true);
 
-        String query = StringUtil.join(args, 1);
+        // Raw query
+        if (args[0].equals("query")) {
+            String query = StringUtil.join(args, 1);
 
-        try {
-            Statement statement = lwc.getPhysicalDatabase().getConnection().createStatement();
-            statement.executeUpdate(query);
-            statement.close();
-            sender.sendMessage(Colors.Green + "Done.");
-        } catch (Exception e) {
-            sender.sendMessage(Colors.Red + "Err: " + e.getMessage());
+            try {
+                Statement statement = lwc.getPhysicalDatabase().getConnection().createStatement();
+                statement.executeUpdate(query);
+                statement.close();
+                sender.sendMessage(Colors.Green + "Done.");
+            } catch (SQLException e) {
+                sender.sendMessage(Colors.Red + "Err: " + e.getMessage());
+            }
+        }
+
+        // Specific query, but the where statement is given
+        else {
+            String where = StringUtil.join(args, 1);
+
+            // Ensure they don't accidentally do /lwc admin deleteprotections
+            // which would delete everything..
+            if (where.isEmpty()) {
+                sender.sendMessage(Colors.Red + "Unsafe query detected.");
+                return;
+            }
+
+            // execute the query
+            try {
+                PhysDB database = lwc.getPhysicalDatabase();
+                Statement statement = database.getConnection().createStatement();
+
+                // choose the statement
+                if (args[0].startsWith("update")) {
+                    int affected = statement.executeUpdate("UPDATE " + database.getPrefix() + "protections " + where);
+                    sender.sendMessage(Colors.Green + "Affected rows: " + affected);
+                } else if (args[0].startsWith("delete")) {
+                    int affected = statement.executeUpdate("DELETE FROM " + database.getPrefix() + "protections WHERE " + where);
+                    sender.sendMessage(Colors.Green + "Affected rows: " + affected);
+                } else if (args[0].startsWith("select")) {
+                    ResultSet set = statement.executeQuery("SELECT * FROM " + database.getPrefix() + "protections WHERE " + where);
+
+                    while (set.next()) {
+                        Protection protection = database.resolveProtection(set);
+                        sender.sendMessage(protection.toString());
+                    }
+
+                    set.close();
+                }
+            } catch (SQLException e) {
+                sender.sendMessage(Colors.Red + "Err: " + e.getMessage());
+            }
         }
 
     }
