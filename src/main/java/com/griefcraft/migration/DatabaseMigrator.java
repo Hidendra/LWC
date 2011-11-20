@@ -43,41 +43,39 @@ public class DatabaseMigrator {
     /**
      * Converts the current database to the given database type
      *
-     * @param type the database to convert to
+     * @param fromDatabase The database to convert from
+     * @param toDatabase The database to convert to - does not need to be initialized; new PhysDB(type) is fine
      * @return true if the conversion was most likely successful
      */
-    public boolean convertFrom(Database.Type type) {
-        PhysDB oldDatabase = new PhysDB(type);
-        PhysDB currentDatabase = LWC.getInstance().getPhysicalDatabase();
-
+    public boolean migrate(PhysDB fromDatabase, PhysDB toDatabase) {
         try {
-            oldDatabase.connect();
-            oldDatabase.load();
+            toDatabase.connect();
+            toDatabase.load();
 
-            currentDatabase.getConnection().setAutoCommit(false);
+            fromDatabase.getConnection().setAutoCommit(false);
 
             // some prelim data
-            int startProtections = currentDatabase.getProtectionCount();
-            int protectionCount = oldDatabase.getProtectionCount();
-            int historyCount = oldDatabase.getHistoryCount();
+            int startProtections = fromDatabase.getProtectionCount();
+            int protectionCount = toDatabase.getProtectionCount();
+            int historyCount = toDatabase.getHistoryCount();
             int expectedProtections = protectionCount + startProtections;
 
             if (protectionCount > 0) {
-                List<Protection> tmp = oldDatabase.loadProtections();
+                List<Protection> tmp = toDatabase.loadProtections();
 
                 for (Protection protection : tmp) {
                     // sync it to the live database
                     protection.saveNow();
                 }
 
-                currentDatabase.getConnection().commit();
-                if (expectedProtections != (protectionCount = currentDatabase.getProtectionCount())) {
+                fromDatabase.getConnection().commit();
+                if (expectedProtections != (protectionCount = fromDatabase.getProtectionCount())) {
                     logger.info("Weird, only " + protectionCount + " protections are in the database? Continuing...");
                 }
             }
 
             if (historyCount > 0) {
-                List<History> tmp = oldDatabase.loadHistory();
+                List<History> tmp = toDatabase.loadHistory();
 
                 for (History history : tmp) {
                     // make sure it's assumed it does not exist in the database
@@ -88,8 +86,8 @@ public class DatabaseMigrator {
                 }
             }
 
-            oldDatabase.getConnection().close();
-            currentDatabase.getConnection().setAutoCommit(true);
+            toDatabase.getConnection().close();
+            fromDatabase.getConnection().setAutoCommit(true);
         } catch (Exception e) {
             e.printStackTrace();
             return false;

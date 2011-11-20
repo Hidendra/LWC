@@ -66,6 +66,22 @@ public abstract class Database {
             return driver;
         }
 
+        /**
+         * Match the given string to a database type
+         *
+         * @param str
+         * @return
+         */
+        public static Type matchType(String str) {
+            for (Type type : values()) {
+                if (type.toString().equalsIgnoreCase(str)) {
+                    return type;
+                }
+            }
+
+            return null;
+        }
+
     }
 
     /**

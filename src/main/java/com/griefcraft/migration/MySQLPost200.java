@@ -29,14 +29,10 @@
 package com.griefcraft.migration;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.History;
-import com.griefcraft.model.Protection;
 import com.griefcraft.sql.Database.Type;
 import com.griefcraft.sql.PhysDB;
 
 import java.io.File;
-import java.sql.SQLException;
-import java.util.List;
 import java.util.logging.Logger;
 
 // Sort of just a convenience class, so as to not make the LWC class more cluttered than it is right now
@@ -77,7 +73,7 @@ public class MySQLPost200 implements MigrationUtility {
         // rev up those sqlite databases because I sure am hungry for some data...
         DatabaseMigrator migrator = new DatabaseMigrator();
 
-        if (migrator.convertFrom(Type.SQLite)) {
+        if (migrator.migrate(lwc.getPhysicalDatabase(), new PhysDB(Type.SQLite))) {
             logger.info("Successfully converted.");
             logger.info("Renaming \"" + database + "\" to \"" + database + ".old\"");
             if (!file.renameTo(new File(database + ".old"))) {
