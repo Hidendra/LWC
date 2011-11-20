@@ -67,12 +67,11 @@ public class LWCPlayerListener extends PlayerListener {
 
     @Override
     public void onPlayerDropItem(PlayerDropItemEvent event) {
-        if (!LWC.ENABLED) {
+        if (event.isCancelled() || !LWC.ENABLED) {
             return;
         }
 
         Player player = event.getPlayer();
-        Item item = event.getItemDrop();
 
         LWCDropItemEvent evt = new LWCDropItemEvent(player, event);
         plugin.getLWC().getModuleLoader().dispatchEvent(evt);
@@ -84,6 +83,10 @@ public class LWCPlayerListener extends PlayerListener {
 
     @Override
     public void onPlayerChat(PlayerChatEvent event) {
+        if (event.isCancelled() || !LWC.ENABLED) {
+            return;
+        }
+
         if (!plugin.getLWC().getConfiguration().getBoolean("core.filterunlock", true)) {
             return;
         }
@@ -99,7 +102,7 @@ public class LWCPlayerListener extends PlayerListener {
 
     @Override
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (!LWC.ENABLED) {
+        if (event.isCancelled() || !LWC.ENABLED) {
             return;
         }
 

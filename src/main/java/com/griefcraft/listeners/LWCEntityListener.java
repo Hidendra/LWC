@@ -28,6 +28,7 @@
 
 package com.griefcraft.listeners;
 
+import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
 import org.bukkit.block.Block;
@@ -41,18 +42,13 @@ public class LWCEntityListener extends EntityListener {
      */
     private LWCPlugin plugin;
 
-    /**
-     * Blast radius for TNT / Creepers
-     */
-    public final static int BLAST_RADIUS = 4;
-
     public LWCEntityListener(LWCPlugin plugin) {
         this.plugin = plugin;
     }
 
     @Override
     public void onEntityExplode(EntityExplodeEvent event) {
-        if (event.isCancelled()) {
+        if (!LWC.ENABLED || event.isCancelled()) {
             return;
         }
 
