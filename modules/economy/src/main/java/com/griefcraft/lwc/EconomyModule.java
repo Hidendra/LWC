@@ -363,9 +363,15 @@ public class EconomyModule extends JavaModule {
         // how much to charge the player
         double charge = 0D;
 
+        String value;
+        // Check for a block override charge
+        if ((value = lwc.resolveProtectionConfiguration(block.getType(), "charge")) == null) {
+            // not found; use default
+            value = resolveValue(player, "charge");
+        }
+
         // attempt to resolve the new charge
         try {
-            String value = resolveValue(player, "charge");
             charge = Double.parseDouble(value);
         } catch (NumberFormatException e) {
         }
