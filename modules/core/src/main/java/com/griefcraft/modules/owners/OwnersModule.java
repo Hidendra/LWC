@@ -89,25 +89,7 @@ public class OwnersModule extends JavaModule {
             }
 
             AccessRight accessRight = accessRights.get(start + index);
-
-            StringBuilder builder = new StringBuilder();
-            builder.append(Colors.LightBlue);
-            builder.append(accessRight.getName());
-            builder.append(Colors.Blue);
-            builder.append(" (");
-            builder.append(AccessRight.typeToString(accessRight.getType()));
-            builder.append(") ");
-
-            if (accessRight.getRights() == 1) {
-                builder.append(Colors.LightBlue);
-                builder.append("(");
-                builder.append(Colors.Red);
-                builder.append("ADMIN");
-                builder.append(Colors.LightBlue);
-                builder.append(")");
-            }
-
-            player.sendMessage(builder.toString());
+            player.sendMessage(accessRight.toString());
         }
 
         lwc.removeModes(player);
