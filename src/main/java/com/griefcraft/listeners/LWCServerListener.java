@@ -50,9 +50,7 @@ public class LWCServerListener extends ServerListener {
 
         Plugin disabled = event.getPlugin();
 
-        /**
-         * Remove any modules registered by the disabled plugin
-         */
+        // Removes any modules registered by the disabled plugin
         plugin.getLWC().getModuleLoader().removeModules(disabled);
     }
 
