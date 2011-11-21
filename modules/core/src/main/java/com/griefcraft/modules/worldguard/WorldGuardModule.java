@@ -35,6 +35,7 @@ import com.griefcraft.util.Colors;
 import com.griefcraft.util.config.Configuration;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.bukkit.BukkitPlayer;
+import com.sk89q.worldguard.bukkit.BukkitUtil;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.GlobalRegionManager;
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -80,49 +81,62 @@ public class WorldGuardModule extends JavaModule {
         Player player = event.getPlayer();
         Block block = event.getBlock();
 
-        try {
-            // Now get the region manager
-            GlobalRegionManager regions = worldGuard.getGlobalRegionManager();
-            RegionManager regionManager = regions.get(player.getWorld());
+        // Load the region manager for the world
+        GlobalRegionManager globalRegionManager = worldGuard.getGlobalRegionManager();
+        RegionManager regionManager = globalRegionManager.get(block.getWorld());
 
-            // We need to reflect into BukkitUtil.toVector
-            Class<?> bukkitUtil = worldGuard.getClass().getClassLoader().loadClass("com.sk89q.worldguard.bukkit.BukkitUtil");
-            Method toVector = bukkitUtil.getMethod("toVector", Block.class);
-            Vector blockVector = (Vector) toVector.invoke(null, block);
-
-            // Now let's get the list of regions at the block we're clicking
-            List<String> regionSet = regionManager.getApplicableRegionsIDs(blockVector);
-            List<String> allowedRegions = configuration.getStringList("worldguard.regions", new ArrayList<String>());
-            List<String> deniedRegions = configuration.getStringList("worldguard.blacklist", new ArrayList<String>());
-            boolean requireBuild = configuration.getBoolean("worldguard.requireBuild", false);
-
-            boolean deny = true;
-            if (!requireBuild
-                    || regionManager.getApplicableRegions(blockVector).canBuild(new BukkitPlayer(worldGuard, player))) {
-                if (allowedRegions.contains("*") && regionSet.size() > 0) {
-                    deny = false;
-                    for (String deniedRegion : deniedRegions) {
-                        if (regionSet.contains(deniedRegion)) {
-                            deny = true;
-                        }
-                    }
-                } else {
-                    for (String region : regionSet) {
-                        if (allowedRegions.contains(region)) {
-                            deny = false;
-                            break;
-                        }
-                    }
-                }
+        // Are we enforcing building?
+        if (configuration.getBoolean("worldguard.requireBuildRights", true)) {
+            if (!globalRegionManager.canBuild(player, block)) {
+                player.sendMessage(Colors.Red + "You need build rights in this region to protect using LWC");
+                event.setCancelled(true);
+                return;
             }
+        }
+
+        // Create a vector for the region
+        Vector vector = BukkitUtil.toVector(block);
+
+        // Load the regions the block encompasses
+        List<String> regions = regionManager.getApplicableRegionsIDs(vector);
+
+        // check each region
+        for (String region : regions) {
+            // Should we deny them?
+            // we don't need to explicitly call isRegionAllowed because isRegionBlacklisted checks that as well
+            boolean deny = isRegionBlacklisted(region);
 
             if (deny) {
                 player.sendMessage(Colors.Red + "You cannot protect that " + LWC.materialToString(block) + " outside of WorldGuard regions");
                 event.setCancelled(true);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+    }
+
+    /**
+     * Check if a region is blacklisted
+     *
+     * @param region
+     * @return
+     */
+    private boolean isRegionBlacklisted(String region) {
+        if (!isRegionAllowed(region)) {
+            return true;
+        }
+
+        List<String> blacklistedRegions = configuration.getStringList("worldguard.blacklistedRegions", new ArrayList<String>());
+        return blacklistedRegions.contains("*") || blacklistedRegions.contains(region);
+    }
+
+    /**
+     * Check if a region is allowed to be built in
+     *
+     * @param region
+     * @return
+     */
+    private boolean isRegionAllowed(String region) {
+        List<String> allowedRegions = configuration.getStringList("worldguard.regions", new ArrayList<String>());
+        return allowedRegions.contains("*") || allowedRegions.contains(region);
     }
 
     /**
