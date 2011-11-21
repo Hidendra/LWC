@@ -107,7 +107,7 @@ public class WorldGuardModule extends JavaModule {
             boolean deny = isRegionBlacklisted(region);
 
             if (deny) {
-                player.sendMessage(Colors.Red + "You cannot protect that " + LWC.materialToString(block) + " outside of WorldGuard regions");
+                player.sendMessage(Colors.Red + "LWC protections are not allowed in this region!");
                 event.setCancelled(true);
             }
         }
