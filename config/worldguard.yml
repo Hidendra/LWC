@@ -1,16 +1,13 @@
-# WorldGuard LWC module
-# this module can be used to regulate where protections are placed.
-# For example, you can restrict protections to specific regions
-# Using '*' as one of the regions limits protections to in any region
-# regionBuild limits protections to regions the player can build in
-# blacklist allows you to override '*' for specific regions
-
 worldguard:
     enabled: false
-    requireBuild: false
+
+    # If the player needs to have build rights in a region to be able to protect blocks using LWC
+    requireBuildRights: true
+
+    # Regions that LWC protections SHOULD be allowed in
     regions:
-        - region1
-        - region2
-    blacklist:
-        - region3
-        - region4
+        - '*'
+
+    # Regions that LWC protections should NOT be allowed in
+    blacklistedRegions:
+        - 'Region1'
