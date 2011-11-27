@@ -188,6 +188,16 @@ public class LWCPlayerListener extends PlayerListener {
                 result = evt.getResult();
             }
 
+            // optional.onlyProtectIfOwnerIsOnline
+            if (protection != null && !canAccess && lwc.getConfiguration().getBoolean("optional.onlyProtectIfOwnerIsOnline", false)) {
+                Player owner = protection.getBukkitOwner();
+
+                // If they aren't online, allow them in :P
+                if (owner == null || !owner.isOnline()) {
+                    return;
+                }
+            }
+
             // debugging
             lwcPlayer.debug(Colors.LightBlue + "Result => " + Colors.Yellow + result + Colors.LightBlue + "  Protection => " + Colors.Yellow + protection + Colors.LightBlue + "  Access/Admin => " + Colors.Yellow + canAccess + "/" + canAdmin + Colors.LightBlue + "  Actions => " + Colors.Yellow + actions);
 
