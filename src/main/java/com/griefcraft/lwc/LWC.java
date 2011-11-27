@@ -139,6 +139,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 public class LWC {
+
     /**
      * If LWC is currently enabled
      */
@@ -1844,4 +1845,5 @@ public class LWC {
     public boolean isHistoryEnabled() {
         return !configuration.getBoolean("core.disableHistory", false);
     }
+
 }
