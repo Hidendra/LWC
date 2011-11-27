@@ -158,7 +158,11 @@ public class LWCPlayerListener extends PlayerListener {
 
             // If the event was cancelled and they have an action, warn them
             if (event.isCancelled()) {
-                if (lwcPlayer.getActions().size() > 0) {
+                int actionCount = lwcPlayer.getActions().size();
+                boolean hasInteracted = lwcPlayer.hasAction("interacted");
+
+                // only send it if a non-"interacted" action is set which is always set on the player
+                if ((hasInteracted && actionCount > 1) || (!hasInteracted && actionCount > 0)) {
                     player.sendMessage(Colors.Red + "[LWC] You have a pending action but another plugin cancelled it!");
                 }
 
@@ -234,11 +238,6 @@ public class LWCPlayerListener extends PlayerListener {
             event.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
             lwc.sendLocale(player, "protection.internalerror", "id", "PLAYER_INTERACT");
             e.printStackTrace();
-        }
-
-        // Reset the protection they're interacting with
-        if (lwcPlayer.hasAction("interacted")) {
-            lwcPlayer.removeAction(lwcPlayer.getAction("interacted"));
         }
 
         lwc.completeStopwatch(stopWatch, player);
