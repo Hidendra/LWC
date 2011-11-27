@@ -63,7 +63,6 @@ import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 public class LWCPlugin extends JavaPlugin {
-
     /**
      * The LWC instance
      */
@@ -103,40 +102,6 @@ public class LWCPlugin extends JavaPlugin {
      * LWC updater
      */
     private Updater updater;
-
-    /**
-     * @return the locale
-     */
-    public ResourceBundle getLocale() {
-        return locale;
-    }
-
-    /**
-     * @return the LWC instance
-     */
-    public LWC getLWC() {
-        return lwc;
-    }
-
-    /**
-     * @return the Updater instance
-     */
-    public Updater getUpdater() {
-        return updater;
-    }
-
-    /**
-     * Load the database
-     */
-    public void loadDatabase() {
-        String database = lwc.getConfiguration().getString("database.adapter");
-
-        if (database.equalsIgnoreCase("mysql")) {
-            Database.DefaultType = Database.Type.MySQL;
-        } else {
-            Database.DefaultType = Database.Type.SQLite;
-        }
-    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
@@ -248,35 +213,6 @@ public class LWCPlugin extends JavaPlugin {
         return false;
     }
 
-    /**
-     * Load shared libraries and other misc things
-     */
-    private void preload() {
-        log("Loading shared objects");
-
-        updater = new Updater();
-        playerListener = new LWCPlayerListener(this);
-        blockListener = new LWCBlockListener(this);
-        entityListener = new LWCEntityListener(this);
-        serverListener = new LWCServerListener(this);
-
-        // Set the SQLite native library path
-        System.setProperty("org.sqlite.lib.path", updater.getOSSpecificFolder());
-
-        // we want to force people who used sqlite.purejava before to switch:
-        System.setProperty("sqlite.purejava", "");
-
-        // BUT, some can't use native, so we need to give them the option to use
-        // pure:
-        String isPureJava = System.getProperty("lwc.purejava");
-
-        if (isPureJava != null && isPureJava.equalsIgnoreCase("true")) {
-            System.setProperty("sqlite.purejava", "true");
-        }
-
-        log("Native library: " + updater.getFullNativeLibraryPath());
-    }
-
     public void onDisable() {
         LWC.ENABLED = false;
 
@@ -313,10 +249,16 @@ public class LWCPlugin extends JavaPlugin {
     }
 
     /**
-     * @return the current locale in use
+     * Load the database
      */
-    public String getCurrentLocale() {
-        return lwc.getConfiguration().getString("core.locale", "en");
+    public void loadDatabase() {
+        String database = lwc.getConfiguration().getString("database.adapter");
+
+        if (database.equalsIgnoreCase("mysql")) {
+            Database.DefaultType = Database.Type.MySQL;
+        } else {
+            Database.DefaultType = Database.Type.SQLite;
+        }
     }
 
     /**
@@ -379,35 +321,41 @@ public class LWCPlugin extends JavaPlugin {
     }
 
     /**
+     * Load shared libraries and other misc things
+     */
+    private void preload() {
+        log("Loading shared objects");
+
+        updater = new Updater();
+        playerListener = new LWCPlayerListener(this);
+        blockListener = new LWCBlockListener(this);
+        entityListener = new LWCEntityListener(this);
+        serverListener = new LWCServerListener(this);
+
+        // Set the SQLite native library path
+        System.setProperty("org.sqlite.lib.path", updater.getOSSpecificFolder());
+
+        // we want to force people who used sqlite.purejava before to switch:
+        System.setProperty("sqlite.purejava", "");
+
+        // BUT, some can't use native, so we need to give them the option to use
+        // pure:
+        String isPureJava = System.getProperty("lwc.purejava");
+
+        if (isPureJava != null && isPureJava.equalsIgnoreCase("true")) {
+            System.setProperty("sqlite.purejava", "true");
+        }
+
+        log("Native library: " + updater.getFullNativeLibraryPath());
+    }
+
+    /**
      * Log a string to the console
      *
      * @param str
      */
     private void log(String str) {
         logger.info("LWC: " + str);
-    }
-
-    /**
-     * Register a hook with default priority
-     *
-     * @param listener
-     * @param eventType
-     */
-    private void registerEvent(Listener listener, Type eventType) {
-        registerEvent(listener, eventType, Priority.Highest);
-    }
-
-    /**
-     * Register a hook
-     *
-     * @param listener
-     * @param eventType
-     * @param priority
-     */
-    private void registerEvent(Listener listener, Type eventType, Priority priority) {
-        // logger.info("-> " + eventType.toString());
-
-        getServer().getPluginManager().registerEvent(eventType, listener, priority, this);
     }
 
     /**
@@ -437,4 +385,54 @@ public class LWCPlugin extends JavaPlugin {
         registerEvent(blockListener, Type.BLOCK_PISTON_RETRACT);
     }
 
+    /**
+     * Register a hook
+     *
+     * @param listener
+     * @param eventType
+     * @param priority
+     */
+    private void registerEvent(Listener listener, Type eventType, Priority priority) {
+        // logger.info("-> " + eventType.toString());
+
+        getServer().getPluginManager().registerEvent(eventType, listener, priority, this);
+    }
+
+    /**
+     * Register a hook with default priority
+     *
+     * @param listener
+     * @param eventType
+     */
+    private void registerEvent(Listener listener, Type eventType) {
+        registerEvent(listener, eventType, Priority.Highest);
+    }
+
+    /**
+     * @return the current locale in use
+     */
+    public String getCurrentLocale() {
+        return lwc.getConfiguration().getString("core.locale", "en");
+    }
+
+    /**
+     * @return the LWC instance
+     */
+    public LWC getLWC() {
+        return lwc;
+    }
+
+    /**
+     * @return the locale
+     */
+    public ResourceBundle getLocale() {
+        return locale;
+    }
+
+    /**
+     * @return the Updater instance
+     */
+    public Updater getUpdater() {
+        return updater;
+    }
 }
