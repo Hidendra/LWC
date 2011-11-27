@@ -63,6 +63,7 @@ import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 public class LWCPlugin extends JavaPlugin {
+
     /**
      * The LWC instance
      */
@@ -435,4 +436,5 @@ public class LWCPlugin extends JavaPlugin {
     public Updater getUpdater() {
         return updater;
     }
+
 }

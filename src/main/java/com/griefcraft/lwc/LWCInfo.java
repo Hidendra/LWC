@@ -46,4 +46,5 @@ public class LWCInfo {
         String implementationVersion = LWCPlugin.class.getPackage().getImplementationVersion();
         FULL_VERSION = new Version(version + " " + implementationVersion);
     }
+
 }
