@@ -75,6 +75,7 @@ import com.griefcraft.modules.debug.DebugModule;
 import com.griefcraft.modules.destroy.DestroyModule;
 import com.griefcraft.modules.devmode.DeveloperModeModule;
 import com.griefcraft.modules.doors.DoorsModule;
+import com.griefcraft.modules.easynotify.EasyNotifyModule;
 import com.griefcraft.modules.fix.FixModule;
 import com.griefcraft.modules.flag.BaseFlagModule;
 import com.griefcraft.modules.flag.MagnetModule;
@@ -1498,6 +1499,7 @@ public class LWC {
         registerModule(new HistoryModule());
         registerModule(new DeveloperModeModule());
         registerModule(new ConfirmModule());
+        registerModule(new EasyNotifyModule());
 
         // admin commands
         registerModule(new BaseAdminModule());
