@@ -47,7 +47,10 @@ optional:
 
     # Protections are only active when a player is online.
     # So if a player is offline, anyone can access it. If the player is online, it functions normally
-    onlyProtectIfOwnerIsOnline: false
+    onlyProtectWhenOwnerIsOnline: false
+
+    # Protections are only active when a player is offline
+    onlyProtectWhenOwnerIsOffline: false
 
 # Database information for LWC
 database:

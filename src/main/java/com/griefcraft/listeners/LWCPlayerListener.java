@@ -189,11 +189,21 @@ public class LWCPlayerListener extends PlayerListener {
             }
 
             // optional.onlyProtectIfOwnerIsOnline
-            if (protection != null && !canAccess && lwc.getConfiguration().getBoolean("optional.onlyProtectIfOwnerIsOnline", false)) {
+            if (protection != null && !canAccess && lwc.getConfiguration().getBoolean("optional.onlyProtectWhenOwnerIsOnline", false)) {
                 Player owner = protection.getBukkitOwner();
 
                 // If they aren't online, allow them in :P
                 if (owner == null || !owner.isOnline()) {
+                    return;
+                }
+            }
+
+            // optional.onlyProtectIfOwnerIsOffline
+            if (protection != null && !canAccess && lwc.getConfiguration().getBoolean("optional.onlyProtectWhenOwnerIsOffline", false)) {
+                Player owner = protection.getBukkitOwner();
+
+                // If they aren't online, allow them in :P
+                if (owner != null && owner.isOnline()) {
                     return;
                 }
             }
