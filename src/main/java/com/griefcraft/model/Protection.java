@@ -28,7 +28,6 @@
 
 package com.griefcraft.model;
 
-import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.util.Colors;
@@ -681,25 +680,6 @@ public class Protection {
     }
 
     /**
-     * Updates the protection in the protection cache
-     * Note that save() and saveNow() call this
-     */
-    public void update() {
-        if (removed) {
-            return;
-        }
-
-        ProtectionCache cache = LWC.getInstance().getProtectionCache();
-        removeCache();
-
-        Protection temp = LWC.getInstance().getPhysicalDatabase().loadProtection(id);
-
-        if (temp != null) {
-            cache.add(temp);
-        }
-    }
-
-    /**
      * Queue the protection to be saved
      */
     public void save() {
@@ -726,7 +706,6 @@ public class Protection {
         // only save the protection if it was modified
         if (modified && !removing) {
             LWC.getInstance().getPhysicalDatabase().saveProtection(this);
-            update();
         }
 
         // check the cache for history updates
@@ -807,6 +786,15 @@ public class Protection {
      */
     public String typeToString() {
         return StringUtil.capitalizeFirstLetter(type.toString());
+    }
+
+    /**
+     * Updates the protection in the protection cache
+     * Note that save() and saveNow() call this
+     */
+    @Deprecated
+    public void update() {
+        throw new UnsupportedOperationException("Protection.update() is no longer necessary!");
     }
 
 }
