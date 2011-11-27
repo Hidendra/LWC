@@ -213,8 +213,8 @@ public class Protection {
 
         Protection other = (Protection) object;
 
-        return id == other.id && x == other.x && y == other.y && z == other.z && owner.equals(other.owner) &&
-                world.equals(other.world);
+        return id == other.id && x == other.x && y == other.y && z == other.z && (owner != null && owner.equals(other.owner)) &&
+                (world != null && world.equals(other.world));
     }
 
     @Override
