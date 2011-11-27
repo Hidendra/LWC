@@ -659,8 +659,8 @@ public class Protection {
             history.setStatus(History.Status.INACTIVE);
         }
 
-        // now perform final saving to ensure all history objects are saved immediately
-        saveNow();
+        // ensure all history objects for this protection are saved
+        checkAndSaveHistory();
 
         // make the protection immutable
         removed = true;
@@ -687,7 +687,6 @@ public class Protection {
             return;
         }
 
-        LWC.getInstance().getProtectionCache().add(this);
         LWC.getInstance().getUpdateThread().queueProtectionUpdate(this);
     }
 
@@ -709,6 +708,17 @@ public class Protection {
         }
 
         // check the cache for history updates
+        checkAndSaveHistory();
+    }
+
+    /**
+     * Saves any of the history items for the Protection that have been modified
+     */
+    public void checkAndSaveHistory() {
+        if (removed) {
+            return;
+        }
+
         for (History history : getRelatedHistory()) {
             // if the history object was modified we need to save it
             if (history.wasModified()) {
@@ -790,7 +800,6 @@ public class Protection {
 
     /**
      * Updates the protection in the protection cache
-     * Note that save() and saveNow() call this
      */
     @Deprecated
     public void update() {

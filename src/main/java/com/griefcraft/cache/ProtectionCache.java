@@ -52,7 +52,7 @@ public class ProtectionCache {
     private final LRUCache<Protection, Object> references;
 
     /**
-     * Protections and their cache key (protection.getCacheKey())
+     * Weak references to protections and their cache key (protection.getCacheKey())
      */
     private final WeakLRUCache<String, Protection> byCacheKey;
 
