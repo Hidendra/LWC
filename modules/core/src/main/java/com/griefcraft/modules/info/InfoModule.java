@@ -62,7 +62,6 @@ public class InfoModule extends JavaModule {
 
         String type = lwc.getLocale(protection.typeToString().toLowerCase());
         // String access = lwc.getLocale((event.canAccess() ? "yes" : "no"));
-        // lwc.sendLocale(player, "protection.interact.info.finalize", "type", lwc.getLocale(protection.typeToString().toLowerCase()), "owner", protection.getOwner(), "access", lwc.getLocale((event.canAccess() ? "yes" : "no")));
 
         // Needs to be localized as well
         String online = Colors.Green + "Online!";
