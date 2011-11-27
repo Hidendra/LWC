@@ -42,6 +42,13 @@ core:
     # if true, LWC will only allow protections to be created inside of Towns via the Towny plugin
     townyBorders: false
 
+# "Fun" options
+optional:
+
+    # Protections are only active when a player is online.
+    # So if a player is offline, anyone can access it. If the player is online, it functions normally
+    onlyProtectIfOwnerIsOnline: false
+
 # Database information for LWC
 database:
 
