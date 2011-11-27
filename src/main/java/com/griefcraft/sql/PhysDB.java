@@ -873,6 +873,23 @@ public class PhysDB extends Database {
     }
 
     /**
+     * Remove all protections for a given player
+     *
+     * @param player
+     * @return the amount of protections removed
+     */
+    public int removeProtectionsByPlayer(String player) {
+        int removed = 0;
+
+        for (Protection protection : loadProtectionsByPlayer(player)) {
+            protection.remove();
+            removed ++;
+        }
+
+        return removed;
+    }
+
+    /**
      * Load all protections in the coordinate ranges
      *
      * @param world

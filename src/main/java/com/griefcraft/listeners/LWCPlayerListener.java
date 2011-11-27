@@ -41,7 +41,6 @@ import com.griefcraft.util.StopWatch;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.ContainerBlock;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerChatEvent;
@@ -49,7 +48,6 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +100,7 @@ public class LWCPlayerListener extends PlayerListener {
 
     @Override
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.isCancelled() || !LWC.ENABLED) {
+        if (!LWC.ENABLED) {
             return;
         }
 
@@ -140,16 +138,6 @@ public class LWCPlayerListener extends PlayerListener {
             boolean canAccess = lwc.canAccessProtection(player, protection);
             boolean canAdmin = lwc.canAdminProtection(player, protection);
 
-            // register in an action what protection they interacted with (if applicable.)
-            if (protection != null) {
-                com.griefcraft.model.Action action = new com.griefcraft.model.Action();
-                action.setName("interacted");
-                action.setPlayer(lwcPlayer);
-                action.setProtection(protection);
-
-                lwcPlayer.addAction(action);
-            }
-
             if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
                 boolean ignoreLeftClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreLeftClick"));
 
@@ -166,6 +154,26 @@ public class LWCPlayerListener extends PlayerListener {
                     lwc.completeStopwatch(stopWatch, player);
                     return;
                 }
+            }
+
+            // If the event was cancelled and they have an action, warn them
+            if (event.isCancelled()) {
+                if (lwcPlayer.getActions().size() > 0) {
+                    player.sendMessage(Colors.Red + "[LWC] You have a pending action but another plugin cancelled it!");
+                }
+
+                // it's cancelled, do not continue !
+                return;
+            }
+
+            // register in an action what protection they interacted with (if applicable.)
+            if (protection != null) {
+                com.griefcraft.model.Action action = new com.griefcraft.model.Action();
+                action.setName("interacted");
+                action.setPlayer(lwcPlayer);
+                action.setProtection(protection);
+
+                lwcPlayer.addAction(action);
             }
 
             if (protection != null) {
@@ -206,6 +214,11 @@ public class LWCPlayerListener extends PlayerListener {
             event.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
             lwc.sendLocale(player, "protection.internalerror", "id", "PLAYER_INTERACT");
             e.printStackTrace();
+        }
+
+        // Reset the protection they're interacting with
+        if (lwcPlayer.hasAction("interacted")) {
+            lwcPlayer.removeAction(lwcPlayer.getAction("interacted"));
         }
 
         lwc.completeStopwatch(stopWatch, player);
