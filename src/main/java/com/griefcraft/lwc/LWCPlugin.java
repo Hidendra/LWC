@@ -36,6 +36,7 @@ import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.sql.Database;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtil;
+import com.griefcraft.util.Version;
 import com.griefcraft.util.locale.LWCResourceBundle;
 import com.griefcraft.util.locale.LocaleClassLoader;
 import com.griefcraft.util.StopWatch;
@@ -229,8 +230,7 @@ public class LWCPlugin extends JavaPlugin {
         preload();
         lwc = new LWC(this);
 
-        String version = getDescription().getVersion();
-        LWCInfo.setVersion(version);
+        LWCInfo.setVersion(getDescription().getVersion());
         LWC.ENABLED = true;
 
         loadLocales();
@@ -246,7 +246,26 @@ public class LWCPlugin extends JavaPlugin {
         // let the updater do its thang
         updater.init();
 
-        log("At version: " + LWCInfo.FULL_VERSION);
+        Version version = LWCInfo.FULL_VERSION;
+        logger.info("|=====================================|");
+        logger.info("|#####################################|");
+        logger.info("|#         Welcome to LWC 4!         #|");
+        if (version.getBuildNumber() > 0) {
+            logger.info("|#       You are on build #" + version.getBuildNumber() + "       #|");
+        }
+        logger.info("|#                                   #|");
+        logger.info("|# This is an ALPHA version of LWC   #|");
+        logger.info("|# and as such may contain bugs from #|");
+        logger.info("|# time to time.                     #|");
+        logger.info("|#                                   #|");
+        logger.info("|# Support / chat lines:             #|");
+        logger.info("|#  - IRC: irc.esper.net #LWC        #|");
+        logger.info("|#  - Steam: Hidendra                #|");
+        logger.info("|#                                   #|");
+        logger.info("|# Thank you for supporting LWC!     #|");
+        logger.info("|#####################################|");
+        logger.info("|=====================================|");
+        log("At version: " + version.toString());
     }
 
     /**
