@@ -61,7 +61,7 @@ public class InfoModule extends JavaModule {
         event.setResult(Result.CANCEL);
 
         String type = lwc.getLocale(protection.typeToString().toLowerCase());
-        String access = lwc.getLocale((event.canAccess() ? "yes" : "no"));
+        // String access = lwc.getLocale((event.canAccess() ? "yes" : "no"));
         // lwc.sendLocale(player, "protection.interact.info.finalize", "type", lwc.getLocale(protection.typeToString().toLowerCase()), "owner", protection.getOwner(), "access", lwc.getLocale((event.canAccess() ? "yes" : "no")));
 
         // Needs to be localized as well
@@ -72,25 +72,27 @@ public class InfoModule extends JavaModule {
         player.sendMessage("Protection type: " + Colors.Green + type);
         player.sendMessage("");
 
-        if (protection.getType() == Protection.Type.PRIVATE || protection.getType() == Protection.Type.DONATION) {
-            player.sendMessage(Colors.Red + "Access Control List " + Colors.White + "(" + protection.getAccessRights().size() + ")");
-            int index = 0;
-            for (AccessRight accessRight : protection.getAccessRights()) {
-                if (index >= 9) {
-                    break;
+        if (event.canAdmin()) {
+            if (protection.getType() == Protection.Type.PRIVATE || protection.getType() == Protection.Type.DONATION) {
+                player.sendMessage(Colors.Red + "Access Control List " + Colors.White + "(" + protection.getAccessRights().size() + ")");
+                int index = 0;
+                for (AccessRight accessRight : protection.getAccessRights()) {
+                    if (index >= 9) {
+                        break;
+                    }
+
+                    player.sendMessage(accessRight.toString());
+                    index ++;
                 }
 
-                player.sendMessage(accessRight.toString());
-                index ++;
-            }
+                if (index == 0) {
+                    player.sendMessage("None! Use /cmodify to modify the access list.");
+                } else if (index >= 9) {
+                    player.sendMessage("Use " + Colors.Gold + "/lwc owners " + Colors.White + "to view the rest of the access list.");
+                }
 
-            if (index == 0) {
-                player.sendMessage("None! Use /cmodify to modify the access list.");
-            } else if (index >= 9) {
-                player.sendMessage("Use " + Colors.Gold + "/lwc owners " + Colors.White + "to view the rest of the access list.");
+                player.sendMessage("");
             }
-
-            player.sendMessage("");
         }
 
         if (lwc.isAdmin(player)) {
