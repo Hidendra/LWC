@@ -139,16 +139,15 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 public class LWC {
+    /**
+     * If LWC is currently enabled
+     */
+    public static boolean ENABLED = false;
 
     /**
      * The current instance of LWC (( should only be one ! if 2 are someone made, the first takes precedence ))
      */
     private static LWC instance;
-
-    /**
-     * If LWC is currently enabled
-     */
-    public static boolean ENABLED = false;
 
     /**
      * Core LWC configuration
@@ -210,24 +209,6 @@ public class LWC {
     }
 
     /**
-     * Create an LWCPlayer object for a player
-     *
-     * @param sender
-     * @return
-     */
-    public LWCPlayer wrapPlayer(CommandSender sender) {
-        if (sender instanceof LWCPlayer) {
-            return (LWCPlayer) sender;
-        }
-
-        if (!(sender instanceof Player)) {
-            return null;
-        }
-
-        return LWCPlayer.getPlayer((Player) sender);
-    }
-
-    /**
      * Get the currently loaded LWC instance
      *
      * @return
@@ -237,79 +218,142 @@ public class LWC {
     }
 
     /**
-     * @return the module loader
-     */
-    public ModuleLoader getModuleLoader() {
-        return moduleLoader;
-    }
-
-    /**
-     * @return the job manager
-     */
-    public JobManager getJobManager() {
-        return jobManager;
-    }
-
-    /**
-     * @return the protection cache
-     */
-    public ProtectionCache getProtectionCache() {
-        return protectionCache;
-    }
-
-    /**
-     * Remove all modes if the player is not in persistent mode
+     * Get a string representation of a block type
      *
-     * @param sender
+     * @param id
+     * @return
      */
-    public void removeModes(CommandSender sender) {
-        if (sender instanceof Player) {
-            Player bPlayer = (Player) sender;
-
-            if (notInPersistentMode(bPlayer.getName())) {
-                wrapPlayer(bPlayer).getActions().clear();
-            }
-        } else if (sender instanceof LWCPlayer) {
-            removeModes(((LWCPlayer) sender).getBukkitPlayer());
-        }
+    public static String materialToString(int id) {
+        return materialToString(Material.getMaterial(id));
     }
 
     /**
-     * Deposit items into an inventory chest
-     * Works with double chests.
+     * Get a string representation of a block material
+     *
+     * @param material
+     * @return
+     */
+    private static String materialToString(Material material) {
+        if (material != null) {
+            String materialName = normalizeName(material);
+
+            // attempt to match the locale
+            String locale = LWC.getInstance().getLocale(materialName.toLowerCase());
+
+            // if it starts with UNKNOWN_LOCALE, use the default material name
+            if (locale.startsWith("UNKNOWN_LOCALE_")) {
+                locale = materialName;
+            }
+
+            return StringUtil.capitalizeFirstLetter(locale);
+        }
+
+        return "";
+    }
+
+    /**
+     * Normalize a name to a more readable & usable form.
+     * <p/>
+     * E.g sign_post/wall_sign = Sign, furnace/burning_furnace = Furnace,
+     * iron_door_block = iron_door
+     *
+     * @param material
+     * @return
+     */
+    private static String normalizeName(Material material) {
+        String name = material.toString().toLowerCase().replaceAll("block", "");
+
+        // some name normalizations
+        if (name.contains("sign")) {
+            name = "Sign";
+        }
+
+        if (name.contains("furnace")) {
+            name = "furnace";
+        }
+
+        if (name.endsWith("_")) {
+            name = name.substring(0, name.length() - 1);
+        }
+
+        return name.toLowerCase();
+    }
+
+    /**
+     * Restore the direction the block is facing for when 1.8 broke it
      *
      * @param block
-     * @param itemStack
-     * @return remaining items (if any)
      */
-    public Map<Integer, ItemStack> depositItems(Block block, ItemStack itemStack) {
-        BlockState blockState;
+    public void adjustChestDirection(Block block, BlockFace face) {
+        if (block.getType() != Material.CHEST) {
+            return;
+        }
 
-        if ((blockState = block.getState()) != null && (blockState instanceof ContainerBlock)) {
-            Block doubleChestBlock = findAdjacentBlock(block, Material.CHEST);
-            ContainerBlock containerBlock = (ContainerBlock) blockState;
+        // Is there a double chest?
+        Block doubleChest = findAdjacentDoubleChest(block);
 
-            Map<Integer, ItemStack> remaining = containerBlock.getInventory().addItem(itemStack);
+        // Calculate the data byte to set
+        byte data = 0;
 
-            // we have remainders, deal with it
-            if (remaining.size() > 0) {
-                int key = remaining.keySet().iterator().next();
-                ItemStack remainingItemStack = remaining.get(key);
+        switch (face) {
+            case NORTH:
+                data = 4;
+                break;
 
-                // is it a double chest ?????
-                if (doubleChestBlock != null) {
-                    ContainerBlock containerBlock2 = (ContainerBlock) doubleChestBlock.getState();
-                    remaining = containerBlock2.getInventory().addItem(remainingItemStack);
+            case SOUTH:
+                data = 5;
+                break;
+
+            case EAST:
+                data = 2;
+                break;
+
+            case WEST:
+                data = 3;
+                break;
+        }
+
+        // set the data for both sides of the chest
+        block.setData(data);
+
+        if (doubleChest != null) {
+            doubleChest.setData(data);
+        }
+    }
+
+    /**
+     * Look for a double chest adjacent to a block
+     *
+     * @param block
+     * @return
+     */
+    public Block findAdjacentDoubleChest(Block block) {
+        Block adjacentBlock;
+        Block lastBlock = null;
+        List<Block> attempts = new ArrayList<Block>(5);
+        attempts.add(block);
+
+        int found = 0;
+
+        for (int attempt = 0; attempt < 4; attempt++) {
+            Block[] attemptsArray = attempts.toArray(new Block[attempts.size()]);
+
+            if ((adjacentBlock = findAdjacentBlock(block, Material.CHEST, attemptsArray)) != null) {
+                if (findAdjacentBlock(adjacentBlock, Material.CHEST, block) != null) {
+                    return adjacentBlock;
                 }
 
-                // recheck remaining in the event of double chest being used
-                if (remaining.size() > 0) {
-                    return remaining;
-                }
+                found++;
+                lastBlock = adjacentBlock;
+                attempts.add(adjacentBlock);
             }
         }
 
-        return new HashMap<Integer, ItemStack>();
+        if (found > 1) {
+            return lastBlock;
+        }
+
+        return null;
     }
 
     /**
@@ -323,7 +367,16 @@ public class LWC {
         Protection protection = findProtection(block);
 
         return protection != null && canAccessProtection(player, protection);
+    }
 
+    /**
+     * Find a protection linked to the block
+     *
+     * @param block
+     * @return
+     */
+    public Protection findProtection(Block block) {
+        return findProtection(block, null);
     }
 
     /**
@@ -340,81 +393,6 @@ public class LWC {
     }
 
     /**
-     * Check if a player has the ability to access a protection
-     *
-     * @param player
-     * @param protection
-     * @return
-     */
-    public boolean canAccessProtection(Player player, Protection protection) {
-        if (protection == null || player == null) {
-            return true;
-        }
-
-        if (isAdmin(player)) {
-            return true;
-        }
-
-        if (isMod(player)) {
-            Player protectionOwner = plugin.getServer().getPlayer(protection.getOwner());
-
-            if (protectionOwner == null) {
-                return true;
-            }
-
-            if (!isAdmin(protectionOwner)) {
-                return true;
-            }
-        }
-
-        // Their access level
-        int accessLevel = AccessRight.RIGHT_NOACCESS;
-
-        String playerName = player.getName();
-
-        switch (protection.getType()) {
-            case PUBLIC:
-            case DONATION:
-                return true;
-
-            case PASSWORD:
-                if (wrapPlayer(player).getAccessibleProtections().contains(protection)) {
-                    return true;
-                }
-
-                break;
-
-            case PRIVATE:
-                if (playerName.equalsIgnoreCase(protection.getOwner())) {
-                    return true;
-                }
-
-                if (protection.getAccess(AccessRight.PLAYER, playerName) >= 0) {
-                    return true;
-                }
-
-                for (String groupName : permissions.getGroups(player)) {
-                    if (protection.getAccess(AccessRight.GROUP, groupName) >= 0) {
-                        return true;
-                    }
-                }
-
-                break;
-        }
-
-        // is it still just NOACCESS?
-        if (accessLevel == AccessRight.RIGHT_NOACCESS) {
-            // call the canAccessProtection hook
-            LWCAccessEvent event = new LWCAccessEvent(player, protection, accessLevel);
-            moduleLoader.dispatchEvent(event);
-
-            accessLevel = event.getAccess();
-        }
-
-        return accessLevel >= AccessRight.RIGHT_PLAYER;
-    }
-
-    /**
      * Check if a player has the ability to administrate a protection
      *
      * @param player
@@ -425,7 +403,6 @@ public class LWC {
         Protection protection = findProtection(block);
 
         return protection != null && canAdminProtection(player, protection);
-
     }
 
     /**
@@ -496,10 +473,84 @@ public class LWC {
     }
 
     /**
+     * Complete a stopwatch and send the player the results if they're in developer mode
+     *
+     * @param stopWatch
+     * @param player
+     */
+    public void completeStopwatch(StopWatch stopWatch, Player player) {
+        if (stopWatch.isRunning()) {
+            stopWatch.stop();
+        }
+
+        wrapPlayer(player).debug(stopWatch.shortSummary());
+    }
+
+    /**
+     * Deposit items into an inventory chest
+     * Works with double chests.
+     *
+     * @param block
+     * @param itemStack
+     * @return remaining items (if any)
+     */
+    public Map<Integer, ItemStack> depositItems(Block block, ItemStack itemStack) {
+        BlockState blockState;
+
+        if ((blockState = block.getState()) != null && (blockState instanceof ContainerBlock)) {
+            Block doubleChestBlock = findAdjacentBlock(block, Material.CHEST);
+            ContainerBlock containerBlock = (ContainerBlock) blockState;
+
+            Map<Integer, ItemStack> remaining = containerBlock.getInventory().addItem(itemStack);
+
+            // we have remainders, deal with it
+            if (remaining.size() > 0) {
+                int key = remaining.keySet().iterator().next();
+                ItemStack remainingItemStack = remaining.get(key);
+
+                // is it a double chest ?????
+                if (doubleChestBlock != null) {
+                    ContainerBlock containerBlock2 = (ContainerBlock) doubleChestBlock.getState();
+                    remaining = containerBlock2.getInventory().addItem(remainingItemStack);
+                }
+
+                // recheck remaining in the event of double chest being used
+                if (remaining.size() > 0) {
+                    return remaining;
+                }
+            }
+        }
+
+        return new HashMap<Integer, ItemStack>();
+    }
+
+    /**
+     * Find a block that is adjacent to another block given a Material
+     *
+     * @param block
+     * @param material
+     * @param ignore
+     * @return
+     */
+    public Block findAdjacentBlock(Block block, Material material, Block... ignore) {
+        BlockFace[] faces = new BlockFace[]{BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
+        List<Block> ignoreList = Arrays.asList(ignore);
+
+        for (BlockFace face : faces) {
+            Block adjacentBlock = block.getRelative(face);
+
+            if (adjacentBlock.getType() == material && !ignoreList.contains(adjacentBlock)) {
+                return adjacentBlock;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Free some memory (LWC was disabled)
      */
     public void destruct() {
-
         // destroy the modules
         moduleLoader.shutdown();
 
@@ -517,6 +568,16 @@ public class LWC {
         }
 
         physicalDatabase = null;
+    }
+
+    /**
+     * Log a string
+     *
+     * @param str
+     */
+    private void log(String str) {
+        str = "LWC: " + str;
+        logger.info(ChatColor.stripColor(str));
     }
 
     /**
@@ -631,329 +692,104 @@ public class LWC {
     }
 
     /**
-     * Restore the direction the block is facing for when 1.8 broke it
+     * Check if a player has the ability to access a protection
      *
-     * @param block
-     */
-    public void adjustChestDirection(Block block, BlockFace face) {
-        if (block.getType() != Material.CHEST) {
-            return;
-        }
-
-        // Is there a double chest?
-        Block doubleChest = findAdjacentDoubleChest(block);
-
-        // Calculate the data byte to set
-        byte data = 0;
-
-        switch (face) {
-            case NORTH:
-                data = 4;
-                break;
-
-            case SOUTH:
-                data = 5;
-                break;
-
-            case EAST:
-                data = 2;
-                break;
-
-            case WEST:
-                data = 3;
-                break;
-        }
-
-        // set the data for both sides of the chest
-        block.setData(data);
-
-        if (doubleChest != null) {
-            doubleChest.setData(data);
-        }
-    }
-
-    /**
-     * Find a block that is adjacent to another block given a Material
-     *
-     * @param block
-     * @param material
-     * @param ignore
+     * @param player
+     * @param protection
      * @return
      */
-    public Block findAdjacentBlock(Block block, Material material, Block... ignore) {
-        BlockFace[] faces = new BlockFace[]{BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
-        List<Block> ignoreList = Arrays.asList(ignore);
-
-        for (BlockFace face : faces) {
-            Block adjacentBlock = block.getRelative(face);
-
-            if (adjacentBlock.getType() == material && !ignoreList.contains(adjacentBlock)) {
-                return adjacentBlock;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Look for a double chest adjacent to a block
-     *
-     * @param block
-     * @return
-     */
-    public Block findAdjacentDoubleChest(Block block) {
-        Block adjacentBlock;
-        Block lastBlock = null;
-        List<Block> attempts = new ArrayList<Block>(5);
-        attempts.add(block);
-
-        int found = 0;
-
-        for (int attempt = 0; attempt < 4; attempt++) {
-            Block[] attemptsArray = attempts.toArray(new Block[attempts.size()]);
-
-            if ((adjacentBlock = findAdjacentBlock(block, Material.CHEST, attemptsArray)) != null) {
-                if (findAdjacentBlock(adjacentBlock, Material.CHEST, block) != null) {
-                    return adjacentBlock;
-                }
-
-                found++;
-                lastBlock = adjacentBlock;
-                attempts.add(adjacentBlock);
-            }
-        }
-
-        if (found > 1) {
-            return lastBlock;
-        }
-
-        return null;
-    }
-
-    /**
-     * Find a protection linked to the block, using the player to debug if they have debug mode
-     *
-     * @param block
-     * @param debugger
-     * @return
-     */
-    public Protection findProtection(Block block, LWCPlayer debugger) {
-        // If the block type is AIR, then we have a problem .. but attempt to load a protection anyway
-        if (block.getType() == Material.AIR) {
-            // We won't be able to match any other blocks anyway, so the least we can do is attempt to load a protection
-            return physicalDatabase.loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
-        }
-
-        // Create a protection finder
-        ProtectionFinder finder = new ProtectionFinder(this);
-
-        // Search for a protection
-        boolean result = finder.matchBlocks(block);
-
-        if (debugger != null) {
-            debugger.debug(String.format("finder.matchBlocks(%s): %s", block.toString(), Boolean.toString(result)));
-        }
-
-        // We're done, load the possibly loaded protection
-        return finder.loadProtection();
-    }
-
-    /**
-     * Find a protection linked to the block
-     *
-     * @param block
-     * @return
-     */
-    public Protection findProtection(Block block) {
-        return findProtection(block, null);
-    }
-
-    /**
-     * Find a protection linked to the block at [x, y, z]
-     *
-     * @param x
-     * @param y
-     * @param z
-     * @return
-     */
-    public Protection findProtection(World world, int x, int y, int z) {
-        if (world == null) {
-            return null;
-        }
-
-        return findProtection(world.getBlockAt(x, y, z));
-    }
-
-    /**
-     * Get the locale value for a given key
-     *
-     * @param key
-     * @param args
-     * @return
-     */
-    public String getLocale(String key, Object... args) {
-        key = key.replaceAll(" ", "_");
-
-        if (!plugin.getLocale().containsKey(key)) {
-            return "UNKNOWN_LOCALE_" + key;
-        }
-
-        Map<String, Object> bind = parseBinds(args);
-        String value = plugin.getLocale().getString(key);
-
-        // apply colors
-        for (String colorKey : Colors.localeColors.keySet()) {
-            String color = Colors.localeColors.get(colorKey);
-
-            if (value.contains(colorKey)) {
-                value = value.replaceAll(colorKey, color);
-            }
-        }
-
-        // apply binds
-        for (String bindKey : bind.keySet()) {
-            Object object = bind.get(bindKey);
-
-            value = value.replaceAll("%" + bindKey + "%", object.toString());
-        }
-
-        return value;
-    }
-
-    /**
-     * @return the Permissions handler
-     */
-    public IPermissions getPermissions() {
-        return permissions;
-    }
-
-    /**
-     * @return the Currency handler
-     */
-    public ICurrency getCurrency() {
-        return currency;
-    }
-
-    /**
-     * @return physical database object
-     */
-    public PhysDB getPhysicalDatabase() {
-        return physicalDatabase;
-    }
-
-    /**
-     * @return the plugin class
-     */
-    public LWCPlugin getPlugin() {
-        return plugin;
-    }
-
-    /**
-     * Useful for getting double chests
-     *
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param z the z coordinate
-     * @return the Chest[] array of chests
-     */
-    public List<Block> getProtectionSet(World world, int x, int y, int z) {
-        if (world == null) {
-            return new ArrayList<Block>();
-        }
-
-        // Get the base block
-        Block baseBlock = world.getBlockAt(x, y, z);
-
-        // Create a new protection finder
-        ProtectionFinder finder = new ProtectionFinder(this);
-
-        // Look for blocks
-        finder.matchBlocks(baseBlock);
-
-        // return the matched blocks
-        return new ArrayList<Block>(finder.getBlocks());
-    }
-
-    /**
-     * @return the update thread
-     */
-    public UpdateThread getUpdateThread() {
-        return updateThread;
-    }
-
-    /**
-     * @return the plugin version
-     */
-    public double getVersion() {
-        return Double.parseDouble(plugin.getDescription().getVersion());
-    }
-
-    /**
-     * Check if a player is an LWC admin -- Console defaults to *YES*
-     *
-     * @param sender
-     * @return
-     */
-    public boolean isAdmin(CommandSender sender) {
-        return !(sender instanceof Player) || isAdmin((Player) sender);
-
-    }
-
-    /**
-     * @return the configuration object
-     */
-    public Configuration getConfiguration() {
-        return configuration;
-    }
-
-    /**
-     * Check if a player has either access to lwc.admin or the specified node
-     *
-     * @param sender
-     * @param node
-     * @return
-     */
-    public boolean hasAdminPermission(CommandSender sender, String node) {
-        return isAdmin(sender) || hasPermission(sender, node, "lwc.admin");
-    }
-
-    /**
-     * Check if a player has either access to lwc.protect or the specified node
-     *
-     * @param sender
-     * @param node
-     * @return
-     */
-    public boolean hasPlayerPermission(CommandSender sender, String node) {
-        return hasPermission(sender, node, "lwc.protect");
-
-    }
-
-    /**
-     * Check a player for a node, using a fallback as a default (e.g lwc.protect)
-     *
-     * @param sender
-     * @param node
-     * @param fallback
-     * @return
-     */
-    public boolean hasPermission(CommandSender sender, String node, String... fallback) {
-        if (!(sender instanceof Player)) {
+    public boolean canAccessProtection(Player player, Protection protection) {
+        if (protection == null || player == null) {
             return true;
         }
 
-        Player player = (Player) sender;
-        boolean hasNode = hasPermission(player, node);
+        if (isAdmin(player)) {
+            return true;
+        }
 
-        if (!hasNode) {
-            for (String temp : fallback) {
-                if (hasPermission(player, temp)) {
-                    return true;
-                }
+        if (isMod(player)) {
+            Player protectionOwner = plugin.getServer().getPlayer(protection.getOwner());
+
+            if (protectionOwner == null) {
+                return true;
+            }
+
+            if (!isAdmin(protectionOwner)) {
+                return true;
             }
         }
 
-        return hasNode;
+        // Their access level
+        int accessLevel = AccessRight.RIGHT_NOACCESS;
+
+        String playerName = player.getName();
+
+        switch (protection.getType()) {
+            case PUBLIC:
+            case DONATION:
+                return true;
+
+            case PASSWORD:
+                if (wrapPlayer(player).getAccessibleProtections().contains(protection)) {
+                    return true;
+                }
+
+                break;
+
+            case PRIVATE:
+                if (playerName.equalsIgnoreCase(protection.getOwner())) {
+                    return true;
+                }
+
+                if (protection.getAccess(AccessRight.PLAYER, playerName) >= 0) {
+                    return true;
+                }
+
+                for (String groupName : permissions.getGroups(player)) {
+                    if (protection.getAccess(AccessRight.GROUP, groupName) >= 0) {
+                        return true;
+                    }
+                }
+
+                break;
+        }
+
+        // is it still just NOACCESS?
+        if (accessLevel == AccessRight.RIGHT_NOACCESS) {
+            // call the canAccessProtection hook
+            LWCAccessEvent event = new LWCAccessEvent(player, protection, accessLevel);
+            moduleLoader.dispatchEvent(event);
+
+            accessLevel = event.getAccess();
+        }
+
+        return accessLevel >= AccessRight.RIGHT_PLAYER;
+    }
+
+    /**
+     * Check if a player can do mod functions on LWC
+     *
+     * @param player the player to check
+     * @return true if the player is an LWC mod
+     */
+    public boolean isMod(Player player) {
+        return hasPermission(player, "lwc.mod");
+    }
+
+    /**
+     * Check if a player can do admin functions on LWC
+     *
+     * @param player the player to check
+     * @return true if the player is an LWC admin
+     */
+    public boolean isAdmin(Player player) {
+        if (player.isOp()) {
+            if (configuration.getBoolean("core.opIsLWCAdmin", true)) {
+                return true;
+            }
+        }
+
+        return hasPermission(player, "lwc.admin");
     }
 
     /**
@@ -997,29 +833,479 @@ public class LWC {
     }
 
     /**
-     * Check if a player can do admin functions on LWC
+     * Create an LWCPlayer object for a player
      *
-     * @param player the player to check
-     * @return true if the player is an LWC admin
+     * @param sender
+     * @return
      */
-    public boolean isAdmin(Player player) {
-        if (player.isOp()) {
-            if (configuration.getBoolean("core.opIsLWCAdmin", true)) {
-                return true;
-            }
+    public LWCPlayer wrapPlayer(CommandSender sender) {
+        if (sender instanceof LWCPlayer) {
+            return (LWCPlayer) sender;
         }
 
-        return hasPermission(player, "lwc.admin");
+        if (!(sender instanceof Player)) {
+            return null;
+        }
+
+        return LWCPlayer.getPlayer((Player) sender);
     }
 
     /**
-     * Check if a player can do mod functions on LWC
+     * Get the locale value for a given key
      *
-     * @param player the player to check
-     * @return true if the player is an LWC mod
+     * @param key
+     * @param args
+     * @return
      */
-    public boolean isMod(Player player) {
-        return hasPermission(player, "lwc.mod");
+    public String getLocale(String key, Object... args) {
+        key = key.replaceAll(" ", "_");
+
+        if (!plugin.getLocale().containsKey(key)) {
+            return "UNKNOWN_LOCALE_" + key;
+        }
+
+        Map<String, Object> bind = parseBinds(args);
+        String value = plugin.getLocale().getString(key);
+
+        // apply colors
+        for (String colorKey : Colors.localeColors.keySet()) {
+            String color = Colors.localeColors.get(colorKey);
+
+            if (value.contains(colorKey)) {
+                value = value.replaceAll(colorKey, color);
+            }
+        }
+
+        // apply binds
+        for (String bindKey : bind.keySet()) {
+            Object object = bind.get(bindKey);
+
+            value = value.replaceAll("%" + bindKey + "%", object.toString());
+        }
+
+        return value;
+    }
+
+    /**
+     * Convert an even-lengthed argument array to a map containing String keys i.e parseBinds("Test", null, "Test2", obj) = Map().put("test", null).put("test2", obj)
+     *
+     * @param args
+     * @return
+     */
+    private Map<String, Object> parseBinds(Object... args) {
+        Map<String, Object> bind = new HashMap<String, Object>();
+
+        if (args == null || args.length < 2) {
+            return bind;
+        }
+
+        int size = args.length;
+        for (int index = 0; index < args.length; index += 2) {
+            if ((index + 2) > size) {
+                break;
+            }
+
+            String key = args[index].toString();
+            Object object = args[index + 1];
+
+            bind.put(key, object);
+        }
+
+        return bind;
+    }
+
+    /**
+     * Send a locale to a player or console
+     *
+     * @param sender
+     * @param key
+     * @param args
+     */
+    public void sendLocale(CommandSender sender, String key, Object... args) {
+        String message = getLocale(key, args);
+        String menuStyle = null; // null unless required!
+
+        // broadcast an event if they are a player
+        if (sender instanceof Player) {
+            LWCSendLocaleEvent evt = new LWCSendLocaleEvent((Player) sender, key);
+            moduleLoader.dispatchEvent(evt);
+
+            // did they cancel it?
+            if (evt.isCancelled()) {
+                return;
+            }
+        }
+
+        if (message == null) {
+            sender.sendMessage(Colors.Red + "LWC: " + Colors.White + "Undefined locale: \"" + Colors.Gray + key + Colors.White + "\"");
+            return;
+        }
+
+        if (message.equals("null")) {
+            return;
+        }
+
+        String[] aliasvars = new String[]{"cprivate", "cpublic", "cpassword", "cmodify", "cunlock", "cinfo", "cremove"};
+
+        // apply command name modification depending on menu style
+        for (String alias : aliasvars) {
+            String replace = "%" + alias + "%";
+
+            if (!message.contains(replace)) {
+                continue;
+            }
+
+            if (menuStyle == null) {
+                menuStyle = (sender instanceof Player) ? physicalDatabase.getMenuStyle(((Player) sender).getName()) : "advanced";
+            }
+
+            String localeName = alias + "." + menuStyle;
+
+            message = message.replace(replace, getLocale(localeName));
+        }
+
+        // split the lines
+        for (String line : message.split("\\n")) {
+            if (line.isEmpty()) {
+                line = " ";
+            }
+
+            sender.sendMessage(line);
+        }
+    }
+
+    /**
+     * Get a string representation of a block's material
+     *
+     * @param block
+     * @return
+     */
+    public static String materialToString(Block block) {
+        return materialToString(block.getType());
+    }
+
+    /**
+     * Remove protections very quickly with raw SQL calls
+     *
+     * @param sender
+     * @param where
+     * @param shouldRemoveBlocks
+     * @return
+     */
+    public int fastRemoveProtections(CommandSender sender, String where, boolean shouldRemoveBlocks) {
+        List<Integer> toRemove = new LinkedList<Integer>();
+        List<Block> removeBlocks = null;
+        int totalProtections = physicalDatabase.getProtectionCount();
+        int completed = 0;
+        int count = 0;
+
+        // flush all changes to the database before working on the live database
+        updateThread.flush();
+
+        if (shouldRemoveBlocks) {
+            removeBlocks = new LinkedList<Block>();
+        }
+
+        if (where != null || !where.trim().isEmpty()) {
+            where = " WHERE " + where.trim();
+        }
+
+        sender.sendMessage("Loading protections via STREAM mode");
+
+        try {
+            Statement resultStatement = physicalDatabase.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+
+            if (physicalDatabase.getType() == Database.Type.MySQL) {
+                resultStatement.setFetchSize(Integer.MIN_VALUE);
+            }
+
+            String prefix = physicalDatabase.getPrefix();
+            ResultSet result = resultStatement.executeQuery("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections" + where);
+
+            while (result.next()) {
+                Protection protection = physicalDatabase.resolveProtection(result);
+                World world = protection.getBukkitWorld();
+
+                // check if the protection is exempt from being removed
+                if (protection.hasFlag(Flag.Type.EXEMPTION)) {
+                    continue;
+                }
+
+                count++;
+
+                if (count % 100000 == 0 || count == totalProtections || count == 1) {
+                    sender.sendMessage(Colors.Red + count + " / " + totalProtections);
+                }
+
+                if (world == null) {
+                    continue;
+                }
+
+                // remove the protection
+                toRemove.add(protection.getId());
+
+                // remove the block ?
+                if (shouldRemoveBlocks) {
+                    removeBlocks.add(protection.getBlock());
+                }
+
+                // Remove it from the cache if it's in there
+                protectionCache.remove(protection);
+
+                completed++;
+            }
+
+            // Close the streaming statement
+            result.close();
+            resultStatement.close();
+
+            // flush all of the queries
+            fullRemoveProtections(sender, toRemove);
+
+            if (shouldRemoveBlocks) {
+                removeBlocks(sender, removeBlocks);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return completed;
+    }
+
+    /**
+     * Push removal changes to the database
+     *
+     * @param sender
+     * @param toRemove
+     */
+    private void fullRemoveProtections(CommandSender sender, List<Integer> toRemove) throws SQLException {
+        final StringBuilder builder = new StringBuilder();
+        final int total = toRemove.size();
+        int count = 0;
+
+        // iterate over the items to remove
+        Iterator<Integer> iter = toRemove.iterator();
+
+        // the database prefix
+        String prefix = getPhysicalDatabase().getPrefix();
+
+        // create the statement to use
+        Statement statement = getPhysicalDatabase().getConnection().createStatement();
+
+        while (iter.hasNext()) {
+            int protectionId = iter.next();
+
+            if (count % 100000 == 0) {
+                builder.append("DELETE FROM ").append(prefix).append("protections WHERE id IN (").append(protectionId);
+            } else {
+                builder.append(",").append(protectionId);
+            }
+
+            if (count % 100000 == 99999 || count == (total - 1)) {
+                builder.append(")");
+                statement.executeUpdate(builder.toString());
+                builder.setLength(0);
+
+                sender.sendMessage(Colors.Green + "REMOVED " + (count + 1) + " / " + total);
+            }
+
+            count++;
+        }
+
+        statement.close();
+    }
+
+    /**
+     * Remove a list of blocks from the world
+     *
+     * @param sender
+     * @param blocks
+     */
+    private void removeBlocks(CommandSender sender, List<Block> blocks) {
+        int count = 0;
+
+        for (Block block : blocks) {
+            if (block == null || !isProtectable(block)) {
+                continue;
+            }
+
+            // possibility of a double chest
+            if (block.getType() == Material.CHEST) {
+                Block doubleChest = findAdjacentBlock(block, Material.CHEST);
+
+                if (doubleChest != null) {
+                    removeInventory(doubleChest);
+                    doubleChest.setType(Material.AIR);
+                }
+            }
+
+            // remove the inventory from the block if it has one
+            removeInventory(block);
+
+            // and now remove the block
+            block.setType(Material.AIR);
+
+            count++;
+        }
+
+        sender.sendMessage("Removed " + count + " blocks from the world");
+    }
+
+    /**
+     * Check a block to see if it is protectable
+     *
+     * @param block
+     * @return
+     */
+    public boolean isProtectable(Block block) {
+        return isProtectable(block.getType());
+    }
+
+    /**
+     * Remove the inventory from a block
+     *
+     * @param block
+     */
+    private void removeInventory(Block block) {
+        if (block == null) {
+            return;
+        }
+
+        if (!(block.getState() instanceof ContainerBlock)) {
+            return;
+        }
+
+        ContainerBlock container = (ContainerBlock) block.getState();
+        container.getInventory().clear();
+    }
+
+    /**
+     * Find a protection linked to the block, using the player to debug if they have debug mode
+     *
+     * @param block
+     * @param debugger
+     * @return
+     */
+    public Protection findProtection(Block block, LWCPlayer debugger) {
+        // If the block type is AIR, then we have a problem .. but attempt to load a protection anyway
+        if (block.getType() == Material.AIR) {
+            // We won't be able to match any other blocks anyway, so the least we can do is attempt to load a protection
+            return physicalDatabase.loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
+        }
+
+        // Create a protection finder
+        ProtectionFinder finder = new ProtectionFinder(this);
+
+        // Search for a protection
+        boolean result = finder.matchBlocks(block);
+
+        if (debugger != null) {
+            debugger.debug(String.format("finder.matchBlocks(%s): %s", block.toString(), Boolean.toString(result)));
+        }
+
+        // We're done, load the possibly loaded protection
+        return finder.loadProtection();
+    }
+
+    /**
+     * Find a protection linked to the block at [x, y, z]
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    public Protection findProtection(World world, int x, int y, int z) {
+        if (world == null) {
+            return null;
+        }
+
+        return findProtection(world.getBlockAt(x, y, z));
+    }
+
+    /**
+     * Useful for getting double chests
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param z the z coordinate
+     * @return the Chest[] array of chests
+     */
+    public List<Block> getProtectionSet(World world, int x, int y, int z) {
+        if (world == null) {
+            return new ArrayList<Block>();
+        }
+
+        // Get the base block
+        Block baseBlock = world.getBlockAt(x, y, z);
+
+        // Create a new protection finder
+        ProtectionFinder finder = new ProtectionFinder(this);
+
+        // Look for blocks
+        finder.matchBlocks(baseBlock);
+
+        // return the matched blocks
+        return new ArrayList<Block>(finder.getBlocks());
+    }
+
+    /**
+     * Check if a player has either access to lwc.admin or the specified node
+     *
+     * @param sender
+     * @param node
+     * @return
+     */
+    public boolean hasAdminPermission(CommandSender sender, String node) {
+        return isAdmin(sender) || hasPermission(sender, node, "lwc.admin");
+    }
+
+    /**
+     * Check if a player is an LWC admin -- Console defaults to *YES*
+     *
+     * @param sender
+     * @return
+     */
+    public boolean isAdmin(CommandSender sender) {
+        return !(sender instanceof Player) || isAdmin((Player) sender);
+    }
+
+    /**
+     * Check a player for a node, using a fallback as a default (e.g lwc.protect)
+     *
+     * @param sender
+     * @param node
+     * @param fallback
+     * @return
+     */
+    public boolean hasPermission(CommandSender sender, String node, String... fallback) {
+        if (!(sender instanceof Player)) {
+            return true;
+        }
+
+        Player player = (Player) sender;
+        boolean hasNode = hasPermission(player, node);
+
+        if (!hasNode) {
+            for (String temp : fallback) {
+                if (hasPermission(player, temp)) {
+                    return true;
+                }
+            }
+        }
+
+        return hasNode;
+    }
+
+    /**
+     * Check if a player has either access to lwc.protect or the specified node
+     *
+     * @param sender
+     * @param node
+     * @return
+     */
+    public boolean hasPlayerPermission(CommandSender sender, String node) {
+        return hasPermission(sender, node, "lwc.protect");
     }
 
     /**
@@ -1040,17 +1326,6 @@ public class LWC {
      */
     public boolean isModeWhitelisted(Player player, String mode) {
         return hasPermission(player, "lwc.mode." + mode, "lwc.allmodes");
-
-    }
-
-    /**
-     * Check a block to see if it is protectable
-     *
-     * @param block
-     * @return
-     */
-    public boolean isProtectable(Block block) {
-        return isProtectable(block.getType());
     }
 
     /**
@@ -1064,33 +1339,36 @@ public class LWC {
     }
 
     /**
-     * Complete a stopwatch and send the player the results if they're in developer mode
+     * Get the appropriate config value for the block (protections.block.node)
      *
-     * @param stopWatch
-     * @param player
+     * @param material
+     * @param node
+     * @return
      */
-    public void completeStopwatch(StopWatch stopWatch, Player player) {
-        if (stopWatch.isRunning()) {
-            stopWatch.stop();
+    public String resolveProtectionConfiguration(Material material, String node) {
+        List<String> names = new ArrayList<String>();
+
+        String materialName = normalizeName(material);
+
+        // add the name & the block id
+        names.add(materialName);
+        names.add(material.getId() + "");
+
+        if (!materialName.equals(material.toString().toLowerCase())) {
+            names.add(material.toString().toLowerCase());
         }
 
-        wrapPlayer(player).debug(stopWatch.shortSummary());
-    }
+        String value = configuration.getString("protections." + node);
 
-    /**
-     * Reload the database
-     */
-    public void reloadDatabase() {
-        try {
-            updateThread.flush();
-            updateThread.stop();
-            physicalDatabase = new PhysDB();
-            physicalDatabase.connect();
-            physicalDatabase.load();
-            updateThread = new UpdateThread(this);
-        } catch (Exception e) {
-            e.printStackTrace();
+        for (String name : names) {
+            String temp = configuration.getString("protections.blocks." + name + "." + node);
+
+            if (temp != null && !temp.isEmpty()) {
+                value = temp;
+            }
         }
+
+        return value;
     }
 
     /**
@@ -1111,7 +1389,7 @@ public class LWC {
 
         // Permissions init
         permissions = new NoPermissions();
-        
+
         // Default to Permissions, except with SuperpermsBridge
         Plugin legacy = resolvePlugin("Permissions");
         if (legacy != null) {
@@ -1330,16 +1608,6 @@ public class LWC {
     }
 
     /**
-     * Return if the player is in persistent mode
-     *
-     * @param player the player to check
-     * @return true if the player is NOT in persistent mode
-     */
-    public boolean notInPersistentMode(String player) {
-        return !wrapPlayer(Bukkit.getServer().getPlayer(player)).hasMode("persist");
-    }
-
-    /**
      * Process rights inputted for a protection and add or remove them to the given protection
      *
      * @param sender
@@ -1421,6 +1689,49 @@ public class LWC {
     }
 
     /**
+     * Reload the database
+     */
+    public void reloadDatabase() {
+        try {
+            updateThread.flush();
+            updateThread.stop();
+            physicalDatabase = new PhysDB();
+            physicalDatabase.connect();
+            physicalDatabase.load();
+            updateThread = new UpdateThread(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Remove all modes if the player is not in persistent mode
+     *
+     * @param sender
+     */
+    public void removeModes(CommandSender sender) {
+        if (sender instanceof Player) {
+            Player bPlayer = (Player) sender;
+
+            if (notInPersistentMode(bPlayer.getName())) {
+                wrapPlayer(bPlayer).getActions().clear();
+            }
+        } else if (sender instanceof LWCPlayer) {
+            removeModes(((LWCPlayer) sender).getBukkitPlayer());
+        }
+    }
+
+    /**
+     * Return if the player is in persistent mode
+     *
+     * @param player the player to check
+     * @return true if the player is NOT in persistent mode
+     */
+    public boolean notInPersistentMode(String player) {
+        return !wrapPlayer(Bukkit.getServer().getPlayer(player)).hasMode("persist");
+    }
+
+    /**
      * Send the full help to a player
      *
      * @param sender the player to send to
@@ -1446,66 +1757,6 @@ public class LWC {
     }
 
     /**
-     * Send a locale to a player or console
-     *
-     * @param sender
-     * @param key
-     * @param args
-     */
-    public void sendLocale(CommandSender sender, String key, Object... args) {
-        String message = getLocale(key, args);
-        String menuStyle = null; // null unless required!
-
-        // broadcast an event if they are a player
-        if (sender instanceof Player) {
-            LWCSendLocaleEvent evt = new LWCSendLocaleEvent((Player) sender, key);
-            moduleLoader.dispatchEvent(evt);
-
-            // did they cancel it?
-            if (evt.isCancelled()) {
-                return;
-            }
-        }
-
-        if (message == null) {
-            sender.sendMessage(Colors.Red + "LWC: " + Colors.White + "Undefined locale: \"" + Colors.Gray + key + Colors.White + "\"");
-            return;
-        }
-
-        if (message.equals("null")) {
-            return;
-        }
-
-        String[] aliasvars = new String[]{"cprivate", "cpublic", "cpassword", "cmodify", "cunlock", "cinfo", "cremove"};
-
-        // apply command name modification depending on menu style
-        for (String alias : aliasvars) {
-            String replace = "%" + alias + "%";
-
-            if (!message.contains(replace)) {
-                continue;
-            }
-
-            if (menuStyle == null) {
-                menuStyle = (sender instanceof Player) ? physicalDatabase.getMenuStyle(((Player) sender).getName()) : "advanced";
-            }
-
-            String localeName = alias + "." + menuStyle;
-
-            message = message.replace(replace, getLocale(localeName));
-        }
-
-        // split the lines
-        for (String line : message.split("\\n")) {
-            if (line.isEmpty()) {
-                line = " ";
-            }
-
-            sender.sendMessage(line);
-        }
-    }
-
-    /**
      * Send the simple usage of a command
      *
      * @param player
@@ -1518,146 +1769,73 @@ public class LWC {
     }
 
     /**
-     * Log a string
-     *
-     * @param str
+     * @return the configuration object
      */
-    private void log(String str) {
-        str = "LWC: " + str;
-        logger.info(ChatColor.stripColor(str));
+    public Configuration getConfiguration() {
+        return configuration;
     }
 
     /**
-     * Convert an even-lengthed argument array to a map containing String keys i.e parseBinds("Test", null, "Test2", obj) = Map().put("test", null).put("test2", obj)
-     *
-     * @param args
-     * @return
+     * @return the Currency handler
      */
-    private Map<String, Object> parseBinds(Object... args) {
-        Map<String, Object> bind = new HashMap<String, Object>();
-
-        if (args == null || args.length < 2) {
-            return bind;
-        }
-
-        int size = args.length;
-        for (int index = 0; index < args.length; index += 2) {
-            if ((index + 2) > size) {
-                break;
-            }
-
-            String key = args[index].toString();
-            Object object = args[index + 1];
-
-            bind.put(key, object);
-        }
-
-        return bind;
+    public ICurrency getCurrency() {
+        return currency;
     }
 
     /**
-     * Get a string representation of a block's material
-     *
-     * @param block
-     * @return
+     * @return the job manager
      */
-    public static String materialToString(Block block) {
-        return materialToString(block.getType());
+    public JobManager getJobManager() {
+        return jobManager;
     }
 
     /**
-     * Get a string representation of a block type
-     *
-     * @param id
-     * @return
+     * @return the module loader
      */
-    public static String materialToString(int id) {
-        return materialToString(Material.getMaterial(id));
+    public ModuleLoader getModuleLoader() {
+        return moduleLoader;
     }
 
     /**
-     * Get a string representation of a block material
-     *
-     * @param material
-     * @return
+     * @return the Permissions handler
      */
-    private static String materialToString(Material material) {
-        if (material != null) {
-            String materialName = normalizeName(material);
-
-            // attempt to match the locale
-            String locale = LWC.getInstance().getLocale(materialName.toLowerCase());
-
-            // if it starts with UNKNOWN_LOCALE, use the default material name
-            if (locale.startsWith("UNKNOWN_LOCALE_")) {
-                locale = materialName;
-            }
-
-            return StringUtil.capitalizeFirstLetter(locale);
-        }
-
-        return "";
+    public IPermissions getPermissions() {
+        return permissions;
     }
 
     /**
-     * Normalize a name to a more readable & usable form.
-     * <p/>
-     * E.g sign_post/wall_sign = Sign, furnace/burning_furnace = Furnace,
-     * iron_door_block = iron_door
-     *
-     * @param material
-     * @return
+     * @return physical database object
      */
-    private static String normalizeName(Material material) {
-        String name = material.toString().toLowerCase().replaceAll("block", "");
-
-        // some name normalizations
-        if (name.contains("sign")) {
-            name = "Sign";
-        }
-
-        if (name.contains("furnace")) {
-            name = "furnace";
-        }
-
-        if (name.endsWith("_")) {
-            name = name.substring(0, name.length() - 1);
-        }
-
-        return name.toLowerCase();
+    public PhysDB getPhysicalDatabase() {
+        return physicalDatabase;
     }
 
     /**
-     * Get the appropriate config value for the block (protections.block.node)
-     *
-     * @param material
-     * @param node
-     * @return
+     * @return the plugin class
      */
-    public String resolveProtectionConfiguration(Material material, String node) {
-        List<String> names = new ArrayList<String>();
+    public LWCPlugin getPlugin() {
+        return plugin;
+    }
 
-        String materialName = normalizeName(material);
+    /**
+     * @return the protection cache
+     */
+    public ProtectionCache getProtectionCache() {
+        return protectionCache;
+    }
 
-        // add the name & the block id
-        names.add(materialName);
-        names.add(material.getId() + "");
+    /**
+     * @return the update thread
+     */
+    public UpdateThread getUpdateThread() {
+        return updateThread;
+    }
 
-        if (!materialName.equals(material.toString().toLowerCase())) {
-            names.add(material.toString().toLowerCase());
-        }
-
-        String value = configuration.getString("protections." + node);
-
-        for (String name : names) {
-            String temp = configuration.getString("protections.blocks." + name + "." + node);
-
-            if (temp != null && !temp.isEmpty()) {
-                value = temp;
-            }
-        }
-
-        return value;
+    /**
+     * @return the plugin version
+     */
+    public double getVersion() {
+        return Double.parseDouble(plugin.getDescription().getVersion());
     }
 
     /**
@@ -1666,190 +1844,4 @@ public class LWC {
     public boolean isHistoryEnabled() {
         return !configuration.getBoolean("core.disableHistory", false);
     }
-
-    /**
-     * Remove protections very quickly with raw SQL calls
-     *
-     * @param sender
-     * @param where
-     * @param shouldRemoveBlocks
-     * @return
-     */
-    public int fastRemoveProtections(CommandSender sender, String where, boolean shouldRemoveBlocks) {
-        List<Integer> toRemove = new LinkedList<Integer>();
-        List<Block> removeBlocks = null;
-        int totalProtections = physicalDatabase.getProtectionCount();
-        int completed = 0;
-        int count = 0;
-
-        // flush all changes to the database before working on the live database
-        updateThread.flush();
-
-        if (shouldRemoveBlocks) {
-            removeBlocks = new LinkedList<Block>();
-        }
-
-        if (where != null || !where.trim().isEmpty()) {
-            where = " WHERE " + where.trim();
-        }
-
-        sender.sendMessage("Loading protections via STREAM mode");
-
-        try {
-            Statement resultStatement = physicalDatabase.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-
-            if (physicalDatabase.getType() == Database.Type.MySQL) {
-                resultStatement.setFetchSize(Integer.MIN_VALUE);
-            }
-
-            String prefix = physicalDatabase.getPrefix();
-            ResultSet result = resultStatement.executeQuery("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections" + where);
-
-            while (result.next()) {
-                Protection protection = physicalDatabase.resolveProtection(result);
-                World world = protection.getBukkitWorld();
-
-                // check if the protection is exempt from being removed
-                if (protection.hasFlag(Flag.Type.EXEMPTION)) {
-                    continue;
-                }
-
-                count++;
-
-                if (count % 100000 == 0 || count == totalProtections || count == 1) {
-                    sender.sendMessage(Colors.Red + count + " / " + totalProtections);
-                }
-
-                if (world == null) {
-                    continue;
-                }
-
-                // remove the protection
-                toRemove.add(protection.getId());
-
-                // remove the block ?
-                if (shouldRemoveBlocks) {
-                    removeBlocks.add(protection.getBlock());
-                }
-
-                // Remove it from the cache if it's in there
-                protectionCache.remove(protection);
-
-                completed++;
-            }
-
-            // Close the streaming statement
-            result.close();
-            resultStatement.close();
-
-            // flush all of the queries
-            fullRemoveProtections(sender, toRemove);
-
-            if (shouldRemoveBlocks) {
-                removeBlocks(sender, removeBlocks);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return completed;
-    }
-
-    /**
-     * Remove a list of blocks from the world
-     *
-     * @param sender
-     * @param blocks
-     */
-    private void removeBlocks(CommandSender sender, List<Block> blocks) {
-        int count = 0;
-
-        for (Block block : blocks) {
-            if (block == null || !isProtectable(block)) {
-                continue;
-            }
-
-            // possibility of a double chest
-            if (block.getType() == Material.CHEST) {
-                Block doubleChest = findAdjacentBlock(block, Material.CHEST);
-
-                if (doubleChest != null) {
-                    removeInventory(doubleChest);
-                    doubleChest.setType(Material.AIR);
-                }
-            }
-
-            // remove the inventory from the block if it has one
-            removeInventory(block);
-
-            // and now remove the block
-            block.setType(Material.AIR);
-
-            count++;
-        }
-
-        sender.sendMessage("Removed " + count + " blocks from the world");
-    }
-
-    /**
-     * Remove the inventory from a block
-     *
-     * @param block
-     */
-    private void removeInventory(Block block) {
-        if (block == null) {
-            return;
-        }
-
-        if (!(block.getState() instanceof ContainerBlock)) {
-            return;
-        }
-
-        ContainerBlock container = (ContainerBlock) block.getState();
-        container.getInventory().clear();
-    }
-
-    /**
-     * Push removal changes to the database
-     *
-     * @param sender
-     * @param toRemove
-     */
-    private void fullRemoveProtections(CommandSender sender, List<Integer> toRemove) throws SQLException {
-        final StringBuilder builder = new StringBuilder();
-        final int total = toRemove.size();
-        int count = 0;
-
-        // iterate over the items to remove
-        Iterator<Integer> iter = toRemove.iterator();
-
-        // the database prefix
-        String prefix = getPhysicalDatabase().getPrefix();
-
-        // create the statement to use
-        Statement statement = getPhysicalDatabase().getConnection().createStatement();
-
-        while (iter.hasNext()) {
-            int protectionId = iter.next();
-
-            if (count % 100000 == 0) {
-                builder.append("DELETE FROM ").append(prefix).append("protections WHERE id IN (").append(protectionId);
-            } else {
-                builder.append(",").append(protectionId);
-            }
-
-            if (count % 100000 == 99999 || count == (total - 1)) {
-                builder.append(")");
-                statement.executeUpdate(builder.toString());
-                builder.setLength(0);
-
-                sender.sendMessage(Colors.Green + "REMOVED " + (count + 1) + " / " + total);
-            }
-
-            count++;
-        }
-
-        statement.close();
-    }
-
 }
