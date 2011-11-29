@@ -1,6 +1,9 @@
 worldguard:
     enabled: false
 
+    # If true, protections will be allowed in non-regioned areas
+    allowProtectionsOutsideRegions: true
+
     # If the player needs to have build rights in a region to be able to protect blocks using LWC
     requireBuildRights: true
 
