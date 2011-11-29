@@ -62,7 +62,7 @@ public class LWCSpoutPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.CUSTOM_EVENT, new SpoutInputListener(this), Event.Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.CUSTOM_EVENT, new SpoutInventoryListener(this), Event.Priority.Normal, this);
 
-        log("Hooked into LWC!");
+        log("Hooked into LWC.");
     }
 
     public void onEnable() {
