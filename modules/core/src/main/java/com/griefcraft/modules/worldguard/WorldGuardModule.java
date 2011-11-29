@@ -34,7 +34,6 @@ import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.config.Configuration;
 import com.sk89q.worldedit.Vector;
-import com.sk89q.worldguard.bukkit.BukkitPlayer;
 import com.sk89q.worldguard.bukkit.BukkitUtil;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.GlobalRegionManager;
@@ -43,7 +42,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,15 +98,22 @@ public class WorldGuardModule extends JavaModule {
         // Load the regions the block encompasses
         List<String> regions = regionManager.getApplicableRegionsIDs(vector);
 
-        // check each region
-        for (String region : regions) {
-            // Should we deny them?
-            // we don't need to explicitly call isRegionAllowed because isRegionBlacklisted checks that as well
-            boolean deny = isRegionBlacklisted(region);
-
-            if (deny) {
-                player.sendMessage(Colors.Red + "LWC protections are not allowed in this region!");
+        // Are they not in a region, and it's blocked there?
+        if (regions.size() == 0) {
+            if (configuration.getBoolean("worldguard.allowProtectionsOutsideRegions", false)) {
+                player.sendMessage(Colors.Red + "LWC protections are not allowed outside of WorldGuard regions!");
                 event.setCancelled(true);
+            }
+        } else {
+            // check each region
+            for (String region : regions) {
+                // Should we deny them?
+                // we don't need to explicitly call isRegionAllowed because isRegionBlacklisted checks that as well
+                if (isRegionBlacklisted(region)) {
+                    player.sendMessage(Colors.Red + "LWC protections are not allowed in this region!");
+                    event.setCancelled(true);
+                    break;
+                }
             }
         }
     }

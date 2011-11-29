@@ -1,4 +1,5 @@
 ### 4.0.0-alpha7
+* Added `worldguard.allowProtectionsOutsideRegions` to the WorldGuard portion of LWC to decide if you want to allow protections outside of WorldGuard regions.
 * Added `optional.onlyProtectWhenOwnerIsOffline` and `optional.onlyProtectWhenOwnerIsOnline` config options to core.yml. They allow protections to only be "active" (protecting items) when the owner of the protection is offline or online respectively.
 * API: Added `removeProtectionsByPlayer` to PhysDB
 * Added the commands: `/lwc admin updateprotections` `/lwc admin deleteprotections` `/lwc admin selectprotections` Delete/Select take a where argument and must be specified; e.g `/lwc admin deleteprotections world='World1'` and Update takes a Where and/or Set statement: `/lwc admin updateprotections set world='World2' where world='World1'`
