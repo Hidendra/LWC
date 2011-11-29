@@ -100,7 +100,7 @@ public class WorldGuardModule extends JavaModule {
 
         // Are they not in a region, and it's blocked there?
         if (regions.size() == 0) {
-            if (configuration.getBoolean("worldguard.allowProtectionsOutsideRegions", false)) {
+            if (configuration.getBoolean("worldguard.allowProtectionsOutsideRegions", true)) {
                 player.sendMessage(Colors.Red + "LWC protections are not allowed outside of WorldGuard regions!");
                 event.setCancelled(true);
             }
