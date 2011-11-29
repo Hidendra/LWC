@@ -40,6 +40,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.plugin.Plugin;
 
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -125,15 +126,25 @@ public class Statistics {
 
         sender.sendMessage(Colors.Red + " ==== Database ====");
         sender.sendMessage("  Engine: " + Colors.Green + Database.DefaultType);
-        sender.sendMessage("  Protections: " + Colors.Green + lwc.getPhysicalDatabase().getProtectionCount());
-        sender.sendMessage("  Queries: " + Colors.Green + queries + " | " + String.format("%.2f", getAverage(queries)) + " / second");
+        sender.sendMessage("  Protections: " + Colors.Green + formatNumber(lwc.getPhysicalDatabase().getProtectionCount()));
+        sender.sendMessage("  Queries: " + Colors.Green + formatNumber(queries) + " | " + String.format("%.2f", getAverage(queries)) + " / second");
         sender.sendMessage(" ");
 
         sender.sendMessage(Colors.Red + " ==== Cache ==== ");
         ProtectionCache cache = lwc.getProtectionCache();
         sender.sendMessage("  Refs: " + cache.size() + "/" + cache.capacity());
-        sender.sendMessage("  Reads: " + cache.getReads() + " | " + String.format("%.2f", getAverage(cache.getReads())) + " / second");
-        sender.sendMessage("  Writes: " + cache.getWrites() + " | " + String.format("%.2f", getAverage(cache.getWrites())) + " / second");
+        sender.sendMessage("  Reads: " + formatNumber(cache.getReads()) + " | " + String.format("%.2f", getAverage(cache.getReads())) + " / second");
+        sender.sendMessage("  Writes: " + formatNumber(cache.getWrites()) + " | " + String.format("%.2f", getAverage(cache.getWrites())) + " / second");
+    }
+
+    /**
+     * Format a number
+     * 
+     * @param number
+     * @return
+     */
+    public static String formatNumber(long number) {
+        return NumberFormat.getInstance().format(number);
     }
 
     /**
