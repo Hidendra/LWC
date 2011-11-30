@@ -105,11 +105,11 @@ import com.griefcraft.scripting.event.LWCSendLocaleEvent;
 import com.griefcraft.sql.Database;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
+import com.griefcraft.util.DatabaseThread;
 import com.griefcraft.util.Statistics;
 import com.griefcraft.util.ProtectionFinder;
 import com.griefcraft.util.StopWatch;
 import com.griefcraft.util.StringUtil;
-import com.griefcraft.util.UpdateThread;
 import com.griefcraft.util.config.Configuration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -187,9 +187,9 @@ public class LWC {
     private LWCPlugin plugin;
 
     /**
-     * Checks for updates that need to be pushed to the sql database
+     * Updates to the database that can be ran on a seperate thread
      */
-    private UpdateThread updateThread;
+    private DatabaseThread databaseThread;
 
     /**
      * The permissions handler
@@ -556,11 +556,11 @@ public class LWC {
         // destroy the modules
         moduleLoader.shutdown();
 
-        log("Flushing final updates (" + updateThread.size() + ")");
+        log("Flushing protection updates (" + databaseThread.size() + ")");
 
-        if (updateThread != null) {
-            updateThread.stop();
-            updateThread = null;
+        if (databaseThread != null) {
+            databaseThread.stop();
+            databaseThread = null;
         }
 
         log("Freeing " + Database.DefaultType);
@@ -1002,7 +1002,7 @@ public class LWC {
         int count = 0;
 
         // flush all changes to the database before working on the live database
-        updateThread.flush();
+        databaseThread.flush();
 
         if (shouldRemoveBlocks) {
             removeBlocks = new LinkedList<Block>();
@@ -1387,7 +1387,7 @@ public class LWC {
         Statistics.init();
 
         physicalDatabase = new PhysDB();
-        updateThread = new UpdateThread(this);
+        databaseThread = new DatabaseThread(this);
 
         // Permissions init
         permissions = new NoPermissions();
@@ -1696,12 +1696,12 @@ public class LWC {
      */
     public void reloadDatabase() {
         try {
-            updateThread.flush();
-            updateThread.stop();
+            databaseThread.flush();
+            databaseThread.stop();
             physicalDatabase = new PhysDB();
             physicalDatabase.connect();
             physicalDatabase.load();
-            updateThread = new UpdateThread(this);
+            databaseThread = new DatabaseThread(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1830,8 +1830,8 @@ public class LWC {
     /**
      * @return the update thread
      */
-    public UpdateThread getUpdateThread() {
-        return updateThread;
+    public DatabaseThread getDatabaseThread() {
+        return databaseThread;
     }
 
     /**

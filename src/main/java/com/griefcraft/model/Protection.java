@@ -229,7 +229,9 @@ public class Protection {
         hash *= 37 + z;
 
         // and for good measure, to *guarantee* no collisions
-        hash *= 37 + creation.hashCode();
+        if (creation != null) {
+            hash *= 37 + creation.hashCode();
+        }
 
         return hash;
     }
@@ -666,7 +668,7 @@ public class Protection {
         removed = true;
 
         // and now finally remove it from the database
-        lwc.getUpdateThread().unqueueProtectionUpdate(this);
+        lwc.getDatabaseThread().removeProtection(this);
         lwc.getPhysicalDatabase().removeProtection(id);
         removeCache();
     }
@@ -687,7 +689,7 @@ public class Protection {
             return;
         }
 
-        LWC.getInstance().getUpdateThread().queueProtectionUpdate(this);
+        LWC.getInstance().getDatabaseThread().addProtection(this);
     }
 
     /**
