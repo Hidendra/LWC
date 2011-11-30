@@ -667,7 +667,7 @@ public class Protection {
 
         // and now finally remove it from the database
         lwc.getUpdateThread().unqueueProtectionUpdate(this);
-        lwc.getPhysicalDatabase().unregisterProtection(id);
+        lwc.getPhysicalDatabase().removeProtection(id);
         removeCache();
     }
 
