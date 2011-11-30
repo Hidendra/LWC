@@ -381,7 +381,7 @@ public class History {
      * TODO: broadcast an event
      */
     public void remove() {
-        LWC.getInstance().getPhysicalDatabase().unregisterHistory(id);
+        LWC.getInstance().getPhysicalDatabase().removeHistory(id);
         this.modified = false;
     }
 
