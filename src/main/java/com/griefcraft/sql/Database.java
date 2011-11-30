@@ -144,6 +144,27 @@ public abstract class Database {
     }
 
     /**
+     * Set the value of auto commit
+     *
+     * @param autoCommit
+     * @return TRUE if successful, FALSE if exception was thrown
+     */
+    public boolean setAutoCommit(boolean autoCommit) {
+        try {
+            // Commit the database if we are setting auto commit back to true
+            if (autoCommit) {
+                connection.commit();
+            }
+
+            connection.setAutoCommit(autoCommit);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
      * @return the table prefix
      */
     public String getPrefix() {
