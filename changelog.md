@@ -1,3 +1,45 @@
+# In progress full changelog
+incomplete
+
+#### Licensing
+* LWC 4 is now licensed under the **2-clause BSD license**
+
+#### Functionality
+* The following commands have been added: (see the wiki for more in depth info)
+ * `/lwc history`
+ * `/lwc details`
+ * `/lwc schedule` or `/lwc jobs`
+ * `/lwc dump`
+ * `/lwc setup`
+ * `/lwc fix`
+ * New sub commands for `/lwc admin`
+* Towny integration. You can now allow members of a specific Town access your Private protection, simply: `/cmodify t:TownName` or when creating it: `/cprivate t:TownName`
+* The WorldGuard feature has been rewritten to be easier to use and now includes a blacklist feature, so you can blacklist specific regions from having protections.
+* Add a new flag: `AUTOCLOSE` which makes a door automatically close after the configured amount of time in `plugins/LWC/doors.yml`
+
+#### Cosmetics
+* `/lwc admin report` has been beautified
+* `/cinfo` has been given a new look and is now more helpful. It will give you a shortlist of players who can access a private protection if you have appropriate access to it.
+
+#### Database
+* Changes to the database format that make LWC4 incompatible with LWC3
+* All existing LWC 3 indexes have been wiped and LWC is now better indexed
+* Startup time has been dramatically reduced (to nil) for those with a huge protection set
+* More optimal caching techniques to ensure duplicate cache entries aren't present or created
+
+#### Internal
+* The "bug 656 workaround" has been replaced with an automatic feature that does not need to be enabled, but is used when required
+* `/lwc admin reload` will now also reload the loaded locale file (including the one in `plugins/LWC/locale/`)
+* New & better updater. You can now subscribe to updates to the STABLE branch or BLEEDING_EDGE, which is the latest Jenkins builds.
+* Locale messages defined as `null` will now not send the message to the player
+* **FIX:** Protected blocks could be pulled with a sticky piston
+* **FIX:** Doors could be destroyed by using a piston to push a dirt block towards it.
+* **FIX:** Limits will now use the highest group limit instead of the first one found.
+* **FIX:** The magnet module would sometimes not work as expected when used across multiple worlds.
+* **API:** Added `removeProtectionsByPlayer` to PhysDB
+
+# Historical changelogs
+
 ### 4.0.0-alpha7
 * Added `worldguard.allowProtectionsOutsideRegions` to the WorldGuard portion of LWC to decide if you want to allow protections outside of WorldGuard regions.
 * Added `optional.onlyProtectWhenOwnerIsOffline` and `optional.onlyProtectWhenOwnerIsOnline` config options to core.yml. They allow protections to only be "active" (protecting items) when the owner of the protection is offline or online respectively.
