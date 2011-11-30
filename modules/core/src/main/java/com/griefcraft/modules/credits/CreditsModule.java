@@ -186,6 +186,7 @@ public class CreditsModule extends JavaModule {
                 "Eric King", // todo
                 "Twizz",
                 "spunkiie",
+                "RustyDagger",
                 " ",
 
                 Colors.Red + "And....",
@@ -218,6 +219,7 @@ public class CreditsModule extends JavaModule {
                 "Zalastri",
                 "MonsterTKE",
                 "Tyrope",
+                "krinsdeath",
                 " ",
 
                 Colors.Yellow + "To everyone else and anyone I missed....",
@@ -239,7 +241,7 @@ public class CreditsModule extends JavaModule {
             return;
         }
 
-        if (!event.hasFlag("credits", "thanks")) {
+        if (!event.hasFlag("about", "credits", "thanks")) {
             return;
         }
 
