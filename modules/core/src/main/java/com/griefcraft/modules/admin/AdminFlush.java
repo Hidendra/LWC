@@ -58,7 +58,7 @@ public class AdminFlush extends JavaModule {
         event.setCancelled(true);
 
         sender.sendMessage(Colors.Green + "Flushing Update Thread..");
-        lwc.getUpdateThread().flush();
+        lwc.getDatabaseThread().flush();
         sender.sendMessage(Colors.Green + "Done.");
     }
 
