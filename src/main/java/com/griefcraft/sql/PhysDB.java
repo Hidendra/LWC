@@ -38,7 +38,6 @@ import com.griefcraft.model.Job;
 import com.griefcraft.model.Protection;
 import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.scripting.Module;
-import com.griefcraft.util.Statistics;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -73,11 +72,6 @@ public class PhysDB extends Database {
         super(currentType);
     }
 
-    @Override
-    protected void postPrepare() {
-        Statistics.addQuery();
-    }
-
     /**
      * Fetch an object from the sql database
      *
@@ -85,7 +79,7 @@ public class PhysDB extends Database {
      * @param column
      * @return
      */
-    public Object fetch(String sql, String column, Object... toBind) {
+    private Object fetch(String sql, String column, Object... toBind) {
         try {
             int index = 1;
             PreparedStatement statement = prepare(sql);
@@ -445,11 +439,11 @@ public class PhysDB extends Database {
 
             // Create our updated (good) indexes
             log("Creating new indexes (One time, may take a while!)");
-            doIndex("protections", "protections_main", "x, y, z, world");
-            doIndex("protections", "protections_utility", "owner");
-            doIndex("history", "history_main", "protectionId");
-            doIndex("history", "history_utility", "player");
-            doIndex("history", "history_utility2", "x, y, z");
+            createIndex("protections", "protections_main", "x, y, z, world");
+            createIndex("protections", "protections_utility", "owner");
+            createIndex("history", "history_main", "protectionId");
+            createIndex("history", "history_utility", "player");
+            createIndex("history", "history_utility2", "x, y, z");
 
             // increment the database version
             incrementDatabaseVersion();
@@ -457,7 +451,7 @@ public class PhysDB extends Database {
 
         if (databaseVersion == 1) {
             log("Creating index on internal");
-            doIndex("internal", "internal_main", "name");
+            createIndex("internal", "internal_main", "name");
             incrementDatabaseVersion();
         }
 
@@ -736,7 +730,7 @@ public class PhysDB extends Database {
      * @param statement
      * @return
      */
-    public Protection resolveProtection(PreparedStatement statement) {
+    private Protection resolveProtection(PreparedStatement statement) {
         List<Protection> protections = resolveProtections(statement);
 
         if (protections.size() == 0) {
@@ -1098,7 +1092,7 @@ public class PhysDB extends Database {
      *
      * @return
      */
-    public History resolveHistory(History history, ResultSet set) throws SQLException {
+    private History resolveHistory(History history, ResultSet set) throws SQLException {
         if (history == null) {
             return null;
         }
@@ -1543,7 +1537,7 @@ public class PhysDB extends Database {
      *
      * @param protectionId the protection Id
      */
-    public void unregisterProtection(int protectionId) {
+    public void removeProtection(int protectionId) {
         try {
             PreparedStatement statement = prepare("DELETE FROM " + prefix + "protections WHERE id = ?");
             statement.setInt(1, protectionId);
@@ -1553,10 +1547,10 @@ public class PhysDB extends Database {
             printException(e);
         }
 
-        // unregisterProtectionHistory(protectionId);
+        // removeProtectionHistory(protectionId);
     }
 
-    public void unregisterProtectionHistory(int protectionId) {
+    public void removeProtectionHistory(int protectionId) {
         try {
             PreparedStatement statement = prepare("DELETE FROM " + prefix + "history WHERE protectionId = ?");
             statement.setInt(1, protectionId);
@@ -1567,7 +1561,7 @@ public class PhysDB extends Database {
         }
     }
 
-    public void unregisterHistory(int historyId) {
+    public void removeHistory(int historyId) {
         try {
             PreparedStatement statement = prepare("DELETE FROM " + prefix + "history WHERE id = ?");
             statement.setInt(1, historyId);
@@ -1579,14 +1573,13 @@ public class PhysDB extends Database {
     }
 
     /**
-     * Remove all of the registered chests
+     * Remove **<b>ALL</b>** all of the protections registered by LWC
      */
-    public void unregisterProtections() {
+    public void removeAllProtections() {
         try {
             Statement statement = connection.createStatement();
             statement.executeUpdate("DELETE FROM " + prefix + "protections");
             statement.close();
-
         } catch (SQLException e) {
             printException(e);
         }
@@ -1599,7 +1592,7 @@ public class PhysDB extends Database {
      * @param indexName
      * @param columns
      */
-    private void doIndex(String table, String indexName, String columns) {
+    private void createIndex(String table, String indexName, String columns) {
         Statement statement = null;
 
         try {

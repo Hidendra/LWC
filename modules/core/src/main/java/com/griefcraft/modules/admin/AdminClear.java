@@ -64,7 +64,7 @@ public class AdminClear extends JavaModule {
         String toClear = args[1].toLowerCase();
 
         if (toClear.equals("protections")) {
-            lwc.getPhysicalDatabase().unregisterProtections();
+            lwc.getPhysicalDatabase().removeAllProtections();
         }
 
         lwc.sendLocale(sender, "protection.admin.clear." + toClear);

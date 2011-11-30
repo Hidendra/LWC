@@ -31,6 +31,7 @@ package com.griefcraft.sql;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.ModuleException;
+import com.griefcraft.util.Statistics;
 import com.griefcraft.util.Updater;
 import com.griefcraft.util.config.Configuration;
 import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
@@ -280,13 +281,6 @@ public abstract class Database {
     }
 
     /**
-     * Called after a statement is prepared
-     */
-    protected void postPrepare() {
-
-    }
-
-    /**
      * Prepare a statement unless it's already cached (and if so, just return it)
      *
      * @param sql
@@ -302,7 +296,7 @@ public abstract class Database {
         }
 
         if (statementCache.containsKey(sql)) {
-            postPrepare();
+            Statistics.addQuery();
             return statementCache.get(sql);
         }
 
@@ -316,7 +310,7 @@ public abstract class Database {
             }
 
             statementCache.put(sql, preparedStatement);
-            postPrepare();
+            Statistics.addQuery();
 
             return preparedStatement;
         } catch (SQLException e) {
