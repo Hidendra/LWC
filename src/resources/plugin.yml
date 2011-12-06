@@ -1,11 +1,10 @@
 name: LWC
 main: com.griefcraft.lwc.LWCPlugin
-version: 3.54
+version: 3.55
 website: http://griefcraft.com
 author: Hidendra
 description: >
-             Inventory protection & management utilizing SQLite or MySQL as its backend
-             Other blocks can also be protected individually, if configured.
+             Lightweight Chest Protection & Management for Chests, Furnaces, Dispensers, and more.
 softdepend:
     - 'Permissions'
     - 'PermissionsBukkit'
