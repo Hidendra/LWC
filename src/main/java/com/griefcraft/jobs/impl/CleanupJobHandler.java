@@ -32,7 +32,6 @@ import com.griefcraft.jobs.IJobHandler;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Job;
 import org.bukkit.Bukkit;
-import org.bukkit.command.ConsoleCommandSender;
 
 public class CleanupJobHandler implements IJobHandler {
 
@@ -49,11 +48,8 @@ public class CleanupJobHandler implements IJobHandler {
     }
 
     public void run(LWC lwc, Job job) {
-        // create a console sender
-        ConsoleCommandSender sender = new ConsoleCommandSender(Bukkit.getServer());
-
         // call the cleanup command
-        lwc.getPlugin().onCommand(sender, lwc.getPlugin().getCommand("lwc"), "lwc", "admin cleanup".split(" "));
+        lwc.getPlugin().onCommand(Bukkit.getConsoleSender(), lwc.getPlugin().getCommand("lwc"), "lwc", "admin cleanup".split(" "));
     }
 
 }
