@@ -146,7 +146,9 @@ public class DoorsModule extends JavaModule {
      * @return
      */
     private boolean isValid(Material material) {
-        return material == Material.IRON_DOOR_BLOCK || material == Material.WOODEN_DOOR;
+        // note: material.getId() is used for fence gate to retain support for 1.8.1
+        // -hidendra
+        return material == Material.IRON_DOOR_BLOCK || material == Material.WOODEN_DOOR || material.getId() == 107;
     }
 
     /**
