@@ -15,7 +15,8 @@ incomplete
  * New sub commands for `/lwc admin`
 * Towny integration. You can now allow members of a specific Town access your Private protection, simply: `/cmodify t:TownName` or when creating it: `/cprivate t:TownName`
 * The WorldGuard feature has been rewritten to be easier to use and now includes a blacklist feature, so you can blacklist specific regions from having protections.
-* Add a new flag: `AUTOCLOSE` which makes a door automatically close after the configured amount of time in `plugins/LWC/doors.yml`
+* Add a new flag: `AUTOCLOSE` which makes a door automatically close after the configured amount of time in `plugins/LWC/doors.yml`. Usage: `/cautoclose on|off`
+* Allow Fence Gates to be automatically closed by the autoclose flag & `doors.yml`
 
 #### Cosmetics
 * `/lwc admin report` has been beautified
