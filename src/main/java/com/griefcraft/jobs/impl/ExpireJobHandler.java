@@ -32,7 +32,6 @@ import com.griefcraft.jobs.IJobHandler;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Job;
 import org.bukkit.Bukkit;
-import org.bukkit.command.ConsoleCommandSender;
 
 public class ExpireJobHandler implements IJobHandler {
 
@@ -49,9 +48,6 @@ public class ExpireJobHandler implements IJobHandler {
     }
 
     public void run(LWC lwc, Job job) {
-        // create a console sender
-        ConsoleCommandSender sender = new ConsoleCommandSender(Bukkit.getServer());
-
         String arguments = "";
 
         // check for arguments
@@ -60,7 +56,7 @@ public class ExpireJobHandler implements IJobHandler {
         }
 
         // call the expire command
-        lwc.getPlugin().onCommand(sender, lwc.getPlugin().getCommand("lwc"), "lwc", ("admin expire " + arguments).split(" "));
+        lwc.getPlugin().onCommand(Bukkit.getConsoleSender(), lwc.getPlugin().getCommand("lwc"), "lwc", ("admin expire " + arguments).split(" "));
     }
 
 }
