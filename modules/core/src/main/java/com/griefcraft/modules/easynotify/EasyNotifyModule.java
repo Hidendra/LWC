@@ -28,6 +28,7 @@
 
 package com.griefcraft.modules.easynotify;
 
+import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
@@ -54,9 +55,10 @@ public class EasyNotifyModule extends JavaModule {
         Player player = event.getPlayer();
         Protection protection = event.getProtection();
         Block block = event.getProtection().getBlock();
+        LWC lwc = event.getLWC();
 
         // Redstone
-        if (isBlockAffectedByRedstone(block)) {
+        if (isBlockAffectedByRedstone(block) && !Boolean.parseBoolean(lwc.resolveProtectionConfiguration(block.getType(), "denyRedstone"))) {
             player.sendMessage(Colors.Red + "Note: " + Colors.White + "Redstone is currently allowed on this protection. To disable use of redstone on it, use " + Colors.Green + "/credstone on");
         }
     }
