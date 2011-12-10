@@ -36,6 +36,7 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
+import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtil;
 import org.bukkit.command.CommandSender;
 
@@ -110,9 +111,14 @@ public class BaseFlagModule extends JavaModule {
         if (args.length < 2) {
             lwc.sendSimpleUsage(sender, "/lwc flag <flag> <on/off>");
 
-            boolean denyRedstone = lwc.getConfiguration().getBoolean("protections.denyRedstone", false);
-            String redstone = denyRedstone ? lwc.getLocale("help.flags.redstone.allow") : lwc.getLocale("help.flags.redstone.deny");
-            lwc.sendLocale(sender, "help.flags", "redstone", redstone);
+            // TODO
+            String flags = "";
+            for (Flag.Type type : Flag.Type.values()) {
+                flags += Colors.Yellow + type.toString().toLowerCase() + Colors.White + ", ";
+            }
+            flags = flags.substring(0, flags.length() - 2);
+            
+            sender.sendMessage("Available flags: " + flags);
 
             return;
         }
@@ -122,9 +128,7 @@ public class BaseFlagModule extends JavaModule {
         String type = args[1].toLowerCase();
         String internalType; // + or -
 
-        /**
-         * Allow lwc.flag.?? (e.g lwc.flag.redstone) or optionally the umbrella node lwc.allflags
-         */
+        // Allow lwc.flag.?? (e.g lwc.flag.redstone) or optionally the umbrella node lwc.allflags
         if (!lwc.hasPermission(sender, "lwc.flag." + flagName, "lwc.protect", "lwc.allflags")) {
             lwc.sendLocale(sender, "protection.accessdenied");
             return;
