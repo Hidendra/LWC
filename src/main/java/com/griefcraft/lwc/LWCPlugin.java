@@ -168,6 +168,9 @@ public class LWCPlugin extends JavaPlugin {
             } else if (commandName.equals("cautoclose")) {
                 aliasCommand = "flag";
                 aliasArgs = ("autoclose " + argString).split(" ");
+            } else if (commandName.equals("callowexplosions") || commandName.equals("ctnt")) {
+                aliasCommand = "flag";
+                aliasArgs = ("allowexplosions " + argString).split(" ");
             }
 
             // Mode aliases
