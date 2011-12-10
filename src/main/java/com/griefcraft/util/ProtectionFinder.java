@@ -168,10 +168,13 @@ public class ProtectionFinder {
         Protection protection = lwc.getPhysicalDatabase().loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
 
         if (protection != null) {
-            this.matchedProtection = protection;
+            // ensure it's the right block
+            if (protection.getBlockId() > 0 && protection.getBlockId() == protection.getBlock().getTypeId()) {
+                this.matchedProtection = protection;
+            }
         }
 
-        return protection != null;
+        return this.matchedProtection != null;
     }
 
     /**
