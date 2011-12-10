@@ -29,13 +29,11 @@
 package com.griefcraft.model;
 
 /**
+ * @deprecated use {@link Protection.Type} instead
  * @see Protection.Type
  */
 public class ProtectionTypes {
 
-    /**
-     * Creatable by anyone
-     */
     @Deprecated
     public static final int PUBLIC = 0;
     @Deprecated
@@ -43,9 +41,6 @@ public class ProtectionTypes {
     @Deprecated
     public static final int PRIVATE = 2;
 
-    /**
-     * Only creatable by lwc admins
-     */
     @Deprecated
     public static final int TRAP_KICK = 3;
     @Deprecated
