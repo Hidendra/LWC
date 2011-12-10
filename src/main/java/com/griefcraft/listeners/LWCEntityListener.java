@@ -30,6 +30,7 @@ package com.griefcraft.listeners;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
+import com.griefcraft.model.Flag;
 import com.griefcraft.model.Protection;
 import org.bukkit.block.Block;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -58,7 +59,7 @@ public class LWCEntityListener extends EntityListener {
             Protection protection = plugin.getLWC().findProtection(block);
 
             if (protection != null) {
-                if (ignoreExplosions) {
+                if (ignoreExplosions || protection.hasFlag(Flag.Type.ALLOWEXPLOSIONS)) {
                     protection.remove();
                 } else {
                     event.setCancelled(true);

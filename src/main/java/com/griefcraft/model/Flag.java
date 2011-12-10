@@ -34,8 +34,8 @@ import org.json.simple.JSONObject;
 public class Flag {
 
     /**
-     * The ordering of this enum <b>MUST NOT</b> change. The ordinal value is stored internally
-     * in LWC. However, the name of a flag may freely change at any time.
+     * The ordering of this enum <b>MUST NOT</b> change. The ordinal value is stored internally.
+     * However, the name of a flag may freely change at any time.
      */
     public enum Type {
 
@@ -58,7 +58,12 @@ public class Flag {
         /**
          * The door will automatically close after the time configured in plugins/LWC/doors.yml
          */
-        AUTOCLOSE;
+        AUTOCLOSE,
+
+        /**
+         * Allows explosions to blow a protection up
+         */
+        ALLOWEXPLOSIONS;
 
         Type() {
             this(false);
