@@ -52,13 +52,15 @@ public class LWCEntityListener extends EntityListener {
         if (!LWC.ENABLED || event.isCancelled()) {
             return;
         }
-
-        boolean ignoreExplosions = plugin.getLWC().getConfiguration().getBoolean("core.ignoreExplosions", false);
+        
+        LWC lwc = LWC.getInstance();
 
         for (Block block : event.blockList()) {
             Protection protection = plugin.getLWC().findProtection(block);
 
             if (protection != null) {
+                boolean ignoreExplosions = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock().getType(), "ignoreExplosions"));
+
                 if (ignoreExplosions || protection.hasFlag(Flag.Type.ALLOWEXPLOSIONS)) {
                     protection.remove();
                 } else {
