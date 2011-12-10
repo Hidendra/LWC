@@ -73,6 +73,10 @@ commands:
   cremoveall:
     description: Remove all of the protections that you own
     usage: /<command>
+  callowexplosions:
+    description: Flag to allow a given protection to explode from explosions.
+  ctnt:
+    description: Flag to allow a given protection to explode from explosions.
 
 permissions:
 
@@ -145,6 +149,7 @@ permissions:
            lwc.flag.redstone: true
            lwc.flag.magnet: true
            lwc.flag.autoclose: true
+           lwc.flag.allowexplosions: true
   lwc.flag.redstone:
       description: Allows you to use the redstone flag, which enables or disables the use of redstone on a protection depending on plugin settings.
   lwc.flag.magnet:
