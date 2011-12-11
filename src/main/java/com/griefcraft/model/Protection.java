@@ -119,9 +119,9 @@ public class Protection {
     private final Set<History> historyCache = new HashSet<History>();
 
     /**
-     * List of the accessRights rights for the protection
+     * List of the permissions rights for the protection
      */
-    private final Set<AccessRight> accessRights = new HashSet<AccessRight>();
+    private final Set<Permission> permissions = new HashSet<Permission>();
 
     /**
      * List of flags enabled on the protection
@@ -246,7 +246,7 @@ public class Protection {
         JSONArray root = new JSONArray();
 
         // add all of the access rights to the root
-        for (AccessRight right : accessRights) {
+        for (Permission right : permissions) {
             if (right != null) {
                 root.add(right.encodeToJSON());
             }
@@ -400,7 +400,6 @@ public class Protection {
 
     /**
      * Remove a flag from the protection
-     * TODO: redo? :s
      *
      * @param flag
      * @return
@@ -415,42 +414,50 @@ public class Protection {
     }
 
     /**
-     * Check if the entity + accessRights type exists, and if so return the rights (-1 if it does not exist)
+     * Check if the entity + permissions type exists, and if so return the rights (-1 if it does not exist)
      *
      * @param type
      * @param name
-     * @return the accessRights the player has
+     * @return the permissions the player has
      */
-    public int getAccess(int type, String name) {
-        for (AccessRight right : accessRights) {
-            if (right.getType() == type && right.getName().equalsIgnoreCase(name)) {
-                return right.getRights();
+    public Permission.Access getAccess(String name, Permission.Type type) {
+        for (Permission permission : permissions) {
+            if (permission.getType() == type && permission.getName().equalsIgnoreCase(name)) {
+                return permission.getAccess();
             }
         }
 
-        return -1;
+        return Permission.Access.NONE;
     }
 
     /**
      * @return the list of access rights
      */
-    public List<AccessRight> getAccessRights() {
-        return Collections.unmodifiableList(new ArrayList<AccessRight>(accessRights));
+    public List<Permission> getPermissions() {
+        return Collections.unmodifiableList(new ArrayList<Permission>(permissions));
     }
 
     /**
-     * Remove temporary accessRights rights from the protection
+     * Remove temporary permissions rights from the protection
      */
-    public void removeTemporaryAccessRights() {
-        removeAccessRightsMatching("*", AccessRight.TEMPORARY);
+    public void removeTemporaryPermissions() {
+        Iterator<Permission> iter = permissions.iterator();
+
+        while (iter.hasNext()) {
+            Permission permission = iter.next();
+            
+            if (permission.isVolatile()) {
+                iter.remove();
+            }
+        }
     }
 
     /**
-     * Add an accessRights right to the stored list
+     * Add an permissions right to the stored list
      *
      * @param right
      */
-    public void addAccessRight(AccessRight right) {
+    public void addAccessRight(Permission right) {
         if (removed || right == null) {
             return;
         }
@@ -459,27 +466,27 @@ public class Protection {
         removeAccessRightsMatching(right.getName(), right.getType());
 
         // now we can safely add it
-        accessRights.add(right);
+        permissions.add(right);
         modified = true;
     }
 
     /**
      * Remove access rights from the protection that match an entity AND type
      *
-     * @param entity
+     * @param name
      * @param type
      */
-    public void removeAccessRightsMatching(String entity, int type) {
+    public void removeAccessRightsMatching(String name, Permission.Type type) {
         if (removed) {
             return;
         }
 
-        Iterator<AccessRight> iter = accessRights.iterator();
+        Iterator<Permission> iter = permissions.iterator();
 
         while (iter.hasNext()) {
-            AccessRight right = iter.next();
+            Permission permission = iter.next();
 
-            if ((right.getName().equals(entity) || entity.equals("*")) && right.getType() == type) {
+            if ((permission.getName().equals(name) || name.equals("*")) && permission.getType() == type) {
                 iter.remove();
                 modified = true;
             }
@@ -642,7 +649,7 @@ public class Protection {
         }
 
         LWC lwc = LWC.getInstance();
-        removeTemporaryAccessRights();
+        removeTemporaryPermissions();
 
         // we're removing it, so assume there are no changes
         modified = false;

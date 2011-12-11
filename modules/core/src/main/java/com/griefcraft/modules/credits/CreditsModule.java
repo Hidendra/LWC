@@ -187,6 +187,7 @@ public class CreditsModule extends JavaModule {
                 "Twizz",
                 "spunkiie",
                 "RustyDagger",
+                "Sam (Nodex servers)",
                 " ",
 
                 Colors.Red + "And....",

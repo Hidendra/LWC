@@ -29,7 +29,7 @@
 package com.griefcraft.modules.towny;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.AccessRight;
+import com.griefcraft.model.Permission;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCAccessEvent;
@@ -92,7 +92,7 @@ public class TownyModule extends JavaModule {
         Player player = event.getPlayer();
         Protection protection = event.getProtection();
 
-        if (event.getAccess() != AccessRight.RIGHT_NOACCESS) {
+        if (event.getAccess() != Permission.Access.NONE) {
             return;
         }
 
@@ -104,8 +104,8 @@ public class TownyModule extends JavaModule {
             return;
         }
 
-        for (AccessRight right : protection.getAccessRights()) {
-            if (right.getType() != AccessRight.TOWN) {
+        for (Permission right : protection.getPermissions()) {
+            if (right.getType() != Permission.Type.TOWN) {
                 continue;
             }
 
@@ -122,15 +122,15 @@ public class TownyModule extends JavaModule {
                 // check if the player is a resident of said town
                 if (!town.hasResident(player.getName())) {
                     // Uh-oh!
-                    event.setAccess(AccessRight.RIGHT_NOACCESS);
+                    event.setAccess(Permission.Access.NONE);
                 } else {
                     // They're in the town :-)
-                    event.setAccess(AccessRight.RIGHT_PLAYER);
+                    event.setAccess(Permission.Access.PLAYER);
                 }
 
                 // If they're the major, let them admin the protection
                 if (town.getMayor().getName().equalsIgnoreCase(player.getName())) {
-                    event.setAccess(AccessRight.RIGHT_ADMIN);
+                    event.setAccess(Permission.Access.ADMIN);
                 }
             } catch (Exception e) {
 

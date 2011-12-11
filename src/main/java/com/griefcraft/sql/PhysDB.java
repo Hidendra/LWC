@@ -31,11 +31,7 @@ package com.griefcraft.sql;
 import com.griefcraft.cache.LRUCache;
 import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.AccessRight;
-import com.griefcraft.model.Flag;
-import com.griefcraft.model.History;
-import com.griefcraft.model.Job;
-import com.griefcraft.model.Protection;
+import com.griefcraft.model.*;
 import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.scripting.Module;
 import org.bukkit.entity.Player;
@@ -43,11 +39,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -637,7 +629,7 @@ public class PhysDB extends Database {
                     JSONObject map = (JSONObject) node;
 
                     // decode the map
-                    AccessRight right = AccessRight.decodeJSON(map);
+                    Permission right = Permission.decodeJSON(map);
 
                     // bingo!
                     if (right != null) {
@@ -1787,7 +1779,7 @@ public class PhysDB extends Database {
                 // load the data we will be using
                 int protectionId = set.getInt("chest");
                 String entity = set.getString("entity");
-                int rights = set.getInt("rights");
+                int access = set.getInt("rights");
                 int type = set.getInt("type");
 
                 // begin loading the protection
@@ -1807,10 +1799,10 @@ public class PhysDB extends Database {
                 }
 
                 // create the access right
-                AccessRight right = new AccessRight();
+                Permission right = new Permission();
                 right.setProtectionId(protectionId);
-                right.setType(type);
-                right.setRights(rights);
+                right.setType(Permission.Type.values()[type]);
+                right.setAccess(Permission.Access.values()[access]);
                 right.setName(entity);
 
                 // add it to the protection and queue it for saving!

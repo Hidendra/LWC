@@ -45,7 +45,7 @@ import com.griefcraft.integration.permissions.SuperPermsPermissions;
 import com.griefcraft.jobs.JobManager;
 import com.griefcraft.migration.ConfigPost300;
 import com.griefcraft.migration.MySQLPost200;
-import com.griefcraft.model.AccessRight;
+import com.griefcraft.model.Permission;
 import com.griefcraft.model.Flag;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
@@ -424,7 +424,7 @@ public class LWC {
         }
 
         // Their access level
-        int accessLevel = AccessRight.RIGHT_NOACCESS;
+        Permission.Access access = Permission.Access.NONE;
 
         String playerName = player.getName();
 
@@ -449,12 +449,12 @@ public class LWC {
                     return true;
                 }
 
-                if (protection.getAccess(AccessRight.PLAYER, playerName) == 1) {
+                if (protection.getAccess(playerName, Permission.Type.PLAYER) == Permission.Access.ADMIN) {
                     return true;
                 }
 
                 for (String groupName : permissions.getGroups(player)) {
-                    if (protection.getAccess(AccessRight.GROUP, groupName) == 1) {
+                    if (protection.getAccess(groupName, Permission.Type.GROUP) == Permission.Access.ADMIN) {
                         return true;
                     }
                 }
@@ -462,16 +462,11 @@ public class LWC {
                 break;
         }
 
-        // is it still just NOACCESS?
-        if (accessLevel == AccessRight.RIGHT_NOACCESS) {
-            // call the canAccessProtection hook
-            LWCAccessEvent event = new LWCAccessEvent(player, protection, accessLevel);
-            moduleLoader.dispatchEvent(event);
+        // call the canAccessProtection hook
+        LWCAccessEvent event = new LWCAccessEvent(player, protection, access);
+        moduleLoader.dispatchEvent(event);
 
-            accessLevel = event.getAccess();
-        }
-
-        return accessLevel >= AccessRight.RIGHT_PLAYER;
+        return event.getAccess() == Permission.Access.ADMIN;
     }
 
     /**
@@ -722,7 +717,7 @@ public class LWC {
         }
 
         // Their access level
-        int accessLevel = AccessRight.RIGHT_NOACCESS;
+        Permission.Access access = Permission.Access.NONE;
 
         String playerName = player.getName();
 
@@ -743,12 +738,12 @@ public class LWC {
                     return true;
                 }
 
-                if (protection.getAccess(AccessRight.PLAYER, playerName) >= 0) {
+                if (protection.getAccess(playerName, Permission.Type.PLAYER).ordinal() >= Permission.Access.PLAYER.ordinal()) {
                     return true;
                 }
 
                 for (String groupName : permissions.getGroups(player)) {
-                    if (protection.getAccess(AccessRight.GROUP, groupName) >= 0) {
+                    if (protection.getAccess(groupName, Permission.Type.GROUP).ordinal() >= Permission.Access.PLAYER.ordinal()) {
                         return true;
                     }
                 }
@@ -756,16 +751,11 @@ public class LWC {
                 break;
         }
 
-        // is it still just NOACCESS?
-        if (accessLevel == AccessRight.RIGHT_NOACCESS) {
-            // call the canAccessProtection hook
-            LWCAccessEvent event = new LWCAccessEvent(player, protection, accessLevel);
-            moduleLoader.dispatchEvent(event);
+        // call the canAccessProtection hook
+        LWCAccessEvent event = new LWCAccessEvent(player, protection, access);
+        moduleLoader.dispatchEvent(event);
 
-            accessLevel = event.getAccess();
-        }
-
-        return accessLevel >= AccessRight.RIGHT_PLAYER;
+        return event.getAccess() == Permission.Access.PLAYER || event.getAccess() == Permission.Access.ADMIN;
     }
 
     /**
@@ -1621,7 +1611,7 @@ public class LWC {
         for (String rightsName : arguments) {
             boolean remove = false;
             boolean isAdmin = false;
-            int type = AccessRight.PLAYER;
+            Permission.Type type = Permission.Type.PLAYER;
 
             // Gracefully ignore id
             if (rightsName.startsWith("id:")) {
@@ -1639,27 +1629,27 @@ public class LWC {
             }
 
             if (rightsName.toLowerCase().startsWith("g:")) {
-                type = AccessRight.GROUP;
+                type = Permission.Type.GROUP;
                 rightsName = rightsName.substring(2);
             }
 
             if (rightsName.toLowerCase().startsWith("l:")) {
-                type = AccessRight.LIST;
+                type = Permission.Type.LIST;
                 rightsName = rightsName.substring(2);
             }
 
             if (rightsName.toLowerCase().startsWith("list:")) {
-                type = AccessRight.LIST;
+                type = Permission.Type.LIST;
                 rightsName = rightsName.substring(5);
             }
 
             if (rightsName.toLowerCase().startsWith("t:")) {
-                type = AccessRight.TOWN;
+                type = Permission.Type.TOWN;
                 rightsName = rightsName.substring(2);
             }
 
             if (rightsName.toLowerCase().startsWith("town:")) {
-                type = AccessRight.TOWN;
+                type = Permission.Type.TOWN;
                 rightsName = rightsName.substring(5);
             }
 
@@ -1668,17 +1658,17 @@ public class LWC {
             }
 
             int protectionId = protection.getId();
-            String localeChild = AccessRight.typeToString(type).toLowerCase();
+            String localeChild = type.toString().toLowerCase();
 
             if (!remove) {
-                AccessRight accessRight = new AccessRight();
-                accessRight.setProtectionId(protectionId);
-                accessRight.setRights(isAdmin ? 1 : 0);
-                accessRight.setName(rightsName);
-                accessRight.setType(type);
+                Permission permission = new Permission();
+                permission.setProtectionId(protectionId);
+                permission.setAccess(isAdmin ? Permission.Access.ADMIN : Permission.Access.PLAYER);
+                permission.setName(rightsName);
+                permission.setType(type);
 
                 // add it to the protection and queue it to be saved
-                protection.addAccessRight(accessRight);
+                protection.addAccessRight(permission);
                 protection.save();
 
                 sendLocale(sender, "protection.interact.rights.register." + localeChild, "name", rightsName, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");

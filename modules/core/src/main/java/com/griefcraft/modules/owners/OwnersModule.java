@@ -29,7 +29,7 @@
 package com.griefcraft.modules.owners;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.AccessRight;
+import com.griefcraft.model.Permission;
 import com.griefcraft.model.Action;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
@@ -45,6 +45,11 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 public class OwnersModule extends JavaModule {
+
+    /**
+     * How many results to show per page
+     */
+    public static final int RESULTS_PER_PAGE = 15;
 
     @Override
     public void onProtectionInteract(LWCProtectionInteractEvent event) {
@@ -64,19 +69,15 @@ public class OwnersModule extends JavaModule {
         Action action = player.getAction("owners");
         int accessPage = Integer.parseInt(action.getData());
 
-        /*
-         * Calculate range
-         */
-        int start = (accessPage - 1) * AccessRight.RESULTS_PER_PAGE;
-        int max = start + AccessRight.RESULTS_PER_PAGE;
+        // Calculate range
+        int start = (accessPage - 1) * RESULTS_PER_PAGE;
+        int max = start + RESULTS_PER_PAGE;
 
-        List<AccessRight> accessRights = protection.getAccessRights();
-        int numRights = accessRights.size();
+        List<Permission> permissions = protection.getPermissions();
+        int numRights = permissions.size();
 
-        /*
-         * May have only been 2 rows left, or something. Get the real max
-         */
-        int realMax = start + accessRights.size();
+        // May have only been 2 rows left, or something. Get the real max
+        int realMax = start + permissions.size();
 
         player.sendMessage("");
         player.sendMessage(Colors.Blue + "Showing results " + Colors.LightBlue + start + Colors.Blue + "-" + Colors.LightBlue + realMax + Colors.Blue + ". Total: " + Colors.LightBlue + numRights);
@@ -88,8 +89,8 @@ public class OwnersModule extends JavaModule {
                 break;
             }
 
-            AccessRight accessRight = accessRights.get(start + index);
-            player.sendMessage(accessRight.toString());
+            Permission permission = permissions.get(start + index);
+            player.sendMessage(permission.toString());
         }
 
         lwc.removeModes(player);
