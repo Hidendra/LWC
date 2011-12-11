@@ -60,7 +60,7 @@ public class Colors {
         localeColors.put("%red%", "\u00A74");
         localeColors.put("%purple%", "\u00A75");
         localeColors.put("%gold%", "\u00A76");
-        localeColors.put("%lighgray%", "\u00A77");
+        localeColors.put("%lightgray%", "\u00A77");
         localeColors.put("%gray%", "\u00A78");
         localeColors.put("%darkpurple%", "\u00A79");
         localeColors.put("%lightgreen%", "\u00A7a");
