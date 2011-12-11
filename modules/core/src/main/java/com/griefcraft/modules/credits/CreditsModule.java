@@ -128,48 +128,16 @@ public class CreditsModule extends JavaModule {
                 " ",
 
                 Colors.Red + "Translations",
-                Colors.Green + "German",
-                "Dawodo",
-                " ",
-
-                Colors.Green + "Polish",
-                "Geoning",
-                "dudsonowa",
-                "andrewkm",
-                " ",
-
-                Colors.Green + "French",
-                "cehel",
-                " ",
-
-                Colors.Green + "Dutch",
-                "Madzero",
-                "aoa2003",
-                " ",
-
-                Colors.Green + "Czech",
-                "hofec",
-                " ",
-
-                Colors.Green + "Swedish",
-                "christley",
-                " ",
-
-                Colors.Green + "Russian",
-                "IlyaGulya",
-                " ",
-
-                Colors.Green + "Spanish",
-                "Raul \"RME\" Martinez",
-                "David \"DME\" Martinez",
-                " ",
-
-                Colors.Green + "Danish",
-                "TCarlsen",
-                " ",
-
-                Colors.Green + "Italian",
-                "portaro",
+                Colors.Green + "German - " + Colors.White + "Dawodo",
+                Colors.Green + "Polish - " + Colors.White + "Geoning, dudsonowa, and andrewkm",
+                Colors.Green + "French - " + Colors.White + "cehel",
+                Colors.Green + "Dutch - " + Colors.White + "Madzero and aoa2003",
+                Colors.Green + "Czech - " + Colors.White + "hofec",
+                Colors.Green + "Swedish - " + Colors.White + "christley",
+                Colors.Green + "Russian - " + Colors.White + "IlyaGulya",
+                Colors.Green + "Spanish - " + Colors.White + "Raul \"RME\" Martinez and David \"DME\" Martinez",
+                Colors.Green + "Danish - " + Colors.White + "TCarlsen",
+                Colors.Green + "Italian - " + Colors.White + "portaro",
                 " ",
 
                 Colors.Red + "Donations",
