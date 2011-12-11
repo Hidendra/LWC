@@ -751,7 +751,7 @@ public class LWC {
                     // Get the item they need to have
                     int item = Integer.parseInt(permission.getName());
 
-                    // Are they weilding it?
+                    // Are they wielding it?
                     if (player.getItemInHand().getTypeId() == item) {
                         return true;
                     }
