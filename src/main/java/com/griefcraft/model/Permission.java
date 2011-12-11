@@ -29,61 +29,93 @@
 package com.griefcraft.model;
 
 import com.griefcraft.util.Colors;
+import com.griefcraft.util.StringUtil;
 import org.json.simple.JSONObject;
 
-public class AccessRight {
+public class Permission {
 
     /**
-     * The player has no access to the protection
+     * The access level
+     * The ordering of this enum <b>MUST NOT</b> change as ordinal values are used internally.
      */
-    public static final int RIGHT_NOACCESS = -1;
+    public enum Access {
+
+        /**
+         * The player has no access
+         */
+        NONE,
+
+        /**
+         * The player has rights that of a regular player
+         */
+        PLAYER,
+
+        /**
+         * The player has admin rights
+         */
+        ADMIN;
+
+        @Override
+        public String toString() {
+            return StringUtil.capitalizeFirstLetter(super.toString());
+        }
+    }
 
     /**
-     * The player has player rights to the protection
+     * The type this permission applies to.
+     * The ordering of this enum <b>MUST NOT</b> change as ordinal values are used internally.
      */
-    public static final int RIGHT_PLAYER = 0;
+    public enum Type {
+        /**
+         * Applies to a specific group of players
+         */
+        GROUP,
+
+        /**
+         * Applies to a specific player
+         */
+        PLAYER,
+
+        /**
+         * Applies to a list created by the Lists plugin
+         */
+        LIST,
+
+        /**
+         * Applies to citizens of a Towny town
+         */
+        TOWN;
+
+        @Override
+        public String toString() {
+            return StringUtil.capitalizeFirstLetter(super.toString());
+        }
+    }
 
     /**
-     * The player has admin rights to the protection
+     * The entity this applies to
      */
-    public static final int RIGHT_ADMIN = 1;
-
-    /**
-     * Access right is for a group
-     */
-    public static final int GROUP = 0;
-
-    /**
-     * Access right is for a player
-     */
-    public static final int PLAYER = 1;
-
-    /**
-     * Used in conjuction with Lists
-     */
-    public static final int LIST = 2;
-
-    /**
-     * Used in conjunction with Towny
-     */
-    public static final int TOWN = 3;
-
-    /**
-     * Not saved to the database
-     */
-    public static final int TEMPORARY = 3;
-
-    /**
-     * Used in conjunction with /lwc -O
-     */
-    public static final int RESULTS_PER_PAGE = 15;
-
     private String name;
 
+    /**
+     * The protection this permission applies to
+     */
     private int protectionId;
 
-    private int rights;
-    private int type;
+    /**
+     * The access the permission has to the protection
+     */
+    private Access access = Access.NONE;
+
+    /**
+     * The type of access used for the permission
+     */
+    private Type type;
+
+    /**
+     * If the permission is not synchronized to the database
+     */
+    private boolean isVolatile = false;
 
     /**
      * Encode the Access Right to a JSONObject
@@ -96,7 +128,7 @@ public class AccessRight {
         // object.put("protection", protectionId);
         object.put("type", type);
         object.put("name", name);
-        object.put("rights", rights);
+        object.put("rights", getAccess().ordinal());
 
         return object;
     }
@@ -107,14 +139,14 @@ public class AccessRight {
      * @param node
      * @return
      */
-    public static AccessRight decodeJSON(JSONObject node) {
-        AccessRight right = new AccessRight();
+    public static Permission decodeJSON(JSONObject node) {
+        Permission right = new Permission();
 
         // The values are stored as longs internally, despite us passing an int
         // right.setProtectionId(((Long) node.get("protection")).intValue());
-        right.setType(((Long) node.get("type")).intValue());
         right.setName((String) node.get("name"));
-        right.setRights(((Long) node.get("rights")).intValue());
+        right.setType(Type.values()[((Long) node.get("type")).intValue()]);
+        right.setAccess(Access.values()[((Long) node.get("rights")).intValue()]);
 
         return right;
     }
@@ -127,11 +159,11 @@ public class AccessRight {
         builder.append(Colors.White);
         builder.append(" (");
         builder.append(Colors.Green);
-        builder.append(AccessRight.typeToString(getType()));
+        builder.append(getType());
         builder.append(Colors.White);
         builder.append(") ");
 
-        if (getRights() == 1) {
+        if (getAccess() == Access.ADMIN) {
         builder.append(Colors.White);
             builder.append("(");
             builder.append(Colors.Red);
@@ -140,7 +172,7 @@ public class AccessRight {
             builder.append(")");
         }
         return builder.toString();
-        // return String.format("AccessRight = { protection=%d name=%s rights=%d type=%s }", protectionId, name, rights, typeToString(rights));
+        // return String.format("Permission = { protection=%d name=%s rights=%d type=%s }", protectionId, name, rights, typeToString(rights));
     }
 
     public String getName() {
@@ -151,11 +183,11 @@ public class AccessRight {
         return protectionId;
     }
 
-    public int getRights() {
-        return rights;
+    public Access getAccess() {
+        return access;
     }
 
-    public int getType() {
+    public Type getType() {
         return type;
     }
 
@@ -167,28 +199,20 @@ public class AccessRight {
         this.protectionId = protectionId;
     }
 
-    public void setRights(int rights) {
-        this.rights = rights;
+    public void setAccess(Access access) {
+        this.access = access;
     }
 
-    public void setType(int type) {
+    public void setType(Type type) {
         this.type = type;
     }
+    
+    public void setVolatile(boolean isVolatile) {
+        this.isVolatile = isVolatile;
+    }
 
-    public static String typeToString(int type) {
-        if (type == GROUP) {
-            return "Group";
-        } else if (type == PLAYER) {
-            return "Player";
-        } else if (type == LIST) {
-            return "List";
-        } else if (type == TOWN) {
-            return "Towny";
-        } else if (type == TEMPORARY) {
-            return "Temporary";
-        }
-
-        return "Unknown";
+    public boolean isVolatile() {
+        return isVolatile;
     }
 
 }
