@@ -84,7 +84,12 @@ public class Permission {
         /**
          * Applies to citizens of a Towny town
          */
-        TOWN;
+        TOWN,
+
+        /**
+         * Allows a specific item (such as a key) to open the protection when interacted with in hand
+         */
+        ITEM;
 
         @Override
         public String toString() {
@@ -126,8 +131,8 @@ public class Permission {
         JSONObject object = new JSONObject();
 
         // object.put("protection", protectionId);
-        object.put("type", type);
         object.put("name", name);
+        object.put("type", getType().ordinal());
         object.put("rights", getAccess().ordinal());
 
         return object;
@@ -140,15 +145,15 @@ public class Permission {
      * @return
      */
     public static Permission decodeJSON(JSONObject node) {
-        Permission right = new Permission();
+        Permission permission = new Permission();
 
         // The values are stored as longs internally, despite us passing an int
         // right.setProtectionId(((Long) node.get("protection")).intValue());
-        right.setName((String) node.get("name"));
-        right.setType(Type.values()[((Long) node.get("type")).intValue()]);
-        right.setAccess(Access.values()[((Long) node.get("rights")).intValue()]);
+        permission.setName((String) node.get("name"));
+        permission.setType(Type.values()[((Long) node.get("type")).intValue()]);
+        permission.setAccess(Access.values()[((Long) node.get("rights")).intValue()]);
 
-        return right;
+        return permission;
     }
 
     @Override
