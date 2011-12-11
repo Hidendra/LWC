@@ -29,7 +29,7 @@
 package com.griefcraft.modules.info;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.AccessRight;
+import com.griefcraft.model.Permission;
 import com.griefcraft.model.Action;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
@@ -73,14 +73,14 @@ public class InfoModule extends JavaModule {
 
         if (event.canAdmin()) {
             if (protection.getType() == Protection.Type.PRIVATE || protection.getType() == Protection.Type.DONATION) {
-                player.sendMessage(Colors.Red + "Access Control List " + Colors.White + "(" + protection.getAccessRights().size() + ")");
+                player.sendMessage(Colors.Red + "Access Control List " + Colors.White + "(" + protection.getPermissions().size() + ")");
                 int index = 0;
-                for (AccessRight accessRight : protection.getAccessRights()) {
+                for (Permission permission : protection.getPermissions()) {
                     if (index >= 9) {
                         break;
                     }
 
-                    player.sendMessage(accessRight.toString());
+                    player.sendMessage(permission.toString());
                     index ++;
                 }
 

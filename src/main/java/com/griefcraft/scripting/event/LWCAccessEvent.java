@@ -28,6 +28,7 @@
 
 package com.griefcraft.scripting.event;
 
+import com.griefcraft.model.Permission;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.ModuleLoader;
 import org.bukkit.entity.Player;
@@ -42,9 +43,9 @@ public class LWCAccessEvent extends LWCPlayerEvent {
     /**
      * The access given
      */
-    private int access;
+    private Permission.Access access;
 
-    public LWCAccessEvent(Player player, Protection protection, int access) {
+    public LWCAccessEvent(Player player, Protection protection, Permission.Access access) {
         super(ModuleLoader.Event.ACCESS_REQUEST, player);
 
         this.protection = protection;
@@ -55,11 +56,11 @@ public class LWCAccessEvent extends LWCPlayerEvent {
         return protection;
     }
 
-    public int getAccess() {
+    public Permission.Access getAccess() {
         return access;
     }
 
-    public void setAccess(int access) {
+    public void setAccess(Permission.Access access) {
         this.access = access;
     }
 

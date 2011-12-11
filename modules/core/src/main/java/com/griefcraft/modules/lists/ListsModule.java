@@ -29,7 +29,7 @@
 package com.griefcraft.modules.lists;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.AccessRight;
+import com.griefcraft.model.Permission;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCAccessEvent;
@@ -65,8 +65,8 @@ public class ListsModule extends JavaModule {
         }
 
         if (lists != null) {
-            for (AccessRight right : protection.getAccessRights()) {
-                if (right.getType() != AccessRight.LIST) {
+            for (Permission right : protection.getPermissions()) {
+                if (right.getType() != Permission.Type.LIST) {
                     continue;
                 }
 
@@ -80,7 +80,7 @@ public class ListsModule extends JavaModule {
 
                     // they have access in some way or another, let's allow them in
                     if (privilegeLevel != null) {
-                        event.setAccess(AccessRight.RIGHT_PLAYER);
+                        event.setAccess(Permission.Access.PLAYER);
                     }
                 }
             }
