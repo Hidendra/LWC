@@ -742,6 +742,21 @@ public class LWC {
                     return true;
                 }
 
+                // Check for item keys
+                for (Permission permission : protection.getPermissions()) {
+                    if (permission.getType() != Permission.Type.ITEM) {
+                        continue;
+                    }
+
+                    // Get the item they need to have
+                    int item = Integer.parseInt(permission.getName());
+
+                    // Are they weilding it?
+                    if (player.getItemInHand().getTypeId() == item) {
+                        return true;
+                    }
+                }
+
                 for (String groupName : permissions.getGroups(player)) {
                     if (protection.getAccess(groupName, Permission.Type.GROUP).ordinal() >= Permission.Access.PLAYER.ordinal()) {
                         return true;
@@ -1608,52 +1623,57 @@ public class LWC {
      * @param arguments
      */
     public void processRightsModifications(CommandSender sender, Protection protection, String... arguments) {
-        for (String rightsName : arguments) {
+        for (String value : arguments) {
             boolean remove = false;
             boolean isAdmin = false;
             Permission.Type type = Permission.Type.PLAYER;
 
             // Gracefully ignore id
-            if (rightsName.startsWith("id:")) {
+            if (value.startsWith("id:")) {
                 continue;
             }
 
-            if (rightsName.startsWith("-")) {
+            if (value.startsWith("-")) {
                 remove = true;
-                rightsName = rightsName.substring(1);
+                value = value.substring(1);
             }
 
-            if (rightsName.startsWith("@")) {
+            if (value.startsWith("@")) {
                 isAdmin = true;
-                rightsName = rightsName.substring(1);
+                value = value.substring(1);
             }
 
-            if (rightsName.toLowerCase().startsWith("g:")) {
+            if (value.toLowerCase().startsWith("g:")) {
                 type = Permission.Type.GROUP;
-                rightsName = rightsName.substring(2);
+                value = value.substring(2);
             }
 
-            if (rightsName.toLowerCase().startsWith("l:")) {
+            if (value.toLowerCase().startsWith("l:")) {
                 type = Permission.Type.LIST;
-                rightsName = rightsName.substring(2);
+                value = value.substring(2);
             }
 
-            if (rightsName.toLowerCase().startsWith("list:")) {
+            if (value.toLowerCase().startsWith("list:")) {
                 type = Permission.Type.LIST;
-                rightsName = rightsName.substring(5);
+                value = value.substring(5);
             }
 
-            if (rightsName.toLowerCase().startsWith("t:")) {
+            if (value.toLowerCase().startsWith("t:")) {
                 type = Permission.Type.TOWN;
-                rightsName = rightsName.substring(2);
+                value = value.substring(2);
             }
 
-            if (rightsName.toLowerCase().startsWith("town:")) {
+            if (value.toLowerCase().startsWith("town:")) {
                 type = Permission.Type.TOWN;
-                rightsName = rightsName.substring(5);
+                value = value.substring(5);
+            }
+            
+            if (value.toLowerCase().startsWith("item:")) {
+                type = Permission.Type.ITEM;
+                value = value.substring(5);
             }
 
-            if (rightsName.trim().isEmpty()) {
+            if (value.trim().isEmpty()) {
                 continue;
             }
 
@@ -1664,19 +1684,19 @@ public class LWC {
                 Permission permission = new Permission();
                 permission.setProtectionId(protectionId);
                 permission.setAccess(isAdmin ? Permission.Access.ADMIN : Permission.Access.PLAYER);
-                permission.setName(rightsName);
+                permission.setName(value);
                 permission.setType(type);
 
                 // add it to the protection and queue it to be saved
                 protection.addAccessRight(permission);
                 protection.save();
 
-                sendLocale(sender, "protection.interact.rights.register." + localeChild, "name", rightsName, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
+                sendLocale(sender, "protection.interact.rights.register." + localeChild, "name", value, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
             } else {
-                protection.removeAccessRightsMatching(rightsName, type);
+                protection.removeAccessRightsMatching(value, type);
                 protection.save();
 
-                sendLocale(sender, "protection.interact.rights.remove." + localeChild, "name", rightsName, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
+                sendLocale(sender, "protection.interact.rights.remove." + localeChild, "name", value, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
             }
         }
     }
