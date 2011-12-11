@@ -170,7 +170,7 @@ public class CreditsModule extends JavaModule {
 
                 Colors.Green + "Italian",
                 "portaro",
-                "",
+                " ",
 
                 Colors.Red + "Donations",
                 Colors.Gray + "(chronological order)",
@@ -182,7 +182,7 @@ public class CreditsModule extends JavaModule {
                 "MonsterTKE" + Colors.Red + " X2",
                 "wokka",
                 "Andreoli3",
-                "andrewkm",
+                "andrewkm" + Colors.Red + " X2",
                 "Eric King", // todo
                 "Twizz",
                 "spunkiie",
