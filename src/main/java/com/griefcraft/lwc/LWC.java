@@ -604,7 +604,7 @@ public class LWC {
         }
 
         // support for old protection dbs that do not contain the block id
-        if (block != null && (protection.getBlockId() == 0 || block.getTypeId() != protection.getBlockId())) {
+        if (block != null && (protection.getBlockId() <= 0 && block.getTypeId() != protection.getBlockId())) {
             protection.setBlockId(block.getTypeId());
             protection.save();
         }
