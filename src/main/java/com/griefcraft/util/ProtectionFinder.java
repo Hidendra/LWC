@@ -169,8 +169,14 @@ public class ProtectionFinder {
 
         if (protection != null) {
             // ensure it's the right block
-            if (protection.getBlockId() > 0 && protection.getBlockId() == protection.getBlock().getTypeId()) {
-                this.matchedProtection = protection;
+            if (protection.getBlockId() > 0) {
+                if (protection.getBlockId() == protection.getBlock().getTypeId()) {
+                    this.matchedProtection = protection;
+                } else {
+                    // Corrupted protection
+                    System.out.println("Removing corrupted protection: " + protection);
+                    protection.remove();
+                }
             }
         }
 
