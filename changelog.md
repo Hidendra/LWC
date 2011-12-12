@@ -23,7 +23,7 @@ incomplete
 * `/cinfo` has been given a new look and is now more helpful. It will give you a shortlist of players who can access a private protection if you have appropriate access to it.
 
 #### Database
-* Changes to the database format that make LWC4 incompatible with LWC3
+* Changes to the database format that make it not possible to downgrade from LWC4 to LWC3. However, LWC will still upgrade from 3 to 4 ok.
 * All existing LWC 3 indexes have been wiped and LWC is now better indexed
 * Startup time has been dramatically reduced (to nil) for those with a huge protection set
 * More optimal caching techniques to ensure duplicate cache entries aren't present or created
