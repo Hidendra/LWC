@@ -34,18 +34,14 @@ import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtil;
 import com.griefcraft.util.TimeUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Protection {
 
@@ -490,6 +486,25 @@ public class Protection {
                 iter.remove();
                 modified = true;
             }
+        }
+    }
+
+    /**
+     * Checks if the protection has the correct block in the world
+     * 
+     * @return
+     */
+    public boolean isBlockInWorld() {
+        int storedBlockId = getBlockId();
+        Block block = getBlock();
+
+        switch (block.getType()) {
+            case FURNACE:
+            case BURNING_FURNACE:
+                return storedBlockId == Material.FURNACE.getId() || storedBlockId == Material.BURNING_FURNACE.getId();
+
+            default:
+                return storedBlockId == block.getTypeId();
         }
     }
 

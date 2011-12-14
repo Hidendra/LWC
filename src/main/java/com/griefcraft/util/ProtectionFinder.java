@@ -170,7 +170,7 @@ public class ProtectionFinder {
         if (protection != null) {
             // ensure it's the right block
             if (protection.getBlockId() > 0) {
-                if (protection.getBlockId() == protection.getBlock().getTypeId()) {
+                if (protection.isBlockInWorld()) {
                     this.matchedProtection = protection;
                 } else {
                     // Corrupted protection
