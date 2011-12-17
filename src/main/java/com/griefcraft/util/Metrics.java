@@ -108,7 +108,8 @@ public class Metrics {
         String response = "ERR No response";
         String data = encode("guid") + "=" + encode(guid)
                 + "&" + encode("version") + "=" + encode(plugin.getDescription().getVersion())
-                + "&" + encode("server") + "=" + encode(Bukkit.getVersion());
+                + "&" + encode("server") + "=" + encode(Bukkit.getVersion())
+                + "&" + encode("players") + "=" + encode(Bukkit.getServer().getOnlinePlayers().length + "");
         
         // If we're pinging, append it
         if (isPing) {
@@ -130,7 +131,7 @@ public class Metrics {
         // Now read the response
         BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         response = reader.readLine();
-        
+
         // close resources
         writer.close();
         reader.close();
@@ -162,7 +163,7 @@ public class Metrics {
         /**
          * Interval of time to ping in minutes
          */
-        private final static int PING_INTERVAL = 30;
+        private final static int PING_INTERVAL = 10;
 
         /**
          * List of plugins to send stats for.
@@ -182,7 +183,7 @@ public class Metrics {
 
         public void run() {
             // convert the interval in milliseconds
-            final long intervalMillis = PING_INTERVAL * 60 * 60 * 1000L;
+            final long intervalMillis = PING_INTERVAL * 60 * 1000L;
             
             while (true) {
                 
