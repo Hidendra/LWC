@@ -89,7 +89,7 @@ public class ScheduleModule extends JavaModule {
             }
 
             if (job != null) {
-                sender.sendMessage(Colors.Red + "Job " + name + " already exists.");
+                lwc.sendLocale(sender, "lwc.job.exists", "name", name);
                 return;
             }
 
@@ -102,7 +102,7 @@ public class ScheduleModule extends JavaModule {
             IJobHandler handler = lwc.getJobManager().getJobHandler(joinedArguments);
 
             if (handler == null) {
-                sender.sendMessage(Colors.Red + "Job handler " + joinedArguments + " does not exist!");
+                lwc.sendLocale(sender, "lwc.job.nohandler", "name", joinedArguments);
                 return;
             }
 
@@ -120,7 +120,7 @@ public class ScheduleModule extends JavaModule {
 
             // save it to the database
             job.save();
-            sender.sendMessage(Colors.Green + "Created the job " + name + " successfully using the handler " + handler.getName());
+            lwc.sendLocale(sender, "lwc.job.created", "name", name, "handler", handler.getName());
         } else if (action.equals("run")) {
             if (args.length < 2) {
                 lwc.sendSimpleUsage(sender, "/lwc schedule <Action> [JobName] [...]");
@@ -128,11 +128,11 @@ public class ScheduleModule extends JavaModule {
             }
 
             if (job == null) {
-                sender.sendMessage(Colors.Red + "Invalid job specified.");
+                lwc.sendLocale(sender, "lwc.invalidjob");
                 return;
             }
 
-            sender.sendMessage("Running job " + job.getName());
+            lwc.sendLocale(sender, "lwc.job.run", "name", job.getName());
             long start = System.currentTimeMillis();
 
             // run the job!
@@ -141,7 +141,7 @@ public class ScheduleModule extends JavaModule {
             // calculate how long it took
             long timeMillis = System.currentTimeMillis() - start;
 
-            sender.sendMessage("Successfully ran the job (" + timeMillis + " ms)");
+            lwc.sendLocale(sender, "lwc.job.run.time", "time", timeMillis);
         } else if (action.equals("remove") || action.equals("delete")) {
             if (args.length < 2) {
                 lwc.sendSimpleUsage(sender, "/lwc schedule <Action> [JobName] [...]");
@@ -149,12 +149,12 @@ public class ScheduleModule extends JavaModule {
             }
 
             if (job == null) {
-                sender.sendMessage(Colors.Red + "Invalid job specified.");
+                lwc.sendLocale(sender, "lwc.invalidjob");
                 return;
             }
 
             job.remove();
-            sender.sendMessage(Colors.Green + "Removed job successfully!");
+            lwc.sendLocale(sender, "lwc.job.removed");
         } else if (action.equals("list")) {
             // force a reload of jobs
             lwc.getJobManager().load();
@@ -163,7 +163,7 @@ public class ScheduleModule extends JavaModule {
             Set<Job> jobs = lwc.getJobManager().getJobs();
 
             if (jobs.size() == 0) {
-                sender.sendMessage(Colors.Red + "No jobs have yet been created.");
+                lwc.sendLocale(sender, "lwc.job.nojobs");
                 return;
             }
 
@@ -197,7 +197,7 @@ public class ScheduleModule extends JavaModule {
             }
 
             if (job == null) {
-                sender.sendMessage(Colors.Red + "Invalid job specified.");
+                lwc.sendLocale(sender, "lwc.invalidjob");
                 return;
             }
 
@@ -211,7 +211,7 @@ public class ScheduleModule extends JavaModule {
             long parsedTimeMillis = parsedTimeSeconds * 1000L;
 
             if (parsedTimeSeconds == 0) {
-                sender.sendMessage(Colors.Red + "Invalid time: " + joinedArguments);
+                lwc.sendLocale(sender, "lwc.invalidtime", "time", joinedArguments);
                 return;
             }
 
@@ -223,42 +223,42 @@ public class ScheduleModule extends JavaModule {
 
             // save it to the database and notify the player
             job.save();
-            sender.sendMessage(Colors.Green + "The job will " + job.getName() + " run again in " + TimeUtil.timeToString(parsedTimeSeconds));
-            sender.sendMessage(Colors.Green + "In server time, that is at " + new Date(job.getNextRun()).toString());
+            lwc.sendLocale(sender, "lwc.job.autorun", "name", job.getName(), "time", TimeUtil.timeToString(parsedTimeSeconds),
+                    "date", new Date(job.getNextRun()).toString());
         } else if (action.equals("check")) {
             if (job == null) {
-                sender.sendMessage(Colors.Red + "Invalid job specified.");
+                lwc.sendLocale(sender, "lwc.invalidjob");
                 return;
             }
 
             long nextRun = job.getNextRun();
 
             if (nextRun <= 0) {
-                sender.sendMessage(Colors.Red + "The job " + job.getName() + " is not set to automatically run.");
+                lwc.sendLocale(sender, "lwc.job.autorun.notset", "name", job.getName());
             } else {
                 long timeRemaining = job.getTimeRemaining();
 
                 if (job.shouldRun()) {
-                    sender.sendMessage(Colors.Green + "The job " + job.getName() + " is waiting to be executed.");
+                    lwc.sendLocale(sender, "lwc.job.waiting", "name", job.getName());
                     return;
                 }
 
-                sender.sendMessage(Colors.Green + "The job " + job.getName() + " will be executed in " + TimeUtil.timeToString(timeRemaining / 1000L));
+                lwc.sendLocale(sender, "lwc.job.nextrun", "name", job.getName(), "time", TimeUtil.timeToString(timeRemaining / 1000L));
             }
         } else if (action.equals("arguments")) {
             if (job == null) {
-                sender.sendMessage(Colors.Red + "Invalid job specified.");
+                lwc.sendLocale(sender, "lwc.invalidjob");
                 return;
             }
 
             if (joinedArguments.isEmpty()) {
-                sender.sendMessage(Colors.Red + "No arguments given.");
+                lwc.sendLocale(sender, "lwc.noarguments");
                 return;
             }
 
             job.getData().put("arguments", joinedArguments);
             job.save();
-            sender.sendMessage(Colors.Green + "The job " + job.getName() + " now has the arguments: \"" + joinedArguments + "\"  (excluding the quotes)");
+            lwc.sendLocale(sender, "lwc.job.setarguments", "name", job.getName(), "arguments", joinedArguments);
         }
     }
 

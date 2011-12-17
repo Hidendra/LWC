@@ -113,7 +113,7 @@ public class DropTransferModule extends JavaModule {
         Protection protection = lwc.getPhysicalDatabase().loadProtection(protectionId);
 
         if (protection == null) {
-            player.sendMessage(Colors.Red + "Protection no longer exists");
+            lwc.sendLocale(player, "lwc.nolongerexists");
             player.disableMode(player.getMode("dropTransfer"));
             return;
         }
@@ -122,14 +122,14 @@ public class DropTransferModule extends JavaModule {
         World world = player.getServer().getWorld(protection.getWorld());
 
         if (world == null) {
-            player.sendMessage(Colors.Red + "Invalid world!");
+            lwc.sendLocale(player, "lwc.invalidworld");
             player.disableMode(player.getMode("dropTransfer"));
             return;
         }
 
         // Don't allow them to transfer items across worlds
         if (bPlayer.getWorld() != world) {
-            player.sendMessage(Colors.Red + "You cannot transfer items across worlds!");
+            lwc.sendLocale(player, "lwc.dropxfer.acrossworlds");
             player.disableMode(player.getMode("dropTransfer"));
             return;
         }
@@ -138,7 +138,7 @@ public class DropTransferModule extends JavaModule {
         Map<Integer, ItemStack> remaining = lwc.depositItems(block, itemStack);
 
         if (remaining.size() > 0) {
-            player.sendMessage("Chest could not hold all the items! Have the remaining items back.");
+            lwc.sendLocale(player, "lwc.dropxfer.chestfull");
 
             for (ItemStack temp : remaining.values()) {
                 bPlayer.getInventory().addItem(temp);

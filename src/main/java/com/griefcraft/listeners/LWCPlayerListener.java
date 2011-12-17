@@ -85,7 +85,8 @@ public class LWCPlayerListener extends PlayerListener {
             return;
         }
 
-        if (!plugin.getLWC().getConfiguration().getBoolean("core.filterunlock", true)) {
+        LWC lwc = plugin.getLWC();
+        if (!lwc.getConfiguration().getBoolean("core.filterunlock", true)) {
             return;
         }
 
@@ -94,7 +95,7 @@ public class LWCPlayerListener extends PlayerListener {
 
         if (message.startsWith("cunlock") || message.startsWith("lcunlock") || message.startsWith(".cunlock")) {
             event.setCancelled(true);
-            event.getPlayer().sendMessage(Colors.Red + "LWC has blocked your message that potentially contained your password in it!");
+            lwc.sendLocale(event.getPlayer(), "lwc.blockedmessage");
         }
     }
 
@@ -163,7 +164,7 @@ public class LWCPlayerListener extends PlayerListener {
 
                 // only send it if a non-"interacted" action is set which is always set on the player
                 if ((hasInteracted && actionCount > 1) || (!hasInteracted && actionCount > 0)) {
-                    player.sendMessage(Colors.Red + "[LWC] You have a pending action but another plugin cancelled it!");
+                    lwc.sendLocale(player, "lwc.pendingaction");
                 }
 
                 // it's cancelled, do not continue !

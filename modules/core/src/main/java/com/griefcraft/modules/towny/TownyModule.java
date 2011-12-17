@@ -83,7 +83,7 @@ public class TownyModule extends JavaModule {
      * @param event
      */
     private void trigger(LWCProtectionRegisterEvent event) {
-        event.getPlayer().sendMessage(Colors.Red + "You can only protect blocks using LWC inside of a Town!");
+        event.getLWC().sendLocale(event.getPlayer(), "lwc.towny.blocked");
         event.setCancelled(true);
     }
 

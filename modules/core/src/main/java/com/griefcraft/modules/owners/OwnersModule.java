@@ -79,10 +79,7 @@ public class OwnersModule extends JavaModule {
         // May have only been 2 rows left, or something. Get the real max
         int realMax = start + permissions.size();
 
-        player.sendMessage("");
-        player.sendMessage(Colors.Blue + "Showing results " + Colors.LightBlue + start + Colors.Blue + "-" + Colors.LightBlue + realMax + Colors.Blue + ". Total: " + Colors.LightBlue + numRights);
-        player.sendMessage("");
-        player.sendMessage("");
+        lwc.sendLocale(player, "lwc.owners.results", "start", start, "max", realMax, "total", numRights);
 
         for (int index = 0; index < max; index++) {
             if ((start + index) >= numRights) {
@@ -131,7 +128,7 @@ public class OwnersModule extends JavaModule {
         event.setCancelled(true);
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(Colors.Red + "Console not supported.");
+            lwc.sendLocale(sender, "lwc.onlyrealplayers");
             return;
         }
 

@@ -77,7 +77,7 @@ public class AdminDump extends JavaModule {
             File localeFile = new File(ModuleLoader.ROOT_PATH + "locale/lwc.properties");
 
             if (localeFile.exists()) {
-                sender.sendMessage(Colors.Red + "The file " + localeFile.getPath() + " already exists. Please delete or move this file!");
+                lwc.sendLocale(sender, "lwc.admin.dump.fileexists", "file", localeFile.getPath());
                 return;
             }
 
@@ -94,7 +94,7 @@ public class AdminDump extends JavaModule {
                 InputStream inputStream = getClass().getResourceAsStream("/lang/lwc_" + lwc.getPlugin().getCurrentLocale() + ".properties");
 
                 if (inputStream == null) {
-                    sender.sendMessage(Colors.Red + "Failed to find locale inside the jar file.");
+                    lwc.sendLocale(sender, "lwc.admin.dump.filenotfound");
                     return;
                 }
 
@@ -110,7 +110,7 @@ public class AdminDump extends JavaModule {
                 outputStream.close();
                 inputStream.close();
 
-                sender.sendMessage(Colors.Green + "Dumped locale file to: " + localeFile.getAbsolutePath());
+                lwc.sendLocale(sender, "lwc.admin.dump.success", "file", localeFile.getAbsolutePath());
             } catch (IOException e) {
                 sender.sendMessage("Error: " + e.getMessage());
             }
