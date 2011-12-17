@@ -1543,7 +1543,7 @@ public class LWC {
         registerModule(new DropTransferModule());
         registerModule(new NoSpamModule());
 
-        // non-core modules but are included with LWC anyway (not a lot of functionality in them, generally ..)
+        // non-core modules but are included with LWC anyway
         if (resolvePlugin("Lists") != null) {
             registerModule(new ListsModule());
         }
