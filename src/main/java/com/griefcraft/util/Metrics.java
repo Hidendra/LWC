@@ -214,7 +214,9 @@ public class Metrics {
          */
         public void addPlugin(Plugin plugin) {
             synchronized (plugins) {
-                plugins.add(plugin);
+                if (!plugins.contains(plugin)) {
+                    plugins.add(plugin);
+                }
             }
         }
 
