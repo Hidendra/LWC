@@ -76,6 +76,7 @@ public class WorldGuardModule extends JavaModule {
             return;
         }
 
+        LWC lwc = event.getLWC();
         Player player = event.getPlayer();
         Block block = event.getBlock();
 
@@ -86,7 +87,7 @@ public class WorldGuardModule extends JavaModule {
         // Are we enforcing building?
         if (configuration.getBoolean("worldguard.requireBuildRights", true)) {
             if (!globalRegionManager.canBuild(player, block)) {
-                player.sendMessage(Colors.Red + "You need build rights in this region to protect using LWC");
+                lwc.sendLocale(player, "lwc.worldguard.needbuildrights");
                 event.setCancelled(true);
                 return;
             }
@@ -101,7 +102,7 @@ public class WorldGuardModule extends JavaModule {
         // Are they not in a region, and it's blocked there?
         if (regions.size() == 0) {
             if (configuration.getBoolean("worldguard.allowProtectionsOutsideRegions", true)) {
-                player.sendMessage(Colors.Red + "LWC protections are not allowed outside of WorldGuard regions!");
+                lwc.sendLocale(player, "lwc.worldguard.notallowed");
                 event.setCancelled(true);
             }
         } else {
@@ -110,7 +111,7 @@ public class WorldGuardModule extends JavaModule {
                 // Should we deny them?
                 // we don't need to explicitly call isRegionAllowed because isRegionBlacklisted checks that as well
                 if (isRegionBlacklisted(region)) {
-                    player.sendMessage(Colors.Red + "LWC protections are not allowed in this region!");
+                    lwc.sendLocale(player, "lwc.worldguard.blacklisted");
                     event.setCancelled(true);
                     break;
                 }

@@ -142,7 +142,7 @@ public class ModifyModule extends JavaModule {
 
             // Does it even exist?
             if (protection == null) {
-                sender.sendMessage(Colors.Red + "Protection not found.");
+                lwc.sendLocale(sender, "lwc.protectionnotfound");
                 return;
             }
 
@@ -160,7 +160,7 @@ public class ModifyModule extends JavaModule {
         }
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(Colors.Red + "Console not supported.");
+            lwc.sendLocale(sender, "lwc.onlyrealplayers");
             return;
         }
 

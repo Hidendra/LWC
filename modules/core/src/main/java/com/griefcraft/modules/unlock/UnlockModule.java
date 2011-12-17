@@ -59,7 +59,7 @@ public class UnlockModule extends JavaModule {
         event.setCancelled(true);
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(Colors.Red + "Console is not supported.");
+            lwc.sendLocale(sender, "lwc.onlyrealplayers");
             return;
         }
 
@@ -81,7 +81,7 @@ public class UnlockModule extends JavaModule {
         Action action = player.getAction("interacted");
 
         if (action == null) {
-            player.sendMessage(Colors.Red + "Nothing selected. Open a locked protection first.");
+            lwc.sendLocale(sender, "lwc.unlock.noselection");
         } else {
             Protection protection = action.getProtection();
 

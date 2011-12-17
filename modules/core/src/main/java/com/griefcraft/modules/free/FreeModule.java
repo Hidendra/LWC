@@ -150,8 +150,7 @@ public class FreeModule extends JavaModule {
             lwc.sendLocale(sender, "protection.remove.modes.finalize");
         } else if (type.equals("allprotections")) {
             // Prompt them for /lwc confirm
-            player.sendMessage("You are about to " + Colors.Red + "PERMANENTLY REMOVE every protection you own.");
-            player.sendMessage("Are you " + Colors.Blue + "absolutely sure?" + Colors.White + " Please type " + Colors.Red + "/lwc confirm " + Colors.White + "to confirm you wish to do this.");
+            lwc.sendLocale(player, "lwc.remove.allprotections");
 
             // our callback (remove all of their protections :p)
             Runnable callback = new Runnable() {
@@ -163,7 +162,7 @@ public class FreeModule extends JavaModule {
                     }
 
                     // Notify them
-                    player.sendMessage(Colors.Green + "All of your protections have been removed.");
+                    lwc.sendLocale(player, "lwc.remove.allprotections.success");
                 }
             };
 

@@ -64,7 +64,7 @@ public class AdminCache extends JavaModule {
 
             if (cmd.equals("clear")) {
                 cache.clear();
-                sender.sendMessage(Colors.Green + "Caches cleared.");
+                lwc.sendLocale(sender, "lwc.admin.caches.cleared");
             }
         } else {
             int size = cache.size();

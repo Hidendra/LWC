@@ -80,11 +80,8 @@ public class HistoryModule extends JavaModule {
         String format = "%4s%12s%12s%12s";
 
         // Header
-        sender.sendMessage(" ");
-        sender.sendMessage("To view extended details on a history item, use " + Colors.Yellow + "/lwc details <HistoryId>");
-        sender.sendMessage(" ");
-        sender.sendMessage(Colors.Yellow + String.format(format, "Id", "Player", "Type", "Status"));
-        sender.sendMessage(Colors.Yellow + "Showing " + relatedHistory.size() + " results on page: " + page + "/" + maxPages + " (" + historyCount + " total)");
+        LWC.getInstance().sendLocale(sender, "lwc.history.list", "header", String.format(format, "Id", "Player", "Type", "Status"), "size", relatedHistory.size(),
+                "page", page, "totalpages", maxPages, "totalhistory", historyCount);
 
         // Send all that is found to them
         for (History history : relatedHistory) {
@@ -107,17 +104,13 @@ public class HistoryModule extends JavaModule {
             protection = null;
         }
 
-        sender.sendMessage(Colors.Red + "History ID: " + history.getId());
-        sender.sendMessage("Created by: " + Colors.Yellow + history.getPlayer());
-        sender.sendMessage("Location: " + Colors.Yellow + String.format("[%d %d %d]", history.getX(), history.getY(), history.getZ()));
-        sender.sendMessage("Status: " + Colors.Yellow + history.getStatus());
-        sender.sendMessage("Type: " + Colors.Yellow + history.getType());
-
-        sender.sendMessage(" ");
-        sender.sendMessage("Protection: " + Colors.Yellow + (protection == null ? "Removed" : protection));
-        sender.sendMessage("Created by: " + Colors.Yellow + history.getString("creator"));
+        lwc.sendLocale(sender, "lwc.history.details.header", "id", history.getId(), "player", history.getPlayer(),
+                "location", String.format("[%d %d %d]", history.getX(), history.getY(), history.getZ()),
+                "status", history.getStatus(), "type", history.getType(),
+                "protection", (protection == null ? "n/a" : protection),
+                "creator", history.getString("creator"));
         if (history.hasKey("destroyer")) {
-            sender.sendMessage("Removed by: " + Colors.Yellow + history.getString("destroyer"));
+            lwc.sendLocale(sender, "lwc.history.details.destroyer", "player", history.getString("destroyer"));
         }
 
         // New line!
@@ -125,8 +118,11 @@ public class HistoryModule extends JavaModule {
 
         // If it had an economy charge, show it
         if (history.hasKey("charge")) {
-            sender.sendMessage("Economy charge: " + Colors.Red + history.getDouble("charge") + " " + lwc.getCurrency().getMoneyName());
-            sender.sendMessage("Discounted?: " + (history.hasKey("discount") ? (Colors.Red + "Yes") : (Colors.Yellow + "No")) + Colors.Yellow + " " + /* Discount id */ (history.hasKey("discountId") ? ("(" + history.getString("discountId") + ")") : ""));
+            lwc.sendLocale(sender, "lwc.history.details.econcharge", "charge", history.getDouble("charge"), "moneyname", lwc.getCurrency().getMoneyName(),
+                    "discount",
+                    // Rest your eyes and avoid the line two lines below
+                    // Its format: Yes|No (ID)  -- (ID) is only shown if Yes is shown.
+                    ((history.hasKey("discount") ? (Colors.Red + "Yes") : (Colors.Yellow + "No")) + Colors.Yellow + " " + /* Discount id */ (history.hasKey("discountId") ? ("(" + history.getString("discountId") + ")") : "")));
         }
 
         // Show the creation date
@@ -136,13 +132,11 @@ public class HistoryModule extends JavaModule {
             creation = new Date(history.getTimestamp() * 1000L).toString();
         }
 
-        sender.sendMessage(" ");
-        sender.sendMessage(Colors.Red + "Dates");
-        sender.sendMessage("Created on: " + Colors.Yellow + (creation == null ? "Unknown" : creation));
+        lwc.sendLocale(sender, "lwc.history.details.dates", "date", (creation == null ? "Unknown" : creation));
 
         // Only show how long ago it was if we know when it was created
         if (creation != null) {
-            sender.sendMessage(Colors.Yellow + TimeUtil.timeToString((System.currentTimeMillis() / 1000L) - history.getTimestamp()) + " ago");
+            lwc.sendLocale(sender, "lwc.history.details.timeago", "time", TimeUtil.timeToString((System.currentTimeMillis() / 1000L) - history.getTimestamp()));
         }
 
         // if its been removed, it most likely will have this key
@@ -161,11 +155,11 @@ public class HistoryModule extends JavaModule {
             String relativeDestroyDate = destroyed > 0 ? TimeUtil.timeToString((System.currentTimeMillis() / 1000L) - destroyed) : "Unknown";
 
             // Send the exact time if known
-            sender.sendMessage("Removed on: " + Colors.Yellow + absoluteDestroyDate);
+            lwc.sendLocale(sender, "lwc.history.details.destroyed", "date", absoluteDestroyDate);
 
             // If there's a relative date available, display it :D
             if (destroyed > 0) {
-                sender.sendMessage(Colors.Yellow + relativeDestroyDate + " ago");
+                lwc.sendLocale(sender, "lwc.history.details.timeago", "time", relativeDestroyDate);
             }
         }
     }
@@ -193,7 +187,7 @@ public class HistoryModule extends JavaModule {
         try {
             historyId = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
-            sender.sendMessage(Colors.Red + "No results found.");
+            lwc.sendLocale(sender, "lwc.noresults");
             return;
         }
 
@@ -201,7 +195,7 @@ public class HistoryModule extends JavaModule {
         History history = lwc.getPhysicalDatabase().loadHistory(historyId);
 
         if (history == null) {
-            sender.sendMessage(Colors.Red + "No results found.");
+            lwc.sendLocale(sender, "lwc.noresults");
             return;
         }
 
@@ -211,7 +205,7 @@ public class HistoryModule extends JavaModule {
                 // verify they actually OWN the history object
                 if (!history.getPlayer().equalsIgnoreCase(((Player) sender).getName())) {
                     // Make them think no results were found
-                    sender.sendMessage(Colors.Red + "No results found.");
+                    lwc.sendLocale(sender, "lwc.noresults");
                     return;
                 }
             }
@@ -319,13 +313,13 @@ public class HistoryModule extends JavaModule {
 
         // Were there any usable results?
         if (relatedHistory.size() == 0) {
-            sender.sendMessage(Colors.Red + "No results found.");
+            lwc.sendLocale(sender, "lwc.noresults");
             return;
         }
 
         // Is it a valid page? (this normally will NOT happen, with the previous statement in place!)
         if (page > pageCount) {
-            sender.sendMessage(Colors.Red + "Page not found.");
+            lwc.sendLocale(sender, "lwc.noresults");
             return;
         }
 
