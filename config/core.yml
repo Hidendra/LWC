@@ -52,6 +52,10 @@ optional:
     # Protections are only active when a player is offline
     onlyProtectWhenOwnerIsOffline: false
 
+    # Opt out of the optional metrics tooling
+    # Available online: http://metrics.griefcraft.com/plugin/LWC/
+    optOut: false
+
 # Database information for LWC
 database:
 

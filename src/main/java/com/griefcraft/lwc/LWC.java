@@ -104,12 +104,7 @@ import com.griefcraft.scripting.event.LWCAccessEvent;
 import com.griefcraft.scripting.event.LWCSendLocaleEvent;
 import com.griefcraft.sql.Database;
 import com.griefcraft.sql.PhysDB;
-import com.griefcraft.util.Colors;
-import com.griefcraft.util.DatabaseThread;
-import com.griefcraft.util.Statistics;
-import com.griefcraft.util.ProtectionFinder;
-import com.griefcraft.util.StopWatch;
-import com.griefcraft.util.StringUtil;
+import com.griefcraft.util.*;
 import com.griefcraft.util.config.Configuration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -126,6 +121,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -1481,6 +1477,22 @@ public class LWC {
         // We are now done loading!
         moduleLoader.loadAll();
         jobManager.load();
+
+        // Should we try metrics?
+        if (!configuration.getBoolean("optional.optOut", false)) {
+            // Run it in a seperate thread
+            new Thread(new Runnable() {
+                public void run() {
+                    Metrics metrics = new Metrics();
+
+                    try {
+                        metrics.postPlugin(plugin);
+                    } catch (IOException e) {
+                        log(e.getMessage());
+                    }
+                }
+            }).start();
+        }
     }
 
     /**
