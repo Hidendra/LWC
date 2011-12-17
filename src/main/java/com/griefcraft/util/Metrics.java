@@ -36,6 +36,8 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -52,6 +54,11 @@ public class Metrics {
      * The url used to report a server's status
      */
     private static final String REPORT_URL = "/report/%s";
+
+    /**
+     * Object that pings the server every so often
+     */
+    private final Ping ping = new Ping();
 
     /**
      * Unique server id
@@ -82,16 +89,31 @@ public class Metrics {
     }
 
     /**
+     * Begin measuring a plugin
+     *
+     * @param plugin
+     */
+    public void beginMeasuringPlugin(Plugin plugin) throws IOException {
+        ping.addPlugin(plugin);
+        postPlugin(plugin, false);
+    }
+
+    /**
      * Generic method that posts a plugin to the metrics website
      * 
      * @param plugin
      */
-    public void postPlugin(Plugin plugin) throws IOException {
+    private void postPlugin(Plugin plugin, boolean isPing) throws IOException {
         // Construct the post data
         String response = "ERR No response";
         String data = encode("guid") + "=" + encode(guid)
                 + "&" + encode("version") + "=" + encode(plugin.getDescription().getVersion())
                 + "&" + encode("server") + "=" + encode(Bukkit.getVersion());
+        
+        // If we're pinging, append it
+        if (isPing) {
+            data += "&" + encode("ping") + "=" + encode("true");
+        }
 
         // Create the url
         URL url = new URL(BASE_URL + String.format(REPORT_URL, plugin.getDescription().getName()));
@@ -130,6 +152,72 @@ public class Metrics {
      */
     private String encode(String text) throws UnsupportedEncodingException {
         return URLEncoder.encode(text, "UTF-8");
+    }
+
+    /**
+     * Periodically runs the metrics tool
+     */
+    private final class Ping implements Runnable {
+
+        /**
+         * Interval of time to ping in minutes
+         */
+        private final static int PING_INTERVAL = 30;
+
+        /**
+         * List of plugins to send stats for.
+         * Must be manually synchronized.
+         */
+        private final List<Plugin> plugins = new LinkedList<Plugin>();
+
+        /**
+         * The last time the server was pinged.
+         * We don't want to immediately ping
+         */
+        private long lastPing = System.currentTimeMillis();
+        
+        public Ping() {
+            new Thread(this).start();
+        }
+
+        public void run() {
+            // convert the interval in milliseconds
+            final long intervalMillis = PING_INTERVAL * 60 * 60 * 1000L;
+            
+            while (true) {
+                
+                // Have we reached the interval?
+                if (System.currentTimeMillis() - lastPing > intervalMillis) {
+                    lastPing = System.currentTimeMillis();
+                    
+                    // Post each plugin
+                    synchronized (plugins) {
+                        for (Plugin plugin : plugins) {
+                            try {
+                                postPlugin(plugin, true);
+                            } catch (IOException e) {
+                                System.out.println("[Metrics] " + e);
+                            }
+                        }
+                    }
+                }
+
+                try {
+                    Thread.sleep(2500L);
+                } catch (InterruptedException e) { }
+            }
+        }
+
+        /**
+         * Add a plugin to be updated every so often
+         * @param plugin
+         */
+        public void addPlugin(Plugin plugin) {
+            synchronized (plugins) {
+                plugins.add(plugin);
+            }
+        }
+
     }
 
 }
