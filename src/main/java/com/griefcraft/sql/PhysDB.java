@@ -467,14 +467,66 @@ public class PhysDB extends Database {
 
         // ship it to the database
         try {
-            PreparedStatement statement = connection.prepareStatement("UPDATE " + prefix + "internal SET value = ? WHERE name = ?");
+            PreparedStatement statement = prepare("UPDATE " + prefix + "internal SET value = ? WHERE name = ?");
             statement.setInt(1, databaseVersion);
             statement.setString(2, "version");
 
             // ok
             statement.executeUpdate();
-            statement.close();
         } catch (SQLException e) { }
+    }
+
+    /**
+     * Get a value in the internal table
+     *
+     * @param key
+     * @return the value found, otherwise NULL if none exists
+     */
+    public String getInternal(String key) {
+        try {
+            PreparedStatement statement = prepare("SELECT value FROM " + prefix + "internal WHERE name = ?");
+            statement.setString(1, key);
+            
+            ResultSet set = statement.executeQuery();
+            if (set.next()) {
+                String value = set.getString("value");
+                set.close();
+                return value;
+            }
+            set.close();
+        } catch (SQLException e) {
+            printException(e);
+        }
+
+        return null;
+    }
+
+    /**
+     * Set a value in the internal table
+     *
+     * @param key
+     * @param value
+     */
+    public void setInternal(String key, String value) {
+        try {
+            PreparedStatement statement = prepare("INSERT INTO " + prefix +"internal (name, value) VALUES (?, ?)");
+            statement.setString(1, key);
+            statement.setString(2, value);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            // Already exists
+            try {
+                PreparedStatement statement = prepare("UPDATE " + prefix + "internal SET value = ? WHERE name = ?");
+                statement.setString(1, value) ;
+                statement.setString(2, key);
+
+                statement.executeUpdate();
+            } catch (SQLException ex) {
+                // Something bad went wrong
+                printException(ex);
+            }
+        }
     }
 
     /**
@@ -484,7 +536,7 @@ public class PhysDB extends Database {
      */
     public int loadDatabaseVersion() {
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT value FROM " + prefix + "internal WHERE name = ?");
+            PreparedStatement statement = prepare("SELECT value FROM " + prefix + "internal WHERE name = ?");
             statement.setString(1, "version");
 
             // Execute it
@@ -499,17 +551,15 @@ public class PhysDB extends Database {
 
             // close everything
             set.close();
-            statement.close();
         } catch (Exception e) {
             // Doesn't exist, create it
             try {
-                PreparedStatement statement = connection.prepareStatement("INSERT INTO " + prefix + "internal (name, value) VALUES(?, ?)");
+                PreparedStatement statement = prepare("INSERT INTO " + prefix + "internal (name, value) VALUES(?, ?)");
                 statement.setString(1, "version");
                 statement.setInt(2, databaseVersion);
 
                 // ok
                 statement.executeUpdate();
-                statement.close();
             } catch (SQLException ex) { }
         }
 
