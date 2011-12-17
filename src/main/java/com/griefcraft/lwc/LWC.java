@@ -1486,7 +1486,7 @@ public class LWC {
                     Metrics metrics = new Metrics();
 
                     try {
-                        metrics.postPlugin(plugin);
+                        metrics.beginMeasuringPlugin(plugin);
                     } catch (IOException e) {
                         log(e.getMessage());
                     }
