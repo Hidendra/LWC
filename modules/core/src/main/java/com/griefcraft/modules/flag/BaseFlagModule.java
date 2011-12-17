@@ -117,9 +117,8 @@ public class BaseFlagModule extends JavaModule {
                 flags += Colors.Yellow + type.toString().toLowerCase() + Colors.White + ", ";
             }
             flags = flags.substring(0, flags.length() - 2);
-            
-            sender.sendMessage("Available flags: " + flags);
 
+            lwc.sendLocale(sender, "lwc.flags.available", "flags", flags);
             return;
         }
 

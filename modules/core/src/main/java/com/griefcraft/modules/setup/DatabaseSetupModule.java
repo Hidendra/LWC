@@ -69,7 +69,7 @@ public class DatabaseSetupModule extends JavaModule {
         Database.Type databaseType = Database.Type.matchType(args[1]);
 
         if (databaseType == null) {
-            sender.sendMessage(Colors.Red + "Invalid database type to switch to.");
+            lwc.sendLocale(sender, "lwc.setup.database.invalid");
             return;
         }
 
@@ -78,9 +78,9 @@ public class DatabaseSetupModule extends JavaModule {
         lwc.reloadDatabase();
 
         if (migrator.migrate(lwc.getPhysicalDatabase(), new PhysDB(databaseType))) {
-            sender.sendMessage(Colors.Green + "Converted the database to " + databaseType);
+            lwc.sendLocale(sender, "lwc.setup.database.success");
         } else {
-            sender.sendMessage(Colors.Red + "Failed to convert the database to " + databaseType + ". Check the console for any errors.");
+            lwc.sendLocale(sender, "lwc.setup.database.failure");
             return;
         }
 

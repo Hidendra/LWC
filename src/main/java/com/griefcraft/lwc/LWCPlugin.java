@@ -211,7 +211,7 @@ public class LWCPlugin extends JavaPlugin {
         }
 
         if (!isPlayer) {
-            sender.sendMessage(Colors.Red + "That LWC command is not supported through the console :-)");
+            lwc.sendLocale(sender, "lwc.commandnotsupported");
             return true;
         }
 

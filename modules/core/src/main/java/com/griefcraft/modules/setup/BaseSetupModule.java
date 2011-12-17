@@ -57,7 +57,7 @@ public class BaseSetupModule extends JavaModule {
 
         if (args.length == 0) {
             if (lwc.isAdmin(sender)) {
-                lwc.sendLocale(sender, "help.setup");
+                // lwc.sendLocale(sender, "help.setup");
             }
 
             event.setCancelled(true);

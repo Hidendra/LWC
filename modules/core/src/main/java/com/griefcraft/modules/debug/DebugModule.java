@@ -71,7 +71,7 @@ public class DebugModule extends JavaModule {
         event.setCancelled(true);
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage("This command is only usable by real players :-)");
+            lwc.sendLocale(sender, "lwc.onlyrealplayers");
             return;
         }
 
@@ -80,7 +80,7 @@ public class DebugModule extends JavaModule {
         player.sendMessage(" ");
         player.sendMessage(Colors.Gray + "LWC: " + LWCInfo.FULL_VERSION);
         player.sendMessage(" ");
-        player.sendMessage(Colors.Green + "Standard LWC permissions");
+        lwc.sendLocale(player, "lwc.debug.standard");
         doPermission(player, "lwc.protect");
 
         doPlayerPermission(player, "lwc.create.public");
@@ -96,14 +96,12 @@ public class DebugModule extends JavaModule {
         }
 
         player.sendMessage(" ");
-        player.sendMessage(Colors.Yellow + "Mod permissions");
+        lwc.sendLocale(player, "lwc.debug.mod");
         doPermission(player, "lwc.mod");
 
         player.sendMessage(" ");
-        player.sendMessage(Colors.Red + "Admin permissions");
+        lwc.sendLocale(player, "lwc.debug.admin");
         doPermission(player, "lwc.admin");
-
-
     }
 
     /**

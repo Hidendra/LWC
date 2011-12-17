@@ -123,7 +123,7 @@ public class AdminForceOwner extends JavaModule {
 
                 // No protection found
                 if (protection == null) {
-                    sender.sendMessage(Colors.Red + "Protection not found.");
+                    lwc.sendLocale(sender, "lwc.protectionnotfound");
                     return;
                 }
 
@@ -133,7 +133,7 @@ public class AdminForceOwner extends JavaModule {
                 lwc.sendLocale(sender, "protection.interact.forceowner.finalize", "player", newOwner);
                 return;
             } catch (NumberFormatException e) {
-                sender.sendMessage(Colors.Red + "Invalid protection ID");
+                lwc.sendLocale(sender, "lwc.invalidprotectionid");
                 return;
             }
         }

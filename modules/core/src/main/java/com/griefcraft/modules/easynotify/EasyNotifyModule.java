@@ -59,7 +59,7 @@ public class EasyNotifyModule extends JavaModule {
 
         // Redstone
         if (isBlockAffectedByRedstone(block) && !Boolean.parseBoolean(lwc.resolveProtectionConfiguration(block.getType(), "denyRedstone"))) {
-            player.sendMessage(Colors.Red + "Note: " + Colors.White + "Redstone is currently allowed on this protection. To disable use of redstone on it, use " + Colors.Green + "/credstone on");
+            lwc.sendLocale(player, "lwc.easynotify.redstone");
         }
     }
 

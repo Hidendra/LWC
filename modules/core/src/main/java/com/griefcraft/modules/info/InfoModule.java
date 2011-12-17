@@ -64,16 +64,11 @@ public class InfoModule extends JavaModule {
         // String access = lwc.getLocale((event.canAccess() ? "yes" : "no"));
 
         // Needs to be localized as well
-        String online = Colors.Green + "Online!";
-        String offline = Colors.Red + "Offline";
-        player.sendMessage("");
-        player.sendMessage("Owner: " + Colors.Green + protection.getOwner() + Colors.White + " (" + (Bukkit.getServer().getPlayer(protection.getOwner()) != null ? online : offline) + Colors.White + ")");
-        player.sendMessage("Protection type: " + Colors.Green + type);
-        player.sendMessage("");
+        lwc.sendLocale(player, "lwc.info", "owner", protection.getOwner(), "type", type);
 
         if (event.canAdmin()) {
             if (protection.getType() == Protection.Type.PRIVATE || protection.getType() == Protection.Type.DONATION) {
-                player.sendMessage(Colors.Red + "Access Control List " + Colors.White + "(" + protection.getPermissions().size() + ")");
+                lwc.sendLocale(player, "lwc.acl", "size", protection.getPermissions().size());
                 int index = 0;
                 for (Permission permission : protection.getPermissions()) {
                     if (index >= 9) {
@@ -85,9 +80,9 @@ public class InfoModule extends JavaModule {
                 }
 
                 if (index == 0) {
-                    player.sendMessage("None! Use /cmodify to modify the access list.");
+                    lwc.sendLocale(player, "lwc.acl.empty");
                 } else if (index >= 9) {
-                    player.sendMessage("Use " + Colors.Gold + "/lwc owners " + Colors.White + "to view the rest of the access list.");
+                    lwc.sendLocale(player, "lwc.acl.limitreached");
                 }
 
                 player.sendMessage("");

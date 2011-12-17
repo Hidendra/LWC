@@ -60,7 +60,7 @@ public class FixModule extends JavaModule {
         if (block.getType() == Material.CHEST || block.getType() == Material.FURNACE || block.getType() == Material.DISPENSER) {
             // Fix it!
             lwc.adjustChestDirection(block, event.getEvent().getBlockFace());
-            player.sendMessage(Colors.Green + "Fixed the " + block.getType().toString().toLowerCase() + "!");
+            lwc.sendLocale(player, "lwc.fix.fixed", "block", block.getType().toString().toLowerCase());
             player.removeAction(player.getAction("fix"));
         }
     }
@@ -79,7 +79,8 @@ public class FixModule extends JavaModule {
             return;
         }
 
-        LWCPlayer player = event.getLWC().wrapPlayer(event.getSender());
+        LWC lwc = event.getLWC();
+        LWCPlayer player = lwc.wrapPlayer(event.getSender());
 
         // create the action
         com.griefcraft.model.Action action = new com.griefcraft.model.Action();
@@ -87,7 +88,7 @@ public class FixModule extends JavaModule {
         action.setPlayer(player);
 
         player.addAction(action);
-        player.sendMessage(Colors.Green + "Click on an object to fix it.");
+        lwc.sendLocale(player, "lwc.fix.clickblock");
         event.setCancelled(true);
     }
 

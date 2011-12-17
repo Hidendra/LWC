@@ -1217,6 +1217,7 @@ public class LWC {
     /**
      * Find a protection linked to the block at [x, y, z]
      *
+     * @param world
      * @param x
      * @param y
      * @param z

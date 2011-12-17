@@ -55,7 +55,7 @@ public class MenuModule extends JavaModule {
         String newStyle = args[0].toLowerCase();
 
         if (!newStyle.equals("basic") && !newStyle.equals("advanced")) {
-            sender.sendMessage(Colors.Red + "Invalid style.");
+            lwc.sendLocale(sender, "lwc.invalidstyle");
             return;
         }
 

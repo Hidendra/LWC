@@ -86,7 +86,7 @@ public class DeveloperModeModule extends JavaModule {
             if (!command.equals("enable") && !command.equals("disable")) {
                 // Only in-game char, please..
                 if (lwcPlayer == null) {
-                    sender.sendMessage(Colors.Red + "Please use this command in-game.");
+                    lwc.sendLocale(sender, "lwc.onlyrealplayers");
                     return;
                 }
 
@@ -113,16 +113,13 @@ public class DeveloperModeModule extends JavaModule {
                 Player temp = lwc.getPlugin().getServer().getPlayer(playerName);
 
                 if (temp == null) {
-                    sender.sendMessage(Colors.Red + "Player not found");
+                    lwc.sendLocale(sender, "lwc.playernotfound");
                     return;
                 }
 
                 // ok, wait for them to confirm
                 pending.put(sender, playerName);
-                sender.sendMessage("You are about to " + Colors.Red + "enable Developer Mode" + Colors.White + " onto " + Colors.Red + temp.getName());
-                sender.sendMessage("Developer Mode will give them " + Colors.Red + "absolute control over LWC until they log out" + Colors.White + " or " + Colors.Yellow + "/lwc dev disable " + temp.getName() + Colors.White + " is used");
-                sender.sendMessage("Please confirm you wish to do this by using the command ");
-                sender.sendMessage(Colors.Yellow + "/lwc confirm");
+                lwc.sendLocale(sender, "lwc.devmode.warning", "player", temp.getName());
 
                 // create the callback
                 Runnable callback = new Runnable() {
@@ -134,24 +131,18 @@ public class DeveloperModeModule extends JavaModule {
                         Player otherPlayer = lwc.getPlugin().getServer().getPlayer(playerName);
 
                         if (otherPlayer == null) {
-                            sender.sendMessage(Colors.Red + "The player has logged out!");
+                            lwc.sendLocale(sender, "lwc.playerloggedout");
                             return;
                         }
 
                         LWCPlayer lwcOtherPlayer = lwc.wrapPlayer(otherPlayer);
 
-                        // if they already have dev mode.. huh?
-                        if (lwcOtherPlayer.isDevMode()) {
-                            sender.sendMessage(Colors.Red + "That player already has Developer Mode enabled!");
-                            return;
-                        }
-
                         // Enable dev mode
                         lwcOtherPlayer.setDevMode(true);
                         lwcOtherPlayer.setPermissionMode(LWCPlayer.PermissionMode.ADMIN);
 
-                        sender.sendMessage(Colors.Green + "Successfully enabled Developer Mode on " + otherPlayer.getName());
-                        otherPlayer.sendMessage(Colors.Green + "Developer Mode received");
+                        lwc.sendLocale(sender, "lwc.devmode.success", "player", otherPlayer.getName());
+                        lwc.sendLocale(otherPlayer, "lwc.devmode.received");
                     }
                 };
 
@@ -187,10 +178,10 @@ public class DeveloperModeModule extends JavaModule {
 
                 if (otherPlayer.isDevMode()) {
                     lwc.wrapPlayer(temp).setDevMode(false);
-                    sender.sendMessage(Colors.Green + "Disabled Developer Mode on " + Colors.Red + temp.getName());
-                    otherPlayer.sendMessage(Colors.Red + "Developer Mode disabled.");
+                    lwc.sendLocale(sender, "lwc.devmode.disabled", "player", temp.getName());
+                    lwc.sendLocale(otherPlayer, "lwc.devmode.lost");
                 } else {
-                    sender.sendMessage(Colors.Red + "Player does not have Developer Mode enabled.");
+                    lwc.sendLocale(sender, "lwc.devmode.nodevmode");
                 }
             } else if (command.equals("permissions")) {
                 if (args.length < 2) {
@@ -207,7 +198,7 @@ public class DeveloperModeModule extends JavaModule {
                 for (LWCPlayer.PermissionMode permissionMode : LWCPlayer.PermissionMode.values()) {
                     if (permissionMode.toString().equalsIgnoreCase(args[1])) {
                         lwcPlayer.setPermissionMode(permissionMode);
-                        player.sendMessage(Colors.Green + "Permission mode set to: " + Colors.Yellow + permissionMode);
+                        lwc.sendLocale(player, "lwc.devmode.permissionsmode", "mode", permissionMode);
                         break;
                     }
                 }
