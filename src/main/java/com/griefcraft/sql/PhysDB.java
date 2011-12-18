@@ -679,11 +679,11 @@ public class PhysDB extends Database {
                     JSONObject map = (JSONObject) node;
 
                     // decode the map
-                    Permission right = Permission.decodeJSON(map);
+                    Permission permission = Permission.decodeJSON(map);
 
                     // bingo!
-                    if (right != null) {
-                        protection.addPermission(right);
+                    if (permission != null) {
+                        protection.addPermission(permission);
                     }
                 }
             }

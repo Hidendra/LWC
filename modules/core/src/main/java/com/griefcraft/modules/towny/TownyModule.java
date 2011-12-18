@@ -104,12 +104,12 @@ public class TownyModule extends JavaModule {
             return;
         }
 
-        for (Permission right : protection.getPermissions()) {
-            if (right.getType() != Permission.Type.TOWN) {
+        for (Permission permission : protection.getPermissions()) {
+            if (permission.getType() != Permission.Type.TOWN) {
                 continue;
             }
 
-            String townName = right.getName();
+            String townName = permission.getName();
 
             // Does the town exist?
             try {
