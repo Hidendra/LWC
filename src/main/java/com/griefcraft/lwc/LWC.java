@@ -1701,12 +1701,12 @@ public class LWC {
                 permission.setType(type);
 
                 // add it to the protection and queue it to be saved
-                protection.addAccessRight(permission);
+                protection.addPermission(permission);
                 protection.save();
 
                 sendLocale(sender, "protection.interact.rights.register." + localeChild, "name", value, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
             } else {
-                protection.removeAccessRightsMatching(value, type);
+                protection.removePermissions(value, type);
                 protection.save();
 
                 sendLocale(sender, "protection.interact.rights.remove." + localeChild, "name", value, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
