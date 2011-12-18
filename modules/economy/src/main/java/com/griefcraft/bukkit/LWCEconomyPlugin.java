@@ -61,7 +61,7 @@ public class LWCEconomyPlugin extends JavaPlugin {
      */
     public void init() {
         LWC.getInstance().getModuleLoader().registerModule(this, new EconomyModule(this));
-        info("Hooked into LWC!");
+        log("Hooked into LWC!");
     }
 
     public void onEnable() {
@@ -73,7 +73,7 @@ public class LWCEconomyPlugin extends JavaPlugin {
             // register the server listener
             getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, serverListener, Priority.Monitor, this);
 
-            info("Waiting for LWC to be enabled...");
+            log("Waiting for LWC to be enabled...");
         }
     }
 
@@ -81,7 +81,7 @@ public class LWCEconomyPlugin extends JavaPlugin {
 
     }
 
-    private void info(String message) {
+    private void log(String message) {
         logger.info("LWC-Economy: " + message);
     }
 
