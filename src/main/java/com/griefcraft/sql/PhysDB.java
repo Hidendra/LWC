@@ -683,7 +683,7 @@ public class PhysDB extends Database {
 
                     // bingo!
                     if (right != null) {
-                        protection.addAccessRight(right);
+                        protection.addPermission(right);
                     }
                 }
             }
@@ -1856,7 +1856,7 @@ public class PhysDB extends Database {
                 right.setName(entity);
 
                 // add it to the protection and queue it for saving!
-                protection.addAccessRight(right);
+                protection.addPermission(right);
                 protection.save();
             }
 

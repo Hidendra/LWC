@@ -449,20 +449,20 @@ public class Protection {
     }
 
     /**
-     * Add an permissions right to the stored list
+     * Add an permission to the protection
      *
-     * @param right
+     * @param permission
      */
-    public void addAccessRight(Permission right) {
-        if (removed || right == null) {
+    public void addPermission(Permission permission) {
+        if (removed || permission == null) {
             return;
         }
 
         // remove any other rights with the same identity
-        removeAccessRightsMatching(right.getName(), right.getType());
+        removePermissions(permission.getName(), permission.getType());
 
         // now we can safely add it
-        permissions.add(right);
+        permissions.add(permission);
         modified = true;
     }
 
@@ -472,7 +472,7 @@ public class Protection {
      * @param name
      * @param type
      */
-    public void removeAccessRightsMatching(String name, Permission.Type type) {
+    public void removePermissions(String name, Permission.Type type) {
         if (removed) {
             return;
         }
