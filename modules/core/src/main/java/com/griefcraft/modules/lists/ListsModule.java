@@ -42,7 +42,7 @@ import org.bukkit.plugin.Plugin;
 public class ListsModule extends JavaModule {
 
     /**
-     * The com.griefcraft.modules.lists api
+     * The Lists api
      */
     private Lists lists = null;
 
@@ -65,12 +65,12 @@ public class ListsModule extends JavaModule {
         }
 
         if (lists != null) {
-            for (Permission right : protection.getPermissions()) {
-                if (right.getType() != Permission.Type.LIST) {
+            for (Permission permission : protection.getPermissions()) {
+                if (permission.getType() != Permission.Type.LIST) {
                     continue;
                 }
 
-                String listName = right.getName();
+                String listName = permission.getName();
 
                 // load the list
                 PrivilegedList privilegedList = lists.getList(listName);
