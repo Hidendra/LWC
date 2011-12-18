@@ -254,6 +254,7 @@ public class PhysDB extends Database {
         doUpdate302();
         doUpdate330();
         doBetaUpdate340();
+        fixMistakesIn354();
 
         try {
             connection.setAutoCommit(false);
@@ -1529,6 +1530,13 @@ public class PhysDB extends Database {
                 }
             }
         }
+    }
+
+    /**
+     * 3.54 had a build error.... D:
+     */
+    private void fixMistakesIn354() {
+        addColumn(prefix + "protections", "flags", "INTEGER");
     }
 
     /**
