@@ -490,6 +490,14 @@ public class Protection {
     }
 
     /**
+     * Remove all of the permissions
+     */
+    public void removeAllPermissions() {
+        permissions.clear();
+        modified = true;
+    }
+
+    /**
      * Checks if the protection has the correct block in the world
      * 
      * @return
