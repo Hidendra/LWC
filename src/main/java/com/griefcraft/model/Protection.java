@@ -242,9 +242,9 @@ public class Protection {
         JSONArray root = new JSONArray();
 
         // add all of the access rights to the root
-        for (Permission right : permissions) {
-            if (right != null) {
-                root.add(right.encodeToJSON());
+        for (Permission permission : permissions) {
+            if (permission != null) {
+                root.add(permission.encodeToJSON());
             }
         }
 
