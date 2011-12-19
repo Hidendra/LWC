@@ -103,34 +103,45 @@ public class Permission {
     private String name;
 
     /**
-     * The protection this permission applies to
+     * The type of access used for the permission
      */
-    private int protectionId;
+    private Type type;
 
     /**
      * The access the permission has to the protection
      */
-    private Access access = Access.NONE;
-
-    /**
-     * The type of access used for the permission
-     */
-    private Type type;
+    private Access access = Access.PLAYER;
 
     /**
      * If the permission is not synchronized to the database
      */
     private boolean isVolatile = false;
 
+    public Permission() {
+    }
+
+    public Permission(String name) {
+        this.name = name;
+    }
+    
+    public Permission(String name, Type type) {
+        this(name);
+        this.type = type;
+    }
+    
+    public Permission(String name, Type type, Access access) {
+        this(name, type);
+        this.access = access;
+    }
+
     /**
-     * Encode the Access Right to a JSONObject
+     * Encode the Permission object to a JSONObject
      *
      * @return
      */
     public JSONObject encodeToJSON() {
         JSONObject object = new JSONObject();
 
-        // object.put("protection", protectionId);
         object.put("name", name);
         object.put("type", getType().ordinal());
         object.put("rights", getAccess().ordinal());
@@ -139,7 +150,7 @@ public class Permission {
     }
 
     /**
-     * Decode a JSONObject into an Access Right
+     * Decode a JSONObject into a Permission object
      *
      * @param node
      * @return
@@ -148,7 +159,6 @@ public class Permission {
         Permission permission = new Permission();
 
         // The values are stored as longs internally, despite us passing an int
-        // right.setProtectionId(((Long) node.get("protection")).intValue());
         permission.setName((String) node.get("name"));
         permission.setType(Type.values()[((Long) node.get("type")).intValue()]);
         permission.setAccess(Access.values()[((Long) node.get("rights")).intValue()]);
@@ -184,10 +194,6 @@ public class Permission {
         return name;
     }
 
-    public int getProtectionId() {
-        return protectionId;
-    }
-
     public Access getAccess() {
         return access;
     }
@@ -198,10 +204,6 @@ public class Permission {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setProtectionId(int protectionId) {
-        this.protectionId = protectionId;
     }
 
     public void setAccess(Access access) {

@@ -138,6 +138,7 @@ public class CreditsModule extends JavaModule {
                 Colors.Green + "Spanish - " + Colors.White + "Raul \"RME\" Martinez and David \"DME\" Martinez",
                 Colors.Green + "Danish - " + Colors.White + "TCarlsen",
                 Colors.Green + "Italian - " + Colors.White + "portaro",
+                Colors.Green + "Hungarian - " + Colors.White + "dretax",
                 " ",
 
                 Colors.Red + "Donations",
