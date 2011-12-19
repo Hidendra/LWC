@@ -28,14 +28,12 @@
 
 package com.griefcraft.integration.permissions;
 
-import com.griefcraft.integration.IPermissions;
 import com.platymuus.bukkit.permissions.Group;
 import com.platymuus.bukkit.permissions.PermissionsPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

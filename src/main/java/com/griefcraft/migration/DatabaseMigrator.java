@@ -28,10 +28,8 @@
 
 package com.griefcraft.migration;
 
-import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.History;
 import com.griefcraft.model.Protection;
-import com.griefcraft.sql.Database;
 import com.griefcraft.sql.PhysDB;
 
 import java.util.List;
