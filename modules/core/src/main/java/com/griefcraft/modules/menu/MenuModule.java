@@ -31,7 +31,6 @@ package com.griefcraft.modules.menu;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
-import com.griefcraft.util.Colors;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

@@ -34,7 +34,6 @@ import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.sql.Database;
 import com.griefcraft.sql.PhysDB;
-import com.griefcraft.util.Colors;
 import org.bukkit.command.CommandSender;
 
 public class DatabaseSetupModule extends JavaModule {
