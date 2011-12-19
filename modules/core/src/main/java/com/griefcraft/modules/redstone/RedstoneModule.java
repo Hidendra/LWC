@@ -47,14 +47,6 @@ public class RedstoneModule extends JavaModule {
 
         LWC lwc = event.getLWC();
         Protection protection = event.getProtection();
-        Block block = protection.getBlock();
-
-        boolean hasFlag = protection.hasFlag(Flag.Type.REDSTONE);
-        boolean denyRedstone = lwc.getConfiguration().getBoolean("protections.denyRedstone", false);
-
-        if ((!hasFlag && denyRedstone) || (hasFlag && !denyRedstone)) {
-            event.setCancelled(true);
-        }
 
         // check for a player using it
         for (Block found : protection.getProtectionFinder().getBlocks()) {
@@ -67,9 +59,21 @@ public class RedstoneModule extends JavaModule {
 
                 if (player != null) {
                     if (!lwc.canAccessProtection(player, protection)) {
-                         event.setCancelled(true);
+                        event.setCancelled(true);
+                    } else {
+                        // bypass the denyRedstone/REDSTONE flag check
+                        return;
                     }
                 }
+            }
+        }
+
+        boolean hasFlag = protection.hasFlag(Flag.Type.REDSTONE);
+        boolean denyRedstone = lwc.getConfiguration().getBoolean("protections.denyRedstone", false);
+
+        if ((!hasFlag && denyRedstone) || (hasFlag && !denyRedstone)) {
+            if (event.getEvent().getNewCurrent() == 15) {
+                event.setCancelled(true);
             }
         }
     }

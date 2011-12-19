@@ -375,16 +375,6 @@ public class LWC {
     }
 
     /**
-     * Find a protection linked to the block
-     *
-     * @param block
-     * @return
-     */
-    public Protection findProtection(Block block) {
-        return findProtection(block, null);
-    }
-
-    /**
      * Check if a player has the ability to access a protection
      *
      * @param player
@@ -1214,6 +1204,16 @@ public class LWC {
 
         ContainerBlock container = (ContainerBlock) block.getState();
         container.getInventory().clear();
+    }
+
+    /**
+     * Find a protection linked to the block
+     *
+     * @param block
+     * @return
+     */
+    public Protection findProtection(Block block) {
+        return findProtection(block, null);
     }
 
     /**
