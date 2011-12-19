@@ -38,7 +38,6 @@ import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCDropItemEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
-import com.griefcraft.util.Colors;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;

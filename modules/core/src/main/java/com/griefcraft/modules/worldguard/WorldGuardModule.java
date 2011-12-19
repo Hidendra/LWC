@@ -31,7 +31,6 @@ package com.griefcraft.modules.worldguard;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
-import com.griefcraft.util.Colors;
 import com.griefcraft.util.config.Configuration;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.bukkit.BukkitUtil;

@@ -29,16 +29,14 @@
 package com.griefcraft.modules.info;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.Permission;
 import com.griefcraft.model.Action;
 import com.griefcraft.model.LWCPlayer;
+import com.griefcraft.model.Permission;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
-import com.griefcraft.util.Colors;
-import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

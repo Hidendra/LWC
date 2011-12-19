@@ -28,7 +28,6 @@
 
 package com.griefcraft.integration.permissions;
 
-import com.griefcraft.integration.IPermissions;
 import org.bukkit.entity.Player;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
