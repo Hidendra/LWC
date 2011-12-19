@@ -4,6 +4,10 @@ incomplete
 #### Licensing
 * LWC 4 is now licensed under the **2-clause BSD license**
 
+#### Translations
+* **New translation! Hungarian, courtesy of dretax**
+* As of 4.0.0 there are around 100 (give or take) new translatable strings
+
 #### Functionality
 * The following commands have been added: (see the wiki for more in depth info)
  * `/lwc history`
@@ -17,6 +21,8 @@ incomplete
 * The WorldGuard feature has been rewritten to be easier to use and now includes a blacklist feature, so you can blacklist specific regions from having protections.
 * Add a new flag: `AUTOCLOSE` which makes a door automatically close after the configured amount of time in `plugins/LWC/doors.yml`. Usage: `/cautoclose on|off`
 * Allow Fence Gates to be automatically closed by the autoclose flag & `doors.yml`
+* Pressure plates will now be protected if they are placed in front of a door. Only players who have access to the protection can use the pressure plate.
+ * If you use `/credstone on` on the door, no redstone except the attached pressure plate will work on the door, meaning now only those who have access to the protection can open it.
 
 #### Cosmetics
 * `/lwc admin report` has been beautified
@@ -38,6 +44,10 @@ incomplete
 * **FIX:** Limits will now use the highest group limit instead of the first one found.
 * **FIX:** The magnet module would sometimes not work as expected when used across multiple worlds.
 * **API:** Added `removeProtectionsByPlayer` to PhysDB
+* Metrics API for measuring plugin usage across the world using non-identifiable data.
+ * Developed by myself, all implementation specific details and backends are open source.
+ * View the data online: http://metrics.griefcraft.com/plugin/LWC
+ * Backend source: https://github.com/Hidendra/metrics.griefcraft.com
 
 # Historical changelogs
 
