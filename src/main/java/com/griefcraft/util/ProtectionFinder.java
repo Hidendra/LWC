@@ -106,12 +106,12 @@ public class ProtectionFinder {
 
         // If the base block is protectable, try it
         blocks.add(baseBlock);
-        if (lwc.isProtectable(baseBlock)) {
+        /* if (lwc.isProtectable(baseBlock)) {
             // load it
             if (tryLoadProtection(baseBlock)) {
                 return true;
             }
-        }
+        } */
 
         // Now attempt to use the matchers
         for (Matcher matcher : PROTECTION_MATCHERS) {
