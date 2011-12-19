@@ -152,11 +152,14 @@ public class CreditsModule extends JavaModule {
                 "wokka",
                 "Andreoli3",
                 "andrewkm" + Colors.Red + " X2",
-                "Eric King", // todo
+                "Eric King",
                 "Twizz",
                 "spunkiie",
                 "RustyDagger",
                 "Sam (Nodex servers)",
+                "doomkidkiller",
+                "untergrundbiber",
+                "Northland Gaming",
                 " ",
 
                 Colors.Red + "And....",
@@ -190,6 +193,9 @@ public class CreditsModule extends JavaModule {
                 "MonsterTKE",
                 "Tyrope",
                 "krinsdeath",
+                "VADemon",
+                "armed_troop",
+                "DeadFred",
                 " ",
 
                 Colors.Yellow + "To everyone else and anyone I missed....",
