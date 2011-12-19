@@ -31,6 +31,7 @@ package com.griefcraft.model;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.util.Colors;
+import com.griefcraft.util.ProtectionFinder;
 import com.griefcraft.util.StringUtil;
 import com.griefcraft.util.TimeUtil;
 import org.bukkit.Bukkit;
@@ -199,6 +200,11 @@ public class Protection {
      * True when the protection has been modified and should be saved
      */
     private boolean modified = false;
+
+    /**
+     * The protection finder used to find this protection
+     */
+    private ProtectionFinder finder;
 
     @Override
     public boolean equals(Object object) {
@@ -661,6 +667,24 @@ public class Protection {
 
         this.lastAccessed = lastAccessed;
         this.modified = true;
+    }
+
+    /**
+     * Sets the protection finder used to create this protection
+     *
+     * @param finder
+     */
+    public void setProtectionFinder(ProtectionFinder finder) {
+        this.finder = finder;
+    }
+
+    /**
+     * Gets the protection finder used the create this protection
+     *
+     * @return the ProtectionFinder used to create this protection
+     */
+    public ProtectionFinder getProtectionFinder() {
+        return finder;
     }
 
     /**

@@ -106,10 +106,7 @@ import com.griefcraft.sql.Database;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.*;
 import com.griefcraft.util.config.Configuration;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -915,6 +912,33 @@ public class LWC {
         }
 
         return bind;
+    }
+
+    /**
+     * Find a player in the given ranges
+     *
+     * @param minX
+     * @param maxX
+     * @param minY
+     * @param maxY
+     * @param minZ
+     * @param maxZ
+     * @return
+     */
+    public Player findPlayer(int minX, int maxX, int minY, int maxY, int minZ, int maxZ) {
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            Location location = player.getLocation();
+            int plrX = location.getBlockX();
+            int plrY = location.getBlockY();
+            int plrZ = location.getBlockZ();
+
+            // simple check of the ranges
+            if (plrX >= minX && plrX <= maxX && plrY >= plrY && plrY <= maxY && plrZ >= minZ && plrZ <= maxZ) {
+                return player;
+            }
+        }
+
+        return null;
     }
 
     /**
