@@ -252,7 +252,7 @@ public class Protection {
         // create the root
         JSONArray root = new JSONArray();
 
-        // add all of the access rights to the root
+        // add all of the permissions to the root
         for (Permission permission : permissions) {
             if (permission != null) {
                 root.add(permission.encodeToJSON());
@@ -438,7 +438,7 @@ public class Protection {
     }
 
     /**
-     * @return the list of access rights
+     * @return the list of permissions
      */
     public List<Permission> getPermissions() {
         return Collections.unmodifiableList(new ArrayList<Permission>(permissions));
@@ -478,7 +478,7 @@ public class Protection {
     }
 
     /**
-     * Remove access rights from the protection that match an entity AND type
+     * Remove permissions from the protection that match a name AND type
      *
      * @param name
      * @param type

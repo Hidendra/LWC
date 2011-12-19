@@ -1728,11 +1728,8 @@ public class LWC {
             String localeChild = type.toString().toLowerCase();
 
             if (!remove) {
-                Permission permission = new Permission();
-                permission.setProtectionId(protectionId);
+                Permission permission = new Permission(value, type);
                 permission.setAccess(isAdmin ? Permission.Access.ADMIN : Permission.Access.PLAYER);
-                permission.setName(value);
-                permission.setType(type);
 
                 // add it to the protection and queue it to be saved
                 protection.addPermission(permission);
