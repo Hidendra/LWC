@@ -28,6 +28,7 @@
 
 package com.griefcraft.util.matchers;
 
+import com.griefcraft.lwc.LWC;
 import com.griefcraft.util.ProtectionFinder;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -42,6 +43,11 @@ import java.util.Set;
 public class DoorMatcher implements ProtectionFinder.Matcher {
 
     private static final Set<Material> PROTECTABLES_DOORS = EnumSet.of(Material.WOODEN_DOOR, Material.IRON_DOOR_BLOCK);
+    private static final Set<Material> PRESSURE_PLATES = EnumSet.of(Material.STONE_PLATE, Material.WOOD_PLATE);
+
+    private static final BlockFace[] faces = new BlockFace[] {
+            BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH
+    };
 
     public boolean matches(ProtectionFinder finder) {
         Block block = finder.getBaseBlock();
@@ -51,6 +57,35 @@ public class DoorMatcher implements ProtectionFinder.Matcher {
 
         // Get the block above the block above the base block
         Block aboveAboveBaseBlock = aboveBaseBlock.getRelative(BlockFace.UP);
+
+        // look for door if they're clicking a pressure plate
+        if (PRESSURE_PLATES.contains(block.getType()) || PRESSURE_PLATES.contains(aboveBaseBlock.getType())) {
+            Block pressurePlate = PRESSURE_PLATES.contains(block.getType()) ? block : aboveBaseBlock;
+            
+            for (BlockFace face : faces) {
+                Block relative = pressurePlate.getRelative(face);
+
+                // only check if it's a door
+                if (!PROTECTABLES_DOORS.contains(relative.getType())) {
+                    continue;
+                }
+
+                // create a protection finder
+                ProtectionFinder doorFinder = new ProtectionFinder(LWC.getInstance());
+
+                // attempt to match the door
+                if (doorFinder.matchBlocks(relative)) {
+                    // add the blocks it matched
+                    for (Block found : doorFinder.getBlocks()) {
+                        finder.addBlock(found);
+                    }
+                    
+                    // add the pressure plate
+                    finder.addBlock(relative);
+                    return true;
+                }
+            }
+        }
 
         // Match the block UNDER the door
         if(PROTECTABLES_DOORS.contains(aboveAboveBaseBlock.getType()) && PROTECTABLES_DOORS.contains(aboveBaseBlock.getType())) {
