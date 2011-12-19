@@ -1856,15 +1856,11 @@ public class PhysDB extends Database {
                     continue;
                 }
 
-                // create the access right
-                Permission right = new Permission();
-                right.setProtectionId(protectionId);
-                right.setType(Permission.Type.values()[type]);
-                right.setAccess(Permission.Access.values()[access]);
-                right.setName(entity);
+                // create the permission
+                Permission permission = new Permission(entity, Permission.Type.values()[type], Permission.Access.values()[access]);
 
                 // add it to the protection and queue it for saving!
-                protection.addPermission(right);
+                protection.addPermission(permission);
                 protection.save();
             }
 
