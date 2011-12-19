@@ -96,8 +96,9 @@
         </replace>
 
         <echo>${label}</echo>
-        <javac srcdir="${src}/main/java/:${core}" destdir="${bin}/core/"
+        <javac source="1.6" target="1.6" srcdir="${src}/main/java/:${core}" destdir="${bin}/core/"
                debug="true" debuglevel="lines,vars,source" deprecation="true" includeantruntime="true">
+            <compilerarg value="-Xlint:-options"/>
             <classpath>
                 <fileset refid="libs"/>
             </classpath>
@@ -115,8 +116,9 @@
         <delete file="${build}/.buildeconomy"/>
 
         <echo>Compiling LWC-Economy</echo>
-        <javac srcdir="${economy}/main/java/" destdir="${bin}/economy/" deprecation="true" debug="true"
+        <javac source="1.6" target="1.6" srcdir="${economy}/main/java/" destdir="${bin}/economy/" deprecation="true" debug="true"
                debuglevel="lines,vars,source" includeantruntime="true">
+            <compilerarg value="-Xlint:-options"/>
             <classpath>
                 <fileset refid="libs"/>
                 <dirset dir="${bin}/core/"/>
@@ -134,8 +136,9 @@
         <delete file="${build}/.buildspot"/>
 
         <echo>Compiling LWC-Spout</echo>
-        <javac srcdir="${spout}/main/java/" destdir="${bin}/spout/" deprecation="true" debug="true"
+        <javac source="1.6" target="1.6" srcdir="${spout}/main/java/" destdir="${bin}/spout/" deprecation="true" debug="true"
                debuglevel="lines,vars,source" includeantruntime="true">
+            <compilerarg value="-Xlint:-options"/>
             <classpath>
                 <fileset refid="libs"/>
                 <dirset dir="${bin}/core/"/>
