@@ -343,7 +343,7 @@ public class Updater {
                 return JENKINS + latestVersion.getBuildNumber() + "/artifact/build/LWC.jar";
 
             default:
-                return UPDATE_SITE + "branch/" + updateScheme.getBranch() + "/download/LWC.jar";
+                return UPDATE_SITE + "branch/" + updateScheme.getBranch() + "/" + latestVersion.getRawVersion() + "/LWC.jar";
         }
     }
 
