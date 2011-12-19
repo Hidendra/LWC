@@ -81,7 +81,7 @@ public class DoorMatcher implements ProtectionFinder.Matcher {
                     }
                     
                     // add the pressure plate
-                    finder.addBlock(relative);
+                    finder.addBlock(pressurePlate);
                     return true;
                 }
             }
@@ -91,20 +91,41 @@ public class DoorMatcher implements ProtectionFinder.Matcher {
         if(PROTECTABLES_DOORS.contains(aboveAboveBaseBlock.getType()) && PROTECTABLES_DOORS.contains(aboveBaseBlock.getType())) {
             finder.addBlock(aboveAboveBaseBlock);
             finder.addBlock(aboveBaseBlock);
+            findPressurePlate(finder, aboveBaseBlock);
         }
 
         // Match the bottom half of the door
         else if (PROTECTABLES_DOORS.contains(aboveBaseBlock.getType())) {
             finder.addBlock(aboveBaseBlock);
+            findPressurePlate(finder, block);
         }
 
         // Match the top half of the door
         else if (PROTECTABLES_DOORS.contains(block.getType())) {
-            finder.addBlock(block.getRelative(BlockFace.DOWN));
+            Block bottomHalf = block.getRelative(BlockFace.DOWN);
+
+            finder.addBlock(bottomHalf);
+            findPressurePlate(finder, bottomHalf);
         }
 
         // Attempt to match the door
         return finder.loadProtection() != null;
+    }
+
+    /**
+     * Found a pressure plate that is around a specific block
+     *
+     * @param finder
+     * @param block
+     */
+    private void findPressurePlate(ProtectionFinder finder, Block block) {
+        for (BlockFace face : faces) {
+            Block relative = block.getRelative(face);
+
+            if (PRESSURE_PLATES.contains(relative.getType())) {
+                finder.addBlock(relative);
+            }
+        }
     }
 
 }
