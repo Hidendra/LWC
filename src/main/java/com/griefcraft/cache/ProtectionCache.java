@@ -57,6 +57,11 @@ public class ProtectionCache {
     private final WeakLRUCache<String, Protection> byCacheKey;
 
     /**
+     * Weak references to protections and their protection id
+     */
+    private final WeakLRUCache<Integer, Protection> byId;
+
+    /**
      * The capacity of the cache
      */
     private int capacity;
@@ -67,6 +72,7 @@ public class ProtectionCache {
 
         this.references = new LRUCache<Protection, Object>(capacity);
         this.byCacheKey = new WeakLRUCache<String, Protection>(capacity);
+        this.byId = new WeakLRUCache<Integer, Protection>(capacity);
         logger.info("LWC: Protection cache: 0/" + capacity);
     }
 
@@ -76,7 +82,7 @@ public class ProtectionCache {
      * @return
      */
     public long getReads() {
-        return byCacheKey.getReads();
+        return byCacheKey.getReads() + byId.getReads();
     }
 
     /**
@@ -85,7 +91,7 @@ public class ProtectionCache {
      * @return
      */
     public long getWrites() {
-        return byCacheKey.getWrites();
+        return byCacheKey.getWrites() + byId.getWrites();
     }
 
     /**
@@ -101,11 +107,12 @@ public class ProtectionCache {
      * Clears the entire protection cache
      */
     public void clear() {
-        // remove refs
+        // remove hard refs
         references.clear();
 
-        // remove cache store
+        // remove weak refs
         byCacheKey.clear();
+        byId.clear();
     }
 
     /**
@@ -127,11 +134,12 @@ public class ProtectionCache {
             return;
         }
 
-        // Add it as a reference
+        // Add the hard reference
         references.put(protection, null);
 
-        // Add its cache key
+        // Add weak references which are used to lookup protections
         byCacheKey.put(protection.getCacheKey(), protection);
+        byId.put(protection.getId(), protection);
     }
 
     /**
@@ -142,16 +150,27 @@ public class ProtectionCache {
     public void remove(Protection protection) {
         references.remove(protection);
         byCacheKey.remove(protection.getCacheKey());
+        byId.remove(protection.getId());
     }
 
     /**
-     * Get a protection via its cache key
+     * Get a protection in the cache via its cache key
      *
      * @param cacheKey
      * @return
      */
     public Protection getProtection(String cacheKey) {
         return byCacheKey.get(cacheKey);
+    }
+
+    /**
+     * Get a protection in the cache via its id
+     *
+     * @param id
+     * @return
+     */
+    public Protection getProtectionById(int id) {
+        return byId.get(id);
     }
 
 }

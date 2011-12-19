@@ -577,15 +577,29 @@ public class PhysDB extends Database {
     /**
      * Load a protection with the given id
      *
-     * @param protectionId
+     * @param id
      * @return the Chest object
      */
-    public Protection loadProtection(int protectionId) {
+    public Protection loadProtection(int id) {
+        // the protection cache
+        ProtectionCache cache = LWC.getInstance().getProtectionCache();
+
+        // check if the protection is already cached
+        Protection cached = cache.getProtectionById(id);
+        if (cached != null) {
+            return cached;
+        }
+
         try {
             PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE id = ?");
-            statement.setInt(1, protectionId);
+            statement.setInt(1, id);
 
-            return resolveProtection(statement);
+            Protection protection = resolveProtection(statement);
+
+            if (protection != null) {
+                cache.add(protection);
+                return protection;
+            }
         } catch (SQLException e) {
             printException(e);
         }
