@@ -277,6 +277,13 @@ public final class Version implements Comparable {
     }
 
     /**
+     * @return
+     */
+    public String getRawVersion() {
+        return rawVersion;
+    }
+
+    /**
      * Calculate the version weights
      */
     private void calculateWeights() {
