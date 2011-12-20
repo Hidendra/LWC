@@ -77,9 +77,9 @@ public class DatabaseSetupModule extends JavaModule {
         lwc.reloadDatabase();
 
         if (migrator.migrate(lwc.getPhysicalDatabase(), new PhysDB(databaseType))) {
-            lwc.sendLocale(sender, "lwc.setup.database.success");
+            lwc.sendLocale(sender, "lwc.setup.database.success", "type", databaseType.toString());
         } else {
-            lwc.sendLocale(sender, "lwc.setup.database.failure");
+            lwc.sendLocale(sender, "lwc.setup.database.failure", "type", databaseType.toString());
             return;
         }
 
