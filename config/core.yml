@@ -42,6 +42,17 @@ core:
     # if true, LWC will only allow protections to be created inside of Towns via the Towny plugin
     townyBorders: false
 
+# Controls how the updater operates
+updater:
+
+    # The branch to select updates from
+    # STABLE or BLEEDING_EDGE
+    branch: STABLE
+
+    # When to retrieve updates
+    # Either AUTOMATIC or MANUAL
+    method: AUTOMATIC
+
 # "Fun" options
 optional:
 

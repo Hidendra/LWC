@@ -53,6 +53,7 @@ import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Locale;
@@ -458,4 +459,13 @@ public class LWCPlugin extends JavaPlugin {
         return updater;
     }
 
+    @Override
+    public File getFile() {
+        return super.getFile();
+    }
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return super.getClassLoader();
+    }
 }
