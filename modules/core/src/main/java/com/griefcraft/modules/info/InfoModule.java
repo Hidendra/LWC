@@ -59,9 +59,6 @@ public class InfoModule extends JavaModule {
         event.setResult(Result.CANCEL);
 
         String type = lwc.getLocale(protection.typeToString().toLowerCase());
-        // String access = lwc.getLocale((event.canAccess() ? "yes" : "no"));
-
-        // Needs to be localized as well
         lwc.sendLocale(player, "lwc.info", "owner", protection.getOwner(), "type", type);
 
         if (event.canAdmin()) {
