@@ -44,8 +44,11 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Enumeration;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 public class Updater {
@@ -60,11 +63,27 @@ public class Updater {
         /**
          * Updating will be performed manually by the admin
          */
-        MANUAL
+        MANUAL;
+
+        /**
+         * Match an input to an update method
+         *
+         * @param input
+         * @return
+         */
+        public static UpdateMethod match(String input) {
+            for (UpdateMethod method : values()) {
+                if (method.toString().equalsIgnoreCase(input)) {
+                    return method;
+                }
+            }
+
+            return null;
+        }
 
     }
 
-    public enum UpdateScheme {
+    public enum UpdateBranch {
 
         /**
          * Long release schedules and is recommended on any server that wishes to have stable LWC features
@@ -74,18 +93,9 @@ public class Updater {
         STABLE("stable"),
 
         /**
-         * The best middle-ground between getting the newest features and having a stable build. Builds received
-         * from the CURRENT branch should never totally break LWC, but the possibility still exists. Builds in
-         * this scheme will almost always display -alphaX or -betaX in /lwc admin version but may also display -rcX
-         * for builds that are nearing a full release.
-         */
-        CURRENT("current"),
-
-        /**
-         * The most volatile scheme. Should not be used on production servers but offers the most up to date features
+         * The most volatile branch. Should not be used on production servers but offers the most up to date features
          * but testing may not have been performed all around. Performance may also not have been rounded out and
-         * any features may be removed at any time. Versioning for this scheme is based off of the current and latest
-         * build number.
+         * any features may be removed at any time. Versioning for this branch is based off of the latest build number.
          */
         BLEEDING_EDGE("bleeding");
 
@@ -94,7 +104,7 @@ public class Updater {
          */
         private String branch;
 
-        UpdateScheme(String branch) {
+        UpdateBranch(String branch) {
             this.branch = branch;
         }
 
@@ -103,6 +113,22 @@ public class Updater {
          */
         public String getBranch() {
             return branch;
+        }
+
+        /**
+         * Match an input to a branch
+         *
+         * @param input
+         * @return
+         */
+        public static UpdateBranch match(String input) {
+            for (UpdateBranch branch : values()) {
+                if (branch.toString().equalsIgnoreCase(input)) {
+                    return branch;
+                }
+            }
+
+            return null;
         }
 
     }
@@ -115,7 +141,12 @@ public class Updater {
     /**
      * URL to the base update site
      */
-    public final static String UPDATE_SITE = "http://griefcraft.com/lwc/";
+    public final static String UPDATE_SITE = "http://update.griefcraft.com";
+
+    /**
+     * Location of the plugin on the website
+     */
+    public final static String PLUGIN_LOCATION = "/lwc/";
 
     /**
      * URL to the Jenkins job for LWC
@@ -133,9 +164,9 @@ public class Updater {
     private final Queue<UpdaterFile> fileQueue = new ConcurrentLinkedQueue<UpdaterFile>();
 
     /**
-     * The update scheme to use
+     * The update branch to use
      */
-    private UpdateScheme updateScheme;
+    private UpdateBranch updateBranch;
 
     /**
      * The update method to use
@@ -148,11 +179,10 @@ public class Updater {
     private Version latestVersion;
 
     public void init() {
-        // some vars that will probably be removed later, testing purposes at the moment
         LWC lwc = LWC.getInstance();
-        updateScheme = UpdateScheme.valueOf(lwc.getConfiguration().getString("core.updateScheme", "BLEEDING_EDGE"));
-        updateMethod = UpdateMethod.valueOf(lwc.getConfiguration().getString("core.updateMethod", "MANUAL"));
-        logger.info("LWC: Update scheme: " + updateScheme);
+        updateBranch = UpdateBranch.match(lwc.getConfiguration().getString("updater.branch", "STABLE"));
+        updateMethod = UpdateMethod.match(lwc.getConfiguration().getString("updater.method", "MANUAL"));
+        logger.info("LWC: Update branch: " + updateBranch);
         logger.info("LWC: Update method: " + updateMethod);
 
         this.loadVersions(true, new Runnable() {
@@ -271,7 +301,10 @@ public class Updater {
 
         logger.info(Colors.Red + "LWC update found!");
 
-        // update_site/download/LWC.jar
+        // make sure all class files are loaded in our jar file before we overwrite it
+        loadAllClasses();
+
+        // update_site/version/LWC.jar
         UpdaterFile file = new UpdaterFile("plugins/LWC.jar", getLatestDownloadURL());
 
         // queue it
@@ -283,16 +316,50 @@ public class Updater {
     }
 
     /**
+     * Load all the classes in the current jar file so it can be overwritten
+     */
+    private void loadAllClasses() {
+        LWC lwc = LWC.getInstance();
+        
+        try {
+            // Load the jar
+            JarFile jar = new JarFile(lwc.getPlugin().getFile());
+
+            // Walk through all of the entries
+            Enumeration<JarEntry> enumeration = jar.entries();
+
+            while (enumeration.hasMoreElements()) {
+                JarEntry entry = enumeration.nextElement();
+                String name = entry.getName();
+                
+                // is it a class file?
+                if (name.endsWith(".class")) {
+                    // convert to package
+                    String path = name.replaceAll("/", ".");
+                    path = path.substring(0, path.length() - ".class".length());
+
+                    // Load it
+                    this.getClass().getClassLoader().loadClass(path);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Verify all required files exist
      */
     private void verifyFiles() {
         // SQLite libraries
         if (Database.DefaultType == Database.Type.SQLite) {
             // sqlite.jar
-            this.verifyFile(new UpdaterFile(DEST_LIBRARY_FOLDER + "sqlite.jar", "http://griefcraft.com/bukkit/shared/lib/sqlite.jar"));
+            this.verifyFile(new UpdaterFile(DEST_LIBRARY_FOLDER + "sqlite.jar", UPDATE_SITE + "/shared/lib/sqlite.jar"));
 
             // Native library
-            this.verifyFile(new UpdaterFile(getFullNativeLibraryPath(), "http://griefcraft.com/bukkit/shared/" + getFullNativeLibraryPath().replaceAll(DEST_LIBRARY_FOLDER, "")));
+            this.verifyFile(new UpdaterFile(getFullNativeLibraryPath(), UPDATE_SITE + "/shared/" + getFullNativeLibraryPath().replaceAll(DEST_LIBRARY_FOLDER, "")));
         }
     }
 
@@ -320,30 +387,35 @@ public class Updater {
         return true;
     }
 
+    /**
+     * Download a config file
+     *
+     * @param config
+     */
     public void downloadConfig(String config) {
         File file = new File(ModuleLoader.ROOT_PATH + config); // where to save to
-        UpdaterFile updaterFile = new UpdaterFile(file.getPath(), "http://griefcraft.com/bukkit/lwc/skel/" + config);
+        UpdaterFile updaterFile = new UpdaterFile(file.getPath(), UPDATE_SITE + PLUGIN_LOCATION + "config/" + config);
 
         this.verifyFile(updaterFile);
         this.downloadFiles();
     }
 
     /**
-     * Get the latest download URL. Could vary depending upon which update scheme is used
+     * Get the latest download URL. Could vary depending upon which update branch is used
      *
      * @return
      */
     public String getLatestDownloadURL() {
-        if (updateScheme == null) {
+        if (updateBranch == null) {
             return "";
         }
 
-        switch (updateScheme) {
+        switch (updateBranch) {
             case BLEEDING_EDGE:
                 return JENKINS + latestVersion.getBuildNumber() + "/artifact/build/LWC.jar";
 
             default:
-                return UPDATE_SITE + "branch/" + updateScheme.getBranch() + "/" + latestVersion.getRawVersion() + "/LWC.jar";
+                return UPDATE_SITE + PLUGIN_LOCATION + "branch/" + updateBranch.getBranch() + "/" + latestVersion.getRawVersion() + "/LWC.jar";
         }
     }
 
@@ -353,7 +425,7 @@ public class Updater {
      * @return
      */
     public boolean shouldAutoUpdate() {
-        if (updateScheme == null) {
+        if (updateBranch == null) {
             return false;
         }
 
@@ -363,7 +435,7 @@ public class Updater {
 
         Version current = LWCInfo.FULL_VERSION;
 
-        switch (updateScheme) {
+        switch (updateBranch) {
             // We only want to compare the build number for bleeding edge
             case BLEEDING_EDGE:
                 return latestVersion.getBuildNumber() > current.getBuildNumber() && (latestVersion.getBuildNumber() > 0 && current.getBuildNumber() > 0);
@@ -393,9 +465,9 @@ public class Updater {
         class Background_Check_Thread implements Runnable {
             public void run() {
 
-                switch (updateScheme) {
+                switch (updateBranch) {
                     /**
-                     * The bleeding edge scheme instead reads the latest build number from Jenkins and relies
+                     * The bleeding edge branch instead reads the latest build number from Jenkins and relies
                      * upon that. The nature of bleeding edge is to stay up to the latest build.
                      */
                     case BLEEDING_EDGE:
@@ -415,7 +487,7 @@ public class Updater {
                     default:
                         // by default, use the LATEST file
                         try {
-                            URL url = new URL(UPDATE_SITE + updateScheme.getBranch() + "/LATEST");
+                            URL url = new URL(UPDATE_SITE + PLUGIN_LOCATION + "branch/" + updateBranch.getBranch() + "/LATEST");
                             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 
                             // read in the first line
@@ -464,10 +536,10 @@ public class Updater {
     }
 
     /**
-     * @return the update scheme that is being used
+     * @return the update branch that is being used
      */
-    public UpdateScheme getUpdateScheme() {
-        return updateScheme;
+    public UpdateBranch getUpdateBranch() {
+        return updateBranch;
     }
 
     /**
