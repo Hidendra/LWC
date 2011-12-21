@@ -70,11 +70,11 @@ public class ModifyModule extends JavaModule {
         if (lwc.canAdminProtection(player.getBukkitPlayer(), protection)) {
             Action action = player.getAction("modify");
 
-            final String defaultEntities = action.getData();
+            String data = action.getData();
             String[] rights = new String[0];
 
-            if (defaultEntities.length() > 0) {
-                rights = defaultEntities.split(" ");
+            if (data.length() > 0) {
+                rights = data.split(" ");
             }
 
             lwc.removeModes(player);

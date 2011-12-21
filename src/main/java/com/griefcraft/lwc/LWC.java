@@ -1670,6 +1670,27 @@ public class LWC {
      * @param arguments
      */
     public void processRightsModifications(CommandSender sender, Protection protection, String... arguments) {
+        // Does it match a protection type?
+        try {
+            Protection.Type protectionType = Protection.Type.matchType(arguments[0]);
+
+            if (protectionType != null) {
+                protection.setType(protectionType);
+                protection.save();
+
+                // If it's being passworded, we need to set the password
+                if (protectionType == Protection.Type.PASSWORD) {
+                    String password = StringUtil.join(arguments, 1);
+                    protection.setPassword(encrypt(password));
+                }
+
+                sendLocale(sender, "protection.typechanged", "type", getLocale(protectionType.toString().toLowerCase()));
+                return;
+            }
+        } catch (IllegalArgumentException e) {
+            // It's normal for this to be thrown if nothing was matched
+        }
+        
         for (String value : arguments) {
             boolean remove = false;
             boolean isAdmin = false;
@@ -1688,6 +1709,11 @@ public class LWC {
             if (value.startsWith("@")) {
                 isAdmin = true;
                 value = value.substring(1);
+            }
+
+            if (value.toLowerCase().startsWith("p:")) {
+                type = Permission.Type.PLAYER;
+                value = value.substring(2);
             }
 
             if (value.toLowerCase().startsWith("g:")) {
