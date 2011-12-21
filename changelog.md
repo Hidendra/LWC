@@ -23,6 +23,7 @@ incomplete
 * Allow Fence Gates to be automatically closed by the autoclose flag & `doors.yml`
 * Pressure plates will now be protected if they are placed in front of a door. Only players who have access to the protection can use the pressure plate.
  * If you use `/credstone on` on the door, no redstone except the attached pressure plate will work on the door, meaning now only those who have access to the protection can open it.
+* A protection's type can now be changed via `/cmodify type` e.g: `/cmodify private` will make a chest private. You can change a password (or change it TO password) via: `/cmodify password ThePassword`
 
 #### Cosmetics
 * `/lwc admin report` has been beautified
