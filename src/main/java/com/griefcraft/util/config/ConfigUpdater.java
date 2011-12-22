@@ -52,7 +52,8 @@ public class ConfigUpdater {
             "protections.blocks",
             "master",
             "groups",
-            "players"
+            "players",
+            "defaults"
     );
 
     /**
