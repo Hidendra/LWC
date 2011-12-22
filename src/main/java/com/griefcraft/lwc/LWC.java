@@ -266,7 +266,7 @@ public class LWC {
      * @param material
      * @return
      */
-    public static String normalizeName(Material material) {
+    private static String normalizeName(Material material) {
         String name = material.toString().toLowerCase().replaceAll("block", "");
 
         // some name normalizations
