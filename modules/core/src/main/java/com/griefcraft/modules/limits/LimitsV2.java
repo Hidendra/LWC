@@ -40,6 +40,7 @@ import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -72,7 +73,7 @@ public class LimitsV2 extends JavaModule {
      */
     private final Map<String, List<Limit>> groupLimits = new HashMap<String, List<Limit>>();
 
-    abstract class Limit {
+    public abstract class Limit {
 
         /**
          * The limit
@@ -99,8 +100,8 @@ public class LimitsV2 extends JavaModule {
             return limit;
         }
     }
-    
-    final class DefaultLimit extends Limit {
+
+    public final class DefaultLimit extends Limit {
 
         public DefaultLimit(int limit) {
             super(limit);
@@ -113,7 +114,7 @@ public class LimitsV2 extends JavaModule {
 
     }
     
-    final class BlockLimit extends Limit {
+    public final class BlockLimit extends Limit {
 
         /**
          * The block material to limit
@@ -198,10 +199,24 @@ public class LimitsV2 extends JavaModule {
             return;
         }
 
-        // Get all of the player's limits
-        List<Limit> limits = orderLimits(getPlayerLimits(player));
+        // send their limits to them
+        sendLimits(player, getPlayerLimits(player));
+    }
+
+    /**
+     * Sends the list of limits to the player
+     * 
+     * @param sender
+     * @param limits
+     */
+    public void sendLimits(CommandSender sender, List<Limit> limits) {
+        LWC lwc = LWC.getInstance();
 
         for (Limit limit : limits) {
+            if (limit == null) {
+                continue;
+            }
+            
             String stringLimit = limit.getLimit() == UNLIMITED ? "Unlimited" : Integer.toString(limit.getLimit());
 
             if (limit instanceof DefaultLimit) {
@@ -274,7 +289,7 @@ public class LimitsV2 extends JavaModule {
                             limits.add(limit);
                         }
                     } else {
-                        limits.add(matched);
+                        limits.add(limit);
                     }
                 }
             }
@@ -302,6 +317,59 @@ public class LimitsV2 extends JavaModule {
      */
     public Limit getEffectiveLimit(Player player, Material material) {
         return getEffectiveLimit(getPlayerLimits(player), material);
+    }
+
+    /**
+     * Gets an immutable list of the default limits
+     *
+     * @return
+     */
+    public List<Limit> getDefaultLimits() {
+        return Collections.unmodifiableList(defaultLimits);
+    }
+
+    /**
+     * Gets an unmodiable map of the player limits
+     *
+     * @return
+     */
+    public Map<String, List<Limit>> getPlayerLimits() {
+        return Collections.unmodifiableMap(playerLimits);
+    }
+
+    /**
+     * Gets an unmodiable map of the group limits
+     *
+     * @return
+     */
+    public Map<String, List<Limit>> getGroupLimits() {
+        return Collections.unmodifiableMap(groupLimits);
+    }
+
+    /**
+     * Orders the limits, putting the default limit at the top of the list
+     *
+     * @param limits
+     * @return
+     */
+    private List<Limit> orderLimits(List<Limit> limits) {
+        Limit defaultLimit = null;
+
+        // Locate the default limit
+        for (Limit limit : limits) {
+            if (limit instanceof DefaultLimit) {
+                defaultLimit = limit;
+                break;
+            }
+        }
+
+        // remove it
+        limits.remove(defaultLimit);
+
+        // readd it at the head
+        limits.add(0, defaultLimit);
+
+        return limits;
     }
 
     /**
@@ -349,14 +417,18 @@ public class LimitsV2 extends JavaModule {
         defaultLimits.addAll(findLimits("defaults"));
 
         // add all of the player limits
-        for (String player : configuration.getKeys("players")) {
-            playerLimits.put(player.toLowerCase(), findLimits("players." + player));
-        }
+        try {
+            for (String player : configuration.getKeys("players")) {
+                playerLimits.put(player.toLowerCase(), findLimits("players." + player));
+            }
+        } catch (NullPointerException e) { }
 
         // add all of the group limits
-        for (String group : configuration.getKeys("groups")) {
-            groupLimits.put(group, findLimits("groups." + group));
-        }
+        try {
+            for (String group : configuration.getKeys("groups")) {
+                groupLimits.put(group, findLimits("groups." + group));
+            }
+        } catch (NullPointerException e) { }
     }
 
     /**
@@ -390,31 +462,8 @@ public class LimitsV2 extends JavaModule {
             }
         }
 
-        return limits;
-    }
-
-    /**
-     * Orders the limits, putting the default limit at the top of the list
-     *
-     * @param limits
-     * @return
-     */
-    private List<Limit> orderLimits(List<Limit> limits) {
-        Limit defaultLimit = null;
-
-        // Locate the default limit
-        for (Limit limit : limits) {
-            if (limit instanceof DefaultLimit) {
-                defaultLimit = limit;
-                break;
-            }
-        }
-
-        // remove it
-        limits.remove(defaultLimit);
-        
-        // readd it at the head
-        limits.add(0, defaultLimit);
+        // Order it
+        orderLimits(limits);
 
         return limits;
     }
@@ -430,7 +479,7 @@ public class LimitsV2 extends JavaModule {
      */
     private Limit findLimit(List<Limit> limits, Limit compare) {
         for (Limit limit : limits) {
-            if (limit.getClass().isInstance(compare)) {
+            if (limit != null && limit.getClass().isInstance(compare)) {
                 if (limit instanceof BlockLimit) {
                     BlockLimit cmp1 = (BlockLimit) limit;
                     BlockLimit cmp2 = (BlockLimit) compare;
