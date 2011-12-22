@@ -39,6 +39,7 @@ import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.scripting.event.LWCRedstoneEvent;
+import com.griefcraft.scripting.event.LWCReloadEvent;
 import com.griefcraft.scripting.event.LWCSendLocaleEvent;
 
 public class JavaModule implements Module {
@@ -59,6 +60,10 @@ public class JavaModule implements Module {
     public final static Result DEFAULT = Result.DEFAULT;
 
     public void load(LWC lwc) {
+    }
+
+    public void onReload(LWCReloadEvent event) {
+
     }
 
     public void onAccessRequest(LWCAccessEvent event) {

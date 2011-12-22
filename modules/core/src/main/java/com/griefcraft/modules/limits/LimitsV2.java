@@ -32,6 +32,7 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
+import com.griefcraft.scripting.event.LWCReloadEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtil;
 import com.griefcraft.util.config.Configuration;
@@ -141,6 +142,11 @@ public class LimitsV2 extends JavaModule {
     }
     
     public LimitsV2() {
+        loadLimits();
+    }
+
+    @Override
+    public void onReload(LWCReloadEvent event) {
         loadLimits();
     }
 
@@ -443,7 +449,6 @@ public class LimitsV2 extends JavaModule {
         
         for (String key : keys) {
             String value = configuration.getString(node + "." + key);
-            System.out.println(key + " => " + value);
 
             int limit;
             
