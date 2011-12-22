@@ -350,13 +350,11 @@ public class LimitsV2 extends JavaModule {
 
         // add all of the player limits
         for (String player : configuration.getKeys("players")) {
-            System.out.println("PLAYER => " + player);
             playerLimits.put(player.toLowerCase(), findLimits("players." + player));
         }
 
         // add all of the group limits
         for (String group : configuration.getKeys("groups")) {
-            System.out.println("GROUP => " + group);
             groupLimits.put(group, findLimits("groups." + group));
         }
     }
@@ -386,11 +384,9 @@ public class LimitsV2 extends JavaModule {
             // Match default
             if (key.equalsIgnoreCase("default")) {
                 limits.add(new DefaultLimit(limit));
-                System.out.println("\tdefault => " + limit);
             } else {
                 Material material = Material.getMaterial(key.toUpperCase());
                 limits.add(new BlockLimit(material, limit));
-                System.out.println("\t" + material + " => " + limit);
             }
         }
 
