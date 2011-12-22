@@ -30,10 +30,14 @@ package com.griefcraft.modules.limits;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
+import com.griefcraft.util.Colors;
+import com.griefcraft.util.StringUtil;
 import com.griefcraft.util.config.Configuration;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -155,6 +159,64 @@ public class LimitsV2 extends JavaModule {
         }
     }
 
+    @Override
+    public void onCommand(LWCCommandEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
+        if (!event.hasFlag("limits")) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        CommandSender sender = event.getSender();
+        String[] args = event.getArgs();
+        event.setCancelled(true);
+
+        if (args.length == 0 && !(sender instanceof Player)) {
+            sender.sendMessage(Colors.Red + "Unsupported");
+            return;
+        }
+
+        String playerName;
+
+        if (args.length == 0) {
+            playerName = sender.getName();
+        } else {
+            if (lwc.isAdmin(sender)) {
+                playerName = args[0];
+            } else {
+                lwc.sendLocale(sender, "protection.accessdenied");
+                return;
+            }
+        }
+
+        Player player = lwc.getPlugin().getServer().getPlayer(playerName);
+
+        if (player == null) {
+            return;
+        }
+
+        // Get all of the player's limits
+        List<Limit> limits = orderLimits(getPlayerLimits(player));
+
+        for (Limit limit : limits) {
+            String stringLimit = limit.getLimit() == UNLIMITED ? "Unlimited" : Integer.toString(limit.getLimit());
+
+            if (limit instanceof DefaultLimit) {
+                sender.sendMessage("Default: " + Colors.Yellow + stringLimit);
+            } else if (limit instanceof BlockLimit) {
+                BlockLimit blockLimit = (BlockLimit) limit;
+
+                sender.sendMessage(lwc.materialToString(blockLimit.getMaterial()) + ": " + Colors.Yellow + stringLimit);
+            } else {
+                sender.sendMessage(limit.getClass().getSimpleName() + ": " + Colors.Yellow + stringLimit);
+            }
+
+        }
+    }
+
     /**
      * Checks if a player has reached their protection limit
      *
@@ -182,8 +244,8 @@ public class LimitsV2 extends JavaModule {
     }
 
     /**
-     * Gets the list of limits that may apply to the player. It always finds the highest limit of one already exists
-     * for a specific material.
+     * Gets the list of limits that may apply to the player.
+     * For group limits, it uses the highest one found.
      *
      * @param player
      * @return
@@ -208,8 +270,8 @@ public class LimitsV2 extends JavaModule {
                     if (matched != null) {
                         // Is our limit better?
                         if (limit.getLimit() > matched.getLimit()) {
-                            limits.remove(limit);
-                            limits.add(matched);
+                            limits.remove(matched);
+                            limits.add(limit);
                         }
                     } else {
                         limits.add(matched);
@@ -223,14 +285,8 @@ public class LimitsV2 extends JavaModule {
             // try to match one already inside what we found
             Limit matched = findLimit(limits, limit);
 
-            if (matched != null) {
-                // Is our limit better?
-                if (limit.getLimit() > matched.getLimit()) {
-                    limits.remove(limit);
-                    limits.add(matched);
-                }
-            } else {
-                limits.add(matched);
+            if (matched == null) {
+                limits.add(limit);
             }
         }
 
@@ -337,6 +393,32 @@ public class LimitsV2 extends JavaModule {
                 System.out.println("\t" + material + " => " + limit);
             }
         }
+
+        return limits;
+    }
+
+    /**
+     * Orders the limits, putting the default limit at the top of the list
+     *
+     * @param limits
+     * @return
+     */
+    private List<Limit> orderLimits(List<Limit> limits) {
+        Limit defaultLimit = null;
+
+        // Locate the default limit
+        for (Limit limit : limits) {
+            if (limit instanceof DefaultLimit) {
+                defaultLimit = limit;
+                break;
+            }
+        }
+
+        // remove it
+        limits.remove(defaultLimit);
+        
+        // readd it at the head
+        limits.add(0, defaultLimit);
 
         return limits;
     }
