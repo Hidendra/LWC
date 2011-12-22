@@ -42,6 +42,7 @@ import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.scripting.event.LWCRedstoneEvent;
+import com.griefcraft.scripting.event.LWCReloadEvent;
 import com.griefcraft.scripting.event.LWCSendLocaleEvent;
 import org.bukkit.plugin.Plugin;
 
@@ -125,9 +126,13 @@ public class ModuleLoader {
          */
         SEND_LOCALE(2),
 
+        //
+        ACCESS_REQUEST(),
 
-        // new / temp
-        ACCESS_REQUEST();
+        /**
+         * Called when LWC's config is reloaded
+         */
+        RELOAD_EVENT;
 
         Event() {
         }
@@ -204,6 +209,8 @@ public class ModuleLoader {
                         module.onSendLocale((LWCSendLocaleEvent) event);
                     } else if (event instanceof LWCRedstoneEvent) {
                         module.onRedstone((LWCRedstoneEvent) event);
+                    } else if (event instanceof LWCReloadEvent) {
+                        module.onReload((LWCReloadEvent) event);
                     }
                 }
             }

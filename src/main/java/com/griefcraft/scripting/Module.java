@@ -39,6 +39,7 @@ import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.scripting.event.LWCRedstoneEvent;
+import com.griefcraft.scripting.event.LWCReloadEvent;
 import com.griefcraft.scripting.event.LWCSendLocaleEvent;
 
 /**
@@ -55,6 +56,11 @@ public interface Module {
      * Called when the module is loaded
      */
     public void load(LWC lwc);
+
+    /**
+     * Called when LWC reloads- e.g a config reload
+     */
+    public void onReload(LWCReloadEvent event);
 
     /**
      * Find out the access level of a player to a protection

@@ -26,43 +26,14 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.modules.admin;
+package com.griefcraft.scripting.event;
 
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.scripting.JavaModule;
-import com.griefcraft.scripting.event.LWCCommandEvent;
-import com.griefcraft.scripting.event.LWCReloadEvent;
-import com.griefcraft.util.config.Configuration;
-import org.bukkit.command.CommandSender;
+import com.griefcraft.scripting.ModuleLoader;
 
-public class AdminReload extends JavaModule {
+public class LWCReloadEvent extends LWCEvent {
 
-    @Override
-    public void onCommand(LWCCommandEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-
-        if (!event.hasFlag("a", "admin")) {
-            return;
-        }
-
-        LWC lwc = event.getLWC();
-        CommandSender sender = event.getSender();
-        String[] args = event.getArgs();
-
-        if (!args[0].equals("reload")) {
-            return;
-        }
-
-        // we have the right command
-        event.setCancelled(true);
-
-        Configuration.reload();
-        lwc.getPlugin().loadLocales();
-        lwc.getModuleLoader().dispatchEvent(new LWCReloadEvent());
-
-        lwc.sendLocale(sender, "protection.admin.reload.finalize");
+    public LWCReloadEvent() {
+        super(ModuleLoader.Event.RELOAD_EVENT);
     }
 
 }
