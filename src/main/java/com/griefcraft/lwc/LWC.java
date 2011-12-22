@@ -83,6 +83,7 @@ import com.griefcraft.modules.free.FreeModule;
 import com.griefcraft.modules.history.HistoryModule;
 import com.griefcraft.modules.info.InfoModule;
 import com.griefcraft.modules.limits.LimitsModule;
+import com.griefcraft.modules.limits.LimitsV2;
 import com.griefcraft.modules.lists.ListsModule;
 import com.griefcraft.modules.menu.MenuModule;
 import com.griefcraft.modules.modes.BaseModeModule;
@@ -1534,6 +1535,7 @@ public class LWC {
      */
     private void registerCoreModules() {
         // core
+        registerModule(new LimitsV2());
         registerModule(new LimitsModule());
         registerModule(new CreateModule());
         registerModule(new ModifyModule());
