@@ -97,12 +97,23 @@ public class Configuration extends ConfigurationNode {
     }
 
     /**
-     * Create and load a configuration file
+     * Create and/or load a configuration file
      *
      * @param config
      * @return
      */
     public static Configuration load(String config) {
+        return load(config, true);
+    }
+
+    /**
+     * Create and/or load a configuration file
+     *
+     * @param config
+     * @param autoDownload
+     * @return
+     */
+    public static Configuration load(String config, boolean autoDownload) {
         if (loaded.containsKey(config)) {
             return loaded.get(config);
         }
@@ -111,6 +122,10 @@ public class Configuration extends ConfigurationNode {
 
         // if it does not exist, attempt to download it if possible :-)
         if (!file.exists()) {
+            if (!autoDownload) {
+                return null;
+            }
+
             Updater updater = LWC.getInstance().getPlugin().getUpdater();
             updater.downloadConfig(config);
         }

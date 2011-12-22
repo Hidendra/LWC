@@ -84,7 +84,7 @@ public class LimitsModule extends JavaModule {
         }
     }
 
-    private Configuration configuration = Configuration.load("limits.yml");
+    private Configuration configuration = Configuration.load("limits.yml", false);
 
     /**
      * Integer value that represents unlimited protections
@@ -116,6 +116,10 @@ public class LimitsModule extends JavaModule {
      * @return true if the player reached their limit
      */
     public boolean hasReachedLimit(Player player, Block block) {
+        if (configuration == null) {
+            return false;
+        }
+
         LWC lwc = LWC.getInstance();
         int limit = mapProtectionLimit(player, block.getTypeId());
 
@@ -192,6 +196,10 @@ public class LimitsModule extends JavaModule {
      * @return
      */
     public int mapProtectionLimit(Player player, int blockId) {
+        if (configuration == null) {
+            return 0;
+        }
+
         int limit = -1;
         Type type = Type.resolve(resolveString(player, "type"));
 
