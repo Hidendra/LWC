@@ -1647,9 +1647,7 @@ public class LWC {
                 ContainerBlock containerBlock = (ContainerBlock) block.getState();
                 Inventory inventory = containerBlock.getInventory();
 
-                /*
-                     * Add all the items from this inventory
-                     */
+                // Add all the items from this inventory
                 for (ItemStack stack : inventory.getContents()) {
                     stacks[index] = stack;
                     index++;
@@ -1846,8 +1844,6 @@ public class LWC {
      * @param command
      */
     public void sendSimpleUsage(CommandSender player, String command) {
-        // player.sendMessage(Colors.Red + "Usage:" + Colors.Gold + " " +
-        // command);
         sendLocale(player, "help.simpleusage", "command", command);
     }
 
