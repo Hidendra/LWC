@@ -52,7 +52,7 @@ public class LimitsV2 extends JavaModule {
     /**
      * The limit represented by unlimited
      */
-    private final static int UNLIMITED = Integer.MAX_VALUE;
+    public final static int UNLIMITED = Integer.MAX_VALUE;
 
     /**
      * The limits configuration
@@ -147,7 +147,7 @@ public class LimitsV2 extends JavaModule {
 
     @Override
     public void onReload(LWCReloadEvent event) {
-        loadLimits();
+        reload();
     }
 
     @Override
@@ -207,6 +207,22 @@ public class LimitsV2 extends JavaModule {
 
         // send their limits to them
         sendLimits(player, getPlayerLimits(player));
+    }
+
+    /**
+     * Gets the raw limits configuration
+     *
+     * @return
+     */
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * Reload the limits
+     */
+    public void reload() {
+        loadLimits();
     }
 
     /**
