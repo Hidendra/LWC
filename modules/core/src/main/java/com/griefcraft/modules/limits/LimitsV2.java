@@ -204,19 +204,21 @@ public class LimitsV2 extends JavaModule {
                 found = getEffectiveLimit(groupLimits.get(group), material);
 
                 if (found != null) {
-                    continue;
+                    break;
                 }
             }
 
             // If all else fails, use the default limit
-            found = getEffectiveLimit(defaultLimits, material);
+            if (found == null) {
+                found = getEffectiveLimit(defaultLimits, material);
+            }
         }
 
         return found;
     }
 
     /**
-     * Gets the player's effective limit that should take precedence
+     * Gets the material's effective limit that should take precedence
      *
      * @param limits
      * @param material
