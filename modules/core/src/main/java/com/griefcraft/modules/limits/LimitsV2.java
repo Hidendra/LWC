@@ -182,6 +182,62 @@ public class LimitsV2 extends JavaModule {
     }
 
     /**
+     * Gets the list of limits that may apply to the player. It always finds the highest limit of one already exists
+     * for a specific material.
+     *
+     * @param player
+     * @return
+     */
+    public List<Limit> getPlayerLimits(Player player) {
+        LWC lwc = LWC.getInstance();
+        List<Limit> limits = new LinkedList<Limit>();
+
+        // get all of their own limits
+        String playerName = player.getName().toLowerCase();
+        if (playerLimits.containsKey(playerName)) {
+            limits.addAll(playerLimits.get(playerName));
+        }
+
+        // Look over the group limits
+        for (String group : lwc.getPermissions().getGroups(player)) {
+            if (groupLimits.containsKey(group)) {
+                for (Limit limit : groupLimits.get(group)) {
+                    // try to match one already inside what we found
+                    Limit matched = findLimit(limits, limit);
+
+                    if (matched != null) {
+                        // Is our limit better?
+                        if (limit.getLimit() > matched.getLimit()) {
+                            limits.remove(limit);
+                            limits.add(matched);
+                        }
+                    } else {
+                        limits.add(matched);
+                    }
+                }
+            }
+        }
+
+        // Look at the default limits
+        for (Limit limit : defaultLimits) {
+            // try to match one already inside what we found
+            Limit matched = findLimit(limits, limit);
+
+            if (matched != null) {
+                // Is our limit better?
+                if (limit.getLimit() > matched.getLimit()) {
+                    limits.remove(limit);
+                    limits.add(matched);
+                }
+            } else {
+                limits.add(matched);
+            }
+        }
+
+        return limits;
+    }
+
+    /**
      * Get the player's effective limit that should take precedence
      *
      * @param player
@@ -189,32 +245,7 @@ public class LimitsV2 extends JavaModule {
      * @return
      */
     public Limit getEffectiveLimit(Player player, Material material) {
-        LWC lwc = LWC.getInstance();
-
-        // The limit that was found
-        Limit found;
-
-        // First check for a player override
-        found = getEffectiveLimit(playerLimits.get(player.getName().toLowerCase()), material);
-
-        // begin going down the chain of precedence
-        if (found == null) {
-            // Go through the players groups and check each one
-            for (String group : lwc.getPermissions().getGroups(player)) {
-                found = getEffectiveLimit(groupLimits.get(group), material);
-
-                if (found != null) {
-                    break;
-                }
-            }
-
-            // If all else fails, use the default limit
-            if (found == null) {
-                found = getEffectiveLimit(defaultLimits, material);
-            }
-        }
-
-        return found;
+        return getEffectiveLimit(getPlayerLimits(player), material);
     }
 
     /**
@@ -308,6 +339,34 @@ public class LimitsV2 extends JavaModule {
         }
 
         return limits;
+    }
+
+    /**
+     * Find a limit in the list of limits that equals the given limit in class;
+     * The LIMIT itself does not need to be equal; only the class & if it's a
+     * BlockLimit, the material must equal
+     *
+     * @param limits
+     * @param compare
+     * @return
+     */
+    private Limit findLimit(List<Limit> limits, Limit compare) {
+        for (Limit limit : limits) {
+            if (limit.getClass().isInstance(compare)) {
+                if (limit instanceof BlockLimit) {
+                    BlockLimit cmp1 = (BlockLimit) limit;
+                    BlockLimit cmp2 = (BlockLimit) compare;
+                    
+                    if (cmp1.getMaterial() == cmp2.getMaterial()) {
+                        return limit;
+                    }
+                } else {
+                    return limit;
+                }
+            }
+        }
+
+        return null;
     }
 
 }
