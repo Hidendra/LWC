@@ -392,7 +392,7 @@ public class LWCPlugin extends JavaPlugin {
         registerEvent(playerListener, Type.PLAYER_CHAT);
 
         /* Entity events */
-        registerEvent(entityListener, Type.ENTITY_EXPLODE, Priority.Lowest);
+        registerEvent(entityListener, Type.ENTITY_EXPLODE, Priority.High);
 
         /* Block events */
         registerEvent(blockListener, Type.BLOCK_BREAK);
