@@ -305,7 +305,10 @@ public class LWCBlockListener extends BlockListener {
 
             // All good!
             Protection protection = lwc.getPhysicalDatabase().registerProtection(block.getTypeId(), type, block.getWorld().getName(), player.getName(), "", block.getX(), block.getY(), block.getZ());
-            lwc.sendLocale(player, "protection.onplace.create.finalize", "type", lwc.getLocale(autoRegisterType.toLowerCase()), "block", LWC.materialToString(block));
+
+            if (!Boolean.parseBoolean(lwc.resolveProtectionConfiguration(block.getType(), "quiet"))) {
+                lwc.sendLocale(player, "protection.onplace.create.finalize", "type", lwc.getLocale(autoRegisterType.toLowerCase()), "block", LWC.materialToString(block));
+            }
 
             if (protection != null) {
                 lwc.getModuleLoader().dispatchEvent(new LWCProtectionRegistrationPostEvent(protection));

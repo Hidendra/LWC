@@ -125,6 +125,9 @@ protections:
     # but not chests.
     ignoreExplosions: false
 
+    # Creation messages and protection notices will not be shown for this protection
+    quiet: false
+
     # Current and custom protections are defined here by their block name or id
     # If you use the Id, you MUST encase it in quotes, for example (chest):
     # '54':
