@@ -1,17 +1,22 @@
 name: LWC
 main: com.griefcraft.lwc.LWCPlugin
-version: 3.58
+version: @VERSION@
 website: http://griefcraft.com
 author: Hidendra
 description: >
-             Lightweight Chest Protection & Management for Chests, Furnaces, Dispensers, and more.
-softdepend:
-    - 'Permissions'
-    - 'PermissionsBukkit'
+             Inventory protection & management utilizing SQLite or MySQL as its backend
+             Other blocks can also be protected individually, if configured.
+load: startup
 
 commands:
   lwc:
     description: LWC's hub command to access everything
+    usage: /<command>
+  lock:
+    description: Lock a block using LWC that only you can access
+    usage: /<command>
+  unlock:
+    description: Remove a protection that was protected by LWC
     usage: /<command>
   cadmin:
     description: Administrate LWC
@@ -25,6 +30,9 @@ commands:
   cprivate:
     description: Create a protection that only you and specific groups or people can access.
     usage: /<command> <Users/Groups>
+  cdonation:
+    description: Creates a chest that can be deposited into, but only removed by player with access. Requires Spout
+    usage: /<command>
   cmodify:
     description: Modify an existing private protection.
     usage: /<command> <Modifications>
@@ -58,6 +66,16 @@ commands:
   cexempt:
     description: Toggle protection exemption on an existing protection; disallows it from being removed by -remove, e.g /lwc admin expire -remove 2 weeks
     usage: /<command>
+  cautoclose:
+    description: Flag a door to automatically close after 3 seconds (configurable.)
+    usage: /<command>
+  cremoveall:
+    description: Remove all of the protections that you own
+    usage: /<command>
+  callowexplosions:
+    description: Flag to allow a given protection to explode from explosions.
+  ctnt:
+    description: Flag to allow a given protection to explode from explosions.
 
 permissions:
 
@@ -102,6 +120,7 @@ permissions:
           lwc.create.public: true
           lwc.create.password: true
           lwc.create.private: true
+          lwc.create.donation: true
   lwc.create.public:
       description: Allows you to create a public protection.
   lwc.create.password:
@@ -127,10 +146,14 @@ permissions:
       children:
            lwc.flag.redstone: true
            lwc.flag.magnet: true
+           lwc.flag.autoclose: true
+           lwc.flag.allowexplosions: true
   lwc.flag.redstone:
       description: Allows you to use the redstone flag, which enables or disables the use of redstone on a protection depending on plugin settings.
   lwc.flag.magnet:
       description: Allows you to use the magnet flag, which makes a protection such as a chest suck up dropped items in a specific radius around it.
+  lwc.flag.autoclose:
+      description: Allows a door to automatically close itself after 3 seconds (configurable.)
 
   lwc.mode.*:
       description: Gives you access to every usable mode, provided they are already disabled.
@@ -144,3 +167,7 @@ permissions:
       description: Allows you to use the persist flag, which allows you to use commands repeatably.
   lwc.mode.droptransfer:
       description: Allows you to use the drop transfer flag, which allows you to "drop" items into your chest from far away.
+
+  lwc.autoprotect:
+      default: false
+      description: Allows you to auto protect LWC protections regardless of how LWC is configured

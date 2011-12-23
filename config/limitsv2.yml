@@ -1,0 +1,19 @@
+# default to unlimited protections
+defaults:
+    default: unlimited
+
+# Overrides for Permissions groups
+groups:
+    # 5 chests, unlimited everything else
+    SampleGroup:
+        default: unlimited
+        chest: 5
+
+    # 5 total protections
+    SampleGroup2:
+        default: 5
+
+players:
+    # Gives Notch unlimited protections
+    Notch:
+        default: unlimited

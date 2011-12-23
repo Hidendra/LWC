@@ -1,0 +1,51 @@
+# Precedence (order) for values LWC-Economy uses is:
+# PLAYER > GROUP > DEFAULT
+iConomy:
+    enabled: true
+
+    # If LWC-Economy should refund money paid for a protection when a player removes it.
+    # If a player gets a discount, they will be refunded the discount, not the full purchase price!
+    refunds: true
+
+    # Configure a server bank account for all charges to be deposited into (a central bank).
+    # When a protections is removed, money will be withdrawn from this account to refund the player.
+    # If the server account does not have  enough money, the player will not be able to remove the protection (to get their refund!)
+    #
+    # ! If blank, a server bank account will NOT be used
+    # ! If the bank account has not already been created, no one will be able to create or remove protections
+    # ! This feature is only supported by a limited amount of Economy plugins (such as iConomy and BOSEconomy.)
+    #
+    serverBankAccount: ''
+
+    # The default price to charge for protections, which can overridden for groups or players
+    charge: 5.00
+
+    # The amount of money the player is charged to ACCESS AND OPEN an inventory of a block that has been
+    # protected. e.g chest, furnace, etc. This can be overridden by groups and/or player nodes
+    usageFee: 0.00
+
+    # Discounted protections
+    # The discount will give exactly AMOUNT protections at NEWCHARGE price.
+    # Discounts also have a 'type'. They can either be: EXACT or TOTAL
+    # EXACT: The discount will give <amount> of protections at <newCharge> price: no more, no less.
+    # TOTAL: The discount will charge <newCharge> price while the player has <amount> or lower total protections.
+    discount:
+        active: false
+        type: EXACT
+        amount: 5
+        newCharge: 0.00
+
+# Group overrides. Please note that these are CASE SENSITIVE
+groups:
+    SomeGroup:
+        charge: 5.00
+        discount:
+            active: false
+            type: EXACT
+            amount: 5
+            newCharge: 0.00
+
+# Player overrides.
+players:
+    Hidendra:
+        charge: 5.00

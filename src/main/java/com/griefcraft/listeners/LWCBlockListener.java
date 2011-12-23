@@ -1,18 +1,29 @@
-/**
- * This file is part of LWC (https://github.com/Hidendra/LWC)
+/*
+ * Copyright 2011 Tyler Blair. All rights reserved.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Redistribution and use in source and binary forms, with or without modification, are
+ * permitted provided that the following conditions are met:
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    1. Redistributions of source code must retain the above copyright notice, this list of
+ *       conditions and the following disclaimer.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *       of conditions and the following disclaimer in the documentation and/or other materials
+ *       provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those of the
+ * authors and contributors and should not be interpreted as representing official policies,
+ * either expressed or implied, of anybody else.
  */
 
 package com.griefcraft.listeners;
@@ -20,13 +31,11 @@ package com.griefcraft.listeners;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
-import com.griefcraft.model.ProtectionTypes;
-import com.griefcraft.scripting.Module.Result;
-import com.griefcraft.scripting.ModuleLoader.Event;
 import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
 import com.griefcraft.scripting.event.LWCRedstoneEvent;
+import com.griefcraft.util.Colors;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -35,6 +44,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
@@ -71,18 +81,17 @@ public class LWCBlockListener extends BlockListener {
             return;
         }
 
-        Result result = lwc.getModuleLoader().dispatchEvent(Event.REDSTONE, protection, block, event.getOldCurrent());
         LWCRedstoneEvent evt = new LWCRedstoneEvent(event, protection);
         lwc.getModuleLoader().dispatchEvent(evt);
 
-        if (evt.isCancelled() || result == Result.CANCEL) {
+        if (evt.isCancelled()) {
             event.setNewCurrent(event.getOldCurrent());
         }
     }
 
     @Override
     public void onSignChange(SignChangeEvent event) {
-        if (!LWC.ENABLED) {
+        if (!LWC.ENABLED || event.isCancelled()) {
             return;
         }
 
@@ -109,11 +118,7 @@ public class LWCBlockListener extends BlockListener {
 
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-
-        if (!LWC.ENABLED) {
+        if (!LWC.ENABLED || event.isCancelled()) {
             return;
         }
 
@@ -138,11 +143,10 @@ public class LWCBlockListener extends BlockListener {
         boolean canAdmin = lwc.canAdminProtection(player, protection);
 
         try {
-            Result result = lwc.getModuleLoader().dispatchEvent(Event.DESTROY_PROTECTION, player, protection, block, canAccess, canAdmin);
-            LWCProtectionDestroyEvent evt = new LWCProtectionDestroyEvent(player, protection, canAccess, canAdmin);
+            LWCProtectionDestroyEvent evt = new LWCProtectionDestroyEvent(player, protection, LWCProtectionDestroyEvent.Method.BLOCK_DESTRUCTION, canAccess, canAdmin);
             lwc.getModuleLoader().dispatchEvent(evt);
 
-            if (evt.isCancelled() || result == Result.CANCEL) {
+            if (evt.isCancelled()) {
                 event.setCancelled(true);
             }
         } catch (Exception e) {
@@ -153,8 +157,8 @@ public class LWCBlockListener extends BlockListener {
     }
 
     @Override
-    public void onBlockPistonExtend(BlockPistonExtendEvent event) {
-        if (!LWC.ENABLED) {
+    public void onBlockPistonRetract(BlockPistonRetractEvent event) {
+        if (!LWC.ENABLED || event.isCancelled()) {
             return;
         }
 
@@ -162,18 +166,69 @@ public class LWCBlockListener extends BlockListener {
         Block piston = event.getBlock();
         BlockState state = piston.getState();
         MaterialData data = state.getData();
+        BlockFace direction = null;
 
-        if(!(data instanceof PistonBaseMaterial)) {
+        // Check the block it pushed directly
+        if (data instanceof PistonBaseMaterial) {
+            direction = ((PistonBaseMaterial) data).getFacing();
+        }
+
+        if (direction == null) {
             return;
         }
 
-        BlockFace direction = ((PistonBaseMaterial) data).getFacing();
-        Block block = event.getBlock().getRelative(direction);
+        // the block that the piston moved
+        Block moved = piston.getRelative(direction, 2);
 
-        Protection protection = lwc.findProtection(block);
-
-        if (protection != null) {
+        if (lwc.findProtection(moved) != null) {
             event.setCancelled(true);
+        }
+    }
+
+    @Override
+    public void onBlockPistonExtend(BlockPistonExtendEvent event) {
+        if (!LWC.ENABLED || event.isCancelled()) {
+            return;
+        }
+
+        LWC lwc = plugin.getLWC();
+        Block piston = event.getBlock();
+        BlockState state = piston.getState();
+        MaterialData data = state.getData();
+        BlockFace direction = null;
+
+        // Check the block it pushed directly
+        if (data instanceof PistonBaseMaterial) {
+            direction = ((PistonBaseMaterial) data).getFacing();
+            Block block = event.getBlock().getRelative(direction);
+
+            Protection protection = lwc.findProtection(block);
+
+            if (protection != null) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+
+        // if no direction was found, no point in going on
+        if (direction == null) {
+            return;
+        }
+
+        // Check the affected blocks
+        for (int i = 0; i < event.getLength() + 2; i++) {
+            Block block = piston.getRelative(direction, i);
+            Protection protection = lwc.findProtection(block);
+
+            // We don't want that!
+            if (block.getType() == Material.AIR) {
+                break;
+            }
+
+            if (protection != null) {
+                event.setCancelled(true);
+                break;
+            }
         }
     }
 
@@ -182,25 +237,13 @@ public class LWCBlockListener extends BlockListener {
      */
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-
-        if (!LWC.ENABLED) {
+        if (!LWC.ENABLED || event.isCancelled()) {
             return;
         }
 
         LWC lwc = plugin.getLWC();
         Player player = event.getPlayer();
         Block block = event.getBlockPlaced();
-
-        // water exploit (placing 3+ chests in a row inside water, fire, etc)
-        if (block.getType() == Material.CHEST) {
-            if (lwc.findAdjacentDoubleChest(block) != null) {
-                event.setCancelled(true);
-                return;
-            }
-        }
 
         // The placable block must be protectable
         if (!lwc.isProtectable(block)) {
@@ -209,7 +252,7 @@ public class LWCBlockListener extends BlockListener {
 
         String autoRegisterType = plugin.getLWC().resolveProtectionConfiguration(block.getType(), "autoRegister");
 
-        // is it auto registerable?
+        // is it auto protectable?
         if (!autoRegisterType.equalsIgnoreCase("private") && !autoRegisterType.equalsIgnoreCase("public")) {
             return;
         }
@@ -218,11 +261,20 @@ public class LWCBlockListener extends BlockListener {
             return;
         }
 
-        // default to public
-        int type = ProtectionTypes.PUBLIC;
+        // Parse the type
+        Protection.Type type;
 
-        if (autoRegisterType.equalsIgnoreCase("private")) {
-            type = ProtectionTypes.PRIVATE;
+        try {
+            type = Protection.Type.valueOf(autoRegisterType.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            // No auto protect type found
+            return;
+        }
+
+        // Is it okay?
+        if (type == null) {
+            player.sendMessage(Colors.Red + "LWC_INVALID_CONFIG_autoRegister");
+            return;
         }
 
         // If it's a chest, make sure they aren't placing it beside an already registered chest
@@ -242,21 +294,22 @@ public class LWCBlockListener extends BlockListener {
         }
 
         try {
-            Result registerProtection = lwc.getModuleLoader().dispatchEvent(Event.REGISTER_PROTECTION, player, block);
             LWCProtectionRegisterEvent evt = new LWCProtectionRegisterEvent(player, block);
             lwc.getModuleLoader().dispatchEvent(evt);
 
             // something cancelled registration
-            if (evt.isCancelled() || registerProtection == Result.CANCEL) {
+            if (evt.isCancelled()) {
                 return;
             }
 
             // All good!
             Protection protection = lwc.getPhysicalDatabase().registerProtection(block.getTypeId(), type, block.getWorld().getName(), player.getName(), "", block.getX(), block.getY(), block.getZ());
-            lwc.sendLocale(player, "protection.onplace.create.finalize", "type", lwc.getLocale(autoRegisterType.toLowerCase()), "block", LWC.materialToString(block));
+
+            if (!Boolean.parseBoolean(lwc.resolveProtectionConfiguration(block.getType(), "quiet"))) {
+                lwc.sendLocale(player, "protection.onplace.create.finalize", "type", lwc.getLocale(autoRegisterType.toLowerCase()), "block", LWC.materialToString(block));
+            }
 
             if (protection != null) {
-                lwc.getModuleLoader().dispatchEvent(Event.POST_REGISTRATION, protection);
                 lwc.getModuleLoader().dispatchEvent(new LWCProtectionRegistrationPostEvent(protection));
             }
         } catch (Exception e) {

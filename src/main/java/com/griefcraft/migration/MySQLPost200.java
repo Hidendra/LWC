@@ -1,32 +1,38 @@
-/**
- * This file is part of LWC (https://github.com/Hidendra/LWC)
+/*
+ * Copyright 2011 Tyler Blair. All rights reserved.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Redistribution and use in source and binary forms, with or without modification, are
+ * permitted provided that the following conditions are met:
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    1. Redistributions of source code must retain the above copyright notice, this list of
+ *       conditions and the following disclaimer.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *       of conditions and the following disclaimer in the documentation and/or other materials
+ *       provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those of the
+ * authors and contributors and should not be interpreted as representing official policies,
+ * either expressed or implied, of anybody else.
  */
 
 package com.griefcraft.migration;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.AccessRight;
-import com.griefcraft.model.History;
-import com.griefcraft.model.Protection;
 import com.griefcraft.sql.Database.Type;
 import com.griefcraft.sql.PhysDB;
 
 import java.io.File;
-import java.sql.SQLException;
-import java.util.List;
 import java.util.logging.Logger;
 
 // Sort of just a convenience class, so as to not make the LWC class more cluttered than it is right now
@@ -51,8 +57,8 @@ public class MySQLPost200 implements MigrationUtility {
         // still exists :-)
         String database = lwc.getConfiguration().getString("database.path");
 
-        if (database == null || database.equals("")) {
-            return;
+        if (database == null || database.trim().equals("")) {
+            database = "plugins/LWC/lwc.db";
         }
 
         File file = new File(database);
@@ -64,88 +70,12 @@ public class MySQLPost200 implements MigrationUtility {
         logger.info("######################################################");
         logger.info("SQLite to MySQL conversion required");
 
-        logger.info("Loading SQLite");
+        // rev up those sqlite databases because I sure am hungry for some data...
+        DatabaseMigrator migrator = new DatabaseMigrator();
+        lwc.reloadDatabase();
 
-        // rev up those sqlite databases because I sure am hungry for some
-        // data...
-        PhysDB sqliteDatabase = new PhysDB(Type.SQLite);
-
-        try {
-            sqliteDatabase.connect();
-            sqliteDatabase.load();
-
-            logger.info("SQLite is good to go");
-            physicalDatabase.getConnection().setAutoCommit(false);
-
-            logger.info("Preliminary scan...............");
-            int startProtections = physicalDatabase.getProtectionCount();
-
-            int protectionCount = sqliteDatabase.getProtectionCount();
-            int rightsCount = sqliteDatabase.getRightsCount();
-            int historyCount = sqliteDatabase.getHistoryCount();
-
-            int expectedProtections = protectionCount + startProtections;
-
-            logger.info("TO CONVERT:");
-            logger.info("Protections:\t" + protectionCount);
-            logger.info("Rights:\t\t" + rightsCount);
-            logger.info("History:\t" + historyCount);
-            logger.info("");
-
-            if (protectionCount > 0) {
-                logger.info("Converting: PROTECTIONS");
-
-                List<Protection> tmp = sqliteDatabase.loadProtections();
-
-                for (Protection protection : tmp) {
-                    int x = protection.getX();
-                    int y = protection.getY();
-                    int z = protection.getZ();
-
-                    // register it
-                    physicalDatabase.registerProtection(protection.getBlockId(), protection.getType(), protection.getWorld(), protection.getOwner(), protection.getData(), x, y, z);
-
-                    // get the new protection, to retrieve the id
-                    Protection registered = physicalDatabase.loadProtection(protection.getWorld(), x, y, z);
-
-                    // get the rights in the world
-                    List<AccessRight> tmpRights = sqliteDatabase.loadRights(protection.getId());
-
-                    // register the new rights using the newly registered protection
-                    for (AccessRight right : tmpRights) {
-                        physicalDatabase.registerProtectionRights(registered.getId(), right.getName(), right.getRights(), right.getType());
-                    }
-                }
-
-                logger.info("COMMITTING");
-                physicalDatabase.getConnection().commit();
-                logger.info("OK , expecting: " + expectedProtections);
-                if (expectedProtections == (protectionCount = physicalDatabase.getProtectionCount())) {
-                    logger.info("OK.");
-                } else {
-                    logger.info("Weird, only " + protectionCount + " protections are in the database? Continuing...");
-                }
-            }
-
-            if(historyCount > 0) {
-                logger.info("Converting: HISTORY");
-
-                List<History> tmp = sqliteDatabase.loadHistory();
-
-                for(History history : tmp) {
-                    // make sure it's assumed it does not exist in the database
-                    history.setExists(false);
-
-                    // sync the history object with the active database (ala MySQL)
-                    history.sync();
-                }
-
-                logger.info("OK");
-            }
-
-            logger.info("Closing SQLite");
-            sqliteDatabase.getConnection().close();
-
+        if (migrator.migrate(lwc.getPhysicalDatabase(), new PhysDB(Type.SQLite))) {
+            logger.info("Successfully converted.");
             logger.info("Renaming \"" + database + "\" to \"" + database + ".old\"");
             if (!file.renameTo(new File(database + ".old"))) {
                 logger.info("NOTICE: FAILED TO RENAME lwc.db!! Please rename this manually!");
@@ -153,15 +83,8 @@ public class MySQLPost200 implements MigrationUtility {
 
             logger.info("SQLite to MySQL conversion is now complete!\n");
             logger.info("Thank you!");
-        } catch (Exception e) {
+        } else {
             logger.info("#### SEVERE ERROR: Something bad happened when converting the database (Oops!)");
-            e.printStackTrace();
-        }
-
-        try {
-            physicalDatabase.getConnection().setAutoCommit(true);
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
 
         logger.info("######################################################");
