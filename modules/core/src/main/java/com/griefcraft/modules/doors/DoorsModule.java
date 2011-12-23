@@ -233,7 +233,7 @@ public class DoorsModule extends JavaModule {
         List<Block> blocks = new ArrayList<Block>();
 
         // the door they clicked on
-        Block clickedDoor = lwc.getProtectionSet(protection.getBukkitWorld(), protection.getX(), protection.getY(), protection.getZ()).get(0);
+        Block clickedDoor = new ArrayList<Block>(protection.getProtectionFinder().getBlocks()).get(0);
 
         // add the bottom half of the door to the set
         blocks.add(clickedDoor);

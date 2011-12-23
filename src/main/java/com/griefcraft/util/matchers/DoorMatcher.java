@@ -61,7 +61,7 @@ public class DoorMatcher implements ProtectionFinder.Matcher {
         // look for door if they're clicking a pressure plate
         if (PRESSURE_PLATES.contains(block.getType()) || PRESSURE_PLATES.contains(aboveBaseBlock.getType())) {
             Block pressurePlate = PRESSURE_PLATES.contains(block.getType()) ? block : aboveBaseBlock;
-            
+
             for (BlockFace face : faces) {
                 Block relative = pressurePlate.getRelative(face);
 
@@ -79,7 +79,7 @@ public class DoorMatcher implements ProtectionFinder.Matcher {
                     for (Block found : doorFinder.getBlocks()) {
                         finder.addBlock(found);
                     }
-                    
+
                     // add the pressure plate
                     finder.addBlock(pressurePlate);
                     return true;
