@@ -1,18 +1,29 @@
-/**
- * This file is part of LWC (https://github.com/Hidendra/LWC)
+/*
+ * Copyright 2011 Tyler Blair. All rights reserved.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Redistribution and use in source and binary forms, with or without modification, are
+ * permitted provided that the following conditions are met:
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    1. Redistributions of source code must retain the above copyright notice, this list of
+ *       conditions and the following disclaimer.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *       of conditions and the following disclaimer in the documentation and/or other materials
+ *       provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those of the
+ * authors and contributors and should not be interpreted as representing official policies,
+ * either expressed or implied, of anybody else.
  */
 
 package com.griefcraft.lwc;
@@ -23,6 +34,8 @@ import com.griefcraft.model.History;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
+import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
@@ -31,7 +44,9 @@ import com.griefcraft.util.config.Configuration;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,6 +55,28 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 public class EconomyModule extends JavaModule {
+
+    public enum DiscountType {
+
+        /**
+         * The discount will apply while the player has under X protections total.
+         */
+        TOTAL,
+
+        /**
+         * The discount will only give the player X discounted protections - no more.
+         */
+        EXACT,
+
+        /**
+         * The discount will apply while the player has under X DISCOUNTED protections total.
+         * This is different from TOTAL because if they have 5 free protections, they get 5
+         * for free, and if they remove one of the free ones, they will get 1 protection
+         * for free.
+         */
+        IN_USE
+
+    }
 
     private Logger logger = Logger.getLogger("LWC");
 
@@ -54,6 +91,11 @@ public class EconomyModule extends JavaModule {
     private LWCEconomyPlugin plugin;
 
     /**
+     * The discount type to use
+     */
+    private DiscountType discountType;
+
+    /**
      * A cache of prices. When a value is inputted, it stays in memory for milliseconds at best.
      * The best way to do this? ha, probably not
      */
@@ -64,12 +106,127 @@ public class EconomyModule extends JavaModule {
     }
 
     @Override
+    public void onProtectionInteract(LWCProtectionInteractEvent event) {
+        if (event.getResult() != Result.DEFAULT || !event.canAccess()) {
+            return;
+        }
+
+        if (!configuration.getBoolean("iConomy.enabled", true)) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        Protection protection = event.getProtection();
+        Player player = event.getPlayer();
+
+        // first, do we still have a currency processor?
+        if (!lwc.getCurrency().isActive()) {
+            return;
+        }
+
+        // is it actually a container? :p
+        if (!(protection.getBlock().getState() instanceof ContainerBlock)) {
+            return;
+        }
+
+        // Are they right clicking the chest (aka open) ?
+        if (event.getEvent().getAction() != Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
+
+        // grab the fee
+        String fee = resolveValue(player, "usageFee");
+
+        if (fee == null || fee.isEmpty()) {
+            return;
+        }
+
+        // Usage fee
+        double usageFee = Double.parseDouble(fee);
+
+        // No fee! :D
+        if (usageFee <= 0) {
+            return;
+        }
+
+        // Can they afford it?
+        if (!lwc.getCurrency().canAfford(player, usageFee)) {
+            // Nope!
+            player.sendMessage(Colors.Red + "You need " + lwc.getCurrency().format(usageFee) + " to open your protection!");
+            event.setResult(Result.CANCEL);
+            return;
+        }
+
+        // Charge them!
+        lwc.getCurrency().removeMoney(player, usageFee);
+        player.sendMessage(Colors.Green + "You have been charged " + lwc.getCurrency().format(usageFee) + " to open your protection.");
+    }
+
+    @Override
+    public void onDestroyProtection(LWCProtectionDestroyEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
+        if (!configuration.getBoolean("iConomy.enabled", true)) {
+            return;
+        }
+
+        // is refunding enabled?
+        if (!configuration.getBoolean("iConomy.refunds", true)) {
+            return;
+        }
+
+        if (!LWC.getInstance().isHistoryEnabled()) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        Protection protection = event.getProtection();
+        Player player = event.getPlayer();
+
+        // first, do we still have a currency processor?
+        if (!lwc.getCurrency().isActive()) {
+            return;
+        }
+
+        // Does it support the server bank feature
+        if (!lwc.getCurrency().usingCentralBank()) {
+            return;
+        }
+
+        // load the transactions so we can check the server bank
+        List<History> transactions = protection.getRelatedHistory(History.Type.TRANSACTION);
+
+        for (History history : transactions) {
+            if (history.getStatus() == History.Status.INACTIVE) {
+                continue;
+            }
+
+            // obtain the charge
+            double charge = history.getDouble("charge");
+
+            // No need to refund if it's negative or 0
+            if (charge <= 0) {
+                continue;
+            }
+
+            // check the server bank
+            if (!lwc.getCurrency().canCentralBankAfford(charge)) {
+                player.sendMessage(Colors.Red + "The Server's Bank does not contain enough funds to remove that protection!");
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
+
+    @Override
     public void onPostRegistration(LWCProtectionRegistrationPostEvent event) {
         if (!configuration.getBoolean("iConomy.enabled", true)) {
             return;
         }
 
-        if(!LWC.getInstance().isHistoryEnabled()) {
+        if (!LWC.getInstance().isHistoryEnabled()) {
             return;
         }
 
@@ -80,7 +237,6 @@ public class EconomyModule extends JavaModule {
 
         // Uh-oh! This REALLY should never happen ... !
         if (block == null || !priceCache.containsKey(block.getLocation())) {
-            logger.severe("LWC-iConomy POST_REGISTRATION has encountered a severe problem!");
             return;
         }
 
@@ -107,12 +263,19 @@ public class EconomyModule extends JavaModule {
         history.addMetaData("charge=" + charge);
 
         // was it a discount?
-        if(usedDiscount) {
+        if (usedDiscount) {
             history.addMetaData("discount=true");
+
+            // Was the discount's id non-null?
+            String discountId = resolveValue(protection.getBukkitOwner(), "discount.id");
+
+            if (!discountId.isEmpty()) {
+                history.addMetaData("discountId=" + discountId);
+            }
         }
 
-        // save it
-        history.sync();
+        // save it immediately
+        history.saveNow();
 
         // we no longer need the value in the price cache :)
         priceCache.remove(location);
@@ -129,7 +292,7 @@ public class EconomyModule extends JavaModule {
             return;
         }
 
-        if(!LWC.getInstance().isHistoryEnabled()) {
+        if (!LWC.getInstance().isHistoryEnabled()) {
             return;
         }
 
@@ -200,9 +363,15 @@ public class EconomyModule extends JavaModule {
         // how much to charge the player
         double charge = 0D;
 
+        String value;
+        // Check for a block override charge
+        if ((value = lwc.resolveProtectionConfiguration(block.getType(), "charge")) == null) {
+            // not found; use default
+            value = resolveValue(player, "charge");
+        }
+
         // attempt to resolve the new charge
         try {
-            String value = resolveValue(player, "charge");
             charge = Double.parseDouble(value);
         } catch (NumberFormatException e) {
         }
@@ -213,25 +382,34 @@ public class EconomyModule extends JavaModule {
 
             if (isDiscountActive) {
                 int discountedProtections = Integer.parseInt(resolveValue(player, "discount.amount"));
-                double wouldCharge = Double.parseDouble(resolveValue(player, "discount.newCharge"));
+                double discountPrice = Double.parseDouble(resolveValue(player, "discount.newCharge"));
 
                 if (discountedProtections > 0) {
-                    String discountType = resolveValue(player, "discount.type");
                     int currentProtections = 0;
-                    boolean isExactDiscountType = true;
 
-                    if(discountType.equalsIgnoreCase("TOTAL")) {
-                        isExactDiscountType = false;
-                    }
+                    // Match the discount type
+                    DiscountType discountType = DiscountType.valueOf(resolveValue(player, "discount.type").toUpperCase());
 
-                    if(isExactDiscountType) {
-                        currentProtections = getDiscountedProtections(lwc, player, wouldCharge);
-                    } else {
-                        currentProtections = lwc.getPhysicalDatabase().getProtectionCount(player.getName());
+                    // The unique id of the discount, by default they are shared between discounts if not set
+                    String discountId = resolveValue(player, "discount.id");
+
+                    // Count the protections
+                    switch (discountType) {
+                        case EXACT:
+                            currentProtections = countDiscountedProtections(lwc, player, discountPrice, discountId.isEmpty() ? null : discountId, false);
+                            break;
+
+                        case TOTAL:
+                            currentProtections = lwc.getPhysicalDatabase().getProtectionCount(player.getName());
+                            break;
+
+                        case IN_USE:
+                            currentProtections = countDiscountedProtections(lwc, player, discountPrice, discountId.isEmpty() ? null : discountId, true);
+                            break;
                     }
 
                     if (discountedProtections > currentProtections) {
-                        charge = wouldCharge;
+                        charge = discountPrice;
                         usedDiscount = true;
                     }
                 }
@@ -243,10 +421,10 @@ public class EconomyModule extends JavaModule {
         Location location = block.getLocation();
 
         // cache the charge momentarily
-        if(lwc.isHistoryEnabled()) {
+        if (lwc.isHistoryEnabled()) {
             priceCache.put(location, (usedDiscount ? "d" : "") + charge);
         }
-        
+
         // It's free!
         if (charge == 0) {
             player.sendMessage(Colors.Green + "This one's on us!");
@@ -271,7 +449,6 @@ public class EconomyModule extends JavaModule {
             return;
         }
 
-        return;
     }
 
     /**
@@ -337,28 +514,38 @@ public class EconomyModule extends JavaModule {
      * @param lwc
      * @param player
      * @param discountPrice
+     * @param discountId
+     * @param onlyCountActiveTransactions
      * @return
      */
-    private int getDiscountedProtections(LWC lwc, Player player, double discountPrice) {
+    private int countDiscountedProtections(LWC lwc, Player player, double discountPrice, String discountId, boolean onlyCountActiveTransactions) {
         LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
         List<History> related = lwcPlayer.getRelatedHistory(History.Type.TRANSACTION);
 
-        if(related.size() == 0) {
-            return 0;
-        }
-
         int amount = 0;
 
-        for(History history : related) {
-            if(!history.getBoolean("discount")) {
+        for (History history : related) {
+            if (!history.getBoolean("discount")) {
+                continue;
+            }
+
+            // Check the other discount id
+            if (discountId != null) {
+                if (!history.hasKey("discountId") || !history.getString("discountId").equals(discountId)) {
+                    continue;
+                }
+            }
+
+            // Are we only looking for valid transactions?
+            if (onlyCountActiveTransactions && history.getStatus() == History.Status.INACTIVE) {
                 continue;
             }
 
             // obtain the charge
             double charge = history.getDouble("charge");
 
-            if(charge == discountPrice) {
-                amount ++;
+            if (charge == discountPrice) {
+                amount++;
             }
         }
 

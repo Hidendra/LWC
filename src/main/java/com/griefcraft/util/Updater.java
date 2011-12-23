@@ -1,18 +1,29 @@
-/**
- * This file is part of LWC (https://github.com/Hidendra/LWC)
+/*
+ * Copyright 2011 Tyler Blair. All rights reserved.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Redistribution and use in source and binary forms, with or without modification, are
+ * permitted provided that the following conditions are met:
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    1. Redistributions of source code must retain the above copyright notice, this list of
+ *       conditions and the following disclaimer.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *       of conditions and the following disclaimer in the documentation and/or other materials
+ *       provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those of the
+ * authors and contributors and should not be interpreted as representing official policies,
+ * either expressed or implied, of anybody else.
  */
 
 package com.griefcraft.util;
@@ -30,135 +41,484 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.net.URLConnection;
+import java.util.Enumeration;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 public class Updater {
 
+    public enum UpdateMethod {
+
+        /**
+         * Updating will be performed automatically by LWC
+         */
+        AUTOMATIC,
+
+        /**
+         * Updating will be performed manually by the admin
+         */
+        MANUAL;
+
+        /**
+         * Match an input to an update method
+         *
+         * @param input
+         * @return
+         */
+        public static UpdateMethod match(String input) {
+            for (UpdateMethod method : values()) {
+                if (method.toString().equalsIgnoreCase(input)) {
+                    return method;
+                }
+            }
+
+            return null;
+        }
+
+    }
+
+    public enum UpdateBranch {
+
+        /**
+         * Long release schedules and is recommended on any server that wishes to have stable LWC features
+         * but does not necessarily want the very latest LWC has to offer in features, bug fixes, and
+         * performance.
+         */
+        STABLE("stable"),
+
+        /**
+         * The most volatile branch. Should not be used on production servers but offers the most up to date features
+         * but testing may not have been performed all around. Performance may also not have been rounded out and
+         * any features may be removed at any time. Versioning for this branch is based off of the latest build number.
+         */
+        BLEEDING_EDGE("bleeding");
+
+        /**
+         * The branch name to use on the update site
+         */
+        private String branch;
+
+        UpdateBranch(String branch) {
+            this.branch = branch;
+        }
+
+        /**
+         * @return
+         */
+        public String getBranch() {
+            return branch;
+        }
+
+        /**
+         * Match an input to a branch
+         *
+         * @param input
+         * @return
+         */
+        public static UpdateBranch match(String input) {
+            for (UpdateBranch branch : values()) {
+                if (branch.toString().equalsIgnoreCase(input)) {
+                    return branch;
+                }
+            }
+
+            return null;
+        }
+
+    }
+
     /**
      * The logging object for this class
      */
-    private Logger logger = Logger.getLogger(getClass().getSimpleName());
-
-    /**
-     * List of files to download
-     */
-    private final List<UpdaterFile> needsUpdating = Collections.synchronizedList(new ArrayList<UpdaterFile>());
-
-    /**
-     * The folder where libraries are stored
-     */
-    public final static String DEST_LIBRARY_FOLDER = "plugins/LWC/";
-
-    /**
-     * File used for the distribution
-     */
-    public final static String DIST_FILE = "lwc/release/LWC.jar";
+    private final Logger logger = Logger.getLogger("LWC");
 
     /**
      * URL to the base update site
      */
-    public final static String UPDATE_SITE = "http://griefcraft.com/bukkit/";
+    public final static String UPDATE_SITE = "http://update.griefcraft.com";
 
     /**
-     * File used to obtain the latest version
+     * Location of the plugin on the website
      */
-    public final static String VERSION_FILE = "lwc/VERSION";
+    public final static String PLUGIN_LOCATION = "/lwc/";
 
     /**
-     * The latest LWC version
+     * URL to the Jenkins job for LWC
      */
-    private double latestPluginVersion = 0.00;
+    public final static String JENKINS = "http://ci.griefcraft.com/job/LWC/";
 
     /**
-     * Download a file
-     *
-     * @param updaterFile
+     * The folder where libraries are stored
      */
-    public void download(UpdaterFile updaterFile) {
-        needsUpdating.add(updaterFile);
+    public final static String DEST_LIBRARY_FOLDER = "plugins/LWC/lib/";
 
-        try {
-            update();
-        } catch (Exception e) {
-        }
+    /**
+     * The queue of files that need to be downloaded
+     */
+    private final Queue<UpdaterFile> fileQueue = new ConcurrentLinkedQueue<UpdaterFile>();
+
+    /**
+     * The update branch to use
+     */
+    private UpdateBranch updateBranch;
+
+    /**
+     * The update method to use
+     */
+    private UpdateMethod updateMethod;
+
+    /**
+     * The latest plugin version
+     */
+    private Version latestVersion;
+
+    public void init() {
+        LWC lwc = LWC.getInstance();
+        updateBranch = UpdateBranch.match(lwc.getConfiguration().getString("updater.branch", "STABLE"));
+        updateMethod = UpdateMethod.match(lwc.getConfiguration().getString("updater.method", "MANUAL"));
+        logger.info("LWC: Update branch: " + updateBranch);
+        logger.info("LWC: Update method: " + updateMethod);
+
+        this.loadVersions(true, new Runnable() {
+
+            public void run() {
+                tryAutoUpdate(false);
+                logger.info("LWC: Latest version: " + latestVersion);
+            }
+
+        });
+
+        // verify we have local files (e.g sqlite.jar, etc)
+        this.verifyFiles();
+        this.downloadFiles();
     }
 
     /**
-     * Check for dependencies
+     * Download all the files in the queue
      */
-    public void check() {
-        // account of dev builds or nonvalid builds
-        if (LWCInfo.VERSION == 0d) {
-            return;
-        }
+    public void downloadFiles() {
+        synchronized (fileQueue) {
+            UpdaterFile updaterFile = null;
 
-        if (Database.DefaultType == Database.Type.SQLite) {
-            String[] shared = new String[]{DEST_LIBRARY_FOLDER + "lib/sqlite.jar", getFullNativeLibraryPath()};
+            while ((updaterFile = fileQueue.poll()) != null) {
+                try {
+                    File local = new File(updaterFile.getLocalLocation());
+                    String remote = updaterFile.getRemoteLocation();
 
-            for (String path : shared) {
-                File file = new File(path);
+                    logger.info("LWC: Downloading file " + local.getName());
 
-                if (!file.exists() && !file.isDirectory()) {
-                    UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + "shared/" + path.replaceAll(DEST_LIBRARY_FOLDER, ""));
-                    updaterFile.setLocalLocation(path);
-
-                    if (!needsUpdating.contains(updaterFile)) {
-                        needsUpdating.add(updaterFile);
+                    // check for LWC folder
+                    File folder = new File("plugins/LWC/");
+                    if (!folder.exists()) {
+                        folder.mkdir();
                     }
+
+                    // check native folders
+                    folder = new File(getOSSpecificFolder());
+                    if (!folder.exists()) {
+                        folder.mkdirs();
+                    }
+
+                    if (local.exists()) {
+                        local.delete();
+                    }
+
+                    // create the local file
+                    local.createNewFile();
+
+                    // open the file
+                    OutputStream outputStream = new FileOutputStream(local);
+
+                    // Connect to the server
+                    URL url = new URL(remote);
+                    URLConnection connection = url.openConnection();
+
+                    InputStream inputStream = connection.getInputStream();
+
+                    // hopefully, the content length provided isn't -1
+                    int contentLength = connection.getContentLength();
+
+                    // Keep a running tally
+                    int bytesTransffered = 0;
+                    long lastUpdate = 0L;
+
+                    // begin transferring
+                    byte[] buffer = new byte[1024];
+                    int read = 0;
+
+                    while ((read = inputStream.read(buffer)) > 0) {
+                        outputStream.write(buffer, 0, read);
+                        bytesTransffered += read;
+
+                        if (contentLength > 0) {
+                            if (System.currentTimeMillis() - lastUpdate > 500L) {
+                                int percentTransferred = (int) (((float) bytesTransffered / contentLength) * 100);
+                                lastUpdate = System.currentTimeMillis();
+
+                                // omit 100% ..
+                                if (percentTransferred != 100) {
+                                    logger.info(percentTransferred + "%");
+                                }
+                            }
+                        }
+                    }
+
+                    // ok!
+                    outputStream.close();
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }
+    }
 
-        if (LWC.getInstance().getConfiguration().getBoolean("core.autoUpdate", false)) {
-            if (latestPluginVersion > LWCInfo.VERSION) {
-                logger.info("Update detected for LWC");
-                logger.info("Latest version: " + latestPluginVersion);
+    /**
+     * Try and automatically update, if automatic updating is enabled.
+     *
+     * @param forceUpdate
+     * @return true if LWC was updated
+     */
+    public boolean tryAutoUpdate(boolean forceUpdate) {
+        if (!forceUpdate) {
+            // do we qualify for an automatic update?
+            if (!shouldAutoUpdate()) {
+                return false;
             }
+        }
+
+        // we shouldn't update if the current version is the same as the latest, or their build numbers are equal
+        Version current = LWCInfo.FULL_VERSION;
+        if (current.equals(latestVersion) || (current.getBuildNumber() > 0 && latestVersion.getBuildNumber() > 0 && current.getBuildNumber() == latestVersion.getBuildNumber())) {
+            return false;
+        }
+
+        logger.info(Colors.Red + "LWC update found!");
+
+        // make sure all class files are loaded in our jar file before we overwrite it
+        loadAllClasses();
+
+        // update_site/version/LWC.jar
+        UpdaterFile file = new UpdaterFile("plugins/LWC.jar", getLatestDownloadURL());
+
+        // queue it
+        fileQueue.offer(file);
+
+        // immediately download
+        downloadFiles();
+        return true;
+    }
+
+    /**
+     * Load all the classes in the current jar file so it can be overwritten
+     */
+    private void loadAllClasses() {
+        LWC lwc = LWC.getInstance();
+        
+        try {
+            // Load the jar
+            JarFile jar = new JarFile(lwc.getPlugin().getFile());
+
+            // Walk through all of the entries
+            Enumeration<JarEntry> enumeration = jar.entries();
+
+            while (enumeration.hasMoreElements()) {
+                JarEntry entry = enumeration.nextElement();
+                String name = entry.getName();
+                
+                // is it a class file?
+                if (name.endsWith(".class")) {
+                    // convert to package
+                    String path = name.replaceAll("/", ".");
+                    path = path.substring(0, path.length() - ".class".length());
+
+                    // Load it
+                    this.getClass().getClassLoader().loadClass(path);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
     /**
-     * Check to see if the distribution is outdated
-     *
-     * @return
+     * Verify all required files exist
      */
-    public boolean checkDist() {
-        check();
+    private void verifyFiles() {
+        // SQLite libraries
+        if (Database.DefaultType == Database.Type.SQLite) {
+            // sqlite.jar
+            this.verifyFile(new UpdaterFile(DEST_LIBRARY_FOLDER + "sqlite.jar", UPDATE_SITE + "/shared/lib/sqlite.jar"));
 
-        if (LWCInfo.VERSION == 0) {
+            // Native library
+            this.verifyFile(new UpdaterFile(getFullNativeLibraryPath(), UPDATE_SITE + "/shared/" + getFullNativeLibraryPath().replaceAll(DEST_LIBRARY_FOLDER, "")));
+        }
+    }
+
+    /**
+     * Verify a file and if it does not exist, download it
+     *
+     * @param updaterFile
+     * @return true if the file was queued to be downloaded
+     */
+    private boolean verifyFile(UpdaterFile updaterFile) {
+        if (updaterFile == null) {
             return false;
         }
 
-        if (latestPluginVersion > LWCInfo.VERSION) {
-            UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + DIST_FILE);
-            updaterFile.setLocalLocation("plugins/LWC.jar");
+        File file = new File(updaterFile.getLocalLocation());
 
-            needsUpdating.add(updaterFile);
+        // Does it exist on the FS?
+        if (file.exists()) {
+            // So it does!
+            return false;
+        }
 
-            try {
-                update();
-                logger.info("Updated successful");
-                return true;
-            } catch (Exception e) {
-                logger.info("Update failed: " + e.getMessage());
-                e.printStackTrace();
+        // It does not exist ..
+        fileQueue.offer(updaterFile);
+        return true;
+    }
+
+    /**
+     * Download a config file
+     *
+     * @param config
+     */
+    public void downloadConfig(String config) {
+        File file = new File(ModuleLoader.ROOT_PATH + config); // where to save to
+        UpdaterFile updaterFile = new UpdaterFile(file.getPath(), UPDATE_SITE + PLUGIN_LOCATION + "config/" + config);
+
+        this.verifyFile(updaterFile);
+        this.downloadFiles();
+    }
+
+    /**
+     * Get the latest download URL. Could vary depending upon which update branch is used
+     *
+     * @return
+     */
+    public String getLatestDownloadURL() {
+        if (updateBranch == null) {
+            return "";
+        }
+
+        switch (updateBranch) {
+            case BLEEDING_EDGE:
+                return JENKINS + latestVersion.getBuildNumber() + "/artifact/build/LWC.jar";
+
+            default:
+                return UPDATE_SITE + PLUGIN_LOCATION + "branch/" + updateBranch.getBranch() + "/" + latestVersion.getRawVersion() + "/LWC.jar";
+        }
+    }
+
+    /**
+     * Check if we should try to automatically update
+     *
+     * @return
+     */
+    public boolean shouldAutoUpdate() {
+        if (updateBranch == null) {
+            return false;
+        }
+
+        if (updateMethod != UpdateMethod.AUTOMATIC) {
+            return false;
+        }
+
+        Version current = LWCInfo.FULL_VERSION;
+
+        switch (updateBranch) {
+            // We only want to compare the build number for bleeding edge
+            case BLEEDING_EDGE:
+                return latestVersion.getBuildNumber() > current.getBuildNumber() && (latestVersion.getBuildNumber() > 0 && current.getBuildNumber() > 0);
+
+            // For everything else, we are fine with the default routine
+            default:
+                return latestVersion.newerThan(current);
+        }
+    }
+
+    /**
+     * Load the latest version
+     *
+     * @param background
+     */
+    public void loadVersions(boolean background) {
+        this.loadVersions(background, null);
+    }
+
+    /**
+     * Load the latest version
+     *
+     * @param background if true, will be run in the background
+     * @param callback   The callback will be ran after the version is loaded
+     */
+    public void loadVersions(boolean background, final Runnable callback) {
+        class Background_Check_Thread implements Runnable {
+            public void run() {
+
+                switch (updateBranch) {
+                    /**
+                     * The bleeding edge branch instead reads the latest build number from Jenkins and relies
+                     * upon that. The nature of bleeding edge is to stay up to the latest build.
+                     */
+                    case BLEEDING_EDGE:
+                        try {
+                            URL url = new URL(JENKINS + "lastSuccessfulBuild/buildNumber");
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+                            latestVersion = new Version("b" + reader.readLine());
+                            reader.close();
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+
+                    default:
+                        // by default, use the LATEST file
+                        try {
+                            URL url = new URL(UPDATE_SITE + PLUGIN_LOCATION + "branch/" + updateBranch.getBranch() + "/LATEST");
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+
+                            // read in the first line
+                            String line = reader.readLine();
+                            reader.close();
+
+                            // parse it and we are done
+                            latestVersion = new Version(line);
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                }
+
+                // run the callback
+                if (callback != null) {
+                    callback.run();
+                }
+
             }
         }
 
-        return false;
-    }
+        Background_Check_Thread worker = new Background_Check_Thread();
 
-    public void downloadConfig(String config) {
-        File file = new File(ModuleLoader.ROOT_PATH + config); // where to save to
-        UpdaterFile updaterFile = new UpdaterFile(Updater.UPDATE_SITE + "lwc/skel/" + config);
-
-        updaterFile.setLocalLocation(file.getPath());
-        download(updaterFile);
+        if (background) {
+            new Thread(worker).start();
+        } else {
+            worker.run();
+        }
     }
 
     /**
@@ -171,8 +531,15 @@ public class Updater {
     /**
      * @return the latest plugin version
      */
-    public double getLatestPluginVersion() {
-        return latestPluginVersion;
+    public Version getLatestVersion() {
+        return latestVersion;
+    }
+
+    /**
+     * @return the update branch that is being used
+     */
+    public UpdateBranch getUpdateBranch() {
+        return updateBranch;
     }
 
     /**
@@ -203,112 +570,6 @@ public class Updater {
             return DEST_LIBRARY_FOLDER + "lib/native/Mac/" + arch + "/";
         } else { /* We assume linux/unix */
             return DEST_LIBRARY_FOLDER + "lib/native/Linux/" + arch + "/";
-        }
-    }
-
-    /**
-     * Load the latest versions
-     *
-     * @param background if true, will be run in the background
-     */
-    public void loadVersions(boolean background) {
-        class Background_Check_Thread implements Runnable {
-            public void run() {
-                try {
-                    URL url = new URL(UPDATE_SITE + VERSION_FILE);
-
-                    InputStream inputStream = url.openStream();
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-                    // load up them versions!
-                    latestPluginVersion = Double.parseDouble(bufferedReader.readLine());
-
-                    bufferedReader.close();
-                } catch (Exception e) {
-                }
-
-                try {
-                    if (LWC.getInstance().getConfiguration().getBoolean("core.autoUpdate", false)) {
-                        checkDist();
-                    } else {
-                        check();
-                    }
-
-                    update();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        Background_Check_Thread worker = new Background_Check_Thread();
-
-        if (background) {
-            new Thread(worker).start();
-        } else {
-            worker.run();
-        }
-    }
-
-    /**
-     * Ensure we have all of the required files (if not, download them)
-     */
-    public void update() throws Exception {
-        if (needsUpdating.size() == 0) {
-            return;
-        }
-
-        /*
-           * Make the folder hierarchy if needed
-           */
-        File folder = new File(getOSSpecificFolder());
-        folder.mkdirs();
-        folder = new File(DEST_LIBRARY_FOLDER + "lib/");
-        folder.mkdirs();
-
-        synchronized (needsUpdating) {
-            Iterator<UpdaterFile> iterator = needsUpdating.iterator();
-
-            while (iterator.hasNext()) {
-                UpdaterFile item = iterator.next();
-
-                String fileName = item.getRemoteLocation();
-                fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
-
-                URL url = new URL(item.getRemoteLocation());
-                File file = new File(item.getLocalLocation());
-
-                logger.info("Downloading: " + item.getRemoteLocation());
-
-                if (file.exists()) {
-                    file.delete();
-                }
-
-                InputStream inputStream = url.openStream();
-                OutputStream outputStream = new FileOutputStream(file);
-
-                saveTo(inputStream, outputStream);
-
-                inputStream.close();
-                outputStream.close();
-
-                iterator.remove();
-            }
-        }
-    }
-
-    /**
-     * Write an input stream to an output stream
-     *
-     * @param inputStream
-     * @param outputStream
-     */
-    public static void saveTo(InputStream inputStream, OutputStream outputStream) throws IOException {
-        byte[] buffer = new byte[1024];
-        int len = 0;
-
-        while ((len = inputStream.read(buffer)) > 0) {
-            outputStream.write(buffer, 0, len);
         }
     }
 

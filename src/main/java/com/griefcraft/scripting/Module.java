@@ -1,24 +1,34 @@
-/**
- * This file is part of LWC (https://github.com/Hidendra/LWC)
+/*
+ * Copyright 2011 Tyler Blair. All rights reserved.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Redistribution and use in source and binary forms, with or without modification, are
+ * permitted provided that the following conditions are met:
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    1. Redistributions of source code must retain the above copyright notice, this list of
+ *       conditions and the following disclaimer.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *       of conditions and the following disclaimer in the documentation and/or other materials
+ *       provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those of the
+ * authors and contributors and should not be interpreted as representing official policies,
+ * either expressed or implied, of anybody else.
  */
 
 package com.griefcraft.scripting;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.event.LWCAccessEvent;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
@@ -29,14 +39,8 @@ import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.scripting.event.LWCRedstoneEvent;
+import com.griefcraft.scripting.event.LWCReloadEvent;
 import com.griefcraft.scripting.event.LWCSendLocaleEvent;
-import org.bukkit.block.Block;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.List;
 
 /**
  * This interface defines methods that modules may implement
@@ -54,11 +58,16 @@ public interface Module {
     public void load(LWC lwc);
 
     /**
+     * Called when LWC reloads- e.g a config reload
+     */
+    public void onReload(LWCReloadEvent event);
+
+    /**
      * Find out the access level of a player to a protection
      *
      * @param event
      */
-    public void protectionAccessRequest(LWCAccessEvent event);
+    public void onAccessRequest(LWCAccessEvent event);
 
     /**
      * Called when a player drops an item
@@ -129,138 +138,5 @@ public interface Module {
      * @param event
      */
     public void onSendLocale(LWCSendLocaleEvent event);
-
-    /**
-     * See if a player can access a protection
-     *
-     * @param lwc
-     * @param player
-     * @param protection
-     * @return
-     */
-    @Deprecated
-    public Result canAccessProtection(LWC lwc, Player player, Protection protection);
-
-    /**
-     * See if a player can administrate a protection (i.e modify it)
-     *
-     * @param lwc
-     * @param player
-     * @param protection
-     * @return
-     */
-    @Deprecated
-    public Result canAdminProtection(LWC lwc, Player player, Protection protection);
-
-    /**
-     * Called when a player drops an item
-     *
-     * @param lwc
-     * @param player
-     * @param item
-     * @param itemStack
-     * @return
-     */
-    @Deprecated
-    public Result onDropItem(LWC lwc, Player player, Item item, ItemStack itemStack);
-
-    /**
-     * Player or console command
-     *
-     * @param lwc
-     * @param sender
-     * @param command does not include "lwc", eg. /lwc info = "info"
-     * @param args
-     * @return
-     */
-    @Deprecated
-    public Result onCommand(LWC lwc, CommandSender sender, String command, String[] args);
-
-    /**
-     * Called when redstone is passed to a valid protection
-     *
-     * @param lwc
-     * @param protection
-     * @param block
-     * @param current    the old current
-     * @return
-     */
-    @Deprecated
-    public Result onRedstone(LWC lwc, Protection protection, Block block, int current);
-
-    /**
-     * Called when a protection is destroyed
-     *
-     * @param lwc
-     * @param protection
-     * @param block
-     * @return
-     */
-    @Deprecated
-    public Result onDestroyProtection(LWC lwc, Player player, Protection protection, Block block, boolean canAccess, boolean canAdmin);
-
-    /**
-     * Called when a player left interacts with a valid protection
-     *
-     * @param lwc
-     * @param player
-     * @param protection
-     * @param canAccess
-     * @return
-     */
-    @Deprecated
-    public Result onProtectionInteract(LWC lwc, Player player, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin);
-
-    /**
-     * Called when a player interacts with a block
-     *
-     * @param lwc
-     * @param player
-     * @param block
-     * @param actions
-     * @return
-     */
-    @Deprecated
-    public Result onBlockInteract(LWC lwc, Player player, Block block, List<String> actions);
-
-    /**
-     * Called just before a protection registration is finalized, after all post-checks are passed.
-     *
-     * @param lwc
-     * @param player
-     * @param block
-     * @return
-     */
-    @Deprecated
-    public Result onRegisterProtection(LWC lwc, Player player, Block block);
-
-    /**
-     * Called after a protection is registered
-     *
-     * @param lwc
-     * @param protection
-     */
-    @Deprecated
-    public void onPostRegistration(LWC lwc, Protection protection);
-
-    /**
-     * Called after a protection is removed (at this point, the protection is IMMUTABLE.)
-     *
-     * @param lwc
-     * @param protection
-     */
-    @Deprecated
-    public void onPostRemoval(LWC lwc, Protection protection);
-
-    /**
-     * Called when a localized message is sent to a player (e.g lwc.accessdenied)
-     *
-     * @param lwc
-     * @param player
-     * @param locale
-     * @since LWC 3.40
-     */
-    @Deprecated
-    public Result onSendLocale(LWC lwc, Player player, String locale);
 
 }

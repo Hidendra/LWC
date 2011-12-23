@@ -1,38 +1,56 @@
-/**
- * This file is part of LWC (https://github.com/Hidendra/LWC)
+/*
+ * Copyright 2011 Tyler Blair. All rights reserved.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Redistribution and use in source and binary forms, with or without modification, are
+ * permitted provided that the following conditions are met:
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    1. Redistributions of source code must retain the above copyright notice, this list of
+ *       conditions and the following disclaimer.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *       of conditions and the following disclaimer in the documentation and/or other materials
+ *       provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those of the
+ * authors and contributors and should not be interpreted as representing official policies,
+ * either expressed or implied, of anybody else.
  */
 
 package com.griefcraft.modules.modify;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.model.AccessRight;
 import com.griefcraft.model.Action;
+import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
-import com.griefcraft.util.Colors;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static com.griefcraft.util.StringUtils.join;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.griefcraft.util.StringUtil.join;
 
 public class ModifyModule extends JavaModule {
+
+    /**
+     * Used to match an id parameter in /cmodify id:##
+     */
+    private final Pattern ID_MATCHER = Pattern.compile(".*id:(\\d+).*");
 
     @Override
     public void onProtectionInteract(LWCProtectionInteractEvent event) {
@@ -46,71 +64,26 @@ public class ModifyModule extends JavaModule {
 
         LWC lwc = event.getLWC();
         Protection protection = event.getProtection();
-        Player player = event.getPlayer();
+        LWCPlayer player = lwc.wrapPlayer(event.getPlayer());
         event.setResult(Result.CANCEL);
 
-        if (lwc.canAdminProtection(player, protection)) {
-            Action action = lwc.getMemoryDatabase().getAction("modify", player.getName());
+        if (lwc.canAdminProtection(player.getBukkitPlayer(), protection)) {
+            Action action = player.getAction("modify");
 
-            final String defaultEntities = action.getData();
-            String[] entities = new String[0];
+            String data = action.getData();
+            String[] rights = new String[0];
 
-            if (defaultEntities.length() > 0) {
-                entities = defaultEntities.split(" ");
+            if (data.length() > 0) {
+                rights = data.split(" ");
             }
 
             lwc.removeModes(player);
-
-            for (String rightsName : entities) {
-                boolean remove = false;
-                boolean isAdmin = false;
-                int chestType = AccessRight.PLAYER;
-
-                if (rightsName.startsWith("-")) {
-                    remove = true;
-                    rightsName = rightsName.substring(1);
-                }
-
-                if (rightsName.startsWith("@")) {
-                    isAdmin = true;
-                    rightsName = rightsName.substring(1);
-                }
-
-                if (rightsName.toLowerCase().startsWith("g:")) {
-                    chestType = AccessRight.GROUP;
-                    rightsName = rightsName.substring(2);
-                }
-
-                if (rightsName.toLowerCase().startsWith("l:")) {
-                    chestType = AccessRight.LIST;
-                    rightsName = rightsName.substring(2);
-                }
-
-                if (rightsName.toLowerCase().startsWith("list:")) {
-                    chestType = AccessRight.LIST;
-                    rightsName = rightsName.substring(5);
-                }
-
-                int chestID = protection.getId();
-                String localeChild = AccessRight.typeToString(chestType).toLowerCase();
-
-                if (!remove) {
-                    lwc.getPhysicalDatabase().unregisterProtectionRights(chestID, rightsName);
-                    lwc.getPhysicalDatabase().registerProtectionRights(chestID, rightsName, isAdmin ? 1 : 0, chestType);
-                    lwc.sendLocale(player, "protection.interact.rights.register." + localeChild, "name", rightsName, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
-                } else {
-                    lwc.getPhysicalDatabase().unregisterProtectionRights(chestID, rightsName);
-                    lwc.sendLocale(player, "protection.interact.rights.remove." + localeChild, "name", rightsName, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
-                }
-
-                protection.update();
-            }
+            lwc.processRightsModifications(player, protection, rights);
         } else {
             lwc.sendLocale(player, "protection.interact.error.notowner", "block", LWC.materialToString(protection.getBlockId()));
             lwc.removeModes(player);
         }
 
-        return;
     }
 
     @Override
@@ -130,7 +103,6 @@ public class ModifyModule extends JavaModule {
 
         lwc.sendLocale(player, "protection.interact.error.notregistered", "block", LWC.materialToString(block));
         lwc.removeModes(player);
-        return;
     }
 
     @Override
@@ -146,12 +118,8 @@ public class ModifyModule extends JavaModule {
         LWC lwc = event.getLWC();
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
+        String full = join(args, 0).trim();
         event.setCancelled(true);
-
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(Colors.Red + "Console not supported.");
-            return;
-        }
 
         if (!lwc.hasPlayerPermission(sender, "lwc.modify")) {
             lwc.sendLocale(sender, "protection.accessdenied");
@@ -163,13 +131,49 @@ public class ModifyModule extends JavaModule {
             return;
         }
 
-        String full = join(args, 0);
-        Player player = (Player) sender;
+        // Check for ID parameter
+        Matcher matcher = ID_MATCHER.matcher(full);
+        if (matcher.matches()) {
+            int protectionId = Integer.parseInt(matcher.group(1));
 
-        lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-        lwc.getMemoryDatabase().registerAction("modify", player.getName(), full);
+            // load the protection
+            Protection protection = lwc.getPhysicalDatabase().loadProtection(protectionId);
+
+            // Does it even exist?
+            if (protection == null) {
+                lwc.sendLocale(sender, "lwc.protectionnotfound");
+                return;
+            }
+
+            // Can they admin it? (if they're console, they can!)
+            if (sender instanceof Player) {
+                if (!lwc.canAdminProtection((Player) sender, protection)) {
+                    lwc.sendLocale(sender, "protection.accessdenied");
+                    return;
+                }
+            }
+
+            // process it
+            lwc.processRightsModifications(sender, protection, args);
+            return;
+        }
+
+        if (!(sender instanceof Player)) {
+            lwc.sendLocale(sender, "lwc.onlyrealplayers");
+            return;
+        }
+
+        LWCPlayer player = lwc.wrapPlayer(sender);
+
+        Action action = new Action();
+        action.setName("modify");
+        action.setPlayer(player);
+        action.setData(full);
+
+        player.removeAllActions();
+        player.addAction(action);
+
         lwc.sendLocale(sender, "protection.modify.finalize");
-        return;
     }
 
 }

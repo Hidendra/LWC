@@ -1,35 +1,53 @@
-/**
- * This file is part of LWC (https://github.com/Hidendra/LWC)
+/*
+ * Copyright 2011 Tyler Blair. All rights reserved.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Redistribution and use in source and binary forms, with or without modification, are
+ * permitted provided that the following conditions are met:
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    1. Redistributions of source code must retain the above copyright notice, this list of
+ *       conditions and the following disclaimer.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *       of conditions and the following disclaimer in the documentation and/or other materials
+ *       provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those of the
+ * authors and contributors and should not be interpreted as representing official policies,
+ * either expressed or implied, of anybody else.
  */
 
 package com.griefcraft.modules.limits;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
-import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
-import com.griefcraft.util.Colors;
-import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.config.Configuration;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 public class LimitsModule extends JavaModule {
+
+    /**
+     * The permission node for type: default protections
+     */
+    public static final String PERMISSION_NODE_GLOBAL = "lwc.limit.";
+
+    /**
+     * NODE.BLOCK.limit
+     */
+    public static final String PERMISSION_NODE_BLOCK = "lwc.limit.block.";
 
     /**
      * Limits type
@@ -62,7 +80,7 @@ public class LimitsModule extends JavaModule {
         }
     }
 
-    private Configuration configuration = Configuration.load("limits.yml");
+    private Configuration configuration = Configuration.load("limits.yml", false);
 
     /**
      * Integer value that represents unlimited protections
@@ -94,6 +112,10 @@ public class LimitsModule extends JavaModule {
      * @return true if the player reached their limit
      */
     public boolean hasReachedLimit(Player player, Block block) {
+        if (configuration == null) {
+            return false;
+        }
+
         LWC lwc = LWC.getInstance();
         int limit = mapProtectionLimit(player, block.getTypeId());
 
@@ -102,7 +124,7 @@ public class LimitsModule extends JavaModule {
             return false;
         }
 
-        Type type = Type.resolve(resolveValue(player, "type"));
+        Type type = Type.resolve(resolveString(player, "type"));
         int protections; // 0 = *
 
         switch (type) {
@@ -122,6 +144,47 @@ public class LimitsModule extends JavaModule {
     }
 
     /**
+     * Search the player's permissions for a permission and return it
+     * Depending on this is used, this can become O(scary)
+     *
+     * @param player
+     * @param prefix
+     * @return
+     */
+    public PermissionAttachmentInfo searchPermissions(Player player, String prefix) {
+        for (PermissionAttachmentInfo attachment : player.getEffectivePermissions()) {
+            String permission = attachment.getPermission();
+
+            // check for the perm node
+            if (attachment.getValue() && permission.startsWith(prefix)) {
+                // Bingo!
+                return attachment;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Search permissions for an integer and if found, return it
+     *
+     * @param player
+     * @param prefix
+     * @return
+     */
+    public int searchPermissionsForInteger(Player player, String prefix) {
+        PermissionAttachmentInfo attachment = searchPermissions(player, prefix);
+
+        // Not found
+        if (attachment == null) {
+            return -1;
+        }
+
+        // Found
+        return Integer.parseInt(attachment.getPermission().substring(prefix.length()));
+    }
+
+    /**
      * Get the protection limits for a player
      *
      * @param player
@@ -129,37 +192,58 @@ public class LimitsModule extends JavaModule {
      * @return
      */
     public int mapProtectionLimit(Player player, int blockId) {
-        String limit = null;
-        Type type = Type.resolve(resolveValue(player, "type"));
+        if (configuration == null) {
+            return 0;
+        }
 
-        if (type == Type.DEFAULT) {
-            limit = resolveValue(player, "limit");
-        } else if (type == Type.CUSTOM) {
-            // first try the block id
-            limit = resolveValue(player, blockId + "");
+        int limit = -1;
+        Type type = Type.resolve(resolveString(player, "type"));
 
-            // and now try the name
-            if (limit == null && blockId > 0) {
-                String name = Material.getMaterial(blockId).toString().toLowerCase().replaceAll("block", "");
+        // Try permissions
+        int globalLimit = searchPermissionsForInteger(player, PERMISSION_NODE_GLOBAL);
 
-                if (name.endsWith("_")) {
-                    name = name.substring(0, name.length() - 1);
+        // Was it found?
+        if (globalLimit >= 0) {
+            return globalLimit;
+        }
+
+        // Try the block id now
+        int blockLimit = searchPermissionsForInteger(player, PERMISSION_NODE_BLOCK + blockId + ".");
+
+        if (blockLimit != -1) {
+            return blockLimit;
+        }
+
+        switch (type) {
+
+            case DEFAULT:
+                limit = resolveInteger(player, "limit");
+                break;
+
+            case CUSTOM:
+                // first try the block id
+                limit = resolveInteger(player, blockId + "");
+
+                // and now try the name
+                if (limit == -1 && blockId > 0) {
+                    String name = Material.getMaterial(blockId).toString().toLowerCase().replaceAll("block", "");
+
+                    if (name.endsWith("_")) {
+                        name = name.substring(0, name.length() - 1);
+                    }
+
+                    limit = resolveInteger(player, name);
                 }
 
-                limit = resolveValue(player, name);
-            }
+                // if it's STILL null, fall back
+                if (limit == -1) {
+                    limit = resolveInteger(player, "limit");
+                }
+                break;
 
-            // if it's STILL null, fall back
-            if (limit == null) {
-                limit = resolveValue(player, "limit");
-            }
         }
 
-        if (limit == null || limit.equalsIgnoreCase("unlimited")) {
-            return UNLIMITED;
-        }
-
-        return !limit.isEmpty() ? Integer.parseInt(limit) : UNLIMITED;
+        return limit == -1 ? UNLIMITED : limit;
     }
 
     /**
@@ -174,7 +258,7 @@ public class LimitsModule extends JavaModule {
      * @param node
      * @return
      */
-    private String resolveValue(Player player, String node) {
+    private String resolveString(Player player, String node) {
         LWC lwc = LWC.getInstance();
 
         // resolve the limits type
@@ -198,6 +282,71 @@ public class LimitsModule extends JavaModule {
         }
 
         return value != null && !value.isEmpty() ? value : null;
+    }
+
+    /**
+     * Resolve an integer for a player
+     *
+     * @param player
+     * @param node
+     * @return
+     */
+    private int resolveInteger(Player player, String node) {
+        LWC lwc = LWC.getInstance();
+
+        // resolve the limits type
+        int value = -1;
+
+        // try the player
+        String temp = configuration.getString("players." + player.getName() + "." + node);
+
+        if (temp != null && !temp.isEmpty()) {
+            value = parseInt(temp);
+        }
+
+        // try the player's groups
+        if (value == -1) {
+            for (String groupName : lwc.getPermissions().getGroups(player)) {
+                if (groupName != null && !groupName.isEmpty()) {
+                    temp = map("groups." + groupName + "." + node);
+
+                    if (temp != null && !temp.isEmpty()) {
+                        int resolved = parseInt(temp);
+
+                        // Is it higher than what we already have?
+                        if (resolved > value) {
+                            value = resolved;
+                        }
+                    }
+                }
+            }
+        }
+
+        // if all else fails, use master
+        if (value == -1) {
+            temp = map("master." + node);
+
+            if (temp != null && !temp.isEmpty()) {
+                value = parseInt(temp);
+            }
+        }
+
+        // Default to 0, not -1 if it is still -1
+        return value;
+    }
+
+    /**
+     * Parse an int
+     *
+     * @param input
+     * @return
+     */
+    private int parseInt(String input) {
+        if (input.equalsIgnoreCase("unlimited")) {
+            return UNLIMITED;
+        }
+
+        return Integer.parseInt(input);
     }
 
     /**
@@ -237,66 +386,6 @@ public class LimitsModule extends JavaModule {
             lwc.sendLocale(player, "protection.exceeded");
             event.setCancelled(true);
         }
-    }
-
-    @Override
-    public void onCommand(LWCCommandEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-
-        if (!event.hasFlag("limits")) {
-            return;
-        }
-
-        LWC lwc = event.getLWC();
-        CommandSender sender = event.getSender();
-        String[] args = event.getArgs();
-        event.setCancelled(true);
-
-        if (args.length == 0 && !(sender instanceof Player)) {
-            sender.sendMessage(Colors.Red + "Unsupported");
-            return;
-        }
-
-        String playerName;
-
-        if (args.length == 0) {
-            playerName = ((Player) sender).getName();
-        } else {
-            if (lwc.isAdmin(sender)) {
-                playerName = args[0];
-            } else {
-                lwc.sendLocale(sender, "protection.accessdenied");
-                return;
-            }
-        }
-
-        Player player = lwc.getPlugin().getServer().getPlayer(playerName);
-
-        if (player == null) {
-            return;
-        }
-
-        Type type = Type.resolve(resolveValue(player, "type"));
-        int limit = mapProtectionLimit(player, 0);
-        String limitShow = limit + "";
-        int current = lwc.getPhysicalDatabase().getProtectionCount(playerName);
-
-        if (limit == UNLIMITED) {
-            limitShow = "Unlimited";
-        }
-
-        String currColour = Colors.Green;
-
-        if (limit == current) {
-            currColour = Colors.Red;
-        } else if (current > (limit / 2)) {
-            currColour = Colors.Yellow;
-        }
-
-        lwc.sendLocale(sender, "protection.limits", "type", StringUtils.capitalizeFirstLetter(type.toString()), "player", playerName, "limit", limitShow, "protected", (currColour + current));
-        return;
     }
 
 }
