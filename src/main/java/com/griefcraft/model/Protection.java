@@ -161,7 +161,7 @@ public class Protection {
     private Type type;
 
     /**
-     * The world this protection is in
+     * The world the protection is in
      */
     private String world;
 
