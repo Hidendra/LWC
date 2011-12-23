@@ -206,7 +206,7 @@ public class LimitsV2 extends JavaModule {
         }
 
         // send their limits to them
-        sendLimits(player, getPlayerLimits(player));
+        sendLimits(player, player, getPlayerLimits(player));
     }
 
     /**
@@ -228,10 +228,11 @@ public class LimitsV2 extends JavaModule {
     /**
      * Sends the list of limits to the player
      * 
-     * @param sender
+     * @param sender the commandsender to send the limits to
+     * @param target the player limits are being shown for, can be null
      * @param limits
      */
-    public void sendLimits(CommandSender sender, List<Limit> limits) {
+    public void sendLimits(CommandSender sender, Player target, List<Limit> limits) {
         LWC lwc = LWC.getInstance();
 
         for (Limit limit : limits) {
@@ -240,13 +241,20 @@ public class LimitsV2 extends JavaModule {
             }
             
             String stringLimit = limit.getLimit() == UNLIMITED ? "Unlimited" : Integer.toString(limit.getLimit());
+            String colour = Colors.Yellow;
+
+            if (target != null) {
+                boolean reachedLimit = hasReachedLimit(target, ((limit instanceof BlockLimit) ? ((BlockLimit) limit).getMaterial() : null));
+                colour = reachedLimit ? Colors.Red : Colors.Green;
+            }
 
             if (limit instanceof DefaultLimit) {
-                sender.sendMessage("Default: " + Colors.Yellow + stringLimit);
+                String currentProtected = target != null ? (Integer.toString(limit.getProtectionCount(target, null)) + "/") : "";
+                sender.sendMessage("Default: " + colour + currentProtected + stringLimit);
             } else if (limit instanceof BlockLimit) {
                 BlockLimit blockLimit = (BlockLimit) limit;
-
-                sender.sendMessage(lwc.materialToString(blockLimit.getMaterial()) + ": " + Colors.Yellow + stringLimit);
+                String currentProtected = target != null ? (Integer.toString(limit.getProtectionCount(target, blockLimit.getMaterial())) + "/") : "";
+                sender.sendMessage(lwc.materialToString(blockLimit.getMaterial()) + ": " + colour + currentProtected + stringLimit);
             } else {
                 sender.sendMessage(limit.getClass().getSimpleName() + ": " + Colors.Yellow + stringLimit);
             }
