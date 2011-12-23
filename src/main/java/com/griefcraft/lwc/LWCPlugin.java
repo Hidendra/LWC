@@ -257,9 +257,6 @@ public class LWCPlugin extends JavaPlugin {
             logger.info("|#       You are on build #" + version.getBuildNumber() + "       #|");
         }
         logger.info("|#                                   #|");
-        logger.info("|# This is a BETA version of LWC and #|");
-        logger.info("|# as such may contain some bugs.    #|");
-        logger.info("|#                                   #|");
         logger.info("|# Support / chat lines:             #|");
         logger.info("|#  - IRC: irc.esper.net #LWC        #|");
         logger.info("|#  - Steam: Hidendra                #|");
