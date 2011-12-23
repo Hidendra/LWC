@@ -1,18 +1,29 @@
-/**
- * This file is part of LWC (https://github.com/Hidendra/LWC)
+/*
+ * Copyright 2011 Tyler Blair. All rights reserved.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Redistribution and use in source and binary forms, with or without modification, are
+ * permitted provided that the following conditions are met:
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    1. Redistributions of source code must retain the above copyright notice, this list of
+ *       conditions and the following disclaimer.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *       of conditions and the following disclaimer in the documentation and/or other materials
+ *       provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those of the
+ * authors and contributors and should not be interpreted as representing official policies,
+ * either expressed or implied, of anybody else.
  */
 
 package com.griefcraft.util.config;
@@ -30,6 +41,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +55,12 @@ public class Configuration extends ConfigurationNode {
      */
     private static Map<String, Configuration> loaded = new HashMap<String, Configuration>();
 
-    public Configuration(File file) {
+    /**
+     * The config updater for config files
+     */
+    private static final ConfigUpdater updater = new ConfigUpdater();
+
+    protected Configuration(File file) {
         super(new HashMap<String, Object>());
 
         DumperOptions options = new DumperOptions();
@@ -51,8 +68,16 @@ public class Configuration extends ConfigurationNode {
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 
         yaml = new Yaml(new SafeConstructor(), new Representer(), options);
-
         this.file = file;
+    }
+
+    /**
+     * Gets the file
+     * 
+     * @return
+     */
+    public File getFile() {
+        return file;
     }
 
     /**
@@ -60,7 +85,7 @@ public class Configuration extends ConfigurationNode {
      */
     public static void reload() {
         for (Configuration configuration : loaded.values()) {
-            configuration.load();
+            configuration.load(configuration.file);
         }
     }
 
@@ -72,47 +97,77 @@ public class Configuration extends ConfigurationNode {
     }
 
     /**
-     * Create and load a configuration file
+     * Create and/or load a configuration file
      *
      * @param config
      * @return
      */
     public static Configuration load(String config) {
+        return load(config, true);
+    }
+
+    /**
+     * Create and/or load a configuration file
+     *
+     * @param config
+     * @param autoDownload
+     * @return
+     */
+    public static Configuration load(String config, boolean autoDownload) {
+        if (loaded.containsKey(config)) {
+            return loaded.get(config);
+        }
+
         File file = new File(ModuleLoader.ROOT_PATH + config);
 
         // if it does not exist, attempt to download it if possible :-)
         if (!file.exists()) {
+            if (!autoDownload) {
+                return null;
+            }
+
             Updater updater = LWC.getInstance().getPlugin().getUpdater();
             updater.downloadConfig(config);
         }
 
         Configuration configuration = new Configuration(file);
-        configuration.load();
+        configuration.load(file);
         loaded.put(config, configuration);
+
+        // Run the config updater
+        updater.update(configuration);
 
         return configuration;
     }
 
     /**
-     * Loads the configuration file. All errors are thrown away.
+     * Loads the configuration file with the given input stream
+     *
+     * @param inputStream
      */
-    public void load() {
-        FileInputStream stream = null;
-
+    public void load(InputStream inputStream) {
         try {
-            stream = new FileInputStream(file);
-            read(yaml.load(new UnicodeReader(stream)));
-        } catch (IOException e) {
-            root = new HashMap<String, Object>();
+            read(yaml.load(new UnicodeReader(inputStream)));
         } catch (ConfigurationException e) {
             root = new HashMap<String, Object>();
         } finally {
             try {
-                if (stream != null) {
-                    stream.close();
+                if (inputStream != null) {
+                    inputStream.close();
                 }
             } catch (IOException e) {
             }
+        }
+    }
+
+    /**
+     * Loads the configuration file. All errors are thrown away.
+     */
+    public void load(File file) {
+        try {
+            load(new FileInputStream(file));
+        } catch (IOException e) {
+            root = new HashMap<String, Object>();
         }
     }
 

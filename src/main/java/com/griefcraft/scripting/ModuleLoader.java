@@ -1,18 +1,29 @@
-/**
- * This file is part of LWC (https://github.com/Hidendra/LWC)
+/*
+ * Copyright 2011 Tyler Blair. All rights reserved.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Redistribution and use in source and binary forms, with or without modification, are
+ * permitted provided that the following conditions are met:
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    1. Redistributions of source code must retain the above copyright notice, this list of
+ *       conditions and the following disclaimer.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *       of conditions and the following disclaimer in the documentation and/or other materials
+ *       provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those of the
+ * authors and contributors and should not be interpreted as representing official policies,
+ * either expressed or implied, of anybody else.
  */
 
 package com.griefcraft.scripting;
@@ -20,8 +31,6 @@ package com.griefcraft.scripting;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
-import com.griefcraft.model.Protection;
-import com.griefcraft.scripting.Module.Result;
 import com.griefcraft.scripting.event.LWCAccessEvent;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
@@ -33,15 +42,10 @@ import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.scripting.event.LWCRedstoneEvent;
+import com.griefcraft.scripting.event.LWCReloadEvent;
 import com.griefcraft.scripting.event.LWCSendLocaleEvent;
-import org.bukkit.block.Block;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import javax.naming.OperationNotSupportedException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -122,9 +126,13 @@ public class ModuleLoader {
          */
         SEND_LOCALE(2),
 
+        //
+        ACCESS_REQUEST(),
 
-        // new / temp
-        ACCESS_REQUEST();
+        /**
+         * Called when LWC's config is reloaded
+         */
+        RELOAD_EVENT;
 
         Event() {
         }
@@ -146,6 +154,11 @@ public class ModuleLoader {
     private static Logger logger = Logger.getLogger("Loader");
 
     /**
+     * The LWC instance this object belongs to
+     */
+    private LWC lwc;
+
+    /**
      * Path to the root of scripts
      */
     public final static String ROOT_PATH = "plugins/LWC/";
@@ -153,11 +166,10 @@ public class ModuleLoader {
     /**
      * Map of loaded modules
      */
-    private final Map<Plugin, List<MetaData>> pluginModules = new LinkedHashMap<Plugin, List<MetaData>>();
+    private final Map<Plugin, List<MetaData>> pluginModules = Collections.synchronizedMap(new LinkedHashMap<Plugin, List<MetaData>>());
 
-    public ModuleLoader() {
-        // initialize the map with the LWC plugin
-        pluginModules.put(LWC.getInstance().getPlugin(), new ArrayList<MetaData>());
+    public ModuleLoader(LWC lwc) {
+        this.lwc = lwc;
     }
 
     /**
@@ -176,7 +188,7 @@ public class ModuleLoader {
                     Module module = metaData.getModule();
 
                     if (event instanceof LWCAccessEvent) {
-                        module.protectionAccessRequest((LWCAccessEvent) event);
+                        module.onAccessRequest((LWCAccessEvent) event);
                     } else if (event instanceof LWCBlockInteractEvent) {
                         module.onBlockInteract((LWCBlockInteractEvent) event);
                     } else if (event instanceof LWCCommandEvent) {
@@ -197,107 +209,14 @@ public class ModuleLoader {
                         module.onSendLocale((LWCSendLocaleEvent) event);
                     } else if (event instanceof LWCRedstoneEvent) {
                         module.onRedstone((LWCRedstoneEvent) event);
+                    } else if (event instanceof LWCReloadEvent) {
+                        module.onReload((LWCReloadEvent) event);
                     }
                 }
             }
         } catch (Throwable throwable) {
             throw new ModuleException("LWC Module threw an uncaught exception! LWC version: " + LWCInfo.FULL_VERSION, throwable);
         }
-    }
-
-    /**
-     * Dispatch an event
-     *
-     * @param event
-     * @param args
-     * @deprecated
-     */
-    public Result dispatchEvent(Event event, Object... args) {
-        if (event.getExpectedArguments() > args.length) {
-            return Result.DEFAULT;
-        }
-
-        LWC lwc = LWC.getInstance();
-        Result result = Result.DEFAULT;
-
-        try {
-            for (List<MetaData> modules : pluginModules.values()) {
-                for (MetaData metaData : modules) {
-                    Module module = metaData.getModule();
-                    Result temp = Result.DEFAULT;
-
-                    switch (event) {
-
-                        case COMMAND:
-                            temp = module.onCommand(lwc, (CommandSender) args[0], (String) args[1], (String[]) args[2]);
-                            break;
-
-                        case REDSTONE:
-                            temp = module.onRedstone(lwc, (Protection) args[0], (Block) args[1], (Integer) args[2]);
-                            break;
-
-                        case DESTROY_PROTECTION:
-                            temp = module.onDestroyProtection(lwc, (Player) args[0], (Protection) args[1], (Block) args[2], (Boolean) args[3], (Boolean) args[4]);
-                            break;
-
-                        case INTERACT_PROTECTION:
-                            temp = module.onProtectionInteract(lwc, (Player) args[0], (Protection) args[1], (List<String>) args[2], (Boolean) args[3], (Boolean) args[4]);
-                            break;
-
-                        case INTERACT_BLOCK:
-                            temp = module.onBlockInteract(lwc, (Player) args[0], (Block) args[1], (List<String>) args[2]);
-                            break;
-
-                        case REGISTER_PROTECTION:
-                            temp = module.onRegisterProtection(lwc, (Player) args[0], (Block) args[1]);
-                            break;
-
-                        case ACCESS_PROTECTION:
-                            temp = module.canAccessProtection(lwc, (Player) args[0], (Protection) args[1]);
-                            break;
-
-                        case ADMIN_PROTECTION:
-                            temp = module.canAdminProtection(lwc, (Player) args[0], (Protection) args[1]);
-                            break;
-
-                        case DROP_ITEM:
-                            temp = module.onDropItem(lwc, (Player) args[0], (Item) args[1], (ItemStack) args[2]);
-                            break;
-
-                        case POST_REGISTRATION:
-                            module.onPostRegistration(lwc, (Protection) args[0]);
-                            break;
-
-                        case POST_REMOVAL:
-                            module.onPostRemoval(lwc, (Protection) args[0]);
-                            break;
-
-                        case SEND_LOCALE:
-                            temp = module.onSendLocale(lwc, (Player) args[0], (String) args[1]);
-                            break;
-
-                        case ACCESS_REQUEST:
-                            throw new OperationNotSupportedException("ACCESS_REQUEST");
-                    }
-
-                    if (temp != Result.DEFAULT) {
-                        result = temp;
-                    }
-
-                    if (result == Result.CANCEL) {
-                        return result;
-                    }
-                }
-            }
-        } catch (Throwable throwable) {
-            throw new ModuleException("LWC Module threw an uncaught exception! LWC version: " + LWCInfo.FULL_VERSION, throwable);
-        }
-
-        if (result == null) {
-            result = Result.DEFAULT;
-        }
-
-        return result;
     }
 
     /**
@@ -313,7 +232,22 @@ public class ModuleLoader {
      * Load all of the modules not marked as loaded
      */
     public void loadAll() {
-        LWC lwc = LWC.getInstance();
+        // Ensure LWC is at the head of the list
+        synchronized (pluginModules) {
+            Map<Plugin, List<MetaData>> newMap = new LinkedHashMap<Plugin, List<MetaData>>();
+
+            // Add LWC
+            newMap.put(lwc.getPlugin(), pluginModules.get(lwc.getPlugin()));
+
+            // Add the rest
+            newMap.putAll(pluginModules);
+
+            // Clear the old map
+            pluginModules.clear();
+
+            // Add the new values in
+            pluginModules.putAll(newMap);
+        }
 
         for (List<MetaData> modules : pluginModules.values()) {
             for (MetaData metaData : modules) {

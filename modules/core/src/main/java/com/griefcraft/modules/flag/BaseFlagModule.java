@@ -1,31 +1,44 @@
-/**
- * This file is part of LWC (https://github.com/Hidendra/LWC)
+/*
+ * Copyright 2011 Tyler Blair. All rights reserved.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Redistribution and use in source and binary forms, with or without modification, are
+ * permitted provided that the following conditions are met:
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *    1. Redistributions of source code must retain the above copyright notice, this list of
+ *       conditions and the following disclaimer.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *       of conditions and the following disclaimer in the documentation and/or other materials
+ *       provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those of the
+ * authors and contributors and should not be interpreted as representing official policies,
+ * either expressed or implied, of anybody else.
  */
 
 package com.griefcraft.modules.flag;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Action;
+import com.griefcraft.model.Flag;
+import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
-import com.griefcraft.util.StringUtils;
+import com.griefcraft.util.Colors;
+import com.griefcraft.util.StringUtil;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class BaseFlagModule extends JavaModule {
 
@@ -37,9 +50,9 @@ public class BaseFlagModule extends JavaModule {
 
         LWC lwc = event.getLWC();
         Protection protection = event.getProtection();
-        Player player = event.getPlayer();
+        LWCPlayer player = lwc.wrapPlayer(event.getPlayer());
 
-        Action action = lwc.getMemoryDatabase().getAction("flag", player.getName());
+        Action action = player.getAction("flag");
         String data = action.getData();
         event.setResult(Result.CANCEL);
 
@@ -51,31 +64,37 @@ public class BaseFlagModule extends JavaModule {
         boolean shouldAdd = data.substring(0, 1).equals("+");
         String flagName = data.substring(1);
 
-        Protection.Flag flag = null;
+        Flag.Type type = null;
 
-        for (Protection.Flag tmp : Protection.Flag.values()) {
+        for (Flag.Type tmp : Flag.Type.values()) {
             if (tmp.toString().equalsIgnoreCase(flagName)) {
-                flag = tmp;
+                type = tmp;
                 break;
             }
         }
 
-        if (flag == null) {
+        if (type == null) {
             lwc.sendLocale(player, "protection.internalerror", "id", "flg");
             return;
         }
 
+        //////// FIXME - needs to allow data somehow
+        Flag flag = protection.getFlag(type);
+
+        if (flag == null) {
+            flag = new Flag(type);
+        }
+
         if (shouldAdd) {
             protection.addFlag(flag);
-            lwc.sendLocale(player, "protection.interact.flag.add", "flag", StringUtils.capitalizeFirstLetter(flagName));
+            lwc.sendLocale(player, "protection.interact.flag.add", "flag", StringUtil.capitalizeFirstLetter(flagName));
         } else {
             protection.removeFlag(flag);
-            lwc.sendLocale(player, "protection.interact.flag.remove", "flag", StringUtils.capitalizeFirstLetter(flagName));
+            lwc.sendLocale(player, "protection.interact.flag.remove", "flag", StringUtil.capitalizeFirstLetter(flagName));
         }
 
         protection.save();
         lwc.removeModes(player);
-        return;
     }
 
     @Override
@@ -92,29 +111,31 @@ public class BaseFlagModule extends JavaModule {
         if (args.length < 2) {
             lwc.sendSimpleUsage(sender, "/lwc flag <flag> <on/off>");
 
-            boolean denyRedstone = lwc.getConfiguration().getBoolean("protections.denyRedstone", false);
-            String redstone = denyRedstone ? lwc.getLocale("help.flags.redstone.allow") : lwc.getLocale("help.flags.redstone.deny");
-            lwc.sendLocale(sender, "help.flags", "redstone", redstone);
+            // TODO
+            String flags = "";
+            for (Flag.Type type : Flag.Type.values()) {
+                flags += Colors.Yellow + type.toString().toLowerCase() + Colors.White + ", ";
+            }
+            flags = flags.substring(0, flags.length() - 2);
 
+            lwc.sendLocale(sender, "lwc.flags.available", "flags", flags);
             return;
         }
 
-        Player player = (Player) sender;
+        LWCPlayer player = lwc.wrapPlayer(sender);
         String flagName = args[0];
         String type = args[1].toLowerCase();
         String internalType; // + or -
 
-        /**
-         * Allow lwc.flag.?? (e.g lwc.flag.redstone) or optionally the umbrella node lwc.allflags
-         */
+        // Allow lwc.flag.?? (e.g lwc.flag.redstone) or optionally the umbrella node lwc.allflags
         if (!lwc.hasPermission(sender, "lwc.flag." + flagName, "lwc.protect", "lwc.allflags")) {
             lwc.sendLocale(sender, "protection.accessdenied");
             return;
         }
 
         // verify the flag name
-        Protection.Flag match = null;
-        for (Protection.Flag flag : Protection.Flag.values()) {
+        Flag.Type match = null;
+        for (Flag.Type flag : Flag.Type.values()) {
             if (flag.toString().equalsIgnoreCase(flagName) || flag.toString().toLowerCase().startsWith(flagName.toLowerCase())) {
                 match = flag;
                 flagName = flag.toString(); // get the case-correct name while we're there
@@ -142,11 +163,15 @@ public class BaseFlagModule extends JavaModule {
             return;
         }
 
-        lwc.getMemoryDatabase().unregisterAllActions(player.getName());
-        lwc.getMemoryDatabase().registerAction("flag", player.getName(), internalType + flagName);
-        lwc.sendLocale(sender, "protection.flag.finalize");
+        Action action = new Action();
+        action.setName("flag");
+        action.setPlayer(player);
+        action.setData(internalType + flagName);
 
-        return;
+        player.removeAllActions();
+        player.addAction(action);
+
+        lwc.sendLocale(sender, "protection.flag.finalize");
     }
 
 }
