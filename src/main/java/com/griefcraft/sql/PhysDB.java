@@ -1864,6 +1864,11 @@ public class PhysDB extends Database {
                 } else {
                     // else, load it...
                     protection = loadProtection(protectionId);
+
+                    if (protection == null) {
+                        continue;
+                    }
+
                     cache.put(protectionId, protection);
                 }
 
