@@ -114,6 +114,7 @@ import com.griefcraft.util.Statistics;
 import com.griefcraft.util.StopWatch;
 import com.griefcraft.util.StringUtil;
 import com.griefcraft.util.config.Configuration;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -151,7 +152,7 @@ public class LWC {
     public static boolean ENABLED = false;
 
     /**
-     * The current instance of LWC (( should only be one ! if 2 are someone made, the first takes precedence ))
+     * The current instance of LWC
      */
     private static LWC instance;
 

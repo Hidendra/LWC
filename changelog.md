@@ -1,5 +1,4 @@
 # In progress full changelog
-incomplete
 
 #### Licensing
 * LWC 4 is now licensed under the **2-clause BSD license**
