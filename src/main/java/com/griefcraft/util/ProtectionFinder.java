@@ -75,6 +75,11 @@ public class ProtectionFinder {
     private Protection matchedProtection = null;
 
     /**
+     * If we already checked the database
+     */
+    private boolean searched = false;
+
+    /**
      * All of the matched blocks
      */
     private final Set<Block> blocks = new HashSet<Block>();
@@ -142,12 +147,13 @@ public class ProtectionFinder {
      */
     public Protection loadProtection() {
         // Do we have a result already cached?
-        if (matchedProtection != null) {
+        if (searched || matchedProtection != null) {
             return matchedProtection;
         }
 
         // Calculate the protectables
         calculateProtectables();
+        searched = true;
 
         for (Block block : protectables) {
             if (tryLoadProtection(block)) {
@@ -219,6 +225,7 @@ public class ProtectionFinder {
         blocks.clear();
         protectables.clear();
         baseBlock = null;
+        searched = false;
     }
 
     /**
@@ -227,6 +234,7 @@ public class ProtectionFinder {
     private void calculateProtectables() {
         // reset the matched protectables
         protectables.clear();
+        searched = false;
 
         // go through the blocks
         for (Block block : blocks) {
