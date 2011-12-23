@@ -69,7 +69,7 @@ public class LimitsSetup extends JavaModule {
         // Send them the default limits
         if (args.length == 1) {
             sender.sendMessage("Default limits:");
-            limits.sendLimits(sender,limits.getDefaultLimits());
+            limits.sendLimits(sender, null, limits.getDefaultLimits());
         } else {
             String name = args[1];
             boolean isGroup = false;
@@ -84,11 +84,12 @@ public class LimitsSetup extends JavaModule {
                 // if they're a player it is simple
                 if (!isGroup) {
                     List<LimitsV2.Limit> found = limits.getPlayerLimits().get(name.toLowerCase());
+                    Player target = lwc.getPlugin().getServer().getPlayer(name);
                     
                     if (found == null) {
                         sender.sendMessage(Colors.Red + "Player override not found.");
                     } else {
-                        limits.sendLimits(sender, found);
+                        limits.sendLimits(sender, target, found);
                     }
                 } else {
                     List<LimitsV2.Limit> found = limits.getGroupLimits().get(name);
@@ -96,7 +97,7 @@ public class LimitsSetup extends JavaModule {
                     if (found == null) {
                         sender.sendMessage(Colors.Red + "Group override not found.");
                     } else {
-                        limits.sendLimits(sender, found);
+                        limits.sendLimits(sender, null, found);
                     }
                 }
 
