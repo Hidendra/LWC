@@ -1507,7 +1507,7 @@ public class LWC {
         // check any major conversions
         new MySQLPost200().run();
 
-        // precache lots of protections
+        // precache protections
         physicalDatabase.precache();
 
         // We are now done loading!
