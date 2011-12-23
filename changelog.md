@@ -6,14 +6,13 @@ incomplete
 
 #### Translations
 * **New translation! Hungarian, courtesy of dretax**
-* As of 4.0.0 there are around 100 (give or take) new translatable strings
+* Most languages have been fully updated to the latest changes.
 
 #### Functionality
 * The following commands have been added: (see the wiki for more in depth info)
  * `/lwc history`
  * `/lwc details`
- * `/lwc schedule` or `/lwc jobs`
- * `/lwc dump`
+ * `/lwc schedule`
  * `/lwc setup`
  * `/lwc fix`
  * New sub commands for `/lwc admin`
@@ -24,6 +23,14 @@ incomplete
 * Pressure plates will now be protected if they are placed in front of a door. Only players who have access to the protection can use the pressure plate.
  * If you use `/credstone on` on the door, no redstone except the attached pressure plate will work on the door, meaning now only those who have access to the protection can open it.
 * A protection's type can now be changed via `/cmodify type` e.g: `/cmodify private` will make a chest private. You can change a password (or change it TO password) via: `/cmodify password ThePassword`
+* Limits V2. New limits system that is a lot easier to manage and use -- see `plugins/LWC/limitsv2.yml` Example commands:
+ * **`/climits` now fully functions as it should! Give the new updated version a shot!**
+ * `/lwc setup limits Hidendra 0` -- give hidendra 0 default protections
+ * `/lwc setup limits Hidendra default unlimited chest 5` -- give hidendra 5 chests and unlimited everything else
+ * `/lwc setup limits g:default 5` -- give the default group 5 protections
+ * `/lwc setup limits default 0` -- set the default amount of protections to 0
+ * `/lwc setup limits hidendra 54 10 96 1` -- example of using block ids instead of names (10 chests, 1 trap door)
+* add `quiet` under protections that can be set to a block that hides creation messages and notices
 
 #### Cosmetics
 * `/lwc admin report` has been beautified
@@ -44,11 +51,11 @@ incomplete
 * **FIX:** Doors could be destroyed by using a piston to push a dirt block towards it.
 * **FIX:** Limits will now use the highest group limit instead of the first one found.
 * **FIX:** The magnet module would sometimes not work as expected when used across multiple worlds.
-* **API:** Added `removeProtectionsByPlayer` to PhysDB
 * Metrics API for measuring plugin usage across the world using non-identifiable data.
  * Developed by myself, all implementation specific details and backends are open source.
  * View the data online: http://metrics.griefcraft.com/plugin/LWC
  * Backend source: https://github.com/Hidendra/metrics.griefcraft.com
+* `loadProtection(int id)` now utilizes the protection cache
 
 # Historical changelogs
 
