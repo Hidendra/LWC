@@ -245,7 +245,6 @@ public class PhysDB extends Database {
         doUpdate330();
         doUpdate400_1();
         doUpdate400_4();
-        doUpdate400_2();
         doUpdate400_3();
         doUpdate400_4();
         doUpdate400_5();
@@ -414,6 +413,7 @@ public class PhysDB extends Database {
 
         // perform database upgrades
         performDatabaseUpdates();
+        doUpdate400_2();
 
         loaded = true;
     }
@@ -1835,6 +1835,7 @@ public class PhysDB extends Database {
      * 4.0.0, update 2
      */
     private void doUpdate400_2() {
+        LWC lwc = LWC.getInstance();
         Statement statement = null;
         try {
             statement = connection.createStatement();
@@ -1875,15 +1876,20 @@ public class PhysDB extends Database {
 
                 // add it to the protection and queue it for saving!
                 protection.addPermission(permission);
-                protection.save();
             }
 
-            // drop the rights table
-            dropTable(prefix + "rights");
+            // Save all of the protections
+            for (Protection protection : cache.values()) {
+                protection.saveNow();
+            }
 
             // Good!
             set.close();
             stmt.close();
+
+            // drop the rights table
+            dropTable(prefix + "rights");
+            precache();
         } catch (SQLException e) {
             // no need to convert!
         } finally {
