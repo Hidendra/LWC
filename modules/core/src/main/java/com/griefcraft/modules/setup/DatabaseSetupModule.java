@@ -66,6 +66,7 @@ public class DatabaseSetupModule extends JavaModule {
 
         // attempt to match the database
         Database.Type databaseType = Database.Type.matchType(args[1]);
+        Database.DefaultType = databaseType;
 
         if (databaseType == null) {
             lwc.sendLocale(sender, "lwc.setup.database.invalid");
@@ -74,9 +75,10 @@ public class DatabaseSetupModule extends JavaModule {
 
         // Immediately convert
         DatabaseMigrator migrator = new DatabaseMigrator();
+        PhysDB fromDatabase = lwc.getPhysicalDatabase();
         lwc.reloadDatabase();
 
-        if (migrator.migrate(lwc.getPhysicalDatabase(), new PhysDB(databaseType))) {
+        if (migrator.migrate(fromDatabase, lwc.getPhysicalDatabase())) {
             lwc.sendLocale(sender, "lwc.setup.database.success", "type", databaseType.toString());
         } else {
             lwc.sendLocale(sender, "lwc.setup.database.failure", "type", databaseType.toString());
@@ -88,7 +90,6 @@ public class DatabaseSetupModule extends JavaModule {
         lwc.getConfiguration().save();
 
         // immediately move to the new database
-        Database.DefaultType = databaseType;
         lwc.reloadDatabase();
     }
 

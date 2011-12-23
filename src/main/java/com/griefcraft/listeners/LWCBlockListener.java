@@ -28,7 +28,6 @@
 
 package com.griefcraft.listeners;
 
-import com.griefcraft.integration.permissions.NijiPermissions;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;

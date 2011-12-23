@@ -47,33 +47,30 @@ public class DatabaseMigrator {
      */
     public boolean migrate(PhysDB fromDatabase, PhysDB toDatabase) {
         try {
-            toDatabase.connect();
-            toDatabase.load();
-
-            fromDatabase.getConnection().setAutoCommit(false);
+            toDatabase.getConnection().setAutoCommit(false);
 
             // some prelim data
-            int startProtections = fromDatabase.getProtectionCount();
-            int protectionCount = toDatabase.getProtectionCount();
-            int historyCount = toDatabase.getHistoryCount();
+            int startProtections = toDatabase.getProtectionCount();
+            int protectionCount = fromDatabase.getProtectionCount();
+            int historyCount = fromDatabase.getHistoryCount();
             int expectedProtections = protectionCount + startProtections;
 
             if (protectionCount > 0) {
-                List<Protection> tmp = toDatabase.loadProtections();
+                List<Protection> tmp = fromDatabase.loadProtections();
 
                 for (Protection protection : tmp) {
                     // sync it to the live database
                     protection.saveNow();
                 }
 
-                fromDatabase.getConnection().commit();
+                toDatabase.getConnection().commit();
                 if (expectedProtections != (protectionCount = fromDatabase.getProtectionCount())) {
                     logger.info("Weird, only " + protectionCount + " protections are in the database? Continuing...");
                 }
             }
 
             if (historyCount > 0) {
-                List<History> tmp = toDatabase.loadHistory();
+                List<History> tmp = fromDatabase.loadHistory();
 
                 for (History history : tmp) {
                     // make sure it's assumed it does not exist in the database
@@ -84,8 +81,8 @@ public class DatabaseMigrator {
                 }
             }
 
-            toDatabase.getConnection().close();
-            fromDatabase.getConnection().setAutoCommit(true);
+            fromDatabase.getConnection().close();
+            toDatabase.getConnection().setAutoCommit(true);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
