@@ -180,6 +180,16 @@ public class LWCBlockListener extends BlockListener {
         // the block that the piston moved
         Block moved = piston.getRelative(direction, 2);
 
+        // TODO remove this when spout fixes their shit
+        if (moved.getType() == Material.WOODEN_DOOR || moved.getType() == Material.IRON_DOOR_BLOCK) {
+            Block below = moved.getRelative(BlockFace.DOWN).getRelative(direction.getOppositeFace());
+
+            if (lwc.findProtection(below) != null) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+
         if (lwc.findProtection(moved) != null) {
             event.setCancelled(true);
         }
