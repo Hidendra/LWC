@@ -1264,12 +1264,15 @@ public class LWC {
     }
 
     /**
-     * Useful for getting double chests
+     * Matches all possible blocks that can be considered a 'protection'
+     * e.g clicking a chest will match double chests, clicking a door or block below a door
+     *     matches the whole door
      *
+     * @param world
      * @param x the x coordinate
      * @param y the y coordinate
      * @param z the z coordinate
-     * @return the Chest[] array of chests
+     * @return the List of possible blocks
      */
     public List<Block> getProtectionSet(World world, int x, int y, int z) {
         if (world == null) {
