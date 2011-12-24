@@ -148,7 +148,7 @@ public class CreditsModule extends JavaModule {
                 "pablo0713",
                 "IrishSailor & Land of Legend server" + Colors.Red + " X2",
                 "aidan",
-                "MonsterTKE" + Colors.Red + " X2",
+                "MonsterTKE" + Colors.Red + " X3",
                 "wokka",
                 "Andreoli3",
                 "andrewkm" + Colors.Red + " X2",
@@ -160,6 +160,7 @@ public class CreditsModule extends JavaModule {
                 "doomkidkiller",
                 "untergrundbiber",
                 "Northland Gaming",
+                "imaxorz & the Shade Crest server",
                 " ",
 
                 Colors.Red + "And....",
