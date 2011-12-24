@@ -44,12 +44,12 @@ public class DoubleChestMatcher implements ProtectionFinder.Matcher {
     /**
      * Blocks that act like double chests
      */
-    private static final Set<Material> PROTECTABLES_CHESTS = EnumSet.of(Material.CHEST);
+    public static final Set<Material> PROTECTABLES_CHESTS = EnumSet.of(Material.CHEST);
 
     /**
      * Possible faces around the base block that protections could be at
      */
-    private static final BlockFace[] POSSIBLE_FACES = new BlockFace[]{ BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST };
+    public static final BlockFace[] POSSIBLE_FACES = new BlockFace[]{ BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST };
 
     public boolean matches(ProtectionFinder finder) {
         Block block = finder.getBaseBlock();

@@ -46,23 +46,23 @@ public class WallMatcher implements ProtectionFinder.Matcher {
      * Blocks that can be attached to the wall and be protected.
      * This assumes that the block is DESTROYED if the wall they are attached to is broken.
      */
-    private static final Set<Material> PROTECTABLES_WALL = EnumSet.of(Material.WALL_SIGN);
+    public static final Set<Material> PROTECTABLES_WALL = EnumSet.of(Material.WALL_SIGN);
 
     /**
      * Those evil levers and buttons have all different bits for directions. Gah!
      */
-    private static final Set<Material> PROTECTABLES_LEVERS_ET_AL = EnumSet.of(Material.STONE_BUTTON, Material.LEVER);
+    public static final Set<Material> PROTECTABLES_LEVERS_ET_AL = EnumSet.of(Material.STONE_BUTTON, Material.LEVER);
 
     /**
      * Same as PROTECTABLE_WALL, except the facing direction is reversed,
      * such as trap doors
      */
-    private static final Set<Material> PROTECTABLES_WALL_REVERSE = EnumSet.of(Material.TRAP_DOOR);
+    public static final Set<Material> PROTECTABLES_WALL_REVERSE = EnumSet.of(Material.TRAP_DOOR);
 
     /**
      * Possible faces around the base block that protections could be at
      */
-    private static final BlockFace[] POSSIBLE_FACES = new BlockFace[]{ BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST };
+    public static final BlockFace[] POSSIBLE_FACES = new BlockFace[]{ BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST };
 
     public boolean matches(ProtectionFinder finder) {
         // The block we are working on
