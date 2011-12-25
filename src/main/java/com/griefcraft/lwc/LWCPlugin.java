@@ -250,20 +250,6 @@ public class LWCPlugin extends JavaPlugin {
         updater.init();
 
         Version version = LWCInfo.FULL_VERSION;
-        logger.info("|=====================================|");
-        logger.info("|#####################################|");
-        logger.info("|#         Welcome to LWC 4!         #|");
-        if (version.getBuildNumber() > 0) {
-            logger.info("|#       You are on build #" + version.getBuildNumber() + "       #|");
-        }
-        logger.info("|#                                   #|");
-        logger.info("|# Support / chat lines:             #|");
-        logger.info("|#  - IRC: irc.esper.net #LWC        #|");
-        logger.info("|#  - Steam: Hidendra                #|");
-        logger.info("|#                                   #|");
-        logger.info("|# Thank you for supporting LWC!     #|");
-        logger.info("|#####################################|");
-        logger.info("|=====================================|");
         log("At version: " + version.toString());
     }
 
