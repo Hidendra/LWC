@@ -182,8 +182,6 @@ public class Updater {
         LWC lwc = LWC.getInstance();
         updateBranch = UpdateBranch.match(lwc.getConfiguration().getString("updater.branch", "STABLE"));
         updateMethod = UpdateMethod.match(lwc.getConfiguration().getString("updater.method", "MANUAL"));
-        logger.info("LWC: Update branch: " + updateBranch);
-        logger.info("LWC: Update method: " + updateMethod);
 
         this.loadVersions(true, new Runnable() {
 
