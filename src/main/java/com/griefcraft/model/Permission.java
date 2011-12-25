@@ -157,11 +157,16 @@ public class Permission {
      */
     public static Permission decodeJSON(JSONObject node) {
         Permission permission = new Permission();
+        
+        Access access = Access.values()[((Long) node.get("rights")).intValue()];
+        if (access.ordinal() == 0) {
+            access = Access.PLAYER;
+        }
 
         // The values are stored as longs internally, despite us passing an int
         permission.setName((String) node.get("name"));
         permission.setType(Type.values()[((Long) node.get("type")).intValue()]);
-        permission.setAccess(Access.values()[((Long) node.get("rights")).intValue()]);
+        permission.setAccess(access);
 
         return permission;
     }
