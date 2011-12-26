@@ -54,6 +54,7 @@ import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Locale;
@@ -272,15 +273,30 @@ public class LWCPlugin extends JavaPlugin {
     public void loadLocales() {
         String localization = getCurrentLocale();
 
+        // located in plugins/LWC/locale/, values in that overrides the ones in the default :-)
+        ResourceBundle optionalBundle = null;
+
         try {
-            ResourceBundle defaultBundle = null;
-            ResourceBundle optionalBundle = null;
+            ResourceBundle defaultBundle;
 
             // Open the LWC jar file
             JarFile file = new JarFile(getFile());
 
             // Attempt to load the default locale
             defaultBundle = new PropertyResourceBundle(new InputStreamReader(file.getInputStream(file.getJarEntry("lang/lwc_en.properties")), "UTF-8"));
+            locale = new LWCResourceBundle(defaultBundle);
+
+            try {
+                optionalBundle = ResourceBundle.getBundle("lwc", new Locale(localization), new LocaleClassLoader(), new UTF8Control());
+            } catch (MissingResourceException e) {
+            }
+
+            if (optionalBundle != null) {
+                locale.addExtensionBundle(optionalBundle);
+            }
+
+            int overrides = optionalBundle != null ? optionalBundle.keySet().size() : 0;
+            log("Loaded " + locale.keySet().size() + " locale strings (" + overrides + " overrides)");
 
             // and now check if a bundled locale the same as the server's locale exists
             try {
@@ -295,8 +311,6 @@ public class LWCPlugin extends JavaPlugin {
                 optionalBundle = null;
             }
 
-            locale = new LWCResourceBundle(defaultBundle);
-
             if (optionalBundle != null) {
                 locale.addExtensionBundle(optionalBundle);
             }
@@ -307,22 +321,6 @@ public class LWCPlugin extends JavaPlugin {
             log("Uh-oh: " + e.getMessage());
             return;
         }
-
-        // located in plugins/LWC/locale/, values in that overrides the ones in the default :-)
-        ResourceBundle optionalBundle = null;
-
-        try {
-            optionalBundle = ResourceBundle.getBundle("lwc", new Locale(localization), new LocaleClassLoader(), new UTF8Control());
-        } catch (MissingResourceException e) {
-        }
-
-        if (optionalBundle != null) {
-            locale.addExtensionBundle(optionalBundle);
-            log("Loaded override bundle: " + optionalBundle.getLocale().toString());
-        }
-
-        int overrides = optionalBundle != null ? optionalBundle.keySet().size() : 0;
-        log("Loaded " + locale.keySet().size() + " locale strings (" + overrides + " overrides)");
     }
 
     /**

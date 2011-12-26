@@ -97,7 +97,7 @@ public class LWCResourceBundle extends ResourceBundle {
 
     @Override
     protected Object handleGetObject(String key) {
-        Object object = null;
+        Object object;
 
         if ((object = getObjectFromExtensionBundles(key)) != null) {
             return object;
