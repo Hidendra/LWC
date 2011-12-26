@@ -58,7 +58,7 @@ public class EasyNotifyModule extends JavaModule {
 
         // Redstone
         if (isBlockAffectedByRedstone(block) && !Boolean.parseBoolean(lwc.resolveProtectionConfiguration(block.getType(), "denyRedstone"))) {
-            if (Boolean.parseBoolean(lwc.resolveProtectionConfiguration(block.getType(), "quiet"))) {
+            if (!Boolean.parseBoolean(lwc.resolveProtectionConfiguration(block.getType(), "quiet"))) {
                 lwc.sendLocale(player, "lwc.easynotify.redstone");
             }
         }
