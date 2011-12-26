@@ -66,7 +66,10 @@ public class DestroyModule extends JavaModule {
             }
 
             protection.remove();
-            lwc.sendLocale(player, "protection.unregistered", "block", LWC.materialToString(protection.getBlockId()));
+
+            if (!Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock().getType(), "quiet"))) {
+                lwc.sendLocale(player, "protection.unregistered", "block", LWC.materialToString(protection.getBlockId()));
+            }
             return;
         }
 
