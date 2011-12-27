@@ -522,6 +522,10 @@ public class Protection {
             case BURNING_FURNACE:
                 return storedBlockId == Material.FURNACE.getId() || storedBlockId == Material.BURNING_FURNACE.getId();
 
+            case STEP:
+            case DOUBLE_STEP:
+                    return storedBlockId == Material.STEP.getId() || storedBlockId == Material.DOUBLE_STEP.getId();
+
             default:
                 return storedBlockId == block.getTypeId();
         }
