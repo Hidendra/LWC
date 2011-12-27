@@ -73,8 +73,18 @@ public class MySQLPost200 implements MigrationUtility {
         // rev up those sqlite databases because I sure am hungry for some data...
         DatabaseMigrator migrator = new DatabaseMigrator();
         lwc.reloadDatabase();
+        
+        // Load the sqlite database
+        PhysDB sqlite = new PhysDB(Type.SQLite);
+        
+        try {
+            sqlite.connect();
+            sqlite.load();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        if (migrator.migrate(lwc.getPhysicalDatabase(), new PhysDB(Type.SQLite))) {
+        if (migrator.migrate(sqlite, lwc.getPhysicalDatabase())) {
             logger.info("Successfully converted.");
             logger.info("Renaming \"" + database + "\" to \"" + database + ".old\"");
             if (!file.renameTo(new File(database + ".old"))) {
