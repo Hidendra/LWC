@@ -486,7 +486,10 @@ public class LimitsV2 extends JavaModule {
                 limits.add(new DefaultLimit(limit));
             } else {
                 Material material = Material.getMaterial(key.toUpperCase());
-                limits.add(new BlockLimit(material, limit));
+
+                if (material != null) {
+                    limits.add(new BlockLimit(material, limit));
+                }
             }
         }
 
