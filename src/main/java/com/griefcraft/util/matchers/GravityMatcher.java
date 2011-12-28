@@ -44,7 +44,8 @@ public class GravityMatcher implements ProtectionFinder.Matcher {
     /**
      * Blocks that are destroyed if the land below them is destroyed
      */
-    public static final Set<Material> PROTECTABLES_POSTS = EnumSet.of(Material.SIGN_POST, Material.RAILS, Material.POWERED_RAIL, Material.DETECTOR_RAIL);
+    public static final Set<Material> PROTECTABLES_POSTS = EnumSet.of(Material.SIGN_POST, Material.RAILS,
+            Material.POWERED_RAIL, Material.DETECTOR_RAIL, Material.LEVER, Material.STONE_BUTTON);
 
     public boolean matches(ProtectionFinder finder) {
         Block block = finder.getBaseBlock();
