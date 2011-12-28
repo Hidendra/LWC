@@ -2,7 +2,6 @@
 .settings
 .externalToolBuilders
 world
-plugins
 bin
 
 .classpath
