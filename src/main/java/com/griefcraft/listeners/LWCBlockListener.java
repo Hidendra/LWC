@@ -164,7 +164,7 @@ public class LWCBlockListener extends BlockListener {
                         ProtectionCache cache = lwc.getProtectionCache();
                         cache.remove(protection);
 
-                        // correct block
+                        // correct the block
                         protection.setBlockId(protectable.getTypeId());
                         protection.setX(protectable.getX());
                         protection.setY(protectable.getY());
