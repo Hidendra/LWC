@@ -149,7 +149,6 @@ public class LWCBlockListener extends BlockListener {
         if (block.getType() == Material.CHEST) {
             // Get the list of protectable blocks that were matched for the protection
             List<Block> protectables = new ArrayList<Block>(protection.getProtectionFinder().getProtectables());
-            System.out.println(protectables.size());
 
             // >= 1 = double chest!
             if (protectables.size() > 1) {
