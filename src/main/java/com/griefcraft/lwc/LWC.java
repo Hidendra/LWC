@@ -1219,6 +1219,18 @@ public class LWC {
     }
 
     /**
+     * Compares two blocks if they are equal
+     *
+     * @param block
+     * @param block2
+     * @return
+     */
+    public boolean blockEquals(Block block, Block block2) {
+        return block.getType() == block2.getType() && block.getX() == block2.getX() && block.getY() == block2.getY()
+                && block.getZ() == block2.getZ() && block.getData() == block2.getData();
+    }
+
+    /**
      * Find a protection linked to the block, using the player to debug if they have debug mode
      *
      * @param block
