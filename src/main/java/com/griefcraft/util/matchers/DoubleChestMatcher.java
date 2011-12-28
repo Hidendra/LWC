@@ -62,17 +62,14 @@ public class DoubleChestMatcher implements ProtectionFinder.Matcher {
         for (BlockFace face : POSSIBLE_FACES) {
             Block relative = block.getRelative(face);
 
-            // Is it the same as the base block?
-            if (block.getType() == relative.getType()) {
-                if (finder.tryLoadProtection(relative)) {
-                    // And bingo was his name-o
-                    finder.addBlock(relative);
-                    return true;
-                }
+            // we only want chests
+            if (PROTECTABLES_CHESTS.contains(relative.getType())) {
+                finder.addBlock(relative);
+                break;
             }
         }
 
-        return false;
+        return finder.loadProtection() != null;
     }
 
 }

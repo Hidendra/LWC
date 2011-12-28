@@ -106,17 +106,11 @@ public class ProtectionFinder {
         }
 
         // First, reset
-        this.reset();
+        reset();
         this.baseBlock = baseBlock;
 
         // If the base block is protectable, try it
         blocks.add(baseBlock);
-        if (lwc.isProtectable(baseBlock) && !DoorMatcher.PROTECTABLES_DOORS.contains(baseBlock.getType())) {
-            // load it
-            if (tryLoadProtection(baseBlock)) {
-                return true;
-            }
-        }
 
         // Now attempt to use the matchers
         for (Matcher matcher : PROTECTION_MATCHERS) {
@@ -126,8 +120,7 @@ public class ProtectionFinder {
             }
         }
 
-        // No protection was found
-        return false;
+        return loadProtection() != null;
     }
 
     /**
@@ -171,6 +164,15 @@ public class ProtectionFinder {
      * @return
      */
     public boolean tryLoadProtection(Block block) {
+        if (matchedProtection != null) {
+            return false;
+        }
+
+        // don't bother trying to load it if it is not protectable
+        if (!lwc.isProtectable(block)) {
+            return false;
+        }
+
         Protection protection = lwc.getPhysicalDatabase().loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
 
         if (protection != null) {
