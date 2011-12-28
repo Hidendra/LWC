@@ -23,6 +23,7 @@
     <!-- Libraries used by LWC & modules -->
     <fileset dir="${lib}" id="libs">
         <include name="*.jar"/>
+        <include name="plugins/*.jar"/>
     </fileset>
 
     <!-- Jenkins integration -->
