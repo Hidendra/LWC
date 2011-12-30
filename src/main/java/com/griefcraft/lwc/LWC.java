@@ -1408,6 +1408,7 @@ public class LWC {
         // add the name & the block id
         names.add(materialName);
         names.add(material.getId() + "");
+        names.add(material.getId() + ":" + material.getData().getModifiers());
 
         if (!materialName.equals(material.toString().toLowerCase())) {
             names.add(material.toString().toLowerCase());
