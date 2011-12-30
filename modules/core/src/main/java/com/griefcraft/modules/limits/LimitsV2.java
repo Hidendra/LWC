@@ -306,8 +306,8 @@ public class LimitsV2 extends JavaModule {
 
         // Look over the group limits
         for (String group : lwc.getPermissions().getGroups(player)) {
-            if (groupLimits.containsKey(group)) {
-                for (Limit limit : groupLimits.get(group)) {
+            if (groupLimits.containsKey(group.toLowerCase())) {
+                for (Limit limit : groupLimits.get(group.toLowerCase())) {
                     // try to match one already inside what we found
                     Limit matched = findLimit(limits, limit);
 
@@ -455,7 +455,7 @@ public class LimitsV2 extends JavaModule {
         // add all of the group limits
         try {
             for (String group : configuration.getKeys("groups")) {
-                groupLimits.put(group, findLimits("groups." + group));
+                groupLimits.put(group.toLowerCase(), findLimits("groups." + group));
             }
         } catch (NullPointerException e) { }
     }
