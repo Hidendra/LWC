@@ -108,12 +108,12 @@ public class History {
     /**
      * The history type, e.g TRANSACTION
      */
-    private Type type;
+    private Type type = Type.TRANSACTION;
 
     /**
      * The status (ACTIVE or INACTIVE normally)
      */
-    private Status status;
+    private Status status = Status.INACTIVE;
 
     /**
      * Metadata about the transaction. An example of one entry would be
