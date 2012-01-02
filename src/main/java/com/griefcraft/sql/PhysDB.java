@@ -455,7 +455,6 @@ public class PhysDB extends Database {
         }
 
         if (databaseVersion == 2) {
-            log("One time rights migration.");
             doUpdate400_2();
             incrementDatabaseVersion();
         }
@@ -1845,6 +1844,8 @@ public class PhysDB extends Database {
         try {
             statement = connection.createStatement();
             statement.execute("SELECT id FROM " + prefix + "rights LIMIT 1");
+
+            log("Migrating LWC3 rights to LWC4 format");
 
             // it exists ..!
             Statement stmt = connection.createStatement();
