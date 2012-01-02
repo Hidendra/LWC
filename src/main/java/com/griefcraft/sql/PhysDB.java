@@ -413,7 +413,6 @@ public class PhysDB extends Database {
 
         // perform database upgrades
         performDatabaseUpdates();
-        doUpdate400_2();
 
         loaded = true;
     }
@@ -452,6 +451,12 @@ public class PhysDB extends Database {
         if (databaseVersion == 1) {
             log("Creating index on internal");
             createIndex("internal", "internal_main", "name");
+            incrementDatabaseVersion();
+        }
+
+        if (databaseVersion == 2) {
+            log("One time rights migration.");
+            doUpdate400_2();
             incrementDatabaseVersion();
         }
 
