@@ -357,7 +357,7 @@ public class Updater {
             this.verifyFile(new UpdaterFile(DEST_LIBRARY_FOLDER + "sqlite.jar", UPDATE_SITE + "/shared/lib/sqlite.jar"));
 
             // Native library
-            this.verifyFile(new UpdaterFile(getFullNativeLibraryPath(), UPDATE_SITE + "/shared/" + getFullNativeLibraryPath().replaceAll(DEST_LIBRARY_FOLDER, "")));
+            this.verifyFile(new UpdaterFile(getFullNativeLibraryPath(), UPDATE_SITE + "/shared/lib/" + getFullNativeLibraryPath().replaceAll(DEST_LIBRARY_FOLDER, "")));
         }
     }
 
@@ -563,11 +563,11 @@ public class Updater {
         String arch = System.getProperty("os.arch").toLowerCase();
 
         if (osname.contains("windows")) {
-            return DEST_LIBRARY_FOLDER + "lib/native/Windows/" + arch + "/";
+            return DEST_LIBRARY_FOLDER + "native/Windows/" + arch + "/";
         } else if (osname.contains("mac")) {
-            return DEST_LIBRARY_FOLDER + "lib/native/Mac/" + arch + "/";
+            return DEST_LIBRARY_FOLDER + "native/Mac/" + arch + "/";
         } else { /* We assume linux/unix */
-            return DEST_LIBRARY_FOLDER + "lib/native/Linux/" + arch + "/";
+            return DEST_LIBRARY_FOLDER + "native/Linux/" + arch + "/";
         }
     }
 
