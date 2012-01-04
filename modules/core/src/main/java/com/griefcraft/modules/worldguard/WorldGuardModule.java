@@ -192,7 +192,7 @@ public class WorldGuardModule extends JavaModule {
 
         // Are they not in a region, and it's blocked there?
         if (regions.size() == 0) {
-            if (configuration.getBoolean("worldguard.allowProtectionsOutsideRegions", true)) {
+            if (!configuration.getBoolean("worldguard.allowProtectionsOutsideRegions", true)) {
                 lwc.sendLocale(player, "lwc.worldguard.notallowed");
                 event.setCancelled(true);
             }
