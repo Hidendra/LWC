@@ -39,6 +39,8 @@ import org.bukkit.block.Block;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -82,12 +84,12 @@ public class ProtectionFinder {
     /**
      * All of the matched blocks
      */
-    private final Set<Block> blocks = new HashSet<Block>();
+    private final List<Block> blocks = new LinkedList<Block>();
 
     /**
      * All of the blocks that are protectables
      */
-    private final Set<Block> protectables = new HashSet<Block>();
+    private final List<Block> protectables = new LinkedList<Block>();
 
     public ProtectionFinder(LWC lwc) {
         this.lwc = lwc;
@@ -109,7 +111,7 @@ public class ProtectionFinder {
         reset();
         this.baseBlock = baseBlock;
 
-        // If the base block is protectable, try it
+        // Add the base block
         blocks.add(baseBlock);
 
         // Now attempt to use the matchers
@@ -149,7 +151,7 @@ public class ProtectionFinder {
         searched = true;
 
         for (Block block : protectables) {
-            if (tryLoadProtection(block)) {
+            if (tryLoadProtection(block, false)) {
                 return matchedProtection;
             }
         }
@@ -158,12 +160,23 @@ public class ProtectionFinder {
     }
 
     /**
-     * Try and load a protection for a given block. If succeded, cache it locally
-     * 
+     * Try and load a protection for a given block. If a protection is found, nothing is done with it
+     *
      * @param block
      * @return
      */
     public boolean tryLoadProtection(Block block) {
+        return tryLoadProtection(block, true);
+    }
+
+    /**
+     * Try and load a protection for a given block. If succeded, cache it locally
+     * 
+     * @param block
+     * @param noAutoCache if a match is found, don't cache it to be the protection we use
+     * @return
+     */
+    protected boolean tryLoadProtection(Block block, boolean noAutoCache) {
         if (matchedProtection != null) {
             return false;
         }
@@ -181,6 +194,10 @@ public class ProtectionFinder {
             // ensure it's the right block
             if (protection.getBlockId() > 0) {
                 if (protection.isBlockInWorld()) {
+                    if (noAutoCache) {
+                        return true;
+                    }
+
                     this.matchedProtection = protection;
                 } else {
                     // Corrupted protection
@@ -207,8 +224,8 @@ public class ProtectionFinder {
      *
      * @return
      */
-    public Set<Block> getBlocks() {
-        return Collections.unmodifiableSet(blocks);
+    public List<Block> getBlocks() {
+        return Collections.unmodifiableList(blocks);
     }
 
     /**
@@ -216,8 +233,8 @@ public class ProtectionFinder {
      *
      * @return
      */
-    public Set<Block> getProtectables() {
-        return Collections.unmodifiableSet(protectables);
+    public List<Block> getProtectables() {
+        return Collections.unmodifiableList(protectables);
     }
 
     /**
