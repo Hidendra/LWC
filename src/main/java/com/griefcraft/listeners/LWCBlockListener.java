@@ -52,7 +52,6 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.PistonBaseMaterial;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class LWCBlockListener extends BlockListener {
@@ -148,7 +147,7 @@ public class LWCBlockListener extends BlockListener {
         // the protection to the chest that is not destroyed, if it is not that one already.
         if (block.getType() == Material.CHEST) {
             // Get the list of protectable blocks that were matched for the protection
-            List<Block> protectables = new ArrayList<Block>(protection.getProtectionFinder().getProtectables());
+            List<Block> protectables = protection.getProtectionFinder().getProtectables();
 
             // >= 1 = double chest!
             if (protectables.size() > 1) {

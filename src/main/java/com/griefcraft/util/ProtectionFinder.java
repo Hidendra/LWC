@@ -128,7 +128,9 @@ public class ProtectionFinder {
      * @param block
      */
     public void addBlock(Block block) {
-        blocks.add(block);
+        if (!blocks.contains(block)) {
+            blocks.add(block);
+        }
     }
 
     /**
