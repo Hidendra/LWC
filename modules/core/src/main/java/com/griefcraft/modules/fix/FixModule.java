@@ -55,6 +55,10 @@ public class FixModule extends JavaModule {
         Protection protection = event.getProtection();
         Block block = protection.getBlock();
 
+        if (!lwc.canAdminProtection(event.getPlayer(), protection)) {
+            return;
+        }
+
         // Should we fix orientation?
         if (block.getType() == Material.CHEST || block.getType() == Material.FURNACE || block.getType() == Material.DISPENSER) {
             // Fix it!
