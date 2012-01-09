@@ -30,9 +30,11 @@ package com.griefcraft.util;
 
 import com.griefcraft.lwc.LWC;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -52,7 +54,7 @@ public class Metrics {
     /**
      * The base url of the metrics domain
      */
-    private static final String BASE_URL = "http://metrics.griefcraft.com";
+    private static final String BASE_URL = "http://test.griefcraft.com";
 
     /**
      * The url used to report a server's status
@@ -60,23 +62,48 @@ public class Metrics {
     private static final String REPORT_URL = "/report/%s";
 
     /**
+     * The file where guid and opt out is stored in
+     */
+    private static final String CONFIG_FILE = "plugins/PluginMetrics/config.yml";
+
+    /**
      * Object that pings the server every so often
      */
-    private final Ping ping = new Ping();
+    private final MetricsPing ping = new MetricsPing();
+
+    /**
+     * The plugin configuration file
+     */
+    private final YamlConfiguration configuration;
 
     /**
      * Unique server id
      */
     private String guid;
 
-    public Metrics() {
-        loadGUID();
+    public Metrics() throws IOException {
+        // load the config
+        File file = new File(CONFIG_FILE);
+        configuration = YamlConfiguration.loadConfiguration(file);
+
+        // add some defaults
+        configuration.addDefault("opt-out", false);
+        configuration.addDefault("guid", getLWCGUID());
+
+        // Do we need to create the file?
+        if (configuration.get("guid", null) == null) {
+            configuration.options().header("http://metrics.griefcraft.com").copyDefaults(true);
+            configuration.save(file);
+        }
+
+        // Load the guid then
+        guid = configuration.getString("guid");
     }
 
     /**
      * Plugin-specific code to load the server's guid
      */
-    private void loadGUID() {
+    private String getLWCGUID() {
         LWC lwc = LWC.getInstance();
 
         // Attempt to load an existing guid
@@ -84,12 +111,10 @@ public class Metrics {
 
         // if it's still null we need to create one
         if (guid == null) {
-            // Generate it directly into the database to guarantee it saves
-            lwc.getPhysicalDatabase().setInternal("guid", UUID.randomUUID().toString());
-            
-            // and then load it from the database again
-            guid = lwc.getPhysicalDatabase().getInternal("guid");
+            return UUID.randomUUID().toString();
         }
+
+        return guid;
     }
 
     /**
@@ -98,6 +123,11 @@ public class Metrics {
      * @param plugin
      */
     public void beginMeasuringPlugin(Plugin plugin) throws IOException {
+        // Did we opt out?
+        if (configuration.getBoolean("opt-out", false)) {
+            return;
+        }
+
         ping.addPlugin(plugin);
         postPlugin(plugin, false);
     }
@@ -162,7 +192,7 @@ public class Metrics {
     /**
      * Periodically runs the metrics tool
      */
-    private final class Ping implements Runnable {
+    private final class MetricsPing implements Runnable {
 
         /**
          * Interval of time to ping in minutes
@@ -181,7 +211,7 @@ public class Metrics {
          */
         private long lastPing = System.currentTimeMillis();
         
-        public Ping() {
+        public MetricsPing() {
             new Thread(this).start();
         }
 
