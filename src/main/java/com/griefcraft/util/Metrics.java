@@ -52,9 +52,14 @@ import java.util.UUID;
 public class Metrics {
 
     /**
+     * The metrics revision number
+     */
+    private final static int REVISION = 1;
+
+    /**
      * The base url of the metrics domain
      */
-    private static final String BASE_URL = "http://test.griefcraft.com";
+    private static final String BASE_URL = "http://metrics.griefcraft.com";
 
     /**
      * The url used to report a server's status
@@ -143,7 +148,8 @@ public class Metrics {
         String data = encode("guid") + "=" + encode(guid)
                 + "&" + encode("version") + "=" + encode(plugin.getDescription().getVersion())
                 + "&" + encode("server") + "=" + encode(Bukkit.getVersion())
-                + "&" + encode("players") + "=" + encode(Bukkit.getServer().getOnlinePlayers().length + "");
+                + "&" + encode("players") + "=" + encode(Bukkit.getServer().getOnlinePlayers().length + "")
+                + "&" + encode("revision") + "=" + encode(REVISION + "");
         
         // If we're pinging, append it
         if (isPing) {
