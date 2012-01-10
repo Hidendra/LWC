@@ -1535,9 +1535,8 @@ public class LWC {
             // Run it in a seperate thread
             new Thread(new Runnable() {
                 public void run() {
-                    Metrics metrics = new Metrics();
-
                     try {
+                        Metrics metrics = new Metrics();
                         metrics.beginMeasuringPlugin(plugin);
                     } catch (IOException e) {
                         log(e.getMessage());
