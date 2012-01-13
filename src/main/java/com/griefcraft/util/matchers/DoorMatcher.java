@@ -109,7 +109,7 @@ public class DoorMatcher implements ProtectionFinder.Matcher {
         }
 
         // Attempt to match the door
-        return finder.loadProtection() != null;
+        return finder.loadProtection(true) != null;
     }
 
     /**
