@@ -140,8 +140,19 @@ public class ProtectionFinder {
      * @return
      */
     public Protection loadProtection() {
+        return loadProtection(false);
+    }
+
+    /**
+     * Load the protection for the calculated protectables.
+     * Returns NULL if no protection was found.
+     *
+     * @param noAutoCache if a match is found, don't cache it to be the protection we use
+     * @return
+     */
+    public Protection loadProtection(boolean noAutoCache) {
         // Do we have a result already cached?
-        if (searched || matchedProtection != null) {
+        if (searched && matchedProtection != null) {
             return matchedProtection;
         }
 
@@ -150,7 +161,7 @@ public class ProtectionFinder {
         searched = true;
 
         for (Block block : protectables) {
-            if (tryLoadProtection(block, false)) {
+            if (tryLoadProtection(block, noAutoCache)) {
                 return matchedProtection;
             }
         }
