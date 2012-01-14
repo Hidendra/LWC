@@ -61,7 +61,6 @@ public class FixModule extends JavaModule {
 
         // Should we fix orientation?
         if (block.getType() == Material.CHEST || block.getType() == Material.FURNACE || block.getType() == Material.DISPENSER) {
-            // Fix it!
             lwc.adjustChestDirection(block, event.getEvent().getBlockFace());
             lwc.sendLocale(player, "lwc.fix.fixed", "block", block.getType().toString().toLowerCase());
             player.removeAction(player.getAction("fix"));
