@@ -42,8 +42,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -54,7 +52,7 @@ public class Metrics {
     /**
      * The metrics revision number
      */
-    private final static int REVISION = 1;
+    private final static int REVISION = 2;
 
     /**
      * The base url of the metrics domain
@@ -72,9 +70,9 @@ public class Metrics {
     private static final String CONFIG_FILE = "plugins/PluginMetrics/config.yml";
 
     /**
-     * Object that pings the server every so often
+     * Interval of time to ping in minutes
      */
-    private final MetricsPing ping = new MetricsPing();
+    private final static int PING_INTERVAL = 10;
 
     /**
      * The plugin configuration file
@@ -127,19 +125,30 @@ public class Metrics {
      *
      * @param plugin
      */
-    public void beginMeasuringPlugin(Plugin plugin) throws IOException {
+    public void beginMeasuringPlugin(final Plugin plugin) throws IOException {
         // Did we opt out?
         if (configuration.getBoolean("opt-out", false)) {
             return;
         }
 
-        ping.addPlugin(plugin);
+        // First tell the server about us
         postPlugin(plugin, false);
+
+        // Ping the server in intervals
+        plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
+            public void run() {
+                try {
+                    postPlugin(plugin, true);
+                } catch (IOException e) {
+                    System.out.println("[Metrics] " + e.getMessage());
+                }
+            }
+        }, PING_INTERVAL * 1200, PING_INTERVAL * 1200);
     }
 
     /**
      * Generic method that posts a plugin to the metrics website
-     * 
+     *
      * @param plugin
      */
     private void postPlugin(Plugin plugin, boolean isPing) throws IOException {
@@ -150,7 +159,7 @@ public class Metrics {
                 + "&" + encode("server") + "=" + encode(Bukkit.getVersion())
                 + "&" + encode("players") + "=" + encode(Bukkit.getServer().getOnlinePlayers().length + "")
                 + "&" + encode("revision") + "=" + encode(REVISION + "");
-        
+
         // If we're pinging, append it
         if (isPing) {
             data += "&" + encode("ping") + "=" + encode("true");
@@ -175,7 +184,7 @@ public class Metrics {
         // close resources
         writer.close();
         reader.close();
-        
+
         if (response.startsWith("OK")) {
             // Useless return, but it documents that we should be receiving OK followed by an optional description
             return;
@@ -193,74 +202,6 @@ public class Metrics {
      */
     private String encode(String text) throws UnsupportedEncodingException {
         return URLEncoder.encode(text, "UTF-8");
-    }
-
-    /**
-     * Periodically runs the metrics tool
-     */
-    private final class MetricsPing implements Runnable {
-
-        /**
-         * Interval of time to ping in minutes
-         */
-        private final static int PING_INTERVAL = 10;
-
-        /**
-         * List of plugins to send stats for.
-         * Must be manually synchronized.
-         */
-        private final List<Plugin> plugins = new LinkedList<Plugin>();
-
-        /**
-         * The last time the server was pinged.
-         * We don't want to immediately ping
-         */
-        private long lastPing = System.currentTimeMillis();
-        
-        public MetricsPing() {
-            new Thread(this).start();
-        }
-
-        public void run() {
-            // convert the interval in milliseconds
-            final long intervalMillis = PING_INTERVAL * 60 * 1000L;
-            
-            while (true) {
-                
-                // Have we reached the interval?
-                if (System.currentTimeMillis() - lastPing > intervalMillis) {
-                    lastPing = System.currentTimeMillis();
-                    
-                    // Post each plugin
-                    synchronized (plugins) {
-                        for (Plugin plugin : plugins) {
-                            try {
-                                postPlugin(plugin, true);
-                            } catch (IOException e) {
-                                System.out.println("[Metrics] " + e);
-                            }
-                        }
-                    }
-                }
-
-                try {
-                    Thread.sleep(2500L);
-                } catch (InterruptedException e) { }
-            }
-        }
-
-        /**
-         * Add a plugin to be updated every so often
-         * @param plugin
-         */
-        public void addPlugin(Plugin plugin) {
-            synchronized (plugins) {
-                if (!plugins.contains(plugin)) {
-                    plugins.add(plugin);
-                }
-            }
-        }
-
     }
 
 }
