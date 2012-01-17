@@ -72,13 +72,7 @@ public class RedstoneModule extends JavaModule {
         boolean denyRedstone = lwc.getConfiguration().getBoolean("protections.denyRedstone", false);
 
         if ((!hasFlag && denyRedstone) || (hasFlag && !denyRedstone)) {
-            if (event.getEvent().getNewCurrent() == 15) {
-                // 15 is the new current when opening the door.
-                // 1 is also passed but it's seen in both closing & opening. not sure what it's for
-                // we can ignore closing of whatever because generally allowing whatever to close
-                // is fine
-                event.setCancelled(true);
-            }
+            event.setCancelled(true);
         }
     }
 
