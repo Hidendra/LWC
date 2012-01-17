@@ -47,7 +47,7 @@ public class SuperPermsPermissions implements IPermissions {
     private String groupPrefix;
 
     public SuperPermsPermissions() {
-        groupPrefix = LWC.getInstance().getConfiguration().getString("core.groupPrefix", "lwc.group.");
+        groupPrefix = LWC.getInstance().getConfiguration().getString("core.groupPrefix", "group.");
     }
 
     // modified implementation by ZerothAngel ( https://github.com/Hidendra/LWC/issues/88#issuecomment-2017807 )
