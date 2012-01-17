@@ -42,6 +42,10 @@ core:
     # if true, LWC will only allow protections to be created inside of Towns via the Towny plugin
     townyBorders: false
 
+    # The permission node prefix that is used to match player groups when
+    # no supported permission plugin is found, e.g group.vip matches the player's group as vip
+    groupPrefix: 'group.'
+
 # Controls how the updater operates
 updater:
 
