@@ -488,7 +488,7 @@ public class EconomyModule extends JavaModule {
             for (String groupName : lwc.getPermissions().getGroups(player)) {
                 if (groupName != null && !groupName.isEmpty()) {
                     try {
-                        double v = Double.parseDouble(map("groups." + groupName + "." + node));
+                        double v = Double.parseDouble(map("groups." + groupName + "." + node, "-1"));
 
                         // check the value
                         if (sortHighest && v > value) {
@@ -504,7 +504,7 @@ public class EconomyModule extends JavaModule {
         // if all else fails, use master
         if (value == -1) {
             try {
-                value = Double.parseDouble(map("iConomy." + node));
+                value = Double.parseDouble(map("iConomy." + node, "-1"));
             } catch (NumberFormatException e) { }
         }
 
@@ -530,20 +530,20 @@ public class EconomyModule extends JavaModule {
         String value;
 
         // try the player
-        value = configuration.getString("players." + player.getName() + "." + node);
+        value = configuration.getString("players." + player.getName() + "." + node, "");
 
         // try permissions
         if (value == null) {
             for (String groupName : lwc.getPermissions().getGroups(player)) {
                 if (groupName != null && !groupName.isEmpty() && value == null) {
-                    value = map("groups." + groupName + "." + node);
+                    value = map("groups." + groupName + "." + node, "");
                 }
             }
         }
 
         // if all else fails, use master
         if (value == null) {
-            value = map("iConomy." + node);
+            value = map("iConomy." + node, "");
         }
 
         return value != null && !value.isEmpty() ? value : "";
@@ -555,8 +555,8 @@ public class EconomyModule extends JavaModule {
      * @param path
      * @return
      */
-    private String map(String path) {
-        String value = configuration.getString(path);
+    private String map(String path, String defaultValue) {
+        String value = configuration.getString(path, defaultValue);
 
         if (value == null) {
             int lastIndex = path.lastIndexOf(".");
