@@ -134,15 +134,8 @@ public class EconomyModule extends JavaModule {
             return;
         }
 
-        // grab the fee
-        String fee = resolveValue(player, "usageFee");
-
-        if (fee == null || fee.isEmpty()) {
-            return;
-        }
-
         // Usage fee
-        double usageFee = Double.parseDouble(fee);
+        double usageFee = resolveDouble(player, "usageFee", false);
 
         // No fee! :D
         if (usageFee <= 0) {
@@ -381,8 +374,8 @@ public class EconomyModule extends JavaModule {
             boolean isDiscountActive = Boolean.parseBoolean(resolveValue(player, "discount.active"));
 
             if (isDiscountActive) {
-                int discountedProtections = Integer.parseInt(resolveValue(player, "discount.amount"));
-                double discountPrice = Double.parseDouble(resolveValue(player, "discount.newCharge"));
+                int discountedProtections = resolveInt(player, "discount.amount", true);
+                double discountPrice = resolveDouble(player, "discount.newCharge", false);
 
                 if (discountedProtections > 0) {
                     int currentProtections = 0;
@@ -449,6 +442,73 @@ public class EconomyModule extends JavaModule {
             return;
         }
 
+    }
+
+    /**
+     * Resolve a configuration node for a player. Tries nodes in this order:
+     * <pre>
+     * players.PLAYERNAME.node
+     * groups.GROUPNAME.node
+     * iConomy.node
+     * </pre>
+     *
+     * @param player
+     * @param node
+     * @param sortHighest
+     * @return
+     */
+    private int resolveInt(Player player, String node, boolean sortHighest) {
+        return (int) resolveDouble(player, node, sortHighest);
+    }
+
+    /**
+     * Resolve a configuration node for a player. Tries nodes in this order:
+     * <pre>
+     * players.PLAYERNAME.node
+     * groups.GROUPNAME.node
+     * iConomy.node
+     * </pre>
+     *
+     * @param player
+     * @param node
+     * @param sortHighest sort values by highest value
+     * @return
+     */
+    private double resolveDouble(Player player, String node, boolean sortHighest) {
+        LWC lwc = LWC.getInstance();
+        double value = -1;
+
+        // try the player
+        try {
+            value = Double.parseDouble(configuration.getString("players." + player.getName() + "." + node, "-1"));
+        } catch (NumberFormatException e) { } // May I be forgiven in hell for that
+
+        // try their groups
+        if (value == -1) {
+            for (String groupName : lwc.getPermissions().getGroups(player)) {
+                if (groupName != null && !groupName.isEmpty()) {
+                    try {
+                        double v = Double.parseDouble(map("groups." + groupName + "." + node));
+
+                        // check the value
+                        if (sortHighest && v > value) {
+                            value = v;
+                        } else if (!sortHighest && v < value) {
+                            value = v;
+                        }
+                    } catch (NumberFormatException e) { }
+                }
+            }
+        }
+
+        // if all else fails, use master
+        if (value == -1) {
+            try {
+                value = Double.parseDouble(map("iConomy." + node));
+            } catch (NumberFormatException e) { }
+        }
+
+        return value;
     }
 
     /**
