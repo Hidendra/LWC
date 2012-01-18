@@ -530,7 +530,7 @@ public class EconomyModule extends JavaModule {
         String value;
 
         // try the player
-        value = configuration.getString("players." + player.getName() + "." + node, "");
+        value = configuration.getString("players." + player.getName() + "." + node, null);
 
         // try permissions
         if (value == null) {
@@ -543,7 +543,7 @@ public class EconomyModule extends JavaModule {
 
         // if all else fails, use master
         if (value == null) {
-            value = map("iConomy." + node, "");
+            value = map("iConomy." + node, null);
         }
 
         return value != null && !value.isEmpty() ? value : "";
