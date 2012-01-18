@@ -536,7 +536,7 @@ public class EconomyModule extends JavaModule {
         if (value == null) {
             for (String groupName : lwc.getPermissions().getGroups(player)) {
                 if (groupName != null && !groupName.isEmpty() && value == null) {
-                    value = map("groups." + groupName + "." + node, "");
+                    value = map("groups." + groupName + "." + node, null);
                 }
             }
         }
