@@ -358,15 +358,13 @@ public class EconomyModule extends JavaModule {
 
         String value;
         // Check for a block override charge
-        if ((value = lwc.resolveProtectionConfiguration(block.getType(), "charge")) == null) {
-            // not found; use default
-            value = resolveValue(player, "charge");
-        }
-
-        // attempt to resolve the new charge
-        try {
-            charge = Double.parseDouble(value);
-        } catch (NumberFormatException e) {
+        if ((value = lwc.resolveProtectionConfiguration(block.getType(), "charge")) != null) {
+            try {
+                charge = Double.parseDouble(value);
+            } catch (NumberFormatException e) {
+            }
+        } else {
+            charge = resolveDouble(player, "charge", false);
         }
 
         // check if they have a discount available
@@ -489,11 +487,15 @@ public class EconomyModule extends JavaModule {
                 if (groupName != null && !groupName.isEmpty()) {
                     try {
                         double v = Double.parseDouble(map("groups." + groupName + "." + node, "-1"));
+                        
+                        if (v == -1) {
+                            continue;
+                        }
 
                         // check the value
-                        if (sortHighest && v > value) {
+                        if (sortHighest && (v > value || value == -1)) {
                             value = v;
-                        } else if (!sortHighest && v < value) {
+                        } else if (!sortHighest && (v < value || value == -1)) {
                             value = v;
                         }
                     } catch (NumberFormatException e) { }
