@@ -42,6 +42,7 @@ import com.griefcraft.integration.permissions.NijiPermissions;
 import com.griefcraft.integration.permissions.NoPermissions;
 import com.griefcraft.integration.permissions.PEXPermissions;
 import com.griefcraft.integration.permissions.SuperPermsPermissions;
+import com.griefcraft.integration.permissions.bPermissions;
 import com.griefcraft.jobs.JobManager;
 import com.griefcraft.migration.ConfigPost300;
 import com.griefcraft.migration.MySQLPost200;
@@ -1482,6 +1483,8 @@ public class LWC {
                 permissions = new BukkitPermissions();
             } else if (resolvePlugin("PermissionsEx") != null) {
                 permissions = new PEXPermissions();
+            } else if (resolvePlugin("bPermissions") != null) {
+                permissions = new bPermissions();
             } else {
                 try {
                     Method method = CraftHumanEntity.class.getDeclaredMethod("hasPermission", String.class);
