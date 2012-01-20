@@ -1014,6 +1014,23 @@ public class LWC {
     }
 
     /**
+     * Fast remove all protections for a player. ~100k protections / second.
+     * @param sender
+     * @param player
+     * @param shouldRemoveBlocks
+     * @return
+     */
+    public int fastRemoveProtectionsByPlayer(CommandSender sender, String player, boolean shouldRemoveBlocks) {
+        // remove their protections first
+        int ret = fastRemoveProtections(sender, "Lower(owner) = Lower('" + player + "')", shouldRemoveBlocks);
+
+        // invalid any history objects associated with the player
+        physicalDatabase.invalidateHistory(player);
+
+        return ret;
+    }
+
+    /**
      * Remove protections very quickly with raw SQL calls
      *
      * @param sender

@@ -133,10 +133,20 @@ public class PhysDB extends Database {
     }
 
     /**
-     * @return the number of protected chests
+     * Get the total amount of protections
+     * @return the number of protections
      */
     public int getProtectionCount() {
         return Integer.decode(fetch("SELECT COUNT(*) AS count FROM " + prefix + "protections", "count").toString());
+    }
+
+    /**
+     * Get the amount of protections for the given protection type
+     * @param type
+     * @return the number of protected chests
+     */
+    public int getProtectionCount(Protection.Type type) {
+        return Integer.decode(fetch("SELECT COUNT(*) AS count FROM " + prefix + "protections WHERE type = " + type.ordinal(), "count").toString());
     }
 
     /**
@@ -1153,6 +1163,23 @@ public class PhysDB extends Database {
         } catch (SQLException e) {
             printException(e);
         }
+    }
+
+    /**
+     * Invalid all history objects for a player
+     * 
+     * @param player
+     */
+    public void invalidateHistory(String player) {
+       try {
+           PreparedStatement statement = prepare("UPDATE " + prefix + "history SET status = ? WHERE Lower(player) = Lower(?)");
+           statement.setInt(1, History.Status.INACTIVE.ordinal());
+           statement.setString(2, player);
+
+           statement.executeUpdate();
+       } catch (SQLException e) {
+           printException(e);
+       }
     }
 
     /**
