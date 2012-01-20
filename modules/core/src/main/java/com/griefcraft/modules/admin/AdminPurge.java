@@ -69,8 +69,7 @@ public class AdminPurge extends JavaModule {
             if (toRemove.contains("'")) continue; // bad me
 
             // Remove all of them
-            lwc.fastRemoveProtections(sender, "owner = '" + toRemove + "'", shouldRemoveBlocks);
-
+            lwc.fastRemoveProtectionsByPlayer(sender, toRemove, shouldRemoveBlocks);
             lwc.sendLocale(sender, "protection.admin.purge.finalize", "player", toRemove);
         }
 

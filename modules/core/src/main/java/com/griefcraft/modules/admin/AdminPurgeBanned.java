@@ -69,8 +69,7 @@ public class AdminPurgeBanned extends JavaModule {
         List<String> players = loadBannedPlayers();
 
         for (String toRemove : players) {
-            lwc.fastRemoveProtections(sender, "owner = '" + toRemove + "'", shouldRemoveBlocks);
-
+            lwc.fastRemoveProtectionsByPlayer(sender, toRemove, shouldRemoveBlocks);
             lwc.sendLocale(sender, "protection.admin.purge.finalize", "player", toRemove);
         }
     }
