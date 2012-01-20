@@ -1554,6 +1554,34 @@ public class LWC {
                 public void run() {
                     try {
                         Metrics metrics = new Metrics();
+
+                        // Add our plotters
+                        metrics.addCustomData(plugin, new Metrics.Plotter() {
+                            @Override
+                            public String getColumnName() {
+                                return "Total Protections";
+                            }
+
+                            @Override
+                            public int getValue() {
+                                return physicalDatabase.getProtectionCount();
+                            }
+                        });
+
+                        for (final Protection.Type type : Protection.Type.values()) {
+                            metrics.addCustomData(plugin, new Metrics.Plotter() {
+                                @Override
+                                public String getColumnName() {
+                                    return StringUtil.capitalizeFirstLetter(type.toString()) + " Protections";
+                                }
+
+                                @Override
+                                public int getValue() {
+                                    return physicalDatabase.getProtectionCount(type);
+                                }
+                            });
+                        }
+
                         metrics.beginMeasuringPlugin(plugin);
                     } catch (IOException e) {
                         log(e.getMessage());

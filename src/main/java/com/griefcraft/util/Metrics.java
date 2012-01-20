@@ -42,6 +42,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -50,9 +55,45 @@ import java.util.UUID;
 public class Metrics {
 
     /**
+     * Interface used to collect custom data for a plugin
+     */
+    public static abstract class Plotter {
+
+        /**
+         * Get the column name for the plotted point
+         *
+         * @return the plotted point's column name
+         */
+        public abstract String getColumnName();
+
+        /**
+         * Get the current value for the plotted point
+         *
+         * @return
+         */
+        public abstract int getValue();
+
+        @Override
+        public int hashCode() {
+            return getColumnName().hashCode() + getValue();
+        }
+
+        @Override
+        public boolean equals(Object object) {
+            if (!(object instanceof Plotter)) {
+                return false;
+            }
+
+            Plotter plotter = (Plotter) object;
+            return plotter.getColumnName().equals(getColumnName()) && plotter.getValue() == getValue();
+        }
+
+    }
+
+    /**
      * The metrics revision number
      */
-    private final static int REVISION = 2;
+    private final static int REVISION = 3;
 
     /**
      * The base url of the metrics domain
@@ -73,6 +114,11 @@ public class Metrics {
      * Interval of time to ping in minutes
      */
     private final static int PING_INTERVAL = 10;
+
+    /**
+     * A map of the custom data plotters for plugins
+     */
+    private Map<Plugin, Set<Plotter>> customData = Collections.synchronizedMap(new HashMap<Plugin, Set<Plotter>>());
 
     /**
      * The plugin configuration file
@@ -121,6 +167,23 @@ public class Metrics {
     }
 
     /**
+     * Adds a custom data plotter for a given plugin
+     *
+     * @param plugin
+     * @param plotter
+     */
+    public void addCustomData(Plugin plugin, Plotter plotter) {
+        Set<Plotter> plotters = customData.get(plugin);
+
+        if (plotters == null) {
+            plotters = Collections.synchronizedSet(new LinkedHashSet<Plotter>());
+            customData.put(plugin, plotters);
+        }
+        
+        plotters.add(plotter);
+    }
+
+    /**
      * Begin measuring a plugin
      *
      * @param plugin
@@ -163,6 +226,16 @@ public class Metrics {
         // If we're pinging, append it
         if (isPing) {
             data += "&" + encode("ping") + "=" + encode("true");
+        }
+
+        // Add any custom data (if applicable)
+        Set<Plotter> plotters = customData.get(plugin);
+
+        if (plotters != null) {
+            for (Plotter plotter : plotters) {
+                data += "&" + encode ("Custom" + plotter.getColumnName())
+                        + "=" + encode(Integer.toString(plotter.getValue()));
+            }
         }
 
         // Create the url
