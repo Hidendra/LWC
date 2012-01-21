@@ -217,15 +217,15 @@ public class Metrics {
     private void postPlugin(Plugin plugin, boolean isPing) throws IOException {
         // Construct the post data
         String response = "ERR No response";
-        String data = encode("guid") + "=" + encode(guid)
-                + "&" + encode("version") + "=" + encode(plugin.getDescription().getVersion())
-                + "&" + encode("server") + "=" + encode(Bukkit.getVersion())
-                + "&" + encode("players") + "=" + encode(Bukkit.getServer().getOnlinePlayers().length + "")
-                + "&" + encode("revision") + "=" + encode(REVISION + "");
+        String data = encode("guid") + '=' + encode(guid)
+                + '&' + encode("version") + '=' + encode(plugin.getDescription().getVersion())
+                + '&' + encode("server") + '=' + encode(Bukkit.getVersion())
+                + '&' + encode("players") + '=' + encode(String.valueOf(Bukkit.getServer().getOnlinePlayers().length))
+                + '&' + encode("revision") + '=' + encode(REVISION + "");
 
         // If we're pinging, append it
         if (isPing) {
-            data += "&" + encode("ping") + "=" + encode("true");
+            data += '&' + encode("ping") + '=' + encode("true");
         }
 
         // Add any custom data (if applicable)
@@ -258,13 +258,10 @@ public class Metrics {
         writer.close();
         reader.close();
 
-        if (response.startsWith("OK")) {
-            // Useless return, but it documents that we should be receiving OK followed by an optional description
-            return;
-        } else if (response.startsWith("ERR")) {
-            // Throw it to whoever is catching us
-            throw new IOException(response);
+        if (response.startsWith("ERR")){
+            throw new IOException(response); //Throw the exception
         }
+        //if (response.startsWith("OK")) - We should get "OK" followed by an optional description if everything goes right
     }
 
     /**
@@ -273,7 +270,7 @@ public class Metrics {
      * @param text
      * @return
      */
-    private String encode(String text) throws UnsupportedEncodingException {
+    private static String encode(String text) throws UnsupportedEncodingException {
         return URLEncoder.encode(text, "UTF-8");
     }
 
