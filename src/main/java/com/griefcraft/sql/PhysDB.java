@@ -468,6 +468,11 @@ public class PhysDB extends Database {
             doUpdate400_2();
             incrementDatabaseVersion();
         }
+        
+        if (databaseVersion == 3) {
+            createIndex("protections", "protections_type", "type");
+            incrementDatabaseVersion();
+        }
 
     }
 
