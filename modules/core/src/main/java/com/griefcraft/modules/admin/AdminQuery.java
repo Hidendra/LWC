@@ -101,6 +101,7 @@ public class AdminQuery extends JavaModule {
                 } else if (args[0].startsWith("delete")) {
                     int affected = statement.executeUpdate("DELETE FROM " + database.getPrefix() + "protections WHERE " + where);
                     sender.sendMessage(Colors.Green + "Affected rows: " + affected);
+                    database.precache();
                 } else if (args[0].startsWith("select")) {
                     ResultSet set = statement.executeQuery("SELECT * FROM " + database.getPrefix() + "protections WHERE " + where);
 
