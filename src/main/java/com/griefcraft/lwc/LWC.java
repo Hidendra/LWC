@@ -623,7 +623,7 @@ public class LWC {
             boolean isOwner = protection.isOwner(player);
             boolean showMyNotices = configuration.getBoolean("core.showMyNotices", true);
 
-            if (isAdmin(player) || isMod(player) || (isOwner && showMyNotices)) {
+            if (!isOwner || (isOwner && showMyNotices)) {
                 String owner = protection.getOwner();
 
                 // replace your username with "you" if you own the protection
