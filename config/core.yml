@@ -5,9 +5,6 @@ core:
     # and so on
     locale: en
 
-    # If set to true, LWC will automatically download new updates as they become available
-    autoUpdate: false
-
     # How often updates are batched to the database (in seconds). If set to a higher value than 10, you may have
     # some unexpected results, especially if your server is prone to crashing.
     flushInterval: 10
