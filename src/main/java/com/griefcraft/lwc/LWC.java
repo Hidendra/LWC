@@ -1040,6 +1040,7 @@ public class LWC {
      * @return
      */
     public int fastRemoveProtections(CommandSender sender, String where, boolean shouldRemoveBlocks) {
+        List<Integer> exemptedBlocks = configuration.getIntList("optional.exemptBlocks", new ArrayList<Integer>());
         List<Integer> toRemove = new LinkedList<Integer>();
         List<Block> removeBlocks = null;
         int totalProtections = physicalDatabase.getProtectionCount();
@@ -1074,7 +1075,7 @@ public class LWC {
                 World world = protection.getBukkitWorld();
 
                 // check if the protection is exempt from being removed
-                if (protection.hasFlag(Flag.Type.EXEMPTION)) {
+                if (protection.hasFlag(Flag.Type.EXEMPTION) || exemptedBlocks.contains(protection.getBlockId())) {
                     continue;
                 }
 
