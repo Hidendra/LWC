@@ -183,14 +183,16 @@ public class Updater {
         updateBranch = UpdateBranch.match(lwc.getConfiguration().getString("updater.branch", "STABLE"));
         updateMethod = UpdateMethod.match(lwc.getConfiguration().getString("updater.method", "MANUAL"));
 
-        this.loadVersions(true, new Runnable() {
+        if (updateMethod == UpdateMethod.AUTOMATIC) {
+            this.loadVersions(true, new Runnable() {
 
-            public void run() {
-                tryAutoUpdate(false);
-                logger.info("LWC: Latest version: " + latestVersion);
-            }
+                public void run() {
+                    tryAutoUpdate(false);
+                    logger.info("LWC: Latest version: " + latestVersion);
+                }
 
-        });
+            });
+        }
 
         // verify we have local files (e.g sqlite.jar, etc)
         this.verifyFiles();
