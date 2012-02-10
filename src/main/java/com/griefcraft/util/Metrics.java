@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -72,6 +73,12 @@ public class Metrics {
          * @return
          */
         public abstract int getValue();
+
+        /**
+         * Called after the website graphs have been updated
+         */
+        public void reset() {
+        }
 
         @Override
         public int hashCode() {
@@ -242,7 +249,15 @@ public class Metrics {
         URL url = new URL(BASE_URL + String.format(REPORT_URL, plugin.getDescription().getName()));
 
         // Connect to the website
-        URLConnection connection = url.openConnection();
+        URLConnection connection;
+
+        // Mineshafter creates a socks proxy, so we can safely bypass it
+        if (isMineshafterPresent()) {
+            connection = url.openConnection(Proxy.NO_PROXY);
+        } else {
+            connection = url.openConnection();
+        }
+
         connection.setDoOutput(true);
 
         // Write the data
@@ -260,8 +275,31 @@ public class Metrics {
 
         if (response.startsWith("ERR")){
             throw new IOException(response); //Throw the exception
+        } else {
+            // Is this the first update this hour?
+            if (response.contains("OK This is your first update this hour")) {
+                if (plotters != null) {
+                    for (Plotter plotter : plotters) {
+                        plotter.reset();
+                    }
+                }
+            }
         }
         //if (response.startsWith("OK")) - We should get "OK" followed by an optional description if everything goes right
+    }
+
+    /**
+     * Check if mineshafter is present. If it is, we need to bypass it to send POST requests
+     *
+     * @return
+     */
+    private boolean isMineshafterPresent() {
+        try {
+            Class.forName("mineshafter.MineServer");
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
