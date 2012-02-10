@@ -1433,8 +1433,9 @@ public class LWC {
             names.add(material.toString().toLowerCase());
         }
 
-        // Add the wildcard last so it can be overriden
+        // Add the wildcards last so it can be overriden
         names.add("*");
+        names.add(material.getId() + ":*");
 
         String value = configuration.getString("protections." + node);
 
