@@ -61,6 +61,11 @@ public class ScheduleModule extends JavaModule {
         // We are using the command from here on out!
         event.setCancelled(true);
 
+        if (!lwc.isAdmin(sender)) {
+            lwc.sendLocale(sender, "protection.accessdenied");
+            return;
+        }
+
         if (args.length < 1) {
             lwc.sendSimpleUsage(sender, "/lwc schedule <Action> [JobName] [...]");
             return;
