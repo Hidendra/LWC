@@ -108,6 +108,10 @@ permissions:
       description: Gives you access to every LWC command. Without lwc.admin or lwc.mod, you cannot open protections you do not own.
       default: false
 
+  lwc.shownotices:
+      description: Shows LWC notices
+      default: op
+
   lwc.mod:
       description: Allows you to open anyone's protection but not remove them
       default: false
