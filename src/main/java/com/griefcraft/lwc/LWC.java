@@ -63,6 +63,7 @@ import com.griefcraft.modules.admin.AdminLocale;
 import com.griefcraft.modules.admin.AdminPurge;
 import com.griefcraft.modules.admin.AdminPurgeBanned;
 import com.griefcraft.modules.admin.AdminQuery;
+import com.griefcraft.modules.admin.AdminRebuild;
 import com.griefcraft.modules.admin.AdminReload;
 import com.griefcraft.modules.admin.AdminRemove;
 import com.griefcraft.modules.admin.AdminReport;
@@ -1644,6 +1645,7 @@ public class LWC {
         registerModule(new AdminPurgeBanned());
         registerModule(new AdminExpire());
         registerModule(new AdminDump());
+        registerModule(new AdminRebuild());
 
         // /lwc setup
         registerModule(new BaseSetupModule());
