@@ -43,6 +43,7 @@ import com.griefcraft.integration.permissions.NoPermissions;
 import com.griefcraft.integration.permissions.PEXPermissions;
 import com.griefcraft.integration.permissions.SuperPermsPermissions;
 import com.griefcraft.integration.permissions.bPermissions;
+import com.griefcraft.io.BackupManager;
 import com.griefcraft.jobs.JobManager;
 import com.griefcraft.migration.ConfigPost300;
 import com.griefcraft.migration.MySQLPost200;
@@ -50,6 +51,7 @@ import com.griefcraft.model.Flag;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Permission;
 import com.griefcraft.model.Protection;
+import com.griefcraft.modules.admin.AdminBackup;
 import com.griefcraft.modules.admin.AdminCache;
 import com.griefcraft.modules.admin.AdminCleanup;
 import com.griefcraft.modules.admin.AdminClear;
@@ -169,6 +171,11 @@ public class LWC {
     private final ModuleLoader moduleLoader;
 
     /**
+     * The manager of backups
+     */
+    private final BackupManager backupManager;
+
+    /**
      * The job manager
      */
     private final JobManager jobManager;
@@ -213,6 +220,7 @@ public class LWC {
         LWC.instance = this;
         configuration = Configuration.load("core.yml");
         protectionCache = new ProtectionCache(this);
+        backupManager = new BackupManager();
         jobManager = new JobManager(this);
         moduleLoader = new ModuleLoader(this);
     }
@@ -620,12 +628,13 @@ public class LWC {
             protection.save();
         }
 
-        if ((hasPermission(player, "lwc.shownotices") || configuration.getBoolean("core.showNotices", true))
+        boolean permShowNotices = hasAdminPermission(player, "lwc.shownotices");
+        if ((permShowNotices || configuration.getBoolean("core.showNotices", true))
                 && !Boolean.parseBoolean(resolveProtectionConfiguration(block.getType(), "quiet"))) {
             boolean isOwner = protection.isOwner(player);
             boolean showMyNotices = configuration.getBoolean("core.showMyNotices", true);
 
-            if (!isOwner || (isOwner && showMyNotices)) {
+            if (!isOwner || (isOwner && (showMyNotices || permShowNotices))) {
                 String owner = protection.getOwner();
 
                 // replace your username with "you" if you own the protection
@@ -1647,6 +1656,7 @@ public class LWC {
         registerModule(new AdminExpire());
         registerModule(new AdminDump());
         registerModule(new AdminRebuild());
+        registerModule(new AdminBackup());
 
         // /lwc setup
         registerModule(new BaseSetupModule());
@@ -1934,6 +1944,13 @@ public class LWC {
      */
     public ICurrency getCurrency() {
         return currency;
+    }
+
+    /**
+     * @return the backup manager
+     */
+    public BackupManager getBackupManager() {
+        return backupManager;
     }
 
     /**

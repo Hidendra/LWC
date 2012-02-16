@@ -28,5 +28,19 @@
 
 package com.griefcraft.io;
 
-public class RestorableEntity {
+public interface Restorable {
+
+    /**
+     * Get the restorable type
+     *
+     * TODO Enum
+     * @return
+     */
+    public int getType();
+
+    /**
+     * Restore the object into the world
+     */
+    public void restore();
+
 }
