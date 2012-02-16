@@ -211,6 +211,11 @@ public class Protection {
      */
     private ProtectionFinder finder;
 
+    /**
+     * The block the protection is at. Saves world calls and allows better concurrency
+     */
+    private Block cachedBlock;
+
     @Override
     public boolean equals(Object object) {
         if (!(object instanceof Protection)) {
@@ -821,13 +826,18 @@ public class Protection {
      * @return the block representing the protection in the world
      */
     public Block getBlock() {
+        if (cachedBlock != null) {
+            return cachedBlock;
+        }
+
         World world = getBukkitWorld();
 
         if (world == null) {
             return null;
         }
 
-        return world.getBlockAt(x, y, z);
+        cachedBlock = world.getBlockAt(x, y, z);
+        return cachedBlock;
     }
 
     /**
