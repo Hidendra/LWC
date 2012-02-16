@@ -1425,6 +1425,40 @@ public class PhysDB extends Database {
     }
 
     /**
+     * Load all protection history for the given status
+     *
+     * @return
+     */
+    public List<History> loadHistory(History.Status status) {
+        List<History> temp = new ArrayList<History>();
+
+        if (!LWC.getInstance().isHistoryEnabled()) {
+            return temp;
+        }
+
+        try {
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE status = ? ORDER BY id DESC");
+            statement.setInt(1, status.ordinal());
+            ResultSet set = statement.executeQuery();
+
+            while (set.next()) {
+                History history = resolveHistory(new History(), set);
+
+                if (history != null) {
+                    // seems ok
+                    temp.add(history);
+                }
+            }
+
+            set.close();
+        } catch (SQLException e) {
+            printException(e);
+        }
+
+        return temp;
+    }
+
+    /**
      * Load all of the history at the given location
      *
      * @param x
