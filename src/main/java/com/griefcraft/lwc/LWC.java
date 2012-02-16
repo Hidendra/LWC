@@ -620,11 +620,12 @@ public class LWC {
             protection.save();
         }
 
-        if (configuration.getBoolean("core.showNotices", true) && !Boolean.parseBoolean(resolveProtectionConfiguration(block.getType(), "quiet"))) {
+        if (!Boolean.parseBoolean(resolveProtectionConfiguration(block.getType(), "quiet"))) {
             boolean isOwner = protection.isOwner(player);
+            boolean showNotices = configuration.getBoolean("core.showNotices", true);
             boolean showMyNotices = configuration.getBoolean("core.showMyNotices", true);
 
-            if (!isOwner || (isOwner && showMyNotices)) {
+            if ((!isOwner && showNotices) || (hasAccess && showMyNotices)) {
                 String owner = protection.getOwner();
 
                 // replace your username with "you" if you own the protection
