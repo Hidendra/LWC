@@ -2,7 +2,7 @@ The file format for backup files is as follows. It is represented using C-struct
 
 Backup files are represented using the `.lwc` or `.lwc.gz` extension, where the former is uncompressed and the latter is compressed using GZip.
 
-By default, backup files are named using the naming format `MM-DD-YYYY-HHMM.lwc.gz` e.g `16-02-2012-1624.lwc.gz`
+By default, backup files are named using the naming format `MM-dd-yyyy-HHmm.lwc.gz` e.g `16-02-2012-1624.lwc.gz`
 
     struct BackupFile {
         short revision;
@@ -11,9 +11,9 @@ By default, backup files are named using the naming format `MM-DD-YYYY-HHMM.lwc.
         RestorableEntity[] entities;
     };
 
-    struct RestorableEntity {
+    struct RESTORABLE {
         byte id; // identifies the type of entity
-        RESTORABLE payload; // either RestorableBlock or RestorableProtection
+        RESTORABLE? payload; // either RestorableBlock or RestorableProtection
     };
 
     struct RestorableBlock {
