@@ -33,6 +33,7 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.sql.Database;
+import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -150,17 +151,20 @@ public class AdminCleanup extends JavaModule {
             sender.sendMessage("Loading protections via STREAM mode");
 
             try {
-                Statement resultStatement = lwc.getPhysicalDatabase().getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+                PhysDB database = new PhysDB();
+                database.connect();
+                database.load();
+                Statement resultStatement = database.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
-                if (lwc.getPhysicalDatabase().getType() == Database.Type.MySQL) {
+                if (database.getType() == Database.Type.MySQL) {
                     resultStatement.setFetchSize(Integer.MIN_VALUE);
                 }
 
-                String prefix = lwc.getPhysicalDatabase().getPrefix();
+                String prefix = database.getPrefix();
                 ResultSet result = resultStatement.executeQuery("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections");
 
                 while (result.next()) {
-                    Protection protection = lwc.getPhysicalDatabase().resolveProtection(result);
+                    Protection protection = database.resolveProtection(result);
                     World world = protection.getBukkitWorld();
 
                     count++;
