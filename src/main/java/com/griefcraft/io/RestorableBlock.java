@@ -28,6 +28,10 @@
 
 package com.griefcraft.io;
 
+import com.griefcraft.lwc.LWC;
+import org.bukkit.Bukkit;
+import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ContainerBlock;
@@ -79,7 +83,50 @@ public class RestorableBlock implements Restorable {
     }
     
     public void restore() {
-        throw new UnsupportedOperationException("Not yet available.");
+        LWC lwc = LWC.getInstance();
+
+        lwc.getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(lwc.getPlugin(), new Runnable() {
+            public void run() {
+                Server server = Bukkit.getServer();
+
+                // Get the world
+                World bworld = server.getWorld(world);
+
+                // Not found :-(
+                if (world == null) {
+                    return;
+                }
+
+                // Get the block we want
+                Block block = bworld.getBlockAt(x, y, z);
+
+                // Begin screwing with shit :p
+                block.setTypeId(id);
+                block.setData((byte) data);
+                
+                if (items.size() > 0) {
+                    if (!(block.getState() instanceof ContainerBlock)) {
+                        System.out.println(String.format("The block at [%d, %d, %d] has backed up items but no longer supports them. Why? %s", x, y, z, block.toString()));
+                    }
+
+                    // Get the block's inventory
+                    Inventory inventory = ((ContainerBlock) block.getState()).getInventory();
+                    
+                    // Set all of the items to it
+                    for (Map.Entry<Integer, ItemStack> entry : items.entrySet()) {
+                        int slot = entry.getKey();
+                        ItemStack stack = entry.getValue();
+
+                        if (stack == null) {
+                            continue;
+                        }
+
+                        // Add it to the inventory
+                        inventory.setItem(slot, stack);
+                    }
+                }
+            }
+        });
     }
 
     /**

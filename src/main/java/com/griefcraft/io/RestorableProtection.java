@@ -28,6 +28,7 @@
 
 package com.griefcraft.io;
 
+import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 
 import java.text.ParseException;
@@ -39,6 +40,11 @@ public class RestorableProtection implements Restorable {
      * The id in the database
      */
     private int id;
+
+    /**
+     * The protection type
+     */
+    private int protectionType;
 
     /**
      * The block id
@@ -90,7 +96,10 @@ public class RestorableProtection implements Restorable {
     }
 
     public void restore() {
-        throw new UnsupportedOperationException("Not yet available.");
+        LWC lwc = LWC.getInstance();
+        Protection protection = lwc.getPhysicalDatabase().registerProtection(blockId, Protection.Type.values()[protectionType],
+                world, owner, data, x, y, z);
+        // TODO fix the ID?
     }
 
     /**
@@ -107,6 +116,7 @@ public class RestorableProtection implements Restorable {
         try {
             RestorableProtection rprotection = new RestorableProtection();
             rprotection.id = protection.getId();
+            rprotection.protectionType = protection.getType().ordinal();
             rprotection.blockId = protection.getBlockId();
             rprotection.owner = protection.getOwner();
             rprotection.world = protection.getWorld();
@@ -130,6 +140,14 @@ public class RestorableProtection implements Restorable {
 
     public void setId(int id) {
         this.id = id;
+    }
+    
+    public int getProtectionType() {
+        return protectionType;
+    }
+
+    public void setProtectionType(int protectionType) {
+        this.protectionType = protectionType;
     }
 
     public int getBlockId() {

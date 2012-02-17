@@ -53,6 +53,13 @@ import java.util.concurrent.Future;
 public class BackupManager {
 
     /**
+     * The result for a backup operationMode
+     */
+    public enum Result {
+        OK, FAILURE
+    }
+
+    /**
      * The folder where backups are stored at
      */
     public static String BACKUP_FOLDER = "plugins/LWC/backups/";
@@ -75,7 +82,7 @@ public class BackupManager {
     /**
      * The amount of protection block gets to batch at once
      */
-    private static int BATCH_SIZE = 100;
+    private static int BATCH_SIZE = 250;
 
     /**
      * The folder backups are stored in
@@ -111,6 +118,97 @@ public class BackupManager {
     }
 
     /**
+     * Begin restoring a backup. This should be ran in a separate thread.
+     * Any world calls are offloaded to the world thread using the scheduler. No world reads are done, only writes.
+     *
+     * @param name
+     * @return OK if successful, otherwise FAILURE
+     */
+    public Result restoreBackup(String name) {
+        try {
+            Backup backup = loadBackup(name);
+
+            if (backup == null) {
+                return Result.FAILURE;
+            }
+
+            return restoreBackup(backup);
+        } catch (IOException e) {
+            System.out.println("[BackupManager] Caught: " + e.getMessage());
+            return Result.FAILURE;
+        }
+    }
+
+    /**
+     * Begin restoring a backup. This should be ran in a separate thread.
+     * Any world calls are offloaded to the world thread using the scheduler. No world reads are done, only writes.
+     *
+     * @param backup
+     * @return OK if successful, otherwise FAILURE
+     */
+    public Result restoreBackup(Backup backup) {
+        try {
+            // Read in the backup's header
+            backup.readHeader();
+
+            // begin restoring :)
+            Restorable restorable;
+            int count = 0;
+            int protectionCount = 0;
+            int blockCount = 0;
+            while ((restorable = backup.readRestorable()) != null) {
+                restorable.restore();
+
+                if (count % 2000 == 0) {
+                    System.out.println("[Backup] Restored restorables: " + count);
+                }
+                count ++;
+
+                // TODO THIS IS HACKS :-( ALSO ENUM ENUM
+                if (restorable.getType() == 0) {
+                    protectionCount ++;
+                } else if (restorable.getType() == 1) {
+                    blockCount ++;
+                }
+            }
+
+            System.out.println(String.format("[BackupManager] Restored %d restorables. %d were protections, %d blocks.", count, protectionCount, blockCount));
+            return Result.OK;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Result.FAILURE;
+        }
+    }
+
+    /**
+     * Load a backup
+     *
+     * @param name
+     * @return
+     */
+    public Backup loadBackup(String name) throws IOException {
+        File file;
+        
+        // Try to load the compressed version
+        file = new File(BACKUP_FOLDER, name + FILE_EXTENSION_COMPRESSED);
+
+        if (file.exists()) {
+            // Bingo
+            return new Backup(file, Backup.OperationMode.READ, EnumSet.of(Flag.COMPRESSION));
+        }
+
+        // Try uncompressed
+        file = new File(BACKUP_FOLDER, name + FILE_EXTENSION_UNCOMPRESSED);
+
+        if (file.exists()) {
+            return new Backup(file, Backup.OperationMode.READ, EnumSet.noneOf(Flag.class));
+        }
+
+        // Nothing :-(
+        return null;
+    }
+
+    /**
      * Create a backup of the given objects.
      * When this returns, it is not guaranteed that the backup is fully written to the disk.
      *
@@ -128,7 +226,7 @@ public class BackupManager {
 
         // Our backup file
         try {
-            final Backup backup = new Backup(backupFile, Backup.Operation.WRITE, flags);
+            final Backup backup = new Backup(backupFile, Backup.OperationMode.WRITE, flags);
 
             scheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
                 public void run() {
@@ -173,7 +271,10 @@ public class BackupManager {
                             if (protections.size() != BATCH_SIZE) {
                                 // Wait until we have BATCH_SIZE protections
                                 protections.add(tprotection);
-                                continue;
+                                
+                                if (protections.size() != totalProtections) {
+                                    continue;
+                                }
                             }
 
                             // Get all of the blocks in the world

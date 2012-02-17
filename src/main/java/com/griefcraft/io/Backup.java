@@ -49,16 +49,9 @@ public class Backup {
     public static final int CURRENT_REVISION = 1;
 
     /**
-     * The result for a backup operation
-     */
-    public enum Result {
-        OK, FAIL
-    }
-
-    /**
      * The operations the backup is allowed to perform
      */
-    public enum Operation {
+    public enum OperationMode {
         READ, WRITE
     }
 
@@ -68,9 +61,9 @@ public class Backup {
     private final File file;
 
     /**
-     * The operation we are allowed to perform
+     * The operationMode we are allowed to perform
      */
-    private final Operation operation;
+    private final OperationMode operationMode;
 
     /**
      * The flags we are using
@@ -97,13 +90,13 @@ public class Backup {
      */
     private DataOutputStream outputStream;
 
-    public Backup(File file, Operation operation, EnumSet<BackupManager.Flag> flags) throws IOException {
+    public Backup(File file, OperationMode operationMode, EnumSet<BackupManager.Flag> flags) throws IOException {
         this.file = file;
-        this.operation = operation;
+        this.operationMode = operationMode;
         this.flags = flags;
 
         if (!file.exists()) {
-            if (operation == Operation.READ) {
+            if (operationMode == OperationMode.READ) {
                 throw new UnsupportedOperationException("The backup could not be read");
             } else {
                 file.createNewFile();
@@ -111,7 +104,7 @@ public class Backup {
         }
 
         // Set some base data if we're writing
-        if (operation == Operation.WRITE) {
+        if (operationMode == OperationMode.WRITE) {
             revision = CURRENT_REVISION;
             created = System.currentTimeMillis() / 1000;
         }
@@ -120,23 +113,13 @@ public class Backup {
         boolean compression = flags.contains(BackupManager.Flag.COMPRESSION);
 
         // create the stream we need
-        if (operation == Operation.READ) {
+        if (operationMode == OperationMode.READ) {
             FileInputStream fis = new FileInputStream(file);
             inputStream = new DataInputStream(compression ? new GZIPInputStream(fis) : fis);
-        } else if (operation == Operation.WRITE) {
+        } else if (operationMode == OperationMode.WRITE) {
             FileOutputStream fos = new FileOutputStream(file);
             outputStream = new DataOutputStream(compression ? new GZIPOutputStream(fos) : fos);
         }
-    }
-
-    /**
-     * Begin restoring this backup. This should be ran in a separate thread.
-     * Any world calls are offloaded to the world thread using the scheduler. No world reads are done, only writes.
-     *
-     * @return
-     */
-    public Result restoreBackup() {
-        throw new UnsupportedOperationException("Not yet supported");
     }
 
     /**
@@ -145,24 +128,42 @@ public class Backup {
      * @return
      */
     protected Restorable readRestorable() throws IOException {
-        if (operation != Operation.READ) {
+        if (operationMode != OperationMode.READ) {
             throw new UnsupportedOperationException("READ is not allowed on this backup.");
         }
 
         // The object type
-        int type = inputStream.read() & 0xFF;
+        int type = (byte) inputStream.read();
+
+        // EOF
+        if (type == -1) {
+            return null;
+        }
 
         // TODO enum that shit yo
         if (type == 0) { // Protection
+            RestorableProtection rprotection = new RestorableProtection();
+            rprotection.setId(inputStream.readInt());
+            rprotection.setProtectionType(inputStream.readByte());
+            rprotection.setBlockId(inputStream.readShort());
+            rprotection.setOwner(inputStream.readUTF());
+            rprotection.setWorld(inputStream.readUTF());
+            rprotection.setX(inputStream.readInt());
+            rprotection.setY(inputStream.readShort());
+            rprotection.setZ(inputStream.readInt());
+            rprotection.setData(inputStream.readUTF());
+            rprotection.setCreated(inputStream.readLong());
+            rprotection.setUpdated(inputStream.readLong());
 
+            return rprotection;
         } else if (type == 1) { // Block
-            RestorableBlock block = new RestorableBlock();
-            block.setId(inputStream.readShort());
-            block.setWorld(inputStream.readUTF());
-            block.setX(inputStream.readInt());
-            block.setY(inputStream.readShort());
-            block.setZ(inputStream.readInt());
-            block.setData(inputStream.read() & 0xFF);
+            RestorableBlock rblock = new RestorableBlock();
+            rblock.setId(inputStream.readShort());
+            rblock.setWorld(inputStream.readUTF());
+            rblock.setX(inputStream.readInt());
+            rblock.setY(inputStream.readShort());
+            rblock.setZ(inputStream.readInt());
+            rblock.setData(inputStream.read() & 0xFF);
             int itemCount = inputStream.readShort();
             
             for (int i = 0; i < itemCount; i++) {
@@ -176,14 +177,14 @@ public class Backup {
                 ItemStack itemStack = new ItemStack(itemId, amount, damage);
 
                 // add it to the block
-                block.setSlot(slot, itemStack);
+                rblock.setSlot(slot, itemStack);
             }
             
             // Woo!
-            return block;
+            return rblock;
         }
 
-        throw new UnsupportedOperationException("Not yet supported");
+        throw new UnsupportedOperationException("Read unknown type: " + type);
     }
 
     /**
@@ -192,7 +193,7 @@ public class Backup {
      * @param restorable
      */
     protected void writeRestorable(Restorable restorable) throws IOException {
-        if (operation != Operation.WRITE) {
+        if (operationMode != OperationMode.WRITE) {
             throw new UnsupportedOperationException("WRITE is not allowed on this backup.");
         }
 
@@ -201,7 +202,19 @@ public class Backup {
 
         // Write it
         if (restorable.getType() == 0) { // Protection, also TODO ENUMSSSSSSSSSSS
+            RestorableProtection rprotection = (RestorableProtection) restorable;
 
+            outputStream.writeInt(rprotection.getId());
+            outputStream.writeByte(rprotection.getType());
+            outputStream.writeShort(rprotection.getBlockId());
+            outputStream.writeUTF(rprotection.getOwner());
+            outputStream.writeUTF(rprotection.getWorld());
+            outputStream.writeInt(rprotection.getX());
+            outputStream.writeShort(rprotection.getY());
+            outputStream.writeInt(rprotection.getZ());
+            outputStream.writeUTF(rprotection.getData());
+            outputStream.writeLong(rprotection.getCreated());
+            outputStream.writeLong(rprotection.getUpdated());
         } else if (restorable.getType() == 1) { // Block, TODO DID I SAY TO DO THE ENUM YET??
             RestorableBlock rblock = (RestorableBlock) restorable;
 
@@ -212,7 +225,7 @@ public class Backup {
             outputStream.writeInt(rblock.getZ());
             outputStream.write((byte) rblock.getData());
             outputStream.writeShort(rblock.getItems().size());
-            
+
             // Write the items if there are any
             for (Map.Entry<Integer, ItemStack> entry : rblock.getItems().entrySet()) {
                 int slot = entry.getKey();
@@ -223,9 +236,9 @@ public class Backup {
                 outputStream.writeShort(stack.getAmount());
                 outputStream.writeShort(stack.getDurability());
             }
-
-            outputStream.flush();
         }
+
+        outputStream.flush();
     }
 
     /**
@@ -250,11 +263,16 @@ public class Backup {
         outputStream.write(new byte[10]); // reserved space
         outputStream.flush();
     }
-    
+
+    /**
+     * Close the backup file
+     *
+     * @throws IOException
+     */
     protected void close() throws IOException {
-        if (operation == Operation.READ) {
+        if (operationMode == OperationMode.READ) {
             inputStream.close();
-        } else if (operation == Operation.WRITE) {
+        } else if (operationMode == OperationMode.WRITE) {
             outputStream.close();
         }
     }
