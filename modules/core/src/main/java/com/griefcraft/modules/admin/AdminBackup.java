@@ -29,9 +29,11 @@
 package com.griefcraft.modules.admin;
 
 import com.griefcraft.io.Backup;
+import com.griefcraft.io.BackupManager;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
+import com.griefcraft.util.StringUtil;
 import org.bukkit.command.CommandSender;
 
 public class AdminBackup extends JavaModule {
@@ -46,8 +48,8 @@ public class AdminBackup extends JavaModule {
             return;
         }
 
-        LWC lwc = event.getLWC();
-        CommandSender sender = event.getSender();
+        final LWC lwc = event.getLWC();
+        final CommandSender sender = event.getSender();
         String[] args = event.getArgs();
 
         if (!args[0].equals("backup")) {
@@ -69,6 +71,21 @@ public class AdminBackup extends JavaModule {
             // Dumb code for now
             Backup created = lwc.getBackupManager().createBackup();
             sender.sendMessage("Backup is being created now.");
+        } else if (action.equals("restore")) {
+            if (args.length < 3) {
+                lwc.sendSimpleUsage(sender, "/lwc admin backup restore <BackupName>");
+                return;
+            }
+
+            final String backupName = StringUtil.join(args, 2);
+            sender.sendMessage("Restoring backup " + backupName);
+
+            lwc.getPlugin().getServer().getScheduler().scheduleAsyncDelayedTask(lwc.getPlugin(), new Runnable() {
+                public void run() {
+                    BackupManager.Result result = lwc.getBackupManager().restoreBackup(backupName);
+                    sender.sendMessage("Result: " + result);
+                }
+            });
         }
     }
 

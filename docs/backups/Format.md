@@ -37,6 +37,7 @@ By default, backup files are named using the naming format `MM-dd-yyyy-HHmm.lwc.
 
     struct RestorableProtection {
         int id; // ID in the database, e.g mysql
+        byte type; // protection type
         short blockId;
         string owner;
         string world;
