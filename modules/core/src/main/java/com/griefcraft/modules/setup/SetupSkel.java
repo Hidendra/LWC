@@ -55,11 +55,6 @@ public class SetupSkel extends JavaModule {
 
         // we have the right command
         event.setCancelled(true);
-
-        if (!lwc.isAdmin(sender)) {
-            lwc.sendLocale(sender, "protection.accessdenied");
-            return;
-        }
     }
 
 }
