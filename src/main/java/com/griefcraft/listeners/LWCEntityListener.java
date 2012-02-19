@@ -33,10 +33,12 @@ import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Flag;
 import com.griefcraft.model.Protection;
 import org.bukkit.block.Block;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.EntityListener;
 
-public class LWCEntityListener extends EntityListener {
+public class LWCEntityListener implements Listener {
 
     /**
      * The plugin instance
@@ -47,7 +49,7 @@ public class LWCEntityListener extends EntityListener {
         this.plugin = plugin;
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.HIGH)
     public void onEntityExplode(EntityExplodeEvent event) {
         if (!LWC.ENABLED || event.isCancelled()) {
             return;

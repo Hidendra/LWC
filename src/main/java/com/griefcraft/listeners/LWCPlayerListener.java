@@ -42,17 +42,19 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LWCPlayerListener extends PlayerListener {
+public class LWCPlayerListener implements Listener {
 
     /**
      * The plugin instance
@@ -63,7 +65,7 @@ public class LWCPlayerListener extends PlayerListener {
         this.plugin = plugin;
     }
 
-    @Override
+    @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event) {
         if (event.isCancelled() || !LWC.ENABLED) {
             return;
@@ -79,7 +81,7 @@ public class LWCPlayerListener extends PlayerListener {
         }
     }
 
-    @Override
+    @EventHandler
     public void onPlayerChat(PlayerChatEvent event) {
         if (event.isCancelled() || !LWC.ENABLED) {
             return;
@@ -99,7 +101,7 @@ public class LWCPlayerListener extends PlayerListener {
         }
     }
 
-    @Override
+    @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (!LWC.ENABLED) {
             return;
@@ -244,7 +246,7 @@ public class LWCPlayerListener extends PlayerListener {
         lwc.completeStopwatch(stopWatch, player);
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(PlayerQuitEvent event) {
         if (!LWC.ENABLED) {
             return;
