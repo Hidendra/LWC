@@ -30,11 +30,12 @@ package com.griefcraft.listeners;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
-import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.Plugin;
 
-public class LWCServerListener extends ServerListener {
+public class LWCServerListener implements Listener {
 
     private LWCPlugin plugin;
 
@@ -42,7 +43,7 @@ public class LWCServerListener extends ServerListener {
         this.plugin = plugin;
     }
 
-    @Override
+    @EventHandler
     public void onPluginDisable(PluginDisableEvent event) {
         if (!LWC.ENABLED) {
             return;

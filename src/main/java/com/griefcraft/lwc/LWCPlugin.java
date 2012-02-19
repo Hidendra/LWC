@@ -41,16 +41,11 @@ import com.griefcraft.util.Version;
 import com.griefcraft.util.locale.LWCResourceBundle;
 import com.griefcraft.util.locale.LocaleClassLoader;
 import com.griefcraft.util.locale.UTF8Control;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockListener;
-import org.bukkit.event.entity.EntityListener;
-import org.bukkit.event.player.PlayerListener;
-import org.bukkit.event.server.ServerListener;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -73,22 +68,22 @@ public class LWCPlugin extends JavaPlugin {
     /**
      * The block listener
      */
-    private BlockListener blockListener;
+    private LWCBlockListener blockListener;
 
     /**
      * The entity listener
      */
-    private EntityListener entityListener;
+    private LWCEntityListener entityListener;
 
     /**
      * The player listener
      */
-    private PlayerListener playerListener;
+    private LWCPlayerListener playerListener;
 
     /**
      * The server listener
      */
-    private ServerListener serverListener;
+    private LWCServerListener serverListener;
 
     /**
      * The locale for LWC
@@ -364,50 +359,11 @@ public class LWCPlugin extends JavaPlugin {
      * Register all of the events used by LWC
      */
     private void registerEvents() {
-        /* Player events */
-        registerEvent(playerListener, Type.PLAYER_QUIT, Priority.Monitor);
-        registerEvent(playerListener, Type.PLAYER_DROP_ITEM);
-        registerEvent(playerListener, Type.PLAYER_INTERACT);
-        registerEvent(playerListener, Type.PLAYER_CHAT);
-
-        /* Entity events */
-        registerEvent(entityListener, Type.ENTITY_EXPLODE, Priority.High);
-
-        /* Block events */
-        registerEvent(blockListener, Type.BLOCK_BREAK);
-        registerEvent(blockListener, Type.BLOCK_PLACE);
-        registerEvent(blockListener, Type.REDSTONE_CHANGE);
-        registerEvent(blockListener, Type.SIGN_CHANGE);
-
-        /* Server events */
-        registerEvent(serverListener, Type.PLUGIN_DISABLE);
-
-        // post-1.7 event
-        registerEvent(blockListener, Type.BLOCK_PISTON_EXTEND);
-        registerEvent(blockListener, Type.BLOCK_PISTON_RETRACT);
-    }
-
-    /**
-     * Register a hook
-     *
-     * @param listener
-     * @param eventType
-     * @param priority
-     */
-    private void registerEvent(Listener listener, Type eventType, Priority priority) {
-        // logger.info("-> " + eventType.toString());
-
-        getServer().getPluginManager().registerEvent(eventType, listener, priority, this);
-    }
-
-    /**
-     * Register a hook with default priority
-     *
-     * @param listener
-     * @param eventType
-     */
-    private void registerEvent(Listener listener, Type eventType) {
-        registerEvent(listener, eventType, Priority.Highest);
+        PluginManager pluginManager = Bukkit.getServer().getPluginManager();
+        pluginManager.registerEvents(playerListener, this);
+        pluginManager.registerEvents(entityListener, this);
+        pluginManager.registerEvents(blockListener, this);
+        pluginManager.registerEvents(serverListener, this);
     }
 
     /**
