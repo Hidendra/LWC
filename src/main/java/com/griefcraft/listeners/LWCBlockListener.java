@@ -42,8 +42,9 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -54,7 +55,7 @@ import org.bukkit.material.PistonBaseMaterial;
 
 import java.util.List;
 
-public class LWCBlockListener extends BlockListener {
+public class LWCBlockListener implements Listener {
 
     /**
      * The plugin instance
@@ -65,7 +66,7 @@ public class LWCBlockListener extends BlockListener {
         this.plugin = plugin;
     }
 
-    @Override
+    @EventHandler
     public void onBlockRedstoneChange(BlockRedstoneEvent event) {
         if (!LWC.ENABLED) {
             return;
@@ -92,7 +93,7 @@ public class LWCBlockListener extends BlockListener {
         }
     }
 
-    @Override
+    @EventHandler
     public void onSignChange(SignChangeEvent event) {
         if (!LWC.ENABLED || event.isCancelled()) {
             return;
@@ -119,7 +120,7 @@ public class LWCBlockListener extends BlockListener {
         }
     }
 
-    @Override
+    @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         if (!LWC.ENABLED || event.isCancelled()) {
             return;
@@ -199,7 +200,7 @@ public class LWCBlockListener extends BlockListener {
         }
     }
 
-    @Override
+    @EventHandler
     public void onBlockPistonRetract(BlockPistonRetractEvent event) {
         if (!LWC.ENABLED || event.isCancelled()) {
             return;
@@ -238,7 +239,7 @@ public class LWCBlockListener extends BlockListener {
         }
     }
 
-    @Override
+    @EventHandler
     public void onBlockPistonExtend(BlockPistonExtendEvent event) {
         if (!LWC.ENABLED || event.isCancelled()) {
             return;
@@ -288,7 +289,7 @@ public class LWCBlockListener extends BlockListener {
     /**
      * Used for auto registering placed protections
      */
-    @Override
+    @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         if (!LWC.ENABLED || event.isCancelled()) {
             return;
