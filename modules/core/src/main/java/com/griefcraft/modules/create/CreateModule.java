@@ -97,7 +97,7 @@ public class CreateModule extends JavaModule {
         String protectionData = StringUtil.join(split, 1);
 
         // check permissions again (DID THE LITTLE SHIT MOVE WORLDS??!?!?!?!?!?)
-        if (!lwc.hasPermission(player, "lwc.create." + protectionType, "lwc.create", "lwc.protect")) {
+        if (!lwc.hasPermission(event.getPlayer(), "lwc.create." + protectionType, "lwc.create", "lwc.protect")) {
             lwc.sendLocale(player, "protection.accessdenied");
             lwc.removeModes(player);
             event.setResult(Result.CANCEL);
