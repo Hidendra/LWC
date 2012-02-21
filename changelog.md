@@ -2,8 +2,8 @@
 * **ALMOST COMPLETE** Full LWC backups can be created using `/lwc admin backup create` -- this creates a full backup for the database and also every block along with it including any contents.
  * Backups can be restored using `/lwc admin backup restore NAME` where NAME is the backup's file name without the extension (`.lwc` or `.lwc.gz`)
  * The data format for backups can be found here: https://github.com/Hidendra/LWC/blob/master/docs/backups/Format.md
-* Admin notices are restored for OPs. You can also manually give the notice ability out using the `lwc.shownotices` permission node
-* Use Bukkit's new event system, this means 1.0.1 and lower is no longer supported, you will need to use 4.0.9
+* Use Bukkit's new event system, this means Minecraft 1.0.1 and lower is no longer supported, you will need to use 4.0.9
+* **FIX:** Admin notices are restored for OPs. You can also manually give the notice ability out using the `lwc.shownotices` permission node
 * **FIX:** The permission check before creating a protection (but after `/cprivate`) was being incorrectly done
 * The following has been fully removed:
  * `/lwc schedule`;
