@@ -29,11 +29,12 @@
 package com.griefcraft.bukkit;
 
 import com.griefcraft.lwc.LWCPlugin;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginEnableEvent;
-import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.Plugin;
 
-public class LWCEconomyServerListener extends ServerListener {
+public class LWCEconomyServerListener implements Listener {
 
     private LWCEconomyPlugin economyPlugin;
 
@@ -41,7 +42,7 @@ public class LWCEconomyServerListener extends ServerListener {
         this.economyPlugin = economyPlugin;
     }
 
-    @Override
+    @EventHandler
     public void onPluginEnable(PluginEnableEvent event) {
         if (economyPlugin.isInitialized()) {
             return;

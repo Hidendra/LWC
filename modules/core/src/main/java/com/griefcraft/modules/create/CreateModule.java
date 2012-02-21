@@ -141,23 +141,6 @@ public class CreateModule extends JavaModule {
 
             lwc.sendLocale(player, "protection.interact.create.finalize");
             lwc.processRightsModifications(player, protection, rights);
-        } else if (protectionType.equals("trap")) {
-            String[] splitData = protectionData.split(" ");
-            String type = splitData[0].toLowerCase();
-            String reason = "";
-
-            if (splitData.length > 1) {
-                reason = StringUtil.join(splitData, 1);
-            }
-
-            Protection.Type tmpType = Protection.Type.TRAP_KICK;
-
-            if (type.equals("ban")) {
-                tmpType = Protection.Type.TRAP_BAN;
-            }
-
-            protection = physDb.registerProtection(block.getTypeId(), tmpType, worldName, playerName, reason, blockX, blockY, blockZ);
-            lwc.sendLocale(player, "protection.interact.create.finalize");
         }
 
         // tell the modules that a protection was registered
@@ -208,19 +191,6 @@ public class CreateModule extends JavaModule {
 
         try {
             switch (Protection.Type.matchType(type)) {
-                case TRAP_KICK:
-                case TRAP_BAN:
-                    if (!lwc.isAdmin(player)) {
-                        lwc.sendLocale(player, "protection.accessdenied");
-                        return;
-                    }
-
-                    if (args.length < 2) {
-                        lwc.sendSimpleUsage(player, "/lwc -c trap <kick/ban> [reason]");
-                        return;
-                    }
-                    break;
-
                 case PASSWORD:
                     if (args.length < 2) {
                         lwc.sendSimpleUsage(player, "/lwc -c password <Password>");

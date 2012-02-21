@@ -33,11 +33,8 @@ import com.griefcraft.lwc.LWCInfo;
 import com.griefcraft.lwc.ManagementModule;
 import com.griefcraft.lwc.PasswordRequestModule;
 import com.griefcraft.scripting.ModuleLoader;
-import com.griefcraft.spout.SpoutInputListener;
 import com.griefcraft.spout.SpoutInventoryListener;
 import com.griefcraft.spout.SpoutScreenListener;
-import org.bukkit.event.Event;
-import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.getspout.spoutapi.gui.Color;
@@ -49,7 +46,7 @@ import java.util.logging.Logger;
 
 public class LWCSpoutPlugin extends JavaPlugin {
     private Logger logger = Logger.getLogger("LWC-Spout");
-    private final ServerListener serverListener = new LWCSpoutServerListener(this);
+    private final LWCSpoutServerListener serverListener = new LWCSpoutServerListener(this);
 
     public void init() {
         // register events into LWC
@@ -58,9 +55,8 @@ public class LWCSpoutPlugin extends JavaPlugin {
         moduleLoader.registerModule(this, new PasswordRequestModule(this));
 
         // register events into Bukkit
-        getServer().getPluginManager().registerEvent(Event.Type.CUSTOM_EVENT, new SpoutScreenListener(this), Event.Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.CUSTOM_EVENT, new SpoutInputListener(this), Event.Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.CUSTOM_EVENT, new SpoutInventoryListener(this), Event.Priority.Normal, this);
+        getServer().getPluginManager().registerEvents(new SpoutScreenListener(), this);
+        getServer().getPluginManager().registerEvents(new SpoutInventoryListener(), this);
 
         log("Hooked into LWC.");
     }
@@ -72,7 +68,7 @@ public class LWCSpoutPlugin extends JavaPlugin {
             init();
         } else {
             // register the server listener
-            getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, serverListener, Event.Priority.Monitor, this);
+            getServer().getPluginManager().registerEvents(serverListener, this);
 
             log("Waiting for LWC to be enabled...");
         }

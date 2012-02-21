@@ -28,30 +28,22 @@
 
 package com.griefcraft.spout;
 
-import com.griefcraft.bukkit.LWCSpoutPlugin;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.inventory.CraftInventoryPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.event.inventory.InventoryClickEvent;
-import org.getspout.spoutapi.event.inventory.InventoryListener;
 import org.getspout.spoutapi.event.inventory.InventorySlotType;
 
-public class SpoutInventoryListener extends InventoryListener {
+public class SpoutInventoryListener implements Listener {
 
-    /**
-     * The plugin instance
-     */
-    private LWCSpoutPlugin plugin;
-
-    public SpoutInventoryListener(LWCSpoutPlugin plugin) {
-        this.plugin = plugin;
-    }
-
+    @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         LWC lwc = LWC.getInstance();
         // Player interacting with the inventory

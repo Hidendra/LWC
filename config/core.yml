@@ -17,10 +17,6 @@ core:
     # as much as possible
     precache: -1
 
-    # The default menu style presented to players. Possible options are basic and advanced. Basic prefers to use
-    # aliases such as /cprivate over its advanced counterpart, /lwc -c private or /lwc create private
-    defaultMenuStyle: basic
-
     # If true, players will be sent a notice in their chat box when they open a protection they have access to, but
     # not their own unless <showMyNotices> is set to true
     showNotices: true
