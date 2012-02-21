@@ -14,7 +14,7 @@
  * EasyNotify;
  * Job support (requirement for schedules);
  * Kick traps;
- * Ban traps;
+ * Ban traps; and
  * Deprecated `ProtectionTypes` class
 
 ### LWC 4.0.9
