@@ -1,5 +1,77 @@
-# In progress full changelog
+### 4.1.0 **unreleased**
+* **ALMOST COMPLETE** Full LWC backups can be created using `/lwc admin backup create` -- this creates a full backup for the database and also every block along with it including any contents.
+ * Backups can be restored using `/lwc admin backup restore NAME` where NAME is the backup's file name without the extension (`.lwc` or `.lwc.gz`)
+ * The data format for backups can be found here: https://github.com/Hidendra/LWC/blob/master/docs/backups/Format.md
+* Admin notices are restored for OPs. You can also manually give the notice ability out using the `lwc.shownotices` permission node
+* Use Bukkit's new event system, this means 1.0.1 and lower is no longer supported, you will need to use 4.0.9
+* **FIX:** The permission check before creating a protection (but after `/cprivate`) was being incorrectly done
+* The following has been fully removed:
+ * `/lwc schedule`;
+ * `/lwc menu`;
+ * `/lwc dev`;
+ * `/lwc admin config`;
+ * List support;
+ * EasyNotify;
+ * Job support (requirement for schedules);
+ * Kick traps;
+ * Ban traps;
+ * Deprecated `ProtectionTypes` class
 
+### LWC 4.0.9
+* /lwc admin rebuild: a command to rebuild a wiped database, barring some missing data such as ACLs which is less important and unrecoverable without backups. See http://forums.bukkit.org/threads/60178/
+
+### LWC 4.0.8
+* Fix an exploit that allows some very dangerous commands to be executed on the server
+
+### LWC 4.0.7
+* Maintenance release to fix an index. Most servers will not notice any difference.
+
+### LWC 4.0.6
+* bPermissions group support
+* Allow the group prefix for matching groups via Permissions be changed in core.yml (and also change the default to group. instead of lwc.group.)
+* Don't allow freshly placed pressure plates to open a door that has the redstone flag
+* `/lwc admin purge` would interfere with LWC-Econ discount type IN_USE and not allow people to get discounted.
+
+### LWC 4.0.5
+* Fix gravity-matched blocks such as wooden sign, rails, lever, etc
+* Prevent players from using /lwc fix on protections they cannot administrate
+
+### LWC 4.0.4
+* Incompatible classes when a method's return type was changed, so 4.0.4 is a complete rebuild of 4.0.3, fixing some bugs
+* No source file changes except for plugin.yml
+
+### LWC 4.0.3
+* **New:** When removing one side of a protected double chest, it won't REMOVE the protection now.
+* **New:** Support custom protections via the data value ( 'id:data' , e.g '181:8' )
+ * This means Industrial Craft, etc blocks that use the data value for the block are now supported individually.
+* Found another area where queries were being wasted when clicking on certain blocks
+* Fixes an exploit detailed by `spunkiie` which allows you to arbitrarily take over certain protections
+* Fix `plugins/LWC/locale/lwc.properties` - it was not being loaded properly
+* Fix removal of double step protections when a step is placed and protected
+* Fix automatic upgrade from sqlite->mysql
+* Only perform rights migration from LWC3 -> LWC4 once even if the old rights table fails to drop
+* Located and restored `/lwc admin purgeregion` - it went AWOL but has came back.
+* Fail with a more descriptive failure when LWC cannot connect to the database at startup
+* Fix an NPE in limitsv2 that is normally only found when using /climits
+* soft defend iConomy to fix a bug when using the serverBankAccount feature of LWC-Economy
+* Also soft depend Permissions & PermissionsBukkit again
+ * **NOTE:** If you use LWC-Economy and/or LWC-Spout, you may need to upgrade them as well.
+* Group limits in limitsv2.yml are no longer case sensitive
+* Fix the SQLite libraries being placed in the wrong location - should be `plugins/LWC/lib` not `plugins/LWC/lib/lib` :)
+* Fix worldguard.allowProtectionsOutsideRegions: it was working in reverse (true meant it was blocked, false meant it was allowed)
+
+### LWC 4.0.2
+* Optimized out 1 to 2 unneeded queries that were used when touching a protected or unprotected door (for either they were two different things)
+* Fix a bug where converted rights from LWC 3 were 'not able to access protections'
+* Fix an exploit where a chest protection could be overridden by another protection in two very specific cases
+* Minor additions to `/lwc credits` -- upgrade MonsterTKE and add imaxorz
+
+### LWC 4.0.1
+* Fix the german locale's file encoding (latin-1 -> utf-8)
+* Fix a Spout bug (both in its RB and dev builds) that allow a sticky piston to destroy chests by pulling a wooden door over it
+* Fix a bug in converting rights from LWC3 -> 4 format when the table is a bit tainted
+
+### LWC 4.0.0
 #### Licensing
 * LWC 4 is now licensed under the **2-clause BSD license**
 
@@ -55,8 +127,6 @@
  * View the data online: http://metrics.griefcraft.com/plugin/LWC
  * Backend source: https://github.com/Hidendra/metrics.griefcraft.com
 * `loadProtection(int id)` now utilizes the protection cache
-
-# Historical changelogs
 
 ### 4.0.0-alpha7
 * Added `worldguard.allowProtectionsOutsideRegions` to the WorldGuard portion of LWC to decide if you want to allow protections outside of WorldGuard regions.
