@@ -77,9 +77,9 @@ public class Permission {
         PLAYER,
 
         /**
-         * Applies to a list created by the Lists plugin
+         * Unused / reserved, has been used before
          */
-        LIST,
+        RESERVED,
 
         /**
          * Applies to citizens of a Towny town

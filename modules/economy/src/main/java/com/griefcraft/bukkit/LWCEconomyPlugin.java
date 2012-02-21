@@ -31,8 +31,6 @@ package com.griefcraft.bukkit;
 
 import com.griefcraft.lwc.EconomyModule;
 import com.griefcraft.lwc.LWC;
-import org.bukkit.event.Event;
-import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -71,7 +69,7 @@ public class LWCEconomyPlugin extends JavaPlugin {
             init();
         } else {
             // register the server listener
-            getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, serverListener, Priority.Monitor, this);
+            getServer().getPluginManager().registerEvents(serverListener, this);
 
             log("Waiting for LWC to be enabled...");
         }

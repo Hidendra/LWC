@@ -28,7 +28,6 @@
 
 package com.griefcraft.lwc;
 
-import com.firestar.mcbans.mcbans;
 import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.integration.ICurrency;
 import com.griefcraft.integration.IPermissions;
@@ -44,7 +43,6 @@ import com.griefcraft.integration.permissions.PEXPermissions;
 import com.griefcraft.integration.permissions.SuperPermsPermissions;
 import com.griefcraft.integration.permissions.bPermissions;
 import com.griefcraft.io.BackupManager;
-import com.griefcraft.jobs.JobManager;
 import com.griefcraft.migration.ConfigPost300;
 import com.griefcraft.migration.MySQLPost200;
 import com.griefcraft.model.Flag;
@@ -55,7 +53,6 @@ import com.griefcraft.modules.admin.AdminBackup;
 import com.griefcraft.modules.admin.AdminCache;
 import com.griefcraft.modules.admin.AdminCleanup;
 import com.griefcraft.modules.admin.AdminClear;
-import com.griefcraft.modules.admin.AdminConfig;
 import com.griefcraft.modules.admin.AdminDump;
 import com.griefcraft.modules.admin.AdminExpire;
 import com.griefcraft.modules.admin.AdminFind;
@@ -77,9 +74,7 @@ import com.griefcraft.modules.create.CreateModule;
 import com.griefcraft.modules.credits.CreditsModule;
 import com.griefcraft.modules.debug.DebugModule;
 import com.griefcraft.modules.destroy.DestroyModule;
-import com.griefcraft.modules.devmode.DeveloperModeModule;
 import com.griefcraft.modules.doors.DoorsModule;
-import com.griefcraft.modules.easynotify.EasyNotifyModule;
 import com.griefcraft.modules.fix.FixModule;
 import com.griefcraft.modules.flag.BaseFlagModule;
 import com.griefcraft.modules.flag.MagnetModule;
@@ -88,8 +83,6 @@ import com.griefcraft.modules.history.HistoryModule;
 import com.griefcraft.modules.info.InfoModule;
 import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.modules.limits.LimitsV2;
-import com.griefcraft.modules.lists.ListsModule;
-import com.griefcraft.modules.menu.MenuModule;
 import com.griefcraft.modules.modes.BaseModeModule;
 import com.griefcraft.modules.modes.DropTransferModule;
 import com.griefcraft.modules.modes.NoSpamModule;
@@ -97,7 +90,6 @@ import com.griefcraft.modules.modes.PersistModule;
 import com.griefcraft.modules.modify.ModifyModule;
 import com.griefcraft.modules.owners.OwnersModule;
 import com.griefcraft.modules.redstone.RedstoneModule;
-import com.griefcraft.modules.schedule.ScheduleModule;
 import com.griefcraft.modules.setup.BaseSetupModule;
 import com.griefcraft.modules.setup.DatabaseSetupModule;
 import com.griefcraft.modules.setup.LimitsSetup;
@@ -176,11 +168,6 @@ public class LWC {
     private final BackupManager backupManager;
 
     /**
-     * The job manager
-     */
-    private final JobManager jobManager;
-
-    /**
      * The protection cache
      */
     private final ProtectionCache protectionCache;
@@ -221,7 +208,6 @@ public class LWC {
         configuration = Configuration.load("core.yml");
         protectionCache = new ProtectionCache(this);
         backupManager = new BackupManager();
-        jobManager = new JobManager(this);
         moduleLoader = new ModuleLoader(this);
     }
 
@@ -667,29 +653,6 @@ public class LWC {
                 }
 
                 break;
-
-            case TRAP_KICK:
-                if (!hasAccess) {
-                    player.kickPlayer(protection.getPassword());
-                    log(player.getName() + " triggered the kick trap: " + protection.toString());
-                }
-                break;
-
-            case TRAP_BAN:
-                if (!hasAccess) {
-                    Plugin mcbansPlugin;
-
-                    // See if we have mcbans
-                    if ((mcbansPlugin = plugin.getServer().getPluginManager().getPlugin("MCBans")) != null) {
-                        mcbans mcbans = (mcbans) mcbansPlugin;
-
-                        // ban then locally
-                        mcbans.mcb_handler.ban(player.getName(), "LWC", protection.getPassword(), "");
-                    }
-
-                    log(player.getName() + " triggered the ban trap: " + protection.toString());
-                }
-                break;
         }
 
         return hasAccess;
@@ -1001,7 +964,6 @@ public class LWC {
             }
 
             String localeName = alias + "." + menuStyle;
-
             message = message.replace(replace, getLocale(localeName));
         }
 
@@ -1564,7 +1526,6 @@ public class LWC {
 
         // We are now done loading!
         moduleLoader.loadAll();
-        jobManager.load();
 
         // Should we try metrics?
         if (!configuration.getBoolean("optional.optOut", false)) {
@@ -1622,25 +1583,20 @@ public class LWC {
         registerModule(new DestroyModule());
         registerModule(new FreeModule());
         registerModule(new InfoModule());
-        registerModule(new MenuModule());
         registerModule(new UnlockModule());
         registerModule(new OwnersModule());
         registerModule(new DoorsModule());
         registerModule(new DebugModule());
         registerModule(new CreditsModule());
-        registerModule(new ScheduleModule());
         registerModule(new FixModule());
         registerModule(new HistoryModule());
-        registerModule(new DeveloperModeModule());
         registerModule(new ConfirmModule());
-        registerModule(new EasyNotifyModule());
 
         // admin commands
         registerModule(new BaseAdminModule());
         registerModule(new AdminCache());
         registerModule(new AdminCleanup());
         registerModule(new AdminClear());
-        registerModule(new AdminConfig());
         registerModule(new AdminFind());
         registerModule(new AdminFlush());
         registerModule(new AdminForceOwner());
@@ -1675,10 +1631,6 @@ public class LWC {
         registerModule(new NoSpamModule());
 
         // non-core modules but are included with LWC anyway
-        if (resolvePlugin("Lists") != null) {
-            registerModule(new ListsModule());
-        }
-
         if (resolvePlugin("WorldGuard") != null) {
             registerModule(new WorldGuardModule());
         }
@@ -1804,16 +1756,6 @@ public class LWC {
                 value = value.substring(2);
             }
 
-            if (value.toLowerCase().startsWith("l:")) {
-                type = Permission.Type.LIST;
-                value = value.substring(2);
-            }
-
-            if (value.toLowerCase().startsWith("list:")) {
-                type = Permission.Type.LIST;
-                value = value.substring(5);
-            }
-
             if (value.toLowerCase().startsWith("t:")) {
                 type = Permission.Type.TOWN;
                 value = value.substring(2);
@@ -1833,7 +1775,6 @@ public class LWC {
                 continue;
             }
 
-            int protectionId = protection.getId();
             String localeChild = type.toString().toLowerCase();
 
             if (!remove) {
@@ -1903,18 +1844,7 @@ public class LWC {
      * @param sender the player to send to
      */
     public void sendFullHelp(CommandSender sender) {
-        boolean isPlayer = (sender instanceof Player);
-        String menuStyle = "advanced"; // default for console
-
-        if (isPlayer) {
-            menuStyle = physicalDatabase.getMenuStyle(((Player) sender).getName()).toLowerCase();
-        }
-
-        if (menuStyle.equals("advanced")) {
-            sendLocale(sender, "help.advanced");
-        } else {
-            sendLocale(sender, "help.basic");
-        }
+        sendLocale(sender, "help.advanced");
 
         if (isAdmin(sender)) {
             sender.sendMessage("");
@@ -1951,13 +1881,6 @@ public class LWC {
      */
     public BackupManager getBackupManager() {
         return backupManager;
-    }
-
-    /**
-     * @return the job manager
-     */
-    public JobManager getJobManager() {
-        return jobManager;
     }
 
     /**
