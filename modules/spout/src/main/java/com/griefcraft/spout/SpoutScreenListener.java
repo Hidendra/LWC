@@ -28,23 +28,14 @@
 
 package com.griefcraft.spout;
 
-import com.griefcraft.bukkit.LWCSpoutPlugin;
 import com.griefcraft.lwc.LWCPopupScreen;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.getspout.spoutapi.event.screen.ButtonClickEvent;
-import org.getspout.spoutapi.event.screen.ScreenListener;
 
-public class SpoutScreenListener extends ScreenListener {
+public class SpoutScreenListener implements Listener {
 
-    /**
-     * The plugin object
-     */
-    private LWCSpoutPlugin plugin;
-
-    public SpoutScreenListener(LWCSpoutPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    @Override
+    @EventHandler
     public void onButtonClick(ButtonClickEvent event) {
         if (event.getScreen() instanceof LWCPopupScreen) {
             ((LWCPopupScreen) event.getScreen()).onButtonClicked(event);

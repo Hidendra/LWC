@@ -33,7 +33,6 @@ import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Flag;
 import com.griefcraft.model.History;
-import com.griefcraft.model.Job;
 import com.griefcraft.model.Permission;
 import com.griefcraft.model.Protection;
 import com.griefcraft.modules.limits.LimitsModule;
@@ -103,33 +102,6 @@ public class PhysDB extends Database {
         }
 
         return null;
-    }
-
-    /**
-     * Get the menu style for a player
-     *
-     * @param player
-     * @return
-     */
-    public String getMenuStyle(String player) {
-        try {
-            PreparedStatement statement = prepare("SELECT menu FROM " + prefix + "menu_styles WHERE player = ?");
-            statement.setString(1, player);
-
-            ResultSet set = statement.executeQuery();
-
-            if (set.next()) {
-                String style = set.getString("menu");
-                set.close();
-                return style;
-            }
-
-            set.close();
-        } catch (Exception e) {
-            printException(e);
-        }
-
-        return LWC.getInstance().getConfiguration().getString("core.defaultMenuStyle");
     }
 
     /**
@@ -239,6 +211,17 @@ public class PhysDB extends Database {
     }
 
     /**
+     * Get the menu style for a player
+     *
+     * @param player
+     * @return
+     * @deprecated
+     */
+    public String getMenuStyle(String player) {
+        return "advanced";
+    }
+
+    /**
      * Load the database and do any updating required or create the tables
      */
     @Override
@@ -255,7 +238,6 @@ public class PhysDB extends Database {
         doUpdate330();
         doUpdate400_1();
         doUpdate400_4();
-        doUpdate400_3();
         doUpdate400_4();
         doUpdate400_5();
         doUpdate400_6();
@@ -318,19 +300,6 @@ public class PhysDB extends Database {
             protections.add(column);
         }
 
-        Table menuStyles = new Table(this, "menu_styles");
-        {
-            column = new Column("player");
-            column.setType("VARCHAR(255)");
-            column.setPrimary(true);
-            column.setAutoIncrement(false);
-            menuStyles.add(column);
-
-            column = new Column("menu");
-            column.setType("VARCHAR(255)");
-            menuStyles.add(column);
-        }
-
         Table history = new Table(this, "history");
         {
             column = new Column("id");
@@ -375,30 +344,6 @@ public class PhysDB extends Database {
             history.add(column);
         }
 
-        Table jobs = new Table(this, "jobs");
-        {
-            column = new Column("id");
-            column.setType("INTEGER");
-            column.setPrimary(true);
-            jobs.add(column);
-
-            column = new Column("name");
-            column.setType("VARCHAR(64)");
-            jobs.add(column);
-
-            column = new Column("type");
-            column.setType("INTEGER");
-            jobs.add(column);
-
-            column = new Column("data");
-            column.setType("TEXT");
-            jobs.add(column);
-
-            column = new Column("nextRun");
-            column.setType("INTEGER");
-            jobs.add(column);
-        }
-
         Table internal = new Table(this, "internal");
         {
             column = new Column("name");
@@ -413,9 +358,7 @@ public class PhysDB extends Database {
         }
 
         protections.execute();
-        menuStyles.execute();
         history.execute();
-        jobs.execute();
         internal.execute();
 
         // Load the database version
@@ -1535,92 +1478,6 @@ public class PhysDB extends Database {
     }
 
     /**
-     * Save a job to the database
-     *
-     * @param job
-     */
-    public void saveJob(Job job) {
-        try {
-            PreparedStatement statement = null;
-            int index = 1;
-
-            if (job.doesExist()) {
-                statement = prepare("REPLACE INTO " + prefix + "jobs (id, name, type, data, nextRun) VALUES (?, ?, ?, ?, ?)");
-                statement.setInt(index++, job.getId());
-            } else {
-                statement = prepare("INSERT INTO " + prefix + "jobs (name, type, data, nextRun) VALUES (?, ?, ?, ?)", true);
-            }
-
-            statement.setString(index++, job.getName());
-            statement.setInt(index++, job.getType());
-            statement.setString(index++, job.getData().toJSONString());
-            statement.setInt(index++, (int) job.getNextRun());
-            statement.executeUpdate();
-
-            // check if it was inserted correctly
-            if (!job.doesExist()) {
-                ResultSet keys = statement.getGeneratedKeys();
-
-                if (keys != null && keys.next()) {
-                    job.setId(keys.getInt(1));
-                    keys.close();
-                }
-            }
-        } catch (SQLException e) {
-            printException(e);
-        }
-    }
-
-    public void removeJob(Job job) {
-        try {
-            PreparedStatement statement = prepare("DELETE FROM " + prefix + "jobs WHERE id = ?");
-
-            statement.setInt(1, job.getId());
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            printException(e);
-        }
-    }
-
-    /**
-     * Load all of the jobs in the database
-     *
-     * @return a List of the jobs in the database
-     */
-    public List<Job> loadJobs() {
-        List<Job> jobs = new ArrayList<Job>();
-
-        try {
-            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "jobs");
-            ResultSet set = statement.executeQuery();
-
-            while (set.next()) {
-                Job job = new Job();
-
-                int id = set.getInt("id");
-                String name = set.getString("name");
-                int type = set.getInt("type");
-                String data = set.getString("data");
-                long nextRun = set.getLong("nextRun");
-
-                job.setId(id);
-                job.setName(name);
-                job.setType(type);
-                job.setData(Job.decodeJSON(data));
-                job.setNextRun(nextRun);
-
-                jobs.add(job);
-            }
-
-            set.close();
-        } catch (SQLException e) {
-            printException(e);
-        }
-
-        return jobs;
-    }
-
-    /**
      * Save a protection to the database
      *
      * @param protection
@@ -1644,24 +1501,6 @@ public class PhysDB extends Database {
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            printException(e);
-        }
-    }
-
-    /**
-     * Set the menu style for a place
-     *
-     * @param player
-     * @param menu
-     */
-    public void setMenuStyle(String player, String menu) {
-        try {
-            PreparedStatement statement = prepare("REPLACE INTO " + prefix + "menu_styles (player, menu) VALUES (?,?)");
-            statement.setString(1, player);
-            statement.setString(2, menu);
-
-            statement.executeUpdate();
-        } catch (Exception e) {
             printException(e);
         }
     }
@@ -1969,26 +1808,6 @@ public class PhysDB extends Database {
             precache();
         } catch (SQLException e) {
             // no need to convert!
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
-    }
-
-    /**
-     * 4.0.0, update 3
-     */
-    private void doUpdate400_3() {
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
-            statement.execute("SELECT name FROM " + prefix + "jobs LIMIT 1");
-        } catch (SQLException e) {
-            addColumn(prefix + "jobs", "name", "VARCHAR(64)");
         } finally {
             if (statement != null) {
                 try {

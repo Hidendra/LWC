@@ -29,11 +29,12 @@
 package com.griefcraft.bukkit;
 
 import com.griefcraft.lwc.LWCPlugin;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginEnableEvent;
-import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.Plugin;
 
-public class LWCSpoutServerListener extends ServerListener {
+public class LWCSpoutServerListener implements Listener {
 
     private LWCSpoutPlugin spoutPlugin;
 
@@ -41,7 +42,7 @@ public class LWCSpoutServerListener extends ServerListener {
         this.spoutPlugin = spoutPlugin;
     }
 
-    @Override
+    @EventHandler
     public void onPluginEnable(PluginEnableEvent event) {
         if (spoutPlugin.isInitialized()) {
             return;

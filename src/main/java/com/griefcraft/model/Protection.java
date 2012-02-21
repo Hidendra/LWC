@@ -79,18 +79,14 @@ public class Protection {
         PRIVATE,
 
         /**
-         * Can only be created by LWC Admins. A kick reason is provided and the protection
-         * then acts as a honeypot. If anyone attempts to access it, they are kicked with
-         * the given reason.
+         * Reserved / unused, to keep ordinal order
          */
-        TRAP_KICK,
+        RESERVED1,
 
         /**
-         * Can only be created by LWC Admins. Same as TRAP_KICK, a ban reason is provided
-         * at creation. Any users that access this protection is <b>LOCAL BANNED</b> via
-         * MCBans. If the plugin is not on the server, they are not banned.
+         * Reserved / unused, to keep ordinal order
          */
-        TRAP_BAN,
+        RESERVED2,
 
         /**
          * Allows players to deposit items into 
