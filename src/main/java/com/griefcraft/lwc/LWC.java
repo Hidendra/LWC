@@ -241,7 +241,7 @@ public class LWC {
             String materialName = normalizeName(material);
 
             // attempt to match the locale
-            String locale = LWC.getInstance().getLocale(materialName.toLowerCase());
+            String locale = LWC.getInstance().getPlugin().getMessageParser().parseMessage(materialName.toLowerCase());
 
             // if it starts with UNKNOWN_LOCALE, use the default material name
             if (locale.startsWith("UNKNOWN_LOCALE_")) {
@@ -587,6 +587,7 @@ public class LWC {
      * @return true if the player was granted access
      */
     public boolean enforceAccess(Player player, Protection protection, Block block) {
+        MessageParser parser = plugin.getMessageParser();
         boolean hasAccess = canAccessProtection(player, protection);
         // boolean canAdmin = canAdminProtection(player, protection);
 
@@ -625,15 +626,15 @@ public class LWC {
 
                 // replace your username with "you" if you own the protection
                 if (owner.equals(player.getName())) {
-                    owner = getLocale("you");
+                    owner = parser.parseMessage("you");
                 }
 
                 String blockName = materialToString(block);
 
-                if (!getLocale("protection." + blockName.toLowerCase() + ".notice.protected").startsWith("UNKNOWN_LOCALE")) {
-                    sendLocale(player, "protection." + blockName.toLowerCase() + ".notice.protected", "type", getLocale(protection.typeToString().toLowerCase()), "block", blockName, "owner", owner);
+                if (!parser.parseMessage("protection." + blockName.toLowerCase() + ".notice.protected").startsWith("UNKNOWN_LOCALE")) {
+                    sendLocale(player, "protection." + blockName.toLowerCase() + ".notice.protected", "type", parser.parseMessage(protection.typeToString().toLowerCase()), "block", blockName, "owner", owner);
                 } else {
-                    sendLocale(player, "protection.general.notice.protected", "type", getLocale(protection.typeToString().toLowerCase()), "block", blockName, "owner", owner);
+                    sendLocale(player, "protection.general.notice.protected", "type", parser.parseMessage(protection.typeToString().toLowerCase()), "block", blockName, "owner", owner);
                 }
             }
         }
@@ -828,70 +829,6 @@ public class LWC {
     }
 
     /**
-     * Get the locale value for a given key
-     *
-     * @param key
-     * @param args
-     * @return
-     */
-    public String getLocale(String key, Object... args) {
-        key = key.replaceAll(" ", "_");
-
-        if (!plugin.getLocale().containsKey(key)) {
-            return "UNKNOWN_LOCALE_" + key;
-        }
-
-        Map<String, Object> bind = parseBinds(args);
-        String value = plugin.getLocale().getString(key);
-
-        // apply colors
-        for (String colorKey : Colors.localeColors.keySet()) {
-            String color = Colors.localeColors.get(colorKey);
-
-            if (value.contains(colorKey)) {
-                value = value.replaceAll(colorKey, color);
-            }
-        }
-
-        // apply binds
-        for (String bindKey : bind.keySet()) {
-            Object object = bind.get(bindKey);
-
-            value = value.replaceAll("%" + bindKey + "%", object.toString());
-        }
-
-        return value;
-    }
-
-    /**
-     * Convert an even-lengthed argument array to a map containing String keys i.e parseBinds("Test", null, "Test2", obj) = Map().put("test", null).put("test2", obj)
-     *
-     * @param args
-     * @return
-     */
-    private Map<String, Object> parseBinds(Object... args) {
-        Map<String, Object> bind = new HashMap<String, Object>();
-
-        if (args == null || args.length < 2) {
-            return bind;
-        }
-
-        int size = args.length;
-        for (int index = 0; index < args.length; index += 2) {
-            if ((index + 2) > size) {
-                break;
-            }
-
-            String key = args[index].toString();
-            Object object = args[index + 1];
-
-            bind.put(key, object);
-        }
-
-        return bind;
-    }
-
-    /**
      * Find a player in the given ranges
      *
      * @param minX
@@ -926,7 +863,8 @@ public class LWC {
      * @param args
      */
     public void sendLocale(CommandSender sender, String key, Object... args) {
-        String message = getLocale(key, args);
+        MessageParser parser = plugin.getMessageParser();
+        String message = parser.parseMessage(key, args);
         String menuStyle = null; // null unless required!
 
         // broadcast an event if they are a player
@@ -960,11 +898,11 @@ public class LWC {
             }
 
             if (menuStyle == null) {
-                menuStyle = (sender instanceof Player) ? physicalDatabase.getMenuStyle(((Player) sender).getName()) : "advanced";
+                menuStyle = "basic";
             }
 
             String localeName = alias + "." + menuStyle;
-            message = message.replace(replace, getLocale(localeName));
+            message = message.replace(replace, parser.parseMessage(localeName));
         }
 
         // split the lines
@@ -1719,7 +1657,7 @@ public class LWC {
                     protection.setPassword(encrypt(password));
                 }
 
-                sendLocale(sender, "protection.typechanged", "type", getLocale(protectionType.toString().toLowerCase()));
+                sendLocale(sender, "protection.typechanged", "type", plugin.getMessageParser().parseMessage(protectionType.toString().toLowerCase()));
                 return;
             }
         } catch (IllegalArgumentException e) {
@@ -1844,7 +1782,7 @@ public class LWC {
      * @param sender the player to send to
      */
     public void sendFullHelp(CommandSender sender) {
-        sendLocale(sender, "help.advanced");
+        sendLocale(sender, "help.basic");
 
         if (isAdmin(sender)) {
             sender.sendMessage("");

@@ -218,7 +218,7 @@ public class PhysDB extends Database {
      * @deprecated
      */
     public String getMenuStyle(String player) {
-        return "advanced";
+        return "basic";
     }
 
     /**

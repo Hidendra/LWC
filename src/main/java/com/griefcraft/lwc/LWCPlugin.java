@@ -86,14 +86,14 @@ public class LWCPlugin extends JavaPlugin {
     private LWCServerListener serverListener;
 
     /**
-     * The locale for LWC
-     */
-    private LWCResourceBundle locale;
-
-    /**
      * The logging object
      */
     private Logger logger = Logger.getLogger("LWC");
+
+    /**
+     * The message parser to parse messages with
+     */
+    private MessageParser messageParser;
 
     /**
      * LWC updater
@@ -265,6 +265,7 @@ public class LWCPlugin extends JavaPlugin {
      * Load LWC localizations
      */
     public void loadLocales() {
+        LWCResourceBundle locale;
         String localization = getCurrentLocale();
 
         // located in plugins/LWC/locale/, values in that overrides the ones in the default :-)
@@ -315,6 +316,9 @@ public class LWCPlugin extends JavaPlugin {
             log("Uh-oh: " + e.getMessage());
             return;
         }
+
+        // create the message parser
+        messageParser = new SimpleMessageParser(locale);
     }
 
     /**
@@ -381,10 +385,11 @@ public class LWCPlugin extends JavaPlugin {
     }
 
     /**
-     * @return the locale
+     * Gets the message parser
+     * @return
      */
-    public ResourceBundle getLocale() {
-        return locale;
+    public MessageParser getMessageParser() {
+        return messageParser;
     }
 
     /**
