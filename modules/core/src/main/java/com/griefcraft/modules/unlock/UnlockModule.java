@@ -96,6 +96,7 @@ public class UnlockModule extends JavaModule {
 
             if (protection.getPassword().equals(password)) {
                 player.addAccessibleProtection(protection);
+                player.removeAction(action);
                 lwc.sendLocale(player, "protection.unlock.password.valid");
             } else {
                 lwc.sendLocale(player, "protection.unlock.password.invalid");
