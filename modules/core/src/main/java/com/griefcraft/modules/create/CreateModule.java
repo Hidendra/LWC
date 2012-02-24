@@ -215,7 +215,7 @@ public class CreateModule extends JavaModule {
         player.removeAllActions();
         player.addAction(action);
 
-        lwc.sendLocale(player, "protection.create.finalize", "type", lwc.getLocale(type));
+        lwc.sendLocale(player, "protection.create.finalize", "type", lwc.getPlugin().getMessageParser().parseMessage(type));
     }
 
 }
