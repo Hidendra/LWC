@@ -30,6 +30,7 @@ package com.griefcraft.modules.debug;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
+import com.griefcraft.lwc.MessageParser;
 import com.griefcraft.model.Flag;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
@@ -51,8 +52,9 @@ public class DebugModule extends JavaModule {
 
     @Override
     public void load(LWC lwc) {
-        yes = lwc.getLocale("yes");
-        no = lwc.getLocale("no");
+        MessageParser parser = lwc.getPlugin().getMessageParser();
+        yes = parser.parseMessage("yes");
+        no = parser.parseMessage("no");
     }
 
     @Override
