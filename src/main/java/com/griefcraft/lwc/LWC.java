@@ -1467,41 +1467,45 @@ public class LWC {
 
         // Should we try metrics?
         if (!configuration.getBoolean("optional.optOut", false)) {
-            try {
-                Metrics metrics = new Metrics();
+            // Run it in a seperate thread
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        Metrics metrics = new Metrics();
 
-                // Create a line graph
-                Metrics.Graph lineGraph = metrics.createGraph(plugin, Metrics.Graph.Type.Line, "Protections");
+                        // Add our plotters
+                        metrics.addCustomData(plugin, new Metrics.Plotter() {
+                            @Override
+                            public String getColumnName() {
+                                return "Total Protections";
+                            }
 
-                // Add the total protections plotter
-                lineGraph.addPlotter(new Metrics.Plotter("Total") {
-                    @Override
-                    public int getValue() {
-                        return physicalDatabase.getProtectionCount();
-                    }
-                });
+                            @Override
+                            public int getValue() {
+                                return physicalDatabase.getProtectionCount();
+                            }
+                        });
 
-                // Create a pie graph for individual protections
-                Metrics.Graph pieGraph = metrics.createGraph(plugin, Metrics.Graph.Type.Pie, "Protection percentages");
+                        for (final Protection.Type type : Protection.Type.values()) {
+                            metrics.addCustomData(plugin, new Metrics.Plotter() {
+                                @Override
+                                public String getColumnName() {
+                                    return StringUtil.capitalizeFirstLetter(type.toString()) + " Protections";
+                                }
 
-                for (final Protection.Type type : Protection.Type.values()) {
-                    // Create the plotter
-                    Metrics.Plotter plotter = new Metrics.Plotter(StringUtil.capitalizeFirstLetter(type.toString()) + " Protections") {
-                        @Override
-                        public int getValue() {
-                            return physicalDatabase.getProtectionCount(type);
+                                @Override
+                                public int getValue() {
+                                    return physicalDatabase.getProtectionCount(type);
+                                }
+                            });
                         }
-                    };
 
-                    // Add it to both graphs
-                    lineGraph.addPlotter(plotter);
-                    pieGraph.addPlotter(plotter);
+                        metrics.beginMeasuringPlugin(plugin);
+                    } catch (IOException e) {
+                        log(e.getMessage());
+                    }
                 }
-
-                metrics.beginMeasuringPlugin(plugin);
-            } catch (IOException e) {
-                log(e.getMessage());
-            }
+            }).start();
         }
     }
 
