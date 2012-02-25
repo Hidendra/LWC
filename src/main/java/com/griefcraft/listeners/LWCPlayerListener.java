@@ -65,7 +65,7 @@ public class LWCPlayerListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerDropItem(PlayerDropItemEvent event) {
         if (event.isCancelled() || !LWC.ENABLED) {
             return;
