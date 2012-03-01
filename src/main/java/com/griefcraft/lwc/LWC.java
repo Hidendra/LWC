@@ -37,7 +37,6 @@ import com.griefcraft.integration.currency.NoCurrency;
 import com.griefcraft.integration.currency.iConomy5Currency;
 import com.griefcraft.integration.currency.iConomy6Currency;
 import com.griefcraft.integration.permissions.BukkitPermissions;
-import com.griefcraft.integration.permissions.NijiPermissions;
 import com.griefcraft.integration.permissions.NoPermissions;
 import com.griefcraft.integration.permissions.PEXPermissions;
 import com.griefcraft.integration.permissions.SuperPermsPermissions;
@@ -778,11 +777,6 @@ public class LWC {
      * @return
      */
     public boolean hasPermission(Player player, String node) {
-        // if Permissions 2/3 is found, don't use anything else
-        if (permissions instanceof NijiPermissions) {
-            return ((NijiPermissions)permissions).permission(player, node);
-        }
-
         // Dev mode
         LWCPlayer lwcPlayer = wrapPlayer(player);
 
@@ -1380,20 +1374,6 @@ public class LWC {
         // Permissions init
         permissions = new NoPermissions();
 
-        // Default to Permissions, except with SuperpermsBridge
-        Plugin legacy = resolvePlugin("Permissions");
-        if (legacy != null) {
-            try {
-                // super perms bridge, will throw exception if it's not it
-                if (!(((com.nijikokun.bukkit.Permissions.Permissions)legacy).getHandler() instanceof com.platymuus.bukkit.permcompat.PermissionHandler)) {
-                    permissions = new NijiPermissions();
-                }
-            } catch (NoClassDefFoundError e) {
-                // Permissions 2/3 or some other bridge
-                permissions = new NijiPermissions();
-            }
-        }
-
         if(permissions.getClass() == NoPermissions.class) {
             if (resolvePlugin("PermissionsBukkit") != null) {
                 permissions = new BukkitPermissions();
@@ -1467,45 +1447,45 @@ public class LWC {
 
         // Should we try metrics?
         if (!configuration.getBoolean("optional.optOut", false)) {
-            // Run it in a seperate thread
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        Metrics metrics = new Metrics();
+            try {
+                Metrics metrics = new Metrics();
 
-                        // Add our plotters
-                        metrics.addCustomData(plugin, new Metrics.Plotter() {
-                            @Override
-                            public String getColumnName() {
-                                return "Total Protections";
-                            }
+                // Create a line graph
+                Metrics.Graph lineGraph = metrics.createGraph(plugin, Metrics.Graph.Type.Line, "Protections");
 
-                            @Override
-                            public int getValue() {
-                                return physicalDatabase.getProtectionCount();
-                            }
-                        });
-
-                        for (final Protection.Type type : Protection.Type.values()) {
-                            metrics.addCustomData(plugin, new Metrics.Plotter() {
-                                @Override
-                                public String getColumnName() {
-                                    return StringUtil.capitalizeFirstLetter(type.toString()) + " Protections";
-                                }
-
-                                @Override
-                                public int getValue() {
-                                    return physicalDatabase.getProtectionCount(type);
-                                }
-                            });
-                        }
-
-                        metrics.beginMeasuringPlugin(plugin);
-                    } catch (IOException e) {
-                        log(e.getMessage());
+                // Add the total protections plotter
+                lineGraph.addPlotter(new Metrics.Plotter("Total") {
+                    @Override
+                    public int getValue() {
+                        return physicalDatabase.getProtectionCount();
                     }
+                });
+
+                // Create a pie graph for individual protections
+                Metrics.Graph pieGraph = metrics.createGraph(plugin, Metrics.Graph.Type.Pie, "Protection percentages");
+
+                for (final Protection.Type type : Protection.Type.values()) {
+                    if (type == Protection.Type.RESERVED1 || type == Protection.Type.RESERVED2) {
+                        continue;
+                    }
+
+                    // Create the plotter
+                    Metrics.Plotter plotter = new Metrics.Plotter(StringUtil.capitalizeFirstLetter(type.toString()) + " Protections") {
+                        @Override
+                        public int getValue() {
+                            return physicalDatabase.getProtectionCount(type);
+                        }
+                    };
+
+                    // Add it to both graphs
+                    lineGraph.addPlotter(plotter);
+                    pieGraph.addPlotter(plotter);
                 }
-            }).start();
+
+                metrics.beginMeasuringPlugin(plugin);
+            } catch (IOException e) {
+                log(e.getMessage());
+            }
         }
     }
 
