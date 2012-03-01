@@ -85,12 +85,14 @@ public class WorldGuardModule extends JavaModule {
         LWC lwc = event.getLWC();
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
-
-        if (!args[0].equals("purgeregion")) {
+        
+        if (!args[0].equals("purgeregion") && !args[0].equals("protectregion")) {
             return;
         }
+        
+        // The command name to send to them
+        String commandName = args[0];
 
-        // we have the right command
         event.setCancelled(true);
 
         // check for worldguard
@@ -100,7 +102,7 @@ public class WorldGuardModule extends JavaModule {
         }
 
         if (args.length < 2) {
-            lwc.sendSimpleUsage(sender, "/lwc admin purgeregion <RegionName> [World]");
+            lwc.sendSimpleUsage(sender, "/lwc admin " + commandName + " <RegionName> [World]");
             return;
         }
 
@@ -116,7 +118,7 @@ public class WorldGuardModule extends JavaModule {
         String worldName = args.length > 2 ? args[2] : "";
 
         // get the world to use
-        World world = null;
+        World world;
 
         if (!worldName.isEmpty()) {
             world = lwc.getPlugin().getServer().getWorld(worldName);
@@ -139,22 +141,71 @@ public class WorldGuardModule extends JavaModule {
         ProtectedRegion region = regionManager.getRegion(regionName);
 
         if (region == null) {
-            sender.sendMessage(Colors.Red + "Region not found. If you region is in a different world than you, please use: /lwc admin purgeregion " + regionName + " WorldName");
+            sender.sendMessage(Colors.Red + "Region not found. If you region is in a different world than you, please use: /lwc admin " + commandName + " " + regionName + " WorldName");
             return;
         }
 
         BlockVector minimum = region.getMinimumPoint();
         BlockVector maximum = region.getMaximumPoint();
+        
+        // Min values
+        int minBlockX = minimum.getBlockX();
+        int minBlockY = minimum.getBlockY();
+        int minBlockZ = minimum.getBlockZ();
+        
+        // Max values
+        int maxBlockX = maximum.getBlockX();
+        int maxBlockY = maximum.getBlockY();
+        int maxBlockZ = maximum.getBlockZ();
 
-        // get all of the protections inside of the region
-        List<Protection> protections = lwc.getPhysicalDatabase().loadProtections(world.getName(), minimum.getBlockX(), maximum.getBlockX(), 0, 128, minimum.getBlockZ(), maximum.getBlockZ());
+        // Calculate the amount of the blocks in the region
+        int numBlocks = (maxBlockX - minBlockX + 1) * (maxBlockY - minBlockY + 1) * (maxBlockZ - minBlockZ + 1);
 
-        // remove all of them
-        for (Protection protection : protections) {
-            protection.remove();
+        if (args[0].equals("purgeregion")) {
+            // get all of the protections inside of the region
+            List<Protection> protections = lwc.getPhysicalDatabase().loadProtections(world.getName(), minBlockX, maxBlockX, minBlockY, maxBlockY, minBlockZ, maxBlockZ);
+
+            // remove all of them
+            for (Protection protection : protections) {
+                protection.remove();
+            }
+
+            sender.sendMessage(Colors.Green + "Removed " + protections.size() + " protections from the region " + regionName);
+        } else if (args[0].equals("protectregion")) {
+            // The owner to assign to the protections
+            String ownerName = "LWCWorldGuard";
+
+            // the number of blocks that were registered
+            int registered = 0;
+            
+            for (int x = minBlockX; x <= maxBlockX; x++) {
+                for (int y = minBlockY; y <= maxBlockY; y++) {
+                    for (int z = minBlockZ; z <= maxBlockZ; z++) {
+                        // Get the block at that location
+                        Block block = world.getBlockAt(x, y, z);
+
+                        // Ensure it's protectable
+                        if (!lwc.isProtectable(block)) {
+                            continue;
+                        }
+
+                        // Check if it's already protected
+                        if (lwc.findProtection(block) != null) {
+                            continue;
+                        }
+
+                        // Protect it!
+                        lwc.getPhysicalDatabase().registerProtection(block.getTypeId(), Protection.Type.PRIVATE, world.getName(),
+                                ownerName, "", x, y, z);
+                        registered ++;
+                    }
+                }
+            }
+            
+            sender.sendMessage("Registered " + registered + " blocks in the region " + regionName);
+            sender.sendMessage("Currently, the owner of these protections is \"" + ownerName + "\". To change this to someone else, run:");
+            sender.sendMessage("/lwc admin updateprotections set owner = 'NewOwner' where owner = '" + ownerName + "'");
         }
-
-        sender.sendMessage(Colors.Green + "Removed " + protections.size() + " protections from the region " + regionName);
     }
 
     @Override
