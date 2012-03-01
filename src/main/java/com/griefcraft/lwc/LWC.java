@@ -37,7 +37,6 @@ import com.griefcraft.integration.currency.NoCurrency;
 import com.griefcraft.integration.currency.iConomy5Currency;
 import com.griefcraft.integration.currency.iConomy6Currency;
 import com.griefcraft.integration.permissions.BukkitPermissions;
-import com.griefcraft.integration.permissions.NoPermissions;
 import com.griefcraft.integration.permissions.PEXPermissions;
 import com.griefcraft.integration.permissions.SuperPermsPermissions;
 import com.griefcraft.integration.permissions.bPermissions;
@@ -119,14 +118,12 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -1372,25 +1369,14 @@ public class LWC {
         databaseThread = new DatabaseThread(this);
 
         // Permissions init
-        permissions = new NoPermissions();
+        permissions = new SuperPermsPermissions();
 
-        if(permissions.getClass() == NoPermissions.class) {
-            if (resolvePlugin("PermissionsBukkit") != null) {
-                permissions = new BukkitPermissions();
-            } else if (resolvePlugin("PermissionsEx") != null) {
-                permissions = new PEXPermissions();
-            } else if (resolvePlugin("bPermissions") != null) {
-                permissions = new bPermissions();
-            } else {
-                try {
-                    Method method = CraftHumanEntity.class.getDeclaredMethod("hasPermission", String.class);
-                    if (method != null) {
-                        permissions = new SuperPermsPermissions();
-                    }
-                } catch(NoSuchMethodException e) {
-                    // server does not support SuperPerms
-                }
-            }
+        if (resolvePlugin("PermissionsBukkit") != null) {
+            permissions = new BukkitPermissions();
+        } else if (resolvePlugin("PermissionsEx") != null) {
+            permissions = new PEXPermissions();
+        } else if (resolvePlugin("bPermissions") != null) {
+            permissions = new bPermissions();
         }
 
         // Currency init
