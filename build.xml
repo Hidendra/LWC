@@ -89,7 +89,7 @@
         <substring text="${GIT_COMMIT_FULL}" start="0" end="8" property="GIT_COMMIT"/>
 
         <!-- Copy plugin.yml to ${bin}/core/resources -->
-        <copy file="${src}/resources/plugin.yml" todir="${bin}/core/resources/" overwrite="true"/>
+        <copy file="src/main/resources/plugin.yml" todir="${bin}/core/resources/" overwrite="true"/>
 
         <!-- Replace ${VERSION} with the version number in plugin.yml -->
         <replace file="${bin}/core/resources/plugin.yml" value="${VERSION} (b${BUILD_NUMBER}-git-${GIT_COMMIT})">
@@ -155,7 +155,7 @@
         <echo>Building LWC.jar</echo>
 
         <jar jarfile="${build}/${jar.core}">
-            <fileset dir="${src}" includes="lang/*"/>
+            <fileset dir="${src}/main/resources/" includes="lang/*"/>
             <fileset dir="${bin}/core/resources/" includes="**/*"/>
             <fileset dir="${bin}/core/" excludes="resources/**"/>
             <fileset dir="." includes="config/**.yml" />
