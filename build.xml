@@ -11,7 +11,6 @@
     <property name="bin" value="build/classes/"/>
 
     <property name="modules" value="modules"/>
-    <property name="core" value="${modules}/core/src/"/>
     <property name="economy" value="${modules}/economy/src/"/>
     <property name="spout" value="${modules}/spout/src/"/>
 
@@ -61,26 +60,10 @@
 
     <target name="all" depends="buildall" description="Build LWC and all modules"/>
 
-    <!-- if the changes file does not exist, force the build to go on -->
-    <target name="test-changes-file">
-        <available file="${build}/.flagcore" property="file.exists" value="true"/>
-    </target>
-
-    <target name="test-changes-file-apply" depends="test-changes-file" unless="file.exists">
-        <property name="build.core" value="true"/>
-        <property name="build.economy" value="true"/>
-        <property name="build.spout" value="true"/>
-    </target>
-
-    <target name="check-for-changes-core" depends="test-changes-file-apply">
-        <available file="${build}/.buildcore" property="build.core" value="true"/>
-    </target>
-
-    <target name="compile-core" description="Compile core LWC" depends="check-for-changes-core" if="build.core">
+    <target name="compile-core" description="Compile core LWC">
         <mkdir dir="${bin}"/>
         <mkdir dir="${bin}/core/"/>
         <mkdir dir="${bin}/core/resources/"/>
-        <delete file="${build}/.buildcore"/>
 
         <!-- Load the version -->
         <loadfile srcfile="VERSION" property="VERSION"/>
@@ -97,7 +80,7 @@
         </replace>
 
         <echo>${label}</echo>
-        <javac source="1.6" target="1.6" srcdir="${src}/main/java/:${core}" destdir="${bin}/core/"
+        <javac source="1.6" target="1.6" srcdir="${src}/main/java/" destdir="${bin}/core/"
                debug="true" debuglevel="lines,vars,source" deprecation="true" includeantruntime="true">
             <compilerarg value="-Xlint:-options"/>
             <classpath>
@@ -106,12 +89,7 @@
         </javac>
     </target>
 
-    <target name="check-for-changes-economy">
-        <available file="${build}/.buildeconomy" property="build.economy" value="true"/>
-    </target>
-
-    <target name="compile-economy" description="Compile LWC-Economy" depends="check-for-changes-economy"
-            if="build.economy">
+    <target name="compile-economy" description="Compile LWC-Economy">
         <mkdir dir="${bin}"/>
         <mkdir dir="${bin}/economy/"/>
         <delete file="${build}/.buildeconomy"/>
@@ -127,11 +105,7 @@
         </javac>
     </target>
 
-    <target name="check-for-changes-spout">
-        <available file="${build}/.buildspout" property="build.spout" value="true"/>
-    </target>
-
-    <target name="compile-spout" description="Compile LWC-Spout" depends="check-for-changes-spout" if="build.spout">
+    <target name="compile-spout" description="Compile LWC-Spout">
         <mkdir dir="${bin}"/>
         <mkdir dir="${bin}/spout/"/>
         <delete file="${build}/.buildspot"/>
@@ -151,7 +125,7 @@
         <copy tofile="${build}/VERSION" file="VERSION" overwrite="yes"/>
     </target>
 
-    <target name="lwc" description="Build LWC.jar" depends="compile-core" if="build.core">
+    <target name="lwc" description="Build LWC.jar" depends="compile-core">
         <echo>Building LWC.jar</echo>
 
         <jar jarfile="${build}/${jar.core}">
@@ -169,7 +143,7 @@
         </jar>
     </target>
 
-    <target name="economy" description="Build LWC-Economy.jar" depends="compile-economy" if="build.economy">
+    <target name="economy" description="Build LWC-Economy.jar" depends="compile-economy">
         <echo>Building LWC-Economy.jar</echo>
 
         <jar jarfile="${build}/${jar.economy}">
@@ -185,7 +159,7 @@
         </jar>
     </target>
 
-    <target name="spout" description="Build LWC-Spout.jar" depends="compile-spout" if="build.spout">
+    <target name="spout" description="Build LWC-Spout.jar" depends="compile-spout">
         <echo>Building LWC-Spout.jar</echo>
 
         <jar jarfile="${build}/${jar.spout}">
