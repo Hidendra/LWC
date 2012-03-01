@@ -468,6 +468,12 @@ public class LWCPlayer implements CommandSender {
     public void sendMessage(String s) {
         player.sendMessage(s);
     }
+    
+    public void sendMessage(String[] s) {
+        for (String _s : s) {
+            sendMessage(_s);
+        }
+    }
 
     public Server getServer() {
         return player.getServer();

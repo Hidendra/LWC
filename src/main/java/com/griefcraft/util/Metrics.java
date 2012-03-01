@@ -209,24 +209,8 @@ public class Metrics {
         // The plugin's description file containg all of the plugin data such as name, version, author, etc
         PluginDescriptionFile description = plugin.getDescription();
 
-        // The author string, created with description.getAuthors()
-        // Authors are separated by a comma
-        String authors = "";
-
-        // Add each author to the string
-        for (String author : description.getAuthors()) {
-            authors += author + ", ";
-        }
-
-        // If there were any authors at all, we need to remove the last 2 characters
-        // the last 2 characters are the last comma and space
-        if (!authors.isEmpty()) {
-            authors = authors.substring(0, authors.length() - 2);
-        }
-
         // Construct the post data
         String data = encode("guid") + '=' + encode(guid)
-                + encodeDataPair("authors", authors)
                 + encodeDataPair("version", description.getVersion())
                 + encodeDataPair("server", Bukkit.getVersion())
                 + encodeDataPair("players", Integer.toString(Bukkit.getServer().getOnlinePlayers().length))
