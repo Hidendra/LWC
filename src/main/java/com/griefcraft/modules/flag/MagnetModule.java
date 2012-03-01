@@ -34,7 +34,6 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.util.config.Configuration;
 import com.narrowtux.showcase.Showcase;
-import de.moritzschmale.Showcase.ShowcaseMain;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -193,13 +192,7 @@ public class MagnetModule extends JavaModule {
         boolean hasShowcase = Bukkit.getServer().getPluginManager().getPlugin("Showcase") != null;
 
         if (hasShowcase) {
-            try {
-                // Now we can check for the showcase item
-                return ShowcaseMain.instance.getItemByDrop(item) != null;
-            } catch (Throwable e) {
-                // It's the "Other" Showcase ...
-                return Showcase.instance.getItemByDrop(item) != null;
-            }
+            return Showcase.instance.getItemByDrop(item) != null;
         }
 
         return false;
