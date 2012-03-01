@@ -1,11 +1,7 @@
 ### 4.1.0 **unreleased**
-* **ALMOST COMPLETE** Full LWC backups can be created using `/lwc admin backup create` -- this creates a full backup for the database and also every block along with it including any contents.
- * Backups can be restored using `/lwc admin backup restore NAME` where NAME is the backup's file name without the extension (`.lwc` or `.lwc.gz`)
- * The data format for backups can be found here: https://github.com/Hidendra/LWC/blob/master/docs/backups/Format.md
-* Use Bukkit's new event system, this means Minecraft 1.0.1 and lower is no longer supported, you will need to use 4.0.9
-* **FIX:** Admin notices are restored for OPs. You can also manually give the notice ability out using the `lwc.shownotices` permission node
-* **FIX:** The permission check before creating a protection (but after `/cprivate`) was being incorrectly done
-* The following has been fully removed:
+# LWC 4.1.0
+* **R6 and Minecraft 1.2 support**
+* **The following has been *COMPLETELY* REMOVED:**
  * `/lwc schedule`;
  * `/lwc menu`;
  * `/lwc dev`;
@@ -14,8 +10,13 @@
  * EasyNotify;
  * Job support (requirement for schedules);
  * Kick traps;
- * Ban traps; and
- * Deprecated `ProtectionTypes` class
+ * Ban traps;
+ * Deprecated `ProtectionTypes` class (use the Protection.Type enum instead!)
+* Full LWC backups can be created using `/lwc admin backup create` -- this creates a full backup for the database and also every block along with it including any contents.
+ * Backups can be restored using `/lwc admin backup restore NAME` where NAME is the backup's file name without the extension (`.lwc` or `.lwc.gz`). The backups are stored in `plugins/LWC/backups/`
+ * At this time, the double chest side of double chests are not stored.
+* Any /lwc admin protectregion NAME to protect all protectable LWC blocks in a WorldGuard region to 'LWCWorldGuard', the owner can be changed via /lwc admin updateprotections set owner = 'NewOwner' where owner ='LWCWorldGuard' (sorry for being so long spunk!)
+* **Fix:** /cunlock could be used even after the correct password was used.
 
 ### LWC 4.0.9
 * /lwc admin rebuild: a command to rebuild a wiped database, barring some missing data such as ACLs which is less important and unrecoverable without backups. See http://forums.bukkit.org/threads/60178/
