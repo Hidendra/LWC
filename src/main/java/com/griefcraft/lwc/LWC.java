@@ -1431,7 +1431,7 @@ public class LWC {
 
             physicalDatabase.load();
 
-            log("Using: " + StringUtil.capitalizeFirstLetter(physicalDatabase.getConnection().getMetaData().getDriverVersion()));
+            log("Using database: " + StringUtil.capitalizeFirstLetter(physicalDatabase.getConnection().getMetaData().getDriverVersion()));
         } catch (Exception e) {
             e.printStackTrace();
         }
