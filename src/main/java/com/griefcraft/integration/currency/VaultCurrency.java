@@ -32,6 +32,7 @@ import com.griefcraft.integration.ICurrency;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class VaultCurrency implements ICurrency {
 
@@ -41,7 +42,11 @@ public class VaultCurrency implements ICurrency {
     private Economy economy;
 
     public VaultCurrency() {
-        economy = Bukkit.getServer().getServicesManager().getRegistration(Economy.class).getProvider();
+        RegisteredServiceProvider<Economy> serviceProvider = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
+
+        if (serviceProvider != null) {
+            economy = serviceProvider.getProvider();
+        }
     }
 
     @Override
