@@ -34,6 +34,7 @@ import com.griefcraft.integration.IPermissions;
 import com.griefcraft.integration.currency.BOSECurrency;
 import com.griefcraft.integration.currency.EssentialsCurrency;
 import com.griefcraft.integration.currency.NoCurrency;
+import com.griefcraft.integration.currency.VaultCurrency;
 import com.griefcraft.integration.currency.iConomy5Currency;
 import com.griefcraft.integration.currency.iConomy6Currency;
 import com.griefcraft.integration.permissions.BukkitPermissions;
@@ -1382,7 +1383,9 @@ public class LWC {
         // Currency init
         currency = new NoCurrency();
 
-        if (resolvePlugin("iConomy") != null) {
+        if (resolvePlugin("Vault") != null) {
+            currency = new VaultCurrency();
+        } else if (resolvePlugin("iConomy") != null) {
             // We need to figure out which iConomy plugin we have...
             Plugin plugin = resolvePlugin("iConomy");
 
