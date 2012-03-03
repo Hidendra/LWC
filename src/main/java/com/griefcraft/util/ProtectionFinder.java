@@ -195,6 +195,12 @@ public class ProtectionFinder {
         if (!lwc.isProtectable(block)) {
             return false;
         }
+        
+        // Null-check
+        if (block.getWorld() == null) {
+            lwc.log("World is null for the block " + block);
+            return false;
+        }
 
         Protection protection = lwc.getPhysicalDatabase().loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
 

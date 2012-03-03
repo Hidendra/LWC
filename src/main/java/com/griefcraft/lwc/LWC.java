@@ -560,9 +560,8 @@ public class LWC {
      *
      * @param str
      */
-    private void log(String str) {
-        str = "LWC: " + str;
-        logger.info(ChatColor.stripColor(str));
+    public void log(String str) {
+        logger.info("[LWC] " + ChatColor.stripColor(str));
     }
 
     /**
