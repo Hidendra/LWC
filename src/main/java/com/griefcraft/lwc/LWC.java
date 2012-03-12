@@ -40,6 +40,7 @@ import com.griefcraft.integration.currency.iConomy6Currency;
 import com.griefcraft.integration.permissions.BukkitPermissions;
 import com.griefcraft.integration.permissions.PEXPermissions;
 import com.griefcraft.integration.permissions.SuperPermsPermissions;
+import com.griefcraft.integration.permissions.VaultPermissions;
 import com.griefcraft.integration.permissions.bPermissions;
 import com.griefcraft.io.BackupManager;
 import com.griefcraft.migration.ConfigPost300;
@@ -1371,7 +1372,9 @@ public class LWC {
         // Permissions init
         permissions = new SuperPermsPermissions();
 
-        if (resolvePlugin("PermissionsBukkit") != null) {
+        if (resolvePlugin("Vault") != null) {
+            permissions = new VaultPermissions();
+        } else if (resolvePlugin("PermissionsBukkit") != null) {
             permissions = new BukkitPermissions();
         } else if (resolvePlugin("PermissionsEx") != null) {
             permissions = new PEXPermissions();
