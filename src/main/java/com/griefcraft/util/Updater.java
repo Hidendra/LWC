@@ -579,7 +579,7 @@ public class Updater {
      * @param e
      */
     private void exceptionCaught(Exception e) {
-        logger.info("[LWC] The updated ran into a minor issue: " + e.getMessage());
+        logger.info("[LWC] The updater ran into a minor issue: " + e.getMessage());
         logger.info("[LWC] This can probably be ignored.");
     }
 
