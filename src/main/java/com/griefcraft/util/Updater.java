@@ -188,7 +188,7 @@ public class Updater {
 
                 public void run() {
                     tryAutoUpdate(false);
-                    logger.info("LWC: Latest version: " + latestVersion);
+                    logger.info("[LWC] Latest version: " + latestVersion);
                 }
 
             });
@@ -211,7 +211,7 @@ public class Updater {
                     File local = new File(updaterFile.getLocalLocation());
                     String remote = updaterFile.getRemoteLocation();
 
-                    logger.info("LWC: Downloading file " + local.getName());
+                    logger.info("[LWC] Downloading file " + local.getName());
 
                     // check for LWC folder
                     File folder = new File("plugins/LWC/");
@@ -273,7 +273,7 @@ public class Updater {
                     outputStream.close();
                     inputStream.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    exceptionCaught(e);
                 }
             }
         }
@@ -343,9 +343,9 @@ public class Updater {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            exceptionCaught(e);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            exceptionCaught(e);
         }
     }
 
@@ -477,9 +477,9 @@ public class Updater {
                             latestVersion = new Version("b" + reader.readLine());
                             reader.close();
                         } catch (MalformedURLException e) {
-                            e.printStackTrace();
+                            exceptionCaught(e);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            exceptionCaught(e);
                         }
                         break;
 
@@ -497,9 +497,9 @@ public class Updater {
                             // parse it and we are done
                             latestVersion = new Version(line);
                         } catch (MalformedURLException e) {
-                            e.printStackTrace();
+                            exceptionCaught(e);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            exceptionCaught(e);
                         }
                         break;
                 }
@@ -571,6 +571,16 @@ public class Updater {
         } else { /* We assume linux/unix */
             return DEST_LIBRARY_FOLDER + "native/Linux/" + arch + "/";
         }
+    }
+
+    /**
+     * Called when an exception is caught
+     *
+     * @param e
+     */
+    private void exceptionCaught(Exception e) {
+        logger.info("[LWC] The updated ran into a minor issue: " + e.getMessage());
+        logger.info("[LWC] This can probably be ignored.");
     }
 
 }
