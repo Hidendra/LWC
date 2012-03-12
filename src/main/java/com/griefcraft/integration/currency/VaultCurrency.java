@@ -42,6 +42,13 @@ public class VaultCurrency implements ICurrency {
     private Economy economy;
 
     public VaultCurrency() {
+        checkEconomy();
+    }
+
+    /**
+     * Check for an economy providor and set it if it was found
+     */
+    private void checkEconomy() {
         RegisteredServiceProvider<Economy> serviceProvider = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
 
         if (serviceProvider != null) {
@@ -51,6 +58,13 @@ public class VaultCurrency implements ICurrency {
 
     @Override
     public boolean isActive() {
+        // If the economy providor is still null it is possible it hasn't been hooked in yet
+        // So we just check for it again, since isActive() is called before any econ
+        // calls should be used :D
+        if (economy == null) {
+            checkEconomy();
+        }
+
         return economy != null;
     }
 
