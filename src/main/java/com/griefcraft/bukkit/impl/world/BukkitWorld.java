@@ -26,77 +26,38 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.api;
+package com.griefcraft.bukkit.impl.world;
 
+import com.griefcraft.api.world.Block;
 import com.griefcraft.api.world.World;
 
-public interface Protection {
+public class BukkitWorld implements World {
 
     /**
-     * The protection's type
+     * The bukkit world handle
      */
-    public enum Type {
+    private final org.bukkit.World handle;
+    
+    public BukkitWorld(org.bukkit.World handle) {
+        if (handle == null) {
+            throw new IllegalArgumentException("World handle cannot be null");
+        }
 
-        /**
-         * The protection is private and only the player or those the player allows can access it
-         */
-        PRIVATE,
-
-        /**
-         * Anyone can access and use the protection but not remove it
-         */
-        PUBLIC,
-
-        /**
-         * The protection requires a password from anyone to enter it
-         */
-        PASSWORD
-
+        this.handle = handle;
     }
 
-    /**
-     * Get the protection's internal database id
-     *
-     * @return
-     */
-    public int getId();
+    public String getName() {
+        return handle.getName();
+    }
 
-    /**
-     * Get the protection's x coordinate
-     * 
-     * @return
-     */
-    public int getX();
+    public Block getBlockAt(int x, int y, int z) {
+        org.bukkit.block.Block blockHandle = handle.getBlockAt(x, y, z);
 
-    /**
-     * Get the protection's y coordinate
-     * 
-     * @return
-     */
-    public int getY();
+        // Make sure it isn't null
+        if (blockHandle == null) {
+            return null;
+        }
 
-    /**
-     * Get the protection's z coordinate
-     * 
-     * @return
-     */
-    public int getZ();
-
-    /**
-     * Get the world the protection is in
-     *
-     * @return
-     */
-    public World getWorld();
-
-    /**
-     * Save the protection to the database
-     */
-    public void save();
-
-    /**
-     * Remove the protection from the database
-     */
-    public void remove();
-
+        return new BukkitBlock(blockHandle);
+    }
 }

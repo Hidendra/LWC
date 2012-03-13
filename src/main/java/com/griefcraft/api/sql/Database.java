@@ -26,12 +26,14 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.api;
+package com.griefcraft.api.sql;
+
+import com.griefcraft.api.dao.Protection;
 
 public interface Database {
 
     /**
-     * Create a protection in the world. The {@link Protection} object returned by this method
+     * Create a protection in the world. The {@link com.griefcraft.api.dao.Protection} object returned by this method
      * can be considered to be in the database already.
      *
      * @param type
