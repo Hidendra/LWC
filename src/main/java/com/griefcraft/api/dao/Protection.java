@@ -62,6 +62,13 @@ public interface Protection {
     public int getId();
 
     /**
+     * Get the protection's type
+     *
+     * @return
+     */
+    public Type getType();
+
+    /**
      * Get the protection's x coordinate
      * 
      * @return
