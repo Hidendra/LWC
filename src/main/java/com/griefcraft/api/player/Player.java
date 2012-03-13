@@ -52,4 +52,12 @@ public interface Player {
      */
     public void sendLocalizedMessage(String node, Object... args);
 
+    /**
+     * Check if a player has the given permission node
+     *
+     * @param node
+     * @return
+     */
+    public boolean hasPermission(String node);
+
 }
