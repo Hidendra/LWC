@@ -3,8 +3,12 @@
 .externalToolBuilders
 world
 bin
+target
 
 .classpath
 .project
 *.txt
 *.bat
+LWC.iml
+LWC.ipr
+LWC.iws
