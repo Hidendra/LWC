@@ -58,7 +58,7 @@ public class VaultCurrency implements ICurrency {
 
     @Override
     public boolean isActive() {
-        // If the economy providor is still null it is possible it hasn't been hooked in yet
+        // If the economy provider is still null it is possible it hasn't been hooked in yet
         // So we just check for it again, since isActive() is called before any econ
         // calls should be used :D
         if (economy == null) {
