@@ -612,7 +612,7 @@ public class LWC {
             protection.save();
         }
 
-        boolean permShowNotices = hasAdminPermission(player, "lwc.shownotices");
+        boolean permShowNotices = hasPermission(player, "lwc.shownotices");
         if ((permShowNotices || configuration.getBoolean("core.showNotices", true))
                 && !Boolean.parseBoolean(resolveProtectionConfiguration(block.getType(), "quiet"))) {
             boolean isOwner = protection.isOwner(player);
