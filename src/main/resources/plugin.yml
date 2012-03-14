@@ -110,7 +110,7 @@ permissions:
 
   lwc.shownotices:
       description: Shows LWC notices
-      default: false
+      default: op
 
   lwc.mod:
       description: Allows you to open anyone's protection but not remove them
