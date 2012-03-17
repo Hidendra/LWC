@@ -125,6 +125,9 @@ protections:
     # but not chests.
     ignoreExplosions: false
 
+    # If entities - such as zombies - are allowed to break down doors
+    allowEntityBreakDoor: false
+
     # Creation messages and protection notices will not be shown for this protection
     quiet: false
 
