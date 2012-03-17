@@ -28,17 +28,25 @@
 
 package com.griefcraft;
 
-import com.griefcraft.command.ConsoleSender;
+import com.griefcraft.command.CommandHandler;
+import com.griefcraft.command.ConsoleCommandSender;
 import com.griefcraft.configuration.Configuration;
 
 public interface LWC {
+
+    /**
+     * Get the command handler
+     *
+     * @return
+     */
+    public CommandHandler getCommandHandler();
 
     /**
      * Get the console sender, used to send messages to the console
      *
      * @return
      */
-    public ConsoleSender getConsoleSender();
+    public ConsoleCommandSender getConsoleSender();
 
     /**
      * Gets the configuration file

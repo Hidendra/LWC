@@ -28,24 +28,32 @@
 
 package com.griefcraft;
 
-import com.griefcraft.command.ConsoleSender;
+import com.griefcraft.command.CommandHandler;
+import com.griefcraft.command.ConsoleCommandSender;
+import com.griefcraft.command.SimpleCommandHandler;
 import com.griefcraft.configuration.Configuration;
 
 public class SimpleLWC implements LWC {
 
     /**
+     * The command handler
+     */
+    private CommandHandler commandHandler;
+
+    /**
      * The console sender
      */
-    private ConsoleSender consoleSender;
+    private ConsoleCommandSender consoleSender;
 
     /**
      * The configuration file to use
      */
     private Configuration configuration;
 
-    private SimpleLWC(ConsoleSender consoleSender, Configuration configuration) {
+    private SimpleLWC(ConsoleCommandSender consoleSender, Configuration configuration) {
         this.consoleSender = consoleSender;
         this.configuration = configuration;
+        this.commandHandler = new SimpleCommandHandler();
     }
 
     /**
@@ -54,7 +62,7 @@ public class SimpleLWC implements LWC {
      * @param configuration
      * @return
      */
-    public static LWC createLWC(ConsoleSender consoleSender, Configuration configuration) {
+    public static LWC createLWC(ConsoleCommandSender consoleSender, Configuration configuration) {
         if (consoleSender == null) {
             throw new IllegalArgumentException("Console sender object cannot be null");
         }
@@ -65,7 +73,11 @@ public class SimpleLWC implements LWC {
         return new SimpleLWC(consoleSender, configuration);
     }
 
-    public ConsoleSender getConsoleSender() {
+    public CommandHandler getCommandHandler() {
+        return commandHandler;
+    }
+
+    public ConsoleCommandSender getConsoleSender() {
         return consoleSender;
     }
 

@@ -28,7 +28,7 @@
 
 package com.griefcraft.command;
 
-public interface Sender {
+public interface CommandSender {
 
     /**
      * Send a message to a player

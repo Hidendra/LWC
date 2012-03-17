@@ -26,25 +26,7 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.player;
+package com.griefcraft.command;
 
-import com.griefcraft.command.CommandSender;
-
-public interface Player extends CommandSender {
-
-    /**
-     * Gets the player's name
-     *
-     * @return
-     */
-    public String getName();
-
-    /**
-     * Check if a player has the given permission node
-     *
-     * @param node
-     * @return
-     */
-    public boolean hasPermission(String node);
-
+public interface ConsoleCommandSender extends CommandSender {
 }

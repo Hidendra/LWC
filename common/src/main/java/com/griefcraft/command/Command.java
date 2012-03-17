@@ -26,25 +26,68 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.player;
+package com.griefcraft.command;
 
-import com.griefcraft.command.CommandSender;
+public class Command {
 
-public interface Player extends CommandSender {
+    public enum Type {
+
+        /**
+         * The command was executed by a player
+         */
+        PLAYER,
+
+        /**
+         * The command is an omnipotent server command
+         */
+        SERVER
+
+    }
 
     /**
-     * Gets the player's name
-     *
-     * @return
+     * The command type
      */
-    public String getName();
+    private Type type;
 
     /**
-     * Check if a player has the given permission node
-     *
-     * @param node
-     * @return
+     * The command commandSender
      */
-    public boolean hasPermission(String node);
+    private CommandSender commandSender;
+
+    /**
+     * The command
+     */
+    private String command;
+
+    /**
+     * The arguments for the command
+     */
+    private String arguments;
+    
+    public Command(Type type, CommandSender commandSender, String command) {
+        if (type == null) {
+            throw new IllegalArgumentException("Command type cannot be null");
+        }
+        if (commandSender == null) {
+            throw new IllegalArgumentException("Command sender cannot be null");
+        }
+        if (command == null) {
+            throw new IllegalArgumentException("Command cannot be null");
+        }
+        
+        this.type = type;
+        this.commandSender = commandSender;
+        this.command = command;
+    }
+    
+    public Command(Type type, CommandSender commandSender, String command, String arguments) {
+        this(type, commandSender, command);
+
+        if (arguments == null) {
+            throw new IllegalArgumentException("Arguments cannot be null");
+        }
+
+        this.arguments = arguments;
+    }
 
 }

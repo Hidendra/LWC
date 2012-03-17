@@ -30,10 +30,11 @@ package com.griefcraft.bukkit;
 
 import com.griefcraft.LWC;
 import com.griefcraft.SimpleLWC;
-import com.griefcraft.bukkit.command.BukkitConsoleSender;
+import com.griefcraft.bukkit.command.BukkitConsoleCommandSender;
 import com.griefcraft.bukkit.configuration.BukkitConfiguration;
 import com.griefcraft.bukkit.player.BukkitPlayer;
-import com.griefcraft.command.Sender;
+import com.griefcraft.command.Command;
+import com.griefcraft.command.CommandSender;
 import com.griefcraft.player.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -60,7 +61,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
         String message = event.getMessage();
 
         // Should we cancel the object?
-        if (_onCommand(player, message)) {
+        if (_onCommand(Command.Type.PLAYER, player, message)) {
             event.setCancelled(true);
         }
     }
@@ -71,8 +72,8 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
      * @param event
      */
     @EventHandler( priority = EventPriority.LOWEST )
-    public void onConsoleCommand(ServerCommandEvent event) {
-        if (_onCommand(lwc.getConsoleSender(), event.getCommand())) {
+    public void onServerCommand(ServerCommandEvent event) {
+        if (_onCommand(Command.Type.SERVER, lwc.getConsoleSender(), event.getCommand())) {
             // TODO how to cancel? just change the command to something else?
         }
     }
@@ -81,7 +82,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
     public void onEnable() {
 
         // Create a new lwc object
-        lwc = SimpleLWC.createLWC(new BukkitConsoleSender(getServer().getConsoleSender()), new BukkitConfiguration(this));
+        lwc = SimpleLWC.createLWC(new BukkitConsoleCommandSender(getServer().getConsoleSender()), new BukkitConfiguration(this));
 
         // Register events
         getServer().getPluginManager().registerEvents(this, this);
@@ -100,11 +101,21 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
      * @param message the name of the command followed by any arguments.
      * @return true if the command event should be cancelled
      */
-    private boolean _onCommand(Sender sender, String message) {
+    private boolean _onCommand(Command.Type type, CommandSender sender, String message) {
         // Normalize the command, removing any prepended /, etc
         message = normalizeCommand(message);
 
-        return false;
+        // Separate the command and arguments
+        int indexOfSpace = message.indexOf(' ');
+
+        if (indexOfSpace != -1) {
+            String command = message.substring(0, indexOfSpace);
+            String arguments = message.substring(indexOfSpace + 1);
+
+            return lwc.getCommandHandler().handleCommand(new Command(type, sender, command, arguments));
+        } else { // No arguments
+            return lwc.getCommandHandler().handleCommand(new Command(type, sender, message));
+        }
     }
 
     /**
@@ -123,7 +134,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
             }
         }
         
-        return message;
+        return message.trim();
     }
 
 }

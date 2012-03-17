@@ -26,7 +26,32 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.command;
+package com.griefcraft.bukkit.command;
 
-public interface ConsoleSender extends Sender {
+import com.griefcraft.command.ConsoleCommandSender;
+
+public class BukkitConsoleCommandSender implements ConsoleCommandSender {
+
+    /**
+     * The command sender handle
+     */
+    private org.bukkit.command.ConsoleCommandSender handle;
+    
+    public BukkitConsoleCommandSender(org.bukkit.command.ConsoleCommandSender handle) {
+        if (handle == null) {
+            throw new IllegalArgumentException("Console sender handle cannot be null");
+        }
+        
+        this.handle = handle;
+    }
+    
+    public void sendMessage(String message) {
+        for (String line : message.split("\n")) {
+            handle.sendMessage(message);
+        }
+    }
+
+    public void sendLocalizedMessage(String node, Object... args) {
+        throw new UnsupportedOperationException("sendLocalizedMessage() is not implemented in BukkitConsonleSender");
+    }
 }
