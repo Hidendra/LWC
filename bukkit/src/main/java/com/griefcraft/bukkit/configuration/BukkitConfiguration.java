@@ -26,27 +26,64 @@
  * either expressed or implied, of anybody else.
  */
 
-public class CanaryPlugin extends Plugin {
+package com.griefcraft.bukkit.configuration;
+
+import com.griefcraft.configuration.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.Plugin;
+
+import java.io.File;
+import java.io.IOException;
+
+public class BukkitConfiguration implements Configuration {
 
     /**
-     * The listener class
+     * The plugin this configuration file is for
      */
-    private PluginListener listener = new CanaryListener();
+    private final Plugin plugin;
 
-    @Override
-    public void enable() {
+    /**
+     * The configuration instance we read from
+     */
+    private final FileConfiguration configuration;
 
-        // Set the name
-        setName("LWC");
-        
-        // Register our listeners
-        etc.getLoader().addListener(PluginLoader.Hook.OPEN_INVENTORY, listener, this, PluginListener.Priority.MEDIUM);
-        
+    public BukkitConfiguration(Plugin plugin) {
+        this.plugin = plugin;
+        this.configuration = plugin.getConfig();
+
+        // Saves the default config if it's not there
+        if (!new File("plugins/LWC/config.yml").exists()) {
+            plugin.saveDefaultConfig();
+        }
     }
 
-    @Override
-    public void disable() {
-
+    public void set(String key, Object value) {
+        configuration.set(key, value);
     }
+
+    public Object get(String key) {
+        return configuration.get(key);
+    }
+
+    public String getString(String key) {
+        return configuration.getString(key);
+    }
+
+    public String getString(String key, String defaultValue) {
+        return configuration.getString(key, defaultValue);
+    }
+
+    public int getInt(String key) {
+        return configuration.getInt(key);
+    }
+
+    public int getInt(String key, int defaultValue) {
+        return configuration.getInt(key, defaultValue);
+    }
+
+    public void save() throws IOException {
+        plugin.saveConfig();
+    }
+
 
 }

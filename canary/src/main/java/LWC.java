@@ -26,38 +26,27 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.bukkit.impl.world;
-
-import com.griefcraft.api.world.Block;
-import com.griefcraft.api.world.World;
-
-public class BukkitWorld implements World {
+public class LWC extends Plugin {
 
     /**
-     * The bukkit world handle
+     * The listener class
      */
-    private final org.bukkit.World handle;
-    
-    public BukkitWorld(org.bukkit.World handle) {
-        if (handle == null) {
-            throw new IllegalArgumentException("World handle cannot be null");
-        }
+    private PluginListener listener = new CanaryListener();
 
-        this.handle = handle;
+    @Override
+    public void enable() {
+
+        // Set the name
+        setName("LWC");
+        
+        // Register our listeners
+        etc.getLoader().addListener(PluginLoader.Hook.OPEN_INVENTORY, listener, this, PluginListener.Priority.MEDIUM);
+        
     }
 
-    public String getName() {
-        return handle.getName();
+    @Override
+    public void disable() {
+
     }
 
-    public Block getBlockAt(int x, int y, int z) {
-        org.bukkit.block.Block blockHandle = handle.getBlockAt(x, y, z);
-
-        // Make sure it isn't null
-        if (blockHandle == null) {
-            return null;
-        }
-
-        return new BukkitBlock(blockHandle);
-    }
 }

@@ -26,46 +26,23 @@
  * either expressed or implied, of anybody else.
  */
 
-public class CanaryBlock implements com.griefcraft.world.Block {
+package com.griefcraft.command;
+
+public interface Sender {
 
     /**
-     * The block handle
+     * Send a message to a player
+     *
+     * @param message
      */
-    private Block handle;
-    
-    public CanaryBlock(Block handle) {
-        if (handle == null) {
-            throw new IllegalArgumentException("Block handle cannot be null");
-        }
+    public void sendMessage(String message);
 
-        this.handle = handle;
-    }
-    
-    public int getType() {
-        return handle.getType();
-    }
+    /**
+     * Send a localized message to the player
+     *
+     * @param node
+     * @param args
+     */
+    public void sendLocalizedMessage(String node, Object... args);
 
-    public byte getData() {
-        return (byte) handle.getData();
-    }
-
-    public int getX() {
-        return handle.getX();
-    }
-
-    public int getY() {
-        return handle.getY();
-    }
-
-    public int getZ() {
-        return handle.getZ();
-    }
-
-    public void setType(int type) {
-        handle.setType(type);
-    }
-
-    public void setData(byte data) {
-        handle.setData(data);
-    }
 }

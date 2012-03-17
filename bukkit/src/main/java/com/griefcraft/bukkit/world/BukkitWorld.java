@@ -26,53 +26,38 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.api.sql;
+package com.griefcraft.bukkit.world;
 
-import com.griefcraft.api.dao.Protection;
+import com.griefcraft.world.Block;
+import com.griefcraft.world.World;
 
-public interface Database {
-
-    /**
-     * Create a protection in the world. The {@link com.griefcraft.api.dao.Protection} object returned by this method
-     * can be considered to be in the database already.
-     *
-     * @param type
-     * @param owner
-     * @param world
-     * @param x
-     * @param y
-     * @param z
-     * @return
-     */
-    public Protection createProtection(Protection.Type type, String owner, String world, int x, int y, int z);
+public class BukkitWorld implements World {
 
     /**
-     * Load a protection from the database for the given player's name
-     *
-     * @return
+     * The bukkit world handle
      */
-    public Protection loadProtection(String player);
+    private final org.bukkit.World handle;
+    
+    public BukkitWorld(org.bukkit.World handle) {
+        if (handle == null) {
+            throw new IllegalArgumentException("World handle cannot be null");
+        }
 
-    /**
-     * Load a protection from the database for the given id
-     *
-     * @param id
-     * @return
-     */
-    public Protection loadProtection(int id);
+        this.handle = handle;
+    }
 
-    /**
-     * Save a protection to the database
-     *
-     * @param protection
-     */
-    public void saveProtection(Protection protection);
+    public String getName() {
+        return handle.getName();
+    }
 
-    /**
-     * Remove a protection and all associated data about it from the database
-     *
-     * @param protection
-     */
-    public void removeProtection(Protection protection);
+    public Block getBlockAt(int x, int y, int z) {
+        org.bukkit.block.Block blockHandle = handle.getBlockAt(x, y, z);
 
+        // Make sure it isn't null
+        if (blockHandle == null) {
+            return null;
+        }
+
+        return new BukkitBlock(blockHandle);
+    }
 }

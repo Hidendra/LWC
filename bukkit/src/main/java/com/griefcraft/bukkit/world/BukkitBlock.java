@@ -26,27 +26,32 @@
  * either expressed or implied, of anybody else.
  */
 
-public class CanaryBlock implements com.griefcraft.world.Block {
+package com.griefcraft.bukkit.world;
+
+import com.griefcraft.world.Block;
+
+// TODO implement hashCode / equals
+public class BukkitBlock implements Block {
 
     /**
-     * The block handle
+     * The bukkit block handle
      */
-    private Block handle;
-    
-    public CanaryBlock(Block handle) {
+    private final org.bukkit.block.Block handle;
+
+    public BukkitBlock(org.bukkit.block.Block handle) {
         if (handle == null) {
             throw new IllegalArgumentException("Block handle cannot be null");
         }
 
         this.handle = handle;
     }
-    
+
     public int getType() {
-        return handle.getType();
+        return handle.getTypeId();
     }
 
     public byte getData() {
-        return (byte) handle.getData();
+        return handle.getData();
     }
 
     public int getX() {
@@ -62,7 +67,7 @@ public class CanaryBlock implements com.griefcraft.world.Block {
     }
 
     public void setType(int type) {
-        handle.setType(type);
+        handle.setTypeId(type);
     }
 
     public void setData(byte data) {

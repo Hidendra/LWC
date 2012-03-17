@@ -26,7 +26,7 @@
  * either expressed or implied, of anybody else.
  */
 
-public class CanaryPlayer implements com.griefcraft.api.player.Player {
+public class CanaryPlayer implements com.griefcraft.player.Player {
 
     /**
      * The player handle

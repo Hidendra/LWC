@@ -28,7 +28,102 @@
 
 package com.griefcraft.bukkit;
 
+import com.griefcraft.LWC;
+import com.griefcraft.SimpleLWC;
+import com.griefcraft.bukkit.command.BukkitConsoleSender;
+import com.griefcraft.bukkit.configuration.BukkitConfiguration;
+import com.griefcraft.bukkit.player.BukkitPlayer;
+import com.griefcraft.command.Sender;
+import com.griefcraft.player.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class BukkitPlugin extends JavaPlugin {
+public class BukkitPlugin extends JavaPlugin implements Listener {
+
+    /**
+     * The LWC object
+     */
+    private LWC lwc;
+
+    /**
+     * Called when a player uses a command
+     * @param event
+     */
+    @EventHandler( ignoreCancelled = true )
+    public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+        // Create the internal object
+        Player player = new BukkitPlayer(event.getPlayer());
+        String message = event.getMessage();
+
+        // Should we cancel the object?
+        if (_onCommand(player, message)) {
+            event.setCancelled(true);
+        }
+    }
+
+    /**
+     * Called when the console uses a command.
+     * Using LOWEST because of kTriggers
+     * @param event
+     */
+    @EventHandler( priority = EventPriority.LOWEST )
+    public void onConsoleCommand(ServerCommandEvent event) {
+        if (_onCommand(lwc.getConsoleSender(), event.getCommand())) {
+            // TODO how to cancel? just change the command to something else?
+        }
+    }
+
+    @Override
+    public void onEnable() {
+
+        // Create a new lwc object
+        lwc = SimpleLWC.createLWC(new BukkitConsoleSender(getServer().getConsoleSender()), new BukkitConfiguration(this));
+
+        // Register events
+        getServer().getPluginManager().registerEvents(this, this);
+
+    }
+
+    @Override
+    public void onDisable() {
+        lwc = null;
+    }
+
+    /**
+     * Command processor
+     *
+     * @param sender
+     * @param message the name of the command followed by any arguments.
+     * @return true if the command event should be cancelled
+     */
+    private boolean _onCommand(Sender sender, String message) {
+        // Normalize the command, removing any prepended /, etc
+        message = normalizeCommand(message);
+
+        return false;
+    }
+
+    /**
+     * Normalize a command, making player and console commands appear to be the same format
+     *
+     * @param message
+     * @return
+     */
+    private String normalizeCommand(String message) {
+        // Remove a prepended /
+        if (message.startsWith("/")) {
+            if (message.length() == 1) {
+                message = ""; // avoid a out of bounds exception
+            } else {
+                message = message.substring(1);
+            }
+        }
+        
+        return message;
+    }
+
 }

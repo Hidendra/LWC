@@ -26,46 +26,53 @@
  * either expressed or implied, of anybody else.
  */
 
-public class CanaryBlock implements com.griefcraft.world.Block {
+package com.griefcraft.sql;
+
+import com.griefcraft.dao.Protection;
+
+public interface Database {
 
     /**
-     * The block handle
+     * Create a protection in the world. The {@link com.griefcraft.dao.Protection} object returned by this method
+     * can be considered to be in the database already.
+     *
+     * @param type
+     * @param owner
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     * @return
      */
-    private Block handle;
-    
-    public CanaryBlock(Block handle) {
-        if (handle == null) {
-            throw new IllegalArgumentException("Block handle cannot be null");
-        }
+    public Protection createProtection(Protection.Type type, String owner, String world, int x, int y, int z);
 
-        this.handle = handle;
-    }
-    
-    public int getType() {
-        return handle.getType();
-    }
+    /**
+     * Load a protection from the database for the given player's name
+     *
+     * @return
+     */
+    public Protection loadProtection(String player);
 
-    public byte getData() {
-        return (byte) handle.getData();
-    }
+    /**
+     * Load a protection from the database for the given id
+     *
+     * @param id
+     * @return
+     */
+    public Protection loadProtection(int id);
 
-    public int getX() {
-        return handle.getX();
-    }
+    /**
+     * Save a protection to the database
+     *
+     * @param protection
+     */
+    public void saveProtection(Protection protection);
 
-    public int getY() {
-        return handle.getY();
-    }
+    /**
+     * Remove a protection and all associated data about it from the database
+     *
+     * @param protection
+     */
+    public void removeProtection(Protection protection);
 
-    public int getZ() {
-        return handle.getZ();
-    }
-
-    public void setType(int type) {
-        handle.setType(type);
-    }
-
-    public void setData(byte data) {
-        handle.setData(data);
-    }
 }

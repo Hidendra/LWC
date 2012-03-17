@@ -26,55 +26,32 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.api.world;
+package com.griefcraft;
 
-public interface Block {
+import com.griefcraft.command.ConsoleSender;
+import com.griefcraft.configuration.Configuration;
 
-    /**
-     * Gets the block's type
-     * @return
-     */
-    public int getType();
+public interface LWC {
 
     /**
-     * Gets the block's data
-     * @return
-     */
-    public byte getData();
-
-    /**
-     * Gets the block's x coordinate
-     * 
-     * @return
-     */
-    public int getX();
-
-    /**
-     * Gets the block's y coordinate
-     * 
-     * @return
-     */
-    public int getY();
-
-    /**
-     * Gets the block's z coordinate
+     * Get the console sender, used to send messages to the console
      *
      * @return
      */
-    public int getZ();
+    public ConsoleSender getConsoleSender();
 
     /**
-     * Set the block's type
+     * Gets the configuration file
      *
-     * @param type
+     * @return
      */
-    public void setType(int type);
+    public Configuration getConfiguration();
 
     /**
-     * Set the block's data
+     * Log a message to the logger
      *
-     * @param data
+     * @param message
      */
-    public void setData(byte data);
+    public void log(String message);
 
 }

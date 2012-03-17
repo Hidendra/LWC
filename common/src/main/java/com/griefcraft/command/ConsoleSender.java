@@ -26,40 +26,7 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.bukkit.impl.player;
+package com.griefcraft.command;
 
-import com.griefcraft.api.player.Player;
-
-public class BukkitPlayer implements Player {
-
-    /**
-     * The player handle
-     */
-    private final org.bukkit.entity.Player handle;
-    
-    public BukkitPlayer(org.bukkit.entity.Player handle) {
-        if (handle == null) {
-            throw new IllegalArgumentException("Player handle cannot be null");
-        }
-
-        this.handle = handle;
-    }
-
-    public String getName() {
-        return handle.getName();
-    }
-
-    public void sendMessage(String message) {
-        for (String line : message.split("\n")) {
-            handle.sendMessage(line);
-        }
-    }
-
-    public void sendLocalizedMessage(String node, Object... args) {
-        throw new UnsupportedOperationException("sendLocalizedMessage is not implemented");
-    }
-
-    public boolean hasPermission(String node) {
-        return handle.hasPermission(node);
-    }
+public interface ConsoleSender extends Sender {
 }

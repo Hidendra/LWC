@@ -26,25 +26,54 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.api.world;
+package com.griefcraft;
 
-public interface World {
+import com.griefcraft.command.ConsoleSender;
+import com.griefcraft.configuration.Configuration;
 
-    /**
-     * Gets the world's name
-     *
-     * @return
-     */
-    public String getName();
+public class SimpleLWC implements LWC {
 
     /**
-     * Get the block at the given coordinates
+     * The console sender
+     */
+    private ConsoleSender consoleSender;
+
+    /**
+     * The configuration file to use
+     */
+    private Configuration configuration;
+
+    private SimpleLWC(ConsoleSender consoleSender, Configuration configuration) {
+        this.consoleSender = consoleSender;
+        this.configuration = configuration;
+    }
+
+    /**
+     * Create an LWC object using SimpleLWC
      *
-     * @param x
-     * @param y
-     * @param z
+     * @param configuration
      * @return
      */
-    public Block getBlockAt(int x, int y, int z);
+    public static LWC createLWC(ConsoleSender consoleSender, Configuration configuration) {
+        if (consoleSender == null) {
+            throw new IllegalArgumentException("Console sender object cannot be null");
+        }
+        if (configuration == null) {
+            throw new IllegalArgumentException("Configuration object cannot be null");
+        }
 
+        return new SimpleLWC(consoleSender, configuration);
+    }
+
+    public ConsoleSender getConsoleSender() {
+        return consoleSender;
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+    
+    public void log(String message) {
+        System.out.println("[LWC] " + message);
+    }
 }

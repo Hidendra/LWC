@@ -26,84 +26,64 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.api.dao;
+package com.griefcraft.configuration;
 
-import com.griefcraft.api.world.World;
+import java.io.IOException;
 
-public interface Protection {
-
-    /**
-     * The protection's type
-     */
-    public enum Type {
-
-        /**
-         * The protection is private and only the player or those the player allows can access it
-         */
-        PRIVATE,
-
-        /**
-         * Anyone can access and use the protection but not remove it
-         */
-        PUBLIC,
-
-        /**
-         * The protection requires a password from anyone to enter it
-         */
-        PASSWORD
-
-    }
+public interface Configuration {
 
     /**
-     * Get the protection's internal database id
+     * Set a configuration value
      *
-     * @return
+     * @param key
+     * @param value
      */
-    public int getId();
+    public void set(String key, Object value);
 
     /**
-     * Get the protection's type
+     * Gets an object from the configuration
      *
+     * @param key
      * @return
      */
-    public Type getType();
+    public Object get(String key);
 
     /**
-     * Get the protection's x coordinate
-     * 
-     * @return
-     */
-    public int getX();
-
-    /**
-     * Get the protection's y coordinate
-     * 
-     * @return
-     */
-    public int getY();
-
-    /**
-     * Get the protection's z coordinate
-     * 
-     * @return
-     */
-    public int getZ();
-
-    /**
-     * Get the world the protection is in
+     * Gets a string from the configuration
      *
+     * @param key
      * @return
      */
-    public World getWorld();
+    public String getString(String key);
 
     /**
-     * Save the protection to the database
+     * Gets a string from the configuration using the default value if it does not exist
+     *
+     * @param key
+     * @return
      */
-    public void save();
+    public String getString(String key, String defaultValue);
 
     /**
-     * Remove the protection from the database
+     * Gets an int from the configuration
+     *
+     * @param key
+     * @return
      */
-    public void remove();
+    public int getInt(String key);
 
+    /**
+     * Gets an int from the configuration using the default value if it does not exist
+     *
+     * @param key
+     * @return
+     */
+    public int getInt(String key, int defaultValue);
+
+    /**
+     * Save the configuration file
+     */
+    public void save() throws IOException;
+    
+    
 }

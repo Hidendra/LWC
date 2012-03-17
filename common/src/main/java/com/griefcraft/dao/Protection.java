@@ -26,46 +26,84 @@
  * either expressed or implied, of anybody else.
  */
 
-public class CanaryBlock implements com.griefcraft.world.Block {
+package com.griefcraft.dao;
+
+import com.griefcraft.world.World;
+
+public interface Protection {
 
     /**
-     * The block handle
+     * The protection's type
      */
-    private Block handle;
-    
-    public CanaryBlock(Block handle) {
-        if (handle == null) {
-            throw new IllegalArgumentException("Block handle cannot be null");
-        }
+    public enum Type {
 
-        this.handle = handle;
-    }
-    
-    public int getType() {
-        return handle.getType();
-    }
+        /**
+         * The protection is private and only the player or those the player allows can access it
+         */
+        PRIVATE,
 
-    public byte getData() {
-        return (byte) handle.getData();
-    }
+        /**
+         * Anyone can access and use the protection but not remove it
+         */
+        PUBLIC,
 
-    public int getX() {
-        return handle.getX();
+        /**
+         * The protection requires a password from anyone to enter it
+         */
+        PASSWORD
+
     }
 
-    public int getY() {
-        return handle.getY();
-    }
+    /**
+     * Get the protection's internal database id
+     *
+     * @return
+     */
+    public int getId();
 
-    public int getZ() {
-        return handle.getZ();
-    }
+    /**
+     * Get the protection's type
+     *
+     * @return
+     */
+    public Type getType();
 
-    public void setType(int type) {
-        handle.setType(type);
-    }
+    /**
+     * Get the protection's x coordinate
+     * 
+     * @return
+     */
+    public int getX();
 
-    public void setData(byte data) {
-        handle.setData(data);
-    }
+    /**
+     * Get the protection's y coordinate
+     * 
+     * @return
+     */
+    public int getY();
+
+    /**
+     * Get the protection's z coordinate
+     * 
+     * @return
+     */
+    public int getZ();
+
+    /**
+     * Get the world the protection is in
+     *
+     * @return
+     */
+    public World getWorld();
+
+    /**
+     * Save the protection to the database
+     */
+    public void save();
+
+    /**
+     * Remove the protection from the database
+     */
+    public void remove();
+
 }

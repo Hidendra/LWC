@@ -26,38 +26,33 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.api.player;
+package com.griefcraft.bukkit.command;
 
-public interface Player {
+import com.griefcraft.command.ConsoleSender;
+import org.bukkit.command.ConsoleCommandSender;
 
-    /**
-     * Gets the player's name
-     *
-     * @return
-     */
-    public String getName();
+public class BukkitConsoleSender implements ConsoleSender {
 
     /**
-     * Send a message to a player
-     * 
-     * @param message
+     * The command sender handle
      */
-    public void sendMessage(String message);
+    private ConsoleCommandSender handle;
+    
+    public BukkitConsoleSender(ConsoleCommandSender handle) {
+        if (handle == null) {
+            throw new IllegalArgumentException("Console sender handle cannot be null");
+        }
+        
+        this.handle = handle;
+    }
+    
+    public void sendMessage(String message) {
+        for (String line : message.split("\n")) {
+            handle.sendMessage(message);
+        }
+    }
 
-    /**
-     * Send a localized message to the player
-     *
-     * @param node
-     * @param args
-     */
-    public void sendLocalizedMessage(String node, Object... args);
-
-    /**
-     * Check if a player has the given permission node
-     *
-     * @param node
-     * @return
-     */
-    public boolean hasPermission(String node);
-
+    public void sendLocalizedMessage(String node, Object... args) {
+        throw new UnsupportedOperationException("sendLocalizedMessage() is not implemented in BukkitConsonleSender");
+    }
 }

@@ -26,46 +26,55 @@
  * either expressed or implied, of anybody else.
  */
 
-public class CanaryBlock implements com.griefcraft.world.Block {
+package com.griefcraft.world;
+
+public interface Block {
 
     /**
-     * The block handle
+     * Gets the block's type
+     * @return
      */
-    private Block handle;
-    
-    public CanaryBlock(Block handle) {
-        if (handle == null) {
-            throw new IllegalArgumentException("Block handle cannot be null");
-        }
+    public int getType();
 
-        this.handle = handle;
-    }
-    
-    public int getType() {
-        return handle.getType();
-    }
+    /**
+     * Gets the block's data
+     * @return
+     */
+    public byte getData();
 
-    public byte getData() {
-        return (byte) handle.getData();
-    }
+    /**
+     * Gets the block's x coordinate
+     * 
+     * @return
+     */
+    public int getX();
 
-    public int getX() {
-        return handle.getX();
-    }
+    /**
+     * Gets the block's y coordinate
+     * 
+     * @return
+     */
+    public int getY();
 
-    public int getY() {
-        return handle.getY();
-    }
+    /**
+     * Gets the block's z coordinate
+     *
+     * @return
+     */
+    public int getZ();
 
-    public int getZ() {
-        return handle.getZ();
-    }
+    /**
+     * Set the block's type
+     *
+     * @param type
+     */
+    public void setType(int type);
 
-    public void setType(int type) {
-        handle.setType(type);
-    }
+    /**
+     * Set the block's data
+     *
+     * @param data
+     */
+    public void setData(byte data);
 
-    public void setData(byte data) {
-        handle.setData(data);
-    }
 }

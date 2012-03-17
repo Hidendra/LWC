@@ -26,46 +26,40 @@
  * either expressed or implied, of anybody else.
  */
 
-public class CanaryBlock implements com.griefcraft.world.Block {
+package com.griefcraft.bukkit.player;
+
+import com.griefcraft.player.Player;
+
+public class BukkitPlayer implements Player {
 
     /**
-     * The block handle
+     * The player handle
      */
-    private Block handle;
+    private final org.bukkit.entity.Player handle;
     
-    public CanaryBlock(Block handle) {
+    public BukkitPlayer(org.bukkit.entity.Player handle) {
         if (handle == null) {
-            throw new IllegalArgumentException("Block handle cannot be null");
+            throw new IllegalArgumentException("Player handle cannot be null");
         }
 
         this.handle = handle;
     }
-    
-    public int getType() {
-        return handle.getType();
+
+    public String getName() {
+        return handle.getName();
     }
 
-    public byte getData() {
-        return (byte) handle.getData();
+    public void sendMessage(String message) {
+        for (String line : message.split("\n")) {
+            handle.sendMessage(line);
+        }
     }
 
-    public int getX() {
-        return handle.getX();
+    public void sendLocalizedMessage(String node, Object... args) {
+        throw new UnsupportedOperationException("sendLocalizedMessage is not implemented");
     }
 
-    public int getY() {
-        return handle.getY();
-    }
-
-    public int getZ() {
-        return handle.getZ();
-    }
-
-    public void setType(int type) {
-        handle.setType(type);
-    }
-
-    public void setData(byte data) {
-        handle.setData(data);
+    public boolean hasPermission(String node) {
+        return handle.hasPermission(node);
     }
 }

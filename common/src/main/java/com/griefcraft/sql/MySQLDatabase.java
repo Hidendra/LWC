@@ -28,8 +28,7 @@
 
 package com.griefcraft.sql;
 
-import com.griefcraft.api.dao.Protection;
-import com.griefcraft.api.sql.Database;
+import com.griefcraft.dao.Protection;
 
 public class MySQLDatabase implements Database {
 

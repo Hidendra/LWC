@@ -26,51 +26,25 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.bukkit.impl.world;
+package com.griefcraft.world;
 
-import com.griefcraft.api.world.Block;
-
-// TODO implement hashCode / equals
-public class BukkitBlock implements Block {
+public interface World {
 
     /**
-     * The bukkit block handle
+     * Gets the world's name
+     *
+     * @return
      */
-    private final org.bukkit.block.Block handle;
+    public String getName();
 
-    public BukkitBlock(org.bukkit.block.Block handle) {
-        if (handle == null) {
-            throw new IllegalArgumentException("Block handle cannot be null");
-        }
+    /**
+     * Get the block at the given coordinates
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    public Block getBlockAt(int x, int y, int z);
 
-        this.handle = handle;
-    }
-
-    public int getType() {
-        return handle.getTypeId();
-    }
-
-    public byte getData() {
-        return handle.getData();
-    }
-
-    public int getX() {
-        return handle.getX();
-    }
-
-    public int getY() {
-        return handle.getY();
-    }
-
-    public int getZ() {
-        return handle.getZ();
-    }
-
-    public void setType(int type) {
-        handle.setTypeId(type);
-    }
-
-    public void setData(byte data) {
-        handle.setData(data);
-    }
 }
