@@ -36,6 +36,7 @@ import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityBreakDoorEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 public class LWCEntityListener implements Listener {
@@ -47,6 +48,23 @@ public class LWCEntityListener implements Listener {
 
     public LWCEntityListener(LWCPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void entityBreakDoor(EntityBreakDoorEvent event) {
+        Block block = event.getBlock();
+
+        // See if there is a protection there
+        Protection protection = plugin.getLWC().findProtection(block);
+
+        if (protection != null) {
+            // protections.allowEntityBreakDoor
+            boolean allowEntityBreakDoor = Boolean.parseBoolean(plugin.getLWC().resolveProtectionConfiguration(block.getType(), "allowEntityBreakDoor"));
+
+            if (!allowEntityBreakDoor) {
+                event.setCancelled(true);
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
