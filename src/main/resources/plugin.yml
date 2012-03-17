@@ -90,13 +90,6 @@ permissions:
   lwc.protect:
       description: Gives the ability to basic LWC usage (almost everything except LWC admin.)
       default: true
-      children:
-          lwc.create.*: true
-          lwc.modify: true
-          lwc.unlock: true
-          lwc.info: true
-          lwc.remove: true
-          lwc.flag.*: true
 
   lwc.admin:
       description: Gives you absolutely power over LWC. As an LWC admin, you have no restrictions.
