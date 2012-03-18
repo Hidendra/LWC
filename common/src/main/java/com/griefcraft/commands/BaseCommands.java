@@ -36,6 +36,11 @@ import com.griefcraft.command.CommandContext;
  */
 public class BaseCommands {
 
+    /**
+     * The base command that is falled onto when no other commands are found. Also, of course, for just /lwc
+     *
+     * @param context
+     */
     @Command(
             command = "lwc"
     )
@@ -55,6 +60,7 @@ public class BaseCommands {
             command = "lwc admin purge",
             description = "Removes all of the player's protections from the world",
             usage = "<player>",
+            aliases = { "purge" },
             min = 1,
             max = 1
     )

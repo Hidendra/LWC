@@ -159,10 +159,21 @@ public class SimpleCommandHandler implements CommandHandler {
         // Grab the instance as well
         Object instance = instances.get(command);
         
-        // Fix the arguments
+        // First fix the command name if it needs to be fixed
         // If we used the command /lwc admin clear, admin clear will be the arguments
-        // We want the command to instead be "lwc admin clear" and the arguments to be []
-        String[] commandNameArray = command.command().split(" ");
+        // We want the command to instead be "lwc admin clear"
+        String[] realCommandNameArray = command.command().split(" ");
+        
+        if (realCommandNameArray.length > 1) {
+            // compare the base command (aliases will never have the same base command)
+            if (realCommandNameArray[0].equals(context.getCommand().split(" ")[0])) {
+                // They are the same, so it's safe to set it the same as the annotation
+                context.setCommand(command.command());
+            }
+        }
+        
+        // Fix the arguments
+        String[] commandNameArray = context.getCommand().split(" ");
 
         // If it's greater than 1 it requires a swift fixing
         if (commandNameArray.length > 1) {
@@ -175,9 +186,6 @@ public class SimpleCommandHandler implements CommandHandler {
             
             // Good, good, now we can set it to the context
             context.setArguments(joined);
-            
-            // Now fix the command name, just as easy as setting it to be the same as the annotation
-            context.setCommand(command.command());
         }
 
         // Verify the command
@@ -263,7 +271,7 @@ public class SimpleCommandHandler implements CommandHandler {
         // Add aliases only if some are defined
         if (command.aliases().length > 0) {
             for (String alias : command.aliases()) {
-                text += "&b" + alias + "&f, ";
+                text += "&b/" + alias + "&f, ";
             }
 
             // Remove the trailing comma
