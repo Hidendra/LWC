@@ -29,6 +29,7 @@
 package com.griefcraft.bukkit.command;
 
 import com.griefcraft.command.ConsoleCommandSender;
+import com.griefcraft.util.Color;
 
 public class BukkitConsoleCommandSender implements ConsoleCommandSender {
 
@@ -47,7 +48,7 @@ public class BukkitConsoleCommandSender implements ConsoleCommandSender {
     
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
-            handle.sendMessage(message);
+            handle.sendMessage(Color.replaceColors(line));
         }
     }
 

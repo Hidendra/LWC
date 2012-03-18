@@ -229,7 +229,7 @@ public class SimpleCommandHandler implements CommandHandler {
      * @param sender
      */
     private void sendUsage(Command command, CommandSender sender) {
-        sender.sendMessage("&2Usage:       &6" + command.usage());
+        sender.sendMessage("&2Usage:       &6/" + command.command() + " " + command.usage());
     }
 
     /**
@@ -284,7 +284,7 @@ public class SimpleCommandHandler implements CommandHandler {
         int min = command.min();
 
         if (min > 0) {
-            if (context.getArgumentsArray().length < min) {
+            if (!(context.getArgumentsArray().length >= min)) {
                 throw new CommandException("Number of arguments does not meet the minimum required");
             }
         }
@@ -301,7 +301,7 @@ public class SimpleCommandHandler implements CommandHandler {
         int max = command.max();
 
         if (max >= 0) {
-            if (context.getArgumentsArray().length > max) {
+            if (!(context.getArgumentsArray().length <= max)) {
                 throw new CommandException("Number of arguments does not meet the maximum requirement!");
             }
         }

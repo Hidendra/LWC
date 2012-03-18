@@ -148,10 +148,13 @@ public class CommandContext {
      * Get an argument at the specified index. If the command defines min/max values, this is guaranteed
      * to return non-null if the index is within those ranges.
      *
-     * @param index
+     * @param index the index number. For example, the first argument is 1, second argument 2, etc
      * @return
      */
     public String getArgument(int index) {
+        // Convert it to 0-n format, not 1-n
+        index = index - 1;
+
         if (index < 0 || index > argumentsArray.length) {
             throw new IndexOutOfBoundsException("Index cannot be out of range!");
         }
@@ -176,7 +179,13 @@ public class CommandContext {
     public void setArguments(String arguments) {
         arguments = arguments.trim();
         this.arguments = arguments;
-        this.argumentsArray = arguments.split(" "); // regenerate the arguments
+
+        // regenerate the arguments
+        if (arguments.isEmpty()) {
+            argumentsArray = new String[0];
+        } else {
+            argumentsArray = arguments.split(" ");
+        }
     }
 
 }

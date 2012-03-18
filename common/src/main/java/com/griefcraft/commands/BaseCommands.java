@@ -52,12 +52,14 @@ public class BaseCommands {
     }
 
     @Command(
-            command = "lwc admin clear",
+            command = "lwc admin purge",
+            description = "Removes all of the player's protections from the world",
+            usage = "<player>",
             min = 1,
             max = 1
     )
-    public void lwcAdminClear(CommandContext context) {
-        context.getCommandSender().sendMessage("/lwc admin clear");
+    public void lwcAdminPurge(CommandContext context) {
+        context.getCommandSender().sendMessage("Purging player?: " + context.getArgument(1));
     }
 
 }
