@@ -39,12 +39,4 @@ public interface Player extends CommandSender {
      */
     public String getName();
 
-    /**
-     * Check if a player has the given permission node
-     *
-     * @param node
-     * @return
-     */
-    public boolean hasPermission(String node);
-
 }

@@ -54,4 +54,9 @@ public class BukkitConsoleCommandSender implements ConsoleCommandSender {
     public void sendLocalizedMessage(String node, Object... args) {
         throw new UnsupportedOperationException("sendLocalizedMessage() is not implemented in BukkitConsonleSender");
     }
+
+    public boolean hasPermission(String node) {
+        return true;
+    }
+
 }
