@@ -28,6 +28,8 @@
 
 package com.griefcraft.command;
 
+import com.griefcraft.util.StringUtils;
+
 public class CommandContext {
 
     public enum Type {
@@ -89,7 +91,7 @@ public class CommandContext {
         this.arguments = arguments;
         
         if (arguments.length() > 0) {
-            argumentsArray = arguments.split(" ");
+            argumentsArray = StringUtils.split(arguments);
         } else {
             argumentsArray = new String[0];
         }
@@ -184,7 +186,7 @@ public class CommandContext {
         if (arguments.isEmpty()) {
             argumentsArray = new String[0];
         } else {
-            argumentsArray = arguments.split(" ");
+            argumentsArray = StringUtils.split(arguments);
         }
     }
 

@@ -79,7 +79,7 @@ public class SimpleCommandHandler implements CommandHandler {
         
         // Try the arguments
         if (context.getArguments().length() > 0) {
-            String[] arguments = context.getArguments().split(" ");
+            String[] arguments = StringUtils.split(context.getArguments());
 
             // Create the key
             String key = (commandName + " " + arguments[0]).trim();

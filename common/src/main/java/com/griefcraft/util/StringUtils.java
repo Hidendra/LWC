@@ -29,9 +29,18 @@
 package com.griefcraft.util;
 
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.Formatter;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StringUtils {
+
+    /**
+     * Regex for matching quoted string arguments
+     */
+    private final static Pattern QUOTED_STRING_REGEX = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
 
     /**
      * Capitalize the first letter in a word
@@ -105,6 +114,33 @@ public class StringUtils {
      */
     public static boolean hasFlag(String command, String checkFlag) {
         return command.equals(checkFlag) || command.equals("-" + checkFlag);
+    }
+
+    /**
+     * Splits a string, leaving quoted messages ("one argument") in the same argument.
+     * Courtesy http://stackoverflow.com/questions/366202/
+     * 
+     * @param str
+     * @return
+     */
+    public static String[] split(String str) {
+        List<String> matchList = new ArrayList<String>();
+        Matcher regexMatcher = QUOTED_STRING_REGEX.matcher(str);
+        
+        while (regexMatcher.find()) {
+            if (regexMatcher.group(1) != null) {
+                // Add double-quoted string without the quotes
+                matchList.add(regexMatcher.group(1));
+            } else if (regexMatcher.group(2) != null) {
+                // Add single-quoted string without the quotes
+                matchList.add(regexMatcher.group(2));
+            } else {
+                // Add unquoted word
+                matchList.add(regexMatcher.group());
+            }
+        }
+        
+        return matchList.toArray(new String[matchList.size()]);
     }
 
     /**
