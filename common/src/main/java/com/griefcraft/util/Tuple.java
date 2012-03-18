@@ -26,50 +26,56 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.command;
+package com.griefcraft.util;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-@Retention( RetentionPolicy.RUNTIME )
-@Target( ElementType.METHOD )
-public @interface Command {
+public class Tuple<X, Y> {
 
     /**
-     * The main command that will trigger this method. This can include arguments, e.g <code>/lwc testcmd</code>
-     * or <code>/lwc testcmd depth2</code>
-     *
-     * @return
+     * The first value in the tuple
      */
-    String command();
+    private final X x;
 
     /**
-     * The list of aliases for the command, if any.
-     *
-     * @return
+     * The second value in the tuple
      */
-    String[] aliases() default { };
+    private final Y y;
+
+    public Tuple(X x, Y y) {
+        this.x = x;
+        this.y = y;
+    }
 
     /**
-     * The command's description
-     *
-     * @return
-     */
-    String description() default "";
-
-    /**
-     * The minimum number of arguments required for the command
+     * Gets the first value in the tuple
      * 
      * @return
      */
-    int min() default 0;
+    public X first() {
+       return x; 
+    }
 
     /**
-     * The maximum number of arguments for the command. -1 means an unlimited number of arguments.
+     * Gets the second value in the tuple
+     *
      * @return
      */
-    int max() default -1;
+    public Y second() {
+        return y;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof Tuple)) {
+            return false;
+        }
+
+        Tuple tuple = (Tuple) object;
+        return tuple.x == x && tuple.y == y;
+    }
+    
+    @Override
+    public int hashCode() {
+        return x.hashCode() ^ y.hashCode();
+    }
 
 }

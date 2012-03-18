@@ -33,7 +33,8 @@ import com.griefcraft.SimpleLWC;
 import com.griefcraft.bukkit.command.BukkitConsoleCommandSender;
 import com.griefcraft.bukkit.configuration.BukkitConfiguration;
 import com.griefcraft.bukkit.player.BukkitPlayer;
-import com.griefcraft.command.Command;
+import com.griefcraft.command.CommandContext;
+import com.griefcraft.command.CommandException;
 import com.griefcraft.command.CommandSender;
 import com.griefcraft.player.Player;
 import org.bukkit.event.EventHandler;
@@ -61,7 +62,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
         String message = event.getMessage();
 
         // Should we cancel the object?
-        if (_onCommand(Command.Type.PLAYER, player, message)) {
+        if (_onCommand(CommandContext.Type.PLAYER, player, message)) {
             event.setCancelled(true);
         }
     }
@@ -73,7 +74,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
      */
     @EventHandler( priority = EventPriority.LOWEST )
     public void onServerCommand(ServerCommandEvent event) {
-        if (_onCommand(Command.Type.SERVER, lwc.getConsoleSender(), event.getCommand())) {
+        if (_onCommand(CommandContext.Type.SERVER, lwc.getConsoleSender(), event.getCommand())) {
             // TODO how to cancel? just change the command to something else?
         }
     }
@@ -101,20 +102,33 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
      * @param message the name of the command followed by any arguments.
      * @return true if the command event should be cancelled
      */
-    private boolean _onCommand(Command.Type type, CommandSender sender, String message) {
+    private boolean _onCommand(CommandContext.Type type, CommandSender sender, String message) {
         // Normalize the command, removing any prepended /, etc
         message = normalizeCommand(message);
 
         // Separate the command and arguments
         int indexOfSpace = message.indexOf(' ');
 
-        if (indexOfSpace != -1) {
-            String command = message.substring(0, indexOfSpace);
-            String arguments = message.substring(indexOfSpace + 1);
+        try {
+            if (indexOfSpace != -1) {
+                String command = message.substring(0, indexOfSpace);
+                String arguments = message.substring(indexOfSpace + 1);
+    
+                return lwc.getCommandHandler().handleCommand(new CommandContext(type, sender, command, arguments));
+            } else { // No arguments
+                return lwc.getCommandHandler().handleCommand(new CommandContext(type, sender, message));
+            }
+        } catch (CommandException e) {
+            // Notify the console
+            lwc.log("An error was encountered while processing a command: " + e.getMessage());
+            e.printStackTrace();
 
-            return lwc.getCommandHandler().handleCommand(new Command(type, sender, command, arguments));
-        } else { // No arguments
-            return lwc.getCommandHandler().handleCommand(new Command(type, sender, message));
+            // Notify the player / console
+            // TODO red this bitch up
+            sender.sendMessage("[LWC] An internal error occurred while processing this command");
+
+            // We failed.. oh we failed
+            return false;
         }
     }
 

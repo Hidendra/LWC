@@ -28,14 +28,24 @@
 
 package com.griefcraft.command;
 
+import java.util.List;
+
 public interface CommandHandler {
 
     /**
      * Called when a command is called
      *
-     * @param command
+     * @param context
      * @return true if the command was handled
      */
-    public boolean handleCommand(Command command);
+    public boolean handleCommand(CommandContext context) throws CommandException;
+
+    /**
+     * Register all of the commands in the given object
+     *
+     * @param object
+     * @return a List of all of the commands registered
+     */
+    public List<Command> registerCommands(Object object);
 
 }

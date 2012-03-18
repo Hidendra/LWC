@@ -31,6 +31,7 @@ package com.griefcraft;
 import com.griefcraft.command.CommandHandler;
 import com.griefcraft.command.ConsoleCommandSender;
 import com.griefcraft.command.SimpleCommandHandler;
+import com.griefcraft.commands.BaseCommands;
 import com.griefcraft.configuration.Configuration;
 
 public class SimpleLWC implements LWC {
@@ -54,6 +55,9 @@ public class SimpleLWC implements LWC {
         this.consoleSender = consoleSender;
         this.configuration = configuration;
         this.commandHandler = new SimpleCommandHandler();
+
+        // Register any commands
+        registerCommands();
     }
 
     /**
@@ -88,4 +92,12 @@ public class SimpleLWC implements LWC {
     public void log(String message) {
         System.out.println("[LWC] " + message);
     }
+
+    /**
+     * Register the commands we want to use
+     */
+    private void registerCommands() {
+        commandHandler.registerCommands(new BaseCommands());
+    }
+
 }
