@@ -29,6 +29,7 @@
 package com.griefcraft.command;
 
 import com.griefcraft.cache.LRUCache;
+import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.Tuple;
 
 import java.lang.reflect.InvocationTargetException;
@@ -77,7 +78,6 @@ public class SimpleCommandHandler implements CommandHandler {
         }
         
         // Try the arguments
-        // We only want to
         if (context.getArguments().length() > 0) {
             String[] arguments = context.getArguments().split(" ");
 
@@ -158,6 +158,39 @@ public class SimpleCommandHandler implements CommandHandler {
         
         // Grab the instance as well
         Object instance = instances.get(command);
+        
+        // Fix the arguments
+        // If we used the command /lwc admin clear, admin clear will be the arguments
+        // We want the command to instead be "lwc admin clear" and the arguments to be []
+        String[] commandNameArray = command.command().split(" ");
+
+        // If it's greater than 1 it requires a swift fixing
+        if (commandNameArray.length > 1) {
+            // Get the old arguments
+            // Basically we want to join the arguments starting at commandNameArray.length - 1 (guaranteed to be at least 1)
+            String[] argumentsArray = context.getArgumentsArray();
+            
+            // Now join it using the new starting index
+            String joined = StringUtils.join(argumentsArray, commandNameArray.length - 1);
+            
+            // Good, good, now we can set it to the context
+            context.setArguments(joined);
+            
+            // Now fix the command name, just as easy as setting it to be the same as the annotation
+            context.setCommand(command.command());
+        }
+
+        // Verify the command
+        try {
+            // Verify argument lengths
+            verifyMinimumArguments(command, context);
+            verifyMaximumArguments(command, context);
+        } catch (CommandException e) {
+            // Invalid!
+            sendHelp(command, context.getCommandSender());
+            return;
+        }
+
 
         // Now just execute the method
         try {
@@ -166,6 +199,111 @@ public class SimpleCommandHandler implements CommandHandler {
             throw new CommandException(command.command() + " threw an exception!",  e);
         } catch (IllegalAccessException e) {
             throw new CommandException(command.command() + " threw an exception!",  e);
+        }
+    }
+
+    /**
+     * Send a command's help to the given command sender
+     *
+     * @param command
+     * @param sender
+     */
+    private void sendHelp(Command command, CommandSender sender) {
+        // Header
+        sender.sendMessage("&2=== &6/" + command.command() + " &2===");
+        
+        // Usage
+        sendUsage(command, sender);
+        
+        // Description
+        sendDescription(command, sender);
+
+        // Aliases
+        sendAliases(command, sender);
+    }
+
+    /**
+     * Send the command's usages to the given command sender
+     *
+     * @param command
+     * @param sender
+     */
+    private void sendUsage(Command command, CommandSender sender) {
+        sender.sendMessage("&2Usage:       &6" + command.usage());
+    }
+
+    /**
+     * Send a command's description to the player
+     *
+     * @param command
+     * @param sender
+     */
+    private void sendDescription(Command command, CommandSender sender) {
+        String description = command.description();
+        String permission = command.permission();
+        
+        if (!description.isEmpty()) {
+            sender.sendMessage("&2Description: &6" + description);
+        }
+        
+        if (!permission.isEmpty()) {
+            sender.sendMessage("&2Permission:  &6" + permission);
+        }
+    }
+
+    /**
+     * Send all of the command's aliases to the sender
+     *
+     * @param command
+     * @param sender
+     */
+    private void sendAliases(Command command, CommandSender sender) {
+        String text = "";
+        
+        // Add aliases only if some are defined
+        if (command.aliases().length > 0) {
+            for (String alias : command.aliases()) {
+                text += "&b" + alias + "&f, ";
+            }
+
+            // Remove the trailing comma
+            text = text.substring(0, text.length() - 2);
+        }
+
+        sender.sendMessage("&2Aliases:     " + text);
+    }
+
+    /**
+     * Verify the minimum number of arguments required
+     *
+     * @param command
+     * @param context
+     * @throws CommandException
+     */
+    private void verifyMinimumArguments(Command command, CommandContext context) throws CommandException {
+        int min = command.min();
+
+        if (min > 0) {
+            if (context.getArgumentsArray().length < min) {
+                throw new CommandException("Number of arguments does not meet the minimum required");
+            }
+        }
+    }
+
+    /**
+     * Verify the maximum number of arguments required
+     *
+     * @param command
+     * @param context
+     * @throws CommandException
+     */
+    private void verifyMaximumArguments(Command command, CommandContext context) throws CommandException {
+        int max = command.max();
+
+        if (max >= 0) {
+            if (context.getArgumentsArray().length > max) {
+                throw new CommandException("Number of arguments does not meet the maximum requirement!");
+            }
         }
     }
 

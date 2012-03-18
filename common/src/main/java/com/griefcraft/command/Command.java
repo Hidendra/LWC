@@ -53,11 +53,25 @@ public @interface Command {
     String[] aliases() default { };
 
     /**
+     * The command's usage. Shown on the help screen.
+     *
+     * @return
+     */
+    String usage() default "";
+
+    /**
      * The command's description
      *
      * @return
      */
     String description() default "";
+
+    /**
+     * The permission required for the command
+     *
+     * @return
+     */
+    String permission() default "";
 
     /**
      * The minimum number of arguments required for the command

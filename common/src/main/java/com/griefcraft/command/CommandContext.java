@@ -57,12 +57,17 @@ public class CommandContext {
     /**
      * The command
      */
-    private final String command;
+    private String command;
 
     /**
      * The arguments for the command
      */
-    private final String arguments;
+    private String arguments;
+
+    /**
+     * The arguments split
+     */
+    private String[] argumentsArray;
 
     public CommandContext(Type type, CommandSender sender, String command, String arguments) {
         if (type == null) {
@@ -82,6 +87,12 @@ public class CommandContext {
         this.sender = sender;
         this.command = command;
         this.arguments = arguments;
+        
+        if (arguments.length() > 0) {
+            argumentsArray = arguments.split(" ");
+        } else {
+            argumentsArray = new String[0];
+        }
     }
 
     public CommandContext(Type type, CommandSender sender, String command) {
@@ -122,6 +133,50 @@ public class CommandContext {
      */
     public String getArguments() {
         return arguments;
+    }
+
+    /**
+     * Get the arguments array
+     *
+     * @return
+     */
+    public String[] getArgumentsArray() {
+        return argumentsArray;
+    }
+
+    /**
+     * Get an argument at the specified index. If the command defines min/max values, this is guaranteed
+     * to return non-null if the index is within those ranges.
+     *
+     * @param index
+     * @return
+     */
+    public String getArgument(int index) {
+        if (index < 0 || index > argumentsArray.length) {
+            throw new IndexOutOfBoundsException("Index cannot be out of range!");
+        }
+
+        return argumentsArray[index];
+    }
+
+    /**
+     * Set the command
+     *
+     * @param command
+     */
+    public void setCommand(String command) {
+        this.command = command;
+    }
+
+    /**
+     * Set the arguments of the command
+     *
+     * @param arguments
+     */
+    public void setArguments(String arguments) {
+        arguments = arguments.trim();
+        this.arguments = arguments;
+        this.argumentsArray = arguments.split(" "); // regenerate the arguments
     }
 
 }

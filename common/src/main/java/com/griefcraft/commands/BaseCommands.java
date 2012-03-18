@@ -52,7 +52,9 @@ public class BaseCommands {
     }
 
     @Command(
-            command = "lwc admin clear"
+            command = "lwc admin clear",
+            min = 1,
+            max = 1
     )
     public void lwcAdminClear(CommandContext context) {
         context.getCommandSender().sendMessage("/lwc admin clear");
