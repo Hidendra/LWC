@@ -52,6 +52,11 @@ public class ProtectionCache {
     private final LRUCache<Protection, Object> references;
 
     /**
+     * Known null cache keys
+     */
+    private final LRUCache<Integer, Object> nulls;
+
+    /**
      * Weak references to protections and their cache key (protection.getCacheKey())
      */
     private final WeakLRUCache<String, Protection> byCacheKey;
@@ -71,6 +76,7 @@ public class ProtectionCache {
         this.capacity = lwc.getConfiguration().getInt("core.cacheSize", 10000);
 
         this.references = new LRUCache<Protection, Object>(capacity);
+        this.nulls = new LRUCache<Integer, Object>(capacity * 10);
         this.byCacheKey = new WeakLRUCache<String, Protection>(capacity);
         this.byId = new WeakLRUCache<Integer, Protection>(capacity);
         logger.info("LWC: Protection cache: 0/" + capacity);
@@ -107,6 +113,9 @@ public class ProtectionCache {
      * Clears the entire protection cache
      */
     public void clear() {
+        // Remove nulls
+        nulls.clear();
+        
         // remove hard refs
         references.clear();
 
@@ -133,6 +142,9 @@ public class ProtectionCache {
         if (protection == null) {
             return;
         }
+        
+        // Remove it from the known nulls if it exists
+        nulls.remove(protection.getCacheKey());
 
         // Add the hard reference
         references.put(protection, null);
@@ -140,6 +152,20 @@ public class ProtectionCache {
         // Add weak references which are used to lookup protections
         byCacheKey.put(protection.getCacheKey(), protection);
         byId.put(protection.getId(), protection);
+    }
+
+    /**
+     * Add a cache key as known to be null
+     *
+     * @param cacheKey
+     */
+    public void addNull(String cacheKey) {
+        // Is it cached already?
+        if (getProtection(cacheKey) != null) {
+            return;
+        }
+
+        nulls.put(cacheKey.hashCode(), null);
     }
 
     /**
@@ -151,6 +177,16 @@ public class ProtectionCache {
         references.remove(protection);
         byCacheKey.remove(protection.getCacheKey());
         byId.remove(protection.getId());
+    }
+
+    /**
+     * Check if a cache key is known to not exist in the database
+     *
+     * @param cacheKey
+     * @return
+     */
+    public boolean isKnownToBeNull(String cacheKey) {
+        return nulls.containsKey(cacheKey.hashCode());
     }
 
     /**

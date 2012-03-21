@@ -34,6 +34,7 @@ import com.griefcraft.util.matchers.DoorMatcher;
 import com.griefcraft.util.matchers.DoubleChestMatcher;
 import com.griefcraft.util.matchers.GravityMatcher;
 import com.griefcraft.util.matchers.WallMatcher;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 import java.util.ArrayList;
@@ -109,17 +110,62 @@ public class ProtectionFinder {
         this.baseBlock = baseBlock;
 
         // Add the base block
-        blocks.add(baseBlock);
+        addBlock(baseBlock);
+
+        // Check the base-block
+        if (tryLoadProtection(baseBlock, false)) {
+            return true;
+        }
 
         // Now attempt to use the matchers
-        for (Matcher matcher : PROTECTION_MATCHERS) {
+        for (Matcher matcher : getProtectionMatchers()) {
             if (matcher.matches(this)) {
-                // Wee, we matched a protection somewhere!
+                // we matched a protection somewhere!
                 return true;
             }
         }
 
-        return loadProtection() != null;
+        return false;
+    }
+
+    /**
+     * Get the possible protection matchers that can match the protection
+     *
+     * @return
+     */
+    public Matcher[] getProtectionMatchers() {
+        Material material = baseBlock.getType();
+        
+        // Double chests
+        if (DoubleChestMatcher.PROTECTABLES_CHESTS.contains(material)) {
+            return new Matcher[] {
+                    new DoubleChestMatcher()
+            };
+        }
+        
+        // Gravity
+        else if (GravityMatcher.PROTECTABLES_POSTS.contains(material)) {
+            return new Matcher[] {
+                    new GravityMatcher()
+            };
+        }
+        
+        // Doors
+        else if (DoorMatcher.PROTECTABLES_DOORS.contains(material)) {
+            return new Matcher[] {
+                    new DoorMatcher()
+            };
+        }
+        
+        // Anything else
+        else {
+            return new Matcher[] {
+                    new DoorMatcher(),
+                    new GravityMatcher(),
+                    new WallMatcher()
+            };
+        }
+        
     }
 
     /**
@@ -215,6 +261,7 @@ public class ProtectionFinder {
                     }
 
                     this.matchedProtection = protection;
+                    searched = true;
                 } else {
                     // Corrupted protection
                     System.out.println("Removing corrupted protection: " + protection);

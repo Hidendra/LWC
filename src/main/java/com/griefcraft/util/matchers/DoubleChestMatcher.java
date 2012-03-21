@@ -65,11 +65,11 @@ public class DoubleChestMatcher implements ProtectionFinder.Matcher {
             // we only want chests
             if (PROTECTABLES_CHESTS.contains(relative.getType())) {
                 finder.addBlock(relative);
-                break;
+                return true;
             }
         }
 
-        return finder.loadProtection() != null;
+        return false;
     }
 
 }
