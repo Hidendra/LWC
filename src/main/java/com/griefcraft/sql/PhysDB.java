@@ -819,6 +819,11 @@ public class PhysDB extends Database {
         // the protection cache
         ProtectionCache cache = LWC.getInstance().getProtectionCache();
 
+        // Is it known to be null?
+        if (cache.isKnownToBeNull(cacheKey)) {
+            return null; // It's null :-)
+        }
+
         // check if the protection is already cached
         Protection cached = cache.getProtection(cacheKey);
         if (cached != null) {
@@ -834,8 +839,12 @@ public class PhysDB extends Database {
 
             Protection protection = resolveProtection(statement);
 
-            // cache the protection
-            cache.add(protection);
+            if (protection == null) {
+                cache.addNull(cacheKey);
+            } else {
+                // cache the protection
+                cache.add(protection);
+            }
 
             return protection;
         } catch (SQLException e) {
@@ -1052,6 +1061,11 @@ public class PhysDB extends Database {
 
                 // now sync the history object to the database
                 transaction.saveNow();
+            }
+            
+            // Cache it
+            if (protection != null) {
+                LWC.getInstance().getProtectionCache().add(protection);
             }
 
             // return the newly created protection
