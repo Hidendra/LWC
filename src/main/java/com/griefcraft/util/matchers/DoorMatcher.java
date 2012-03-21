@@ -92,12 +92,14 @@ public class DoorMatcher implements ProtectionFinder.Matcher {
             finder.addBlock(aboveAboveBaseBlock);
             finder.addBlock(aboveBaseBlock);
             findPressurePlate(finder, aboveBaseBlock);
+            return true;
         }
 
         // Match the bottom half of the door
         else if (PROTECTABLES_DOORS.contains(aboveBaseBlock.getType())) {
             finder.addBlock(aboveBaseBlock);
             findPressurePlate(finder, block);
+            return true;
         }
 
         // Match the top half of the door
@@ -106,10 +108,10 @@ public class DoorMatcher implements ProtectionFinder.Matcher {
 
             finder.addBlock(bottomHalf);
             findPressurePlate(finder, bottomHalf);
+            return true;
         }
 
-        // Attempt to match the door
-        return finder.loadProtection(true) != null;
+        return false;
     }
 
     /**

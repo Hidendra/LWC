@@ -53,7 +53,7 @@ public class GravityMatcher implements ProtectionFinder.Matcher {
         // Easy to match, just try to match the block above the base block :P
         Block up = block.getRelative(BlockFace.UP);
 
-        if (PROTECTABLES_POSTS.contains(up.getType()) && finder.tryLoadProtection(up)) {
+        if (PROTECTABLES_POSTS.contains(up.getType())) {
             finder.addBlock(up);
             return true;
         }

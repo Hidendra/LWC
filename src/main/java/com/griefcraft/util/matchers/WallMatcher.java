@@ -77,7 +77,7 @@ public class WallMatcher implements ProtectionFinder.Matcher {
                 Block matched = tryMatchBlock(face, blockFace);
 
                 // We found something ..! Try and load the protection
-                if (matched != null && finder.tryLoadProtection(matched)) {
+                if (matched != null) {
                     finder.addBlock(matched);
                     return true;
                 }
