@@ -41,6 +41,16 @@ public class SimpleMessageParser implements MessageParser {
      */
     private final ResourceBundle locale;
 
+    /**
+     * Cached messages
+     */
+    private final Map<String, String> basicMessageCache = new HashMap<String, String>();
+
+    /**
+     * A heavy cache that includes binds.
+     */
+    private final Map<String, String> bindMessageCache = new HashMap<String, String>();
+
     public SimpleMessageParser(ResourceBundle locale) {
         this.locale = locale;
     }
@@ -48,20 +58,56 @@ public class SimpleMessageParser implements MessageParser {
     public String parseMessage(String key, Object... args) {
         key = key.replaceAll(" ", "_");
 
+        // For the bind cache
+        String cacheKey = key;
+
+        // add the arguments to the cache key
+        if (args.length > 0) {
+            for (Object argument : args) {
+                cacheKey += argument.toString();
+            }
+        }
+
+        if (bindMessageCache.containsKey(cacheKey)) {
+            return bindMessageCache.get(cacheKey);
+        }
+
         if (!locale.containsKey(key)) {
-            return "UNKNOWN_LOCALE_" + key;
+            return null;
         }
 
         Map<String, Object> bind = parseBinds(args);
-        String value = locale.getString(key);
+        String value = basicMessageCache.get(key);
 
-        // apply colors
-        for (String colorKey : Colors.localeColors.keySet()) {
-            String color = Colors.localeColors.get(colorKey);
+        if (value == null) {
+            value = locale.getString(key);
 
-            if (value.contains(colorKey)) {
-                value = value.replaceAll(colorKey, color);
+            // apply colors
+            for (String colorKey : Colors.localeColors.keySet()) {
+                String color = Colors.localeColors.get(colorKey);
+
+                if (value.contains(colorKey)) {
+                    value = value.replaceAll(colorKey, color);
+                }
             }
+
+            // Apply aliases
+            String[] aliasvars = new String[]{"cprivate", "cpublic", "cpassword", "cmodify", "cunlock", "cinfo", "cremove"};
+
+            // apply command name modification depending on menu style
+            for (String alias : aliasvars) {
+                String replace = "%" + alias + "%";
+
+                if (!value.contains(replace)) {
+                    continue;
+                }
+
+                String localeName = alias + ".basic";
+                value = value.replace(replace, parseMessage(localeName));
+            }
+
+            // Cache it
+            basicMessageCache.put(key, value);
         }
 
         // apply binds
@@ -71,6 +117,8 @@ public class SimpleMessageParser implements MessageParser {
             value = value.replaceAll("%" + bindKey + "%", object.toString());
         }
 
+        // include the binds
+        bindMessageCache.put(cacheKey, value);
         return value;
     }
 

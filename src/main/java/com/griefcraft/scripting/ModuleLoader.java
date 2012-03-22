@@ -46,8 +46,10 @@ import com.griefcraft.scripting.event.LWCReloadEvent;
 import com.griefcraft.scripting.event.LWCSendLocaleEvent;
 import org.bukkit.plugin.Plugin;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,8 +170,143 @@ public class ModuleLoader {
      */
     private final Map<Plugin, List<MetaData>> pluginModules = Collections.synchronizedMap(new LinkedHashMap<Plugin, List<MetaData>>());
 
+    /**
+     * A cache used to get a list of modules for any given event. Reflection is used to find which events modules implement.
+     * This was mainly added for backwards compatibility reasons (vs events to be individually registered). This still
+     * achieves the same effect by using reflection.
+     */
+    private final Map<Event, List<Module>> fastModuleCache = new HashMap<Event, List<Module>>();
+
+    /**
+     * Toasty caches for doesObjectOverrideMethod
+     */
+    private final Map<String, Boolean> overrideCache = new HashMap<String, Boolean>();
+
     public ModuleLoader(LWC lwc) {
         this.lwc = lwc;
+        populateFastModuleCache();
+    }
+
+    /**
+     * Populate the fast module cache
+     */
+    private void populateFastModuleCache() {
+        for (Event event : Event.values()) {
+            fastModuleCache.put(event, new ArrayList<Module>(10));
+        }
+    }
+
+    /**
+     * Register a module into the fast cache
+     * @param module
+     */
+    private void registerFastCache(Module module) {
+        // get all of the methods from the module's superclass
+        Class<?> superclass = module.getClass().getSuperclass();
+
+        // Impossible
+        if (superclass == null) {
+            throw new IllegalArgumentException("Method cannot be its own superclass (?)");
+        }
+
+        // The methods that are possible to implement
+        Method[] methods = superclass.getDeclaredMethods();
+
+        // Now check each method to see if the module implements it
+        for (Method method : methods) {
+            boolean doesOverride = doesObjectOverrideMethod(module, method);
+
+            // It does override it! Add it to the fast cache o/
+            if (doesOverride) {
+                // But adding it to the fast cache isn't so easy, we need the event object
+                Class<?>[] parameters = method.getParameterTypes();
+
+                // If it's not 1 we have a method we do not want
+                if (parameters.length != 1) {
+                    continue;
+                }
+
+                // Start comparing on the parameter to find the event type
+                Event event = null;
+                Class<?> parameter = parameters[0];
+
+                if (parameter == LWCAccessEvent.class) {
+                    event = Event.ACCESS_REQUEST;
+                } else if (parameter == LWCBlockInteractEvent.class) {
+                    event = Event.INTERACT_BLOCK;
+                } else if (parameter == LWCCommandEvent.class) {
+                    event = Event.COMMAND;
+                } else if (parameter == LWCDropItemEvent.class) {
+                    event = Event.DROP_ITEM;
+                } else if (parameter == LWCProtectionDestroyEvent.class) {
+                    event = Event.DESTROY_PROTECTION;
+                } else if (parameter == LWCProtectionInteractEvent.class) {
+                    event = Event.INTERACT_PROTECTION;
+                } else if (parameter == LWCProtectionRegisterEvent.class) {
+                    event = Event.REGISTER_PROTECTION;
+                } else if (parameter == LWCProtectionRemovePostEvent.class) {
+                    event = Event.POST_REMOVAL;
+                } else if (parameter == LWCProtectionRegistrationPostEvent.class) {
+                    event = Event.POST_REGISTRATION;
+                } else if (parameter == LWCSendLocaleEvent.class) {
+                    event = Event.SEND_LOCALE;
+                } else if (parameter == LWCRedstoneEvent.class) {
+                    event = Event.REDSTONE;
+                } else if (parameter == LWCReloadEvent.class) {
+                    event = Event.RELOAD_EVENT;
+                }
+                
+                // ok!
+                if (event != null) {
+                    List<Module> modules = fastModuleCache.get(event);
+                    modules.add(module);
+                }
+            }
+        }
+    }
+
+    /**
+     * Check if a method overrides a method using reflection. This method uses a cache for constant access after
+     * the caches are warm and toasty.
+     * <p/>
+     * This assumes the object is overriding JavaModule
+     *
+     * @param object
+     * @param method
+     * @return
+     */
+    public boolean doesObjectOverrideMethod(Object object, Method method) {
+        if (object == null) {
+            throw new IllegalArgumentException("Object cannot be null");
+        }
+        if (method == null) {
+            throw new IllegalArgumentException("Method cannot be null");
+        }
+        String methodName = method.getName();
+
+        String cacheKey = object.getClass().getSimpleName() + methodName;
+        
+        // Check the cache
+        if (overrideCache.containsKey(cacheKey)) {
+            return overrideCache.get(cacheKey);
+        }
+
+        // The class to compare to; the assumed superclass
+        Class<?> compare = JavaModule.class;
+
+        // The result; does it actually override the method?
+        boolean result = false;
+
+        // Compare the methods the object declares
+        for (Method declaredMethod : object.getClass().getDeclaredMethods()) {
+            if (declaredMethod.getName().equals(methodName)) {
+                result = true;
+                break;
+            }
+        }
+
+        overrideCache.put(cacheKey, result);
+        return result;
     }
 
     /**
@@ -183,35 +320,32 @@ public class ModuleLoader {
         }
 
         try {
-            for (List<MetaData> modules : pluginModules.values()) {
-                for (MetaData metaData : modules) {
-                    Module module = metaData.getModule();
-
-                    if (event instanceof LWCAccessEvent) {
-                        module.onAccessRequest((LWCAccessEvent) event);
-                    } else if (event instanceof LWCBlockInteractEvent) {
-                        module.onBlockInteract((LWCBlockInteractEvent) event);
-                    } else if (event instanceof LWCCommandEvent) {
-                        module.onCommand((LWCCommandEvent) event);
-                    } else if (event instanceof LWCDropItemEvent) {
-                        module.onDropItem((LWCDropItemEvent) event);
-                    } else if (event instanceof LWCProtectionDestroyEvent) {
-                        module.onDestroyProtection((LWCProtectionDestroyEvent) event);
-                    } else if (event instanceof LWCProtectionInteractEvent) {
-                        module.onProtectionInteract((LWCProtectionInteractEvent) event);
-                    } else if (event instanceof LWCProtectionRegisterEvent) {
-                        module.onRegisterProtection((LWCProtectionRegisterEvent) event);
-                    } else if (event instanceof LWCProtectionRemovePostEvent) {
-                        module.onPostRemoval((LWCProtectionRemovePostEvent) event);
-                    } else if (event instanceof LWCProtectionRegistrationPostEvent) {
-                        module.onPostRegistration((LWCProtectionRegistrationPostEvent) event);
-                    } else if (event instanceof LWCSendLocaleEvent) {
-                        module.onSendLocale((LWCSendLocaleEvent) event);
-                    } else if (event instanceof LWCRedstoneEvent) {
-                        module.onRedstone((LWCRedstoneEvent) event);
-                    } else if (event instanceof LWCReloadEvent) {
-                        module.onReload((LWCReloadEvent) event);
-                    }
+            List<Module> modules = fastModuleCache.get(event.getEventType());
+            for (Module module : modules) {
+                if (event instanceof LWCAccessEvent) {
+                    module.onAccessRequest((LWCAccessEvent) event);
+                } else if (event instanceof LWCBlockInteractEvent) {
+                    module.onBlockInteract((LWCBlockInteractEvent) event);
+                } else if (event instanceof LWCCommandEvent) {
+                    module.onCommand((LWCCommandEvent) event);
+                } else if (event instanceof LWCDropItemEvent) {
+                    module.onDropItem((LWCDropItemEvent) event);
+                } else if (event instanceof LWCProtectionDestroyEvent) {
+                    module.onDestroyProtection((LWCProtectionDestroyEvent) event);
+                } else if (event instanceof LWCProtectionInteractEvent) {
+                    module.onProtectionInteract((LWCProtectionInteractEvent) event);
+                } else if (event instanceof LWCProtectionRegisterEvent) {
+                    module.onRegisterProtection((LWCProtectionRegisterEvent) event);
+                } else if (event instanceof LWCProtectionRemovePostEvent) {
+                    module.onPostRemoval((LWCProtectionRemovePostEvent) event);
+                } else if (event instanceof LWCProtectionRegistrationPostEvent) {
+                    module.onPostRegistration((LWCProtectionRegistrationPostEvent) event);
+                } else if (event instanceof LWCSendLocaleEvent) {
+                    module.onSendLocale((LWCSendLocaleEvent) event);
+                } else if (event instanceof LWCRedstoneEvent) {
+                    module.onRedstone((LWCRedstoneEvent) event);
+                } else if (event instanceof LWCReloadEvent) {
+                    module.onReload((LWCReloadEvent) event);
                 }
             }
         } catch (Throwable throwable) {
@@ -322,6 +456,9 @@ public class ModuleLoader {
         MetaData metaData = new MetaData(module);
         modules.add(metaData);
         pluginModules.put(plugin, modules);
+
+        // Populate the fast cache
+        registerFastCache(module);
     }
 
     /**

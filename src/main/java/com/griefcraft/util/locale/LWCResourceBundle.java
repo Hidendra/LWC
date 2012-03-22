@@ -81,6 +81,10 @@ public class LWCResourceBundle extends ResourceBundle {
      * @return
      */
     private Object getObjectFromExtensionBundles(String key) {
+        if (extensionBundles.size() == 0) {
+            return null;
+        }
+
         try {
             for (ResourceBundle bundle : extensionBundles) {
                 Object object = bundle.getObject(key);

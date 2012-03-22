@@ -37,7 +37,6 @@ import com.griefcraft.util.matchers.WallMatcher;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,18 +45,6 @@ import java.util.List;
  * Searches for blocks that can potentially be a protection
  */
 public class ProtectionFinder {
-
-    /**
-     * A list of the protection matchers
-     */
-    public static final List<Matcher> PROTECTION_MATCHERS = new ArrayList<Matcher>();
-
-    static {
-        PROTECTION_MATCHERS.add(new DoubleChestMatcher());
-        PROTECTION_MATCHERS.add(new WallMatcher());
-        PROTECTION_MATCHERS.add(new DoorMatcher());
-        PROTECTION_MATCHERS.add(new GravityMatcher());
-    }
 
     /**
      * The LWC object to work with
@@ -119,12 +106,16 @@ public class ProtectionFinder {
 
         // Now attempt to use the matchers
         for (Matcher matcher : getProtectionMatchers()) {
-            if (matcher.matches(this)) {
+            boolean matches = matcher.matches(this);
+            
+            if (matches) {
                 // we matched a protection somewhere!
                 return true;
             }
         }
 
+        // No matches
+        searched = true;
         return false;
     }
 
@@ -198,7 +189,7 @@ public class ProtectionFinder {
      */
     public Protection loadProtection(boolean noAutoCache) {
         // Do we have a result already cached?
-        if (searched && matchedProtection != null) {
+        if (searched) {
             return matchedProtection;
         }
 
@@ -317,9 +308,17 @@ public class ProtectionFinder {
         // reset the matched protectables
         protectables.clear();
         searched = false;
+        
+        // if there's only 1 block it was already checked (the base block)
+        int size = blocks.size();
+        if (size == 1) {
+            return;
+        }
 
         // go through the blocks
-        for (Block block : blocks) {
+        for (int index = 1; index < size; index++) {
+            Block block = blocks.get(index);
+            
             // Is it protectable?
             if (lwc.isProtectable(block)) {
                 protectables.add(block);

@@ -34,7 +34,6 @@ import com.griefcraft.listeners.LWCPlayerListener;
 import com.griefcraft.listeners.LWCServerListener;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.sql.Database;
-import com.griefcraft.util.StopWatch;
 import com.griefcraft.util.StringUtil;
 import com.griefcraft.util.Updater;
 import com.griefcraft.util.Version;
@@ -105,10 +104,6 @@ public class LWCPlugin extends JavaPlugin {
         String commandName = command.getName().toLowerCase();
         String argString = StringUtil.join(args, 0);
         boolean isPlayer = (sender instanceof Player); // check if they're a player
-
-        // Timing
-        StopWatch stopWatch = new StopWatch("onCommand");
-        stopWatch.start();
 
         // these can only apply to players, not the console (who has absolute player :P)
         if (isPlayer) {
@@ -182,7 +177,6 @@ public class LWCPlugin extends JavaPlugin {
 
             if (aliasCommand != null) {
                 lwc.getModuleLoader().dispatchEvent(new LWCCommandEvent(sender, aliasCommand, aliasArgs));
-                lwc.completeStopwatch(stopWatch, (Player) sender);
                 return true;
             }
         }
@@ -195,11 +189,6 @@ public class LWCPlugin extends JavaPlugin {
         ///// Dispatch command to modules
         LWCCommandEvent evt = new LWCCommandEvent(sender, args[0].toLowerCase(), args.length > 1 ? StringUtil.join(args, 1).split(" ") : new String[0]);
         lwc.getModuleLoader().dispatchEvent(evt);
-
-        // Send timings if they're a player
-        if (isPlayer) {
-            lwc.completeStopwatch(stopWatch, (Player) sender);
-        }
 
         if (evt.isCancelled()) {
             return true;
