@@ -48,6 +48,8 @@ import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 
+import java.lang.Double;
+import java.lang.String;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -100,6 +102,11 @@ public class EconomyModule extends JavaModule {
      * The best way to do this? ha, probably not
      */
     private Map<Location, String> priceCache = Collections.synchronizedMap(new HashMap<Location, String>());
+
+    /**
+     * Our cache
+     */
+    private final Map<String, String> cache = new HashMap<String, String>();
 
     public EconomyModule(LWCEconomyPlugin plugin) {
         this.plugin = plugin;
@@ -475,6 +482,11 @@ public class EconomyModule extends JavaModule {
     private double resolveDouble(Player player, String node, boolean sortHighest) {
         LWC lwc = LWC.getInstance();
         double value = -1;
+        
+        String cacheKey = "resolve-" + player.getName() + node;
+        if (cache.containsKey(cacheKey)) {
+            return Double.parseDouble(cache.get(cacheKey));
+        }
 
         // try the player
         try {
@@ -509,7 +521,8 @@ public class EconomyModule extends JavaModule {
                 value = Double.parseDouble(map("iConomy." + node, "-1"));
             } catch (NumberFormatException e) { }
         }
-
+        
+        cache.put(cacheKey, Double.toString(value));
         return value;
     }
 

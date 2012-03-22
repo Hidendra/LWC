@@ -36,8 +36,6 @@ import com.griefcraft.scripting.Module;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCDropItemEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
-import com.griefcraft.util.Colors;
-import com.griefcraft.util.StopWatch;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.ContainerBlock;
@@ -111,19 +109,12 @@ public class LWCPlayerListener implements Listener {
         Player player = event.getPlayer();
         LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
 
-        // Send the block action to the player if they're in dev mode
-        lwcPlayer.debug("Block Action: " + event.getAction());
-
         if (event.getAction() != Action.LEFT_CLICK_BLOCK && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
 
         Block block = event.getClickedBlock();
         Material material = block.getType();
-
-        // Timing start
-        StopWatch stopWatch = new StopWatch(String.format("PLAYER_INTERACT Block=%s Location=[%d %d %d]", material, block.getX(), block.getY(), block.getZ()));
-        stopWatch.start();
 
         // Prevent players with lwc.deny from interacting
         if (block.getState() instanceof ContainerBlock) {
@@ -136,7 +127,7 @@ public class LWCPlayerListener implements Listener {
 
         try {
             List<String> actions = new ArrayList<String>(lwcPlayer.getActionNames());
-            Protection protection = lwc.findProtection(block, lwcPlayer);
+            Protection protection = lwc.findProtection(block);
             Module.Result result;
             boolean canAccess = lwc.canAccessProtection(player, protection);
             boolean canAdmin = lwc.canAdminProtection(player, protection);
@@ -145,16 +136,12 @@ public class LWCPlayerListener implements Listener {
                 boolean ignoreLeftClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreLeftClick"));
 
                 if (ignoreLeftClick) {
-                    lwcPlayer.debug("ignoreLeftClick!");
-                    lwc.completeStopwatch(stopWatch, player);
                     return;
                 }
             } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 boolean ignoreRightClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreRightClick"));
 
                 if (ignoreRightClick) {
-                    lwcPlayer.debug("ignoreRightClick!");
-                    lwc.completeStopwatch(stopWatch, player);
                     return;
                 }
             }
@@ -215,11 +202,7 @@ public class LWCPlayerListener implements Listener {
                 }
             }
 
-            // debugging
-            lwcPlayer.debug(Colors.LightBlue + "Result => " + Colors.Yellow + result + Colors.LightBlue + "  Protection => " + Colors.Yellow + protection + Colors.LightBlue + "  Access/Admin => " + Colors.Yellow + canAccess + "/" + canAdmin + Colors.LightBlue + "  Actions => " + Colors.Yellow + actions);
-
             if (result == Module.Result.ALLOW) {
-                lwc.completeStopwatch(stopWatch, player);
                 return;
             }
 
@@ -242,8 +225,6 @@ public class LWCPlayerListener implements Listener {
             lwc.sendLocale(player, "protection.internalerror", "id", "PLAYER_INTERACT");
             e.printStackTrace();
         }
-
-        lwc.completeStopwatch(stopWatch, player);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

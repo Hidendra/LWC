@@ -106,6 +106,11 @@ public class LWCPlayer implements CommandSender {
     private final static Map<LWCPlayer, Set<Protection>> accessibleProtections = Collections.synchronizedMap(new HashMap<LWCPlayer, Set<Protection>>());
 
     /**
+     * All of the action names
+     */
+    private final static Map<LWCPlayer, Set<String>> actionNames = Collections.synchronizedMap(new HashMap<LWCPlayer, Set<String>>());
+
+    /**
      * The player's permission mode
      */
     private PermissionMode permissionMode = PermissionMode.NONE;
@@ -235,6 +240,13 @@ public class LWCPlayer implements CommandSender {
         if (old != null) {
             removeAction(old);
         }
+        
+        Set<String> names = actionNames.get(this);
+        if (names == null) {
+            names = new HashSet<String>();
+            actionNames.put(this, names);
+        }
+        names.add(action.getName());
 
         return getActions().add(action);
     }
@@ -246,6 +258,7 @@ public class LWCPlayer implements CommandSender {
      * @return
      */
     public boolean removeAction(Action action) {
+        actionNames.get(this).remove(action.getName());
         return getActions().remove(action);
     }
 
@@ -308,14 +321,11 @@ public class LWCPlayer implements CommandSender {
      * @return a Set containing all of the action names
      */
     public Set<String> getActionNames() {
-        Set<Action> actions = getActions();
-        Set<String> names = new HashSet<String>(actions.size());
-
-        for (Action action : actions) {
-            names.add(action.getName());
+        if (actionNames.containsKey(this)) {
+            return new HashSet<String>(actionNames.get(this));
+        } else {
+            return new HashSet<String>();
         }
-
-        return names;
     }
 
     /**
@@ -415,38 +425,6 @@ public class LWCPlayer implements CommandSender {
         }
 
         return related;
-    }
-
-    /**
-     * Set the devmode flag
-     *
-     * @param devMode
-     */
-    public void setDevMode(boolean devMode) {
-        this.devMode = devMode;
-
-        // Reset any old vars just incase
-        if (!devMode) {
-            this.permissionMode = PermissionMode.NONE;
-        }
-    }
-
-    /**
-     * @return true if the player is in devmode
-     */
-    public boolean isDevMode() {
-        return devMode;
-    }
-
-    /**
-     * Send a debug message to the player if they are in dev mode
-     *
-     * @param message
-     */
-    public void debug(String message) {
-        if (isDevMode()) {
-            player.sendMessage(message);
-        }
     }
 
     /**
