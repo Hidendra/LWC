@@ -144,7 +144,7 @@ public class ProtectionCache {
         }
         
         // Remove it from the known nulls if it exists
-        nulls.remove(protection.getCacheKey());
+        nulls.remove(protection.getCacheKey().hashCode());
 
         // Add the hard reference
         references.put(protection, null);
