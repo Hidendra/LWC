@@ -1028,6 +1028,8 @@ public class PhysDB extends Database {
      * @return
      */
     public Protection registerProtection(int blockId, Protection.Type type, String world, String player, String data, int x, int y, int z) {
+        ProtectionCache cache = LWC.getInstance().getProtectionCache();
+
         try {
             PreparedStatement statement = prepare("INSERT INTO " + prefix + "protections (blockId, type, world, owner, password, x, y, z, date, last_accessed) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
@@ -1043,6 +1045,9 @@ public class PhysDB extends Database {
             statement.setLong(10, System.currentTimeMillis() / 1000L);
 
             statement.executeUpdate();
+
+            // Remove the pesky null from the cache if it is there
+            cache.removeNull(world + ":" + x + ":" + y + ":" + z);
 
             // We need to create the initial transaction for this protection
             // this transaction is viewable and modifiable during POST_REGISTRATION
@@ -1065,7 +1070,7 @@ public class PhysDB extends Database {
             
             // Cache it
             if (protection != null) {
-                LWC.getInstance().getProtectionCache().add(protection);
+                cache.add(protection);
             }
 
             // return the newly created protection
