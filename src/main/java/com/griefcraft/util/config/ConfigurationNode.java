@@ -36,6 +36,11 @@ import java.util.Map;
 public class ConfigurationNode {
     Map<String, Object> root;
 
+    /**
+     * Added by Hidendra
+     */
+    private final Map<String, Object> cache = new HashMap<String, Object>();
+
     ConfigurationNode(Map<String, Object> root) {
         this.root = root;
     }
@@ -52,11 +57,17 @@ public class ConfigurationNode {
      */
     @SuppressWarnings("unchecked")
     Object getProperty(String path) {
+        // Check the cache
+        if (cache.containsKey(path)) {
+            return cache.get(path);
+        }
+
         if (!path.contains(".")) {
             Object val = root.get(path);
             if (val == null) {
                 return null;
             }
+            cache.put(path, val);
             return val;
         }
 
@@ -71,6 +82,7 @@ public class ConfigurationNode {
             }
 
             if (i == parts.length - 1) {
+                cache.put(path, o);
                 return o;
             }
 
@@ -514,6 +526,7 @@ public class ConfigurationNode {
      */
     @SuppressWarnings("unchecked")
     public void removeProperty(String path) {
+        cache.remove(path);
         if (!path.contains(".")) {
             root.remove(path);
             return;

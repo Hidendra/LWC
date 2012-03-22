@@ -107,8 +107,8 @@ import com.griefcraft.util.DatabaseThread;
 import com.griefcraft.util.Metrics;
 import com.griefcraft.util.ProtectionFinder;
 import com.griefcraft.util.Statistics;
-import com.griefcraft.util.StopWatch;
 import com.griefcraft.util.StringUtil;
+import com.griefcraft.util.Tuple;
 import com.griefcraft.util.config.Configuration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -136,6 +136,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
 
 public class LWC {
@@ -199,6 +201,11 @@ public class LWC {
      * The currency handler
      */
     private ICurrency currency;
+
+    /**
+     * Protection configuration cache
+     */
+    private final Map<String, String> protectionConfigurationCache = new HashMap<String, String>();
 
     public LWC(LWCPlugin plugin) {
         this.plugin = plugin;
@@ -459,20 +466,6 @@ public class LWC {
     }
 
     /**
-     * Complete a stopwatch and send the player the results if they're in developer mode
-     *
-     * @param stopWatch
-     * @param player
-     */
-    public void completeStopwatch(StopWatch stopWatch, Player player) {
-        if (stopWatch.isRunning()) {
-            stopWatch.stop();
-        }
-
-        wrapPlayer(player).debug(stopWatch.shortSummary());
-    }
-
-    /**
      * Deposit items into an inventory chest
      * Works with double chests.
      *
@@ -622,13 +615,13 @@ public class LWC {
                 String owner = protection.getOwner();
 
                 // replace your username with "you" if you own the protection
-                if (owner.equals(player.getName())) {
+                if (isOwner) {
                     owner = parser.parseMessage("you");
                 }
 
                 String blockName = materialToString(block);
 
-                if (!parser.parseMessage("protection." + blockName.toLowerCase() + ".notice.protected").startsWith("UNKNOWN_LOCALE")) {
+                if (parser.parseMessage("protection." + blockName.toLowerCase() + ".notice.protected") != null) {
                     sendLocale(player, "protection." + blockName.toLowerCase() + ".notice.protected", "type", parser.parseMessage(protection.typeToString().toLowerCase()), "block", blockName, "owner", owner);
                 } else {
                     sendLocale(player, "protection.general.notice.protected", "type", parser.parseMessage(protection.typeToString().toLowerCase()), "block", blockName, "owner", owner);
@@ -775,25 +768,6 @@ public class LWC {
      * @return
      */
     public boolean hasPermission(Player player, String node) {
-        // Dev mode
-        LWCPlayer lwcPlayer = wrapPlayer(player);
-
-        if (lwcPlayer.isDevMode()) {
-            switch (lwcPlayer.getPermissionMode()) {
-                case NONE:
-                    return false;
-
-                case PLAYER:
-                    return !node.contains("admin") && !node.contains("mod");
-
-                case MOD:
-                    return !node.contains("admin");
-
-                case ADMIN:
-                    return true;
-            }
-        }
-
         try {
             return player.hasPermission(node);
         } catch (NoSuchMethodError e) {
@@ -855,9 +829,15 @@ public class LWC {
      * @param args
      */
     public void sendLocale(CommandSender sender, String key, Object... args) {
+        String[] message; // The message to send to the player
         MessageParser parser = plugin.getMessageParser();
-        String message = parser.parseMessage(key, args);
-        String menuStyle = null; // null unless required!
+        String parsed = parser.parseMessage(key, args);
+
+        if (parsed == null) {
+            return; // Nothing to send
+        }
+
+        message = parsed.split("\\n");
 
         // broadcast an event if they are a player
         if (sender instanceof Player) {
@@ -879,32 +859,8 @@ public class LWC {
             return;
         }
 
-        String[] aliasvars = new String[]{"cprivate", "cpublic", "cpassword", "cmodify", "cunlock", "cinfo", "cremove"};
-
-        // apply command name modification depending on menu style
-        for (String alias : aliasvars) {
-            String replace = "%" + alias + "%";
-
-            if (!message.contains(replace)) {
-                continue;
-            }
-
-            if (menuStyle == null) {
-                menuStyle = "basic";
-            }
-
-            String localeName = alias + "." + menuStyle;
-            message = message.replace(replace, parser.parseMessage(localeName));
-        }
-
-        // split the lines
-        for (String line : message.split("\\n")) {
-            if (line.isEmpty()) {
-                line = " ";
-            }
-
-            sender.sendMessage(line);
-        }
+        // Send the message!
+        sender.sendMessage(message);
     }
 
     /**
@@ -1061,6 +1017,7 @@ public class LWC {
             }
 
             count++;
+            physicalDatabase.decrementProtectionCount();
         }
 
         statement.close();
@@ -1131,16 +1088,6 @@ public class LWC {
     }
 
     /**
-     * Find a protection linked to the block
-     *
-     * @param block
-     * @return
-     */
-    public Protection findProtection(Block block) {
-        return findProtection(block, null);
-    }
-
-    /**
      * Compares two blocks if they are equal
      *
      * @param block
@@ -1156,10 +1103,9 @@ public class LWC {
      * Find a protection linked to the block, using the player to debug if they have debug mode
      *
      * @param block
-     * @param debugger
      * @return
      */
-    public Protection findProtection(Block block, LWCPlayer debugger) {
+    public Protection findProtection(Block block) {
         // If the block type is AIR, then we have a problem .. but attempt to load a protection anyway
         if (block.getType() == Material.AIR) {
             // We won't be able to match any other blocks anyway, so the least we can do is attempt to load a protection
@@ -1171,10 +1117,6 @@ public class LWC {
 
         // Search for a protection
         boolean result = finder.matchBlocks(block);
-
-        if (debugger != null) {
-            debugger.debug(String.format("finder.matchBlocks(%s): %s", block.toString(), Boolean.toString(result)));
-        }
 
         // We're done, load the possibly loaded protection
         return finder.loadProtection();
@@ -1323,6 +1265,11 @@ public class LWC {
      * @return
      */
     public String resolveProtectionConfiguration(Material material, String node) {
+        String cacheKey = material.toString() + node;
+        if (protectionConfigurationCache.containsKey(cacheKey)) {
+            return protectionConfigurationCache.get(cacheKey);
+        }
+        
         List<String> names = new ArrayList<String>();
 
         String materialName = normalizeName(material);
@@ -1349,7 +1296,8 @@ public class LWC {
                 value = temp;
             }
         }
-
+        
+        protectionConfigurationCache.put(cacheKey, value);
         return value;
     }
 

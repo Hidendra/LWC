@@ -63,12 +63,35 @@ public class PhysDB extends Database {
      */
     private int databaseVersion = 0;
 
+    /**
+     * The number of protections that should exist
+     */
+    private int protectionCount = 0;
+
     public PhysDB() {
         super();
     }
 
     public PhysDB(Type currentType) {
         super(currentType);
+    }
+
+    /**
+     * Decrement the known protection counter
+     */
+    public void decrementProtectionCount() {
+        protectionCount --;
+    }
+
+    /**
+     * Check if the protection cache has all of the known protections cached
+     *
+     * @return
+     */
+    private boolean hasAllProtectionsCached() {
+        ProtectionCache cache = LWC.getInstance().getProtectionCache();
+
+        return cache.size() >= protectionCount;
     }
 
     /**
@@ -366,6 +389,9 @@ public class PhysDB extends Database {
 
         // perform database upgrades
         performDatabaseUpdates();
+
+        // get the amount of protections
+        protectionCount = getProtectionCount();
 
         loaded = true;
     }
@@ -805,7 +831,7 @@ public class PhysDB extends Database {
     }
 
     /**
-     * Load a chest at a given tile
+     * Load a protection at the given coordinates
      *
      * @param x
      * @param y
@@ -813,6 +839,19 @@ public class PhysDB extends Database {
      * @return the Protection object
      */
     public Protection loadProtection(String worldName, int x, int y, int z) {
+        return loadProtection(worldName, x, y, z, false);
+    }
+
+    /**
+     * Load a protection at the given coordinates
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param ignoreProtectionCount
+     * @return the Protection object
+     */
+    private Protection loadProtection(String worldName, int x, int y, int z, boolean ignoreProtectionCount) {
         // the unique key to use in the cache
         String cacheKey = worldName + ":" + x + ":" + y + ":" + z;
 
@@ -821,14 +860,23 @@ public class PhysDB extends Database {
 
         // Is it known to be null?
         if (cache.isKnownToBeNull(cacheKey)) {
+            // System.out.println("loadProtection() => IS_NULL");
             return null; // It's null :-)
         }
 
         // check if the protection is already cached
         Protection cached = cache.getProtection(cacheKey);
         if (cached != null) {
+            // System.out.println("loadProtection() => CACHE HIT");
             return cached;
         }
+
+        // Is it possible that there are protections in the cache?
+        if (!ignoreProtectionCount && hasAllProtectionsCached()) {
+            // System.out.println("loadProtection() => HAS_ALL_PROTECTIONS_CACHED");
+            return null; // nothing was in the cache, nothing assumed to be in the database
+        }
+        // System.out.println("loadProtection() => QUERYING");
 
         try {
             PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE x = ? AND y = ? AND z = ? AND world = ?");
@@ -1051,7 +1099,7 @@ public class PhysDB extends Database {
 
             // We need to create the initial transaction for this protection
             // this transaction is viewable and modifiable during POST_REGISTRATION
-            Protection protection = loadProtection(world, x, y, z);
+            Protection protection = loadProtection(world, x, y, z, true);
 
             // if history logging is enabled, create it
             if (LWC.getInstance().isHistoryEnabled() && protection != null) {
@@ -1071,6 +1119,7 @@ public class PhysDB extends Database {
             // Cache it
             if (protection != null) {
                 cache.add(protection);
+                protectionCount ++;
             }
 
             // return the newly created protection
@@ -1534,7 +1583,11 @@ public class PhysDB extends Database {
             PreparedStatement statement = prepare("DELETE FROM " + prefix + "protections WHERE id = ?");
             statement.setInt(1, protectionId);
 
-            statement.executeUpdate();
+            int affected = statement.executeUpdate();
+
+            if (affected >= 1) {
+                protectionCount -= affected;
+            }
         } catch (SQLException e) {
             printException(e);
         }
@@ -1571,6 +1624,7 @@ public class PhysDB extends Database {
         try {
             Statement statement = connection.createStatement();
             statement.executeUpdate("DELETE FROM " + prefix + "protections");
+            protectionCount = 0;
             statement.close();
         } catch (SQLException e) {
             printException(e);
