@@ -1675,7 +1675,7 @@ public class LWC {
             Player bPlayer = (Player) sender;
 
             if (notInPersistentMode(bPlayer.getName())) {
-                wrapPlayer(bPlayer).getActions().clear();
+                wrapPlayer(bPlayer).removeAllActions();
             }
         } else if (sender instanceof LWCPlayer) {
             removeModes(((LWCPlayer) sender).getBukkitPlayer());
