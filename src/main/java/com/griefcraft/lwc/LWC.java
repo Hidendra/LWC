@@ -848,11 +848,6 @@ public class LWC {
         }
 
         if (message == null) {
-            sender.sendMessage(Colors.Red + "LWC: " + Colors.White + "Undefined locale: \"" + Colors.Gray + key + Colors.White + "\"");
-            return;
-        }
-
-        if (message.equals("null")) {
             return;
         }
 
