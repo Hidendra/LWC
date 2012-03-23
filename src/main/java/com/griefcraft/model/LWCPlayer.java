@@ -267,7 +267,10 @@ public class LWCPlayer implements CommandSender {
      */
     public void removeAllActions() {
         getActions().clear();
-        actionNames.get(this).clear();
+        
+        if (actionNames.containsKey(this)) {
+            actionNames.get(this).clear();
+        }
     }
 
     /**
