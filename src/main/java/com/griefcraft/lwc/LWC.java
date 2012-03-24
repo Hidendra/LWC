@@ -612,7 +612,7 @@ public class LWC {
                 String owner = protection.getOwner();
 
                 // replace your username with "you" if you own the protection
-                if (isOwner) {
+                if (owner.equalsIgnoreCase(player.getName())) {
                     owner = parser.parseMessage("you");
                 }
 
