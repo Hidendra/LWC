@@ -26,37 +26,47 @@
  * either expressed or implied, of anybody else.
  */
 
-public class CanaryPlayer extends com.griefcraft.player.Player {
+package com.griefcraft.event;
+
+public final class EventNotifier {
 
     /**
-     * The player handle
+     * The block of code that runs when this event is ran
      */
-    private Player handle;
+    private final Runnable block;
 
-    public CanaryPlayer(Player handle) {
-        if (handle == null) {
-            throw new IllegalArgumentException("Player handle cannot be null");
+    /**
+     * If the event should be removed after it is called
+     */
+    private final boolean temporary;
+
+    public EventNotifier(Runnable block, boolean temporary) {
+        this.block = block;
+        this.temporary = temporary;
+    }
+
+    public EventNotifier(Runnable block) {
+        this(block, true);
+    }
+
+    /**
+     * Runs the event
+     */
+    public void call() throws EventException {
+        try {
+            block.run();
+        } catch (Exception e) {
+            throw new EventException("Exception occurred while running an event", e);
         }
-
-        this.handle = handle;
     }
 
-    public String getName() {
-        return handle.getName();
+    /**
+     * Check if the event is temporary
+     *
+     * @return
+     */
+    public boolean isTemporary() {
+        return temporary;
     }
 
-    public void sendMessage(String message) {
-        for (String line : message.split("\n")) {
-            handle.sendMessage(line);
-        }
-    }
-
-    public void sendLocalizedMessage(String node, Object... args) {
-        throw new UnsupportedOperationException("Not supported");
-    }
-
-    public boolean hasPermission(String node) {
-        // TODO Morph it somehow?
-        return handle.canUseCommand(node);
-    }
 }

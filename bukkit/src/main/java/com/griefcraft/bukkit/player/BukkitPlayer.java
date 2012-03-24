@@ -31,7 +31,7 @@ package com.griefcraft.bukkit.player;
 import com.griefcraft.player.Player;
 import com.griefcraft.util.Color;
 
-public class BukkitPlayer implements Player {
+public class BukkitPlayer extends Player {
 
     /**
      * The player handle

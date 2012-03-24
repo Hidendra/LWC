@@ -26,37 +26,24 @@
  * either expressed or implied, of anybody else.
  */
 
-public class CanaryPlayer extends com.griefcraft.player.Player {
+package com.griefcraft.event;
 
-    /**
-     * The player handle
-     */
-    private Player handle;
+public class EventException extends Exception {
 
-    public CanaryPlayer(Player handle) {
-        if (handle == null) {
-            throw new IllegalArgumentException("Player handle cannot be null");
-        }
-
-        this.handle = handle;
+    public EventException() {
+        super();
     }
 
-    public String getName() {
-        return handle.getName();
+    public EventException(String message) {
+        super(message);
     }
 
-    public void sendMessage(String message) {
-        for (String line : message.split("\n")) {
-            handle.sendMessage(line);
-        }
+    public EventException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    public void sendLocalizedMessage(String node, Object... args) {
-        throw new UnsupportedOperationException("Not supported");
+    public EventException(Throwable cause) {
+        super(cause);
     }
 
-    public boolean hasPermission(String node) {
-        // TODO Morph it somehow?
-        return handle.canUseCommand(node);
-    }
 }

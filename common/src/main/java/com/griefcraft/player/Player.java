@@ -29,14 +29,15 @@
 package com.griefcraft.player;
 
 import com.griefcraft.command.CommandSender;
+import com.griefcraft.event.PlayerEventHandler;
 
-public interface Player extends CommandSender {
+public abstract class Player extends PlayerEventHandler implements CommandSender {
 
     /**
      * Gets the player's name
      *
      * @return
      */
-    public String getName();
+    public abstract String getName();
 
 }
