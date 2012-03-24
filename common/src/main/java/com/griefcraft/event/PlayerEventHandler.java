@@ -56,8 +56,7 @@ public class PlayerEventHandler {
      * @param callback
      */
     public void onPlayerInteract(Runnable callback) {
-        checkCallback(callback);
-        onEvent(Type.PLAYER_INTERACT, new EventNotifier(callback));
+        onPlayerInteract(callback, true);
     }
 
     /**
