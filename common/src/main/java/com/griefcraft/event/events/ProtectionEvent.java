@@ -26,26 +26,29 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.player;
+package com.griefcraft.event.events;
 
-import com.griefcraft.command.CommandSender;
-import com.griefcraft.event.PlayerEventDelegate;
-import com.griefcraft.event.PlayerEventHandler;
+import com.griefcraft.dao.Protection;
+import com.griefcraft.event.Event;
 
-public abstract class Player extends PlayerEventHandler implements CommandSender {
+public class ProtectionEvent implements Event {
 
     /**
-     * Gets the player's name
+     * The protection
+     */
+    private Protection protection;
+
+    public ProtectionEvent(Protection protection) {
+        this.protection = protection;
+    }
+
+    /**
+     * Get the protection for this given
      *
      * @return
      */
-    public abstract String getName();
-
-    /**
-     * The player's event delegate, used to broadcast events about their actions
-     *
-     * @return
-     */
-    public abstract PlayerEventDelegate getEventDelegate();
+    public Protection getProtection() {
+        return protection;
+    }
 
 }

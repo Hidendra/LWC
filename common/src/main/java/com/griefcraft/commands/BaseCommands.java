@@ -30,6 +30,10 @@ package com.griefcraft.commands;
 
 import com.griefcraft.command.Command;
 import com.griefcraft.command.CommandContext;
+import com.griefcraft.command.CommandSender;
+import com.griefcraft.event.events.BlockEvent;
+import com.griefcraft.event.notifiers.BlockEventNotifier;
+import com.griefcraft.player.Player;
 
 /**
  * A test of commands used mainly for testing
@@ -53,7 +57,23 @@ public class BaseCommands {
             aliases = { "ctest" }
     )
     public void lwcTest(CommandContext context) {
-        context.getCommandSender().sendMessage("/lwc test");
+        CommandSender sender = context.getCommandSender();
+
+        if (!(sender instanceof Player)) {
+            return;
+        }
+
+        final Player player = (Player) sender;
+        player.sendMessage("Click on a block, please!~");
+
+        // Wait for them to click on the block
+        player.onBlockInteract(new BlockEventNotifier() {
+            @Override
+            public boolean call(BlockEvent event) {
+                player.sendMessage("You clicked on a block with the id " + event.getBlock().getType() + "!");
+                return true;
+            }
+        });
     }
 
     @Command(

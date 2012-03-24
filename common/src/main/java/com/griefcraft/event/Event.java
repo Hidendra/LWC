@@ -26,26 +26,7 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.player;
+package com.griefcraft.event;
 
-import com.griefcraft.command.CommandSender;
-import com.griefcraft.event.PlayerEventDelegate;
-import com.griefcraft.event.PlayerEventHandler;
-
-public abstract class Player extends PlayerEventHandler implements CommandSender {
-
-    /**
-     * Gets the player's name
-     *
-     * @return
-     */
-    public abstract String getName();
-
-    /**
-     * The player's event delegate, used to broadcast events about their actions
-     *
-     * @return
-     */
-    public abstract PlayerEventDelegate getEventDelegate();
-
+public interface Event {
 }

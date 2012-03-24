@@ -26,26 +26,29 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.player;
+package com.griefcraft.event.events;
 
-import com.griefcraft.command.CommandSender;
-import com.griefcraft.event.PlayerEventDelegate;
-import com.griefcraft.event.PlayerEventHandler;
+import com.griefcraft.event.Event;
+import com.griefcraft.world.Block;
 
-public abstract class Player extends PlayerEventHandler implements CommandSender {
+public class BlockEvent implements Event {
 
     /**
-     * Gets the player's name
+     * The block object
+     */
+    private Block block;
+    
+    public BlockEvent(Block block) {
+        this.block = block;
+    }
+
+    /**
+     * Get the block for this event
      *
      * @return
      */
-    public abstract String getName();
-
-    /**
-     * The player's event delegate, used to broadcast events about their actions
-     *
-     * @return
-     */
-    public abstract PlayerEventDelegate getEventDelegate();
-
+    public Block getBlock() {
+        return block;
+    }
+    
 }

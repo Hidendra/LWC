@@ -28,37 +28,25 @@
 
 package com.griefcraft.event;
 
-public final class EventNotifier {
-
-    /**
-     * The block of code that runs when this event is ran
-     */
-    private final Runnable block;
+public abstract class EventNotifier<T> {
 
     /**
      * If the event should be removed after it is called
      */
     private final boolean temporary;
 
-    public EventNotifier(Runnable block, boolean temporary) {
-        this.block = block;
+    public EventNotifier(boolean temporary) {
         this.temporary = temporary;
     }
 
-    public EventNotifier(Runnable block) {
-        this(block, true);
+    public EventNotifier() {
+        this(true);
     }
 
     /**
      * Runs the event
      */
-    public void call() throws EventException {
-        try {
-            block.run();
-        } catch (Exception e) {
-            throw new EventException("Exception occurred while running an event", e);
-        }
-    }
+    public abstract boolean call(T event);
 
     /**
      * Check if the event is temporary
@@ -67,6 +55,20 @@ public final class EventNotifier {
      */
     public boolean isTemporary() {
         return temporary;
+    }
+
+    /**
+     * Calls the notifier using an unsafe cast. The only protection assumed is if the argument given is null.
+     *
+     * @param event
+     * @return
+     */
+    protected boolean unsafeCall(Event event) {
+        if (event == null) {
+            return call(null);
+        } else {
+            return call((T) event);
+        }
     }
 
 }

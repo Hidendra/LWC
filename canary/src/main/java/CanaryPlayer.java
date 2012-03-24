@@ -26,6 +26,8 @@
  * either expressed or implied, of anybody else.
  */
 
+import com.griefcraft.event.PlayerEventDelegate;
+
 public class CanaryPlayer extends com.griefcraft.player.Player {
 
     /**
@@ -33,16 +35,28 @@ public class CanaryPlayer extends com.griefcraft.player.Player {
      */
     private Player handle;
 
+    /**
+     * The event delegate
+     */
+    private PlayerEventDelegate eventDelegate;
+
     public CanaryPlayer(Player handle) {
         if (handle == null) {
             throw new IllegalArgumentException("Player handle cannot be null");
         }
 
         this.handle = handle;
+        this.eventDelegate = new PlayerEventDelegate(null, this);
+        // TODO create lwc object in the plugin class
     }
 
     public String getName() {
         return handle.getName();
+    }
+
+    @Override
+    public PlayerEventDelegate getEventDelegate() {
+        return eventDelegate;
     }
 
     public void sendMessage(String message) {

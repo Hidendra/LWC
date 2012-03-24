@@ -26,26 +26,41 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.player;
+package com.griefcraft.bukkit.listeners;
 
-import com.griefcraft.command.CommandSender;
-import com.griefcraft.event.PlayerEventDelegate;
-import com.griefcraft.event.PlayerEventHandler;
+import com.griefcraft.bukkit.BukkitPlugin;
+import com.griefcraft.bukkit.world.BukkitBlock;
+import com.griefcraft.player.Player;
+import com.griefcraft.world.Block;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
 
-public abstract class Player extends PlayerEventHandler implements CommandSender {
-
-    /**
-     * Gets the player's name
-     *
-     * @return
-     */
-    public abstract String getName();
+public class PlayerListener implements Listener {
 
     /**
-     * The player's event delegate, used to broadcast events about their actions
-     *
-     * @return
+     * The plugin object
      */
-    public abstract PlayerEventDelegate getEventDelegate();
+    private BukkitPlugin plugin;
+
+    public PlayerListener(BukkitPlugin plugin) {
+        this.plugin = plugin;
+    }
+
+    @EventHandler( ignoreCancelled = true )
+    public void playerInteract(PlayerInteractEvent event) {
+        Player player = plugin.wrapPlayer(event.getPlayer());
+        Block block = new BukkitBlock(event.getClickedBlock());
+
+        // send the event for the player around the plugin (and maybe other plugins, too.)
+        boolean result = player.getEventDelegate().onPlayerInteract(block);
+
+        // cancel it if need be
+        if (result) {
+            event.setCancelled(true);
+            event.setUseInteractedBlock(Event.Result.DENY);
+        }
+    }
 
 }

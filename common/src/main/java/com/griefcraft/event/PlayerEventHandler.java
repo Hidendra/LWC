@@ -28,6 +28,9 @@
 
 package com.griefcraft.event;
 
+import com.griefcraft.event.notifiers.BlockEventNotifier;
+import com.griefcraft.event.notifiers.ProtectionEventNotifier;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,12 +39,17 @@ import java.util.Map;
 
 public class PlayerEventHandler {
 
-    private enum Type {
+    public enum Type {
 
         /**
-         * When the player interacts with a block
+         * When the player interacts with a protection
          */
-        PLAYER_INTERACT
+        PLAYER_INTERACT_PROTECTION,
+
+        /**
+         * When a player interacts with a block that has no protection
+         */
+        PLAYER_INTERACT_BLOCK
 
     }
 
@@ -53,39 +61,41 @@ public class PlayerEventHandler {
     /**
      * Queue the notifier to be called next time the player interacts with a protection
      *
-     * @param callback
+     * @param notifier
      */
-    public void onPlayerInteract(Runnable callback) {
-        onPlayerInteract(callback, true);
+    public void onPlayerInteract(ProtectionEventNotifier notifier) {
+        checkNotifier(notifier);
+        addEventNotifier(Type.PLAYER_INTERACT_PROTECTION, notifier);
     }
 
     /**
-     * Queue the notifier to be called next time the player interacts with a protection
+     * Queue the notifier to be called next time the player interacts with a block
      *
-     * @param callback
-     * @param temporary
+     * @param notifier
      */
-    public void onPlayerInteract(Runnable callback, boolean temporary) {
-        checkCallback(callback);
-        onEvent(Type.PLAYER_INTERACT, new EventNotifier(callback, temporary));
+    public void onBlockInteract(BlockEventNotifier notifier) {
+        checkNotifier(notifier);
+        addEventNotifier(Type.PLAYER_INTERACT_BLOCK, notifier);
     }
 
     /**
      * Call an event for the given type
      *
      * @param type
+     * @param event
+     * @return true if the event should be cancelled, false otherwise
      * @throws EventException
      */
-    protected void callEvent(Type type) throws EventException {
+    protected boolean callEvent(Type type, Event event) throws EventException {
         List<EventNotifier> notifiers = this.notifiers.get(type);
 
         if (notifiers == null) {
-            return; // Nothing to call
+            return false; // Nothing to call
         }
 
         Iterator<EventNotifier> iter = notifiers.iterator();
         while (iter.hasNext()) {
-            EventNotifier notifier = iter.next();
+            EventNotifier<?> notifier = iter.next();
 
             // First remove the event if it is temporary
             if (notifier.isTemporary()) {
@@ -96,8 +106,18 @@ public class PlayerEventHandler {
             // We call the event after removing it because it can throw an exception
             // So we want to make sure it is removed incase it constantly throws
             // the exception
-            notifier.call();
+            try {
+                boolean result = notifier.unsafeCall(event);
+
+                if (result) {
+                    return true;
+                }
+            } catch (Exception e) {
+                throw new EventException("Event notifier threw an exception!", e);
+            }
         }
+
+        return false;
     }
 
     /**
@@ -106,7 +126,7 @@ public class PlayerEventHandler {
      * @param type
      * @param notifier
      */
-    private void onEvent(Type type, EventNotifier notifier) {
+    private void addEventNotifier(Type type, EventNotifier notifier) {
         if (type == null) {
             throw new IllegalArgumentException("Event type cannot be null");
         }
@@ -115,7 +135,7 @@ public class PlayerEventHandler {
         }
 
         // Make sure a list is available for us to write into
-        checkObserversList(type);
+        checkNotifiers(type);
 
         // Get the list
         List<EventNotifier> notifiers = this.notifiers.get(type);
@@ -127,19 +147,19 @@ public class PlayerEventHandler {
     /**
      * Checks a callback, making sure it is not null
      *
-     * @param callback
+     * @param notifier
      */
-    private void checkCallback(Runnable callback) {
-        if (callback == null) {
-            throw new IllegalArgumentException("Callback cannot be null");
+    private void checkNotifier(EventNotifier<?> notifier) {
+        if (notifier == null) {
+            throw new IllegalArgumentException("Event notifier cannot be null");
         }
     }
 
     /**
-     * Check the notifiers list and ensure a valid list is available
+     * Check for notifiers and ensure a valid list is available
      * @param type
      */
-    private void checkObserversList(Type type) {
+    private void checkNotifiers(Type type) {
         List<EventNotifier> notifiers = this.notifiers.get(type);
 
         if (notifiers == null) {

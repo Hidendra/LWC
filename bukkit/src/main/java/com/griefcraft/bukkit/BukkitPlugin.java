@@ -32,6 +32,7 @@ import com.griefcraft.LWC;
 import com.griefcraft.SimpleLWC;
 import com.griefcraft.bukkit.command.BukkitConsoleCommandSender;
 import com.griefcraft.bukkit.configuration.BukkitConfiguration;
+import com.griefcraft.bukkit.listeners.PlayerListener;
 import com.griefcraft.bukkit.player.BukkitPlayer;
 import com.griefcraft.command.CommandContext;
 import com.griefcraft.command.CommandException;
@@ -44,6 +45,9 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class BukkitPlugin extends JavaPlugin implements Listener {
 
     /**
@@ -52,13 +56,41 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
     private LWC lwc;
 
     /**
+     * A map of all of the players.
+     * TODO populate/depop this automatically using events
+     */
+    private final Map<String, Player> players = new HashMap<String, Player>();
+
+    /**
+     * Wrap a player object to a native version we can work with
+     *
+     * @param player
+     * @return
+     */
+    public Player wrapPlayer(org.bukkit.entity.Player player) {
+        if (player == null) {
+            throw new IllegalArgumentException("Player cannot be null");
+        }
+        
+        String playerName = player.getName();
+        
+        if (players.containsKey(playerName)) {
+            return players.get(playerName);
+        }
+
+        Player lPlayer = new BukkitPlayer(lwc, player);
+        players.put(playerName, lPlayer);
+        return lPlayer;
+    }
+
+    /**
      * Called when a player uses a command
      * @param event
      */
     @EventHandler( ignoreCancelled = true )
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
         // Create the internal object
-        Player player = new BukkitPlayer(event.getPlayer());
+        Player player = wrapPlayer(event.getPlayer());
         String message = event.getMessage();
 
         // Should we cancel the object?
@@ -87,6 +119,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
 
         // Register events
         getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
 
     }
 

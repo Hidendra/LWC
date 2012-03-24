@@ -28,6 +28,8 @@
 
 package com.griefcraft.bukkit.player;
 
+import com.griefcraft.LWC;
+import com.griefcraft.event.PlayerEventDelegate;
 import com.griefcraft.player.Player;
 import com.griefcraft.util.Color;
 
@@ -37,17 +39,28 @@ public class BukkitPlayer extends Player {
      * The player handle
      */
     private final org.bukkit.entity.Player handle;
+
+    /**
+     * The player's event delegate
+     */
+    private final PlayerEventDelegate eventDelegate;
     
-    public BukkitPlayer(org.bukkit.entity.Player handle) {
+    public BukkitPlayer(LWC lwc, org.bukkit.entity.Player handle) {
         if (handle == null) {
             throw new IllegalArgumentException("Player handle cannot be null");
         }
 
         this.handle = handle;
+        this.eventDelegate = new PlayerEventDelegate(lwc, this);
     }
 
     public String getName() {
         return handle.getName();
+    }
+
+    @Override
+    public PlayerEventDelegate getEventDelegate() {
+        return eventDelegate;
     }
 
     public void sendMessage(String message) {
