@@ -34,6 +34,30 @@ import java.util.Formatter;
 public class StringUtil {
 
     /**
+     * Fast replace one char with another char
+     *
+     * @param haystack
+     * @param find
+     * @param replace
+     * @return
+     */
+    public static String fastReplace(String haystack, char find, char replace) {
+        if (haystack == null) {
+            throw new IllegalArgumentException("Invalid haystack");
+        }
+
+        char[] chrarray = haystack.toCharArray();
+
+        for (int index = 0; index < chrarray.length; index++) {
+            if (chrarray[index] == find) {
+                chrarray[index] = replace;
+            }
+        }
+
+        return new String(chrarray);
+    }
+
+    /**
      * Capitalize the first letter in a word
      *
      * @param str
