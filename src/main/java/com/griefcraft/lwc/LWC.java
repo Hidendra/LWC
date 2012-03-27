@@ -108,7 +108,9 @@ import com.griefcraft.util.Metrics;
 import com.griefcraft.util.ProtectionFinder;
 import com.griefcraft.util.Statistics;
 import com.griefcraft.util.StringUtil;
+import com.griefcraft.util.Tuple;
 import com.griefcraft.util.config.Configuration;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -135,6 +137,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
 
 public class LWC {
@@ -204,6 +208,11 @@ public class LWC {
      */
     private final Map<String, String> protectionConfigurationCache = new HashMap<String, String>();
 
+    /**
+     * Message queue
+     */
+    private final Queue<Tuple<CommandSender, String[]>> messageQueue = new ConcurrentLinkedQueue<Tuple<CommandSender, String[]>>();
+
     public LWC(LWCPlugin plugin) {
         this.plugin = plugin;
         LWC.instance = this;
@@ -211,6 +220,34 @@ public class LWC {
         protectionCache = new ProtectionCache(this);
         backupManager = new BackupManager();
         moduleLoader = new ModuleLoader(this);
+
+        // Create our message queue task
+        // it can be in a separate thread o/
+        final int maxQueuePoll = 200; // Todo make this static if the queue proves worthwhile
+        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+            public void run() {
+                Tuple<CommandSender, String[]> tuple;
+                int polled = 0;
+                
+                while ((tuple = messageQueue.poll()) != null) {
+                    
+                    // Polled too many for this iteration
+                    if (polled > maxQueuePoll) {
+                        break;
+                    }
+                    
+                    //
+                    CommandSender sender = tuple.first();
+                    String[] message = tuple.second();
+
+                    // Send the message to the sender
+                    sender.sendMessage(message);
+                    
+                    polled ++;
+                }
+
+            }
+        }, 0, 1);
     }
 
     /**
@@ -266,7 +303,7 @@ public class LWC {
      * @return
      */
     private static String normalizeName(Material material) {
-        String name = material.toString().toLowerCase().replaceAll("block", "");
+        String name = StringUtils.replace(material.toString().toLowerCase(), "block", "");
 
         // some name normalizations
         if (name.contains("sign")) {
@@ -834,7 +871,8 @@ public class LWC {
             return; // Nothing to send
         }
 
-        message = parsed.split("\\n");
+        // message = parsed.split("\\n");
+        message = StringUtils.split(parsed, "\\n");
 
         // broadcast an event if they are a player
         if (sender instanceof Player) {
@@ -857,7 +895,8 @@ public class LWC {
         }
 
         // Send the message!
-        sender.sendMessage(message);
+        // sender.sendMessage(message);
+        messageQueue.offer(new Tuple<CommandSender, String[]>(sender, message));
     }
 
     /**

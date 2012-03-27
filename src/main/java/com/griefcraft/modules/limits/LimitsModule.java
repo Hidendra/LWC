@@ -32,6 +32,7 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.util.config.Configuration;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -226,7 +227,7 @@ public class LimitsModule extends JavaModule {
 
                 // and now try the name
                 if (limit == -1 && blockId > 0) {
-                    String name = Material.getMaterial(blockId).toString().toLowerCase().replaceAll("block", "");
+                    String name = StringUtils.replace(Material.getMaterial(blockId).toString().toLowerCase(), "block", "");
 
                     if (name.endsWith("_")) {
                         name = name.substring(0, name.length() - 1);
