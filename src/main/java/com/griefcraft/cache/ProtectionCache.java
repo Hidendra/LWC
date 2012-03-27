@@ -207,6 +207,15 @@ public class ProtectionCache {
     }
 
     /**
+     * Remove a block as null
+     *
+     * @param block
+     */
+    public void removeNull(Block block) {
+        removeNull(cacheKey(block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
+    }
+
+    /**
      * Remove the protection from the cache
      *
      * @param protection

@@ -299,6 +299,9 @@ public class LWCBlockListener implements Listener {
         Player player = event.getPlayer();
         Block block = event.getBlockPlaced();
 
+        // Forcely remove it from the cache
+        lwc.getProtectionCache().removeNull(block);
+
         // The placable block must be protectable
         if (!lwc.isProtectable(block)) {
             return;
