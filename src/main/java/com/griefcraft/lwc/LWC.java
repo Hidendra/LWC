@@ -872,7 +872,7 @@ public class LWC {
         }
 
         // message = parsed.split("\\n");
-        message = StringUtils.split(parsed, "\\n");
+        message = StringUtils.split(parsed, '\n');
 
         // broadcast an event if they are a player
         if (sender instanceof Player) {
