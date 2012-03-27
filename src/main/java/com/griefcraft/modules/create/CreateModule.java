@@ -145,6 +145,10 @@ public class CreateModule extends JavaModule {
 
         // tell the modules that a protection was registered
         if (protection != null) {
+            // Fix the blocks that match it
+            protection.radiusRemoveCache();
+            LWC.getInstance().getProtectionCache().add(protection);
+
             lwc.getModuleLoader().dispatchEvent(new LWCProtectionRegistrationPostEvent(protection));
         }
 

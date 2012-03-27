@@ -28,6 +28,7 @@
 
 package com.griefcraft.util;
 
+import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.util.matchers.DoorMatcher;
@@ -100,18 +101,24 @@ public class ProtectionFinder {
         addBlock(baseBlock);
 
         // Check the base-block
-        if (tryLoadProtection(baseBlock, false)) {
-            return true;
+        Result result;
+        if ((result = tryLoadProtection(baseBlock, false)) != Result.E_NOT_FOUND) {
+            return result == Result.E_FOUND;
         }
 
         // Now attempt to use the matchers
         for (Matcher matcher : getProtectionMatchers()) {
             boolean matches = matcher.matches(this);
-            
+
             if (matches) {
                 // we matched a protection somewhere!
                 return true;
             }
+        }
+
+        // Blacklist each block, all of them did not return matches
+        for (Block block : blocks) {
+            LWC.getInstance().getProtectionCache().addNull(block);
         }
 
         // No matches
@@ -198,22 +205,12 @@ public class ProtectionFinder {
         searched = true;
 
         for (Block block : protectables) {
-            if (tryLoadProtection(block, noAutoCache)) {
+            if (tryLoadProtection(block, noAutoCache) == Result.E_FOUND) {
                 return matchedProtection;
             }
         }
 
         return null;
-    }
-
-    /**
-     * Try and load a protection for a given block. If a protection is found, nothing is done with it
-     *
-     * @param block
-     * @return
-     */
-    public boolean tryLoadProtection(Block block) {
-        return tryLoadProtection(block, true);
     }
 
     /**
@@ -223,32 +220,62 @@ public class ProtectionFinder {
      * @param noAutoCache if a match is found, don't cache it to be the protection we use
      * @return
      */
-    protected boolean tryLoadProtection(Block block, boolean noAutoCache) {
+    protected Result tryLoadProtection(Block block, boolean noAutoCache) {
         if (matchedProtection != null) {
-            return false;
+            return Result.E_FOUND;
         }
 
+        LWC lwc = LWC.getInstance();
+        ProtectionCache cache = lwc.getProtectionCache();
+
+        // Check the cache
+        if ((matchedProtection = cache.getProtection(block)) != null) {
+            searched = true;
+            if (matchedProtection.getProtectionFinder() == null) {
+                matchedProtection.setProtectionFinder(this);
+                matchedProtection.removeCache();
+                lwc.getProtectionCache().add(matchedProtection);
+            }
+            return Result.E_FOUND;
+        }
+
+        // Manual intervention is required
+        if (block.getType() == Material.REDSTONE_WIRE || block.getType() == Material.REDSTONE_TORCH_OFF ||
+                block.getType() == Material.REDSTONE_TORCH_ON) {
+            return Result.E_ABORT;
+        }
+
+        // Null cache
+        if (cache.isKnownToBeNull(block)) {
+            searched = true;
+            return Result.E_ABORT;
+        }
+        
         // don't bother trying to load it if it is not protectable
         if (!lwc.isProtectable(block)) {
-            return false;
+            return Result.E_NOT_FOUND;
         }
         
         // Null-check
         if (block.getWorld() == null) {
             lwc.log("World is null for the block " + block);
-            return false;
+            return Result.E_NOT_FOUND;
         }
 
         Protection protection = lwc.getPhysicalDatabase().loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
 
         if (protection != null) {
-            protection.setProtectionFinder(this);
+            if (protection.getProtectionFinder() == null) {
+                protection.setProtectionFinder(this);
+                protection.removeCache();
+                lwc.getProtectionCache().add(protection);
+            }
 
             // ensure it's the right block
             if (protection.getBlockId() > 0) {
                 if (protection.isBlockInWorld()) {
                     if (noAutoCache) {
-                        return true;
+                        return Result.E_FOUND;
                     }
 
                     this.matchedProtection = protection;
@@ -261,7 +288,7 @@ public class ProtectionFinder {
             }
         }
 
-        return this.matchedProtection != null;
+        return this.matchedProtection != null ? Result.E_FOUND : Result.E_NOT_FOUND;
     }
 
     /**
@@ -339,5 +366,7 @@ public class ProtectionFinder {
         public boolean matches(ProtectionFinder finder);
 
     }
+
+    private enum Result { E_FOUND, E_ABORT, E_NOT_FOUND }
 
 }

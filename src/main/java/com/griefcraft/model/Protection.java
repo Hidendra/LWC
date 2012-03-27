@@ -28,6 +28,7 @@
 
 package com.griefcraft.model;
 
+import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.util.Colors;
@@ -743,6 +744,23 @@ public class Protection {
     public void removeCache() {
         LWC lwc = LWC.getInstance();
         lwc.getProtectionCache().remove(this);
+        radiusRemoveCache();
+    }
+
+    /**
+     * Remove blocks around the protection in a radius of 3, to account for broken known / null blocks
+     */
+    public void radiusRemoveCache() {
+        ProtectionCache cache = LWC.getInstance().getProtectionCache();
+        
+        for (int x = -3; x <= 3; x++) {
+            for (int y = -3; y <= 3; y++) {
+                for (int z = -3; z <= 3; z++) {
+                    String cacheKey = world + ":" + (this.x + x) + ":" + (this.y + y) + ":" + (this.z + z);
+                    cache.remove(cacheKey);
+                }
+            }
+        }
     }
 
     /**
