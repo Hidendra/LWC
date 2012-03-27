@@ -33,16 +33,16 @@ import com.griefcraft.scripting.ModuleLoader;
 import org.bukkit.block.Block;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import java.util.List;
+import java.util.Set;
 
 public class LWCBlockInteractEvent extends LWCPlayerEvent implements IResult {
 
     private PlayerInteractEvent event;
     private Block block;
-    private List<String> actions;
+    private Set<String> actions;
     private Module.Result result = Module.Result.DEFAULT;
 
-    public LWCBlockInteractEvent(PlayerInteractEvent event, Block block, List<String> actions) {
+    public LWCBlockInteractEvent(PlayerInteractEvent event, Block block, Set<String> actions) {
         super(ModuleLoader.Event.INTERACT_BLOCK, event.getPlayer());
 
         this.event = event;
@@ -64,7 +64,7 @@ public class LWCBlockInteractEvent extends LWCPlayerEvent implements IResult {
         return block;
     }
 
-    public List<String> getActions() {
+    public Set<String> getActions() {
         return actions;
     }
 

@@ -33,15 +33,15 @@ import com.griefcraft.scripting.Module;
 import com.griefcraft.scripting.ModuleLoader;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import java.util.List;
+import java.util.Set;
 
 public class LWCProtectionInteractEvent extends LWCProtectionEvent implements IResult {
 
     private PlayerInteractEvent event;
-    private List<String> actions;
+    private Set<String> actions;
     private Module.Result result = Module.Result.DEFAULT;
 
-    public LWCProtectionInteractEvent(PlayerInteractEvent event, Protection protection, List<String> actions, boolean canAccess, boolean canAdmin) {
+    public LWCProtectionInteractEvent(PlayerInteractEvent event, Protection protection, Set<String> actions, boolean canAccess, boolean canAdmin) {
         super(ModuleLoader.Event.INTERACT_PROTECTION, event.getPlayer(), protection, canAccess, canAdmin);
 
         this.event = event;
@@ -62,7 +62,7 @@ public class LWCProtectionInteractEvent extends LWCProtectionEvent implements IR
         return event;
     }
 
-    public List<String> getActions() {
+    public Set<String> getActions() {
         return actions;
     }
 

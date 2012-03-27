@@ -874,6 +874,7 @@ public class PhysDB extends Database {
         // Is it possible that there are protections in the cache?
         if (!ignoreProtectionCount && hasAllProtectionsCached()) {
             // System.out.println("loadProtection() => HAS_ALL_PROTECTIONS_CACHED");
+            cache.addNull(cacheKey);
             return null; // nothing was in the cache, nothing assumed to be in the database
         }
         // System.out.println("loadProtection() => QUERYING");

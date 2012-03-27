@@ -98,17 +98,12 @@ public class LWCPlayer implements CommandSender {
     /**
      * The actions bound to all players
      */
-    private final static Map<LWCPlayer, Set<Action>> actions = Collections.synchronizedMap(new HashMap<LWCPlayer, Set<Action>>());
+    private final static Map<LWCPlayer, Map<String, Action>> actions = Collections.synchronizedMap(new HashMap<LWCPlayer, Map<String, Action>>());
 
     /**
      * Map of protections a player can temporarily access
      */
     private final static Map<LWCPlayer, Set<Protection>> accessibleProtections = Collections.synchronizedMap(new HashMap<LWCPlayer, Set<Protection>>());
-
-    /**
-     * All of the action names
-     */
-    private final static Map<LWCPlayer, Set<String>> actionNames = Collections.synchronizedMap(new HashMap<LWCPlayer, Set<String>>());
 
     /**
      * The player's permission mode
@@ -208,7 +203,7 @@ public class LWCPlayer implements CommandSender {
      * @return
      */
     public boolean hasAction(String name) {
-        return getAction(name) != null;
+        return getActions().containsKey(name);
     }
 
     /**
@@ -218,13 +213,7 @@ public class LWCPlayer implements CommandSender {
      * @return
      */
     public Action getAction(String name) {
-        for (Action action : getActions()) {
-            if (action.getName().equals(name)) {
-                return action;
-            }
-        }
-
-        return null;
+        return getActions().get(name);
     }
 
     /**
@@ -234,21 +223,9 @@ public class LWCPlayer implements CommandSender {
      * @return
      */
     public boolean addAction(Action action) {
-        Action old = getAction(action.getName());
-
-        // remove the old action
-        if (old != null) {
-            removeAction(old);
-        }
-        
-        Set<String> names = actionNames.get(this);
-        if (names == null) {
-            names = new HashSet<String>();
-            actionNames.put(this, names);
-        }
-        names.add(action.getName());
-
-        return getActions().add(action);
+        Map<String, Action> actions = getActions();
+        actions.put(action.getName(), action);
+        return true;
     }
 
     /**
@@ -258,8 +235,8 @@ public class LWCPlayer implements CommandSender {
      * @return
      */
     public boolean removeAction(Action action) {
-        actionNames.get(this).remove(action.getName());
-        return getActions().remove(action);
+        getActions().remove(action.getName());
+        return true;
     }
 
     /**
@@ -267,10 +244,6 @@ public class LWCPlayer implements CommandSender {
      */
     public void removeAllActions() {
         getActions().clear();
-        
-        if (actionNames.containsKey(this)) {
-            actionNames.get(this).clear();
-        }
     }
 
     /**
@@ -313,9 +286,9 @@ public class LWCPlayer implements CommandSender {
     /**
      * @return the Set of actions the player has
      */
-    public Set<Action> getActions() {
+    public Map<String, Action> getActions() {
         if (!actions.containsKey(this)) {
-            actions.put(this, new HashSet<Action>());
+            actions.put(this, new HashMap<String, Action>());
         }
 
         return actions.get(this);
@@ -325,11 +298,7 @@ public class LWCPlayer implements CommandSender {
      * @return a Set containing all of the action names
      */
     public Set<String> getActionNames() {
-        if (actionNames.containsKey(this)) {
-            return new HashSet<String>(actionNames.get(this));
-        } else {
-            return new HashSet<String>();
-        }
+        return getActions().keySet();
     }
 
     /**

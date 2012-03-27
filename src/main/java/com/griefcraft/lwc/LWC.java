@@ -610,10 +610,8 @@ public class LWC {
      * @param block
      * @return true if the player was granted access
      */
-    public boolean enforceAccess(Player player, Protection protection, Block block) {
+    public boolean enforceAccess(Player player, Protection protection, Block block, boolean hasAccess, boolean hasAdmin) {
         MessageParser parser = plugin.getMessageParser();
-        boolean hasAccess = canAccessProtection(player, protection);
-        // boolean canAdmin = canAdminProtection(player, protection);
 
         if (block == null || protection == null) {
             return true;
@@ -1155,7 +1153,11 @@ public class LWC {
         boolean result = finder.matchBlocks(block);
 
         // We're done, load the possibly loaded protection
-        return finder.loadProtection();
+        if (result) {
+            return finder.loadProtection();
+        }
+
+        return null;
     }
 
     /**

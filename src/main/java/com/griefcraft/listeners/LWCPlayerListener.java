@@ -38,7 +38,6 @@ import com.griefcraft.scripting.event.LWCDropItemEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -49,8 +48,8 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.EnumSet;
+import java.util.Set;
 
 public class LWCPlayerListener implements Listener {
 
@@ -58,6 +57,11 @@ public class LWCPlayerListener implements Listener {
      * The plugin instance
      */
     private LWCPlugin plugin;
+
+    /**
+     * Blocks that can contain an inventory
+     */
+    private static final EnumSet<Material> INVENTORY_BLOCKS = EnumSet.of(Material.CHEST, Material.FURNACE, Material.DISPENSER);
 
     public LWCPlayerListener(LWCPlugin plugin) {
         this.plugin = plugin;
@@ -117,7 +121,7 @@ public class LWCPlayerListener implements Listener {
         Material material = block.getType();
 
         // Prevent players with lwc.deny from interacting
-        if (block.getState() instanceof ContainerBlock) {
+        if (INVENTORY_BLOCKS.contains(material)) {
             if (!lwc.hasPermission(player, "lwc.protect") && lwc.hasPermission(player, "lwc.deny") && !lwc.isAdmin(player) && !lwc.isMod(player)) {
                 lwc.sendLocale(player, "protection.interact.error.blocked");
                 event.setCancelled(true);
@@ -126,7 +130,7 @@ public class LWCPlayerListener implements Listener {
         }
 
         try {
-            List<String> actions = new ArrayList<String>(lwcPlayer.getActionNames());
+            Set<String> actions = lwcPlayer.getActionNames();
             Protection protection = lwc.findProtection(block);
             Module.Result result;
             boolean canAccess = lwc.canAccessProtection(player, protection);
@@ -207,7 +211,7 @@ public class LWCPlayerListener implements Listener {
             }
 
             if (result == Module.Result.DEFAULT) {
-                canAccess = lwc.enforceAccess(player, protection, block);
+                canAccess = lwc.enforceAccess(player, protection, block, canAccess, canAdmin);
             }
 
             // Fix a bug where pre-1.8 chests were flipped directions in 1.8

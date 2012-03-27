@@ -46,8 +46,8 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class DropTransferModule extends JavaModule {
 
@@ -152,7 +152,7 @@ public class DropTransferModule extends JavaModule {
     public void onProtectionInteract(LWCProtectionInteractEvent event) {
         LWC lwc = event.getLWC();
         Protection protection = event.getProtection();
-        List<String> actions = event.getActions();
+        Set<String> actions = event.getActions();
         boolean canAccess = event.canAccess();
 
         Player bPlayer = event.getPlayer();
@@ -192,7 +192,7 @@ public class DropTransferModule extends JavaModule {
     @Override
     public void onBlockInteract(LWCBlockInteractEvent event) {
         Player player = event.getPlayer();
-        List<String> actions = event.getActions();
+        Set<String> actions = event.getActions();
 
         if (!actions.contains("dropTransferSelect")) {
             return;

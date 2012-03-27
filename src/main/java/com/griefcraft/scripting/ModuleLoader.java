@@ -321,30 +321,31 @@ public class ModuleLoader {
 
         try {
             List<Module> modules = fastModuleCache.get(event.getEventType());
+            Event type = event.getEventType();
             for (Module module : modules) {
-                if (event instanceof LWCAccessEvent) {
+                if (type == Event.ACCESS_REQUEST) {
                     module.onAccessRequest((LWCAccessEvent) event);
-                } else if (event instanceof LWCBlockInteractEvent) {
+                } else if (type == Event.INTERACT_BLOCK) {
                     module.onBlockInteract((LWCBlockInteractEvent) event);
-                } else if (event instanceof LWCCommandEvent) {
+                } else if (type == Event.COMMAND) {
                     module.onCommand((LWCCommandEvent) event);
-                } else if (event instanceof LWCDropItemEvent) {
+                } else if (type == Event.DROP_ITEM) {
                     module.onDropItem((LWCDropItemEvent) event);
-                } else if (event instanceof LWCProtectionDestroyEvent) {
+                } else if (type == Event.DESTROY_PROTECTION) {
                     module.onDestroyProtection((LWCProtectionDestroyEvent) event);
-                } else if (event instanceof LWCProtectionInteractEvent) {
+                } else if (type == Event.INTERACT_PROTECTION) {
                     module.onProtectionInteract((LWCProtectionInteractEvent) event);
-                } else if (event instanceof LWCProtectionRegisterEvent) {
+                } else if (type == Event.REGISTER_PROTECTION) {
                     module.onRegisterProtection((LWCProtectionRegisterEvent) event);
-                } else if (event instanceof LWCProtectionRemovePostEvent) {
+                } else if (type == Event.POST_REMOVAL) {
                     module.onPostRemoval((LWCProtectionRemovePostEvent) event);
-                } else if (event instanceof LWCProtectionRegistrationPostEvent) {
+                } else if (type == Event.POST_REGISTRATION) {
                     module.onPostRegistration((LWCProtectionRegistrationPostEvent) event);
-                } else if (event instanceof LWCSendLocaleEvent) {
+                } else if (type == Event.SEND_LOCALE) {
                     module.onSendLocale((LWCSendLocaleEvent) event);
-                } else if (event instanceof LWCRedstoneEvent) {
+                } else if (type == Event.REDSTONE) {
                     module.onRedstone((LWCRedstoneEvent) event);
-                } else if (event instanceof LWCReloadEvent) {
+                } else if (type == Event.RELOAD_EVENT) {
                     module.onReload((LWCReloadEvent) event);
                 }
             }

@@ -31,6 +31,7 @@ package com.griefcraft.cache;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
+import org.bukkit.block.Block;
 
 import java.util.logging.Logger;
 
@@ -67,6 +68,11 @@ public class ProtectionCache {
     private final WeakLRUCache<Integer, Protection> byId;
 
     /**
+     * A block that isn't the protected block itself but matches it in a protection matcher
+     */
+    private final WeakLRUCache<String, Protection> byKnownBlock;
+
+    /**
      * The capacity of the cache
      */
     private int capacity;
@@ -79,6 +85,7 @@ public class ProtectionCache {
         this.nulls = new LRUCache<Integer, Object>(capacity * 10);
         this.byCacheKey = new WeakLRUCache<String, Protection>(capacity);
         this.byId = new WeakLRUCache<Integer, Protection>(capacity);
+        this.byKnownBlock = new WeakLRUCache<String, Protection>(capacity);
         logger.info("LWC: Protection cache: 0/" + capacity);
     }
 
@@ -88,7 +95,7 @@ public class ProtectionCache {
      * @return
      */
     public long getReads() {
-        return byCacheKey.getReads() + byId.getReads();
+        return byCacheKey.getReads() + byId.getReads() + byKnownBlock.getReads();
     }
 
     /**
@@ -97,7 +104,7 @@ public class ProtectionCache {
      * @return
      */
     public long getWrites() {
-        return byCacheKey.getWrites() + byId.getWrites();
+        return byCacheKey.getWrites() + byId.getWrites() + byKnownBlock.getWrites();
     }
 
     /**
@@ -122,6 +129,7 @@ public class ProtectionCache {
         // remove weak refs
         byCacheKey.clear();
         byId.clear();
+        byKnownBlock.clear();
     }
 
     /**
@@ -152,6 +160,18 @@ public class ProtectionCache {
         // Add weak references which are used to lookup protections
         byCacheKey.put(protection.getCacheKey(), protection);
         byId.put(protection.getId(), protection);
+
+        // get the protection's finder if it was found via that
+        if (protection.getProtectionFinder() != null) {
+            Block protectedBlock = protection.getBlock();
+            for (Block block : protection.getProtectionFinder().getBlocks()) {
+                if (block != protectedBlock) {
+                    String cacheKey = cacheKey(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
+                    byKnownBlock.put(cacheKey, protection);
+                    removeNull(cacheKey);
+                }
+            }
+        }
     }
 
     /**
@@ -166,6 +186,15 @@ public class ProtectionCache {
         }
 
         nulls.put(cacheKey.hashCode(), null);
+    }
+
+    /**
+     * Add a block as null
+     *
+     * @param block
+     */
+    public void addNull(Block block) {
+        addNull(cacheKey(block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
     }
 
     /**
@@ -184,8 +213,19 @@ public class ProtectionCache {
      */
     public void remove(Protection protection) {
         references.remove(protection);
-        byCacheKey.remove(protection.getCacheKey());
         byId.remove(protection.getId());
+        remove(protection.getCacheKey());
+    }
+
+    /**
+     * Remove the given cache key from any caches
+     * 
+     * @param cacheKey
+     */
+    public void remove(String cacheKey) {
+        byCacheKey.remove(cacheKey);
+        byKnownBlock.remove(cacheKey);
+        removeNull(cacheKey);
     }
 
     /**
@@ -199,13 +239,51 @@ public class ProtectionCache {
     }
 
     /**
+     * Check if a cache key is known to not exist in the database
+     *
+     * @param block
+     * @return
+     */
+    public boolean isKnownToBeNull(Block block) {
+        return isKnownToBeNull(cacheKey(block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
+    }
+
+    /**
      * Get a protection in the cache via its cache key
      *
      * @param cacheKey
      * @return
      */
     public Protection getProtection(String cacheKey) {
-        return byCacheKey.get(cacheKey);
+        Protection protection;
+        
+        // Check the direct cache first
+        if ((protection = byCacheKey.get(cacheKey)) != null) {
+            return protection;
+        }
+        
+        // now use the 'others' cache
+        return byKnownBlock.get(cacheKey);
+    }
+
+    /**
+     * Get a protection in the cache located on the given block
+     *
+     * @param block
+     * @return
+     */
+    public Protection getProtection(Block block) {
+        return getProtection(cacheKey(block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
+    }
+
+    /**
+     * Check if the known block protection cache contains the given key
+     *
+     * @param block
+     * @return
+     */
+    public boolean isKnownBlock(Block block) {
+        return byKnownBlock.containsKey(cacheKey(block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
     }
 
     /**
@@ -216,6 +294,19 @@ public class ProtectionCache {
      */
     public Protection getProtectionById(int id) {
         return byId.get(id);
+    }
+
+    /**
+     * Generate a cache key using the given data
+     *
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    private String cacheKey(String world, int x, int y, int z) {
+        return world + ":" + x + ":" + y + ":" + z;
     }
 
 }
