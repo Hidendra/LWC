@@ -228,7 +228,7 @@ public class ProtectionCache {
 
     /**
      * Remove the given cache key from any caches
-     * 
+     *
      * @param cacheKey
      */
     public void remove(String cacheKey) {
