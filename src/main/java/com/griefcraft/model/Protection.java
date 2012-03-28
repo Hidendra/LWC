@@ -748,7 +748,7 @@ public class Protection {
     }
 
     /**
-     * Remove blocks around the protection in a radius of 3, to account for broken known / null blocks
+     * Remove blocks around the protection in a radius of 3, to account for broken null blocks
      */
     public void radiusRemoveCache() {
         ProtectionCache cache = LWC.getInstance().getProtectionCache();
@@ -757,7 +757,14 @@ public class Protection {
             for (int y = -3; y <= 3; y++) {
                 for (int z = -3; z <= 3; z++) {
                     String cacheKey = world + ":" + (this.x + x) + ":" + (this.y + y) + ":" + (this.z + z);
-                    cache.remove(cacheKey);
+                    
+                    // get the protection for that entry
+                    Protection protection = cache.getProtection(cacheKey);
+                    if (protection != null && id == protection.getId()) {
+                        cache.remove(cacheKey);
+                    } else {
+                        cache.removeNull(cacheKey);
+                    }
                 }
             }
         }
