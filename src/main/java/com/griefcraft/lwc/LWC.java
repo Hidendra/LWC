@@ -370,32 +370,7 @@ public class LWC {
      * @return
      */
     public Block findAdjacentDoubleChest(Block block) {
-        Block adjacentBlock;
-        Block lastBlock = null;
-        List<Block> attempts = new ArrayList<Block>(5);
-        attempts.add(block);
-
-        int found = 0;
-
-        for (int attempt = 0; attempt < 4; attempt++) {
-            Block[] attemptsArray = attempts.toArray(new Block[attempts.size()]);
-
-            if ((adjacentBlock = findAdjacentBlock(block, Material.CHEST, attemptsArray)) != null) {
-                if (findAdjacentBlock(adjacentBlock, Material.CHEST, block) != null) {
-                    return adjacentBlock;
-                }
-
-                found++;
-                lastBlock = adjacentBlock;
-                attempts.add(adjacentBlock);
-            }
-        }
-
-        if (found > 1) {
-            return lastBlock;
-        }
-
-        return null;
+        return findAdjacentBlock(block, Material.CHEST);
     }
 
     /**
