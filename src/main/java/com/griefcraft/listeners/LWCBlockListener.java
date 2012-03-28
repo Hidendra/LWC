@@ -53,8 +53,6 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.PistonBaseMaterial;
 
-import java.util.List;
-
 public class LWCBlockListener implements Listener {
 
     /**
@@ -143,38 +141,31 @@ public class LWCBlockListener implements Listener {
             return;
         }
 
+        boolean canAccess = lwc.canAccessProtection(player, protection);
+        boolean canAdmin = lwc.canAdminProtection(player, protection);
+
         // when destroying a chest, it's possible they are also destroying a double chest
         // in the event they're trying to destroy a double chest, we should just move
         // the protection to the chest that is not destroyed, if it is not that one already.
-        if (block.getType() == Material.CHEST) {
-            // Get the list of protectable blocks that were matched for the protection
-            List<Block> protectables = protection.getProtectionFinder().getProtectables();
+        if (canAdmin && block.getType() == Material.CHEST) {
+            Block doubleChest = lwc.findAdjacentDoubleChest(block);
 
-            // >= 1 = double chest!
-            if (protectables.size() > 1) {
+            if (doubleChest != null) {
                 // if they destroyed the protected block we want to move it aye?
                 if (lwc.blockEquals(protection.getBlock(), block)) {
-                    for (Block protectable : protectables) {
-                        // we want a different block
-                        if (lwc.blockEquals(protectable, block)) {
-                            continue;
-                        }
+                    // We need to manually fix the cache
+                    ProtectionCache cache = lwc.getProtectionCache();
+                    cache.remove(protection);
 
-                        // We need to manually fix the cache
-                        ProtectionCache cache = lwc.getProtectionCache();
-                        cache.remove(protection);
+                    // correct the block
+                    protection.setBlockId(doubleChest.getTypeId());
+                    protection.setX(doubleChest.getX());
+                    protection.setY(doubleChest.getY());
+                    protection.setZ(doubleChest.getZ());
+                    protection.save();
 
-                        // correct the block
-                        protection.setBlockId(protectable.getTypeId());
-                        protection.setX(protectable.getX());
-                        protection.setY(protectable.getY());
-                        protection.setZ(protectable.getZ());
-                        protection.save();
-
-                        // put it into the cache again with the updated block location
-                        cache.add(protection);
-                        return;
-                    }
+                    // put it into the cache again with the updated block location
+                    cache.add(protection);
                 }
 
                 // they did not click the protected block, however we still want to prevent removal
@@ -182,9 +173,6 @@ public class LWCBlockListener implements Listener {
             }
 
         }
-
-        boolean canAccess = lwc.canAccessProtection(player, protection);
-        boolean canAdmin = lwc.canAdminProtection(player, protection);
 
         try {
             LWCProtectionDestroyEvent evt = new LWCProtectionDestroyEvent(player, protection, LWCProtectionDestroyEvent.Method.BLOCK_DESTRUCTION, canAccess, canAdmin);
