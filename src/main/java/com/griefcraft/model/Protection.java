@@ -748,7 +748,7 @@ public class Protection {
     }
 
     /**
-     * Remove blocks around the protection in a radius of 3, to account for broken null blocks
+     * Remove blocks around the protection in a radius of 3, to account for broken known / null blocks
      */
     public void radiusRemoveCache() {
         ProtectionCache cache = LWC.getInstance().getProtectionCache();

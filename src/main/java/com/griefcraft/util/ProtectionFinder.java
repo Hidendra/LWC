@@ -116,9 +116,14 @@ public class ProtectionFinder {
             }
         }
 
-        // Blacklist each block, all of them did not return matches
-        for (Block block : blocks) {
-            LWC.getInstance().getProtectionCache().addNull(block);
+        if (loadProtection() == null) {
+            // Blacklist each block, all of them did not return matches
+            ProtectionCache cache = LWC.getInstance().getProtectionCache();
+            for (Block block : blocks) {
+                if (cache.getProtection(block) == null) {
+                    cache.addNull(block);
+                }
+            }
         }
 
         // No matches
@@ -231,11 +236,8 @@ public class ProtectionFinder {
         // Check the cache
         if ((matchedProtection = cache.getProtection(block)) != null) {
             searched = true;
-            if (matchedProtection.getProtectionFinder() == null) {
-                matchedProtection.setProtectionFinder(this);
-                matchedProtection.removeCache();
-                lwc.getProtectionCache().add(matchedProtection);
-            }
+            matchedProtection.setProtectionFinder(this);
+            lwc.getProtectionCache().add(matchedProtection);
             return Result.E_FOUND;
         }
 
@@ -265,11 +267,8 @@ public class ProtectionFinder {
         Protection protection = lwc.getPhysicalDatabase().loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
 
         if (protection != null) {
-            if (protection.getProtectionFinder() == null) {
-                protection.setProtectionFinder(this);
-                protection.removeCache();
-                lwc.getProtectionCache().add(protection);
-            }
+            protection.setProtectionFinder(this);
+            lwc.getProtectionCache().add(protection);
 
             // ensure it's the right block
             if (protection.getBlockId() > 0) {
