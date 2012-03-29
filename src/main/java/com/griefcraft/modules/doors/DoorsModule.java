@@ -233,7 +233,7 @@ public class DoorsModule extends JavaModule {
         List<Block> blocks = new ArrayList<Block>();
 
         // the door they clicked on
-        Block clickedDoor = new ArrayList<Block>(protection.getProtectionFinder().getBlocks()).get(0);
+        Block clickedDoor = protection.getProtectionFinder().getBlocks().get(1);
 
         // add the bottom half of the door to the set
         blocks.add(clickedDoor);
