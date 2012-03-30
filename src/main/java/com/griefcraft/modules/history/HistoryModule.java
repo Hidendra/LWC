@@ -113,7 +113,13 @@ public class HistoryModule extends JavaModule {
         int page = Integer.parseInt(action.getData());
 
         // load the history objects for the protection
-        List<History> relatedHistory = lwc.getPhysicalDatabase().loadHistory(x, y, z);
+        List<History> relatedHistory = null;
+        
+        if (lwc.isAdmin(player)) {
+            relatedHistory = lwc.getPhysicalDatabase().loadHistory(x, y, z);
+        } else {
+            relatedHistory = lwc.getPhysicalDatabase().loadHistory(player.getName(), x, y, z);
+        }
 
         if (page < 0 || page >= relatedHistory.size()) {
             page = 0;
