@@ -141,10 +141,22 @@ public class InfoModule extends JavaModule {
         if (args.length > 0) {
             type = args[0].toLowerCase();
         }
+        
+        System.out.println("type = " + type);
 
         if (type.equals("info")) {
             Action action = new Action();
             action.setName("info");
+            action.setPlayer(player);
+
+            player.removeAllActions();
+            player.addAction(action);
+
+            lwc.sendLocale(player, "protection.info.finalize");
+        } else if (type.equals("history")) {
+            Action action = new Action();
+            action.setName("history");
+            action.setData("0");
             action.setPlayer(player);
 
             player.removeAllActions();
