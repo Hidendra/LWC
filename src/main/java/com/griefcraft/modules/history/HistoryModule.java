@@ -108,7 +108,8 @@ public class HistoryModule extends JavaModule {
                 "location", String.format("[%d %d %d]", history.getX(), history.getY(), history.getZ()),
                 "status", history.getStatus(), "type", history.getType(),
                 "protection", (protection == null ? "n/a" : protection),
-                "creator", history.getString("creator"));
+                "creator", history.getString("creator"),
+                "currencyname", lwc.getCurrency().getMoneyName());
         if (history.hasKey("destroyer")) {
             lwc.sendLocale(sender, "lwc.history.details.destroyer", "player", history.getString("destroyer"));
         }

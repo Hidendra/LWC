@@ -208,11 +208,6 @@ public class LWC {
      */
     private final Map<String, String> protectionConfigurationCache = new HashMap<String, String>();
 
-    /**
-     * Message queue
-     */
-    private final Queue<Tuple<CommandSender, String[]>> messageQueue = new ConcurrentLinkedQueue<Tuple<CommandSender, String[]>>();
-
     public LWC(LWCPlugin plugin) {
         this.plugin = plugin;
         LWC.instance = this;
@@ -220,34 +215,6 @@ public class LWC {
         protectionCache = new ProtectionCache(this);
         backupManager = new BackupManager();
         moduleLoader = new ModuleLoader(this);
-
-        // Create our message queue task
-        // it can be in a separate thread o/
-        final int maxQueuePoll = 200; // Todo make this static if the queue proves worthwhile
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-            public void run() {
-                Tuple<CommandSender, String[]> tuple;
-                int polled = 0;
-                
-                while ((tuple = messageQueue.poll()) != null) {
-                    
-                    // Polled too many for this iteration
-                    if (polled > maxQueuePoll) {
-                        break;
-                    }
-                    
-                    //
-                    CommandSender sender = tuple.first();
-                    String[] message = tuple.second();
-
-                    // Send the message to the sender
-                    sender.sendMessage(message);
-                    
-                    polled ++;
-                }
-
-            }
-        }, 0, 1);
     }
 
     /**
@@ -869,7 +836,7 @@ public class LWC {
 
         // Send the message!
         // sender.sendMessage(message);
-        messageQueue.offer(new Tuple<CommandSender, String[]>(sender, message));
+        sender.sendMessage(message);
     }
 
     /**
