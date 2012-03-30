@@ -1511,6 +1511,48 @@ public class PhysDB extends Database {
     }
 
     /**
+     * Load all of the history at the given location
+     *
+     * @param player
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    public List<History> loadHistory(String player, int x, int y, int z) {
+        List<History> temp = new ArrayList<History>();
+
+        if (!LWC.getInstance().isHistoryEnabled()) {
+            return temp;
+        }
+
+        try {
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE LOWER(player) = LOWER(?) AND x = ? AND y = ? AND z = ?");
+            statement.setString(1, player);
+            statement.setInt(2, x);
+            statement.setInt(3, y);
+            statement.setInt(4, z);
+
+            ResultSet set = statement.executeQuery();
+
+            while (set.next()) {
+                History history = resolveHistory(new History(), set);
+
+                if (history != null) {
+                    // seems ok
+                    temp.add(history);
+                }
+            }
+
+            set.close();
+        } catch (SQLException e) {
+            printException(e);
+        }
+
+        return temp;
+    }
+
+    /**
      * Load all protection history
      *
      * @return
