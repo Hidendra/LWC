@@ -29,17 +29,19 @@
 package com.griefcraft.modules.history;
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Action;
 import com.griefcraft.model.History;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.TimeUtil;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Date;
 import java.util.List;
@@ -60,11 +62,99 @@ public class HistoryModule extends JavaModule {
             return;
         }
 
-        LWC lwc = event.getLWC();
-        LWCPlayer lwcPlayer = lwc.wrapPlayer(event.getPlayer());
-        PlayerInteractEvent bukkitEvent = event.getEvent(); // the bukkit event
+        if (!event.hasAction("history")) {
+            return;
+        }
 
-        // are they already checking history?
+        LWC lwc = event.getLWC();
+        Player player = event.getPlayer();
+        Protection protection = event.getProtection();
+        
+        historyTool(lwc, player, protection.getX(), protection.getY(), protection.getZ());
+        event.setResult(Result.CANCEL);
+    }
+
+    @Override
+    public void onBlockInteract(LWCBlockInteractEvent event) {
+        if (event.getResult() != DEFAULT) {
+            return;
+        }
+
+        if (!event.hasAction("history")) {
+            return;
+        }
+
+        LWC lwc = event.getLWC();
+        Block block = event.getBlock();
+        Player player = event.getPlayer();
+
+        historyTool(lwc, player, block.getX(), block.getY(), block.getZ());
+        event.setResult(Result.CANCEL);
+    }
+
+    /**
+     * History tool logic
+     *
+     * @param player
+     * @param x
+     * @param y
+     * @param z
+     */
+    private void historyTool(LWC lwc, Player player, int x, int y, int z) {
+        LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
+        Action action = lwcPlayer.getAction("history");
+        
+        if (action == null) {
+            player.sendMessage(Colors.Red + "History action is null!");
+            return;
+        }
+
+        // the current "page"
+        int page = Integer.parseInt(action.getData());
+
+        // load the history objects for the protection
+        List<History> relatedHistory = lwc.getPhysicalDatabase().loadHistory(x, y, z);
+
+        if (page < 0 || page >= relatedHistory.size()) {
+            page = 0;
+        }
+
+        // No results
+        if (relatedHistory.size() == 0) {
+            lwc.sendLocale(player, "lwc.noresults");
+            return;
+        }
+
+        // The relevent history object
+        History history = relatedHistory.get(page);
+
+        // Uh-oh! This normally will not happen (?)
+        if (history == null) {
+            lwcPlayer.removeAllActions();
+            lwcPlayer.sendMessage("Refusing to send null history object");
+            return;
+        }
+
+        // Make sure they can access it
+        if (!lwc.isAdmin(player) && !history.getPlayer().equals(player.getName())) {
+            return;
+        }
+
+        // Send the header
+        lwcPlayer.sendMessage("History tool: Page " + (page + 1) + "/" + relatedHistory.size());
+
+        // Send the details
+        sendDetails(player, history);
+
+        // increment the page
+        if (page >= relatedHistory.size()) {
+            // rewind
+            action.setData("0");
+        } else {
+            action.setData(Integer.toString(page + 1));
+        }
+
+        lwc.removeModes(player);
     }
 
     /**
