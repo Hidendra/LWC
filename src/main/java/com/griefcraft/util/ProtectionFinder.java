@@ -134,7 +134,7 @@ public class ProtectionFinder {
     /**
      * Do a full sweeping match of all the blocks for a given protection
      */
-    private void fullMatchBlocks() {
+    public void fullMatchBlocks() {
         
         // Reset the blocks
         blocks.clear();
