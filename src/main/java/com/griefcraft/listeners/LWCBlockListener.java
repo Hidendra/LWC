@@ -295,7 +295,14 @@ public class LWCBlockListener implements Listener {
             return;
         }
 
-        String autoRegisterType = plugin.getLWC().resolveProtectionConfiguration(block.getType(), "autoRegister");
+        // Update the cache if a protection is matched here
+        Protection current = lwc.findProtection(block);
+        if (current != null && current.getProtectionFinder() != null) {
+            current.getProtectionFinder().fullMatchBlocks();
+            lwc.getProtectionCache().add(current);
+        }
+
+        String autoRegisterType = lwc.resolveProtectionConfiguration(block.getType(), "autoRegister");
 
         // is it auto protectable?
         if (!autoRegisterType.equalsIgnoreCase("private") && !autoRegisterType.equalsIgnoreCase("public")) {
@@ -331,7 +338,7 @@ public class LWCBlockListener implements Listener {
 
                 //They're placing it beside a chest, check if it's already protected
                 if (face.getType() == Material.CHEST) {
-                    if (lwc.getPhysicalDatabase().loadProtection(face.getWorld().getName(), face.getX(), face.getY(), face.getZ()) != null) {
+                    if (lwc.findProtection(face) != null) {
                         return;
                     }
                 }
