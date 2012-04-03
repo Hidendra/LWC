@@ -99,12 +99,12 @@ public class MagnetModule extends JavaModule {
                         ItemStack stack = item.getItemStack();
 
                         // check if it is in the blacklist
-                        if (itemBlacklist.contains(item.getItemStack().getTypeId())) {
+                        if (itemBlacklist.contains(stack.getTypeId())) {
                             continue;
                         }
 
                         // check if the item is valid
-                        if (stack == null || stack.getAmount() <= 0) {
+                        if (stack.getAmount() <= 0) {
                             continue;
                         }
 
