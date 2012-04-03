@@ -290,9 +290,9 @@ public class ProtectionFinder {
         Protection protection = lwc.getPhysicalDatabase().loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
 
         if (protection != null) {
-            if (matchedProtection.getProtectionFinder() == null) {
+            if (protection.getProtectionFinder() == null) {
                 fullMatchBlocks();
-                matchedProtection.setProtectionFinder(this);
+                protection.setProtectionFinder(this);
                 lwc.getProtectionCache().add(matchedProtection);
             }
 
