@@ -141,8 +141,6 @@ public class InfoModule extends JavaModule {
         if (args.length > 0) {
             type = args[0].toLowerCase();
         }
-        
-        System.out.println("type = " + type);
 
         if (type.equals("info")) {
             Action action = new Action();
