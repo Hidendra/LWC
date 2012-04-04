@@ -28,59 +28,22 @@
 
 package com.griefcraft.sql;
 
-import com.griefcraft.dao.Protection;
+public class DatabaseException extends Exception {
 
-public interface Database {
+    public DatabaseException() {
+        super();
+    }
 
-    /**
-     * Connect to the database
-     *
-     * @return
-     * @throws DatabaseException
-     */
-    public boolean connect() throws DatabaseException;
+    public DatabaseException(String message) {
+        super(message);
+    }
 
-    /**
-     * Create a protection in the world. The {@link com.griefcraft.dao.Protection} object returned by this method
-     * can be considered to be in the database already.
-     *
-     * @param type
-     * @param owner
-     * @param world
-     * @param x
-     * @param y
-     * @param z
-     * @return
-     */
-    public Protection createProtection(Protection.Type type, String owner, String world, int x, int y, int z);
+    public DatabaseException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-    /**
-     * Load a protection from the database for the given player's name
-     *
-     * @return
-     */
-    public Protection loadProtection(String player);
-
-    /**
-     * Load a protection from the database for the given id
-     *
-     * @param id
-     * @return
-     */
-    public Protection loadProtection(int id);
-
-    /**
-     * Save a protection to the database
-     *
-     * @param protection
-     */
-    public void saveProtection(Protection protection);
-
-    /**
-     * Remove a protection and all associated data about it from the database
-     *
-     * @param protection
-     */
-    public void removeProtection(Protection protection);
+    public DatabaseException(Throwable cause) {
+        super(cause);
+    }
 
 }
