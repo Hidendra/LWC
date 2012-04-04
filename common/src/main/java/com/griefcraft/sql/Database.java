@@ -41,6 +41,13 @@ public interface Database {
     public boolean connect() throws DatabaseException;
 
     /**
+     * Check if the database is actually currently connected to
+     *
+     * @return true if the database is connected to
+     */
+    public boolean isConnected();
+
+    /**
      * Create a protection in the world. The {@link com.griefcraft.dao.Protection} object returned by this method
      * can be considered to be in the database already.
      *

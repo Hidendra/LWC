@@ -95,6 +95,14 @@ public class JDBCDatabase implements Database {
         this.details = details;
     }
 
+    public boolean isConnected() {
+        try {
+            return connection == null || connection.isClosed();
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
     public boolean connect() throws DatabaseException {
         Driver driver = details.getDriver();
 
