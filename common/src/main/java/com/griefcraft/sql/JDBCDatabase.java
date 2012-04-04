@@ -30,7 +30,7 @@ package com.griefcraft.sql;
 
 import com.griefcraft.dao.Protection;
 
-public class MySQLDatabase implements Database {
+public class JDBCDatabase implements Database {
 
     public Protection createProtection(Protection.Type type, String owner, String world, int x, int y, int z) {
         throw new UnsupportedOperationException("Not yet implemented");
