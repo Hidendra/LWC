@@ -32,12 +32,18 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Flag;
 import com.griefcraft.model.Protection;
+import com.nitnelave.CreeperHeal.CreeperHeal;
+import com.nitnelave.CreeperHeal.WorldConfig;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityBreakDoorEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.plugin.Plugin;
 
 public class LWCEntityListener implements Listener {
 
@@ -82,12 +88,47 @@ public class LWCEntityListener implements Listener {
                 boolean ignoreExplosions = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock().getType(), "ignoreExplosions"));
 
                 if (ignoreExplosions || protection.hasFlag(Flag.Type.ALLOWEXPLOSIONS)) {
+                    // If creeper heal is active for the block, halt all thrusters!
+                    if (isCreeperHealActive(event.getEntity())) {
+                        break;
+                    }
+
                     protection.remove();
                 } else {
                     event.setCancelled(true);
                 }
             }
         }
+    }
+
+    /**
+     * Check if the CreeperHeal plugin is active. If it is, we shouldn't remove protections
+     *
+     * @return
+     */
+    private boolean isCreeperHealActive(Entity entity) {
+        if (entity == null) {
+            return false;
+        }
+
+        Plugin creeperHealPlugin = plugin.getServer().getPluginManager().getPlugin("CreeperHeal");
+
+        if (creeperHealPlugin != null) {
+            CreeperHeal creeperHeal = (CreeperHeal) creeperHealPlugin;
+            WorldConfig worldConfig = creeperHeal.loadWorld(entity.getWorld());
+
+            if (worldConfig == null) {
+                return false; // Uh-oh?
+            }
+
+            if (entity instanceof Creeper) {
+                return "true".equalsIgnoreCase(worldConfig.creepers);
+            } else if (entity instanceof TNTPrimed) {
+                return "true".equalsIgnoreCase(worldConfig.tnt);
+            }
+        }
+
+        return false;
     }
 
 }
