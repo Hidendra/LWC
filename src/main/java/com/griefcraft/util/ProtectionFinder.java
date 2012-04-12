@@ -116,16 +116,6 @@ public class ProtectionFinder {
             }
         }
 
-        if (loadProtection() == null) {
-            // Blacklist each block, all of them did not return matches
-            ProtectionCache cache = LWC.getInstance().getProtectionCache();
-            for (Block block : blocks) {
-                if (cache.getProtection(block) == null) {
-                    cache.addNull(block);
-                }
-            }
-        }
-
         // No matches
         searched = true;
         return false;
@@ -269,12 +259,6 @@ public class ProtectionFinder {
                 block.getType() == Material.REDSTONE_TORCH_ON) {
             return Result.E_ABORT;
         }
-
-        // Null cache
-        if (cache.isKnownToBeNull(block)) {
-            searched = true;
-            return Result.E_ABORT;
-        }
         
         // don't bother trying to load it if it is not protectable
         if (!lwc.isProtectable(block)) {
@@ -291,8 +275,8 @@ public class ProtectionFinder {
 
         if (protection != null) {
             if (protection.getProtectionFinder() == null) {
-                fullMatchBlocks();
                 protection.setProtectionFinder(this);
+                fullMatchBlocks();
                 lwc.getProtectionCache().add(matchedProtection);
             }
 

@@ -858,12 +858,6 @@ public class PhysDB extends Database {
         // the protection cache
         ProtectionCache cache = LWC.getInstance().getProtectionCache();
 
-        // Is it known to be null?
-        if (cache.isKnownToBeNull(cacheKey)) {
-            // System.out.println("loadProtection() => IS_NULL");
-            return null; // It's null :-)
-        }
-
         // check if the protection is already cached
         Protection cached = cache.getProtection(cacheKey);
         if (cached != null) {
@@ -874,7 +868,6 @@ public class PhysDB extends Database {
         // Is it possible that there are protections in the cache?
         if (!ignoreProtectionCount && hasAllProtectionsCached()) {
             // System.out.println("loadProtection() => HAS_ALL_PROTECTIONS_CACHED");
-            cache.addNull(cacheKey);
             return null; // nothing was in the cache, nothing assumed to be in the database
         }
         // System.out.println("loadProtection() => QUERYING");
@@ -888,9 +881,7 @@ public class PhysDB extends Database {
 
             Protection protection = resolveProtection(statement);
 
-            if (protection == null) {
-                cache.addNull(cacheKey);
-            } else {
+            if (protection != null) {
                 // cache the protection
                 cache.add(protection);
             }
@@ -1094,9 +1085,6 @@ public class PhysDB extends Database {
             statement.setLong(10, System.currentTimeMillis() / 1000L);
 
             statement.executeUpdate();
-
-            // Remove the pesky null from the cache if it is there
-            cache.removeNull(world + ":" + x + ":" + y + ":" + z);
 
             // We need to create the initial transaction for this protection
             // this transaction is viewable and modifiable during POST_REGISTRATION
