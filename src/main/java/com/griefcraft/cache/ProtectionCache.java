@@ -53,11 +53,6 @@ public class ProtectionCache {
     private final LRUCache<Protection, Object> references;
 
     /**
-     * Known null cache keys
-     */
-    private final LRUCache<Integer, Object> nulls;
-
-    /**
      * Weak references to protections and their cache key (protection.getCacheKey())
      */
     private final WeakLRUCache<String, Protection> byCacheKey;
@@ -82,7 +77,6 @@ public class ProtectionCache {
         this.capacity = lwc.getConfiguration().getInt("core.cacheSize", 10000);
 
         this.references = new LRUCache<Protection, Object>(capacity);
-        this.nulls = new LRUCache<Integer, Object>(capacity * 10);
         this.byCacheKey = new WeakLRUCache<String, Protection>(capacity);
         this.byId = new WeakLRUCache<Integer, Protection>(capacity);
         this.byKnownBlock = new WeakLRUCache<String, Protection>(capacity);
@@ -120,9 +114,6 @@ public class ProtectionCache {
      * Clears the entire protection cache
      */
     public void clear() {
-        // Remove nulls
-        nulls.clear();
-        
         // remove hard refs
         references.clear();
 
@@ -150,9 +141,6 @@ public class ProtectionCache {
         if (protection == null) {
             return;
         }
-        
-        // Remove it from the known nulls if it exists
-        removeNull(protection.getCacheKey());
 
         // Add the hard reference
         references.put(protection, null);
@@ -168,51 +156,9 @@ public class ProtectionCache {
                 if (block != protectedBlock) {
                     String cacheKey = cacheKey(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
                     byKnownBlock.put(cacheKey, protection);
-                    removeNull(cacheKey);
                 }
             }
         }
-    }
-
-    /**
-     * Add a cache key as known to be null
-     *
-     * @param cacheKey
-     */
-    public void addNull(String cacheKey) {
-        // Is it cached already?
-        if (getProtection(cacheKey) != null) {
-            return;
-        }
-
-        nulls.put(cacheKey.hashCode(), null);
-    }
-
-    /**
-     * Add a block as null
-     *
-     * @param block
-     */
-    public void addNull(Block block) {
-        addNull(cacheKey(block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
-    }
-
-    /**
-     * Remove a null from the cache
-     * 
-     * @param cacheKey
-     */
-    public void removeNull(String cacheKey) {
-        nulls.remove(cacheKey.hashCode());
-    }
-
-    /**
-     * Remove a block as null
-     *
-     * @param block
-     */
-    public void removeNull(Block block) {
-        removeNull(cacheKey(block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
     }
 
     /**
@@ -234,27 +180,6 @@ public class ProtectionCache {
     public void remove(String cacheKey) {
         byCacheKey.remove(cacheKey);
         byKnownBlock.remove(cacheKey);
-        removeNull(cacheKey);
-    }
-
-    /**
-     * Check if a cache key is known to not exist in the database
-     *
-     * @param cacheKey
-     * @return
-     */
-    public boolean isKnownToBeNull(String cacheKey) {
-        return nulls.containsKey(cacheKey.hashCode());
-    }
-
-    /**
-     * Check if a cache key is known to not exist in the database
-     *
-     * @param block
-     * @return
-     */
-    public boolean isKnownToBeNull(Block block) {
-        return isKnownToBeNull(cacheKey(block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
     }
 
     /**
