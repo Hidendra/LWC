@@ -65,6 +65,13 @@
         <mkdir dir="${bin}/core/"/>
         <mkdir dir="${bin}/core/resources/"/>
 
+        <!-- Timestamp, bitches -->
+        <tstamp>
+            <!-- Use the timezone that doesn't exist -->
+            <!-- Date format: MONTH DD YYYY e.g January 25, 2012 -->
+            <format property="build.time" pattern="MMMM dd, yyyy" offset="0" unit="hour" />
+        </tstamp>
+
         <!-- Load the version -->
         <loadfile srcfile="VERSION" property="VERSION"/>
 
@@ -75,7 +82,7 @@
         <copy file="src/main/resources/plugin.yml" todir="${bin}/core/resources/" overwrite="true"/>
 
         <!-- Replace ${VERSION} with the version number in plugin.yml -->
-        <replace file="${bin}/core/resources/plugin.yml" value="${VERSION} (b${BUILD_NUMBER}-git-${GIT_COMMIT})">
+        <replace file="${bin}/core/resources/plugin.yml" value="${VERSION} (b${BUILD_NUMBER}-git-${GIT_COMMIT}) (${build.time})">
             <replacefilter token="@VERSION@"/>
         </replace>
 
