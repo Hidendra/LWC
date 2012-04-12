@@ -67,7 +67,6 @@
 
         <!-- Timestamp, bitches -->
         <tstamp>
-            <!-- Use the timezone that doesn't exist -->
             <!-- Date format: MONTH DD YYYY e.g January 25, 2012 -->
             <format property="build.time" pattern="MMMM dd, yyyy" offset="0" unit="hour" />
         </tstamp>
