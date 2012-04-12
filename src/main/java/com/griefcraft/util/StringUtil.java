@@ -58,6 +58,19 @@ public class StringUtil {
     }
 
     /**
+     * Fast replace a string within a string
+     *
+     * @param haystack
+     * @param needle
+     * @param replace
+     * @return
+     */
+    public static String fastReplace(String haystack, String needle, String replace) {
+        // TODO it is a lie
+        return haystack.replace(needle, replace);
+    }
+
+    /**
      * Capitalize the first letter in a word
      *
      * @param str

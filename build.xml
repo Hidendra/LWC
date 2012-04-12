@@ -128,9 +128,6 @@
     <target name="lwc" description="Build LWC.jar" depends="compile-core">
         <echo>Building LWC.jar</echo>
 
-        <!-- Extract commons -->
-        <unzip src="${lib}/commons-lang3-3.1.jar" dest="${bin}/core/" />
-
         <jar jarfile="${build}/${jar.core}">
             <fileset dir="${src}/main/resources/" includes="lang/*"/>
             <fileset dir="${bin}/core/resources/" includes="**/*"/>
