@@ -108,7 +108,6 @@ import com.griefcraft.util.Metrics;
 import com.griefcraft.util.ProtectionFinder;
 import com.griefcraft.util.Statistics;
 import com.griefcraft.util.StringUtil;
-import com.griefcraft.util.Tuple;
 import com.griefcraft.util.config.Configuration;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -137,8 +136,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
 
 public class LWC {
