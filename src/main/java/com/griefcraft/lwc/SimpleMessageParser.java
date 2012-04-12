@@ -30,7 +30,6 @@ package com.griefcraft.lwc;
 
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtil;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -89,7 +88,7 @@ public class SimpleMessageParser implements MessageParser {
                 String color = Colors.localeColors.get(colorKey);
 
                 if (value.contains(colorKey)) {
-                    value = StringUtils.replace(value, colorKey, color);
+                    value = StringUtil.fastReplace(value, colorKey, color);
                 }
             }
 
@@ -116,7 +115,7 @@ public class SimpleMessageParser implements MessageParser {
         for (String bindKey : bind.keySet()) {
             Object object = bind.get(bindKey);
 
-            value = StringUtils.replace(value, "%" + bindKey + "%", object.toString());
+            value = StringUtil.fastReplace(value, "%" + bindKey + "%", object.toString());
         }
 
         // include the binds

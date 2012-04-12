@@ -762,8 +762,6 @@ public class Protection {
                     Protection protection = cache.getProtection(cacheKey);
                     if (protection != null && id == protection.getId()) {
                         cache.remove(cacheKey);
-                    } else {
-                        cache.removeNull(cacheKey);
                     }
                 }
             }
