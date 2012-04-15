@@ -109,6 +109,7 @@ import com.griefcraft.util.ProtectionFinder;
 import com.griefcraft.util.Statistics;
 import com.griefcraft.util.StringUtil;
 import com.griefcraft.util.config.Configuration;
+import com.griefcraft.util.locale.LocaleUtil;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -1364,10 +1365,10 @@ public class LWC {
         // Should we try metrics?
         if (!configuration.getBoolean("optional.optOut", false)) {
             try {
-                Metrics metrics = new Metrics();
+                Metrics metrics = new Metrics(plugin);
 
                 // Create a line graph
-                Metrics.Graph lineGraph = metrics.createGraph(plugin, Metrics.Graph.Type.Line, "Protections");
+                Metrics.Graph lineGraph = metrics.createGraph("Protections");
 
                 // Add the total protections plotter
                 lineGraph.addPlotter(new Metrics.Plotter("Total") {
@@ -1378,7 +1379,7 @@ public class LWC {
                 });
 
                 // Create a pie graph for individual protections
-                Metrics.Graph pieGraph = metrics.createGraph(plugin, Metrics.Graph.Type.Pie, "Protection percentages");
+                Metrics.Graph pieGraph = metrics.createGraph("Protection percentages");
 
                 for (final Protection.Type type : Protection.Type.values()) {
                     if (type == Protection.Type.RESERVED1 || type == Protection.Type.RESERVED2) {
@@ -1398,7 +1399,17 @@ public class LWC {
                     pieGraph.addPlotter(plotter);
                 }
 
-                metrics.beginMeasuringPlugin(plugin);
+                Metrics.Graph langGraph = metrics.createGraph("Locale");
+                langGraph.addPlotter(new Metrics.Plotter(LocaleUtil.iso639ToEnglish(configuration.getString("core.locale", "en"))) {
+
+                    @Override
+                    public int getValue() {
+                        return 1;
+                    }
+
+                });
+
+                metrics.start();
             } catch (IOException e) {
                 log(e.getMessage());
             }
