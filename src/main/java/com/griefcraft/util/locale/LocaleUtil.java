@@ -31,7 +31,7 @@ package com.griefcraft.util.locale;
 public class LocaleUtil {
 
     /**
-     *
+     * Convert a ISO 639-1 language code into its English equivalent name
      *
      * @param iso639
      * @return
