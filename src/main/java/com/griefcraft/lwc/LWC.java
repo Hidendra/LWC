@@ -1399,14 +1399,22 @@ public class LWC {
                     pieGraph.addPlotter(plotter);
                 }
 
+                // Locale
                 Metrics.Graph langGraph = metrics.createGraph("Locale");
                 langGraph.addPlotter(new Metrics.Plotter(LocaleUtil.iso639ToEnglish(configuration.getString("core.locale", "en"))) {
-
                     @Override
                     public int getValue() {
                         return 1;
                     }
-
+                });
+                
+                // Database type
+                Metrics.Graph databaseGraph = metrics.createGraph("Database Engine");
+                databaseGraph.addPlotter(new Metrics.Plotter(physicalDatabase.getType().toString()) {
+                    @Override
+                    public int getValue() {
+                        return 1;
+                    }
                 });
 
                 metrics.start();
