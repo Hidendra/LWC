@@ -323,26 +323,27 @@ public class ModuleLoader {
             List<Module> modules = fastModuleCache.get(event.getEventType());
             Event type = event.getEventType();
             for (Module module : modules) {
-                if (type == Event.ACCESS_REQUEST) {
-                    module.onAccessRequest((LWCAccessEvent) event);
+                long start = System.nanoTime();
+                if (type == Event.INTERACT_PROTECTION) {
+                    module.onProtectionInteract((LWCProtectionInteractEvent) event);
                 } else if (type == Event.INTERACT_BLOCK) {
                     module.onBlockInteract((LWCBlockInteractEvent) event);
+                } else if (type == Event.SEND_LOCALE) {
+                    module.onSendLocale((LWCSendLocaleEvent) event);
+                } else if (type == Event.ACCESS_REQUEST) {
+                    module.onAccessRequest((LWCAccessEvent) event);
                 } else if (type == Event.COMMAND) {
                     module.onCommand((LWCCommandEvent) event);
                 } else if (type == Event.DROP_ITEM) {
                     module.onDropItem((LWCDropItemEvent) event);
                 } else if (type == Event.DESTROY_PROTECTION) {
                     module.onDestroyProtection((LWCProtectionDestroyEvent) event);
-                } else if (type == Event.INTERACT_PROTECTION) {
-                    module.onProtectionInteract((LWCProtectionInteractEvent) event);
-                } else if (type == Event.REGISTER_PROTECTION) {
+                }else if (type == Event.REGISTER_PROTECTION) {
                     module.onRegisterProtection((LWCProtectionRegisterEvent) event);
                 } else if (type == Event.POST_REMOVAL) {
                     module.onPostRemoval((LWCProtectionRemovePostEvent) event);
                 } else if (type == Event.POST_REGISTRATION) {
                     module.onPostRegistration((LWCProtectionRegistrationPostEvent) event);
-                } else if (type == Event.SEND_LOCALE) {
-                    module.onSendLocale((LWCSendLocaleEvent) event);
                 } else if (type == Event.REDSTONE) {
                     module.onRedstone((LWCRedstoneEvent) event);
                 } else if (type == Event.RELOAD_EVENT) {

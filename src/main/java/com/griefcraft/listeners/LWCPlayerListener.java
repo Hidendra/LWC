@@ -132,9 +132,13 @@ public class LWCPlayerListener implements Listener {
         try {
             Set<String> actions = lwcPlayer.getActionNames();
             Protection protection = lwc.findProtection(block);
-            Module.Result result;
+            Module.Result result = Module.Result.DEFAULT;
             boolean canAccess = lwc.canAccessProtection(player, protection);
-            boolean canAdmin = lwc.canAdminProtection(player, protection);
+
+            // Calculate if the player has a pending action (i.e any action besides 'interacted')
+            int actionCount = actions.size();
+            boolean hasInteracted = actions.contains("interacted");
+            boolean hasPendingAction = (hasInteracted && actionCount > 1) || (!hasInteracted && actionCount > 0);
 
             if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
                 boolean ignoreLeftClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreLeftClick"));
@@ -152,11 +156,8 @@ public class LWCPlayerListener implements Listener {
 
             // If the event was cancelled and they have an action, warn them
             if (event.isCancelled()) {
-                int actionCount = lwcPlayer.getActions().size();
-                boolean hasInteracted = lwcPlayer.hasAction("interacted");
-
                 // only send it if a non-"interacted" action is set which is always set on the player
-                if ((hasInteracted && actionCount > 1) || (!hasInteracted && actionCount > 0)) {
+                if (hasPendingAction) {
                     lwc.sendLocale(player, "lwc.pendingaction");
                 }
 
@@ -174,16 +175,25 @@ public class LWCPlayerListener implements Listener {
                 lwcPlayer.addAction(action);
             }
 
-            if (protection != null) {
-                LWCProtectionInteractEvent evt = new LWCProtectionInteractEvent(event, protection, actions, canAccess, canAdmin);
-                lwc.getModuleLoader().dispatchEvent(evt);
+            // events are only used when they already have an action pending
+            if (hasPendingAction) {
+                boolean canAdmin = lwc.canAdminProtection(player, protection);
 
-                result = evt.getResult();
-            } else {
-                LWCBlockInteractEvent evt = new LWCBlockInteractEvent(event, block, actions);
-                lwc.getModuleLoader().dispatchEvent(evt);
+                if (protection != null) {
+                    LWCProtectionInteractEvent evt = new LWCProtectionInteractEvent(event, protection, actions, canAccess, canAdmin);
+                    lwc.getModuleLoader().dispatchEvent(evt);
 
-                result = evt.getResult();
+                    result = evt.getResult();
+                } else {
+                    LWCBlockInteractEvent evt = new LWCBlockInteractEvent(event, block, actions);
+                    lwc.getModuleLoader().dispatchEvent(evt);
+
+                    result = evt.getResult();
+                }
+            }
+
+            if (result == Module.Result.ALLOW) {
+                return;
             }
 
             // optional.onlyProtectIfOwnerIsOnline
@@ -206,17 +216,8 @@ public class LWCPlayerListener implements Listener {
                 }
             }
 
-            if (result == Module.Result.ALLOW) {
-                return;
-            }
-
             if (result == Module.Result.DEFAULT) {
-                canAccess = lwc.enforceAccess(player, protection, block, canAccess, canAdmin);
-            }
-
-            // Fix a bug where pre-1.8 chests were flipped directions in 1.8
-            if (canAccess && block.getType() == Material.CHEST && block.getData() == 0) {
-                lwc.adjustChestDirection(block, event.getBlockFace());
+                canAccess = lwc.enforceAccess(player, protection, block, canAccess);
             }
 
             if (!canAccess || result == Module.Result.CANCEL) {

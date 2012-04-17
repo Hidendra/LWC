@@ -550,7 +550,7 @@ public class LWC {
      * @param block
      * @return true if the player was granted access
      */
-    public boolean enforceAccess(Player player, Protection protection, Block block, boolean hasAccess, boolean hasAdmin) {
+    public boolean enforceAccess(Player player, Protection protection, Block block, boolean hasAccess) {
         MessageParser parser = plugin.getMessageParser();
 
         if (block == null || protection == null) {
@@ -601,21 +601,14 @@ public class LWC {
             }
         }
 
-        switch (protection.getType()) {
-            case PASSWORD:
-                if (!hasAccess) {
-                    sendLocale(player, "protection.general.locked.password", "block", materialToString(block));
-                }
+        if (!hasAccess) {
+            Protection.Type type = protection.getType();
 
-                break;
-
-            case PRIVATE:
-            case DONATION:
-                if (!hasAccess) {
-                    sendLocale(player, "protection.general.locked.private", "block", materialToString(block));
-                }
-
-                break;
+            if (type == Protection.Type.PASSWORD) {
+                sendLocale(player, "protection.general.locked.password", "block", materialToString(block));
+            } else if (type == Protection.Type.PRIVATE || type == Protection.Type.DONATION) {
+                sendLocale(player, "protection.general.locked.private", "block", materialToString(block));
+            }
         }
 
         return hasAccess;
