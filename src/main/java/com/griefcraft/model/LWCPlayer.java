@@ -39,7 +39,6 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -47,33 +46,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class LWCPlayer implements CommandSender {
-
-    /**
-     * Permission modes that a player in dev mode can set for themselves for testing
-     */
-    public enum PermissionMode {
-
-        /**
-         * The player will have no access to LWC
-         */
-        NONE,
-
-        /**
-         * The player will be considered to have lwc.protect
-         */
-        PLAYER,
-
-        /**
-         * The player will be considered an LWC Mod
-         */
-        MOD,
-
-        /**
-         * The player will be considered and LWC Admin
-         */
-        ADMIN
-
-    }
 
     /**
      * The LWC instance
@@ -91,29 +63,19 @@ public class LWCPlayer implements CommandSender {
     private final static Map<Player, LWCPlayer> playerCache = new HashMap<Player, LWCPlayer>();
 
     /**
-     * The modes bound to all players
+     * The map of actions the player has
      */
-    private final static Map<LWCPlayer, Set<Mode>> modes = Collections.synchronizedMap(new HashMap<LWCPlayer, Set<Mode>>());
+    private final Map<String, Action> actions = new HashMap<String, Action>();
 
     /**
-     * The actions bound to all players
+     * The set of modes the player has
      */
-    private final static Map<LWCPlayer, Map<String, Action>> actions = Collections.synchronizedMap(new HashMap<LWCPlayer, Map<String, Action>>());
+    private final Set<Mode> modes = new HashSet<Mode>();
 
     /**
-     * Map of protections a player can temporarily access
+     * The set of protections the player can access
      */
-    private final static Map<LWCPlayer, Set<Protection>> accessibleProtections = Collections.synchronizedMap(new HashMap<LWCPlayer, Set<Protection>>());
-
-    /**
-     * The player's permission mode
-     */
-    private PermissionMode permissionMode = PermissionMode.NONE;
-
-    /**
-     * If the player is in dev mode
-     */
-    private boolean devMode = false;
+    private final Set<Protection> accessibleProtections = new HashSet<Protection>();
 
     public LWCPlayer(LWC lwc, Player player) {
         this.lwc = lwc;
@@ -142,13 +104,6 @@ public class LWCPlayer implements CommandSender {
     public static void removePlayer(Player player) {
         LWCPlayer lwcPlayer = getPlayer(player);
 
-        // remove everything accessible by them
-        if (lwcPlayer != null) {
-            modes.remove(lwcPlayer);
-            actions.remove(lwcPlayer);
-            accessibleProtections.remove(lwcPlayer);
-        }
-
         // uncache them
         playerCache.remove(player);
     }
@@ -174,7 +129,7 @@ public class LWCPlayer implements CommandSender {
      * @return
      */
     public boolean enableMode(Mode mode) {
-        return getModes().add(mode);
+        return modes.add(mode);
     }
 
     /**
@@ -184,7 +139,7 @@ public class LWCPlayer implements CommandSender {
      * @return
      */
     public boolean disableMode(Mode mode) {
-        return getModes().remove(mode);
+        return modes.remove(mode);
     }
 
     /**
@@ -193,7 +148,7 @@ public class LWCPlayer implements CommandSender {
      * @return
      */
     public void disableAllModes() {
-        getModes().clear();
+        modes.clear();
     }
 
     /**
@@ -203,7 +158,7 @@ public class LWCPlayer implements CommandSender {
      * @return
      */
     public boolean hasAction(String name) {
-        return getActions().containsKey(name);
+        return actions.containsKey(name);
     }
 
     /**
@@ -213,7 +168,7 @@ public class LWCPlayer implements CommandSender {
      * @return
      */
     public Action getAction(String name) {
-        return getActions().get(name);
+        return actions.get(name);
     }
 
     /**
@@ -223,7 +178,6 @@ public class LWCPlayer implements CommandSender {
      * @return
      */
     public boolean addAction(Action action) {
-        Map<String, Action> actions = getActions();
         actions.put(action.getName(), action);
         return true;
     }
@@ -235,7 +189,7 @@ public class LWCPlayer implements CommandSender {
      * @return
      */
     public boolean removeAction(Action action) {
-        getActions().remove(action.getName());
+        actions.remove(action.getName());
         return true;
     }
 
@@ -243,7 +197,7 @@ public class LWCPlayer implements CommandSender {
      * Remove all actions
      */
     public void removeAllActions() {
-        getActions().clear();
+        actions.clear();
     }
 
     /**
@@ -253,7 +207,7 @@ public class LWCPlayer implements CommandSender {
      * @return
      */
     public Mode getMode(String name) {
-        for (Mode mode : getModes()) {
+        for (Mode mode : modes) {
             if (mode.getName().equals(name)) {
                 return mode;
             }
@@ -276,40 +230,28 @@ public class LWCPlayer implements CommandSender {
      * @return the Set of modes the player has activated
      */
     public Set<Mode> getModes() {
-        if (!modes.containsKey(this)) {
-            modes.put(this, new HashSet<Mode>());
-        }
-
-        return modes.get(this);
+        return new HashSet<Mode>(modes);
     }
 
     /**
      * @return the Set of actions the player has
      */
     public Map<String, Action> getActions() {
-        if (!actions.containsKey(this)) {
-            actions.put(this, new HashMap<String, Action>());
-        }
-
-        return actions.get(this);
+        return new HashMap<String, Action>(actions);
     }
 
     /**
      * @return a Set containing all of the action names
      */
     public Set<String> getActionNames() {
-        return getActions().keySet();
+        return new HashSet<String>(actions.keySet());
     }
 
     /**
      * @return the set of protections the player can temporarily access
      */
     public Set<Protection> getAccessibleProtections() {
-        if (!accessibleProtections.containsKey(this)) {
-            accessibleProtections.put(this, new HashSet<Protection>());
-        }
-
-        return accessibleProtections.get(this);
+        return new HashSet<Protection>(accessibleProtections);
     }
 
     /**
@@ -319,7 +261,7 @@ public class LWCPlayer implements CommandSender {
      * @return
      */
     public boolean addAccessibleProtection(Protection protection) {
-        return getAccessibleProtections().add(protection);
+        return accessibleProtections.add(protection);
     }
 
     /**
@@ -329,14 +271,14 @@ public class LWCPlayer implements CommandSender {
      * @return
      */
     public boolean removeAccessibleProtection(Protection protection) {
-        return getAccessibleProtections().remove(protection);
+        return accessibleProtections.remove(protection);
     }
 
     /**
      * Remove all accessible protections
      */
     public void removeAllAccessibleProtections() {
-        getAccessibleProtections().clear();
+        accessibleProtections.clear();
     }
 
     /**
@@ -398,22 +340,6 @@ public class LWCPlayer implements CommandSender {
         }
 
         return related;
-    }
-
-    /**
-     * Set the player's permission mode
-     *
-     * @param permissionMode
-     */
-    public void setPermissionMode(PermissionMode permissionMode) {
-        this.permissionMode = permissionMode;
-    }
-
-    /**
-     * @return the player's permission mode
-     */
-    public PermissionMode getPermissionMode() {
-        return permissionMode;
     }
 
     public void sendMessage(String s) {

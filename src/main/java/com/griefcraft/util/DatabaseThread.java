@@ -34,7 +34,7 @@ import com.griefcraft.sql.Database;
 
 import java.util.Iterator;
 import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class DatabaseThread implements Runnable {
 
@@ -46,7 +46,7 @@ public class DatabaseThread implements Runnable {
     /**
      * The protections waiting to be updated in the database
      */
-    private final Queue<Protection> updateQueue = new LinkedBlockingQueue<Protection>();
+    private final Queue<Protection> updateQueue = new ConcurrentLinkedQueue<Protection>();
 
     /**
      * The thread we are running in
@@ -123,21 +123,19 @@ public class DatabaseThread implements Runnable {
      */
     private void flushDatabase() {
         if (!updateQueue.isEmpty()) {
-            synchronized (updateQueue) {
-                Database database = lwc.getPhysicalDatabase();
-                database.setAutoCommit(false);
+            Database database = lwc.getPhysicalDatabase();
+            database.setAutoCommit(false);
 
-                // Begin iterating through the queue
-                Iterator<Protection> iter = updateQueue.iterator();
-                while (iter.hasNext()) {
-                    Protection protection = iter.next();
-                    iter.remove();
-                    protection.saveNow();
-                }
-
-                // Commit the changes to the database
-                database.setAutoCommit(true);
+            // Begin iterating through the queue
+            Iterator<Protection> iter = updateQueue.iterator();
+            while (iter.hasNext()) {
+                Protection protection = iter.next();
+                iter.remove();
+                protection.saveNow();
             }
+
+            // Commit the changes to the database
+            database.setAutoCommit(true);
         }
 
         // update the time we last flushed at
