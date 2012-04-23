@@ -176,20 +176,18 @@ public class LWCPlayerListener implements Listener {
             }
 
             // events are only used when they already have an action pending
-            if (hasPendingAction) {
-                boolean canAdmin = lwc.canAdminProtection(player, protection);
+            boolean canAdmin = lwc.canAdminProtection(player, protection);
 
-                if (protection != null) {
-                    LWCProtectionInteractEvent evt = new LWCProtectionInteractEvent(event, protection, actions, canAccess, canAdmin);
-                    lwc.getModuleLoader().dispatchEvent(evt);
+            if (protection != null) {
+                LWCProtectionInteractEvent evt = new LWCProtectionInteractEvent(event, protection, actions, canAccess, canAdmin);
+                lwc.getModuleLoader().dispatchEvent(evt);
 
-                    result = evt.getResult();
-                } else {
-                    LWCBlockInteractEvent evt = new LWCBlockInteractEvent(event, block, actions);
-                    lwc.getModuleLoader().dispatchEvent(evt);
+                result = evt.getResult();
+            } else {
+                LWCBlockInteractEvent evt = new LWCBlockInteractEvent(event, block, actions);
+                lwc.getModuleLoader().dispatchEvent(evt);
 
-                    result = evt.getResult();
-                }
+                result = evt.getResult();
             }
 
             if (result == Module.Result.ALLOW) {
