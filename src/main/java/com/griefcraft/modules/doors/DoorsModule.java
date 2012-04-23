@@ -110,11 +110,18 @@ public class DoorsModule extends JavaModule {
         }
 
         Protection protection = event.getProtection();
-        final Block block = event.getEvent().getClickedBlock(); // The block they actually clicked :)
+        Block block = event.getEvent().getClickedBlock(); // The block they actually clicked :)
 
         // Check if the block is even something that should be opened
         if (!isValid(block.getType())) {
             return;
+        }
+
+        // Are we looking at the top half?
+        // If we are, we need to get the bottom half instead
+        if ((block.getData() & 0x8) == 0x8) {
+            // Inspect the bottom half instead, fool!
+            block = block.getRelative(BlockFace.DOWN);
         }
 
         // Should we look for double doors?
@@ -137,6 +144,7 @@ public class DoorsModule extends JavaModule {
             // Abuse the fact that we still use final variables inside the task
             // The double door block object is initially only assigned if we need
             // it, so we just create a second variable ^^
+            final Block finalBlock = block;
             final Block finalDoubleDoorBlock = doubleDoorBlock;
 
             // Calculate the wait time
@@ -150,7 +158,7 @@ public class DoorsModule extends JavaModule {
 
                     // Essentially all we need to do is reset the door states
                     // But DO NOT open the door if it's closed !
-                    changeDoorStates(false, block, finalDoubleDoorBlock);
+                    changeDoorStates(false, finalBlock, finalDoubleDoorBlock);
 
                 }
             }, wait);
@@ -185,7 +193,11 @@ public class DoorsModule extends JavaModule {
 
             // Now xor both data values with 0x8, the flag that states if the door is open
             door.setData((byte) (door.getData() ^ 0x4));
-            topHalf.setData((byte) (topHalf.getData() ^ 0x4));
+
+            // Only change the block above it if it is something we can open or close
+            if (isValid(topHalf.getType())) {
+                topHalf.setData((byte) (topHalf.getData() ^ 0x4));
+            }
         }
     }
 
@@ -200,23 +212,15 @@ public class DoorsModule extends JavaModule {
             return null;
         }
 
-        Block inspecting = block;
-
-        // Are we looking at the top half?
-        if ((inspecting.getData() & 0x8) == 0x8) {
-            // Inspect the bottom half instead, fool!
-            inspecting = inspecting.getRelative(BlockFace.DOWN);
-        }
-
         Block found;
 
         // Try a wooden door
-        if ((found = lwc.findAdjacentBlock(inspecting, Material.WOODEN_DOOR)) != null) {
+        if ((found = lwc.findAdjacentBlock(block, Material.WOODEN_DOOR)) != null) {
             return found;
         }
 
         // Now an iron door
-        if ((found = lwc.findAdjacentBlock(inspecting, Material.IRON_DOOR_BLOCK)) != null) {
+        if ((found = lwc.findAdjacentBlock(block, Material.IRON_DOOR_BLOCK)) != null) {
             return found;
         }
 
