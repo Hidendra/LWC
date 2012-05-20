@@ -1,4 +1,19 @@
-### 4.1.0 **unreleased**
+### 4.2.0
+# LWC 4.2.0
+* **Significant** performance increases, in some cases upwards of 90%. In most cases, ProtectionInteract was >100k nanoseconds. It is now 20k-ish. The Redstone event, which accounted for 50% of the cpu time, at 20k nanoseconds/event, is now around 2k-3k nanoseconds per event.
+* Vault Economy & Permissions support
+* Added fence gates to the default configuration
+* Less quiet exceptions when the updater fails for any reason
+* CreeperHeal support - do not remove protections if creeper heal is activated & enabled :)
+* Rewrote double door logic to be more reliable. It also does not reopen doors that are already closed.
+* Work around a difficult to reproduce exploit that appears to be caused by a Bukkit bug, exact cause unknown (not on LWC's end, but it prevents it now)
+* A block's protection history can be cycled through if you use the command `/lwc info history`
+
+### 4.1.1
+# LWC 4.1.1
+* Minor bug fix for metrics
+
+### 4.1.0
 # LWC 4.1.0
 * **R6 and Minecraft 1.2 support**
 * **The following has been *COMPLETELY* REMOVED:**
