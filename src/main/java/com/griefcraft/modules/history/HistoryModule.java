@@ -72,6 +72,7 @@ public class HistoryModule extends JavaModule {
         
         historyTool(lwc, player, protection.getX(), protection.getY(), protection.getZ());
         event.setResult(Result.CANCEL);
+        lwc.removeModes(player);
     }
 
     @Override
@@ -90,6 +91,7 @@ public class HistoryModule extends JavaModule {
 
         historyTool(lwc, player, block.getX(), block.getY(), block.getZ());
         event.setResult(Result.CANCEL);
+        lwc.removeModes(player);
     }
 
     /**
@@ -159,8 +161,6 @@ public class HistoryModule extends JavaModule {
         } else {
             action.setData(Integer.toString(page + 1));
         }
-
-        lwc.removeModes(player);
     }
 
     /**
