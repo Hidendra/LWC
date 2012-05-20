@@ -88,7 +88,7 @@ public class PhysDB extends Database {
      *
      * @return
      */
-    private boolean hasAllProtectionsCached() {
+    public boolean hasAllProtectionsCached() {
         ProtectionCache cache = LWC.getInstance().getProtectionCache();
 
         return cache.size() >= protectionCount;
