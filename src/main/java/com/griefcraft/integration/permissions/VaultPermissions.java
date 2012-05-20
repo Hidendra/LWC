@@ -29,24 +29,30 @@
 package com.griefcraft.integration.permissions;
 
 import net.milkbowl.vault.permission.Permission;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import com.griefcraft.integration.IPermissions;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class VaultPermissions implements IPermissions {
+public class VaultPermissions extends SuperPermsPermissions {
+
+    @Override
     public List<String> getGroups(Player player) {
         RegisteredServiceProvider<Permission> serviceProvider = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
-        if (serviceProvider == null)
-            return new ArrayList<String>();
-        
+
+        if (serviceProvider == null) {
+            return super.getGroups(player);
+        }
+
         Permission perm = serviceProvider.getProvider();
-        return Arrays.asList(perm.getPlayerGroups(player));
+
+        try {
+            return Arrays.asList(perm.getPlayerGroups(player));
+        } catch (UnsupportedOperationException e) {
+            return super.getGroups(player);
+        }
     }
+
 }
