@@ -1,3 +1,7 @@
+### 4.2.1
+# LWC 4.2.1
+* Bug fix for vault
+
 ### 4.2.0
 # LWC 4.2.0
 * **Significant** performance increases, in some cases upwards of 90%. In most cases, ProtectionInteract was >100k nanoseconds. It is now 20k-ish. The Redstone event, which accounted for 50% of the cpu time, at 20k nanoseconds/event, is now around 2k-3k nanoseconds per event.
