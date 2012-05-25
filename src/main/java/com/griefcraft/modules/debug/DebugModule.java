@@ -82,6 +82,7 @@ public class DebugModule extends JavaModule {
         player.sendMessage(" ");
         player.sendMessage(Colors.Gray + "LWC: " + LWCInfo.FULL_VERSION);
         player.sendMessage(" ");
+        player.sendMessage("Groups => " + lwc.getPermissions().getGroups(player));
         lwc.sendLocale(player, "lwc.debug.standard");
         doPermission(player, "lwc.protect");
 
@@ -98,11 +99,7 @@ public class DebugModule extends JavaModule {
         }
 
         player.sendMessage(" ");
-        lwc.sendLocale(player, "lwc.debug.mod");
         doPermission(player, "lwc.mod");
-
-        player.sendMessage(" ");
-        lwc.sendLocale(player, "lwc.debug.admin");
         doPermission(player, "lwc.admin");
     }
 
