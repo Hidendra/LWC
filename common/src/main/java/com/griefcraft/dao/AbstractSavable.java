@@ -28,72 +28,34 @@
 
 package com.griefcraft.dao;
 
-import com.griefcraft.world.World;
-
-public abstract class Protection extends AbstractSavable {
+/**
+ * Represents an object that can be saved to the database
+ */
+public abstract class AbstractSavable {
 
     /**
-     * The protection's type
+     * Flush the object to the database immediately without waiting
+     * for caches, etc.
      */
-    public enum Type {
+    public abstract void saveImmediately();
 
-        /**
-         * The protection is private and only the player or those the player allows can access it
-         */
-        PRIVATE,
+    /**
+     * Checks if the object actually needs to be saved to the database or not
+     * @return
+     */
+    public abstract boolean isSaveNeeded();
 
-        /**
-         * Anyone can access and use the protection but not remove it
-         */
-        PUBLIC,
+    /**
+     * Remove the object from the database immediately. Returns when the object is removed
+     */
+    public abstract void remove();
 
-        /**
-         * The protection requires a password from anyone to enter it
-         */
-        PASSWORD
-
+    /**
+     * Requests that the object be saved to the database. This may or may not happen immediately nor is it
+     * guaranteed to happen within any given amount of time.
+     */
+    public void save() {
+        throw new UnsupportedOperationException("AbstractSavable.save() is not yet implemented");
     }
-
-    /**
-     * Get the protection's internal database id
-     *
-     * @return
-     */
-    public abstract int getId();
-
-    /**
-     * Get the protection's type
-     *
-     * @return
-     */
-    public abstract Type getType();
-
-    /**
-     * Get the protection's x coordinate
-     * 
-     * @return
-     */
-    public abstract int getX();
-
-    /**
-     * Get the protection's y coordinate
-     * 
-     * @return
-     */
-    public abstract int getY();
-
-    /**
-     * Get the protection's z coordinate
-     * 
-     * @return
-     */
-    public abstract int getZ();
-
-    /**
-     * Get the world the protection is in
-     *
-     * @return
-     */
-    public abstract World getWorld();
 
 }

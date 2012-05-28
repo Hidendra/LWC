@@ -155,6 +155,21 @@ public class SimpleCommandHandler implements CommandHandler {
     private void executeCommand(Tuple<Command, Method> pair, CommandContext context) throws CommandException {
         Command command = pair.first();
         Method method = pair.second();
+
+        // First check permissions
+        if (!command.permission().isEmpty()) {
+            CommandSender sender = context.getCommandSender();
+
+            if (!sender.hasPermission(command.permission())) {
+                // First tell them they do not have permission
+                // TODO localize
+                sender.sendMessage("&4You do not have permission to use that command.");
+
+                // Now send the command's help
+                sendHelp(command, context.getCommandSender());
+                return;
+            }
+        }
         
         // Grab the instance as well
         Object instance = instances.get(command);
@@ -198,7 +213,6 @@ public class SimpleCommandHandler implements CommandHandler {
             sendHelp(command, context.getCommandSender());
             return;
         }
-
 
         // Now just execute the method
         try {

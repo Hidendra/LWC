@@ -54,6 +54,7 @@ public class BaseCommands {
 
     @Command(
             command = "lwc test",
+            permission = "lwc.test",
             aliases = { "ctest" }
     )
     public void lwcTest(CommandContext context) {
@@ -79,6 +80,7 @@ public class BaseCommands {
     @Command(
             command = "lwc admin purge",
             description = "Removes all of the player's protections from the world",
+            permission = "lwc.admin.purge",
             usage = "<player>",
             aliases = { "purge" },
             min = 1,
