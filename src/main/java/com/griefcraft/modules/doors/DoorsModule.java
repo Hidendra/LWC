@@ -137,7 +137,7 @@ public class DoorsModule extends JavaModule {
 
         // Either way we are going to be toggling the door open
         // So toggle both doors to be open. We can safely pass null values to changeDoorStates
-        changeDoorStates(true, (block.getType() == Material.WOODEN_DOOR ? null : block) /* They clicked it so it auto opens already */,
+        changeDoorStates(true, ((block.getType() == Material.WOODEN_DOOR || block.getType() == Material.FENCE_GATE) ? null : block) /* They clicked it so it auto opens already */,
                 doubleDoorBlock);
 
         if (action == Action.OPEN_AND_CLOSE) {
