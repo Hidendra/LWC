@@ -827,7 +827,9 @@ public class LWC {
 
         // Send the message!
         // sender.sendMessage(message);
-        sender.sendMessage(message);
+        for (String line : message) {
+            sender.sendMessage(line);
+        }
     }
 
     /**
