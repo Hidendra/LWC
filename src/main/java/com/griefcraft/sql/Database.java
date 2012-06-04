@@ -48,7 +48,6 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 public abstract class Database {
 
@@ -101,11 +100,6 @@ public abstract class Database {
      * The connection to the database
      */
     protected Connection connection = null;
-
-    /**
-     * Logging object
-     */
-    protected Logger logger = Logger.getLogger(getClass().getSimpleName());
 
     /**
      * The default database engine being used. This is set via config
@@ -299,7 +293,7 @@ public abstract class Database {
      * @param str The string to log
      */
     public void log(String str) {
-        logger.info("LWC: " + str);
+        LWC.getInstance().log(str);
     }
 
     /**
