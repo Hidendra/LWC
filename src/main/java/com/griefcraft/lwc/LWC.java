@@ -112,7 +112,6 @@ import com.griefcraft.util.config.Configuration;
 import com.griefcraft.util.locale.LocaleUtil;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -137,7 +136,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public class LWC {
 
@@ -170,11 +168,6 @@ public class LWC {
      * The protection cache
      */
     private final ProtectionCache protectionCache;
-
-    /**
-     * Logging instance
-     */
-    private Logger logger = Logger.getLogger("LWC");
 
     /**
      * Physical database instance
@@ -529,7 +522,7 @@ public class LWC {
      * @param str
      */
     public void log(String str) {
-        logger.info("[LWC] " + ChatColor.stripColor(str));
+        plugin.getLogger().info(str);
     }
 
     /**

@@ -49,7 +49,6 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Logger;
 
 public class Updater {
 
@@ -134,11 +133,6 @@ public class Updater {
     }
 
     /**
-     * The logging object for this class
-     */
-    private final Logger logger = Logger.getLogger("LWC");
-
-    /**
      * URL to the base update site
      */
     public final static String UPDATE_SITE = "http://update.griefcraft.com";
@@ -179,7 +173,7 @@ public class Updater {
     private Version latestVersion;
 
     public void init() {
-        LWC lwc = LWC.getInstance();
+        final LWC lwc = LWC.getInstance();
         updateBranch = UpdateBranch.match(lwc.getConfiguration().getString("updater.branch", "STABLE"));
         updateMethod = UpdateMethod.match(lwc.getConfiguration().getString("updater.method", "MANUAL"));
 
@@ -188,7 +182,10 @@ public class Updater {
 
                 public void run() {
                     tryAutoUpdate(false);
-                    logger.info("[LWC] Latest version: " + latestVersion);
+
+                    if (updateAvailable()) {
+                        lwc.log("Update available! Latest version: " + latestVersion);
+                    }
                 }
 
             });
@@ -205,13 +202,14 @@ public class Updater {
     public void downloadFiles() {
         synchronized (fileQueue) {
             UpdaterFile updaterFile = null;
+            LWC lwc = LWC.getInstance();
 
             while ((updaterFile = fileQueue.poll()) != null) {
                 try {
                     File local = new File(updaterFile.getLocalLocation());
                     String remote = updaterFile.getRemoteLocation();
 
-                    logger.info("[LWC] Downloading file " + local.getName());
+                    lwc.log("Downloading file " + local.getName());
 
                     // check for LWC folder
                     File folder = new File("plugins/LWC/");
@@ -263,7 +261,7 @@ public class Updater {
 
                                 // omit 100% ..
                                 if (percentTransferred != 100) {
-                                    logger.info(percentTransferred + "%");
+                                    lwc.log(percentTransferred + "%");
                                 }
                             }
                         }
@@ -277,6 +275,20 @@ public class Updater {
                 }
             }
         }
+    }
+
+    /**
+     * Check if an update is available or not. Assumes the latest version has already been grabbed
+     *
+     * @return
+     */
+    public boolean updateAvailable() {
+        if (latestVersion == null) {
+            return false;
+        }
+
+        Version current = LWCInfo.FULL_VERSION;
+        return !(current.equals(latestVersion) || (current.getBuildNumber() > 0 && latestVersion.getBuildNumber() > 0 && current.getBuildNumber() == latestVersion.getBuildNumber()));
     }
 
     /**
@@ -294,12 +306,11 @@ public class Updater {
         }
 
         // we shouldn't update if the current version is the same as the latest, or their build numbers are equal
-        Version current = LWCInfo.FULL_VERSION;
-        if (current.equals(latestVersion) || (current.getBuildNumber() > 0 && latestVersion.getBuildNumber() > 0 && current.getBuildNumber() == latestVersion.getBuildNumber())) {
+        if (!updateAvailable()) {
             return false;
         }
 
-        logger.info(Colors.Red + "LWC update found!");
+        LWC.getInstance().log(Colors.Red + "LWC update found!");
 
         // make sure all class files are loaded in our jar file before we overwrite it
         loadAllClasses();
@@ -579,8 +590,9 @@ public class Updater {
      * @param e
      */
     private void exceptionCaught(Exception e) {
-        logger.info("[LWC] The updater ran into a minor issue: " + e.getMessage());
-        logger.info("[LWC] This can probably be ignored.");
+        LWC lwc = LWC.getInstance();
+        lwc.log("[LWC] The updater ran into a minor issue: " + e.getMessage());
+        lwc.log("[LWC] This can probably be ignored.");
     }
 
 }

@@ -822,7 +822,7 @@ public class PhysDB extends Database {
                 cache.add(protection);
             }
 
-            log("Precached " + protections.size() + " protections.");
+            log("Precached " + protections.size() + " protections");
         } catch (SQLException e) {
             printException(e);
         }

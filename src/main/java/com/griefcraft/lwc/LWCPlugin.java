@@ -36,7 +36,6 @@ import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.sql.Database;
 import com.griefcraft.util.StringUtil;
 import com.griefcraft.util.Updater;
-import com.griefcraft.util.Version;
 import com.griefcraft.util.locale.LWCResourceBundle;
 import com.griefcraft.util.locale.LocaleClassLoader;
 import com.griefcraft.util.locale.UTF8Control;
@@ -55,7 +54,6 @@ import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.jar.JarFile;
-import java.util.logging.Logger;
 
 public class LWCPlugin extends JavaPlugin {
 
@@ -83,11 +81,6 @@ public class LWCPlugin extends JavaPlugin {
      * The server listener
      */
     private LWCServerListener serverListener;
-
-    /**
-     * The logging object
-     */
-    private Logger logger = Logger.getLogger("LWC");
 
     /**
      * The message parser to parse messages with
@@ -232,9 +225,6 @@ public class LWCPlugin extends JavaPlugin {
 
         // let the updater do its thang
         updater.init();
-
-        Version version = LWCInfo.FULL_VERSION;
-        log("At version: " + version.toString());
     }
 
     /**
@@ -314,8 +304,6 @@ public class LWCPlugin extends JavaPlugin {
      * Load shared libraries and other misc things
      */
     private void preload() {
-        log("Loading shared objects");
-
         updater = new Updater();
         playerListener = new LWCPlayerListener(this);
         blockListener = new LWCBlockListener(this);
@@ -324,19 +312,6 @@ public class LWCPlugin extends JavaPlugin {
 
         // Set the SQLite native library path
         System.setProperty("org.sqlite.lib.path", updater.getOSSpecificFolder());
-
-        // we want to force people who used sqlite.purejava before to switch:
-        System.setProperty("sqlite.purejava", "");
-
-        // BUT, some can't use native, so we need to give them the option to use
-        // pure:
-        String isPureJava = System.getProperty("lwc.purejava");
-
-        if (isPureJava != null && isPureJava.equalsIgnoreCase("true")) {
-            System.setProperty("sqlite.purejava", "true");
-        }
-
-        log("Native library: " + updater.getFullNativeLibraryPath());
     }
 
     /**
@@ -345,7 +320,7 @@ public class LWCPlugin extends JavaPlugin {
      * @param str
      */
     private void log(String str) {
-        logger.info("LWC: " + str);
+        getLogger().info(str);
     }
 
     /**
