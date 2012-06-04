@@ -33,14 +33,7 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import org.bukkit.block.Block;
 
-import java.util.logging.Logger;
-
 public class ProtectionCache {
-
-    /**
-     * Logging instance
-     */
-    private Logger logger = Logger.getLogger("Cache");
 
     /**
      * The LWC instance this set belongs to
@@ -80,7 +73,6 @@ public class ProtectionCache {
         this.byCacheKey = new WeakLRUCache<String, Protection>(capacity);
         this.byId = new WeakLRUCache<Integer, Protection>(capacity);
         this.byKnownBlock = new WeakLRUCache<String, Protection>(capacity);
-        logger.info("LWC: Protection cache: 0/" + capacity);
     }
 
     /**
