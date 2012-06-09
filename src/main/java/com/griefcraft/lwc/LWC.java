@@ -566,8 +566,12 @@ public class LWC {
         if (hasAccess) {
             long timestamp = System.currentTimeMillis() / 1000L;
 
-            protection.setLastAccessed(timestamp);
-            protection.save();
+            boolean isAdmin = isAdmin(player);
+            // check that they aren't an admin and if they are, they need to be the owner of the protection or have access through /cmodify
+            if (!isAdmin || protection.getOwner().equals(player.getName()) || protection.getAccess(player.getName(), Permission.Type.PLAYER) != Permission.Access.NONE) {
+                protection.setLastAccessed(timestamp);
+                protection.save();
+            }
         }
 
         boolean permShowNotices = hasPermission(player, "lwc.shownotices");
