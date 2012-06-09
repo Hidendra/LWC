@@ -26,8 +26,9 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.cache;
+package com.griefcraft;
 
+import com.griefcraft.cache.LRUCache;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

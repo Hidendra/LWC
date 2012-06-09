@@ -2,8 +2,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.griefcraft</groupId>
-    <artifactId>common</artifactId>
-    <name>LWC-Common</name>
+    <artifactId>api</artifactId>
+    <name>LWC-API</name>
     <url>griefcraft.com</url>
     <packaging>jar</packaging>
     <version>UNSTABLE-SNAPSHOT</version>
@@ -20,12 +20,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.griefcraft</groupId>
-            <artifactId>api</artifactId>
-            <version>UNSTABLE-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.10</version>
@@ -34,26 +28,7 @@
     </dependencies>
 
     <build>
-        <finalName>${project.name}-${project.version}</finalName>
+        <finalName>${project.name}</finalName>
         <defaultGoal>clean package</defaultGoal>
-
-        <resources>
-            <resource>
-                <directory>${basedir}/src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
 </project>

@@ -28,6 +28,7 @@
     </dependencies>
 
     <modules>
+        <module>api</module>
         <module>common</module>
         <module>bukkit</module>
         <module>canary</module>
