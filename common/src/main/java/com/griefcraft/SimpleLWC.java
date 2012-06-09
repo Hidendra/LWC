@@ -28,6 +28,7 @@
 
 package com.griefcraft;
 
+import com.griefcraft.command.CommandException;
 import com.griefcraft.command.CommandHandler;
 import com.griefcraft.command.ConsoleCommandSender;
 import com.griefcraft.command.SimpleCommandHandler;
@@ -96,7 +97,11 @@ public class SimpleLWC implements LWC {
      * Register the commands we want to use
      */
     private void registerCommands() {
-        commandHandler.registerCommands(new BaseCommands());
+        try {
+            commandHandler.registerCommands(new BaseCommands());
+        } catch (CommandException e) {
+            e.printStackTrace();
+        }
     }
 
 }

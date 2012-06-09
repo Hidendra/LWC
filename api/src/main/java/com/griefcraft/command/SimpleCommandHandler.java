@@ -111,7 +111,7 @@ public class SimpleCommandHandler implements CommandHandler {
         return false;
     }
 
-    public List<Command> registerCommands(Object object) {
+    public List<Command> registerCommands(Object object) throws CommandException {
         List<Command> registered = new ArrayList<Command>();
         Class<?> clazz = object.getClass();
 
@@ -121,8 +121,22 @@ public class SimpleCommandHandler implements CommandHandler {
             // Check for the command annotation
             if (method.isAnnotationPresent(Command.class)) {
 
+                // verify arguments
+                Class<?>[] parameters = method.getParameterTypes();
+                if (parameters.length != 1 || parameters[0] != CommandContext.class) {
+                    if (parameters.length == 0) {
+                        throw new CommandException("Command method \"" + method.getName() + "\" has too few parameters!");
+                    } else if (parameters.length == 1) {
+                        throw new CommandException("Command method \"" + method.getName() + "\" has too many parameters!");
+                    } else {
+                        throw new CommandException("Command method \"" + method.getName() + "\" has invalid parameters!");
+                    }
+                }
+
                 // Grab the annotation instance
                 Command command = method.getAnnotation(Command.class);
+
+                checkCommand(command);
                 
                 // Create the tuple
                 Tuple<Command, Method> tuple = new Tuple<Command, Method>(command, method);
@@ -326,6 +340,19 @@ public class SimpleCommandHandler implements CommandHandler {
             if (!(context.getArgumentsArray().length <= max)) {
                 throw new CommandException("Number of arguments does not meet the maximum requirement!");
             }
+        }
+    }
+
+    /**
+     * Used when parsing commands from methods to ensure the command is valid
+     *
+     * @param command
+     * @throws CommandException
+     */
+    private void checkCommand(Command command) throws CommandException {
+        // check for min > max
+        if (command.max() != -1 && command.min() > command.max()) {
+            throw new CommandException("Command's minimum must not be higher than its maximum");
         }
     }
 

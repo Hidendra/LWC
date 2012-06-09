@@ -46,6 +46,6 @@ public interface CommandHandler {
      * @param object
      * @return a List of all of the commands registered
      */
-    public List<Command> registerCommands(Object object);
+    public List<Command> registerCommands(Object object) throws CommandException;
 
 }
