@@ -29,6 +29,11 @@
 package com.griefcraft.command;
 
 import com.griefcraft.cache.LRUCache;
+import com.griefcraft.command.Command;
+import com.griefcraft.command.CommandContext;
+import com.griefcraft.command.CommandException;
+import com.griefcraft.command.CommandHandler;
+import com.griefcraft.command.CommandSender;
 import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.Tuple;
 
