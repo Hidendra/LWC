@@ -55,11 +55,4 @@ public interface LWC {
      */
     public Configuration getConfiguration();
 
-    /**
-     * Log a message to the logger
-     *
-     * @param message
-     */
-    public void log(String message);
-
 }

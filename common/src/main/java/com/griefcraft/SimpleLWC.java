@@ -34,7 +34,10 @@ import com.griefcraft.command.SimpleCommandHandler;
 import com.griefcraft.commands.BaseCommands;
 import com.griefcraft.configuration.Configuration;
 
+import java.util.logging.Logger;
+
 public class SimpleLWC implements LWC {
+    private Logger logger = Logger.getLogger("LWC");
 
     /**
      * The command handler
@@ -87,10 +90,6 @@ public class SimpleLWC implements LWC {
 
     public Configuration getConfiguration() {
         return configuration;
-    }
-    
-    public void log(String message) {
-        System.out.println("[LWC] " + message);
     }
 
     /**

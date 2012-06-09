@@ -47,8 +47,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class BukkitPlugin extends JavaPlugin implements Listener {
+    private Logger logger = null;
 
     /**
      * The LWC object
@@ -113,6 +115,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        logger = this.getLogger();
 
         // Create a new lwc object
         lwc = SimpleLWC.createLWC(new BukkitConsoleCommandSender(getServer().getConsoleSender()), new BukkitConfiguration(this));
@@ -153,7 +156,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
             }
         } catch (CommandException e) {
             // Notify the console
-            lwc.log("An error was encountered while processing a command: " + e.getMessage());
+            logger.info("An error was encountered while processing a command: " + e.getMessage());
             e.printStackTrace();
 
             // Notify the player / console
