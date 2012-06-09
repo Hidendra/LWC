@@ -178,7 +178,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
         // Remove a prepended /
         if (message.startsWith("/")) {
             if (message.length() == 1) {
-                message = ""; // avoid a out of bounds exception
+                return "";
             } else {
                 message = message.substring(1);
             }
