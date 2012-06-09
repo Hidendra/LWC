@@ -6,7 +6,7 @@
     <name>LWC-Bukkit</name>
     <url>griefcraft.com</url>
     <packaging>jar</packaging>
-    <version>UNSTABLE-SNAPSHOT</version>
+    <version>0.00</version>
 
     <parent>
         <groupId>com.griefcraft</groupId>
@@ -48,7 +48,7 @@
     </dependencies>
 
     <build>
-        <finalName>${project.name}-${project.version}</finalName>
+        <finalName>${project.name}-UNSTABLE-SNAPSHOT</finalName>
         <defaultGoal>clean package</defaultGoal>
 
         <resources>
