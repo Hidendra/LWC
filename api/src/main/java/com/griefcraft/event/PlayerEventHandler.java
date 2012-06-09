@@ -30,6 +30,7 @@ package com.griefcraft.event;
 
 import com.griefcraft.event.notifiers.BlockEventNotifier;
 import com.griefcraft.event.notifiers.ProtectionEventNotifier;
+import com.griefcraft.util.Tuple;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,9 +55,17 @@ public class PlayerEventHandler {
     }
 
     /**
-     * The event notifiers
+     * The map of non-temporary event notifiers
      */
     private final Map<Type, List<EventNotifier>> notifiers = new HashMap<Type, List<EventNotifier>>();
+
+    /**
+     * We only allow one temporary event notifier to prevent large amounts of cascading event calls.
+     * By design it is safe to assume that a temporary event notifier is normally for when we want
+     * the player to execute an action. If it's overridden by another temporary notifier, then
+     * it can be assumed that they want to do something else instead.
+     */
+    private Tuple<Type, EventNotifier<?>> temporaryEventNotifier = null;
 
     /**
      * Queue the notifier to be called next time the player interacts with a protection
@@ -87,6 +96,22 @@ public class PlayerEventHandler {
      * @throws EventException
      */
     protected boolean callEvent(Type type, Event event) throws EventException {
+        // Check temporary notifier
+        if (temporaryEventNotifier != null) {
+            Type tempType = temporaryEventNotifier.first();
+
+            if (type == tempType) {
+                EventNotifier<?> notifier = temporaryEventNotifier.second();
+
+                // remove the temporary notifier association before calling it
+                temporaryEventNotifier = null;
+
+                if (internalCallEvent(event, notifier)) {
+                    return true;
+                }
+            }
+        }
+
         List<EventNotifier> notifiers = this.notifiers.get(type);
 
         if (notifiers == null) {
@@ -106,15 +131,29 @@ public class PlayerEventHandler {
             // We call the event after removing it because it can throw an exception
             // So we want to make sure it is removed incase it constantly throws
             // the exception
-            try {
-                boolean result = notifier.unsafeCall(event);
+            return internalCallEvent(event, notifier);
+        }
 
-                if (result) {
-                    return true;
-                }
-            } catch (Exception e) {
-                throw new EventException("Event notifier threw an exception!", e);
+        return false;
+    }
+
+    /**
+     * Call an event on the event notifier and return the result
+     *
+     * @param event
+     * @param notifier
+     * @return
+     * @throws EventException
+     */
+    private boolean internalCallEvent(Event event, EventNotifier notifier) throws EventException {
+        try {
+            boolean result = notifier.unsafeCall(event);
+
+            if (result) {
+                return true;
             }
+        } catch (Exception e) {
+            throw new EventException("Event notifier threw an exception!", e);
         }
 
         return false;
@@ -132,6 +171,12 @@ public class PlayerEventHandler {
         }
         if (notifier == null) {
             throw new IllegalArgumentException("Event notifier cannot be null");
+        }
+
+        // handle temporary notifiers separately
+        if (notifier.isTemporary()) {
+            temporaryEventNotifier = new Tuple<Type, EventNotifier<?>>(type, notifier);
+            return;
         }
 
         // Make sure a list is available for us to write into
