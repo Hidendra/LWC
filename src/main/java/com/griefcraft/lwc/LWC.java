@@ -447,9 +447,9 @@ public class LWC {
             Block doubleChestBlock = findAdjacentBlock(block, Material.CHEST);
             ContainerBlock containerBlock = (ContainerBlock) blockState;
 
-        if (itemStack.getAmount() <= 0) {
-            return new HashMap<Integer, ItemStack>();
-        }
+            if (itemStack.getAmount() <= 0) {
+                return new HashMap<Integer, ItemStack>();
+            }
 
             Map<Integer, ItemStack> remaining = containerBlock.getInventory().addItem(itemStack);
 
