@@ -52,6 +52,6 @@ public class CanaryWorld implements com.griefcraft.world.World {
             return null;
         }
 
-        return new CanaryBlock(block);
+        return new CanaryBlock(this, block);
     }
 }

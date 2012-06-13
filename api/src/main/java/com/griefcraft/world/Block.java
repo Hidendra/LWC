@@ -43,6 +43,12 @@ public interface Block {
     public byte getData();
 
     /**
+     * Get the world this block is located in
+     * @return
+     */
+    public World getWorld();
+
+    /**
      * Gets the block's x coordinate
      * 
      * @return
@@ -76,5 +82,11 @@ public interface Block {
      * @param data
      */
     public void setData(byte data);
+
+    /**
+     * Get the block's current location
+     * @return
+     */
+    public Location getLocation();
 
 }

@@ -58,6 +58,6 @@ public class BukkitWorld implements World {
             return null;
         }
 
-        return new BukkitBlock(blockHandle);
+        return new BukkitBlock(this, blockHandle);
     }
 }

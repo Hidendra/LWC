@@ -32,6 +32,7 @@ import com.griefcraft.bukkit.BukkitPlugin;
 import com.griefcraft.bukkit.world.BukkitBlock;
 import com.griefcraft.player.Player;
 import com.griefcraft.world.Block;
+import com.griefcraft.world.World;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -51,7 +52,8 @@ public class PlayerListener implements Listener {
     @EventHandler( ignoreCancelled = true )
     public void playerInteract(PlayerInteractEvent event) {
         Player player = plugin.wrapPlayer(event.getPlayer());
-        Block block = new BukkitBlock(event.getClickedBlock());
+        World world = plugin.loadWorld(event.getPlayer().getWorld().getName());
+        Block block = new BukkitBlock(world, event.getClickedBlock());
 
         // send the event for the player around the plugin (and maybe other plugins, too.)
         boolean result = player.getEventDelegate().onPlayerInteract(block);

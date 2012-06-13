@@ -29,6 +29,7 @@
 package com.griefcraft.sql;
 
 import com.griefcraft.model.Protection;
+import com.griefcraft.world.Location;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -166,17 +167,17 @@ public class JDBCDatabase implements Database {
         return connection.prepareStatement("INSERT INTO " + details.getPrefix() + table + " " + query);
     }
 
-    public Protection createProtection(Protection.Type type, String owner, String world, int x, int y, int z) {
+    public Protection createProtection(Protection.Type type, String owner, Location location) {
         try {
             PreparedStatement statement = prepareInsertQuery("protections", "(type, owner, world, x, y, z, updated, created) VALUES (?, ?, ?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()");
 
             try {
                 statement.setInt(1, type.ordinal());
                 statement.setString(2, owner);
-                statement.setString(3, world);
-                statement.setInt(4, x);
-                statement.setInt(5, y);
-                statement.setInt(6, z);
+                statement.setString(3, location.getWorld().getName());
+                statement.setInt(4, location.getBlockX());
+                statement.setInt(5, location.getBlockY());
+                statement.setInt(6, location.getBlockZ());
                 statement.executeUpdate();
             } finally {
                 statement.close();
@@ -188,8 +189,8 @@ public class JDBCDatabase implements Database {
         return null;
     }
 
-    public Protection loadProtection(String player) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public Protection loadProtection(Location location) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public Protection loadProtection(int id) {

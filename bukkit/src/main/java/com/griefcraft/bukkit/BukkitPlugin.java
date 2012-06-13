@@ -34,10 +34,12 @@ import com.griefcraft.bukkit.command.BukkitConsoleCommandSender;
 import com.griefcraft.bukkit.configuration.BukkitConfiguration;
 import com.griefcraft.bukkit.listeners.PlayerListener;
 import com.griefcraft.bukkit.player.BukkitPlayer;
+import com.griefcraft.bukkit.world.BukkitWorld;
 import com.griefcraft.command.CommandContext;
 import com.griefcraft.command.CommandException;
 import com.griefcraft.command.CommandSender;
 import com.griefcraft.player.Player;
+import com.griefcraft.world.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -64,6 +66,11 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
     private final Map<String, Player> players = new HashMap<String, Player>();
 
     /**
+     * A map of the worlds
+     */
+    private final Map<String, World> worlds = new HashMap<String, World>();
+
+    /**
      * Wrap a player object to a native version we can work with
      *
      * @param player
@@ -83,6 +90,30 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
         Player lPlayer = new BukkitPlayer(lwc, player);
         players.put(playerName, lPlayer);
         return lPlayer;
+    }
+
+    /**
+     * Load a world and return the handle for it. Does not create unloaded worlds.
+     *
+     * @param worldName
+     * @return
+     */
+    public World loadWorld(String worldName) {
+        World world = worlds.get(worldName);
+
+        if (world != null) {
+            return world;
+        }
+
+        // get the world handle
+        org.bukkit.World handle = getServer().getWorld(worldName);
+
+        // no world
+        if (handle == null) {
+            return null;
+        }
+
+        return new BukkitWorld(handle);
     }
 
     /**

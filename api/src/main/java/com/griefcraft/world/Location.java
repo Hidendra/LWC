@@ -26,63 +26,92 @@
  * either expressed or implied, of anybody else.
  */
 
-import com.griefcraft.world.Location;
-import com.griefcraft.world.World;
+package com.griefcraft.world;
 
-public class CanaryBlock implements com.griefcraft.world.Block {
-
-    /**
-     * The block handle
-     */
-    private Block handle;
+public final class Location {
 
     /**
-     * The local world handle
+     * The world this location is situated in
      */
-    private World world;
-    
-    public CanaryBlock(World world, Block handle) {
-        if (handle == null) {
-            throw new IllegalArgumentException("Block handle cannot be null");
-        }
+    private final World world;
 
-        this.handle = handle;
+    /**
+     * The x coordinate
+     */
+    private final double x;
+
+    /**
+     * The y coordinate
+     */
+    private final double y;
+
+    /**
+     * The z coordinate
+     */
+    private final double z;
+
+    public Location(World world, double x, double y, double z) {
         this.world = world;
-    }
-    
-    public int getType() {
-        return handle.getType();
-    }
-
-    public byte getData() {
-        return (byte) handle.getData();
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
+    /**
+     * Get the block x coordinate
+     * @return
+     */
+    public int getBlockX() {
+        return (int) x;
+    }
+
+    /**
+     * Get the block y coordinate
+     * @return
+     */
+    public int getBlockY() {
+        return (int) y;
+    }
+
+    /**
+     * Get the block z coordinate
+     * @return
+     */
+    public int getBlockZ() {
+        return (int) z;
+    }
+
+    /**
+     * Get the world the location is in
+     * @return
+     */
     public World getWorld() {
         return world;
     }
 
-    public int getX() {
-        return handle.getX();
+    /**
+     * Get the x coordinate
+     * @return
+     */
+    public double getX() {
+        return x;
     }
 
-    public int getY() {
-        return handle.getY();
+    /**
+     * Get the y coordinate
+     * @return
+     */
+    public double getY() {
+        return y;
     }
 
-    public int getZ() {
-        return handle.getZ();
+    /**
+     * Get the z coordinate
+     *
+     * @return
+     */
+    public double getZ() {
+        return z;
     }
 
-    public void setType(int type) {
-        handle.setType(type);
-    }
-
-    public void setData(byte data) {
-        handle.setData(data);
-    }
-
-    public com.griefcraft.world.Location getLocation() {
-        return new Location(world, getX(), getY(), getZ());
-    }
 }

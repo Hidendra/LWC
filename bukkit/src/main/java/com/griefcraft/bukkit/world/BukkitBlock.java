@@ -29,6 +29,8 @@
 package com.griefcraft.bukkit.world;
 
 import com.griefcraft.world.Block;
+import com.griefcraft.world.Location;
+import com.griefcraft.world.World;
 
 // TODO implement hashCode / equals
 public class BukkitBlock implements Block {
@@ -38,7 +40,12 @@ public class BukkitBlock implements Block {
      */
     private final org.bukkit.block.Block handle;
 
-    public BukkitBlock(org.bukkit.block.Block handle) {
+    /**
+     * The world this block is located in
+     */
+    private World world;
+
+    public BukkitBlock(World world, org.bukkit.block.Block handle) {
         if (handle == null) {
             throw new IllegalArgumentException("Block handle cannot be null");
         }
@@ -52,6 +59,10 @@ public class BukkitBlock implements Block {
 
     public byte getData() {
         return handle.getData();
+    }
+
+    public World getWorld() {
+        return world;
     }
 
     public int getX() {
@@ -72,5 +83,9 @@ public class BukkitBlock implements Block {
 
     public void setData(byte data) {
         handle.setData(data);
+    }
+
+    public Location getLocation() {
+        return new Location(world, getX(), getY(), getZ());
     }
 }
