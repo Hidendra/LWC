@@ -42,6 +42,7 @@ public class MobArena extends JavaModule {
      */
     private com.garbagemule.MobArena.MobArena mobarena;
 
+    @Override
     public void load(LWC lwc) {
         Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("MobArena");
 
