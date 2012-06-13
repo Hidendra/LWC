@@ -26,7 +26,7 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.dao;
+package com.griefcraft.model;
 
 import com.griefcraft.world.World;
 
@@ -67,6 +67,13 @@ public abstract class Protection extends AbstractSavable {
      * @return
      */
     public abstract Type getType();
+
+    /**
+     * Get the protection's owner
+     *
+     * @return
+     */
+    public abstract String getOwner();
 
     /**
      * Get the protection's x coordinate

@@ -28,7 +28,7 @@
 
 package com.griefcraft.event.events;
 
-import com.griefcraft.dao.Protection;
+import com.griefcraft.model.Protection;
 import com.griefcraft.event.Event;
 
 public class ProtectionEvent implements Event {

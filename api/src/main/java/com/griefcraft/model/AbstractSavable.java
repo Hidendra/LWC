@@ -26,7 +26,7 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.dao;
+package com.griefcraft.model;
 
 /**
  * Represents an object that can be saved to the database

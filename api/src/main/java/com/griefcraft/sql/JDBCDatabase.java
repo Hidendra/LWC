@@ -28,7 +28,7 @@
 
 package com.griefcraft.sql;
 
-import com.griefcraft.dao.Protection;
+import com.griefcraft.model.Protection;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

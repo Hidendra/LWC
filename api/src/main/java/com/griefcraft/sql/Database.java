@@ -28,7 +28,7 @@
 
 package com.griefcraft.sql;
 
-import com.griefcraft.dao.Protection;
+import com.griefcraft.model.Protection;
 
 public interface Database {
 
@@ -48,7 +48,7 @@ public interface Database {
     public boolean isConnected();
 
     /**
-     * Create a protection in the world. The {@link com.griefcraft.dao.Protection} object returned by this method
+     * Create a protection in the world. The {@link com.griefcraft.model.Protection} object returned by this method
      * can be considered to be in the database already.
      *
      * @param type

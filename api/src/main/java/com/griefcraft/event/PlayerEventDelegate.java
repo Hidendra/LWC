@@ -29,7 +29,7 @@
 package com.griefcraft.event;
 
 import com.griefcraft.LWC;
-import com.griefcraft.dao.Protection;
+import com.griefcraft.model.Protection;
 import com.griefcraft.event.events.BlockEvent;
 import com.griefcraft.event.events.ProtectionEvent;
 import com.griefcraft.player.Player;
