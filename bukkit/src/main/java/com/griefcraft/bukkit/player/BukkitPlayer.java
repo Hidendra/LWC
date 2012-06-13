@@ -29,11 +29,18 @@
 package com.griefcraft.bukkit.player;
 
 import com.griefcraft.LWC;
+import com.griefcraft.bukkit.BukkitPlugin;
 import com.griefcraft.event.PlayerEventDelegate;
 import com.griefcraft.player.Player;
 import com.griefcraft.util.Color;
+import com.griefcraft.world.Location;
 
 public class BukkitPlayer extends Player {
+
+    /**
+     * The plugin object
+     */
+    private final BukkitPlugin plugin;
 
     /**
      * The player handle
@@ -45,17 +52,25 @@ public class BukkitPlayer extends Player {
      */
     private final PlayerEventDelegate eventDelegate;
     
-    public BukkitPlayer(LWC lwc, org.bukkit.entity.Player handle) {
+    public BukkitPlayer(LWC lwc, BukkitPlugin plugin, org.bukkit.entity.Player handle) {
         if (handle == null) {
             throw new IllegalArgumentException("Player handle cannot be null");
         }
 
+        this.plugin = plugin;
         this.handle = handle;
         this.eventDelegate = new PlayerEventDelegate(lwc, this);
     }
 
+    @Override
     public String getName() {
         return handle.getName();
+    }
+
+    @Override
+    public Location getLocation() {
+        org.bukkit.Location lhandle = handle.getLocation();
+        return new Location(plugin.loadWorld(lhandle.getWorld().getName()), lhandle.getX(), lhandle.getY(), lhandle.getZ());
     }
 
     @Override

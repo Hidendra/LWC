@@ -87,7 +87,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
             return players.get(playerName);
         }
 
-        Player lPlayer = new BukkitPlayer(lwc, player);
+        Player lPlayer = new BukkitPlayer(lwc, this, player);
         players.put(playerName, lPlayer);
         return lPlayer;
     }

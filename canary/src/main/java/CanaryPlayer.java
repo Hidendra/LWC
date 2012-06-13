@@ -27,6 +27,7 @@
  */
 
 import com.griefcraft.event.PlayerEventDelegate;
+import com.griefcraft.world.Location;
 
 public class CanaryPlayer extends com.griefcraft.player.Player {
 
@@ -52,6 +53,12 @@ public class CanaryPlayer extends com.griefcraft.player.Player {
 
     public String getName() {
         return handle.getName();
+    }
+
+    @Override
+    public Location getLocation() {
+        // TODO cache the world somewhere else
+        return new Location(new CanaryWorld(handle.getWorld()), handle.getX(), handle.getY(), handle.getZ());
     }
 
     @Override

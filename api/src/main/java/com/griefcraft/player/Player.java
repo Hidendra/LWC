@@ -31,6 +31,7 @@ package com.griefcraft.player;
 import com.griefcraft.command.CommandSender;
 import com.griefcraft.event.PlayerEventDelegate;
 import com.griefcraft.event.PlayerEventHandler;
+import com.griefcraft.world.Location;
 
 public abstract class Player extends PlayerEventHandler implements CommandSender {
 
@@ -40,6 +41,12 @@ public abstract class Player extends PlayerEventHandler implements CommandSender
      * @return
      */
     public abstract String getName();
+
+    /**
+     * Get the player's current location
+     * @return
+     */
+    public abstract Location getLocation();
 
     /**
      * The player's event delegate, used to broadcast events about their actions
