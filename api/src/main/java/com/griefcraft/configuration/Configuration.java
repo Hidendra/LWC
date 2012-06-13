@@ -81,6 +81,23 @@ public interface Configuration {
     public int getInt(String key, int defaultValue);
 
     /**
+     * Gets a double from the configuration
+     *
+     * @param key
+     * @return
+     */
+    public double getDouble(String key);
+
+    /**
+     * Gets a double from the configuration using the default value if it does not exist
+     *
+     * @param key
+     * @param defaultValue
+     * @return
+     */
+    public double getDouble(String key, double defaultValue);
+
+    /**
      * Save the configuration file
      */
     public void save() throws IOException;

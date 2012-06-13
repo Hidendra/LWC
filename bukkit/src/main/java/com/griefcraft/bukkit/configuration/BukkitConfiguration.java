@@ -81,6 +81,14 @@ public class BukkitConfiguration implements Configuration {
         return configuration.getInt(key, defaultValue);
     }
 
+    public double getDouble(String key) {
+        return configuration.getDouble(key);
+    }
+
+    public double getDouble(String key, double defaultValue) {
+        return configuration.getDouble(key, defaultValue);
+    }
+
     public void save() throws IOException {
         plugin.saveConfig();
     }
