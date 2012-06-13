@@ -35,6 +35,12 @@ import com.griefcraft.configuration.Configuration;
 public interface LWC {
 
     /**
+     * Get the API version
+     * @return
+     */
+    public String getAPIVersion();
+
+    /**
      * Get the command handler
      *
      * @return
