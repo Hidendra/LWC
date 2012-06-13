@@ -90,13 +90,14 @@ import com.griefcraft.modules.modes.PersistModule;
 import com.griefcraft.modules.modify.ModifyModule;
 import com.griefcraft.modules.owners.OwnersModule;
 import com.griefcraft.modules.pluginsupport.MobArena;
+import com.griefcraft.modules.pluginsupport.Towny;
+import com.griefcraft.modules.pluginsupport.WorldGuard;
 import com.griefcraft.modules.redstone.RedstoneModule;
 import com.griefcraft.modules.setup.BaseSetupModule;
 import com.griefcraft.modules.setup.DatabaseSetupModule;
 import com.griefcraft.modules.setup.LimitsSetup;
-import com.griefcraft.modules.towny.TownyModule;
+import com.griefcraft.modules.pluginsupport.Towny;
 import com.griefcraft.modules.unlock.UnlockModule;
-import com.griefcraft.modules.worldguard.WorldGuardModule;
 import com.griefcraft.scripting.Module;
 import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.scripting.event.LWCAccessEvent;
@@ -1485,11 +1486,11 @@ public class LWC {
 
         // non-core modules but are included with LWC anyway
         if (resolvePlugin("WorldGuard") != null) {
-            registerModule(new WorldGuardModule());
+            registerModule(new WorldGuard());
         }
 
         if (resolvePlugin("Towny") != null) {
-            registerModule(new TownyModule());
+            registerModule(new Towny());
         }
     }
 
