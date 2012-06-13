@@ -29,7 +29,7 @@
 package com.griefcraft.migration;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.modules.worldguard.WorldGuardModule;
+import com.griefcraft.modules.pluginsupport.WorldGuard;
 import org.bukkit.Material;
 
 import java.io.File;
@@ -129,7 +129,7 @@ public class ConfigPost300 implements MigrationUtility {
         String enforceWorldGuard = old.getProperty("enforce-worldguard-regions");
 
         if (Boolean.parseBoolean(enforceWorldGuard)) {
-            WorldGuardModule worldGuard = (WorldGuardModule) lwc.getModuleLoader().getModule(WorldGuardModule.class);
+            WorldGuard worldGuard = (WorldGuard) lwc.getModuleLoader().getModule(WorldGuard.class);
             List<String> regions = null;
 
             String oldRegions = old.getProperty("worldguard-allowed-regions");
