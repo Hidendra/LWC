@@ -32,6 +32,7 @@ import com.griefcraft.model.Protection;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -143,8 +144,48 @@ public class JDBCDatabase implements Database {
         return false;
     }
 
+    /**
+     * Handle an exception thrown by this class
+     *
+     * @param e
+     */
+    private void handleException(SQLException e) {
+        // TOOD
+        e.printStackTrace();
+    }
+
+    /**
+     * Prepare an insert query
+     *
+     * @param table
+     * @param query
+     * @return
+     * @throws SQLException
+     */
+    private PreparedStatement prepareInsertQuery(String table, String query) throws SQLException {
+        return connection.prepareStatement("INSERT INTO " + details.getPrefix() + table + " " + query);
+    }
+
     public Protection createProtection(Protection.Type type, String owner, String world, int x, int y, int z) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        try {
+            PreparedStatement statement = prepareInsertQuery("protections", "(type, owner, world, x, y, z, updated, created) VALUES (?, ?, ?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()");
+
+            try {
+                statement.setInt(1, type.ordinal());
+                statement.setString(2, owner);
+                statement.setString(3, world);
+                statement.setInt(4, x);
+                statement.setInt(5, y);
+                statement.setInt(6, z);
+                statement.executeUpdate();
+            } finally {
+                statement.close();
+            }
+        } catch (SQLException e) {
+            handleException(e);
+        }
+
+        return null;
     }
 
     public Protection loadProtection(String player) {
@@ -173,9 +214,9 @@ public class JDBCDatabase implements Database {
         /**
          * The connection details
          */
-        private final String hostname, database, username, password;
+        private final String hostname, database, prefix, username, password;
         
-        public JDBCConnectionDetails(Driver driver, String hostname, String database, String username, String password) {
+        public JDBCConnectionDetails(Driver driver, String hostname, String database, String prefix, String username, String password) {
             if (driver == null) {
                 throw new IllegalArgumentException("JDBC Driver cannot be null");
             }
@@ -195,6 +236,7 @@ public class JDBCDatabase implements Database {
             this.driver = driver;
             this.hostname = hostname;
             this.database = database;
+            this.prefix = prefix;
             this.username = username;
             this.password = password;
         }
@@ -224,6 +266,15 @@ public class JDBCDatabase implements Database {
          */
         public String getDatabase() {
             return database;
+        }
+
+        /**
+         * Get the table prefix
+         *
+         * @return
+         */
+        public String getPrefix() {
+            return prefix;
         }
 
         /**
