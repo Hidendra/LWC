@@ -81,7 +81,7 @@ public class Color {
             char forward = chrarray[index + 1];
             
             // is it in range?
-            if ((forward >= '0' && forward <= '9') || (forward >= 'a' && forward <= 'f')) {
+            if ((forward >= '0' && forward <= '9') || (forward >= 'a' && forward <= 'f') || (forward >= 'k' && forward <= 'r')) {
                 // It is! Replace the char we are at now with the escape sequence
                 chrarray[index] = ESCAPE;
             }
