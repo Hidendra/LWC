@@ -82,7 +82,7 @@ public class SimpleLWC implements LWC {
     }
 
     public String getBackendVersion() {
-        return "v5-volatile-test";
+        return "v5-volatile-test (Java)";
     }
 
     public CommandHandler getCommandHandler() {
