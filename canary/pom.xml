@@ -28,9 +28,9 @@
         <dependency>
             <groupId>net.canarymod</groupId>
             <artifactId>crow</artifactId>
-            <version>4.6.10</version>
+            <version>4.10.10</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/../lib/CanaryMod.jar</systemPath>
+            <systemPath>${project.basedir}/../lib/CanaryMod-4.10.10.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

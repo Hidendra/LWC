@@ -1,7 +1,5 @@
 # Building LWC
 
-    git clone git://github.com/Hidendra/LWC.git
-    cd LWC
-    ant
+    mvn
 
-Distribution files (e.g LWC.jar and LWC-Economy.jar) will be located in the `build/` folder
+Distribution files will be located in their respective target folders. For example, for Bukkit, this is `bukkit/target/LWC-Bukkit-XX.jar`
