@@ -81,7 +81,7 @@ public class SimpleLWC implements LWC {
         return new SimpleLWC(consoleSender, configuration);
     }
 
-    public String getAPIVersion() {
+    public String getBackendVersion() {
         return "v5-volatile-test";
     }
 
