@@ -28,37 +28,16 @@
 
 package com.griefcraft;
 
-import com.griefcraft.command.CommandHandler;
-import com.griefcraft.command.ConsoleCommandSender;
-import com.griefcraft.configuration.Configuration;
-
-public interface LWC {
+public enum Game {
 
     /**
-     * Get the API version
-     * @return
+     * Minecraft - http://minecraft.net
      */
-    public String getBackendVersion();
+    MINECRAFT,
 
     /**
-     * Get the command handler
-     *
-     * @return
+     * Terraria - http://terraria.org
      */
-    public CommandHandler getCommandHandler();
-
-    /**
-     * Get the console sender, used to send messages to the console
-     *
-     * @return
-     */
-    public ConsoleCommandSender getConsoleSender();
-
-    /**
-     * Gets the configuration file
-     *
-     * @return
-     */
-    public Configuration getConfiguration();
+    TERRARIA
 
 }

@@ -28,37 +28,58 @@
 
 package com.griefcraft;
 
-import com.griefcraft.command.CommandHandler;
-import com.griefcraft.command.ConsoleCommandSender;
-import com.griefcraft.configuration.Configuration;
-
-public interface LWC {
+public enum ServerMod {
 
     /**
-     * Get the API version
-     * @return
+     * TODO -- not even released
+     * Official Minecraft Mod API
      */
-    public String getBackendVersion();
+    MCAPI (Game.MINECRAFT),
 
     /**
-     * Get the command handler
-     *
-     * @return
+     * Bukkit - http://bukkit.org
      */
-    public CommandHandler getCommandHandler();
+    BUKKIT (Game.MINECRAFT),
 
     /**
-     * Get the console sender, used to send messages to the console
-     *
-     * @return
+     * TODO -- not implemented
+     * Spout - http://spout.org
      */
-    public ConsoleCommandSender getConsoleSender();
+    SPOUT (Game.MINECRAFT),
 
     /**
-     * Gets the configuration file
-     *
+     * TODO -- partially implemented
+     * Canary, the hMod successfor - http://canarymod.net
+     */
+    CANARY (Game.MINECRAFT),
+
+    /**
+     * TDSM - http://tdsm.org
+     */
+    TDSM (Game.TERRARIA),
+
+    /**
+     * TODO -- not implemented, TBD after testing with TDSM
+     * TShock - http://tshock.co
+     */
+    TSHOCK (Game.TERRARIA) ;
+
+    /**
+     * The game this mod is for
+     */
+    private Game game;
+
+    ServerMod(Game game) {
+        this.game = game;
+    }
+
+    /**
+     * Get the game this mod is for
      * @return
      */
-    public Configuration getConfiguration();
+    public Game game() {
+        return game;
+    }
+
 
 }
