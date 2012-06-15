@@ -70,16 +70,6 @@ public abstract class ServerLayer {
     public abstract World getDefaultWorld();
 
     /**
-     * Override a jdbc driver. If this returns null, the default method of resolving the driver is done
-     *
-     * @param driver
-     * @return
-     */
-    public Driver overrideJDBCDriver(JDBCDatabase.Driver driver) {
-        return null;
-    }
-
-    /**
      * Get a player from the server
      *
      * @param playerName
@@ -117,6 +107,16 @@ public abstract class ServerLayer {
         }
 
         return world;
+    }
+
+    /**
+     * Override a jdbc driver. If this returns null, the default method of resolving the driver is done
+     *
+     * @param driver
+     * @return
+     */
+    public Driver overrideJDBCDriver(JDBCDatabase.Driver driver) {
+        return null;
     }
 
 }
