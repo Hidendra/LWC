@@ -81,8 +81,12 @@ public class BaseCommands {
         player.onBlockInteract(new BlockEventNotifier() {
             @Override
             public boolean call(BlockEvent event) {
-                lwc.getDatabase().createProtection(Protection.Type.PRIVATE, player.getName(), event.getBlock().getLocation());
-                player.sendMessage("Protected~");
+                Protection protection = lwc.getDatabase().createProtection(Protection.Type.PRIVATE, player.getName(), event.getBlock().getLocation());
+                if (protection != null) {
+                    player.sendMessage("Protected~");
+                } else {
+                    player.sendMessage("Failed to protect for some reason ?");
+                }
                 return true;
             }
         });

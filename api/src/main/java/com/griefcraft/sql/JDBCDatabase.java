@@ -188,7 +188,7 @@ public class JDBCDatabase implements Database {
 
     public Protection createProtection(Protection.Type type, String owner, Location location) {
         try {
-            PreparedStatement statement = prepareInsertQuery("protections", "(type, owner, world, x, y, z, updated, created) VALUES (?, ?, ?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()");
+            PreparedStatement statement = prepareInsertQuery("protections", "(type, owner, world, x, y, z, updated, created) VALUES (?, ?, ?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())");
 
             try {
                 statement.setInt(1, type.ordinal());
@@ -221,7 +221,9 @@ public class JDBCDatabase implements Database {
                 ResultSet set = statement.executeQuery();
 
                 try {
-                    return resolveProtection(set);
+                    if (set.next()) {
+                        return resolveProtection(set);
+                    }
                 } finally {
                     set.close();
                 }
