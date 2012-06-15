@@ -32,11 +32,11 @@ package com.griefcraft.commands;
 import com.griefcraft.LWC;
 import com.griefcraft.command.Command;
 import com.griefcraft.command.CommandContext;
-import com.griefcraft.command.CommandSender;
+import com.griefcraft.command.SenderType;
+import com.griefcraft.entity.Player;
 import com.griefcraft.event.events.BlockEvent;
 import com.griefcraft.event.notifiers.BlockEventNotifier;
 import com.griefcraft.model.Protection;
-import com.griefcraft.entity.Player;
 
 /**
  * A test of commands used mainly for testing
@@ -67,16 +67,11 @@ public class BaseCommands {
     @Command(
             command = "lwc create private",
             permission = "lwc.create.private",
-            aliases = { "cprivate" }
+            aliases = { "cprivate" },
+            accepts = SenderType.PLAYER
     )
     public void createPrivateProtection(CommandContext context) {
-        CommandSender sender = context.getCommandSender();
-
-        if (!(sender instanceof Player)) {
-            return;
-        }
-
-        final Player player = (Player) sender;
+        final Player player = (Player) context.getCommandSender();
         player.sendMessage("Click on a block to protect it!");
 
         player.onBlockInteract(new BlockEventNotifier() {
@@ -96,16 +91,11 @@ public class BaseCommands {
     @Command(
             command = "lwc test",
             permission = "lwc.test",
-            aliases = { "ctest" }
+            aliases = { "ctest" },
+            accepts = SenderType.PLAYER
     )
     public void lwcTest(CommandContext context) {
-        CommandSender sender = context.getCommandSender();
-
-        if (!(sender instanceof Player)) {
-            return;
-        }
-
-        final Player player = (Player) sender;
+        final Player player = (Player) context.getCommandSender();
         player.sendMessage("Click on a block, please!~");
 
         // Wait for them to click on the block

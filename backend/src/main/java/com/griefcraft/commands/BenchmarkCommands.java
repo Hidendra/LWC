@@ -32,6 +32,7 @@ package com.griefcraft.commands;
 import com.griefcraft.LWC;
 import com.griefcraft.command.Command;
 import com.griefcraft.command.CommandContext;
+import com.griefcraft.command.SenderType;
 import com.griefcraft.model.Protection;
 import com.griefcraft.world.Location;
 
@@ -49,7 +50,8 @@ public class BenchmarkCommands {
     }
 
     @Command(
-            command = "lwc test insert"
+            command = "lwc test insert",
+            accepts = SenderType.CONSOLE
     )
     public void insertTest(CommandContext context) {
         lwc.getConsoleSender().sendMessage("Inserting 10,000 random protections");
@@ -64,7 +66,8 @@ public class BenchmarkCommands {
     }
 
     @Command(
-            command = "lwc test select"
+            command = "lwc test select",
+            accepts = SenderType.CONSOLE
     )
     public void selectTest(CommandContext context) {
         lwc.getConsoleSender().sendMessage("Selecting 10,000 random protections");

@@ -30,6 +30,7 @@
 package com.griefcraft.command;
 
 import com.griefcraft.cache.LRUCache;
+import com.griefcraft.entity.Player;
 import com.griefcraft.util.StringUtils;
 import com.griefcraft.util.Tuple;
 
@@ -220,6 +221,14 @@ public class SimpleCommandHandler implements CommandHandler {
             context.setArguments(joined);
         }
 
+        // verify accepts()
+        try {
+            verifySenderType(command, context);
+        } catch (CommandException e) {
+            context.getCommandSender().sendMessage("&4" + e.getMessage());
+            return;
+        }
+
         // Verify the command
         try {
             // Verify argument lengths
@@ -310,6 +319,26 @@ public class SimpleCommandHandler implements CommandHandler {
         }
 
         sender.sendMessage("&2Aliases:     " + text);
+    }
+
+    /**
+     * Verify the command's sender type (accepts())
+     *
+     * @param command
+     * @param context
+     * @throws CommandException
+     */
+    private void verifySenderType(Command command, CommandContext context) throws CommandException {
+        CommandSender sender = context.getCommandSender();
+        SenderType accepts = command.accepts();
+
+        if (accepts == SenderType.CONSOLE && sender instanceof Player) {
+            throw new CommandException("Only the console can use this command");
+        }
+
+        else if (accepts == SenderType.PLAYER && !(sender instanceof Player)) {
+            throw new CommandException("Only a player can use this command");
+        }
     }
 
     /**
