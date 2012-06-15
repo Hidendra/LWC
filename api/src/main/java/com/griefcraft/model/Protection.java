@@ -30,7 +30,7 @@ package com.griefcraft.model;
 
 import com.griefcraft.world.World;
 
-public abstract class Protection extends AbstractSavable {
+public class Protection extends AbstractSavable {
 
     /**
      * The protection's type
@@ -55,52 +55,152 @@ public abstract class Protection extends AbstractSavable {
     }
 
     /**
-     * Get the protection's internal database id
-     *
-     * @return
+     * The protection's internal id
      */
-    public abstract int getId();
+    private int id;
 
     /**
-     * Get the protection's type
-     *
-     * @return
+     * The protection's type
      */
-    public abstract Type getType();
+    private Type type;
 
     /**
-     * Get the protection's owner
-     *
-     * @return
+     * The protection's owner
      */
-    public abstract String getOwner();
+    private String owner;
 
     /**
-     * Get the protection's x coordinate
-     * 
-     * @return
+     * The world this protection is in
      */
-    public abstract int getX();
+    private World world;
 
     /**
-     * Get the protection's y coordinate
-     * 
-     * @return
+     * The x coordinate of the protection
      */
-    public abstract int getY();
+    private int x;
 
     /**
-     * Get the protection's z coordinate
-     * 
-     * @return
+     * The y coordinate of the protection
      */
-    public abstract int getZ();
+    private int y;
 
     /**
-     * Get the world the protection is in
-     *
-     * @return
+     * The z coordinate of the protection
      */
-    public abstract World getWorld();
+    private int z;
+
+    /**
+     * The unix timestamp of when the protection was last updated and/or accessed
+
+     */
+    private int updated;
+
+    /**
+     * The unix timestamp of when the protection was created
+     */
+    private int created;
+
+    /**
+     * If the protection has been modified
+     */
+    private boolean modified = false;
+
+    public Protection(int id) {
+        this.id = id;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+        modified = true;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+        modified = true;
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+        modified = true;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+        modified = true;
+    }
+
+    public void setZ(int z) {
+        this.z = z;
+        modified = true;
+    }
+
+    public void setUpdated(int updated) {
+        this.updated = updated;
+        modified = true;
+    }
+
+    public void setCreated(int created) {
+        this.created = created;
+        modified = true;
+    }
+
+    public void setModified(boolean modified) {
+        this.modified = modified;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getZ() {
+        return z;
+    }
+
+    public World getWorld() {
+        return world;
+    }
+
+    public int getUpdated() {
+        return updated;
+    }
+
+    public int getCreated() {
+        return created;
+    }
+
+    @Override
+    public void saveImmediately() {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public boolean isSaveNeeded() {
+        return modified;
+    }
+
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException("Not implemented");
+    }
 
 }

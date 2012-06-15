@@ -26,69 +26,78 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.bukkit.player;
+package com.griefcraft;
 
-import com.griefcraft.LWC;
-import com.griefcraft.bukkit.BukkitPlugin;
-import com.griefcraft.event.PlayerEventDelegate;
 import com.griefcraft.player.Player;
-import com.griefcraft.util.Color;
-import com.griefcraft.world.Location;
+import com.griefcraft.world.World;
 
-public class BukkitPlayer extends Player {
+import java.util.HashMap;
+import java.util.Map;
 
-    /**
-     * The plugin object
-     */
-    private final BukkitPlugin plugin;
+public abstract class ServerLayer {
 
     /**
-     * The player handle
+     * A map of all of the currently loaded players
      */
-    private final org.bukkit.entity.Player handle;
+    private final Map<String, Player> players = new HashMap<String, Player>();
 
     /**
-     * The player's event delegate
+     * A map of all of the currently known worlds
      */
-    private final PlayerEventDelegate eventDelegate;
-    
-    public BukkitPlayer(LWC lwc, BukkitPlugin plugin, org.bukkit.entity.Player handle) {
-        if (handle == null) {
-            throw new IllegalArgumentException("Player handle cannot be null");
+    private final Map<String, World> worlds = new HashMap<String, World>();
+
+    /**
+     * Load a player directly from the server without using any caches
+     *
+     * @param playerName
+     */
+    protected abstract Player internalGetPlayer(String playerName);
+
+    /**
+     * Load a world directly from the server without using any caches
+     *
+     * @param worldName
+     */
+    protected abstract World internalGetWorld(String worldName);
+
+    /**
+     * Get a player from the server
+     *
+     * @param playerName
+     * @return
+     */
+    public Player getPlayer(String playerName) {
+        if (players.containsKey(playerName)) {
+            return players.get(playerName);
         }
 
-        this.plugin = plugin;
-        this.handle = handle;
-        this.eventDelegate = new PlayerEventDelegate(lwc, this);
-    }
+        Player player = internalGetPlayer(playerName);
 
-    @Override
-    public String getName() {
-        return handle.getName();
-    }
-
-    @Override
-    public Location getLocation() {
-        org.bukkit.Location lhandle = handle.getLocation();
-        return new Location(plugin.getWorld(lhandle.getWorld().getName()), lhandle.getX(), lhandle.getY(), lhandle.getZ());
-    }
-
-    @Override
-    public PlayerEventDelegate getEventDelegate() {
-        return eventDelegate;
-    }
-
-    public void sendMessage(String message) {
-        for (String line : message.split("\n")) {
-            handle.sendMessage(Color.replaceColors(line));
+        if (player != null) {
+            players.put(playerName, player);
         }
+
+        return player;
     }
 
-    public void sendLocalizedMessage(String node, Object... args) {
-        throw new UnsupportedOperationException("sendLocalizedMessage is not implemented");
+    /**
+     * Get a world from the server
+     *
+     * @param worldName
+     * @return
+     */
+    public World getWorld(String worldName) {
+        if (worlds.containsKey(worldName)) {
+            return worlds.get(worldName);
+        }
+
+        World world = internalGetWorld(worldName);
+
+        if (world != null) {
+            worlds.put(worldName, world);
+        }
+
+        return world;
     }
 
-    public boolean hasPermission(String node) {
-        return handle.hasPermission(node);
-    }
 }

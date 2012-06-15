@@ -26,69 +26,45 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.bukkit.player;
+package com.griefcraft.bukkit;
 
-import com.griefcraft.LWC;
-import com.griefcraft.bukkit.BukkitPlugin;
-import com.griefcraft.event.PlayerEventDelegate;
+import com.griefcraft.ServerLayer;
+import com.griefcraft.bukkit.player.BukkitPlayer;
+import com.griefcraft.bukkit.world.BukkitWorld;
 import com.griefcraft.player.Player;
-import com.griefcraft.util.Color;
-import com.griefcraft.world.Location;
+import com.griefcraft.world.World;
+import org.bukkit.Bukkit;
 
-public class BukkitPlayer extends Player {
+public class BukkitServerLayer extends ServerLayer {
 
     /**
      * The plugin object
      */
-    private final BukkitPlugin plugin;
+    private BukkitPlugin plugin;
 
-    /**
-     * The player handle
-     */
-    private final org.bukkit.entity.Player handle;
-
-    /**
-     * The player's event delegate
-     */
-    private final PlayerEventDelegate eventDelegate;
-    
-    public BukkitPlayer(LWC lwc, BukkitPlugin plugin, org.bukkit.entity.Player handle) {
-        if (handle == null) {
-            throw new IllegalArgumentException("Player handle cannot be null");
-        }
-
+    public BukkitServerLayer(BukkitPlugin plugin) {
         this.plugin = plugin;
-        this.handle = handle;
-        this.eventDelegate = new PlayerEventDelegate(lwc, this);
     }
 
     @Override
-    public String getName() {
-        return handle.getName();
-    }
+    protected Player internalGetPlayer(String playerName) {
+        org.bukkit.entity.Player player = Bukkit.getPlayer(playerName);
 
-    @Override
-    public Location getLocation() {
-        org.bukkit.Location lhandle = handle.getLocation();
-        return new Location(plugin.getWorld(lhandle.getWorld().getName()), lhandle.getX(), lhandle.getY(), lhandle.getZ());
-    }
-
-    @Override
-    public PlayerEventDelegate getEventDelegate() {
-        return eventDelegate;
-    }
-
-    public void sendMessage(String message) {
-        for (String line : message.split("\n")) {
-            handle.sendMessage(Color.replaceColors(line));
+        if (player == null) {
+            return null;
         }
+
+        return new BukkitPlayer(plugin.getLWC(), plugin, player);
     }
 
-    public void sendLocalizedMessage(String node, Object... args) {
-        throw new UnsupportedOperationException("sendLocalizedMessage is not implemented");
-    }
+    @Override
+    protected World internalGetWorld(String worldName) {
+        org.bukkit.World world = Bukkit.getWorld(worldName);
 
-    public boolean hasPermission(String node) {
-        return handle.hasPermission(node);
+        if (world == null) {
+            return null;
+        }
+
+        return new BukkitWorld(world);
     }
 }

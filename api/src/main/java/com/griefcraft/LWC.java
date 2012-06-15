@@ -35,6 +35,13 @@ import com.griefcraft.configuration.Configuration;
 public interface LWC {
 
     /**
+     * Get the server layer that provides some server specific utilities
+     *
+     * @return
+     */
+    public ServerLayer getServerLayer();
+
+    /**
      * Get the API version
      * @return
      */

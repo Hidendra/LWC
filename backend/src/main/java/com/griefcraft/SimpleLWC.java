@@ -41,6 +41,11 @@ public class SimpleLWC implements LWC {
     private Logger logger = Logger.getLogger("LWC");
 
     /**
+     * The server layer
+     */
+    private ServerLayer serverLayer;
+
+    /**
      * The underlying server's information
      */
     private ServerInfo serverInfo;
@@ -60,7 +65,8 @@ public class SimpleLWC implements LWC {
      */
     private Configuration configuration;
 
-    private SimpleLWC(ServerInfo serverInfo, ConsoleCommandSender consoleSender, Configuration configuration) {
+    private SimpleLWC(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender, Configuration configuration) {
+        this.serverLayer = serverLayer;
         this.serverInfo = serverInfo;
         this.consoleSender = consoleSender;
         this.configuration = configuration;
@@ -80,7 +86,13 @@ public class SimpleLWC implements LWC {
      * @param configuration
      * @return
      */
-    public static LWC createLWC(ServerInfo serverInfo, ConsoleCommandSender consoleSender, Configuration configuration) {
+    public static LWC createLWC(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender, Configuration configuration) {
+        if (serverLayer == null) {
+            throw new IllegalArgumentException("Server layer object cannot be null");
+        }
+        if (serverInfo == null) {
+            throw new IllegalArgumentException("Server info object cannot be null");
+        }
         if (consoleSender == null) {
             throw new IllegalArgumentException("Console sender object cannot be null");
         }
@@ -88,7 +100,11 @@ public class SimpleLWC implements LWC {
             throw new IllegalArgumentException("Configuration object cannot be null");
         }
 
-        return new SimpleLWC(serverInfo, consoleSender, configuration);
+        return new SimpleLWC(serverLayer, serverInfo, consoleSender, configuration);
+    }
+
+    public ServerLayer getServerLayer() {
+        return serverLayer;
     }
 
     public String getBackendVersion() {

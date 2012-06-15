@@ -28,12 +28,14 @@
 
 package com.griefcraft.sql;
 
+import com.griefcraft.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.world.Location;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -80,6 +82,11 @@ public class JDBCDatabase implements Database {
     }
 
     /**
+     * LWC instance
+     */
+    private LWC lwc;
+
+    /**
      * The connection to the database
      */
     private Connection connection;
@@ -89,7 +96,7 @@ public class JDBCDatabase implements Database {
      */
     private final JDBCConnectionDetails details;
 
-    public JDBCDatabase(JDBCConnectionDetails details) {
+    public JDBCDatabase(LWC lwc, JDBCConnectionDetails details) {
         if (details == null) {
             throw new IllegalArgumentException("Connection details cannot be null");
         }
@@ -167,6 +174,19 @@ public class JDBCDatabase implements Database {
         return connection.prepareStatement("INSERT INTO " + details.getPrefix() + table + " " + query);
     }
 
+    /**
+     * Prepare a select query
+     *
+     * @param table
+     * @param columns
+     * @param query
+     * @return
+     * @throws SQLException
+     */
+    private PreparedStatement prepareSelectQuery(String table, String columns, String query) throws SQLException {
+        return connection.prepareStatement("SELECT " + columns + " FROM " + details.getPrefix() + table + " " + query);
+    }
+
     public Protection createProtection(Protection.Type type, String owner, Location location) {
         try {
             PreparedStatement statement = prepareInsertQuery("protections", "(type, owner, world, x, y, z, updated, created) VALUES (?, ?, ?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()");
@@ -186,11 +206,28 @@ public class JDBCDatabase implements Database {
             handleException(e);
         }
 
-        return null;
+        return loadProtection(location);
     }
 
     public Protection loadProtection(Location location) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        try {
+            PreparedStatement statement = prepareSelectQuery("protections", "id, type, owner, world, x, y, z, updated, created", "WHERE x = ? AND y = ? AND z = ? AND world = ?");
+
+            try {
+                statement.setInt(1, location.getBlockX());
+                statement.setInt(2, location.getBlockY());
+                statement.setInt(3, location.getBlockZ());
+                statement.setString(4, location.getWorld().getName());
+
+                // TODO
+            } finally {
+                statement.close();
+            }
+        } catch (SQLException e) {
+            handleException(e);
+        }
+
+        return null;
     }
 
     public Protection loadProtection(int id) {
@@ -203,6 +240,25 @@ public class JDBCDatabase implements Database {
 
     public void removeProtection(Protection protection) {
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    /**
+     * Resolve a protection from a result set
+     *
+     * @param set
+     * @return
+     */
+    private Protection resolveProtection(ResultSet set) throws SQLException {
+        Protection protection = new Protection(set.getInt("id"));
+        protection.setType(Protection.Type.values()[set.getInt("type")]);
+        protection.setOwner(set.getString("owner"));
+        protection.setWorld(lwc.getServerLayer().getWorld(set.getString("world")));
+        protection.setX(set.getInt("x"));
+        protection.setY(set.getInt("y"));
+        protection.setZ(set.getInt("z"));
+        protection.setUpdated(set.getInt("updated"));
+        protection.setCreated(set.getInt("created"));
+        return protection;
     }
 
     public final static class JDBCConnectionDetails {

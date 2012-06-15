@@ -52,7 +52,7 @@ public class PlayerListener implements Listener {
     @EventHandler( ignoreCancelled = true )
     public void playerInteract(PlayerInteractEvent event) {
         Player player = plugin.wrapPlayer(event.getPlayer());
-        World world = plugin.loadWorld(event.getPlayer().getWorld().getName());
+        World world = plugin.getWorld(event.getPlayer().getWorld().getName());
         Block block = new BukkitBlock(world, event.getClickedBlock());
 
         // send the event for the player around the plugin (and maybe other plugins, too.)

@@ -29,12 +29,11 @@
 package com.griefcraft.bukkit;
 
 import com.griefcraft.LWC;
+import com.griefcraft.ServerLayer;
 import com.griefcraft.SimpleLWC;
 import com.griefcraft.bukkit.command.BukkitConsoleCommandSender;
 import com.griefcraft.bukkit.configuration.BukkitConfiguration;
 import com.griefcraft.bukkit.listeners.PlayerListener;
-import com.griefcraft.bukkit.player.BukkitPlayer;
-import com.griefcraft.bukkit.world.BukkitWorld;
 import com.griefcraft.command.CommandContext;
 import com.griefcraft.command.CommandException;
 import com.griefcraft.command.CommandSender;
@@ -47,8 +46,6 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 public class BukkitPlugin extends JavaPlugin implements Listener {
@@ -60,15 +57,18 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
     private LWC lwc;
 
     /**
-     * A map of all of the players.
-     * TODO populate/depop this automatically using events
+     * The server layer
      */
-    private final Map<String, Player> players = new HashMap<String, Player>();
+    private final ServerLayer layer = new BukkitServerLayer(this);
 
     /**
-     * A map of the worlds
+     * Get the LWC object
+     *
+     * @return
      */
-    private final Map<String, World> worlds = new HashMap<String, World>();
+    public LWC getLWC() {
+        return lwc;
+    }
 
     /**
      * Wrap a player object to a native version we can work with
@@ -77,43 +77,17 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
      * @return
      */
     public Player wrapPlayer(org.bukkit.entity.Player player) {
-        if (player == null) {
-            throw new IllegalArgumentException("Player cannot be null");
-        }
-        
-        String playerName = player.getName();
-        
-        if (players.containsKey(playerName)) {
-            return players.get(playerName);
-        }
-
-        Player lPlayer = new BukkitPlayer(lwc, this, player);
-        players.put(playerName, lPlayer);
-        return lPlayer;
+        return layer.getPlayer(player.getName());
     }
 
     /**
-     * Load a world and return the handle for it. Does not create unloaded worlds.
+     * Get a world
      *
      * @param worldName
      * @return
      */
-    public World loadWorld(String worldName) {
-        World world = worlds.get(worldName);
-
-        if (world != null) {
-            return world;
-        }
-
-        // get the world handle
-        org.bukkit.World handle = getServer().getWorld(worldName);
-
-        // no world
-        if (handle == null) {
-            return null;
-        }
-
-        return new BukkitWorld(handle);
+    public World getWorld(String worldName) {
+        return layer.getWorld(worldName);
     }
 
     /**
@@ -149,7 +123,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
         logger = this.getLogger();
 
         // Create a new lwc object
-        lwc = SimpleLWC.createLWC(new BukkitServerInfo(), new BukkitConsoleCommandSender(getServer().getConsoleSender()), new BukkitConfiguration(this));
+        lwc = SimpleLWC.createLWC(layer, new BukkitServerInfo(), new BukkitConsoleCommandSender(getServer().getConsoleSender()), new BukkitConfiguration(this));
 
         // Register events
         getServer().getPluginManager().registerEvents(this, this);
