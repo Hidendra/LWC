@@ -66,6 +66,10 @@ public class SimpleLWC implements LWC {
         this.configuration = configuration;
         this.commandHandler = new SimpleCommandHandler();
 
+        consoleSender.sendMessage("Server: " + serverInfo.getServerMod() + " [" + serverInfo.getServerVersion() + "]");
+        consoleSender.sendMessage("Layer: " + serverInfo.getLayerVersion());
+        consoleSender.sendMessage("Backend: " + getBackendVersion());
+
         // Register any commands
         registerCommands();
     }

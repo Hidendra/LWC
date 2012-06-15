@@ -44,4 +44,10 @@ public interface ServerInfo {
      */
     public String getServerVersion();
 
+    /**
+     * Get the version of the server <-> plugin layer
+     * @return
+     */
+    public String getLayerVersion();
+
 }

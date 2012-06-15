@@ -42,4 +42,8 @@ public class BukkitServerInfo implements ServerInfo {
         return Bukkit.getVersion();
     }
 
+    public String getLayerVersion() {
+        return "v0.01 (Java)"; // TODO
+    }
+
 }
