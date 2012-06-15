@@ -48,23 +48,23 @@ public class BukkitServerLayer extends ServerLayer {
 
     @Override
     protected Player internalGetPlayer(String playerName) {
-        org.bukkit.entity.Player player = Bukkit.getPlayer(playerName);
+        org.bukkit.entity.Player handle = Bukkit.getPlayer(playerName);
 
-        if (player == null) {
+        if (handle == null) {
             return null;
         }
 
-        return new BukkitPlayer(plugin.getLWC(), plugin, player);
+        return new BukkitPlayer(plugin.getLWC(), plugin, handle);
     }
 
     @Override
     protected World internalGetWorld(String worldName) {
-        org.bukkit.World world = Bukkit.getWorld(worldName);
+        org.bukkit.World handle = Bukkit.getWorld(worldName);
 
-        if (world == null) {
+        if (handle == null) {
             return null;
         }
 
-        return new BukkitWorld(world);
+        return new BukkitWorld(handle);
     }
 }
