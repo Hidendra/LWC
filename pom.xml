@@ -29,7 +29,7 @@
 
     <modules>
         <module>api</module>
-        <module>common</module>
+        <module>backend</module>
         <module>bukkit</module>
         <module>canary</module>
     </modules>

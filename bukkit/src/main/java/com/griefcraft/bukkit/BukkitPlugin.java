@@ -149,7 +149,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
         logger = this.getLogger();
 
         // Create a new lwc object
-        lwc = SimpleLWC.createLWC(new BukkitConsoleCommandSender(getServer().getConsoleSender()), new BukkitConfiguration(this));
+        lwc = SimpleLWC.createLWC(new BukkitServerInfo(), new BukkitConsoleCommandSender(getServer().getConsoleSender()), new BukkitConfiguration(this));
 
         // Register events
         getServer().getPluginManager().registerEvents(this, this);

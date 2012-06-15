@@ -41,6 +41,11 @@ public class SimpleLWC implements LWC {
     private Logger logger = Logger.getLogger("LWC");
 
     /**
+     * The underlying server's information
+     */
+    private ServerInfo serverInfo;
+
+    /**
      * The command handler
      */
     private CommandHandler commandHandler;
@@ -55,7 +60,8 @@ public class SimpleLWC implements LWC {
      */
     private Configuration configuration;
 
-    private SimpleLWC(ConsoleCommandSender consoleSender, Configuration configuration) {
+    private SimpleLWC(ServerInfo serverInfo, ConsoleCommandSender consoleSender, Configuration configuration) {
+        this.serverInfo = serverInfo;
         this.consoleSender = consoleSender;
         this.configuration = configuration;
         this.commandHandler = new SimpleCommandHandler();
@@ -70,7 +76,7 @@ public class SimpleLWC implements LWC {
      * @param configuration
      * @return
      */
-    public static LWC createLWC(ConsoleCommandSender consoleSender, Configuration configuration) {
+    public static LWC createLWC(ServerInfo serverInfo, ConsoleCommandSender consoleSender, Configuration configuration) {
         if (consoleSender == null) {
             throw new IllegalArgumentException("Console sender object cannot be null");
         }
@@ -78,11 +84,15 @@ public class SimpleLWC implements LWC {
             throw new IllegalArgumentException("Configuration object cannot be null");
         }
 
-        return new SimpleLWC(consoleSender, configuration);
+        return new SimpleLWC(serverInfo, consoleSender, configuration);
     }
 
     public String getBackendVersion() {
         return "v5-volatile-test (Java)";
+    }
+
+    public ServerInfo getServerInfo() {
+        return serverInfo;
     }
 
     public CommandHandler getCommandHandler() {

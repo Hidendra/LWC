@@ -26,60 +26,20 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft;
+package com.griefcraft.bukkit;
 
-public enum ServerMod {
+import com.griefcraft.ServerInfo;
+import com.griefcraft.ServerMod;
+import org.bukkit.Bukkit;
 
-    /**
-     * TODO -- not even released
-     * Official Minecraft Mod API
-     */
-    MCAPI (Game.MINECRAFT),
+public class BukkitServerInfo implements ServerInfo {
 
-    /**
-     * Bukkit - http://bukkit.org
-     */
-    BUKKIT (Game.MINECRAFT),
-
-    /**
-     * TODO -- not implemented
-     * Spout - http://spout.org
-     */
-    SPOUT (Game.MINECRAFT),
-
-    /**
-     * TODO -- partially implemented
-     * Canary, the hMod successor - http://canarymod.net
-     */
-    CANARY (Game.MINECRAFT),
-
-    /**
-     * TDSM - http://tdsm.org
-     */
-    TDSM (Game.TERRARIA),
-
-    /**
-     * TODO -- not implemented, TBD after testing with TDSM
-     * TShock - http://tshock.co
-     */
-    TSHOCK (Game.TERRARIA) ;
-
-    /**
-     * The game this mod is for
-     */
-    private Game game;
-
-    ServerMod(Game game) {
-        this.game = game;
+    public ServerMod getServerMod() {
+        return ServerMod.BUKKIT;
     }
 
-    /**
-     * Get the game this mod is for
-     * @return
-     */
-    public Game game() {
-        return game;
+    public String getServerVersion() {
+        return Bukkit.getVersion();
     }
-
 
 }

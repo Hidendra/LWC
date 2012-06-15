@@ -28,58 +28,20 @@
 
 package com.griefcraft;
 
-public enum ServerMod {
+public interface ServerInfo {
 
     /**
-     * TODO -- not even released
-     * Official Minecraft Mod API
-     */
-    MCAPI (Game.MINECRAFT),
-
-    /**
-     * Bukkit - http://bukkit.org
-     */
-    BUKKIT (Game.MINECRAFT),
-
-    /**
-     * TODO -- not implemented
-     * Spout - http://spout.org
-     */
-    SPOUT (Game.MINECRAFT),
-
-    /**
-     * TODO -- partially implemented
-     * Canary, the hMod successor - http://canarymod.net
-     */
-    CANARY (Game.MINECRAFT),
-
-    /**
-     * TDSM - http://tdsm.org
-     */
-    TDSM (Game.TERRARIA),
-
-    /**
-     * TODO -- not implemented, TBD after testing with TDSM
-     * TShock - http://tshock.co
-     */
-    TSHOCK (Game.TERRARIA) ;
-
-    /**
-     * The game this mod is for
-     */
-    private Game game;
-
-    ServerMod(Game game) {
-        this.game = game;
-    }
-
-    /**
-     * Get the game this mod is for
+     * Get the server mod this server is running
+     *
      * @return
      */
-    public Game game() {
-        return game;
-    }
+    public ServerMod getServerMod();
 
+    /**
+     * Get the version of the server that is running
+     *
+     * @return
+     */
+    public String getServerVersion();
 
 }

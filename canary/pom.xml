@@ -21,7 +21,7 @@
     <dependencies>
         <dependency>
             <groupId>com.griefcraft</groupId>
-            <artifactId>common</artifactId>
+            <artifactId>backend</artifactId>
             <version>UNSTABLE-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
