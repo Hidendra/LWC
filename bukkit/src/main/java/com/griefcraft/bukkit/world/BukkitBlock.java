@@ -50,6 +50,7 @@ public class BukkitBlock implements Block {
             throw new IllegalArgumentException("Block handle cannot be null");
         }
 
+        this.world = world;
         this.handle = handle;
     }
 
