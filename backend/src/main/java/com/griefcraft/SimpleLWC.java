@@ -153,7 +153,7 @@ public class SimpleLWC implements LWC {
         );
 
         // Open the database
-        Database database = new JDBCDatabase(this, details);
+        database = new JDBCDatabase(this, details);
 
         boolean result;
 
@@ -177,7 +177,7 @@ public class SimpleLWC implements LWC {
      */
     private void registerCommands() {
         try {
-            commandHandler.registerCommands(new BaseCommands());
+            commandHandler.registerCommands(new BaseCommands(this));
         } catch (CommandException e) {
             e.printStackTrace();
         }

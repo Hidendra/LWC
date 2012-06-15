@@ -28,17 +28,28 @@
 
 package com.griefcraft.commands;
 
+import com.griefcraft.LWC;
 import com.griefcraft.command.Command;
 import com.griefcraft.command.CommandContext;
 import com.griefcraft.command.CommandSender;
 import com.griefcraft.event.events.BlockEvent;
 import com.griefcraft.event.notifiers.BlockEventNotifier;
+import com.griefcraft.model.Protection;
 import com.griefcraft.player.Player;
 
 /**
  * A test of commands used mainly for testing
  */
 public class BaseCommands {
+
+    /**
+     * The lwc object
+     */
+    private LWC lwc;
+
+    public BaseCommands(LWC lwc) {
+        this.lwc = lwc;
+    }
 
     /**
      * The base command that is falled onto when no other commands are found. Also, of course, for just /lwc
@@ -50,6 +61,31 @@ public class BaseCommands {
     )
     public void lwc(CommandContext context) {
         context.getCommandSender().sendMessage("/lwc");
+    }
+
+    @Command(
+            command = "lwc create private",
+            permission = "lwc.create.private",
+            aliases = { "cprivate" }
+    )
+    public void createPrivateProtection(CommandContext context) {
+        CommandSender sender = context.getCommandSender();
+
+        if (!(sender instanceof Player)) {
+            return;
+        }
+
+        final Player player = (Player) sender;
+        player.sendMessage("Click on a block to protect it!");
+
+        player.onBlockInteract(new BlockEventNotifier() {
+            @Override
+            public boolean call(BlockEvent event) {
+                lwc.getDatabase().createProtection(Protection.Type.PRIVATE, player.getName(), event.getBlock().getLocation());
+                player.sendMessage("Protected~");
+                return true;
+            }
+        });
     }
 
     @Command(
