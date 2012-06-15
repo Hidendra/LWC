@@ -34,6 +34,7 @@ import com.griefcraft.command.CommandHandler;
 import com.griefcraft.command.ConsoleCommandSender;
 import com.griefcraft.command.SimpleCommandHandler;
 import com.griefcraft.commands.BaseCommands;
+import com.griefcraft.commands.BenchmarkCommands;
 import com.griefcraft.configuration.Configuration;
 import com.griefcraft.sql.Database;
 import com.griefcraft.sql.DatabaseException;
@@ -179,6 +180,7 @@ public class SimpleLWC implements LWC {
     private void registerCommands() {
         try {
             commandHandler.registerCommands(new BaseCommands(this));
+            commandHandler.registerCommands(new BenchmarkCommands(this));
         } catch (CommandException e) {
             e.printStackTrace();
         }
