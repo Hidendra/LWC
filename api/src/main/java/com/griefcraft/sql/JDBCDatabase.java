@@ -101,6 +101,7 @@ public class JDBCDatabase implements Database {
             throw new IllegalArgumentException("Connection details cannot be null");
         }
 
+        this.lwc = lwc;
         this.details = details;
     }
 
