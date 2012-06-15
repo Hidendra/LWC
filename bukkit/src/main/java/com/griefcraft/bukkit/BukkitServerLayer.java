@@ -32,11 +32,8 @@ import com.griefcraft.ServerLayer;
 import com.griefcraft.bukkit.player.BukkitPlayer;
 import com.griefcraft.bukkit.world.BukkitWorld;
 import com.griefcraft.player.Player;
-import com.griefcraft.sql.JDBCDatabase;
 import com.griefcraft.world.World;
 import org.bukkit.Bukkit;
-
-import java.sql.Driver;
 
 public class BukkitServerLayer extends ServerLayer {
 
