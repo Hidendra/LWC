@@ -36,6 +36,9 @@ import com.griefcraft.event.events.BlockEvent;
 import com.griefcraft.event.notifiers.BlockEventNotifier;
 import com.griefcraft.model.Protection;
 import com.griefcraft.player.Player;
+import com.griefcraft.world.Location;
+
+import java.util.Random;
 
 /**
  * A test of commands used mainly for testing
@@ -61,6 +64,35 @@ public class BaseCommands {
     )
     public void lwc(CommandContext context) {
         context.getCommandSender().sendMessage("/lwc");
+    }
+
+    @Command(
+            command = "lwc test insert"
+    )
+    public void insertTest(CommandContext context) {
+        lwc.getConsoleSender().sendMessage("Inserting 10,000 random protections");
+        Random random = new Random();
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < 10000; i++) {
+            lwc.getDatabase().createProtection(Protection.Type.PRIVATE, "virulent",
+                    new Location(lwc.getServerLayer().getDefaultWorld(), random.nextDouble() * 100000, random.nextDouble() * 100000, random.nextDouble() * 100000));
+        }
+        long time = System.currentTimeMillis() - start;
+        lwc.getConsoleSender().sendMessage(String.format("Done. %d ms total, %.2f ms per protection", time, time / 10000D));
+    }
+
+    @Command(
+            command = "lwc test select"
+    )
+    public void selectTest(CommandContext context) {
+        lwc.getConsoleSender().sendMessage("Selecting 10,000 random protections");
+        Random random = new Random();
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < 10000; i++) {
+            lwc.getDatabase().loadProtection(new Location(lwc.getServerLayer().getDefaultWorld(), random.nextDouble() * 100000, random.nextDouble() * 100000, random.nextDouble() * 100000));
+        }
+        long time = System.currentTimeMillis() - start;
+        lwc.getConsoleSender().sendMessage(String.format("Done. %d ms total, %.2f ms per protection", time, time / 10000D));
     }
 
     @Command(

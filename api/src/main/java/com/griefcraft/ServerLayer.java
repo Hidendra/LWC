@@ -63,12 +63,21 @@ public abstract class ServerLayer {
     protected abstract World internalGetWorld(String worldName);
 
     /**
+     * Get the default world
+     *
+     * @return
+     */
+    public abstract World getDefaultWorld();
+
+    /**
      * Override a jdbc driver. If this returns null, the default method of resolving the driver is done
      *
      * @param driver
      * @return
      */
-    public abstract Driver overrideJDBCDriver(JDBCDatabase.Driver driver);
+    public Driver overrideJDBCDriver(JDBCDatabase.Driver driver) {
+        return null;
+    }
 
     /**
      * Get a player from the server

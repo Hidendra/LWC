@@ -6,7 +6,6 @@ target
 
 .classpath
 .project
-*.txt
 *.bat
 LWC.iml
 LWC.ipr

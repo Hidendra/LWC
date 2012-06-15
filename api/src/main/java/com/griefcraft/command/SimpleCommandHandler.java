@@ -76,10 +76,23 @@ public class SimpleCommandHandler implements CommandHandler {
             executeCommand(found, context);
             return true;
         }
+
+        String[] arguments = StringUtils.split(context.getArguments());
+
+        // try the full command first
+        if (arguments.length > 1) {
+            // Second depth
+            String key = (commandName + " " + arguments[0] + " " + arguments[1]).trim();
+
+            // Try it
+            if ((found = tryFindCommand(key)) != null) {
+                executeCommand(found, context);
+                return true;
+            }
+        }
         
-        // Try the arguments
-        if (context.getArguments().length() > 0) {
-            String[] arguments = StringUtils.split(context.getArguments());
+        // Try only the first argument
+        if (arguments.length > 0) {
 
             // Create the key
             String key = (commandName + " " + arguments[0]).trim();
@@ -88,17 +101,6 @@ public class SimpleCommandHandler implements CommandHandler {
             if ((found = tryFindCommand(key)) != null) {
                 executeCommand(found, context);
                 return true;
-            }
-
-            if (arguments.length > 1) {
-                // Second depth
-                key = (commandName + " " + arguments[0] + " " + arguments[1]).trim();
-
-                // Try it
-                if ((found = tryFindCommand(key)) != null) {
-                    executeCommand(found, context);
-                    return true;
-                }
             }
         }
 
