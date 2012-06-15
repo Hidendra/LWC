@@ -64,6 +64,15 @@ public class JDBCDatabase implements Database {
         }
 
         /**
+         * Get the driver's class name
+         *
+         * @return
+         */
+        public String getClassName() {
+            return clazz;
+        }
+
+        /**
          * Resolve a driver name to its enum equivalent. This method is case insensitive.
          *
          * @param name
@@ -144,7 +153,14 @@ public class JDBCDatabase implements Database {
 
         // Now we can finally [try to] connect to the database
         try {
-            connection = DriverManager.getConnection(connectionString, properties);
+            java.sql.Driver override = lwc.getServerLayer().overrideJDBCDriver(driver);
+
+            if (override != null) {
+                connection = override.connect(connectionString, properties);
+            } else {
+                connection = DriverManager.getConnection(connectionString, properties);
+            }
+
             return true;
         } catch (SQLException e) {
             // Rethrow the exception as our own
