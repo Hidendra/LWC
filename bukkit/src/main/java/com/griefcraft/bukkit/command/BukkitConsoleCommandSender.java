@@ -48,7 +48,7 @@ public class BukkitConsoleCommandSender implements ConsoleCommandSender {
     
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
-            handle.sendMessage(Color.replaceColors(line));
+            handle.sendMessage("[LWC] " + Color.replaceColors(line));
         }
     }
 

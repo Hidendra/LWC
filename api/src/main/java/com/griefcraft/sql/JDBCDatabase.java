@@ -144,12 +144,11 @@ public class JDBCDatabase implements Database {
         // Now we can finally [try to] connect to the database
         try {
             connection = DriverManager.getConnection(connectionString, properties);
+            return true;
         } catch (SQLException e) {
             // Rethrow the exception as our own
             throw new DatabaseException("Exception occurred while connecting to the database!", e);
         }
-
-        return false;
     }
 
     /**
@@ -219,7 +218,13 @@ public class JDBCDatabase implements Database {
                 statement.setInt(3, location.getBlockZ());
                 statement.setString(4, location.getWorld().getName());
 
-                // TODO
+                ResultSet set = statement.executeQuery();
+
+                try {
+                    return resolveProtection(set);
+                } finally {
+                    set.close();
+                }
             } finally {
                 statement.close();
             }
@@ -231,7 +236,27 @@ public class JDBCDatabase implements Database {
     }
 
     public Protection loadProtection(int id) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        try {
+            PreparedStatement statement = prepareSelectQuery("protections", "id, type, owner, world, x, y, z, updated, created", "WHERE id = ?");
+
+            try {
+                statement.setInt(1, id);
+
+                ResultSet set = statement.executeQuery();
+
+                try {
+                    return resolveProtection(set);
+                } finally {
+                    set.close();
+                }
+            } finally {
+                statement.close();
+            }
+        } catch (SQLException e) {
+            handleException(e);
+        }
+
+        return null;
     }
 
     public void saveProtection(Protection protection) {

@@ -34,11 +34,11 @@ import com.griefcraft.command.ConsoleCommandSender;
 import com.griefcraft.command.SimpleCommandHandler;
 import com.griefcraft.commands.BaseCommands;
 import com.griefcraft.configuration.Configuration;
-
-import java.util.logging.Logger;
+import com.griefcraft.sql.Database;
+import com.griefcraft.sql.DatabaseException;
+import com.griefcraft.sql.JDBCDatabase;
 
 public class SimpleLWC implements LWC {
-    private Logger logger = Logger.getLogger("LWC");
 
     /**
      * The server layer
@@ -61,6 +61,11 @@ public class SimpleLWC implements LWC {
     private ConsoleCommandSender consoleSender;
 
     /**
+     * The database
+     */
+    private Database database;
+
+    /**
      * The configuration file to use
      */
     private Configuration configuration;
@@ -75,6 +80,9 @@ public class SimpleLWC implements LWC {
         consoleSender.sendMessage("Server: " + serverInfo.getServerMod() + " [" + serverInfo.getServerVersion() + "]");
         consoleSender.sendMessage("Layer: " + serverInfo.getLayerVersion());
         consoleSender.sendMessage("Backend: " + getBackendVersion());
+
+        // connect to the db
+        openDatabase();
 
         // Register any commands
         registerCommands();
@@ -123,8 +131,45 @@ public class SimpleLWC implements LWC {
         return consoleSender;
     }
 
+    public Database getDatabase() {
+        return database;
+    }
+
     public Configuration getConfiguration() {
         return configuration;
+    }
+
+    /**
+     * Open and connect to the database
+     */
+    private void openDatabase() {
+        JDBCDatabase.JDBCConnectionDetails details = new JDBCDatabase.JDBCConnectionDetails(
+                JDBCDatabase.Driver.MYSQL,
+                "127.0.0.1",
+                "lwc5",
+                "",
+                "root",
+                ""
+        );
+
+        // Open the database
+        Database database = new JDBCDatabase(this, details);
+
+        boolean result;
+
+        // attempt to connect to the database
+        try {
+            result = database.connect();
+        } catch (DatabaseException e) {
+            result = false;
+            e.printStackTrace();
+        }
+
+        if (result) {
+            consoleSender.sendMessage("Connected to the database (" + details.getDriver() + ")");
+        } else {
+            consoleSender.sendMessage("Failed to connect to the database");
+        }
     }
 
     /**

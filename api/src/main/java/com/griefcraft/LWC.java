@@ -31,6 +31,7 @@ package com.griefcraft;
 import com.griefcraft.command.CommandHandler;
 import com.griefcraft.command.ConsoleCommandSender;
 import com.griefcraft.configuration.Configuration;
+import com.griefcraft.sql.Database;
 
 public interface LWC {
 
@@ -60,6 +61,13 @@ public interface LWC {
      * @return
      */
     public ConsoleCommandSender getConsoleSender();
+
+    /**
+     * Get the database object
+     *
+     * @return
+     */
+    public Database getDatabase();
 
     /**
      * Gets the configuration file
