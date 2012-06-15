@@ -75,9 +75,4 @@ public class BukkitServerLayer extends ServerLayer {
     public World getDefaultWorld() {
         return getWorld(Bukkit.getWorlds().get(0).getName());
     }
-
-    @Override
-    public Driver overrideJDBCDriver(JDBCDatabase.Driver driver) {
-        return null;
-    }
 }
