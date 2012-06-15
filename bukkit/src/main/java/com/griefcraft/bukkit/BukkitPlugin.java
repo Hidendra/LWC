@@ -38,7 +38,7 @@ import com.griefcraft.bukkit.listeners.PlayerListener;
 import com.griefcraft.command.CommandContext;
 import com.griefcraft.command.CommandException;
 import com.griefcraft.command.CommandSender;
-import com.griefcraft.player.Player;
+import com.griefcraft.entity.Player;
 import com.griefcraft.world.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

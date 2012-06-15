@@ -33,7 +33,7 @@ import com.griefcraft.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.event.events.BlockEvent;
 import com.griefcraft.event.events.ProtectionEvent;
-import com.griefcraft.player.Player;
+import com.griefcraft.entity.Player;
 import com.griefcraft.world.Block;
 
 /**

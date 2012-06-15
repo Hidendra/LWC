@@ -29,7 +29,7 @@
 import com.griefcraft.event.PlayerEventDelegate;
 import com.griefcraft.world.Location;
 
-public class CanaryPlayer extends com.griefcraft.player.Player {
+public class CanaryPlayer extends com.griefcraft.entity.Player {
 
     /**
      * The player handle

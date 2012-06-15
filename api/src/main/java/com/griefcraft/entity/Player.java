@@ -27,69 +27,33 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.bukkit.player;
+package com.griefcraft.entity;
 
-import com.griefcraft.LWC;
-import com.griefcraft.bukkit.BukkitPlugin;
+import com.griefcraft.command.CommandSender;
 import com.griefcraft.event.PlayerEventDelegate;
-import com.griefcraft.player.Player;
-import com.griefcraft.util.Color;
+import com.griefcraft.event.PlayerEventHandler;
 import com.griefcraft.world.Location;
 
-public class BukkitPlayer extends Player {
+public abstract class Player extends PlayerEventHandler implements CommandSender {
 
     /**
-     * The plugin object
+     * Gets the player's name
+     *
+     * @return
      */
-    private final BukkitPlugin plugin;
+    public abstract String getName();
 
     /**
-     * The player handle
+     * Get the player's current location
+     * @return
      */
-    private final org.bukkit.entity.Player handle;
+    public abstract Location getLocation();
 
     /**
-     * The player's event delegate
+     * The player's event delegate, used to broadcast events about their actions
+     *
+     * @return
      */
-    private final PlayerEventDelegate eventDelegate;
-    
-    public BukkitPlayer(LWC lwc, BukkitPlugin plugin, org.bukkit.entity.Player handle) {
-        if (handle == null) {
-            throw new IllegalArgumentException("Player handle cannot be null");
-        }
+    public abstract PlayerEventDelegate getEventDelegate();
 
-        this.plugin = plugin;
-        this.handle = handle;
-        this.eventDelegate = new PlayerEventDelegate(lwc, this);
-    }
-
-    @Override
-    public String getName() {
-        return handle.getName();
-    }
-
-    @Override
-    public Location getLocation() {
-        org.bukkit.Location lhandle = handle.getLocation();
-        return new Location(plugin.getWorld(lhandle.getWorld().getName()), lhandle.getX(), lhandle.getY(), lhandle.getZ());
-    }
-
-    @Override
-    public PlayerEventDelegate getEventDelegate() {
-        return eventDelegate;
-    }
-
-    public void sendMessage(String message) {
-        for (String line : message.split("\n")) {
-            handle.sendMessage(Color.replaceColors(line));
-        }
-    }
-
-    public void sendLocalizedMessage(String node, Object... args) {
-        throw new UnsupportedOperationException("sendLocalizedMessage is not implemented");
-    }
-
-    public boolean hasPermission(String node) {
-        return handle.hasPermission(node);
-    }
 }

@@ -36,7 +36,7 @@ import com.griefcraft.command.CommandSender;
 import com.griefcraft.event.events.BlockEvent;
 import com.griefcraft.event.notifiers.BlockEventNotifier;
 import com.griefcraft.model.Protection;
-import com.griefcraft.player.Player;
+import com.griefcraft.entity.Player;
 
 /**
  * A test of commands used mainly for testing

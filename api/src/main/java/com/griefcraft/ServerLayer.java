@@ -29,7 +29,7 @@
 
 package com.griefcraft;
 
-import com.griefcraft.player.Player;
+import com.griefcraft.entity.Player;
 import com.griefcraft.sql.JDBCDatabase;
 import com.griefcraft.world.World;
 

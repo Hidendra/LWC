@@ -30,9 +30,9 @@
 package com.griefcraft.bukkit;
 
 import com.griefcraft.ServerLayer;
-import com.griefcraft.bukkit.player.BukkitPlayer;
+import com.griefcraft.bukkit.entity.BukkitPlayer;
 import com.griefcraft.bukkit.world.BukkitWorld;
-import com.griefcraft.player.Player;
+import com.griefcraft.entity.Player;
 import com.griefcraft.world.World;
 import org.bukkit.Bukkit;
 

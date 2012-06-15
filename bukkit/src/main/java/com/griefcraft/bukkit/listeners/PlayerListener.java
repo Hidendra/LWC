@@ -31,7 +31,7 @@ package com.griefcraft.bukkit.listeners;
 
 import com.griefcraft.bukkit.BukkitPlugin;
 import com.griefcraft.bukkit.world.BukkitBlock;
-import com.griefcraft.player.Player;
+import com.griefcraft.entity.Player;
 import com.griefcraft.world.Block;
 import com.griefcraft.world.World;
 import org.bukkit.event.Event;
