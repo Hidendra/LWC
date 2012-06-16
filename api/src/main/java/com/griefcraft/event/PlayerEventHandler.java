@@ -132,7 +132,9 @@ public class PlayerEventHandler {
             // We call the event after removing it because it can throw an exception
             // So we want to make sure it is removed incase it constantly throws
             // the exception
-            return internalCallEvent(event, notifier);
+            if (internalCallEvent(event, notifier)) {
+                return true;
+            }
         }
 
         return false;
