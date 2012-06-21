@@ -485,7 +485,21 @@ public class LimitsV2 extends JavaModule {
             if (key.equalsIgnoreCase("default")) {
                 limits.add(new DefaultLimit(limit));
             } else {
-                Material material = Material.getMaterial(key.toUpperCase());
+                // attempt to resolve it as a block id
+                int blockId = -1;
+
+                try {
+                    blockId = Integer.parseInt(key);
+                } catch (NumberFormatException e) { }
+
+                // resolve the material
+                Material material;
+
+                if (blockId >= 0) {
+                    material = Material.getMaterial(blockId);
+                } else {
+                    material = Material.getMaterial(key.toUpperCase());
+                }
 
                 if (material != null) {
                     limits.add(new BlockLimit(material, limit));
