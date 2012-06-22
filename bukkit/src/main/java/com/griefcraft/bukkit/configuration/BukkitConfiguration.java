@@ -74,6 +74,14 @@ public class BukkitConfiguration implements Configuration {
         return configuration.getString(key, defaultValue);
     }
 
+    public boolean getBoolean(String key) {
+        return configuration.getBoolean(key);
+    }
+
+    public boolean getBoolean(String key, boolean defaultValue) {
+        return configuration.getBoolean(key, defaultValue);
+    }
+
     public int getInt(String key) {
         return configuration.getInt(key);
     }

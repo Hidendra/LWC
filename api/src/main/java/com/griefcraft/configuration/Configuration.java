@@ -66,6 +66,23 @@ public interface Configuration {
     public String getString(String key, String defaultValue);
 
     /**
+     * Gets a boolean from the configuration
+     *
+     * @param key
+     * @return
+     */
+    public boolean getBoolean(String key);
+
+    /**
+     * Gets a boolean from the configuration using the default value if it does not exist
+     *
+     * @param key
+     * @param defaultValue
+     * @return
+     */
+    public boolean getBoolean(String key, boolean defaultValue);
+
+    /**
      * Gets an int from the configuration
      *
      * @param key
