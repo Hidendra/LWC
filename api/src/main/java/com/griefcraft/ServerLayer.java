@@ -31,12 +31,16 @@ package com.griefcraft;
 
 import com.griefcraft.entity.Player;
 import com.griefcraft.sql.JDBCDatabase;
+import com.griefcraft.world.Block;
 import com.griefcraft.world.World;
 
 import java.sql.Driver;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Server mod specific methods
+ */
 public abstract class ServerLayer {
 
     /**
@@ -48,6 +52,21 @@ public abstract class ServerLayer {
      * A map of all of the currently known worlds
      */
     private final Map<String, World> worlds = new HashMap<String, World>();
+
+    /**
+     * Check if the given block can be protected
+     *
+     * @param block
+     * @return true if the block can be protected
+     */
+    public abstract boolean isBlockProtectable(Block block);
+
+    /**
+     * Get the default world
+     *
+     * @return
+     */
+    public abstract World getDefaultWorld();
 
     /**
      * Load a player directly from the server without using any caches
@@ -62,13 +81,6 @@ public abstract class ServerLayer {
      * @param worldName
      */
     protected abstract World internalGetWorld(String worldName);
-
-    /**
-     * Get the default world
-     *
-     * @return
-     */
-    public abstract World getDefaultWorld();
 
     /**
      * Get a player from the server

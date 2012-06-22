@@ -33,6 +33,7 @@ import com.griefcraft.ServerLayer;
 import com.griefcraft.bukkit.entity.BukkitPlayer;
 import com.griefcraft.bukkit.world.BukkitWorld;
 import com.griefcraft.entity.Player;
+import com.griefcraft.world.Block;
 import com.griefcraft.world.World;
 import org.bukkit.Bukkit;
 
@@ -67,6 +68,11 @@ public class BukkitServerLayer extends ServerLayer {
         }
 
         return new BukkitWorld(handle);
+    }
+
+    @Override
+    public boolean isBlockProtectable(Block block) {
+        return block.getType() == 54; // TODO
     }
 
     @Override
