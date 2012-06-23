@@ -92,4 +92,56 @@ public abstract class Block {
         return new Location(getWorld(), getX(), getY(), getZ());
     }
 
+    /**
+     * Get a block relative to this block
+     *
+     * @param deltaX
+     * @param deltaY
+     * @param deltaZ
+     * @return
+     */
+    public Block getRelative(int deltaX, int deltaY, int deltaZ) {
+        return getWorld().getBlockAt(getX() + deltaX, getY() + deltaY, getZ() + deltaZ);
+    }
+
+    /**
+     * Finds a block relative to the block with the given block type. This does not look UP or DOWN and only looks
+     * on the current plane for the block (that is, the current y-level)
+     *
+     * @param type
+     * @return the Block found. If it was not found, NULL will be returned
+     */
+    public Block findBlockRelative(int type) {
+        Block block;
+
+        // First, the x plane
+        if ((block = getRelative(-1, 0, 0)) != null) {
+            if (block.getType() == type) {
+                return block;
+            }
+        }
+
+        else if ((block = getRelative(1, 0, 0)) != null) {
+            if (block.getType() == type) {
+                return block;
+            }
+        }
+
+        // now the z plane
+        else if ((block = getRelative(0, 0, -1)) != null) {
+            if (block.getType() == type) {
+                return block;
+            }
+        }
+
+        else if ((block = getRelative(0, 0, 1)) != null) {
+            if (block.getType() == type) {
+                return block;
+            }
+        }
+
+        // nothing at all found QQ
+        return block;
+    }
+
 }
