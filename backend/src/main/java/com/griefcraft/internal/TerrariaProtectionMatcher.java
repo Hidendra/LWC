@@ -27,18 +27,22 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft;
+package com.griefcraft.internal;
 
+import com.griefcraft.LWC;
+import com.griefcraft.ProtectionMatcher;
+import com.griefcraft.ProtectionSet;
+import com.griefcraft.ServerLayer;
 import com.griefcraft.world.Block;
 
-public class SimpleProtectionMatcher implements ProtectionMatcher {
+public class TerrariaProtectionMatcher implements ProtectionMatcher {
 
     /**
      * The lwc instance
      */
     private LWC lwc;
 
-    public SimpleProtectionMatcher(LWC lwc) {
+    public TerrariaProtectionMatcher(LWC lwc) {
         this.lwc = lwc;
     }
 
@@ -46,10 +50,9 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
         ServerLayer layer = lwc.getServerLayer();
         ProtectionSet blocks = new ProtectionSet(lwc.getDatabase());
 
-        // first add the base block, as it must exist on the protection if it matches
         blocks.add(layer.isBlockProtectable(base) ? ProtectionSet.BlockType.PROTECTABLE : ProtectionSet.BlockType.MATCHABLE, base);
-
-
+        // TODO check that block ^
+        // iirc terraria doesn't have very many protection schematics that could be used so nothing complex
         return blocks;
     }
 
