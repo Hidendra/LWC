@@ -26,10 +26,9 @@
  * either expressed or implied, of anybody else.
  */
 
-import com.griefcraft.world.Location;
 import com.griefcraft.world.World;
 
-public class CanaryBlock implements com.griefcraft.world.Block {
+public class CanaryBlock extends com.griefcraft.world.Block {
 
     /**
      * The block handle
@@ -82,7 +81,4 @@ public class CanaryBlock implements com.griefcraft.world.Block {
         handle.setData(data);
     }
 
-    public com.griefcraft.world.Location getLocation() {
-        return new Location(world, getX(), getY(), getZ());
-    }
 }

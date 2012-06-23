@@ -30,11 +30,10 @@
 package com.griefcraft.bukkit.world;
 
 import com.griefcraft.world.Block;
-import com.griefcraft.world.Location;
 import com.griefcraft.world.World;
 
 // TODO implement hashCode / equals
-public class BukkitBlock implements Block {
+public class BukkitBlock extends Block {
 
     /**
      * The bukkit block handle
@@ -87,7 +86,4 @@ public class BukkitBlock implements Block {
         handle.setData(data);
     }
 
-    public Location getLocation() {
-        return new Location(world, getX(), getY(), getZ());
-    }
 }

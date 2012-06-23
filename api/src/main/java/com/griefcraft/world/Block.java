@@ -29,65 +29,67 @@
 
 package com.griefcraft.world;
 
-public interface Block {
+public abstract class Block {
 
     /**
      * Gets the block's type
      * @return
      */
-    public int getType();
+    public abstract int getType();
 
     /**
      * Gets the block's data
      * @return
      */
-    public byte getData();
+    public abstract byte getData();
 
     /**
      * Get the world this block is located in
      * @return
      */
-    public World getWorld();
+    public abstract World getWorld();
 
     /**
      * Gets the block's x coordinate
      * 
      * @return
      */
-    public int getX();
+    public abstract int getX();
 
     /**
      * Gets the block's y coordinate
      * 
      * @return
      */
-    public int getY();
+    public abstract int getY();
 
     /**
      * Gets the block's z coordinate
      *
      * @return
      */
-    public int getZ();
+    public abstract int getZ();
 
     /**
      * Set the block's type
      *
      * @param type
      */
-    public void setType(int type);
+    public abstract void setType(int type);
 
     /**
      * Set the block's data
      *
      * @param data
      */
-    public void setData(byte data);
+    public abstract void setData(byte data);
 
     /**
      * Get the block's current location
      * @return
      */
-    public Location getLocation();
+    public Location getLocation() {
+        return new Location(getWorld(), getX(), getY(), getZ());
+    }
 
 }
