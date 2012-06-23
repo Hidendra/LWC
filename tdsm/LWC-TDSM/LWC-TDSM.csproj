@@ -43,9 +43,6 @@
     <Reference Include="LWC-Backend">
       <HintPath>..\..\csharp-backend\target\LWC-Backend.dll</HintPath>
     </Reference>
-    <Reference Include="mysql-jdbc">
-      <HintPath>..\..\lib\terraria\mysql-jdbc.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

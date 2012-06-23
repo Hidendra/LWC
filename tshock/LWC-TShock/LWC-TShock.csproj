@@ -37,9 +37,6 @@
     <Reference Include="IKVM.OpenJDK.Jdbc">
       <HintPath>..\..\lib\terraria\ikvm-7.0.4335.0\IKVM.OpenJDK.Jdbc.dll</HintPath>
     </Reference>
-    <Reference Include="mysql-jdbc">
-      <HintPath>..\..\lib\terraria\mysql-jdbc.dll</HintPath>
-    </Reference>
     <Reference Include="LWC-Backend">
       <HintPath>..\..\csharp-backend\target\LWC-Backend.dll</HintPath>
     </Reference>

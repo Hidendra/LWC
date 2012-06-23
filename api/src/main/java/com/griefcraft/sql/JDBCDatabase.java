@@ -159,11 +159,15 @@ public class JDBCDatabase implements Database {
             if (override != null) {
                 connection = override.connect(connectionString, properties);
             } else {
+                Class.forName(driver.getClassName());
                 connection = DriverManager.getConnection(connectionString, properties);
             }
 
             return true;
         } catch (SQLException e) {
+            // Rethrow the exception as our own
+            throw new DatabaseException("Exception occurred while connecting to the database!", e);
+        } catch (ClassNotFoundException e) {
             // Rethrow the exception as our own
             throw new DatabaseException("Exception occurred while connecting to the database!", e);
         }

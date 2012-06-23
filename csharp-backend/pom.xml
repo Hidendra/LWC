@@ -36,6 +36,69 @@
                 <version>1.2.1</version>
                 <executions>
                     <execution>
+                        <id>prepare-java-backend</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>mkdir</executable>
+                            <arguments>
+                                <argument>-p</argument>
+                                <argument>bin</argument>
+                                <argument>target</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>extract-java-backend</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>unzip</executable>
+                            <arguments>
+                                <argument>-oqd</argument>
+                                <argument>bin</argument>
+                                <argument>../backend/target/LWC-Backend.jar</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>extract-java-mysql-driver</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>unzip</executable>
+                            <arguments>
+                                <argument>-oqd</argument>
+                                <argument>bin</argument>
+                                <argument>../lib/mysql-jdbc.jar</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>shade-backend-jar</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>jar</executable>
+                            <arguments>
+                                <argument>cf</argument>
+                                <argument>target/shaded-LWC-Backend.jar</argument>
+                                <argument>-C</argument>
+                                <argument>bin</argument>
+                                <argument>.</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
                         <id>build-dll</id>
                         <phase>package</phase>
                         <goals>
@@ -45,14 +108,14 @@
                             <executable>ikvmc</executable>
                             <arguments>
                                 <argument>-out:target/LWC-Backend.dll</argument>
-                                <argument>../backend/target/LWC-Backend.jar</argument>
+                                <argument>target/shaded-LWC-Backend.jar</argument>
                             </arguments>
                         </configuration>
                     </execution>
 
                     <!-- Hack of the year -->
                     <execution>
-                        <id>remove-empty-jar</id>
+                        <id>cleanup</id>
                         <phase>package</phase>
                         <goals>
                             <goal>exec</goal>
@@ -60,6 +123,8 @@
                         <configuration>
                             <executable>rm</executable>
                             <arguments>
+                                <argument>-r</argument>
+                                <argument>bin</argument>
                                 <argument>target/LWC-Backend.jar</argument>
                             </arguments>
                         </configuration>
