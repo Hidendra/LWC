@@ -34,6 +34,7 @@
         <module>bukkit</module>
         <module>canary</module>
         <module>tdsm</module>
+        <module>tshock</module>
     </modules>
 
     <build>
