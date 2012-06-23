@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.griefcraft</groupId>
     <artifactId>csharp-api</artifactId>
-    <name>LWC-Backend</name>
+    <name>LWC-Backend (C#)</name>
     <url>griefcraft.com</url>
     <version>UNSTABLE-SNAPSHOT</version>
 
@@ -26,7 +26,7 @@
     </dependencies>
 
     <build>
-        <finalName>${project.name}</finalName>
+        <finalName>LWC-Backend</finalName>
         <defaultGoal>clean package</defaultGoal>
 
 
@@ -45,7 +45,7 @@
                         <configuration>
                             <executable>ikvmc</executable>
                             <arguments>
-                                <argument>-out:target/${project.name}.dll</argument>
+                                <argument>-out:target/LWC-Backend.dll</argument>
                                 <argument>../backend/target/LWC-Backend.jar</argument>
                             </arguments>
                         </configuration>
