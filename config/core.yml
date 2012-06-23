@@ -128,7 +128,7 @@ protections:
     # If entities - such as zombies - are allowed to break down doors
     allowEntityBreakDoor: false
 
-    # If entities - such as villages - should be allowed to interact with protections (i.e doors)
+    # If entities - such as villagers - should be allowed to interact with protections (i.e doors)
     allowEntityInteract: false
 
     # Creation messages and protection notices will not be shown for this protection
