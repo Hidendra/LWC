@@ -74,6 +74,21 @@
                             </arguments>
                         </configuration>
                     </execution>
+
+                    <execution>
+                        <id>rename-dll</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>mv</executable>
+                            <arguments>
+                                <argument>target/LWC-TDSM.dll</argument>
+                                <argument>target/${build.finalName}.dll</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
