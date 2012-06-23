@@ -45,6 +45,8 @@ import org.bukkit.event.entity.EntityBreakDoorEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.plugin.Plugin;
 
+import java.lang.Boolean;
+
 public class LWCEntityListener implements Listener {
 
     /**
@@ -54,6 +56,21 @@ public class LWCEntityListener implements Listener {
 
     public LWCEntityListener(LWCPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void entityInteract(EntityInteractEvent event) {
+        Block block = event.getBlock();
+
+        Protection protection = plugin.getLWC().findProtection(block);
+
+        if (protection != null) {
+            boolean allowEntityInteract = Boolean.parseBoolean(plugin.getLWC().resolveProtectionConfiguration(block.getType(), "allowEntityInteract"));
+
+            if (!allowEntityInteract) {
+                event.setCancelled(true);
+            }
+        }
     }
 
     @EventHandler
