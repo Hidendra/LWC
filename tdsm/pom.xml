@@ -2,10 +2,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.griefcraft</groupId>
-    <artifactId>csharp-backend</artifactId>
-    <name>LWC-Backend (C#)</name>
+    <artifactId>tdsm</artifactId>
+    <name>LWC-TDSM</name>
     <url>griefcraft.com</url>
-    <version>UNSTABLE-SNAPSHOT</version>
+    <packaging>netpack</packaging>
+    <version>0.00</version>
 
     <parent>
         <groupId>com.griefcraft</groupId>
@@ -14,7 +15,9 @@
     </parent>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <visual.studio.solution>LWC-TDSM.sln</visual.studio.solution>
+        <visual.test.project.pattern>*.Tests;*Test</visual.test.project.pattern>
+        <dotnet.tool.version>4.0</dotnet.tool.version>
     </properties>
 
     <dependencies>
@@ -25,32 +28,54 @@
         </dependency>
     </dependencies>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>doodleproject-repo</id>
+            <name>DoodleProject Maven 2 Repository</name>
+            <url>http://doodleproject.sourceforge.net/maven2/release</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
+
     <build>
-        <finalName>LWC-Backend</finalName>
+        <finalName>${project.name}-UNSTABLE-SNAPSHOT</finalName>
         <defaultGoal>clean package</defaultGoal>
 
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.sonar-plugins.dotnet</groupId>
+                <artifactId>maven-dotnet-plugin</artifactId>
+                <extensions>true</extensions>
+                <version>1.2</version>
+                <configuration>
+                    <buildConfigurations>Release</buildConfigurations>
+                </configuration>
+            </plugin>
+
+            <!-- Copy the release dll -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.2.1</version>
                 <executions>
                     <execution>
-                        <id>build-dll</id>
+                        <id>copy-dll</id>
                         <phase>package</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>ikvmc</executable>
+                            <executable>cp</executable>
                             <arguments>
-                                <argument>-out:target/LWC-Backend.dll</argument>
-                                <argument>../backend/target/LWC-Backend.jar</argument>
+                                <argument>LWC-TDSM/bin/Release/LWC-TDSM.dll</argument>
+                                <argument>target/</argument>
                             </arguments>
                         </configuration>
                     </execution>
 
-                    <!-- Hack of the year -->
+                    <!-- Hack of the year version 2.54 -->
                     <execution>
                         <id>remove-empty-jar</id>
                         <phase>package</phase>
@@ -60,7 +85,7 @@
                         <configuration>
                             <executable>rm</executable>
                             <arguments>
-                                <argument>target/LWC-Backend.jar</argument>
+                                <argument>target/*.netpack</argument>
                             </arguments>
                         </configuration>
                     </execution>

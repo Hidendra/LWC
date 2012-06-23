@@ -33,6 +33,7 @@
         <module>csharp-backend</module>
         <module>bukkit</module>
         <module>canary</module>
+        <module>tdsm</module>
     </modules>
 
     <build>

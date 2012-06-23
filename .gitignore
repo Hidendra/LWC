@@ -2,6 +2,7 @@
 .settings
 .externalToolBuilders
 bin
+obj
 target
 
 .classpath
@@ -10,3 +11,6 @@ target
 LWC.iml
 LWC.ipr
 LWC.iws
+*ReSharper*
+*.suo
+*.iml
