@@ -36,6 +36,7 @@ import com.griefcraft.command.SimpleCommandHandler;
 import com.griefcraft.commands.BaseCommands;
 import com.griefcraft.commands.BenchmarkCommands;
 import com.griefcraft.configuration.Configuration;
+import com.griefcraft.internal.SimpleProtectionManager;
 import com.griefcraft.sql.Database;
 import com.griefcraft.sql.DatabaseException;
 import com.griefcraft.sql.JDBCDatabase;
@@ -45,7 +46,7 @@ public class SimpleLWC implements LWC {
     /**
      * The protection manager
      */
-    private ProtectionManager manager;
+    private final ProtectionManager manager = new SimpleProtectionManager(this);
 
     /**
      * The server layer

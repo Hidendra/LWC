@@ -27,68 +27,45 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft;
+package com.griefcraft.internal;
 
-import com.griefcraft.command.CommandHandler;
-import com.griefcraft.command.ConsoleCommandSender;
-import com.griefcraft.configuration.Configuration;
-import com.griefcraft.sql.Database;
+import com.griefcraft.Game;
+import com.griefcraft.LWC;
+import com.griefcraft.ProtectionManager;
+import com.griefcraft.ProtectionMatcher;
+import com.griefcraft.model.Protection;
+import com.griefcraft.world.Location;
 
-public interface LWC {
-
-    /**
-     * Get the protection manager
-     *
-     * @return
-     */
-    public ProtectionManager getProtectionManager();
+public class SimpleProtectionManager implements ProtectionManager {
 
     /**
-     * Get the server layer that provides some server specific utilities
-     *
-     * @return
+     * The LWC instance
      */
-    public ServerLayer getServerLayer();
+    private LWC lwc;
 
-    /**
-     * Get information about the server mod itself
-     *
-     * @return
-     */
-    public ServerInfo getServerInfo();
+    public SimpleProtectionManager(LWC lwc) {
+        this.lwc = lwc;
+    }
 
-    /**
-     * Get the API version
-     * @return
-     */
-    public String getBackendVersion();
+    public Protection findProtection(Location location) {
+        ProtectionMatcher matcher;
 
-    /**
-     * Get the command handler
-     *
-     * @return
-     */
-    public CommandHandler getCommandHandler();
+        // select the matcher depending on the game
+        Game game = lwc.getServerInfo().getServerMod().game();
+        if (game == Game.MINECRAFT) {
+            matcher = new MinecraftProtectionMatcher(lwc);
+        } else if (game == Game.TERRARIA) {
+            matcher = new TerrariaProtectionMatcher(lwc);
+        } else {
+            throw new UnsupportedOperationException("Game \"" + game + "\" is not implemented");
+        }
 
-    /**
-     * Get the console sender, used to send messages to the console
-     *
-     * @return
-     */
-    public ConsoleCommandSender getConsoleSender();
+        // TODO magical things
+        return null;
+    }
 
-    /**
-     * Get the database object
-     *
-     * @return
-     */
-    public Database getDatabase();
-
-    /**
-     * Gets the configuration file
-     *
-     * @return
-     */
-    public Configuration getConfiguration();
-
+    public Protection createProtection(Protection.Type type, String owner, Location location) {
+        // TODO check arguments
+        return lwc.getDatabase().createProtection(type, owner, location);
+    }
 }
