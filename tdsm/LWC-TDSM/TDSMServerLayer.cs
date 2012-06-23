@@ -7,6 +7,7 @@ using com.griefcraft;
 using com.griefcraft.sql;
 using com.griefcraft.world;
 using java.lang;
+using java.sql;
 using Player = com.griefcraft.entity.Player;
 
 namespace LWC_TDSM
@@ -46,18 +47,6 @@ namespace LWC_TDSM
         protected override com.griefcraft.world.World internalGetWorld(string str)
         {
             return LWCPlugin.MAIN_WORLD; // TODO ???
-        }
-
-        public override java.sql.Driver overrideJDBCDriver(JDBCDatabase.Driver driver)
-        {
-            // TODO SQLite
-            if (driver == JDBCDatabase.Driver.MYSQL)
-            {
-                Class.forName(typeof(com.mysql.jdbc.Driver).AssemblyQualifiedName);
-                return (java.sql.Driver) new com.mysql.jdbc.Driver();
-            }
-
-            return null;
         }
 
     }

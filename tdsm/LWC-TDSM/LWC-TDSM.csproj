@@ -66,12 +66,6 @@
     <Compile Include="World\TDSMBlock.cs" />
     <Compile Include="World\TDSMWorld.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Terraria_Server\Terraria_Server.csproj">
-      <Project>{6B42E70C-75CD-410B-9D4A-3EA75B6F5176}</Project>
-      <Name>Terraria_Server</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -30,11 +30,9 @@
 package com.griefcraft;
 
 import com.griefcraft.entity.Player;
-import com.griefcraft.sql.JDBCDatabase;
 import com.griefcraft.world.Block;
 import com.griefcraft.world.World;
 
-import java.sql.Driver;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -120,16 +118,6 @@ public abstract class ServerLayer {
         }
 
         return world;
-    }
-
-    /**
-     * Override a jdbc driver. If this returns null, the default method of resolving the driver is done
-     *
-     * @param driver
-     * @return
-     */
-    public Driver overrideJDBCDriver(JDBCDatabase.Driver driver) {
-        return null;
     }
 
 }

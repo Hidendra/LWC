@@ -10,8 +10,10 @@ using Terraria_Server.Logging;
 using Terraria_Server.Plugins;
 using com.griefcraft;
 using com.griefcraft.command;
+using com.griefcraft.sql;
 using com.griefcraft.world;
 using java.lang;
+using java.sql;
 
 namespace LWC_TDSM
 {
@@ -38,6 +40,19 @@ namespace LWC_TDSM
             TDSMBuild = 39;
 
             layer = new TDSMServerLayer(this);
+        }
+
+        // TODO repurpose into a usable alternative
+        public Driver createDriver(JDBCDatabase.Driver driver)
+        {
+            // TODO SQLite
+            if (driver == JDBCDatabase.Driver.MYSQL)
+            {
+                Class.forName(typeof(com.mysql.jdbc.Driver).AssemblyQualifiedName);
+                return (Driver)new com.mysql.jdbc.Driver();
+            }
+
+            return null;
         }
 
         /**

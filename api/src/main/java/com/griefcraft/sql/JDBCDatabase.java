@@ -154,7 +154,7 @@ public class JDBCDatabase implements Database {
 
         // Now we can finally [try to] connect to the database
         try {
-            java.sql.Driver override = lwc.getServerLayer().overrideJDBCDriver(driver);
+            java.sql.Driver override = null; // TODO lwc.getServerLayer().overrideJDBCDriver(driver);
 
             if (override != null) {
                 connection = override.connect(connectionString, properties);
