@@ -29,59 +29,27 @@
 
 package com.griefcraft;
 
-import com.griefcraft.command.CommandHandler;
-import com.griefcraft.command.ConsoleCommandSender;
-import com.griefcraft.configuration.Configuration;
-import com.griefcraft.sql.Database;
+import com.griefcraft.model.Protection;
+import com.griefcraft.world.Location;
 
-public interface LWC {
+public interface ProtectionManager {
 
     /**
-     * Get the protection manager
+     * Find a protection at the given location
      *
+     * @param location
      * @return
      */
-    public ProtectionManager getProtectionManager();
+    public Protection findProtection(Location location);
 
     /**
-     * Get the server layer that provides some server specific utilities
+     * Create a protection in the world
      *
+     * @param type
+     * @param owner
+     * @param location
      * @return
      */
-    public ServerLayer getServerLayer();
-
-    /**
-     * Get the API version
-     * @return
-     */
-    public String getBackendVersion();
-
-    /**
-     * Get the command handler
-     *
-     * @return
-     */
-    public CommandHandler getCommandHandler();
-
-    /**
-     * Get the console sender, used to send messages to the console
-     *
-     * @return
-     */
-    public ConsoleCommandSender getConsoleSender();
-
-    /**
-     * Get the database object
-     *
-     * @return
-     */
-    public Database getDatabase();
-
-    /**
-     * Gets the configuration file
-     *
-     * @return
-     */
-    public Configuration getConfiguration();
+    public Protection createProtection(Protection.Type type, String owner, Location location);
 
 }

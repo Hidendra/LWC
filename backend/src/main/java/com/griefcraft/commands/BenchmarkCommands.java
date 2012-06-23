@@ -58,7 +58,7 @@ public class BenchmarkCommands {
         Random random = new Random();
         long start = System.currentTimeMillis();
         for (int i = 0; i < 10000; i++) {
-            lwc.getDatabase().createProtection(Protection.Type.PRIVATE, "virulent",
+            lwc.getProtectionManager().createProtection(Protection.Type.PRIVATE, "virulent",
                     new Location(lwc.getServerLayer().getDefaultWorld(), random.nextDouble() * 100000, random.nextDouble() * 100000, random.nextDouble() * 100000));
         }
         long time = System.currentTimeMillis() - start;

@@ -77,7 +77,7 @@ public class BaseCommands {
         player.onBlockInteract(new BlockEventNotifier() {
             @Override
             public boolean call(BlockEvent event) {
-                Protection protection = lwc.getDatabase().createProtection(Protection.Type.PRIVATE, player.getName(), event.getBlock().getLocation());
+                Protection protection = lwc.getProtectionManager().createProtection(Protection.Type.PRIVATE, player.getName(), event.getBlock().getLocation());
                 if (protection != null) {
                     player.sendMessage("Protected~");
                 } else {

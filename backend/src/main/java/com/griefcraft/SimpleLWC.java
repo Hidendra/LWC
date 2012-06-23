@@ -43,6 +43,11 @@ import com.griefcraft.sql.JDBCDatabase;
 public class SimpleLWC implements LWC {
 
     /**
+     * The protection manager
+     */
+    private ProtectionManager manager;
+
+    /**
      * The server layer
      */
     private ServerLayer serverLayer;
@@ -111,6 +116,10 @@ public class SimpleLWC implements LWC {
         }
 
         return new SimpleLWC(serverLayer, serverInfo, consoleSender, configuration);
+    }
+
+    public ProtectionManager getProtectionManager() {
+        return manager;
     }
 
     public ServerLayer getServerLayer() {
