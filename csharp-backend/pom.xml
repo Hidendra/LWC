@@ -43,7 +43,7 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>ikvmc.exe</executable>
+                            <executable>ikvmc</executable>
                             <arguments>
                                 <argument>-out:target/${project.name}.dll</argument>
                                 <argument>../backend/target/LWC-Backend.jar</argument>

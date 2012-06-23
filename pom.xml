@@ -30,6 +30,7 @@
     <modules>
         <module>api</module>
         <module>backend</module>
+        <module>csharp-backend</module>
         <module>bukkit</module>
         <module>canary</module>
     </modules>
