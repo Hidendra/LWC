@@ -33,7 +33,24 @@ import com.griefcraft.world.Block;
 
 public class SimpleProtectionMatcher implements ProtectionMatcher {
 
-    public ProtectionSet matchProtection(Block base) {
-        throw new UnsupportedOperationException("Not implemented.");
+    /**
+     * The lwc instance
+     */
+    private LWC lwc;
+
+    public SimpleProtectionMatcher(LWC lwc) {
+        this.lwc = lwc;
     }
+
+    public ProtectionSet matchProtection(Block base) {
+        ServerLayer layer = lwc.getServerLayer();
+        ProtectionSet blocks = new ProtectionSet(lwc.getDatabase());
+
+        // first add the base block, as it must exist on the protection if it matches
+        blocks.add(layer.isBlockProtectable(base) ? ProtectionSet.BlockType.PROTECTABLE : ProtectionSet.BlockType.MATCHABLE, base);
+
+
+        return blocks;
+    }
+
 }

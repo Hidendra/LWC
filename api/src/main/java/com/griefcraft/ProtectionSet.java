@@ -30,7 +30,9 @@
 package com.griefcraft;
 
 import com.griefcraft.model.Protection;
+import com.griefcraft.sql.Database;
 import com.griefcraft.world.Block;
+import com.griefcraft.world.Location;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,10 +56,34 @@ public class ProtectionSet {
 
     }
 
+    private static final class BlockNode {
+
+        /**
+         * The block at this node
+         */
+        Block block;
+
+        /**
+         * If the node has been checked in the database to a protection or not. Allows us to wastefully
+         * reiterate the blocks to look for protections without wasting queries.
+         */
+        boolean checked = false;
+
+        BlockNode(Block block) {
+            this.block = block;
+        }
+
+    }
+
+    /**
+     * The database that should be used to attempt to load protections
+     */
+    private final Database database;
+
     /**
      * The blocks that were found
      */
-    private final Map<BlockType, List<Block>> blocks = new HashMap<BlockType, List<Block>>();
+    private final Map<BlockType, Map<Location, BlockNode>> blocks = new HashMap<BlockType, Map<Location, BlockNode>>();
 
     /**
      * The resultant protection
@@ -70,7 +96,8 @@ public class ProtectionSet {
      */
     private boolean locked = false;
 
-    public ProtectionSet() {
+    public ProtectionSet(Database database) {
+        this.database = database;
         initialize();
     }
 
@@ -85,18 +112,25 @@ public class ProtectionSet {
             throw new IllegalStateException("Result cannot be changed once locked.");
         }
 
-        List<Block> blocks = this.blocks.get(type);
-        blocks.add(block);
+        Map<Location, BlockNode> blocks = this.blocks.get(type);
+        blocks.put(block.getLocation(), new BlockNode(block));
     }
 
     /**
-     * Get the blocks for the given block type. The list returned is NOT modifiable
+     * Get the blocks for the given block type. The list returned is NOT modifiable and can be expensive.
+     * The list has to essentially be copied from a map, so O(N)
      *
      * @param type
      * @return
      */
     public List<Block> get(BlockType type) {
-        return Collections.unmodifiableList(blocks.get(type));
+        List<Block> blocks = new ArrayList<Block>();
+
+        for (BlockNode node : this.blocks.get(type).values()) {
+            blocks.add(node.block);
+        }
+
+        return Collections.unmodifiableList(blocks);
     }
 
     /**
@@ -127,7 +161,7 @@ public class ProtectionSet {
      */
     private void initialize() {
         for (BlockType type : BlockType.values()) {
-            blocks.put(type, new ArrayList<Block>());
+            blocks.put(type, new HashMap<Location, BlockNode>());
         }
     }
 
