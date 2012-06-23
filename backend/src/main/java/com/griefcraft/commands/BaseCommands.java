@@ -30,6 +30,7 @@
 package com.griefcraft.commands;
 
 import com.griefcraft.LWC;
+import com.griefcraft.ServerLayer;
 import com.griefcraft.command.Command;
 import com.griefcraft.command.CommandContext;
 import com.griefcraft.command.SenderType;
@@ -37,6 +38,7 @@ import com.griefcraft.entity.Player;
 import com.griefcraft.event.events.BlockEvent;
 import com.griefcraft.event.notifiers.BlockEventNotifier;
 import com.griefcraft.model.Protection;
+import com.griefcraft.world.Block;
 
 /**
  * A test of commands used mainly for testing
@@ -77,12 +79,21 @@ public class BaseCommands {
         player.onBlockInteract(new BlockEventNotifier() {
             @Override
             public boolean call(BlockEvent event) {
-                Protection protection = lwc.getProtectionManager().createProtection(Protection.Type.PRIVATE, player.getName(), event.getBlock().getLocation());
+                ServerLayer layer = lwc.getServerLayer();
+                Block block = event.getBlock();
+
+                if (!layer.isBlockProtectable(block)) {
+                    player.sendMessage("That block is not protectable");
+                    return false;
+                }
+
+                Protection protection = lwc.getProtectionManager().createProtection(Protection.Type.PRIVATE, player.getName(), block.getLocation());
                 if (protection != null) {
                     player.sendMessage("Protected~");
                 } else {
                     player.sendMessage("Failed to protect for some reason ?");
                 }
+
                 return true;
             }
         });
