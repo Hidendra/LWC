@@ -33,7 +33,9 @@ import com.griefcraft.Game;
 import com.griefcraft.LWC;
 import com.griefcraft.ProtectionManager;
 import com.griefcraft.ProtectionMatcher;
+import com.griefcraft.ProtectionSet;
 import com.griefcraft.model.Protection;
+import com.griefcraft.world.Block;
 import com.griefcraft.world.Location;
 
 public class SimpleProtectionManager implements ProtectionManager {
@@ -58,6 +60,26 @@ public class SimpleProtectionManager implements ProtectionManager {
             matcher = new TerrariaProtectionMatcher(lwc);
         } else {
             throw new UnsupportedOperationException("Game \"" + game + "\" is not implemented");
+        }
+
+        // Get the block at the location
+        // this will be our base block -- or reference point -- of where the protection is matched from
+        Block base = location.getWorld().getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+
+        // attempt to match the protection set
+        ProtectionSet blocks = matcher.matchProtection(base);
+
+        // go through each of the protectable blocks
+        for (Block block : blocks.get(ProtectionSet.BlockType.PROTECTABLE)) {
+            // load it from the database
+            Protection protection = lwc.getDatabase().loadProtection(block.getLocation());
+
+            if (protection != null) {
+                // match !
+                // TODO hand the protection set over to the protection or something?
+                blocks.matchedResultant(protection);
+                return protection;
+            }
         }
 
         // TODO magical things

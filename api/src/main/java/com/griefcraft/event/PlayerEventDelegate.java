@@ -68,7 +68,8 @@ public final class PlayerEventDelegate {
         boolean cancel; // If the event should be cancelled
 
         // Match the block to a protection
-        Protection protection = null; // TODO :-)
+        Protection protection = lwc.getProtectionManager().findProtection(block.getLocation()); // TODO :-)
+        lwc.getConsoleSender().sendMessage("Protection found: " + protection);
 
         // Give events the first stab
         try {
