@@ -106,6 +106,12 @@ public class Protection extends AbstractSavable {
      */
     private boolean modified = false;
 
+    @Override
+    public String toString() {
+        // TODO add in updated, created
+        return String.format("Protection(owner=\"%s\", world=\"%s\", location=[%d, %d, %d])", owner, world, x, y, z);
+    }
+
     public Protection(int id) {
         this.id = id;
     }
