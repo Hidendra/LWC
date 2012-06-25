@@ -31,7 +31,6 @@ package com.griefcraft.event;
 
 import com.griefcraft.event.notifiers.BlockEventNotifier;
 import com.griefcraft.event.notifiers.ProtectionEventNotifier;
-import com.griefcraft.util.Tuple;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,12 +60,13 @@ public class PlayerEventHandler {
     private final Map<Type, List<EventNotifier>> notifiers = new HashMap<Type, List<EventNotifier>>();
 
     /**
-     * We only allow one temporary event notifier to prevent large amounts of cascading event calls.
+     * We only allow one temporary event notifier for each event type to prevent large amounts of
+     * cascading event calls.
      * By design it is safe to assume that a temporary event notifier is normally for when we want
      * the player to execute an action. If it's overridden by another temporary notifier, then
      * it can be assumed that they want to do something else instead.
      */
-    private Tuple<Type, EventNotifier<?>> temporaryEventNotifier = null;
+    private final Map<Type, EventNotifier<?>> temporaryNotifiers = new HashMap<Type, EventNotifier<?>>();
 
     /**
      * Queue the notifier to be called next time the player interacts with a protection
@@ -98,14 +98,12 @@ public class PlayerEventHandler {
      */
     protected boolean callEvent(Type type, Event event) throws EventException {
         // Check temporary notifier
-        if (temporaryEventNotifier != null) {
-            Type tempType = temporaryEventNotifier.first();
+        if (temporaryNotifiers != null) {
+            EventNotifier<?> notifier = temporaryNotifiers.get(type);
 
-            if (type == tempType) {
-                EventNotifier<?> notifier = temporaryEventNotifier.second();
-
+            if (notifier != null) {
                 // remove the temporary notifier association before calling it
-                temporaryEventNotifier = null;
+                temporaryNotifiers.remove(type);
 
                 if (internalCallEvent(event, notifier)) {
                     return true;
@@ -178,7 +176,7 @@ public class PlayerEventHandler {
 
         // handle temporary notifiers separately
         if (notifier.isTemporary()) {
-            temporaryEventNotifier = new Tuple<Type, EventNotifier<?>>(type, notifier);
+            temporaryNotifiers.put(type, notifier);
             return;
         }
 
