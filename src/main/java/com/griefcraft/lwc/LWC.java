@@ -885,7 +885,7 @@ public class LWC {
             removeBlocks = new LinkedList<Block>();
         }
 
-        if (where != null || !where.trim().isEmpty()) {
+        if (where != null && !where.trim().isEmpty()) {
             where = " WHERE " + where.trim();
         }
 
