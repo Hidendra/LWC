@@ -31,7 +31,6 @@ package com.griefcraft.util;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
-import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.sql.Database;
 
 import java.io.BufferedReader;
@@ -396,19 +395,6 @@ public class Updater {
         // It does not exist ..
         fileQueue.offer(updaterFile);
         return true;
-    }
-
-    /**
-     * Download a config file
-     *
-     * @param config
-     */
-    public void downloadConfig(String config) {
-        File file = new File(ModuleLoader.ROOT_PATH + config); // where to save to
-        UpdaterFile updaterFile = new UpdaterFile(file.getPath(), UPDATE_SITE + PLUGIN_LOCATION + "config/" + config);
-
-        this.verifyFile(updaterFile);
-        this.downloadFiles();
     }
 
     /**
