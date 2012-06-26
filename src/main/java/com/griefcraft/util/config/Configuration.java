@@ -28,9 +28,7 @@
 
 package com.griefcraft.util.config;
 
-import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.ModuleLoader;
-import com.griefcraft.util.Updater;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
@@ -42,6 +40,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -110,24 +109,28 @@ public class Configuration extends ConfigurationNode {
      * Create and/or load a configuration file
      *
      * @param config
-     * @param autoDownload
+     * @param extractConfig
      * @return
      */
-    public static Configuration load(String config, boolean autoDownload) {
+    public static Configuration load(String config, boolean extractConfig) {
         if (loaded.containsKey(config)) {
             return loaded.get(config);
         }
 
         File file = new File(ModuleLoader.ROOT_PATH + config);
+        File folder = new File(ModuleLoader.ROOT_PATH);
+
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
 
         // if it does not exist, attempt to download it if possible :-)
         if (!file.exists()) {
-            if (!autoDownload) {
+            if (!extractConfig) {
                 return null;
             }
 
-            Updater updater = LWC.getInstance().getPlugin().getUpdater();
-            updater.downloadConfig(config);
+            extractFile("/config/" + config, ModuleLoader.ROOT_PATH + config);
         }
 
         Configuration configuration = new Configuration(file);
@@ -138,6 +141,41 @@ public class Configuration extends ConfigurationNode {
         updater.update(configuration);
 
         return configuration;
+    }
+
+    /**
+     * Extract a file (in the jar) to the destination folder
+     *
+     * @param path
+     * @param destFolder
+     */
+    private static void extractFile(String path, String destFolder) {
+        InputStream is = null;
+        OutputStream os = null;
+
+        try {
+            is = updater.getClass().getResourceAsStream(path);
+            os = new FileOutputStream(destFolder);
+
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) { }
+            }
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) { }
+            }
+        }
     }
 
     /**
