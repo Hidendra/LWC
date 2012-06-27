@@ -208,7 +208,7 @@ public class ModuleLoader {
         if (superclass == null) {
             throw new IllegalArgumentException("Method cannot be its own superclass (?)");
         }
-        if ( superclass == Object.class ) {
+        if (superclass == Object.class) {
             // then it implements the Module interface but doesn't extend any class
             // also means getDeclaredMethods() below wouldn't show the interface methods when acting on Object.class
             // modules would then fail to register if they just implement the Module interface instead of extending JavaModule
