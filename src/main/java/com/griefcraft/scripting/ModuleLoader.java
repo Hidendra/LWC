@@ -208,7 +208,28 @@ public class ModuleLoader {
         if (superclass == null) {
             throw new IllegalArgumentException("Method cannot be its own superclass (?)");
         }
-
+		if ( superclass == Object.class ) {
+			// then it implements the Module interface but doesn't extend any class
+			//also means getDeclaredMethods() below wouldn't show the interface methods when acting on Object.class
+			//modules would then fail to register if they just implement the Module interface instead of extending JavaModule
+			superclass=Module.class;//the easy way
+			//or the hard way:
+//			Class<?>[] ifaces = module.getClass().getInterfaces();
+//			if ( ( null == ifaces ) || ( ifaces.length <= 0 ) ) {
+//				// now this is impossible,
+//				throw new IllegalArgumentException( "just not really possible to get here" );
+//			} else {
+//				for ( Class<?> iface : ifaces ) {
+//					if (Module.class.isAssignableFrom( iface )) {
+//						//in other words this interface is a subinterface of Module, ie. maybe adding more methods
+//						superclass = iface;
+//						//this also means we'd miss other interfaces which could be subinterface of Module and adding more methods
+//						//which at the same time are all implemented by this module instance
+//					}
+//				}
+//				// superclass=
+//			}
+		}
         // The methods that are possible to implement
         Method[] methods = superclass.getDeclaredMethods();
 
