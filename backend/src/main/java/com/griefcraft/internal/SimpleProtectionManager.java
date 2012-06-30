@@ -34,6 +34,7 @@ import com.griefcraft.LWC;
 import com.griefcraft.ProtectionManager;
 import com.griefcraft.ProtectionMatcher;
 import com.griefcraft.ProtectionSet;
+import com.griefcraft.entity.Player;
 import com.griefcraft.model.Protection;
 import com.griefcraft.world.Block;
 import com.griefcraft.world.Location;
@@ -89,5 +90,20 @@ public class SimpleProtectionManager implements ProtectionManager {
     public Protection createProtection(Protection.Type type, String owner, Location location) {
         // TODO check arguments
         return lwc.getDatabase().createProtection(type, owner, location);
+    }
+
+    public boolean defaultPlayerInteractAction(Protection protection, Player player) {
+
+        // TODO do these checks elsewhere ? :p
+        // if they're the owner, return immediately
+        if (protection.isOwner(player)) {
+            return false;
+        }
+
+        // they cannot access the protection o\
+        // so send them a kind message
+        player.sendMessage("&4This protection is locked by a magical spell");
+
+        return true;
     }
 }

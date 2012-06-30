@@ -59,7 +59,7 @@ public final class PlayerEventDelegate {
     }
 
     /**
-     * Called when the player interacts with a block. Return TRUE to cancel this event.
+     * Called when the player interacts with a block. Returns TRUE to cancel this event.
      *
      * @param block
      * @return true to cancel the event
@@ -80,6 +80,10 @@ public final class PlayerEventDelegate {
                 cancel = player.callEvent(PlayerEventHandler.Type.PLAYER_INTERACT_PROTECTION, new ProtectionEvent(protection));
             }
 
+            // default event action
+            if (!cancel && protection != null) {
+                cancel = lwc.getProtectionManager().defaultPlayerInteractAction(protection, player);
+            }
         } catch (EventException e) {
             player.sendMessage("&cA severe error occurred while processing the event: " + e.getMessage());
             player.sendMessage("&cThe full stack trace has been printed out to the log file");
