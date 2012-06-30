@@ -64,15 +64,8 @@ public class SimpleMessageParser implements MessageParser {
 
         // add the arguments to the cache key
         if (args != null && args.length > 0) {
-            int index = 0;
             for (Object argument : args) {
-                if (argument == null) {
-                    System.out.println("Argument is null at index " + index);
-                } else {
-                    cacheKey += argument.toString();
-                }
-
-                index ++;
+                cacheKey += argument.toString();
             }
         }
 

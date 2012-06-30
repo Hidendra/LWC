@@ -96,7 +96,6 @@ import com.griefcraft.modules.redstone.RedstoneModule;
 import com.griefcraft.modules.setup.BaseSetupModule;
 import com.griefcraft.modules.setup.DatabaseSetupModule;
 import com.griefcraft.modules.setup.LimitsSetup;
-import com.griefcraft.modules.pluginsupport.Towny;
 import com.griefcraft.modules.unlock.UnlockModule;
 import com.griefcraft.scripting.Module;
 import com.griefcraft.scripting.ModuleLoader;
@@ -595,11 +594,16 @@ public class LWC {
                 }
 
                 String blockName = materialToString(block);
+                String protectionTypeToString = parser.parseMessage(protection.typeToString().toLowerCase());
+
+                if (protectionTypeToString == null) {
+                    protectionTypeToString = "Unknown";
+                }
 
                 if (parser.parseMessage("protection." + blockName.toLowerCase() + ".notice.protected") != null) {
-                    sendLocale(player, "protection." + blockName.toLowerCase() + ".notice.protected", "type", parser.parseMessage(protection.typeToString().toLowerCase()), "block", blockName, "owner", owner);
+                    sendLocale(player, "protection." + blockName.toLowerCase() + ".notice.protected", "type", protectionTypeToString, "block", blockName, "owner", owner);
                 } else {
-                    sendLocale(player, "protection.general.notice.protected", "type", parser.parseMessage(protection.typeToString().toLowerCase()), "block", blockName, "owner", owner);
+                    sendLocale(player, "protection.general.notice.protected", "type", protectionTypeToString, "block", blockName, "owner", owner);
                 }
             }
         }
