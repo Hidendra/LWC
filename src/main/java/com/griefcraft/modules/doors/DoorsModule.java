@@ -191,7 +191,7 @@ public class DoorsModule extends JavaModule {
             // Get the top half of the door
             Block topHalf = door.getRelative(BlockFace.UP);
 
-            // Now xor both data values with 0x8, the flag that states if the door is open
+            // Now xor both data values with 0x4, the flag that states if the door is open
             door.setData((byte) (door.getData() ^ 0x4));
 
             // Only change the block above it if it is something we can open or close
