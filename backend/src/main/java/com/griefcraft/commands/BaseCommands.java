@@ -115,7 +115,7 @@ public class BaseCommands {
         player.onBlockInteract(new BlockEventNotifier() {
             @Override
             public boolean call(BlockEvent event) {
-                player.sendMessage(_("You clicked on a block with the id " + event.getBlock().getType() + "!"));
+                player.sendMessage(_("You clicked on a block with the id {0}!", event.getBlock().getType()));
                 return true;
             }
         });

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-07 02:27-0300\n"
+"POT-Creation-Date: 2012-07-07 02:31-0300\n"
 "PO-Revision-Date: 2012-07-07 00:38-0300\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: English\n"
@@ -55,8 +55,9 @@ msgid "Click on a block, please!~"
 msgstr "Click on a block, please!~"
 
 #: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:118
-msgid "You clicked on a block with the id "
-msgstr "You clicked on a block with the id "
+#, fuzzy, java-format
+msgid "You clicked on a block with the id {0}!"
+msgstr "You clicked on a block with the id {0}!"
 
 #: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:134
 #, java-format
