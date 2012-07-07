@@ -85,10 +85,6 @@ public class BukkitPlayer extends Player {
         }
     }
 
-    public void sendLocalizedMessage(String node, Object... args) {
-        throw new UnsupportedOperationException("sendLocalizedMessage is not implemented");
-    }
-
     public boolean hasPermission(String node) {
         return handle.hasPermission(node);
     }

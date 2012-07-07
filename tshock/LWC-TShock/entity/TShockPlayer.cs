@@ -42,11 +42,6 @@ namespace LWC_TShock.entity
             }
         }
 
-        public override void sendLocalizedMessage(string node, object[] arguments)
-        {
-            throw new NotImplementedException();
-        }
-
         public override bool hasPermission(string message)
         {
             // TODO
