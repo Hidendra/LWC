@@ -6,12 +6,12 @@
     <name>LWC-TDSM</name>
     <url>griefcraft.com</url>
     <packaging>netpack</packaging>
-    <version>0.00</version>
+    <version>0.00-SNAPSHOT</version>
 
     <parent>
         <groupId>com.griefcraft</groupId>
         <artifactId>lwc</artifactId>
-        <version>UNSTABLE-SNAPSHOT</version>
+        <version>0.00-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -40,7 +40,7 @@
     </pluginRepositories>
 
     <build>
-        <finalName>${project.name}-UNSTABLE-SNAPSHOT</finalName>
+        <finalName>${project.name}-${project.version}</finalName>
         <defaultGoal>clean package</defaultGoal>
 
         <plugins>

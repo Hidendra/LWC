@@ -5,12 +5,12 @@
     <artifactId>csharp-backend</artifactId>
     <name>LWC-Backend (C#)</name>
     <url>griefcraft.com</url>
-    <version>UNSTABLE-SNAPSHOT</version>
+    <version>0.00-SNAPSHOT</version>
 
     <parent>
         <groupId>com.griefcraft</groupId>
         <artifactId>lwc</artifactId>
-        <version>UNSTABLE-SNAPSHOT</version>
+        <version>0.00-SNAPSHOT</version>
     </parent>
 
     <properties>

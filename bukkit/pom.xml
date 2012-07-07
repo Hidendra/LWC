@@ -6,12 +6,12 @@
     <name>LWC-Bukkit</name>
     <url>griefcraft.com</url>
     <packaging>jar</packaging>
-    <version>0.00</version>
+    <version>0.00-SNAPSHOT</version>
 
     <parent>
         <groupId>com.griefcraft</groupId>
         <artifactId>lwc</artifactId>
-        <version>UNSTABLE-SNAPSHOT</version>
+        <version>0.00-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>com.griefcraft</groupId>
             <artifactId>backend</artifactId>
-            <version>UNSTABLE-SNAPSHOT</version>
+            <version>0.00-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -48,7 +48,7 @@
     </dependencies>
 
     <build>
-        <finalName>${project.name}-UNSTABLE-SNAPSHOT</finalName>
+        <finalName>${project.name}-${project.version}</finalName>
         <defaultGoal>clean package</defaultGoal>
 
         <resources>

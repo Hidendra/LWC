@@ -6,12 +6,12 @@
     <name>LWC-API</name>
     <url>griefcraft.com</url>
     <packaging>jar</packaging>
-    <version>UNSTABLE-SNAPSHOT</version>
+    <version>0.00-SNAPSHOT</version>
 
     <parent>
         <groupId>com.griefcraft</groupId>
         <artifactId>lwc</artifactId>
-        <version>UNSTABLE-SNAPSHOT</version>
+        <version>0.00-SNAPSHOT</version>
     </parent>
 
     <properties>

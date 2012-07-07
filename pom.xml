@@ -7,7 +7,7 @@
     <name>LWC</name>
     <url>griefcraft.com</url>
     <packaging>pom</packaging>
-    <version>UNSTABLE-SNAPSHOT</version>
+    <version>0.00-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -40,4 +40,18 @@
     <build>
         <defaultGoal>clean package</defaultGoal>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>mcstats.releases</id>
+            <name>mcstats.org releases</name>
+            <url>http://repo.mcstats.org/content/repositories/releases/</url>
+        </repository>
+
+        <snapshotRepository>
+            <id>mcstats.snapshots</id>
+            <name>mcstats.org snapshots</name>
+            <url>http://repo.mcstats.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
