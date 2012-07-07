@@ -39,14 +39,6 @@ public interface CommandSender {
     public void sendMessage(String message);
 
     /**
-     * Send a localized message to the player
-     *
-     * @param node
-     * @param args
-     */
-    public void sendLocalizedMessage(String node, Object... args);
-
-    /**
      * Check if a player has the given permission node
      *
      * @param node

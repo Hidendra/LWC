@@ -1,5 +1,7 @@
 package com.griefcraft;
 
+import java.text.MessageFormat;
+
 public class I18n {
 
     /**
@@ -11,7 +13,7 @@ public class I18n {
      * @return
      */
     public static String _(String message, Object... arguments) {
-        return message;
+        return MessageFormat.format(message, arguments);
     }
 
 }

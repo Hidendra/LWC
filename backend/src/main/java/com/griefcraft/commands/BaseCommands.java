@@ -131,7 +131,7 @@ public class BaseCommands {
             max = 1
     )
     public void lwcAdminPurge(CommandContext context) {
-        context.getCommandSender().sendMessage("Purging player?: " + context.getArgument(1));
+        context.getCommandSender().sendMessage(_("Purging player?: {0}", context.getArgument(1)));
     }
 
 }

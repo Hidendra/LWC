@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-07 00:36-0300\n"
+"POT-Creation-Date: 2012-07-07 02:19-0300\n"
 "PO-Revision-Date: 2012-07-07 00:38-0300\n"
 "Last-Translator: Tyler Blair <>\n"
 "Language-Team: English\n"
@@ -57,6 +57,11 @@ msgstr "Click on a block, please!~"
 #: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:118
 msgid "You clicked on a block with the id "
 msgstr "You clicked on a block with the id "
+
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:134
+#, java-format
+msgid "Purging player?: {0}"
+msgstr "Purging player?: {0}"
 
 #: backend/src/main/java/com/griefcraft/internal/SimpleProtectionManager.java:107
 msgid "This protection is locked by a magical spell."
