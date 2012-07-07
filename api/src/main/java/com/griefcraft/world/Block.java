@@ -121,20 +121,20 @@ public abstract class Block {
             }
         }
 
-        else if ((block = getRelative(1, 0, 0)) != null) {
+        if ((block = getRelative(1, 0, 0)) != null) {
             if (block.getType() == type) {
                 return block;
             }
         }
 
         // now the z plane
-        else if ((block = getRelative(0, 0, -1)) != null) {
+        if ((block = getRelative(0, 0, -1)) != null) {
             if (block.getType() == type) {
                 return block;
             }
         }
 
-        else if ((block = getRelative(0, 0, 1)) != null) {
+        if ((block = getRelative(0, 0, 1)) != null) {
             if (block.getType() == type) {
                 return block;
             }

@@ -18,6 +18,23 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>gettext-commons-site</id>
+            <url>http://gettext-commons.googlecode.com/svn/maven-repository/</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>gettext-commons-site</id>
+            <url>http://gettext-commons.googlecode.com/svn/maven-repository/</url>
+            <releases>
+                <updatePolicy>daily</updatePolicy>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
+
     <dependencies>
         <dependency>
             <groupId>com.griefcraft</groupId>
@@ -30,6 +47,11 @@
             <artifactId>junit</artifactId>
             <version>4.10</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.xnap.commons</groupId>
+            <artifactId>gettext-commons</artifactId>
+            <version>0.9.6</version>
         </dependency>
     </dependencies>
 
@@ -55,6 +77,7 @@
                 </configuration>
             </plugin>
 
+            <!-- bundle api with the backend -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -69,11 +92,36 @@
                             <artifactSet>
                                 <excludes>
                                     <exclude>junit:junit</exclude>
+                                    <exclude>org.xnap.commons:gettext-commons</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!-- i18n -->
+            <plugin>
+                <groupId>org.xnap.commons</groupId>
+                <artifactId>maven-gettext-plugin</artifactId>
+                <version>1.2.3</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>merge</goal>
+                            <goal>dist</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <targetBundle>Messages</targetBundle>
+                    <poDirectory>po</poDirectory>
+                    <sourceDirectory>${project.basedir}/../</sourceDirectory>
+                    <keywords>--keyword=_</keywords>
+                    <outputFormat>properties</outputFormat>
+                    <encoding>utf-8</encoding>
+                </configuration>
             </plugin>
         </plugins>
     </build>

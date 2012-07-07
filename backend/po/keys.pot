@@ -1,0 +1,61 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR LWC'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-07-07 01:02-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: api/src/main/java/com/griefcraft/event/PlayerEventDelegate.java:91
+#, java-format
+msgid ""
+"&cA severe error occurred while processing the event: {0}&cThe full stack "
+"trace has been printed out to the log file"
+msgstr ""
+
+#: api/src/main/java/com/griefcraft/sql/JDBCDatabase.java:303
+msgid "owner"
+msgstr ""
+
+#: api/src/main/java/com/griefcraft/sql/JDBCDatabase.java:304
+msgid "world"
+msgstr ""
+
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:79
+msgid "Click on a block to protect it!"
+msgstr ""
+
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:88
+msgid "That block is not protectable"
+msgstr ""
+
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:94
+msgid "Protected~"
+msgstr ""
+
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:96
+msgid "Failed to protect for some reason ?"
+msgstr ""
+
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:112
+msgid "Click on a block, please!~"
+msgstr ""
+
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:118
+msgid "You clicked on a block with the id "
+msgstr ""
+
+#: backend/src/main/java/com/griefcraft/internal/SimpleProtectionManager.java:107
+msgid "This protection is locked by a magical spell."
+msgstr ""

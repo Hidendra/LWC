@@ -29,6 +29,7 @@
 
 package com.griefcraft.model;
 
+import com.griefcraft.entity.Player;
 import com.griefcraft.world.World;
 
 public class Protection extends AbstractSavable {
@@ -105,6 +106,22 @@ public class Protection extends AbstractSavable {
      * If the protection has been modified
      */
     private boolean modified = false;
+
+    @Override
+    public String toString() {
+        // TODO add in updated, created
+        return String.format("Protection(id=%d, owner=\"%s\", world=\"%s\", location=[%d, %d, %d])", id, owner, world, x, y, z);
+    }
+
+    /**
+     * Check if a player is the owner of this protection
+     *
+     * @param player
+     * @return
+     */
+    public boolean isOwner(Player player) {
+        return player != null && player.getName().equals(owner);
+    }
 
     public Protection(int id) {
         this.id = id;

@@ -33,8 +33,13 @@ import com.griefcraft.Game;
 import com.griefcraft.LWC;
 import com.griefcraft.ProtectionManager;
 import com.griefcraft.ProtectionMatcher;
+import com.griefcraft.ProtectionSet;
+import com.griefcraft.entity.Player;
 import com.griefcraft.model.Protection;
+import com.griefcraft.world.Block;
 import com.griefcraft.world.Location;
+
+import static com.griefcraft.I18n._;
 
 public class SimpleProtectionManager implements ProtectionManager {
 
@@ -60,6 +65,26 @@ public class SimpleProtectionManager implements ProtectionManager {
             throw new UnsupportedOperationException("Game \"" + game + "\" is not implemented");
         }
 
+        // Get the block at the location
+        // this will be our base block -- or reference point -- of where the protection is matched from
+        Block base = location.getWorld().getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+
+        // attempt to match the protection set
+        ProtectionSet blocks = matcher.matchProtection(base);
+
+        // go through each of the protectable blocks
+        for (Block block : blocks.get(ProtectionSet.BlockType.PROTECTABLE)) {
+            // load it from the database
+            Protection protection = lwc.getDatabase().loadProtection(block.getLocation());
+
+            if (protection != null) {
+                // match !
+                // TODO hand the protection set over to the protection or something?
+                blocks.matchedResultant(protection);
+                return protection;
+            }
+        }
+
         // TODO magical things
         return null;
     }
@@ -67,5 +92,20 @@ public class SimpleProtectionManager implements ProtectionManager {
     public Protection createProtection(Protection.Type type, String owner, Location location) {
         // TODO check arguments
         return lwc.getDatabase().createProtection(type, owner, location);
+    }
+
+    public boolean defaultPlayerInteractAction(Protection protection, Player player) {
+
+        // TODO do these checks elsewhere ? :p
+        // if they're the owner, return immediately
+        if (protection.isOwner(player)) {
+            return false;
+        }
+
+        // they cannot access the protection o\
+        // so send them a kind message
+        player.sendMessage(_("This protection is locked by a magical spell."));
+
+        return true;
     }
 }

@@ -147,7 +147,7 @@ public class ProtectionSet {
      *
      * @param resultant the resultant. Can be null.
      */
-    protected void matchedResultant(Protection resultant) {
+    public void matchedResultant(Protection resultant) {
         if (locked) {
             throw new IllegalStateException("Result cannot be changed once locked.");
         }

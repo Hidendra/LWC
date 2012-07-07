@@ -36,6 +36,8 @@ import com.griefcraft.event.events.ProtectionEvent;
 import com.griefcraft.entity.Player;
 import com.griefcraft.world.Block;
 
+import static com.griefcraft.I18n._;
+
 /**
  * Used to provide handling for any event in one central location. This takes the burden of having to deal
  * with event specific code in each server's plugin version, so we can then focus on implementing the bare
@@ -59,7 +61,7 @@ public final class PlayerEventDelegate {
     }
 
     /**
-     * Called when the player interacts with a block. Return TRUE to cancel this event.
+     * Called when the player interacts with a block. Returns TRUE to cancel this event.
      *
      * @param block
      * @return true to cancel the event
@@ -68,7 +70,8 @@ public final class PlayerEventDelegate {
         boolean cancel; // If the event should be cancelled
 
         // Match the block to a protection
-        Protection protection = null; // TODO :-)
+        Protection protection = lwc.getProtectionManager().findProtection(block.getLocation()); // TODO :-)
+        lwc.getConsoleSender().sendMessage("Protection found: " + protection);
 
         // Give events the first stab
         try {
@@ -79,9 +82,14 @@ public final class PlayerEventDelegate {
                 cancel = player.callEvent(PlayerEventHandler.Type.PLAYER_INTERACT_PROTECTION, new ProtectionEvent(protection));
             }
 
+            // default event action
+            if (!cancel && protection != null) {
+                cancel = lwc.getProtectionManager().defaultPlayerInteractAction(protection, player);
+            }
         } catch (EventException e) {
-            player.sendMessage("&cA severe error occurred while processing the event: " + e.getMessage());
-            player.sendMessage("&cThe full stack trace has been printed out to the log file");
+            // TODO {0}
+            player.sendMessage(_("&cA severe error occurred while processing the event: {0}"
+                                + "&cThe full stack trace has been printed out to the log file", e.getMessage()));
             e.printStackTrace();
             return true; // Better safe than sorry
         }

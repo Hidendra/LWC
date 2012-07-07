@@ -40,6 +40,8 @@ import com.griefcraft.event.notifiers.BlockEventNotifier;
 import com.griefcraft.model.Protection;
 import com.griefcraft.world.Block;
 
+import static com.griefcraft.I18n._;
+
 /**
  * A test of commands used mainly for testing
  */
@@ -74,7 +76,7 @@ public class BaseCommands {
     )
     public void createPrivateProtection(CommandContext context) {
         final Player player = (Player) context.getCommandSender();
-        player.sendMessage("Click on a block to protect it!");
+        player.sendMessage(_("Click on a block to protect it!"));
 
         player.onBlockInteract(new BlockEventNotifier() {
             @Override
@@ -83,15 +85,15 @@ public class BaseCommands {
                 Block block = event.getBlock();
 
                 if (!layer.isBlockProtectable(block)) {
-                    player.sendMessage("That block is not protectable");
+                    player.sendMessage(_("That block is not protectable"));
                     return false;
                 }
 
                 Protection protection = lwc.getProtectionManager().createProtection(Protection.Type.PRIVATE, player.getName(), block.getLocation());
                 if (protection != null) {
-                    player.sendMessage("Protected~");
+                    player.sendMessage(_("Protected~"));
                 } else {
-                    player.sendMessage("Failed to protect for some reason ?");
+                    player.sendMessage(_("Failed to protect for some reason ?"));
                 }
 
                 return true;
@@ -107,13 +109,13 @@ public class BaseCommands {
     )
     public void lwcTest(CommandContext context) {
         final Player player = (Player) context.getCommandSender();
-        player.sendMessage("Click on a block, please!~");
+        player.sendMessage(_("Click on a block, please!~"));
 
         // Wait for them to click on the block
         player.onBlockInteract(new BlockEventNotifier() {
             @Override
             public boolean call(BlockEvent event) {
-                player.sendMessage("You clicked on a block with the id " + event.getBlock().getType() + "!");
+                player.sendMessage(_("You clicked on a block with the id " + event.getBlock().getType() + "!"));
                 return true;
             }
         });

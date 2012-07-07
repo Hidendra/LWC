@@ -1,0 +1,63 @@
+# English translations for LWC.
+# Copyright (C) 2012 LWC'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the LWC package.
+# Tyler Blair <hidendra@griefcraft.com>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-07-07 00:36-0300\n"
+"PO-Revision-Date: 2012-07-07 00:38-0300\n"
+"Last-Translator: Tyler Blair <>\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: api/src/main/java/com/griefcraft/event/PlayerEventDelegate.java:91
+#, java-format
+msgid ""
+"&cA severe error occurred while processing the event: {0}&cThe full stack "
+"trace has been printed out to the log file"
+msgstr ""
+"&cA severe error occurred while processing the event: {0}&cThe full stack "
+"trace has been printed out to the log file"
+
+#: api/src/main/java/com/griefcraft/sql/JDBCDatabase.java:303
+msgid "owner"
+msgstr "owner"
+
+#: api/src/main/java/com/griefcraft/sql/JDBCDatabase.java:304
+msgid "world"
+msgstr "world"
+
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:79
+msgid "Click on a block to protect it!"
+msgstr "Click on a block to protect it!"
+
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:88
+msgid "That block is not protectable"
+msgstr "That block is not protectable"
+
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:94
+msgid "Protected~"
+msgstr "Protected~"
+
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:96
+msgid "Failed to protect for some reason ?"
+msgstr "Failed to protect for some reason ?"
+
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:112
+msgid "Click on a block, please!~"
+msgstr "Click on a block, please!~"
+
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:118
+msgid "You clicked on a block with the id "
+msgstr "You clicked on a block with the id "
+
+#: backend/src/main/java/com/griefcraft/internal/SimpleProtectionManager.java:107
+msgid "This protection is locked by a magical spell."
+msgstr "This protection is locked by a magical spell."

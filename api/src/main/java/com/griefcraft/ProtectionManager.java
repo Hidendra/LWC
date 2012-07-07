@@ -29,6 +29,7 @@
 
 package com.griefcraft;
 
+import com.griefcraft.entity.Player;
 import com.griefcraft.model.Protection;
 import com.griefcraft.world.Location;
 
@@ -51,5 +52,14 @@ public interface ProtectionManager {
      * @return
      */
     public Protection createProtection(Protection.Type type, String owner, Location location);
+
+    /**
+     * The method that is called in the event no events cancel a player interact call.
+     *
+     * @param protection
+     * @param player
+     * @return
+     */
+    public boolean defaultPlayerInteractAction(Protection protection, Player player);
 
 }
