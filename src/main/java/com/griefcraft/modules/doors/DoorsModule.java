@@ -33,6 +33,7 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.util.config.Configuration;
+import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -191,8 +192,11 @@ public class DoorsModule extends JavaModule {
             // Get the top half of the door
             Block topHalf = door.getRelative(BlockFace.UP);
 
-            // Now xor both data values with 0x8, the flag that states if the door is open
+            // Now xor both data values with 0x4, the flag that states if the door is open
             door.setData((byte) (door.getData() ^ 0x4));
+            
+            // Play the door open/close sound
+            door.getWorld().playEffect(door.getLocation(), Effect.DOOR_TOGGLE, 0);
 
             // Only change the block above it if it is something we can open or close
             if (isValid(topHalf.getType())) {
