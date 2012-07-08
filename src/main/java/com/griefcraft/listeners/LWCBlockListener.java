@@ -50,8 +50,11 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.PistonBaseMaterial;
+
+import java.util.List;
 
 public class LWCBlockListener implements Listener {
 
@@ -88,6 +91,27 @@ public class LWCBlockListener implements Listener {
 
         if (evt.isCancelled()) {
             event.setNewCurrent(event.getOldCurrent());
+        }
+    }
+
+    @EventHandler
+    public void onStructureGrow(StructureGrowEvent event) {
+        if (!LWC.ENABLED) {
+            return;
+        }
+
+        LWC lwc = LWC.getInstance();
+        // the blocks that were changed / replaced
+        List<BlockState> blocks = event.getBlocks();
+
+        for (BlockState block : blocks) {
+            // we don't have the block id of the block before it
+            // so we have to do some raw lookups (these are usually cache hits however, at least!)
+            Protection protection = lwc.getPhysicalDatabase().loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
+
+            if (protection != null) {
+                event.setCancelled(true);
+            }
         }
     }
 
