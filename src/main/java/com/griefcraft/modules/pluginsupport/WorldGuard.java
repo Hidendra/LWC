@@ -29,14 +29,17 @@
 package com.griefcraft.modules.pluginsupport;
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Permission;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCAccessEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.config.Configuration;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.Vector;
+import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.bukkit.BukkitUtil;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.GlobalRegionManager;
@@ -205,6 +208,89 @@ public class WorldGuard extends JavaModule {
             sender.sendMessage("Registered " + registered + " blocks in the region " + regionName);
             sender.sendMessage("Currently, the owner of these protections is \"" + ownerName + "\". To change this to someone else, run:");
             sender.sendMessage("/lwc admin updateprotections set owner = 'NewOwner' where owner = '" + ownerName + "'");
+        }
+    }
+
+
+    @Override
+    public void onAccessRequest(LWCAccessEvent event) {
+        if (event.getAccess() != Permission.Access.NONE) {
+            // Player already has access.
+            return;
+        }
+
+        // WorldGuard must be running and LWC must be configured to interface with it.
+        if (worldGuard == null) {
+            return;
+        }
+        if (!configuration.getBoolean("worldguard.enabled", false)) {
+            return;
+        }
+        if (!configuration.getBoolean("worldguard.allowRegionPermissions", true)) {
+            return;
+        }
+
+        Protection protection = event.getProtection();
+        GlobalRegionManager globalRegionManager = worldGuard.getGlobalRegionManager();
+        LocalPlayer wgPlayer = worldGuard.wrapPlayer(event.getPlayer());
+        for (Permission permission : protection.getPermissions()) {
+            if (permission.getType() != Permission.Type.REGION) {
+                continue;
+            }
+            String regionName = permission.getName();
+            if (regionName.equalsIgnoreCase("#this")) {
+                // Handle the special value which tells us to not actually look up a region but
+                // check just the player's WG build permissions on the block. It may be in multiple
+                // regions or none; we don't care here. That's WorldGuard's domain.
+                if (!globalRegionManager.canBuild(event.getPlayer(), protection.getBlock())) {
+                    continue;
+                }
+            } else if (regionName.startsWith("#")) {
+                // Silently disallow looking up regions by index, a newer WG feature.
+                // Iterating through potentially thousands of regions each time we check a block's
+                // ACL is not a good idea. It would be cleaner to use regionManager.getRegionExact()
+                // below, but that would break compatibility with older versions of WG.
+                continue;
+            } else {
+                // Region name specified, go look it up
+                World world;
+                int c = regionName.indexOf(':');
+                if (c < 0) {
+                    // No world specified in ACL. Use the block's world.
+                    world = protection.getBlock().getWorld();
+                } else {
+                    // World specified. Partition the string and look up the world.
+                    String worldName = regionName.substring(c + 1);
+                    world = event.getLWC().getPlugin().getServer().getWorld(worldName);
+                    regionName = regionName.substring(0, c);
+                }
+                if (world == null) {
+                    continue;
+                }
+                RegionManager regionManager = globalRegionManager.get(world);
+                if (regionManager == null) {
+                    continue;
+                }
+                ProtectedRegion region = regionManager.getRegion(regionName);
+                if (region == null) {
+                    continue;
+                }
+                // Check the region (and its parents) to see if the player is a member (or an owner).
+                if (!region.isMember(wgPlayer)) {
+                    continue;
+                }
+            }
+            // We match the region, so bump up our access level. Whether we get PLAYER access or
+            // ADMIN access depends solely on the LWC permission entry. (I.e., WG owner does not
+            // imply LWC admin.)
+            if (permission.getAccess().ordinal() > event.getAccess().ordinal()) {
+                event.setAccess(permission.getAccess());
+                if (event.getAccess().ordinal() >= Permission.Access.ADMIN.ordinal()) {
+                    return;
+                }
+                // else we just have PLAYER access. Keep looking; maybe we match another region
+                // that grants us ADMIN.
+            }
         }
     }
 

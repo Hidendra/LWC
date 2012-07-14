@@ -89,7 +89,12 @@ public class Permission {
         /**
          * Allows a specific item (such as a key) to open the protection when interacted with in hand
          */
-        ITEM;
+        ITEM,
+
+        /**
+         * Applies to members of a WorldGuard region
+         */
+        REGION;
 
         @Override
         public String toString() {

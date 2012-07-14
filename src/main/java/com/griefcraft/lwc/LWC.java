@@ -1629,6 +1629,16 @@ public class LWC {
                 value = value.substring(5);
             }
 
+            if (value.toLowerCase().startsWith("r:")) {
+                type = Permission.Type.REGION;
+                value = value.substring(2);
+            }
+
+            if (value.toLowerCase().startsWith("region:")) {
+                type = Permission.Type.REGION;
+                value = value.substring(7);
+            }
+
             if (value.trim().isEmpty()) {
                 continue;
             }
