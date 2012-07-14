@@ -1,6 +1,9 @@
 worldguard:
     enabled: false
 
+    # If true, allow protections to use region-level permissions (i.e., reuse WG region member lists as the block-level ACL)
+    allowRegionPermissions: true
+
     # If true, protections will be allowed in non-regioned areas
     allowProtectionsOutsideRegions: true
 
