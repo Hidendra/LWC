@@ -28,7 +28,11 @@
 
 package com.griefcraft.lwc;
 
-import com.griefcraft.listeners.*;
+import com.griefcraft.listeners.LWCBlockListener;
+import com.griefcraft.listeners.LWCEntityListener;
+import com.griefcraft.listeners.LWCMCPCSupport;
+import com.griefcraft.listeners.LWCPlayerListener;
+import com.griefcraft.listeners.LWCServerListener;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.sql.Database;
 import com.griefcraft.util.StringUtil;
