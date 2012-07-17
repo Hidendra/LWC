@@ -63,6 +63,10 @@ optional:
     # Block IDs to automatically blocks from /lwc admin purge, /lwc admin expire, etc.
     exemptBlocks: []
 
+    # If MCPC / Tekkit is installed, should ic2/redpower transport pipes be blocked from being placed around LWC-protected chests that
+    # the player CANNOT access. If they can access said protection, they'll be able to place it.
+    blockTransportPipes: true
+
     # Opt out of the optional metrics tooling
     # Available online: http://metrics.griefcraft.com/plugin/LWC/
     optOut: false
