@@ -1234,6 +1234,10 @@ public class LWC {
      * @return
      */
     public boolean isProtectable(Material material) {
+        if (material == null) {
+            return false;
+        }
+
         return Boolean.parseBoolean(resolveProtectionConfiguration(material, "enabled"));
     }
 
