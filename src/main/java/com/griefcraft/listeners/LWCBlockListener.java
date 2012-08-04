@@ -246,9 +246,6 @@ public class LWCBlockListener implements Listener {
             }
         }
 
-        if (lwc.findProtection(moved) != null) {
-            event.setCancelled(true);
-        }
     }
 
     @EventHandler
