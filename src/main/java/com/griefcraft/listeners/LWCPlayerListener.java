@@ -43,7 +43,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -83,6 +82,7 @@ public class LWCPlayerListener implements Listener {
         }
     }
 
+/*
     @EventHandler
     public void onPlayerChat(PlayerChatEvent event) {
         if (event.isCancelled() || !LWC.ENABLED) {
@@ -102,6 +102,7 @@ public class LWCPlayerListener implements Listener {
             lwc.sendLocale(event.getPlayer(), "lwc.blockedmessage");
         }
     }
+*/
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
