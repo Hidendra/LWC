@@ -40,6 +40,7 @@ public class LWCMCPCSupport implements Listener {
         // attempt to detect Forge, tekkit definitely contains forge, most other MCPC mods are going to have it ?
         try {
             Class.forName("forge.MinecraftForge");
+            return true;
         } catch (Exception e) { } // ignore failure
 
         return false; // no mcpc
