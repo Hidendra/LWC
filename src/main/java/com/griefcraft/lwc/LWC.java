@@ -499,6 +499,29 @@ public class LWC {
     }
 
     /**
+     * Find a block that is adjacent to another block on any of the block's 6 sides given a Material
+     *
+     * @param block
+     * @param material
+     * @param ignore
+     * @return
+     */
+    public Block findAdjacentBlockOnAllSides(Block block, Material material, Block... ignore) {
+        BlockFace[] faces = new BlockFace[]{BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN};
+        List<Block> ignoreList = Arrays.asList(ignore);
+
+        for (BlockFace face : faces) {
+            Block adjacentBlock = block.getRelative(face);
+
+            if (adjacentBlock.getType() == material && !ignoreList.contains(adjacentBlock)) {
+                return adjacentBlock;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Free some memory (LWC was disabled)
      */
     public void destruct() {
