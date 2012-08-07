@@ -32,7 +32,17 @@ public class LWCMCPCSupport implements Listener {
      * @return
      */
     public boolean mcpcInstalled() {
-        return Bukkit.getBukkitVersion().contains("MCPC");
+        // quickest and easiest check
+        if (Bukkit.getBukkitVersion().contains("MCPC")) {
+            return true;
+        }
+
+        // attempt to detect Forge, tekkit definitely contains forge, most other MCPC mods are going to have it ?
+        try {
+            Class.forName("forge.MinecraftForge");
+        } catch (Exception e) { } // ignore failure
+
+        return false; // no mcpc
     }
 
     @EventHandler
@@ -52,7 +62,7 @@ public class LWCMCPCSupport implements Listener {
 
         if (blockIsBlacklisted) {
             // it's blacklisted, check for a protected chest
-            Block chest = lwc.findAdjacentBlock(block, Material.CHEST);
+            Block chest = lwc.findAdjacentBlockOnAllSides(block, Material.CHEST);
 
             if (chest != null) {
                 Protection protection = lwc.findProtection(chest);
