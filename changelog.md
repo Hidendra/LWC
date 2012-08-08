@@ -1,3 +1,26 @@
+### 4.3.0
+# LWC 4.3.0
+* Stronger Tekkit/MCPC support - don't allow pipes to be placed adjacent to chests you cannot access. This prevents players from siphoning items out of your chest as long as it doesn't already have a pipe attached to it.
+* Better compatibility with 1.3.1
+* `/lwc debug` will now show which groups LWC sees you as having
+* Normalize startup output to look the same
+* Automatic updating will now default to OFF
+* **NEW**/worldguard: Tighter integration with WorldGuard thanks to **@bencvt**
+ * Adds the following types to `/cmodify` : `region:some_region` (or `r:some_region`) , `region:some_region:world` (or `r:some_region:world`) , and `region:#this`
+ * `r:some_region` will allow any member of `some_region` to open and access the protection
+ * `r:some_region:world` will allow any member of `some_region` (which is located in the world `world`) to open and access the protection
+ * `r:#this` simply delegates access to WorldGuard. If the protection is inside a region, **and** the player can **BUILD** where the chest is located at, they can open and access the protection
+* **NEW**/limits: Allow support for item IDs in limit v2 definitions
+* **NEW**/mobarena: Add Mob Arena. Don't allow Drop Transfer to be used inside Mob Arenas
+* **BUG**/core: Don't change the "last accessed time" on protections if you are an LWC Admin and are not the owner of the protection
+* **BUG**/core: Don't allow villagers to open protected doors. Can be changed in core.yml
+* **BUG**/core: Don't download config files if one is needed, copy it from the jar file instead
+* **BUG**/core: Don't allow tree growth (i.e from saplings) to destroy protected blocks
+* **BUG**/doors: Play the 'door toggle' sound effect when LWC opens or closes a door
+* **BUG**/magnet: Don't pickup items with an amount equal to or less than 0
+* **BUG**/modloader: Fix an issue with ModLoader items where some have a null material
+* **BUG**/mcpc: Fix MCPC detection when using CB++ instead of CB
+
 ### 4.2.1
 # LWC 4.2.1
 * Bug fix for vault
