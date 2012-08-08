@@ -535,8 +535,6 @@ public class LWC {
             databaseThread = null;
         }
 
-        log("Freeing " + Database.DefaultType);
-
         if (physicalDatabase != null) {
             physicalDatabase.dispose();
         }
