@@ -100,6 +100,7 @@ import com.griefcraft.modules.unlock.UnlockModule;
 import com.griefcraft.scripting.Module;
 import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.scripting.event.LWCAccessEvent;
+import com.griefcraft.scripting.event.LWCReloadEvent;
 import com.griefcraft.scripting.event.LWCSendLocaleEvent;
 import com.griefcraft.sql.Database;
 import com.griefcraft.sql.PhysDB;
@@ -1686,6 +1687,16 @@ public class LWC {
                 sendLocale(sender, "protection.interact.rights.remove." + localeChild, "name", value, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
             }
         }
+    }
+
+    /**
+     * Reload internal data structures
+     */
+    public void reload() {
+        plugin.loadLocales();
+        protectionConfigurationCache.clear();
+        Configuration.reload();
+        moduleLoader.dispatchEvent(new LWCReloadEvent());
     }
 
     /**

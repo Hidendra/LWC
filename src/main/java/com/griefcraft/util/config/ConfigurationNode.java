@@ -39,7 +39,7 @@ public class ConfigurationNode {
     /**
      * Added by Hidendra
      */
-    private final Map<String, Object> cache = new HashMap<String, Object>();
+    protected final Map<String, Object> cache = new HashMap<String, Object>();
 
     ConfigurationNode(Map<String, Object> root) {
         this.root = root;
