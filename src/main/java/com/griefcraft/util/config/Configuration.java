@@ -203,6 +203,7 @@ public class Configuration extends ConfigurationNode {
      */
     public void load(File file) {
         try {
+            cache.clear();
             load(new FileInputStream(file));
         } catch (IOException e) {
             root = new HashMap<String, Object>();

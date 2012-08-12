@@ -31,8 +31,6 @@ package com.griefcraft.modules.admin;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
-import com.griefcraft.scripting.event.LWCReloadEvent;
-import com.griefcraft.util.config.Configuration;
 import org.bukkit.command.CommandSender;
 
 public class AdminReload extends JavaModule {
@@ -58,10 +56,7 @@ public class AdminReload extends JavaModule {
         // we have the right command
         event.setCancelled(true);
 
-        Configuration.reload();
-        lwc.getPlugin().loadLocales();
-        lwc.getModuleLoader().dispatchEvent(new LWCReloadEvent());
-
+        lwc.reload();
         lwc.sendLocale(sender, "protection.admin.reload.finalize");
     }
 
