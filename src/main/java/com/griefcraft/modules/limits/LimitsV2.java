@@ -180,14 +180,14 @@ public class LimitsV2 extends JavaModule {
         String[] args = event.getArgs();
         event.setCancelled(true);
 
-        if (args.length == 0 && !(sender instanceof Player)) {
-            sender.sendMessage(Colors.Red + "Unsupported");
-            return;
-        }
-
         String playerName;
 
         if (args.length == 0) {
+            if (args.length == 0 && !(sender instanceof Player)) {
+                sender.sendMessage(Colors.Red + "You are not a player!");
+                return;
+            }
+
             playerName = sender.getName();
         } else {
             if (lwc.isAdmin(sender)) {
@@ -201,6 +201,7 @@ public class LimitsV2 extends JavaModule {
         Player player = lwc.getPlugin().getServer().getPlayer(playerName);
 
         if (player == null) {
+            sender.sendMessage(Colors.Red + "That player is not online!");
             return;
         }
 
