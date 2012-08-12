@@ -206,7 +206,7 @@ public class LimitsV2 extends JavaModule {
         }
 
         // send their limits to them
-        sendLimits(player, player, getPlayerLimits(player));
+        sendLimits(sender, player, getPlayerLimits(player));
     }
 
     /**
