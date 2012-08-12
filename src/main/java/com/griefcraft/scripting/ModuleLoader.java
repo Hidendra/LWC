@@ -328,7 +328,6 @@ public class ModuleLoader {
             List<Module> modules = fastModuleCache.get(event.getEventType());
             Event type = event.getEventType();
             for (Module module : modules) {
-                long start = System.nanoTime();
                 if (type == Event.INTERACT_PROTECTION) {
                     module.onProtectionInteract((LWCProtectionInteractEvent) event);
                 } else if (type == Event.INTERACT_BLOCK) {
