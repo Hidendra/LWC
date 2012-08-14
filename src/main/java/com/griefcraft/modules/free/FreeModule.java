@@ -60,7 +60,7 @@ public class FreeModule extends JavaModule {
         Player player = event.getPlayer();
         event.setResult(Result.CANCEL);
 
-        if (lwc.hasAdminPermission(player, "lwc.admin.remove") || protection.getOwner().equals(player.getName())) {
+        if (lwc.hasAdminPermission(player, "lwc.admin.remove") || protection.getOwner().equals(player.getName()) || lwc.hasPlayerPermission(player, "lwc.remove.other")) {
             LWCProtectionDestroyEvent evt = new LWCProtectionDestroyEvent(player, protection, LWCProtectionDestroyEvent.Method.COMMAND, true, true);
             lwc.getModuleLoader().dispatchEvent(evt);
 
