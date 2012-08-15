@@ -123,6 +123,11 @@ public abstract class Database {
      */
     protected String prefix = "";
 
+    /**
+     * If the high level statement cache should be used. If this is false, already cached statements are ignored
+     */
+    private boolean useStatementCache = true;
+
     public Database() {
         currentType = DefaultType;
 
@@ -285,6 +290,9 @@ public abstract class Database {
         return currentType;
     }
 
+    /**
+     * Load the database
+     */
     public abstract void load();
 
     /**
@@ -306,12 +314,19 @@ public abstract class Database {
         return prepare(sql, false);
     }
 
+    /**
+     * Prepare a statement unless it's already cached (and if so, just return it)
+     *
+     * @param sql
+     * @param returnGeneratedKeys
+     * @return
+     */
     public PreparedStatement prepare(String sql, boolean returnGeneratedKeys) {
         if (connection == null) {
             return null;
         }
 
-        if (statementCache.containsKey(sql)) {
+        if (useStatementCache && statementCache.containsKey(sql)) {
             Statistics.addQuery();
             return statementCache.get(sql);
         }
@@ -407,6 +422,25 @@ public abstract class Database {
      */
     public boolean isConnected() {
         return connected;
+    }
+
+    /**
+     * Returns true if the high level statement cache should be used. If this is false, already cached statements are ignored
+     *
+     * @return
+     */
+    public boolean useStatementCache() {
+        return useStatementCache;
+    }
+
+    /**
+     * Set if the high level statement cache should be used.
+     *
+     * @param useStatementCache
+     * @return
+     */
+    public void setUseStatementCache(boolean useStatementCache) {
+        this.useStatementCache = useStatementCache;
     }
 
 }
