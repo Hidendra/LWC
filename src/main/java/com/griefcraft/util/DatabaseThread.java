@@ -125,6 +125,7 @@ public class DatabaseThread implements Runnable {
         if (!updateQueue.isEmpty()) {
             Database database = lwc.getPhysicalDatabase();
             database.setAutoCommit(false);
+            database.setUseStatementCache(false);
 
             // Begin iterating through the queue
             Iterator<Protection> iter = updateQueue.iterator();
@@ -135,6 +136,7 @@ public class DatabaseThread implements Runnable {
             }
 
             // Commit the changes to the database
+            database.setUseStatementCache(true);
             database.setAutoCommit(true);
         }
 
