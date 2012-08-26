@@ -33,6 +33,7 @@ import com.griefcraft.model.Flag;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCRedstoneEvent;
+import com.griefcraft.util.ProtectionFinder;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -49,20 +50,24 @@ public class RedstoneModule extends JavaModule {
         Protection protection = event.getProtection();
 
         // check for a player using it
-        for (Block found : protection.getProtectionFinder().getBlocks()) {
-            if (found.getType() == Material.STONE_PLATE || found.getType() == Material.WOOD_PLATE) {
-                // find a player that is using it
-                int x = found.getX();
-                int y = found.getY();
-                int z = found.getZ();
-                Player player = lwc.findPlayer(x - 1, x + 1, y, y + 1, z - 1, z + 1);
+        ProtectionFinder finder = protection.getProtectionFinder();
 
-                if (player != null) {
-                    if (!lwc.canAccessProtection(player, protection)) {
-                        event.setCancelled(true);
-                    } else {
-                        // bypass the denyRedstone/REDSTONE flag check
-                        return;
+        if (finder != null) {
+            for (Block found : finder.getBlocks()) {
+                if (found.getType() == Material.STONE_PLATE || found.getType() == Material.WOOD_PLATE) {
+                    // find a player that is using it
+                    int x = found.getX();
+                    int y = found.getY();
+                    int z = found.getZ();
+                    Player player = lwc.findPlayer(x - 1, x + 1, y, y + 1, z - 1, z + 1);
+
+                    if (player != null) {
+                        if (!lwc.canAccessProtection(player, protection)) {
+                            event.setCancelled(true);
+                        } else {
+                            // bypass the denyRedstone/REDSTONE flag check
+                            return;
+                        }
                     }
                 }
             }
