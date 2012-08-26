@@ -6,12 +6,12 @@
     <name>LWC-Canary</name>
     <url>griefcraft.com</url>
     <packaging>jar</packaging>
-    <version>0.00-SNAPSHOT</version>
+    <version>5.0.0-SNAPSHOT</version>
 
     <parent>
         <groupId>com.griefcraft</groupId>
         <artifactId>lwc</artifactId>
-        <version>0.00-SNAPSHOT</version>
+        <version>5.0.0-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -20,9 +20,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.griefcraft</groupId>
+            <groupId>com.griefcraft.lwc</groupId>
             <artifactId>backend</artifactId>
-            <version>0.00-SNAPSHOT</version>
+            <version>5.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

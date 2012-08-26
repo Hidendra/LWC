@@ -6,12 +6,12 @@
     <name>LWC-TDSM</name>
     <url>griefcraft.com</url>
     <packaging>netpack</packaging>
-    <version>0.00-SNAPSHOT</version>
+    <version>5.0.0-SNAPSHOT</version>
 
     <parent>
         <groupId>com.griefcraft</groupId>
         <artifactId>lwc</artifactId>
-        <version>0.00-SNAPSHOT</version>
+        <version>5.0.0-SNAPSHOT</version>
     </parent>
 
     <properties>

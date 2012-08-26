@@ -6,12 +6,12 @@
     <name>LWC-Bukkit</name>
     <url>griefcraft.com</url>
     <packaging>jar</packaging>
-    <version>0.00-SNAPSHOT</version>
+    <version>5.0.0-SNAPSHOT</version>
 
     <parent>
         <groupId>com.griefcraft</groupId>
         <artifactId>lwc</artifactId>
-        <version>0.00-SNAPSHOT</version>
+        <version>5.0.0-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -24,19 +24,30 @@
             <id>bukkit-snapshots</id>
             <url>http://repo.bukkit.org/content/groups/public</url>
         </repository>
+
+        <repository>
+            <id>Plugin Metrics</id>
+            <url>http://repo.mcstats.org/content/repositories/public</url>
+        </repository>
     </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>com.griefcraft</groupId>
+            <groupId>com.griefcraft.lwc</groupId>
             <artifactId>backend</artifactId>
-            <version>0.00-SNAPSHOT</version>
+            <version>5.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
             <version>1.2.3-R0.3-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mcstats</groupId>
+            <artifactId>metrics</artifactId>
+            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -84,6 +95,7 @@
                                 <excludes>
                                     <exclude>junit:junit</exclude>
                                     <exclude>org.bukkit:bukkit</exclude>
+                                    <exclude>org.xnap.commons:gettext-commons</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>
