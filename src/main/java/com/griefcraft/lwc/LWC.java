@@ -524,7 +524,7 @@ public class LWC {
     }
 
     /**
-     * Find a protection that is adjacent to another block on any of the block's 6 sides given a Material
+     * Find a protection that is adjacent to another block on any of the block's 6 sides
      *
      * @param block
      * @param ignore
