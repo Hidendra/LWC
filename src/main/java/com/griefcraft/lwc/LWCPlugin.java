@@ -30,7 +30,6 @@ package com.griefcraft.lwc;
 
 import com.griefcraft.listeners.LWCBlockListener;
 import com.griefcraft.listeners.LWCEntityListener;
-import com.griefcraft.listeners.LWCMCPCSupport;
 import com.griefcraft.listeners.LWCPlayerListener;
 import com.griefcraft.listeners.LWCServerListener;
 import com.griefcraft.scripting.event.LWCCommandEvent;
@@ -333,14 +332,6 @@ public class LWCPlugin extends JavaPlugin {
         pluginManager.registerEvents(entityListener, this);
         pluginManager.registerEvents(blockListener, this);
         pluginManager.registerEvents(serverListener, this);
-
-        // tekkit support
-        LWCMCPCSupport mcpcSupport = new LWCMCPCSupport(lwc);
-
-        // check for tekkit and register the events in it if we're on tekkit
-        if (mcpcSupport.mcpcInstalled()) {
-            pluginManager.registerEvents(mcpcSupport, this);
-        }
     }
 
     /**

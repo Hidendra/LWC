@@ -43,6 +43,7 @@ import com.griefcraft.integration.permissions.SuperPermsPermissions;
 import com.griefcraft.integration.permissions.VaultPermissions;
 import com.griefcraft.integration.permissions.bPermissions;
 import com.griefcraft.io.BackupManager;
+import com.griefcraft.listeners.LWCMCPCSupport;
 import com.griefcraft.migration.ConfigPost300;
 import com.griefcraft.migration.MySQLPost200;
 import com.griefcraft.model.Flag;
@@ -1456,6 +1457,9 @@ public class LWC {
      * Register the core modules for LWC
      */
     private void registerCoreModules() {
+        // MCPC
+        registerModule(new LWCMCPCSupport(this));
+
         // core
         registerModule(new LimitsV2());
         registerModule(new LimitsModule());
