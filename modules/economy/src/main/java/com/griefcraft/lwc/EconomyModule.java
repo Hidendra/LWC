@@ -44,12 +44,10 @@ import com.griefcraft.util.config.Configuration;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
+import org.bukkit.inventory.InventoryHolder;
 
-import java.lang.Double;
-import java.lang.String;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -132,7 +130,7 @@ public class EconomyModule extends JavaModule {
         }
 
         // is it actually a container? :p
-        if (!(protection.getBlock().getState() instanceof ContainerBlock)) {
+        if (!(protection.getBlock().getState() instanceof InventoryHolder)) {
             return;
         }
 

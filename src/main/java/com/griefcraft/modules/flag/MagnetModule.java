@@ -40,9 +40,9 @@ import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -140,7 +140,7 @@ public class MagnetModule extends JavaModule {
                     block = world.getBlockAt(protection.getX(), protection.getY(), protection.getZ());
 
                     // we only want inventory blocks
-                    if (!(block.getState() instanceof ContainerBlock)) {
+                    if (!(block.getState() instanceof InventoryHolder)) {
                         continue;
                     }
 
