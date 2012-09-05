@@ -34,8 +34,8 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.ContainerBlock;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -105,12 +105,12 @@ public class RestorableBlock implements Restorable {
                 block.setData((byte) data);
                 
                 if (items.size() > 0) {
-                    if (!(block.getState() instanceof ContainerBlock)) {
+                    if (!(block.getState() instanceof InventoryHolder)) {
                         System.out.println(String.format("The block at [%d, %d, %d] has backed up items but no longer supports them. Why? %s", x, y, z, block.toString()));
                     }
 
                     // Get the block's inventory
-                    Inventory inventory = ((ContainerBlock) block.getState()).getInventory();
+                    Inventory inventory = ((InventoryHolder) block.getState()).getInventory();
                     
                     // Set all of the items to it
                     for (Map.Entry<Integer, ItemStack> entry : items.entrySet()) {
@@ -151,8 +151,8 @@ public class RestorableBlock implements Restorable {
         BlockState state = block.getState();
 
         // Does it have an inventory? ^^
-        if (state instanceof ContainerBlock) {
-            Inventory inventory = ((ContainerBlock) state).getInventory();
+        if (state instanceof InventoryHolder) {
+            Inventory inventory = ((InventoryHolder) state).getInventory();
             ItemStack[] stacks = inventory.getContents();
 
             for (int slot = 0; slot < stacks.length; slot++) {
