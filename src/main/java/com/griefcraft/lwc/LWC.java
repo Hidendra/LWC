@@ -121,10 +121,10 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.ContainerBlock;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
@@ -446,15 +446,15 @@ public class LWC {
     public Map<Integer, ItemStack> depositItems(Block block, ItemStack itemStack) {
         BlockState blockState;
 
-        if ((blockState = block.getState()) != null && (blockState instanceof ContainerBlock)) {
+        if ((blockState = block.getState()) != null && (blockState instanceof InventoryHolder)) {
             Block doubleChestBlock = findAdjacentBlock(block, Material.CHEST);
-            ContainerBlock containerBlock = (ContainerBlock) blockState;
+            InventoryHolder holder = (InventoryHolder) blockState;
 
             if (itemStack.getAmount() <= 0) {
                 return new HashMap<Integer, ItemStack>();
             }
 
-            Map<Integer, ItemStack> remaining = containerBlock.getInventory().addItem(itemStack);
+            Map<Integer, ItemStack> remaining = holder.getInventory().addItem(itemStack);
 
             // we have remainders, deal with it
             if (remaining.size() > 0) {
@@ -463,8 +463,8 @@ public class LWC {
 
                 // is it a double chest ?????
                 if (doubleChestBlock != null) {
-                    ContainerBlock containerBlock2 = (ContainerBlock) doubleChestBlock.getState();
-                    remaining = containerBlock2.getInventory().addItem(remainingItemStack);
+                    InventoryHolder holder2 = (InventoryHolder) doubleChestBlock.getState();
+                    remaining = holder2.getInventory().addItem(remainingItemStack);
                 }
 
                 // recheck remaining in the event of double chest being used
@@ -1101,12 +1101,12 @@ public class LWC {
             return;
         }
 
-        if (!(block.getState() instanceof ContainerBlock)) {
+        if (!(block.getState() instanceof InventoryHolder)) {
             return;
         }
 
-        ContainerBlock container = (ContainerBlock) block.getState();
-        container.getInventory().clear();
+        InventoryHolder holder = (InventoryHolder) block.getState();
+        holder.getInventory().clear();
     }
 
     /**
@@ -1588,12 +1588,12 @@ public class LWC {
 
         try {
             for (Block block : blocks) {
-                if (!(block.getState() instanceof ContainerBlock)) {
+                if (!(block.getState() instanceof InventoryHolder)) {
                     continue;
                 }
 
-                ContainerBlock containerBlock = (ContainerBlock) block.getState();
-                Inventory inventory = containerBlock.getInventory();
+                InventoryHolder holder = (InventoryHolder) block.getState();
+                Inventory inventory = holder.getInventory();
 
                 // Add all the items from this inventory
                 for (ItemStack stack : inventory.getContents()) {
