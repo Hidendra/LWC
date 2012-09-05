@@ -524,6 +524,29 @@ public class LWC {
     }
 
     /**
+     * Find a protection that is adjacent to another block on any of the block's 6 sides given a Material
+     *
+     * @param block
+     * @param ignore
+     * @return
+     */
+    public Protection findAdjacentProtectionOnAllSides(Block block, Block... ignore) {
+        BlockFace[] faces = new BlockFace[]{BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN};
+        List<Block> ignoreList = Arrays.asList(ignore);
+
+        for (BlockFace face : faces) {
+            Protection protection;
+            Block adjacentBlock = block.getRelative(face);
+
+            if (!ignoreList.contains(adjacentBlock) && (protection = findProtection(adjacentBlock)) != null) {
+                return protection;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Free some memory (LWC was disabled)
      */
     public void destruct() {
