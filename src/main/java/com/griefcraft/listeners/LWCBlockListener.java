@@ -105,6 +105,10 @@ public class LWCBlockListener implements Listener {
         List<BlockState> blocks = event.getBlocks();
 
         for (BlockState block : blocks) {
+            if (!lwc.isProtectable(block.getType())) {
+                continue;
+            }
+
             // we don't have the block id of the block before it
             // so we have to do some raw lookups (these are usually cache hits however, at least!)
             Protection protection = lwc.getPhysicalDatabase().loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
