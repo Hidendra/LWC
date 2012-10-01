@@ -173,5 +173,8 @@ protections:
 modes:
     droptransfer:
         enabled: true
+
+        # allow items to be transferred across world boundaries
+        crossWorld: false
     persist:
         enabled: true
