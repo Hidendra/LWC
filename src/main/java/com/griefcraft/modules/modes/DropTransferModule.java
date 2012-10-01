@@ -127,7 +127,7 @@ public class DropTransferModule extends JavaModule {
         }
 
         // Don't allow them to transfer items across worlds
-        if (bPlayer.getWorld() != world) {
+        if (bPlayer.getWorld() != world && lwc.getConfiguration().getBoolean("modes.droptransfer.crossWorld", false)) {
             lwc.sendLocale(player, "lwc.dropxfer.acrossworlds");
             player.disableMode(player.getMode("dropTransfer"));
             return;
