@@ -35,14 +35,14 @@ import com.griefcraft.ProtectionSet;
 import com.griefcraft.ServerLayer;
 import com.griefcraft.world.Block;
 
-public class TerrariaProtectionMatcher implements ProtectionMatcher {
+public class SimpleProtectionMatcher implements ProtectionMatcher {
 
     /**
      * The lwc instance
      */
     private LWC lwc;
 
-    public TerrariaProtectionMatcher(LWC lwc) {
+    public SimpleProtectionMatcher(LWC lwc) {
         this.lwc = lwc;
     }
 
@@ -50,10 +50,32 @@ public class TerrariaProtectionMatcher implements ProtectionMatcher {
         ServerLayer layer = lwc.getServerLayer();
         ProtectionSet blocks = new ProtectionSet(lwc.getDatabase());
 
-        blocks.add(layer.isBlockProtectable(base) ? ProtectionSet.BlockType.PROTECTABLE : ProtectionSet.BlockType.MATCHABLE, base);
-        // TODO check that block ^
-        // iirc terraria doesn't have very many protection schematics that could be used so nothing complex
+        int baseType = base.getType();
+
+        // first add the base block, as it must exist on the protection if it matches
+        blocks.add(getBlockType(base), base);
+
+        // Double chests
+        // TODO no literals ?
+        if (baseType == 54) {
+            Block adjacentChest = base.findBlockRelative(54);
+
+            if (adjacentChest != null) {
+                blocks.add(getBlockType(adjacentChest), adjacentChest);
+            }
+        }
+
         return blocks;
+    }
+
+    /**
+     * Get the BlockType that should be used for the given block
+     *
+     * @param block
+     * @return
+     */
+    private ProtectionSet.BlockType getBlockType(Block block) {
+        return lwc.getServerLayer().isBlockProtectable(block) ? ProtectionSet.BlockType.PROTECTABLE : ProtectionSet.BlockType.MATCHABLE;
     }
 
 }

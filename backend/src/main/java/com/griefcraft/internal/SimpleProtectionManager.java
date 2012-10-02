@@ -29,7 +29,6 @@
 
 package com.griefcraft.internal;
 
-import com.griefcraft.Game;
 import com.griefcraft.LWC;
 import com.griefcraft.ProtectionManager;
 import com.griefcraft.ProtectionMatcher;
@@ -53,17 +52,7 @@ public class SimpleProtectionManager implements ProtectionManager {
     }
 
     public Protection findProtection(Location location) {
-        ProtectionMatcher matcher;
-
-        // select the matcher depending on the game
-        Game game = lwc.getServerInfo().getServerMod().game();
-        if (game == Game.MINECRAFT) {
-            matcher = new MinecraftProtectionMatcher(lwc);
-        } else if (game == Game.TERRARIA) {
-            matcher = new TerrariaProtectionMatcher(lwc);
-        } else {
-            throw new UnsupportedOperationException("Game \"" + game + "\" is not implemented");
-        }
+        ProtectionMatcher matcher = new SimpleProtectionMatcher(lwc);
 
         // Get the block at the location
         // this will be our base block -- or reference point -- of where the protection is matched from

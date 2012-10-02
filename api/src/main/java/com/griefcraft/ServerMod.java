@@ -35,52 +35,23 @@ public enum ServerMod {
      * TODO -- not even released
      * Official Minecraft Mod API
      */
-    MCAPI (Game.MINECRAFT),
+    WORKBENCH,
 
     /**
      * Bukkit - http://bukkit.org
      */
-    BUKKIT (Game.MINECRAFT),
+    BUKKIT,
 
     /**
      * TODO -- not implemented
      * Spout - http://spout.org
      */
-    SPOUT (Game.MINECRAFT),
+    SPOUT,
 
     /**
      * TODO -- partially implemented
      * Canary, the hMod successor - http://canarymod.net
      */
-    CANARY (Game.MINECRAFT),
-
-    /**
-     * TDSM - http://tdsm.org
-     */
-    TDSM (Game.TERRARIA),
-
-    /**
-     * TODO -- not implemented, TBD after testing with TDSM
-     * TShock - http://tshock.co
-     */
-    TSHOCK (Game.TERRARIA) ;
-
-    /**
-     * The game this mod is for
-     */
-    private Game game;
-
-    ServerMod(Game game) {
-        this.game = game;
-    }
-
-    /**
-     * Get the game this mod is for
-     * @return
-     */
-    public Game game() {
-        return game;
-    }
-
+    CANARY;
 
 }
