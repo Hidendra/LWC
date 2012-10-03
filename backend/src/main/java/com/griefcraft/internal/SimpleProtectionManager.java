@@ -61,21 +61,8 @@ public class SimpleProtectionManager implements ProtectionManager {
         // attempt to match the protection set
         ProtectionSet blocks = matcher.matchProtection(base);
 
-        // go through each of the protectable blocks
-        for (Block block : blocks.get(ProtectionSet.BlockType.PROTECTABLE)) {
-            // load it from the database
-            Protection protection = lwc.getDatabase().loadProtection(block.getLocation());
-
-            if (protection != null) {
-                // match !
-                // TODO hand the protection set over to the protection or something?
-                blocks.matchedResultant(protection);
-                return protection;
-            }
-        }
-
-        // TODO magical things
-        return null;
+        // return the matched protection
+        return blocks.getResultant();
     }
 
     public Protection createProtection(Protection.Type type, String owner, Location location) {

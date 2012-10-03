@@ -30,7 +30,6 @@
 package com.griefcraft;
 
 import com.griefcraft.model.Protection;
-import com.griefcraft.sql.Database;
 import com.griefcraft.world.Block;
 import com.griefcraft.world.Location;
 
@@ -66,6 +65,7 @@ public class ProtectionSet {
         /**
          * If the node has been checked in the database to a protection or not. Allows us to wastefully
          * reiterate the blocks to look for protections without wasting queries.
+         * TODO
          */
         boolean checked = false;
 
@@ -76,9 +76,9 @@ public class ProtectionSet {
     }
 
     /**
-     * The database that should be used to attempt to load protections
+     * The LWC instance
      */
-    private final Database database;
+    private LWC lwc;
 
     /**
      * The blocks that were found
@@ -96,9 +96,42 @@ public class ProtectionSet {
      */
     private boolean locked = false;
 
-    public ProtectionSet(Database database) {
-        this.database = database;
+    public ProtectionSet(LWC lwc) {
+        this.lwc = lwc;
         initialize();
+    }
+
+    /**
+     * Check for protections on the available protectable blocks that haven't been checked yet.
+     * This method is normally called after a block (or set of blocks) has been added to the matcher to
+     * save processing time.
+     * @return true if a protection was matched
+     */
+    public boolean checkForProtections() {
+        // if we've already found a protection don't bother searching
+        if (resultant != null) {
+            return true;
+        }
+
+        for (BlockNode node : blocks.get(BlockType.PROTECTABLE).values()) {
+            // has the node been checked ?
+            if (node.checked) {
+                return resultant != null;
+            }
+
+            // look for a protection
+            resultant = lwc.getDatabase().loadProtection(node.block.getLocation());
+
+            // mark the node as checked
+            node.checked = true;
+
+            // if we've matched the node then don't continue searching
+            if (resultant != null) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -114,6 +147,15 @@ public class ProtectionSet {
 
         Map<Location, BlockNode> blocks = this.blocks.get(type);
         blocks.put(block.getLocation(), new BlockNode(block));
+    }
+
+    /**
+     * Add a block to the set
+     *
+     * @param block
+     */
+    public void add(Block block) {
+        add(getBlockType(block), block);
     }
 
     /**
@@ -163,6 +205,16 @@ public class ProtectionSet {
         for (BlockType type : BlockType.values()) {
             blocks.put(type, new HashMap<Location, BlockNode>());
         }
+    }
+
+    /**
+     * Get the BlockType that should be used for the given block
+     *
+     * @param block
+     * @return
+     */
+    private ProtectionSet.BlockType getBlockType(Block block) {
+        return lwc.getServerLayer().isBlockProtectable(block) ? ProtectionSet.BlockType.PROTECTABLE : ProtectionSet.BlockType.MATCHABLE;
     }
 
 }

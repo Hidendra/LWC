@@ -29,6 +29,9 @@
 
 package com.griefcraft.world;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public abstract class Block {
 
     /**
@@ -84,6 +87,11 @@ public abstract class Block {
      */
     public abstract void setData(byte data);
 
+    @Override
+    public String toString() {
+        return String.format("Block(type=%d data=%d loc=[%d %d %d \"%s\"])", getType(), getData(), getX(), getY(), getZ(), getWorld().getName());
+    }
+
     /**
      * Get the block's current location
      * @return
@@ -108,40 +116,80 @@ public abstract class Block {
      * Finds a block relative to the block with the given block type. This does not look UP or DOWN and only looks
      * on the current plane for the block (that is, the current y-level)
      *
-     * @param type
+     * @param types
      * @return the Block found. If it was not found, NULL will be returned
      */
-    public Block findBlockRelative(int type) {
+    public Block findBlockRelativeToXZ(int... types) {
         Block block;
+
+        // a set of integers to match
+        Set<Integer> typeSet = new HashSet<Integer>();
+        for (int type : types) {
+            typeSet.add(type);
+        }
 
         // First, the x plane
         if ((block = getRelative(-1, 0, 0)) != null) {
-            if (block.getType() == type) {
+            if (typeSet.contains(block.getType())) {
                 return block;
             }
         }
 
         if ((block = getRelative(1, 0, 0)) != null) {
-            if (block.getType() == type) {
+            if (typeSet.contains(block.getType())) {
                 return block;
             }
         }
 
         // now the z plane
         if ((block = getRelative(0, 0, -1)) != null) {
-            if (block.getType() == type) {
+            if (typeSet.contains(block.getType())) {
                 return block;
             }
         }
 
         if ((block = getRelative(0, 0, 1)) != null) {
-            if (block.getType() == type) {
+            if (typeSet.contains(block.getType())) {
                 return block;
             }
         }
 
         // nothing at all found QQ
-        return block;
+        return null;
+    }
+
+    /**
+     * Finds a block relative to the block with the given block type. This does not on the current plane
+     * but looks on the planes directly above and below the block (i.e the block above and below this block)
+     *
+     * @param types
+     * @return the Block found. If it was not found, NULL will be returned
+     */
+    public Block findBlockRelativeToY(int... types) {
+        Block block;
+
+        // a set of integers to match
+        Set<Integer> typeSet = new HashSet<Integer>();
+        for (int type : types) {
+            typeSet.add(type);
+        }
+
+        // block above
+        if ((block = getRelative(0, 1, 0)) != null) {
+            if (typeSet.contains(block.getType())) {
+                return block;
+            }
+        }
+
+        // block below
+        if ((block = getRelative(0, -1, 0)) != null) {
+            if (typeSet.contains(block.getType())) {
+                return block;
+            }
+        }
+
+        // nothing at all found QQ
+        return null;
     }
 
 }

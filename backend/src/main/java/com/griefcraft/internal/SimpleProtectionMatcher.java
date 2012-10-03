@@ -32,7 +32,6 @@ package com.griefcraft.internal;
 import com.griefcraft.LWC;
 import com.griefcraft.ProtectionMatcher;
 import com.griefcraft.ProtectionSet;
-import com.griefcraft.ServerLayer;
 import com.griefcraft.world.Block;
 
 public class SimpleProtectionMatcher implements ProtectionMatcher {
@@ -47,35 +46,58 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
     }
 
     public ProtectionSet matchProtection(Block base) {
-        ServerLayer layer = lwc.getServerLayer();
-        ProtectionSet blocks = new ProtectionSet(lwc.getDatabase());
+        ProtectionSet blocks = new ProtectionSet(lwc);
 
         int baseType = base.getType();
 
         // first add the base block, as it must exist on the protection if it matches
-        blocks.add(getBlockType(base), base);
+        blocks.add(base);
 
-        // Double chests
-        // TODO no literals ?
+        /////
+        // TODO add a convenience method inside Block for checking if it matches a set of IDs
+        /////
+
+        // Double chest
         if (baseType == 54) {
-            Block adjacentChest = base.findBlockRelative(54);
+            Block adjacentChest = base.findBlockRelativeToXZ(54);
 
             if (adjacentChest != null) {
-                blocks.add(getBlockType(adjacentChest), adjacentChest);
+                blocks.add(adjacentChest);
             }
         }
 
-        return blocks;
-    }
+        // Doors (not the block below the door)
+        else if (baseType == 64 || baseType == 71) {
+            Block otherDoor = base.findBlockRelativeToY(64, 71);
 
-    /**
-     * Get the BlockType that should be used for the given block
-     *
-     * @param block
-     * @return
-     */
-    private ProtectionSet.BlockType getBlockType(Block block) {
-        return lwc.getServerLayer().isBlockProtectable(block) ? ProtectionSet.BlockType.PROTECTABLE : ProtectionSet.BlockType.MATCHABLE;
+            // add the other half of the door
+            if (otherDoor != null) {
+                blocks.add(otherDoor);
+            }
+        }
+
+        // other
+        else {
+            // get the block above the current block (useful)
+            Block above = base.getRelative(0, 1, 0);
+
+            // door above the current block
+            if (above.getType() == 64 || above.getType() == 71) {
+                blocks.add(above);
+                blocks.add(above.getRelative(0, 1, 0)); // top of the door
+            }
+
+        }
+
+        for (ProtectionSet.BlockType type : ProtectionSet.BlockType.values()) {
+            for (Block block : blocks.get(type)) {
+                lwc.getConsoleSender().sendMessage(type.toString() + " => " + block.toString());
+            }
+        }
+
+        // check for a protection and return
+        blocks.checkForProtections();
+        return blocks;
     }
 
 }
