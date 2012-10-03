@@ -30,8 +30,8 @@
     <modules>
         <module>api</module>
         <module>backend</module>
-        <module>bukkit</module>
-        <module>canary</module>
+        <module>mods/bukkit</module>
+        <module>mods/canary</module>
     </modules>
 
     <build>
