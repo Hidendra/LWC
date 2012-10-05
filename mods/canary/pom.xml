@@ -41,7 +41,7 @@
     </dependencies>
 
     <build>
-        <finalName>${project.name}-${project.version}-INCOMPLETE</finalName>
+        <finalName>${project.name}-${project.version}</finalName>
         <defaultGoal>clean package</defaultGoal>
 
         <resources>
