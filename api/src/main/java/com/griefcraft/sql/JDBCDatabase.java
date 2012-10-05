@@ -30,6 +30,7 @@
 package com.griefcraft.sql;
 
 import com.griefcraft.LWC;
+import com.griefcraft.ProtectionType;
 import com.griefcraft.model.Protection;
 import com.griefcraft.world.Location;
 
@@ -208,12 +209,12 @@ public class JDBCDatabase implements Database {
         return connection.prepareStatement("SELECT " + columns + " FROM " + details.getPrefix() + table + " " + query);
     }
 
-    public Protection createProtection(Protection.Type type, String owner, Location location) {
+    public Protection createProtection(ProtectionType type, String owner, Location location) {
         try {
             PreparedStatement statement = prepareInsertQuery("protections", "(type, owner, world, x, y, z, updated, created) VALUES (?, ?, ?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())");
 
             try {
-                statement.setInt(1, type.ordinal());
+                statement.setInt(1, type.getId());
                 statement.setString(2, owner);
                 statement.setString(3, location.getWorld().getName());
                 statement.setInt(4, location.getBlockX());
@@ -299,7 +300,7 @@ public class JDBCDatabase implements Database {
      */
     private Protection resolveProtection(ResultSet set) throws SQLException {
         Protection protection = new Protection(set.getInt("id"));
-        protection.setType(Protection.Type.values()[set.getInt("type")]);
+        protection.setType(lwc.getProtectionManager().getProtectionTypeById(set.getInt("type")));
         protection.setOwner(set.getString("owner"));
         protection.setWorld(lwc.getServerLayer().getWorld(set.getString("world")));
         protection.setX(set.getInt("x"));

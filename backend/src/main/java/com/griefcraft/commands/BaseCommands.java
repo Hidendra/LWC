@@ -89,7 +89,7 @@ public class BaseCommands {
                     return false;
                 }
 
-                Protection protection = lwc.getProtectionManager().createProtection(Protection.Type.PRIVATE, player.getName(), block.getLocation());
+                Protection protection = null; // lwc.getProtectionManager().createProtection(Protection.Type.PRIVATE, player.getName(), block.getLocation());
                 if (protection != null) {
                     player.sendMessage(_("Protected~"));
                 } else {

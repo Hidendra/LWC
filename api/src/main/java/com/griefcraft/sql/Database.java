@@ -29,6 +29,7 @@
 
 package com.griefcraft.sql;
 
+import com.griefcraft.ProtectionType;
 import com.griefcraft.model.Protection;
 import com.griefcraft.world.Location;
 
@@ -58,7 +59,7 @@ public interface Database {
      * @param location
      * @return
      */
-    public Protection createProtection(Protection.Type type, String owner, Location location);
+    public Protection createProtection(ProtectionType type, String owner, Location location);
 
     /**
      * Load a protection from the database at the given location

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-01 22:04-0300\n"
+"POT-Creation-Date: 2012-10-05 12:49-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,11 +24,11 @@ msgid ""
 "trace has been printed out to the log file"
 msgstr ""
 
-#: api/src/main/java/com/griefcraft/sql/JDBCDatabase.java:303
+#: api/src/main/java/com/griefcraft/sql/JDBCDatabase.java:304
 msgid "owner"
 msgstr ""
 
-#: api/src/main/java/com/griefcraft/sql/JDBCDatabase.java:304
+#: api/src/main/java/com/griefcraft/sql/JDBCDatabase.java:305
 msgid "world"
 msgstr ""
 
@@ -62,6 +62,6 @@ msgstr ""
 msgid "Purging player?: {0}"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/internal/SimpleProtectionManager.java:96
+#: backend/src/main/java/com/griefcraft/internal/SimpleProtectionManager.java:102
 msgid "This protection is locked by a magical spell."
 msgstr ""

@@ -29,32 +29,12 @@
 
 package com.griefcraft.model;
 
+import com.griefcraft.ProtectionAccess;
+import com.griefcraft.ProtectionType;
 import com.griefcraft.entity.Player;
 import com.griefcraft.world.World;
 
 public class Protection extends AbstractSavable {
-
-    /**
-     * The protection's type
-     */
-    public enum Type {
-
-        /**
-         * The protection is private and only the player or those the player allows can access it
-         */
-        PRIVATE,
-
-        /**
-         * Anyone can access and use the protection but not remove it
-         */
-        PUBLIC,
-
-        /**
-         * The protection requires a password from anyone to enter it
-         */
-        PASSWORD
-
-    }
 
     /**
      * The protection's internal id
@@ -64,7 +44,7 @@ public class Protection extends AbstractSavable {
     /**
      * The protection's type
      */
-    private Type type;
+    private ProtectionType type;
 
     /**
      * The protection's owner
@@ -113,6 +93,10 @@ public class Protection extends AbstractSavable {
         return String.format("Protection(id=%d, owner=\"%s\", world=\"%s\", location=[%d, %d, %d])", id, owner, world, x, y, z);
     }
 
+    public Protection(int id) {
+        this.id = id;
+    }
+
     /**
      * Check if a player is the owner of this protection
      *
@@ -123,11 +107,21 @@ public class Protection extends AbstractSavable {
         return player != null && player.getName().equals(owner);
     }
 
-    public Protection(int id) {
-        this.id = id;
+    /**
+     * Get the {@link ProtectionAccess} level a player has to this protection
+     * @param player
+     * @return
+     */
+    public ProtectionAccess getAccess(Player player) {
+        if (type == null) {
+            return ProtectionAccess.DENY;
+        }
+
+        return type.getAccess(this, player);
     }
 
-    public void setType(Type type) {
+
+    public void setType(ProtectionType type) {
         this.type = type;
         modified = true;
     }
@@ -174,7 +168,7 @@ public class Protection extends AbstractSavable {
         return id;
     }
 
-    public Type getType() {
+    public ProtectionType getType() {
         return type;
     }
 

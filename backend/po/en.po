@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-01 12:41-0300\n"
+"POT-Creation-Date: 2012-10-05 12:49-0300\n"
 "PO-Revision-Date: 2012-07-07 00:38-0300\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: English\n"
@@ -26,11 +26,11 @@ msgstr ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "
 "trace has been printed out to the log file"
 
-#: api/src/main/java/com/griefcraft/sql/JDBCDatabase.java:303
+#: api/src/main/java/com/griefcraft/sql/JDBCDatabase.java:304
 msgid "owner"
 msgstr "owner"
 
-#: api/src/main/java/com/griefcraft/sql/JDBCDatabase.java:304
+#: api/src/main/java/com/griefcraft/sql/JDBCDatabase.java:305
 msgid "world"
 msgstr "world"
 
@@ -64,7 +64,7 @@ msgstr "You clicked on a block with the id {0}!"
 msgid "Purging player?: {0}"
 msgstr "Purging player?: {0}"
 
-#: backend/src/main/java/com/griefcraft/internal/SimpleProtectionManager.java:96
+#: backend/src/main/java/com/griefcraft/internal/SimpleProtectionManager.java:102
 #, fuzzy
 msgid "This protection is locked by a magical spell."
 msgstr "This protection is locked by a magical spell."

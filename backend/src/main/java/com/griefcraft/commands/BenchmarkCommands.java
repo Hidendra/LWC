@@ -33,7 +33,6 @@ import com.griefcraft.LWC;
 import com.griefcraft.command.Command;
 import com.griefcraft.command.CommandContext;
 import com.griefcraft.command.SenderType;
-import com.griefcraft.model.Protection;
 import com.griefcraft.world.Location;
 
 import java.util.Random;
@@ -58,8 +57,8 @@ public class BenchmarkCommands {
         Random random = new Random();
         long start = System.currentTimeMillis();
         for (int i = 0; i < 10000; i++) {
-            lwc.getProtectionManager().createProtection(Protection.Type.PRIVATE, "virulent",
-                    new Location(lwc.getServerLayer().getDefaultWorld(), random.nextDouble() * 100000, random.nextDouble() * 100000, random.nextDouble() * 100000));
+            //lwc.getProtectionManager().createProtection(Protection.Type.PRIVATE, "virulent",
+            //        new Location(lwc.getServerLayer().getDefaultWorld(), random.nextDouble() * 100000, random.nextDouble() * 100000, random.nextDouble() * 100000));
         }
         long time = System.currentTimeMillis() - start;
         lwc.getConsoleSender().sendMessage(String.format("Done. %d ms total, %.2f ms per protection", time, time / 10000D));
