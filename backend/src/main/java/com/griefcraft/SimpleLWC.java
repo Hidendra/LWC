@@ -37,6 +37,7 @@ import com.griefcraft.commands.BaseCommands;
 import com.griefcraft.commands.BenchmarkCommands;
 import com.griefcraft.configuration.Configuration;
 import com.griefcraft.internal.SimpleProtectionManager;
+import com.griefcraft.internal.protections.PublicProtectionType;
 import com.griefcraft.sql.Database;
 import com.griefcraft.sql.DatabaseException;
 import com.griefcraft.sql.JDBCDatabase;
@@ -94,6 +95,9 @@ public class SimpleLWC implements LWC {
 
         // Register any commands
         registerCommands();
+
+        // register default protection types
+        registerDefaultProtectionTypes();
     }
 
     /**
@@ -194,6 +198,13 @@ public class SimpleLWC implements LWC {
         } catch (CommandException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Register the default protection types
+     */
+    private void registerDefaultProtectionTypes() {
+        manager.registerProtectionType(new PublicProtectionType());
     }
 
 }
