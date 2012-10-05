@@ -32,6 +32,7 @@
         <module>backend</module>
         <module>mods/bukkit</module>
         <module>mods/canary</module>
+        <module>mods/workbench</module>
     </modules>
 
     <build>

@@ -2,8 +2,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.griefcraft.lwc.mods</groupId>
-    <artifactId>canary</artifactId>
-    <name>LWC-Canary</name>
+    <artifactId>workbench</artifactId>
+    <name>LWC-Workbench</name>
     <url>griefcraft.com</url>
     <packaging>jar</packaging>
     <version>5.0.0-SNAPSHOT</version>
@@ -18,6 +18,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>Plugin Metrics</id>
+            <url>http://repo.mcstats.org/content/repositories/public</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>com.griefcraft.lwc</groupId>
@@ -26,11 +33,10 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>net.canarymod</groupId>
-            <artifactId>crow</artifactId>
-            <version>4.10.10</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../../lib/CanaryMod-4.10.10.jar</systemPath>
+            <groupId>net.minecraft</groupId>
+            <artifactId>minecraft-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
