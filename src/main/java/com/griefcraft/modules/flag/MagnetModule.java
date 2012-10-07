@@ -121,6 +121,10 @@ public class MagnetModule extends JavaModule {
                 World world = item.getWorld();
                 ItemStack itemStack = item.getItemStack();
 
+                if (item.isDead()) {
+                    continue;
+                }
+
                 Location location = item.getLocation();
                 int x = location.getBlockX();
                 int y = location.getBlockY();
