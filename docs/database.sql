@@ -1,88 +1,70 @@
 /*
-Navicat MySQL Data Transfer
+ Navicat Premium Data Transfer
 
-Source Server         : local
-Source Server Version : 50519
-Source Host           : localhost:3306
-Source Database       : lwc5
+ Source Server         : localhost
+ Source Server Type    : MySQL
+ Source Server Version : 50528
+ Source Host           : localhost
+ Source Database       : minecraft
 
-Target Server Type    : MYSQL
-Target Server Version : 50519
-File Encoding         : 65001
+ Target Server Type    : MySQL
+ Target Server Version : 50528
+ File Encoding         : utf-8
 
-Date: 2012-03-13 19:34:01
+ Date: 10/07/2012 12:16:53 PM
 */
 
--- ----------------------------
--- Table structure for `permissions`
--- ----------------------------
-DROP TABLE IF EXISTS `permissions`;
-CREATE TABLE `permissions` (
-`id`  int(11) NOT NULL ,
-`protection_id`  int(11) NOT NULL ,
-`type`  int(11) NOT NULL COMMENT 'ordinal() from Permission.Type' ,
-`value`  varchar(20) NOT NULL COMMENT 'player name, group name, etc' ,
-PRIMARY KEY (`id`),
-FOREIGN KEY (`protection_id`) REFERENCES `protections` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-)
-COMMENT='lwc 5.0.0 in development table schema'
-
-;
+SET NAMES utf8;
+SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for `protections`
+--  Table structure for `protection_attributes`
+-- ----------------------------
+DROP TABLE IF EXISTS `protection_attributes`;
+CREATE TABLE `protection_attributes` (
+	`protection_id` int(11) NOT NULL,
+	`attribute` varchar(20) NOT NULL,
+	`attribute_value` varchar(255) NOT NULL,
+	UNIQUE `unique` (protection_id, attribute)
+) ENGINE=`InnoDB` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci ROW_FORMAT=COMPACT CHECKSUM=0 DELAY_KEY_WRITE=0;
+
+-- ----------------------------
+--  Table structure for `protection_roles`
+-- ----------------------------
+DROP TABLE IF EXISTS `protection_roles`;
+CREATE TABLE `protection_roles` (
+	`protection_id` int(11) NOT NULL,
+	`user_id` int(11) NOT NULL,
+	`role` int(11) NOT NULL,
+	UNIQUE `entity` (protection_id, user_id)
+) ENGINE=`InnoDB` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci ROW_FORMAT=COMPACT CHECKSUM=0 DELAY_KEY_WRITE=0;
+
+-- ----------------------------
+--  Table structure for `protection_users`
+-- ----------------------------
+DROP TABLE IF EXISTS `protection_users`;
+CREATE TABLE `protection_users` (
+	`id` int(11) NOT NULL,
+	`type` int(11) NOT NULL,
+	`name` varchar(255) NOT NULL,
+	UNIQUE `entity` (type, `name`)
+) ENGINE=`InnoDB` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci ROW_FORMAT=COMPACT CHECKSUM=0 DELAY_KEY_WRITE=0;
+
+-- ----------------------------
+--  Table structure for `protections`
 -- ----------------------------
 DROP TABLE IF EXISTS `protections`;
 CREATE TABLE `protections` (
-`id`  int(11) NOT NULL ,
-`type`  int(11) NOT NULL COMMENT 'ordinal() from Protection.Type' ,
-`owner`  varchar(16) NOT NULL ,
-`world`  varchar(20) NOT NULL ,
-`x`  int(11) NOT NULL ,
-`y`  int(11) NOT NULL ,
-`z`  int(11) NOT NULL ,
-`updated`  int(11) NOT NULL COMMENT 'unix timestamp' ,
-`created`  int(11) NOT NULL COMMENT 'unix timestamp' ,
-PRIMARY KEY (`id`)
-)
-COMMENT='lwc 5.0.0 in development table schema'
+	`id` int(11) NOT NULL,
+	`type` smallint(6) NOT NULL,
+	`x` int(11) NOT NULL,
+	`y` int(11) NOT NULL,
+	`z` int(11) NOT NULL,
+	`world` varchar(255) NOT NULL,
+	`created` int(11) NOT NULL,
+	`updated` int(11) NOT NULL,
+	`accessed` int(11) NOT NULL,
+	UNIQUE `position` (x, y, z, world)
+) ENGINE=`InnoDB` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci ROW_FORMAT=COMPACT CHECKSUM=0 DELAY_KEY_WRITE=0;
 
-;
-
--- ----------------------------
--- Table structure for `traits`
--- ----------------------------
-DROP TABLE IF EXISTS `traits`;
-CREATE TABLE `traits` (
-`id`  int(11) NOT NULL ,
-`protection_id`  int(11) NOT NULL ,
-`trait`  int(11) NOT NULL COMMENT 'ordinal() from Trait.Type' ,
-`value`  varchar(50) NOT NULL ,
-`created`  int(11) NOT NULL COMMENT 'unix timestamp' ,
-PRIMARY KEY (`id`),
-FOREIGN KEY (`protection_id`) REFERENCES `protections` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-)
-COMMENT='lwc 5.0.0 in development table schema'
-
-;
-
--- ----------------------------
--- Indexes structure for table permissions
--- ----------------------------
-CREATE INDEX `ProtectionId` ON `permissions`(`protection_id`) USING BTREE ;
-CREATE INDEX `type` ON `permissions`(`type`) USING BTREE ;
-CREATE INDEX `value` ON `permissions`(`value`) USING BTREE ;
-
--- ----------------------------
--- Indexes structure for table protections
--- ----------------------------
-CREATE UNIQUE INDEX `Location` ON `protections`(`world`, `x`, `y`, `z`) USING BTREE ;
-CREATE INDEX `Player` ON `protections`(`owner`) USING BTREE ;
-CREATE INDEX `Type` ON `protections`(`type`) USING BTREE ;
-
--- ----------------------------
--- Indexes structure for table traits
--- ----------------------------
-CREATE INDEX `ProtectionId` ON `traits`(`protection_id`) USING BTREE ;
-CREATE INDEX `trait` ON `traits`(`trait`) USING BTREE ;
-CREATE INDEX `FKTrait` ON `traits`(`protection_id`, `trait`) USING BTREE ;
+SET FOREIGN_KEY_CHECKS = 1;

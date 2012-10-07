@@ -162,7 +162,7 @@ public class SimpleLWC implements LWC {
         JDBCDatabase.JDBCConnectionDetails details = new JDBCDatabase.JDBCConnectionDetails(
                 JDBCDatabase.Driver.MYSQL,
                 "127.0.0.1",
-                "lwc5",
+                "minecraft",
                 "",
                 "root",
                 ""
