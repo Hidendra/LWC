@@ -1,0 +1,5 @@
+name: LWC
+author: Hidendra
+main: com.griefcraft.spout.SpoutPlugin
+version: ${project.version}
+platform: SERVER
