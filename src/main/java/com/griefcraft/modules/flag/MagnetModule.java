@@ -108,6 +108,11 @@ public class MagnetModule extends JavaModule {
                             continue;
                         }
 
+                        // Check for usable blocks
+                        if (scanForInventoryBlocks(item.getLocation(), radius).size() == 0) {
+                            continue;
+                        }
+
                         items.offer(item);
                     }
                 }
@@ -125,26 +130,16 @@ public class MagnetModule extends JavaModule {
                     continue;
                 }
 
-                Location location = item.getLocation();
-                int x = location.getBlockX();
-                int y = location.getBlockY();
-                int z = location.getBlockZ();
-
                 if (isShowcaseItem(item)) {
                     // it's being used by the Showcase plugin ... ignore it
                     continue;
                 }
 
-                List<Protection> protections = lwc.getPhysicalDatabase().loadProtections(world.getName(), x, y, z, radius);
-                Block block;
-                Protection protection;
+                List<Block> blocks = scanForInventoryBlocks(item.getLocation(), radius);
+                for (Block block : blocks) {
+                    Protection protection = lwc.findProtection(block);
 
-                for (Protection temp : protections) {
-                    protection = temp;
-                    block = world.getBlockAt(protection.getX(), protection.getY(), protection.getZ());
-
-                    // we only want inventory blocks
-                    if (!(block.getState() instanceof InventoryHolder)) {
+                    if (protection == null) {
                         continue;
                     }
 
@@ -169,7 +164,7 @@ public class MagnetModule extends JavaModule {
                     // if we have a remainder, we need to drop them
                     if (remaining.size() > 0) {
                         for (ItemStack stack : remaining.values()) {
-                            world.dropItemNaturally(location, stack);
+                            world.dropItemNaturally(item.getLocation(), stack);
                         }
                     }
 
@@ -233,6 +228,34 @@ public class MagnetModule extends JavaModule {
         // register our search thread schedule
         MagnetTask searchThread = new MagnetTask();
         lwc.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(lwc.getPlugin(), searchThread, 50, 50);
+    }
+
+    /**
+     * Scan for inventory blocks around the given block inside the given radius
+     *
+     * @param location
+     * @param radius
+     * @return
+     */
+    private List<Block> scanForInventoryBlocks(Location location, int radius) {
+        List<Block> found = new ArrayList<Block>();
+        int baseX = location.getBlockX();
+        int baseY = location.getBlockY();
+        int baseZ = location.getBlockZ();
+
+        for (int x = baseX - radius; x < baseX + radius; x++) {
+            for (int y = baseY - radius; y < baseY + radius; y++) {
+                for (int z = baseZ - radius; z < baseZ + radius; z++) {
+                    Block block = location.getWorld().getBlockAt(x, y, z);
+
+                    if (block.getState() instanceof InventoryHolder) {
+                        found.add(block);
+                    }
+                }
+            }
+        }
+
+        return found;
     }
 
 }
