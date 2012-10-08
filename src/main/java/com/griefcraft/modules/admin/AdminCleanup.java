@@ -35,18 +35,27 @@ import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.sql.Database;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
-import org.bukkit.World;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 public class AdminCleanup extends JavaModule {
+
+    /**
+     * The amount of protection block gets to batch at once
+     */
+    private static int BATCH_SIZE = 250;
 
     @Override
     public void onCommand(LWCCommandEvent event) {
@@ -80,7 +89,7 @@ public class AdminCleanup extends JavaModule {
 
         // do the work in a separate thread so we don't fully lock the server
         // new Thread(new Admin_Cleanup_Thread(lwc, sender)).start();
-        new Admin_Cleanup_Thread(lwc, sender, silent).run();
+        Bukkit.getScheduler().scheduleAsyncDelayedTask(lwc.getPlugin(), new Admin_Cleanup_Thread(lwc, sender, silent));
     }
 
     /**
@@ -141,76 +150,104 @@ public class AdminCleanup extends JavaModule {
         }
 
         public void run() {
-            long start = System.currentTimeMillis();
-            int completed = 0;
-            int count = 0;
-
             List<Integer> toRemove = new LinkedList<Integer>();
-            int totalProtections = lwc.getPhysicalDatabase().getProtectionCount();
+            int removed = 0;
+            int percentChecked = 0;
 
-            sender.sendMessage("Loading protections via STREAM mode");
+            // the bukkit scheduler
+            BukkitScheduler scheduler = Bukkit.getScheduler();
 
             try {
+                sender.sendMessage(Colors.Red + "Processing cleanup request now in a separate thread");
+
+                // the list of protections work off of. We batch updates to the world
+                // so we can more than 20 results/second.
+                final List<Protection> protections = new ArrayList<Protection>(BATCH_SIZE);
+
+                // amount of protections
+                int totalProtections = lwc.getPhysicalDatabase().getProtectionCount();
+
+                // TODO separate stream logic to somewhere else :)
+                // Create a new database connection, we are just reading
                 PhysDB database = new PhysDB();
                 database.connect();
                 database.load();
+
                 Statement resultStatement = database.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
-                if (database.getType() == Database.Type.MySQL) {
+                if (lwc.getPhysicalDatabase().getType() == Database.Type.MySQL) {
                     resultStatement.setFetchSize(Integer.MIN_VALUE);
                 }
 
-                String prefix = database.getPrefix();
+                String prefix = lwc.getPhysicalDatabase().getPrefix();
                 ResultSet result = resultStatement.executeQuery("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections");
+                int checked = 0;
 
                 while (result.next()) {
-                    Protection protection = database.resolveProtection(result);
-                    World world = protection.getBukkitWorld();
+                    final Protection tprotection = database.resolveProtection(result);
 
-                    count++;
+                    if (protections.size() != BATCH_SIZE) {
+                        // Wait until we have BATCH_SIZE protections
+                        protections.add(tprotection);
 
-                    if (count % 100000 == 0 || count == totalProtections || count == 1) {
-                        sender.sendMessage(Colors.Red + count + " / " + totalProtections);
-                    }
-
-                    if (world == null) {
-                        if (!silent) {
-                            lwc.sendLocale(sender, "protection.admin.cleanup.noworld", "world", protection.getWorld());
-                        }
-
-                        continue;
-                    }
-
-                    // now we can check the world for the protection
-                    Block block = protection.getBlock();
-
-                    // remove protections not found in the world
-                    if (block == null || !lwc.isProtectable(block)) {
-                        toRemove.add(protection.getId());
-                        completed++;
-
-                        if (!silent) {
-                            lwc.sendLocale(sender, "protection.admin.cleanup.removednoexist", "protection", protection.toString());
+                        if (protections.size() != totalProtections) {
+                            continue;
                         }
                     }
+
+                    // Get all of the blocks in the world
+                    Future<Void> getBlocks = scheduler.callSyncMethod(lwc.getPlugin(), new Callable<Void>() {
+                        public Void call() throws Exception {
+                            for (Protection protection : protections) {
+                                protection.getBlock(); // this will cache it also :D
+                            }
+
+                            return null;
+                        }
+                    });
+
+                    // Get all of the blocks
+                    getBlocks.get();
+
+                    for (Protection protection : protections) {
+                        Block block = protection.getBlock();
+
+                        // remove protections not found in the world
+                        if (block == null || !lwc.isProtectable(block)) {
+                            toRemove.add(protection.getId());
+                            removed ++;
+
+                            if (!silent) {
+                                lwc.sendLocale(sender, "protection.admin.cleanup.removednoexist", "protection", protection.toString());
+                            }
+                        }
+
+                        checked ++;
+                    }
+
+                    // percentage dump
+                    int percent = (int) ((((double) checked) / totalProtections) * 100);
+
+                    if (percent % 5 == 0 && percentChecked != percent) {
+                        percentChecked = percent;
+                        sender.sendMessage(Colors.Red + "Cleanup @ " + percent + "% [ " + checked + "/" + totalProtections + " protections ] [ removed " + removed + " protections ]");
+                    }
+
+                    // Clear the protection set, we are done with them
+                    protections.clear();
                 }
 
-                // Close the streaming statement
+                // close the sql statements
                 result.close();
                 resultStatement.close();
 
                 // flush all of the queries
                 push(toRemove);
-            } catch (Exception e) {
-                sender.sendMessage("Uh-oh, something bad happened while cleaning up the LWC database!");
-                lwc.sendLocale(sender, "protection.internalerror", "id", "cleanup");
-                e.printStackTrace();
+
+                sender.sendMessage("Cleanup completed. Removed " + removed + " protections out of " + checked + " checked protections.");
+            } catch (Exception e) { // database.connect() throws Exception
+                System.out.println("Exception caught during cleanup: " + e.getMessage());
             }
-
-            long finish = System.currentTimeMillis();
-            float timeInSeconds = (finish - start) / 1000.0f;
-
-            lwc.sendLocale(sender, "protection.admin.cleanup.complete", "count", completed, "seconds", timeInSeconds);
         }
 
     }
