@@ -67,7 +67,7 @@ public class ModifyModule extends JavaModule {
         LWCPlayer player = lwc.wrapPlayer(event.getPlayer());
         event.setResult(Result.CANCEL);
 
-        if (lwc.canAdminProtection(player.getBukkitPlayer(), protection)) {
+        if (lwc.canAdminProtection(player.getBukkitPlayer(), protection) || lwc.hasPlayerPermission(player.getBukkitPlayer(), "lwc.modify.other")) {
             Action action = player.getAction("modify");
 
             String data = action.getData();

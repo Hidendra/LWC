@@ -128,12 +128,16 @@ permissions:
 
   lwc.modify:
       description: Allows you to modify protections you own.
+  lwc.modify.other:
+      description: Allows you to modify protections you don't own.
   lwc.unlock:
       description: Allows you to unlock password-protected protections.
   lwc.info:
       description: Allows you to view the owner and other misc data on a protection.
   lwc.remove:
       description: Allows you to remove protections you own.
+  lwc.remove.other:
+      description: Allows you to remove protections you don't own.
 
   lwc.flag.*:
       description: Gives you access to every usable flag.
