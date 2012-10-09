@@ -447,8 +447,18 @@ public class LWC {
         BlockState blockState;
 
         if ((blockState = block.getState()) != null && (blockState instanceof InventoryHolder)) {
-            Block doubleChestBlock = findAdjacentBlock(block, Material.CHEST);
+            Block doubleChestBlock = null;
             InventoryHolder holder = (InventoryHolder) blockState;
+
+            if (block.getType() == Material.CHEST) {
+                doubleChestBlock = findAdjacentBlock(block, Material.CHEST);
+            } else if (block.getType() == Material.FURNACE) {
+                Inventory inventory = holder.getInventory();
+
+                if (inventory.getItem(0) != null && inventory.getItem(1) != null) {
+                    return null;
+                }
+            }
 
             if (itemStack.getAmount() <= 0) {
                 return new HashMap<Integer, ItemStack>();
