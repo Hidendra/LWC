@@ -1359,7 +1359,7 @@ public class LWC {
 
         // Permissions init
         permissions = new SuperPermsPermissions();
-
+/* SuperPerms is the recommended interface. Better deal with God rather than with Saints
         if (resolvePlugin("Vault") != null) {
             permissions = new VaultPermissions();
         } else if (resolvePlugin("PermissionsBukkit") != null) {
@@ -1369,7 +1369,7 @@ public class LWC {
         } else if (resolvePlugin("bPermissions") != null) {
             permissions = new bPermissions();
         }
-
+*/
         // Currency init
         currency = new NoCurrency();
 
