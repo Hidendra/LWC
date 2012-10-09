@@ -155,6 +155,11 @@ public class MagnetModule extends JavaModule {
                     // Remove the items and suck them up :3
                     Map<Integer, ItemStack> remaining = lwc.depositItems(block, itemStack);
 
+                    // we cancelled the item drop for some reason
+                    if (remaining == null) {
+                        continue;
+                    }
+
                     if (remaining.size() == 1) {
                         ItemStack other = remaining.values().iterator().next();
 
