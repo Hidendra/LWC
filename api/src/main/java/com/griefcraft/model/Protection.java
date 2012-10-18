@@ -47,11 +47,6 @@ public class Protection extends AbstractSavable {
     private ProtectionType type;
 
     /**
-     * The protection's owner
-     */
-    private String owner;
-
-    /**
      * The world this protection is in
      */
     private World world;
@@ -72,15 +67,19 @@ public class Protection extends AbstractSavable {
     private int z;
 
     /**
-     * The unix timestamp of when the protection was last updated and/or accessed
+     * The unix timestamp of when the protection was created
+     */
+    private int created;
 
+    /**
+     * The unix timestamp of when the protection was last updated and
      */
     private int updated;
 
     /**
-     * The unix timestamp of when the protection was created
+     * The unix timestamp of when the protection was last accessed by a member (i.e not overridden)
      */
-    private int created;
+    private int accessed;
 
     /**
      * If the protection has been modified
@@ -90,7 +89,7 @@ public class Protection extends AbstractSavable {
     @Override
     public String toString() {
         // TODO add in updated, created
-        return String.format("Protection(id=%d, owner=\"%s\", world=\"%s\", location=[%d, %d, %d])", id, owner, world, x, y, z);
+        return String.format("Protection(id=%d, world=\"%s\", location=[%d, %d, %d])", id, world, x, y, z);
     }
 
     public Protection(int id) {
@@ -104,7 +103,8 @@ public class Protection extends AbstractSavable {
      * @return
      */
     public boolean isOwner(Player player) {
-        return player != null && player.getName().equals(owner);
+        // return player != null && player.getName().equals(owner);
+        return false;
     }
 
     /**
@@ -123,11 +123,6 @@ public class Protection extends AbstractSavable {
 
     public void setType(ProtectionType type) {
         this.type = type;
-        modified = true;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
         modified = true;
     }
 
@@ -172,10 +167,6 @@ public class Protection extends AbstractSavable {
         return type;
     }
 
-    public String getOwner() {
-        return owner;
-    }
-
     public int getX() {
         return x;
     }
@@ -198,6 +189,15 @@ public class Protection extends AbstractSavable {
 
     public int getCreated() {
         return created;
+    }
+
+    public int getAccessed() {
+        return accessed;
+    }
+
+    public void setAccessed(int accessed) {
+        this.accessed = accessed;
+        modified = true;
     }
 
     @Override
