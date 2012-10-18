@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-05 12:49-0300\n"
+"POT-Creation-Date: 2012-10-18 12:24-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,40 +24,36 @@ msgid ""
 "trace has been printed out to the log file"
 msgstr ""
 
-#: api/src/main/java/com/griefcraft/sql/JDBCDatabase.java:304
-msgid "owner"
-msgstr ""
-
-#: api/src/main/java/com/griefcraft/sql/JDBCDatabase.java:305
+#: api/src/main/java/com/griefcraft/sql/JDBCDatabase.java:303
 msgid "world"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:79
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:80
 msgid "Click on a block to protect it!"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:88
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:89
 msgid "That block is not protectable"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:94
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:95
 msgid "Protected~"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:96
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:97
 msgid "Failed to protect for some reason ?"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:112
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:113
 msgid "Click on a block, please!~"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:118
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:119
 #, java-format
 msgid "You clicked on a block with the id {0}!"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:134
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:135
 #, java-format
 msgid "Purging player?: {0}"
 msgstr ""

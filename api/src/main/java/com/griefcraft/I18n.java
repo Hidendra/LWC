@@ -2,7 +2,6 @@ package com.griefcraft;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.Enumeration;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
@@ -49,11 +48,10 @@ public class I18n {
      */
     private String translate(String message) {
         // load the bundle if it hasn't been loaded yet
-        if (bundle == null || true) {
+        if (bundle == null) {
             loadLanguageBundle();
         }
 
-        System.out.println("bundle [" + message + "] => [" + bundle.getString(message) + "]");
         return bundle.getString(message);
     }
 
@@ -69,7 +67,6 @@ public class I18n {
         if (bundle == null) {
             loadLanguageBundle();
         }
-        System.out.println("test");
 
         return MessageFormat.format(translate(message), arguments);
     }
@@ -80,12 +77,6 @@ public class I18n {
     private void loadLanguageBundle() {
         try {
             bundle = new PropertyResourceBundle(getClass().getResourceAsStream("/Messages_en.properties"));
-
-            System.out.println("Loading keys");
-            Enumeration<String> keys = bundle.getKeys();
-            while (keys.hasMoreElements()) {
-                System.out.println("locale key loaded = \"" + keys.nextElement() + "\"");
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }
