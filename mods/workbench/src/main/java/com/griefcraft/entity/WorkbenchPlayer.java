@@ -1,15 +1,15 @@
 package com.griefcraft.entity;
 
-import com.griefcraft.LWC;
+import com.griefcraft.Engine;
 import com.griefcraft.event.PlayerEventDelegate;
 import com.griefcraft.world.Location;
 
 public class WorkbenchPlayer extends Player {
 
     /**
-     * The LWC instance
+     * The LWC engine instance
      */
-    private LWC lwc;
+    private Engine engine;
 
     /**
      * Player handle
@@ -21,10 +21,10 @@ public class WorkbenchPlayer extends Player {
      */
     private PlayerEventDelegate eventDelegate;
 
-    public WorkbenchPlayer(LWC lwc, net.minecraft.workbench.server.players.Player handle) {
-        this.lwc = lwc;
+    public WorkbenchPlayer(Engine engine, net.minecraft.workbench.server.players.Player handle) {
+        this.engine = engine;
         this.handle = handle;
-        eventDelegate = new PlayerEventDelegate(lwc, this);
+        eventDelegate = new PlayerEventDelegate(engine, this);
     }
 
     @Override

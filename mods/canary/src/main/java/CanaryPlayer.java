@@ -48,7 +48,7 @@ public class CanaryPlayer extends com.griefcraft.entity.Player {
 
         this.handle = handle;
         this.eventDelegate = new PlayerEventDelegate(null, this);
-        // TODO create lwc object in the plugin class
+        // TODO create LWC engine in the plugin class
     }
 
     public String getName() {

@@ -29,7 +29,7 @@
 
 package com.griefcraft.event;
 
-import com.griefcraft.LWC;
+import com.griefcraft.Engine;
 import com.griefcraft.model.Protection;
 import com.griefcraft.event.events.BlockEvent;
 import com.griefcraft.event.events.ProtectionEvent;
@@ -46,17 +46,17 @@ import static com.griefcraft.I18n._;
 public final class PlayerEventDelegate {
 
     /**
-     * The LWC object
+     * The LWC engine
      */
-    private final LWC lwc;
+    private final Engine engine;
 
     /**
      * The player this delegate sends requests to
      */
     private final Player player;
 
-    public PlayerEventDelegate(LWC lwc, Player player) {
-        this.lwc = lwc;
+    public PlayerEventDelegate(Engine engine, Player player) {
+        this.engine = engine;
         this.player = player;
     }
 
@@ -70,8 +70,8 @@ public final class PlayerEventDelegate {
         boolean cancel; // If the event should be cancelled
 
         // Match the block to a protection
-        Protection protection = lwc.getProtectionManager().findProtection(block.getLocation()); // TODO :-)
-        lwc.getConsoleSender().sendMessage("Protection found: " + protection);
+        Protection protection = engine.getProtectionManager().findProtection(block.getLocation()); // TODO :-)
+        engine.getConsoleSender().sendMessage("Protection found: " + protection);
 
         // Give events the first stab
         try {
@@ -84,7 +84,7 @@ public final class PlayerEventDelegate {
 
             // default event action
             if (!cancel && protection != null) {
-                cancel = lwc.getProtectionManager().defaultPlayerInteractAction(protection, player);
+                cancel = engine.getProtectionManager().defaultPlayerInteractAction(protection, player);
             }
         } catch (EventException e) {
             // TODO {0}

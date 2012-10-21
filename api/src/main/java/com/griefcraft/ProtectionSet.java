@@ -76,9 +76,9 @@ public class ProtectionSet {
     }
 
     /**
-     * The LWC instance
+     * The LWC engine instance
      */
-    private LWC lwc;
+    private Engine engine;
 
     /**
      * The blocks that were found
@@ -96,8 +96,8 @@ public class ProtectionSet {
      */
     private boolean locked = false;
 
-    public ProtectionSet(LWC lwc) {
-        this.lwc = lwc;
+    public ProtectionSet(Engine engine) {
+        this.engine = engine;
         initialize();
     }
 
@@ -120,7 +120,7 @@ public class ProtectionSet {
             }
 
             // look for a protection
-            resultant = lwc.getDatabase().loadProtection(node.block.getLocation());
+            resultant = engine.getDatabase().loadProtection(node.block.getLocation());
 
             // mark the node as checked
             node.checked = true;
@@ -214,7 +214,7 @@ public class ProtectionSet {
      * @return
      */
     private ProtectionSet.BlockType getBlockType(Block block) {
-        return lwc.getServerLayer().isBlockProtectable(block) ? ProtectionSet.BlockType.PROTECTABLE : ProtectionSet.BlockType.MATCHABLE;
+        return engine.getServerLayer().isBlockProtectable(block) ? ProtectionSet.BlockType.PROTECTABLE : ProtectionSet.BlockType.MATCHABLE;
     }
 
 }

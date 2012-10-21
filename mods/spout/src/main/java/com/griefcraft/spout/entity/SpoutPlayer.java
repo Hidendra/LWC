@@ -30,7 +30,7 @@
 package com.griefcraft.spout.entity;
 
 import com.griefcraft.spout.SpoutPlugin;
-import com.griefcraft.LWC;
+import com.griefcraft.Engine;
 import com.griefcraft.entity.Player;
 import com.griefcraft.event.PlayerEventDelegate;
 import com.griefcraft.util.Color;
@@ -54,14 +54,14 @@ public class SpoutPlayer extends Player {
      */
     private final PlayerEventDelegate eventDelegate;
     
-    public SpoutPlayer(LWC lwc, SpoutPlugin plugin, org.spout.api.entity.Player handle) {
+    public SpoutPlayer(Engine engine, SpoutPlugin plugin, org.spout.api.entity.Player handle) {
         if (handle == null) {
             throw new IllegalArgumentException("Player handle cannot be null");
         }
 
         this.plugin = plugin;
         this.handle = handle;
-        this.eventDelegate = new PlayerEventDelegate(lwc, this);
+        this.eventDelegate = new PlayerEventDelegate(engine, this);
     }
 
     @Override

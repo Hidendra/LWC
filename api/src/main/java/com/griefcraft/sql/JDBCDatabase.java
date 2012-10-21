@@ -29,7 +29,7 @@
 
 package com.griefcraft.sql;
 
-import com.griefcraft.LWC;
+import com.griefcraft.Engine;
 import com.griefcraft.ProtectionType;
 import com.griefcraft.model.Protection;
 import com.griefcraft.world.Location;
@@ -93,9 +93,9 @@ public class JDBCDatabase implements Database {
     }
 
     /**
-     * LWC instance
+     * LWC engine instance
      */
-    private LWC lwc;
+    private Engine engine;
 
     /**
      * The connection to the database
@@ -107,12 +107,12 @@ public class JDBCDatabase implements Database {
      */
     private final JDBCConnectionDetails details;
 
-    public JDBCDatabase(LWC lwc, JDBCConnectionDetails details) {
+    public JDBCDatabase(Engine engine, JDBCConnectionDetails details) {
         if (details == null) {
             throw new IllegalArgumentException("Connection details cannot be null");
         }
 
-        this.lwc = lwc;
+        this.engine = engine;
         this.details = details;
     }
 
@@ -299,8 +299,8 @@ public class JDBCDatabase implements Database {
      */
     private Protection resolveProtection(ResultSet set) throws SQLException {
         Protection protection = new Protection(set.getInt("id"));
-        protection.setType(lwc.getProtectionManager().getProtectionTypeById(set.getInt("type")));
-        protection.setWorld(lwc.getServerLayer().getWorld(set.getString("world")));
+        protection.setType(engine.getProtectionManager().getProtectionTypeById(set.getInt("type")));
+        protection.setWorld(engine.getServerLayer().getWorld(set.getString("world")));
         protection.setX(set.getInt("x"));
         protection.setY(set.getInt("y"));
         protection.setZ(set.getInt("z"));

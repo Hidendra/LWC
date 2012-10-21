@@ -29,7 +29,7 @@
 
 package com.griefcraft.internal;
 
-import com.griefcraft.LWC;
+import com.griefcraft.Engine;
 import com.griefcraft.ProtectionMatcher;
 import com.griefcraft.ProtectionSet;
 import com.griefcraft.world.Block;
@@ -37,16 +37,16 @@ import com.griefcraft.world.Block;
 public class SimpleProtectionMatcher implements ProtectionMatcher {
 
     /**
-     * The lwc instance
+     * The LWC engine instance
      */
-    private LWC lwc;
+    private Engine engine;
 
-    public SimpleProtectionMatcher(LWC lwc) {
-        this.lwc = lwc;
+    public SimpleProtectionMatcher(Engine engine) {
+        this.engine = engine;
     }
 
     public ProtectionSet matchProtection(Block base) {
-        ProtectionSet blocks = new ProtectionSet(lwc);
+        ProtectionSet blocks = new ProtectionSet(engine);
 
         int baseType = base.getType();
 
@@ -91,7 +91,7 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
 
         for (ProtectionSet.BlockType type : ProtectionSet.BlockType.values()) {
             for (Block block : blocks.get(type)) {
-                lwc.getConsoleSender().sendMessage(type.toString() + " => " + block.toString());
+                engine.getConsoleSender().sendMessage(type.toString() + " => " + block.toString());
             }
         }
 

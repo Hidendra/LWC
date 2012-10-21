@@ -29,7 +29,7 @@
 
 package com.griefcraft.commands;
 
-import com.griefcraft.LWC;
+import com.griefcraft.Engine;
 import com.griefcraft.ServerLayer;
 import com.griefcraft.command.Command;
 import com.griefcraft.command.CommandContext;
@@ -49,12 +49,12 @@ import static com.griefcraft.I18n._;
 public class BaseCommands {
 
     /**
-     * The lwc object
+     * The LWC engine
      */
-    private LWC lwc;
+    private Engine engine;
 
-    public BaseCommands(LWC lwc) {
-        this.lwc = lwc;
+    public BaseCommands(Engine engine) {
+        this.engine = engine;
     }
 
     /**
@@ -82,7 +82,7 @@ public class BaseCommands {
         player.onBlockInteract(new BlockEventNotifier() {
             @Override
             public boolean call(BlockEvent event) {
-                ServerLayer layer = lwc.getServerLayer();
+                ServerLayer layer = engine.getServerLayer();
                 Block block = event.getBlock();
 
                 if (!layer.isBlockProtectable(block)) {
@@ -90,7 +90,7 @@ public class BaseCommands {
                     return false;
                 }
 
-                Protection protection = lwc.getProtectionManager().createProtection(new PublicProtectionType(), player.getName(), block.getLocation());
+                Protection protection = engine.getProtectionManager().createProtection(new PublicProtectionType(), player.getName(), block.getLocation());
                 if (protection != null) {
                     player.sendMessage(_("Protected~"));
                 } else {

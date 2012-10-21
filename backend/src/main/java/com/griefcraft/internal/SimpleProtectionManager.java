@@ -29,7 +29,7 @@
 
 package com.griefcraft.internal;
 
-import com.griefcraft.LWC;
+import com.griefcraft.Engine;
 import com.griefcraft.ProtectionManager;
 import com.griefcraft.ProtectionMatcher;
 import com.griefcraft.ProtectionSet;
@@ -47,9 +47,9 @@ import static com.griefcraft.I18n._;
 public class SimpleProtectionManager implements ProtectionManager {
 
     /**
-     * The LWC instance
+     * The LWC engine instance
      */
-    private LWC lwc;
+    private Engine engine;
 
     /**
      * Protection types by name
@@ -61,8 +61,8 @@ public class SimpleProtectionManager implements ProtectionManager {
      */
     private Map<Integer, ProtectionType> protectionTypeById = new HashMap<Integer, ProtectionType>();
 
-    public SimpleProtectionManager(LWC lwc) {
-        this.lwc = lwc;
+    public SimpleProtectionManager(Engine engine) {
+        this.engine = engine;
     }
 
     public void registerProtectionType(ProtectionType type) {
@@ -71,7 +71,7 @@ public class SimpleProtectionManager implements ProtectionManager {
     }
 
     public Protection findProtection(Location location) {
-        ProtectionMatcher matcher = new SimpleProtectionMatcher(lwc);
+        ProtectionMatcher matcher = new SimpleProtectionMatcher(engine);
 
         // Get the block at the location
         // this will be our base block -- or reference point -- of where the protection is matched from
@@ -86,7 +86,7 @@ public class SimpleProtectionManager implements ProtectionManager {
 
     public Protection createProtection(ProtectionType type, String owner, Location location) {
         // TODO check arguments
-        return lwc.getDatabase().createProtection(type, owner, location);
+        return engine.getDatabase().createProtection(type, owner, location);
     }
 
     public boolean defaultPlayerInteractAction(Protection protection, Player player) {

@@ -34,7 +34,7 @@ import com.griefcraft.command.ConsoleCommandSender;
 import com.griefcraft.configuration.Configuration;
 import com.griefcraft.sql.Database;
 
-public interface LWC {
+public interface Engine {
 
     /**
      * Get the {@link RoleManager} which manages role associations

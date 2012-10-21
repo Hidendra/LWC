@@ -29,7 +29,7 @@
 
 package com.griefcraft.commands;
 
-import com.griefcraft.LWC;
+import com.griefcraft.Engine;
 import com.griefcraft.command.Command;
 import com.griefcraft.command.CommandContext;
 import com.griefcraft.command.SenderType;
@@ -40,12 +40,12 @@ import java.util.Random;
 public class BenchmarkCommands {
 
     /**
-     * The lwc object
+     * The LWC engine
      */
-    private LWC lwc;
+    private Engine engine;
 
-    public BenchmarkCommands(LWC lwc) {
-        this.lwc = lwc;
+    public BenchmarkCommands(Engine engine) {
+        this.engine = engine;
     }
 
     @Command(
@@ -53,7 +53,7 @@ public class BenchmarkCommands {
             accepts = SenderType.CONSOLE
     )
     public void insertTest(CommandContext context) {
-        lwc.getConsoleSender().sendMessage("Inserting 10,000 random protections");
+        engine.getConsoleSender().sendMessage("Inserting 10,000 random protections");
         Random random = new Random();
         long start = System.currentTimeMillis();
         for (int i = 0; i < 10000; i++) {
@@ -61,7 +61,7 @@ public class BenchmarkCommands {
             //        new Location(lwc.getServerLayer().getDefaultWorld(), random.nextDouble() * 100000, random.nextDouble() * 100000, random.nextDouble() * 100000));
         }
         long time = System.currentTimeMillis() - start;
-        lwc.getConsoleSender().sendMessage(String.format("Done. %d ms total, %.2f ms per protection", time, time / 10000D));
+        engine.getConsoleSender().sendMessage(String.format("Done. %d ms total, %.2f ms per protection", time, time / 10000D));
     }
 
     @Command(
@@ -69,14 +69,14 @@ public class BenchmarkCommands {
             accepts = SenderType.CONSOLE
     )
     public void selectTest(CommandContext context) {
-        lwc.getConsoleSender().sendMessage("Selecting 10,000 random protections");
+        engine.getConsoleSender().sendMessage("Selecting 10,000 random protections");
         Random random = new Random();
         long start = System.currentTimeMillis();
         for (int i = 0; i < 10000; i++) {
-            lwc.getDatabase().loadProtection(new Location(lwc.getServerLayer().getDefaultWorld(), random.nextDouble() * 100000, random.nextDouble() * 100000, random.nextDouble() * 100000));
+            engine.getDatabase().loadProtection(new Location(engine.getServerLayer().getDefaultWorld(), random.nextDouble() * 100000, random.nextDouble() * 100000, random.nextDouble() * 100000));
         }
         long time = System.currentTimeMillis() - start;
-        lwc.getConsoleSender().sendMessage(String.format("Done. %d ms total, %.2f ms per protection", time, time / 10000D));
+        engine.getConsoleSender().sendMessage(String.format("Done. %d ms total, %.2f ms per protection", time, time / 10000D));
     }
 
 }

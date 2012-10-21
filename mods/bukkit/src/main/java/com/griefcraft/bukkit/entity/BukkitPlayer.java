@@ -29,7 +29,7 @@
 
 package com.griefcraft.bukkit.entity;
 
-import com.griefcraft.LWC;
+import com.griefcraft.Engine;
 import com.griefcraft.bukkit.BukkitPlugin;
 import com.griefcraft.event.PlayerEventDelegate;
 import com.griefcraft.entity.Player;
@@ -53,14 +53,14 @@ public class BukkitPlayer extends Player {
      */
     private final PlayerEventDelegate eventDelegate;
     
-    public BukkitPlayer(LWC lwc, BukkitPlugin plugin, org.bukkit.entity.Player handle) {
+    public BukkitPlayer(Engine engine, BukkitPlugin plugin, org.bukkit.entity.Player handle) {
         if (handle == null) {
             throw new IllegalArgumentException("Player handle cannot be null");
         }
 
         this.plugin = plugin;
         this.handle = handle;
-        this.eventDelegate = new PlayerEventDelegate(lwc, this);
+        this.eventDelegate = new PlayerEventDelegate(engine, this);
     }
 
     @Override

@@ -43,7 +43,7 @@ import com.griefcraft.sql.Database;
 import com.griefcraft.sql.DatabaseException;
 import com.griefcraft.sql.JDBCDatabase;
 
-public class SimpleLWC implements LWC {
+public class SimpleEngine implements Engine {
 
     /**
      * The protection manager
@@ -85,7 +85,7 @@ public class SimpleLWC implements LWC {
      */
     private Configuration configuration;
 
-    private SimpleLWC(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender, Configuration configuration) {
+    private SimpleEngine(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender, Configuration configuration) {
         this.serverLayer = serverLayer;
         this.serverInfo = serverInfo;
         this.consoleSender = consoleSender;
@@ -110,12 +110,12 @@ public class SimpleLWC implements LWC {
     }
 
     /**
-     * Create an LWC object using SimpleLWC
+     * Create an LWC engine using SimpleLWC
      *
      * @param configuration
      * @return
      */
-    public static LWC createLWC(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender, Configuration configuration) {
+    public static Engine createEngine(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender, Configuration configuration) {
         if (serverLayer == null) {
             throw new IllegalArgumentException("Server layer object cannot be null");
         }
@@ -129,7 +129,7 @@ public class SimpleLWC implements LWC {
             throw new IllegalArgumentException("Configuration object cannot be null");
         }
 
-        return new SimpleLWC(serverLayer, serverInfo, consoleSender, configuration);
+        return new SimpleEngine(serverLayer, serverInfo, consoleSender, configuration);
     }
 
     public RoleManager getRoleManager() {

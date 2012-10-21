@@ -29,9 +29,9 @@
 
 package com.griefcraft.spout;
 
-import com.griefcraft.LWC;
+import com.griefcraft.Engine;
 import com.griefcraft.ServerLayer;
-import com.griefcraft.SimpleLWC;
+import com.griefcraft.SimpleEngine;
 import com.griefcraft.command.CommandContext;
 import com.griefcraft.command.CommandException;
 import com.griefcraft.command.CommandSender;
@@ -55,9 +55,9 @@ public class SpoutPlugin extends CommonPlugin implements Listener {
     private Logger logger = null;
 
     /**
-     * The LWC object
+     * The LWC engine
      */
-    private LWC lwc;
+    private Engine engine;
 
     /**
      * The server layer
@@ -65,12 +65,12 @@ public class SpoutPlugin extends CommonPlugin implements Listener {
     private final ServerLayer layer = new SpoutServerLayer(this);
 
     /**
-     * Get the LWC object
+     * Get the LWC engine
      *
      * @return
      */
-    public LWC getLWC() {
-        return lwc;
+    public Engine getLWC() {
+        return engine;
     }
 
     /**
@@ -97,8 +97,8 @@ public class SpoutPlugin extends CommonPlugin implements Listener {
     public void onEnable() {
         logger = this.getLogger();
 
-        // Create a new lwc object
-        lwc = SimpleLWC.createLWC(layer, new SpoutServerInfo(), new SpoutConsoleCommandSender(), new SpoutConfiguration(this));
+        // Create a new LWC engine
+        engine = SimpleEngine.createEngine(layer, new SpoutServerInfo(), new SpoutConsoleCommandSender(), new SpoutConfiguration(this));
 
         CommandExecutor executor = new CommandExecutor() {
             public void processCommand(CommandSource commandSource, Command command, org.spout.api.command.CommandContext commandContext) throws org.spout.api.exception.CommandException {
@@ -106,7 +106,7 @@ public class SpoutPlugin extends CommonPlugin implements Listener {
                 CommandSender sender;
 
                 if (contextType == CommandContext.Type.SERVER) {
-                    sender = lwc.getConsoleSender();
+                    sender = engine.getConsoleSender();
                 } else {
                     sender = wrapPlayer((org.spout.api.entity.Player) commandSource);
                 }
@@ -133,7 +133,7 @@ public class SpoutPlugin extends CommonPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        lwc = null;
+        engine = null;
     }
 
     /**
@@ -155,9 +155,9 @@ public class SpoutPlugin extends CommonPlugin implements Listener {
                 String command = message.substring(0, indexOfSpace);
                 String arguments = message.substring(indexOfSpace + 1);
     
-                return lwc.getCommandHandler().handleCommand(new CommandContext(type, sender, command, arguments));
+                return engine.getCommandHandler().handleCommand(new CommandContext(type, sender, command, arguments));
             } else { // No arguments
-                return lwc.getCommandHandler().handleCommand(new CommandContext(type, sender, message));
+                return engine.getCommandHandler().handleCommand(new CommandContext(type, sender, message));
             }
         } catch (CommandException e) {
             // Notify the console

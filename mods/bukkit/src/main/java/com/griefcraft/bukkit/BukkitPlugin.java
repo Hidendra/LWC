@@ -29,9 +29,9 @@
 
 package com.griefcraft.bukkit;
 
-import com.griefcraft.LWC;
+import com.griefcraft.Engine;
 import com.griefcraft.ServerLayer;
-import com.griefcraft.SimpleLWC;
+import com.griefcraft.SimpleEngine;
 import com.griefcraft.bukkit.command.BukkitConsoleCommandSender;
 import com.griefcraft.bukkit.configuration.BukkitConfiguration;
 import com.griefcraft.bukkit.listeners.PlayerListener;
@@ -53,9 +53,9 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
     private Logger logger = null;
 
     /**
-     * The LWC object
+     * The LWC engine
      */
-    private LWC lwc;
+    private Engine engine;
 
     /**
      * The server layer
@@ -63,12 +63,12 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
     private final ServerLayer layer = new BukkitServerLayer(this);
 
     /**
-     * Get the LWC object
+     * Get the LWC engine
      *
      * @return
      */
-    public LWC getLWC() {
-        return lwc;
+    public Engine getLWC() {
+        return engine;
     }
 
     /**
@@ -114,7 +114,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
      */
     @EventHandler( priority = EventPriority.LOWEST )
     public void onServerCommand(ServerCommandEvent event) {
-        if (_onCommand(CommandContext.Type.SERVER, lwc.getConsoleSender(), event.getCommand())) {
+        if (_onCommand(CommandContext.Type.SERVER, engine.getConsoleSender(), event.getCommand())) {
             // TODO how to cancel? just change the command to something else?
         }
     }
@@ -123,8 +123,8 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
     public void onEnable() {
         logger = this.getLogger();
 
-        // Create a new lwc object
-        lwc = SimpleLWC.createLWC(layer, new BukkitServerInfo(), new BukkitConsoleCommandSender(getServer().getConsoleSender()), new BukkitConfiguration(this));
+        // Create a new LWC engine
+        engine = SimpleEngine.createEngine(layer, new BukkitServerInfo(), new BukkitConsoleCommandSender(getServer().getConsoleSender()), new BukkitConfiguration(this));
 
         // Register events
         getServer().getPluginManager().registerEvents(this, this);
@@ -134,7 +134,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        lwc = null;
+        engine = null;
     }
 
     /**
@@ -156,9 +156,9 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
                 String command = message.substring(0, indexOfSpace);
                 String arguments = message.substring(indexOfSpace + 1);
     
-                return lwc.getCommandHandler().handleCommand(new CommandContext(type, sender, command, arguments));
+                return engine.getCommandHandler().handleCommand(new CommandContext(type, sender, command, arguments));
             } else { // No arguments
-                return lwc.getCommandHandler().handleCommand(new CommandContext(type, sender, message));
+                return engine.getCommandHandler().handleCommand(new CommandContext(type, sender, message));
             }
         } catch (CommandException e) {
             // Notify the console
