@@ -38,6 +38,7 @@ import com.griefcraft.commands.BenchmarkCommands;
 import com.griefcraft.configuration.Configuration;
 import com.griefcraft.internal.SimpleProtectionManager;
 import com.griefcraft.internal.protections.PublicProtectionType;
+import com.griefcraft.roles.PlayerRoleDefinition;
 import com.griefcraft.sql.Database;
 import com.griefcraft.sql.DatabaseException;
 import com.griefcraft.sql.JDBCDatabase;
@@ -47,7 +48,12 @@ public class SimpleLWC implements LWC {
     /**
      * The protection manager
      */
-    private final ProtectionManager manager = new SimpleProtectionManager(this);
+    private final ProtectionManager protectionManager = new SimpleProtectionManager(this);
+
+    /**
+     * The role manager
+     */
+    private final RoleManager roleManager = new SimpleRoleManager();
 
     /**
      * The server layer
@@ -98,6 +104,9 @@ public class SimpleLWC implements LWC {
 
         // register default protection types
         registerDefaultProtectionTypes();
+
+        // register default roles
+        registerDefaultRoles();
     }
 
     /**
@@ -123,8 +132,12 @@ public class SimpleLWC implements LWC {
         return new SimpleLWC(serverLayer, serverInfo, consoleSender, configuration);
     }
 
+    public RoleManager getRoleManager() {
+        return roleManager;
+    }
+
     public ProtectionManager getProtectionManager() {
-        return manager;
+        return protectionManager;
     }
 
     public ServerLayer getServerLayer() {
@@ -204,7 +217,14 @@ public class SimpleLWC implements LWC {
      * Register the default protection types
      */
     private void registerDefaultProtectionTypes() {
-        manager.registerProtectionType(new PublicProtectionType());
+        protectionManager.registerProtectionType(new PublicProtectionType());
+    }
+
+    /**
+     * Register the default roles
+     */
+    private void registerDefaultRoles() {
+        roleManager.registerDefinition(new PlayerRoleDefinition());
     }
 
 }

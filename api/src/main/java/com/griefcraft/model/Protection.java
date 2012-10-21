@@ -114,7 +114,7 @@ public class Protection extends AbstractSavable {
      */
     public ProtectionAccess getAccess(Player player) {
         if (type == null) {
-            return ProtectionAccess.DENY;
+            return ProtectionAccess.NONE;
         }
 
         return type.getAccess(this, player);

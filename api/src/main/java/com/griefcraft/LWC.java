@@ -37,6 +37,12 @@ import com.griefcraft.sql.Database;
 public interface LWC {
 
     /**
+     * Get the {@link RoleManager} which manages role associations
+     * @return
+     */
+    public RoleManager getRoleManager();
+
+    /**
      * Get the protection manager
      *
      * @return

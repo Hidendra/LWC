@@ -17,10 +17,10 @@ public class PublicProtectionType implements ProtectionType {
 
     public ProtectionAccess getAccess(Protection protection, Player player) {
         if (protection.isOwner(player)) {
-            return ProtectionAccess.ALLOW; // TODO will be broken up into OWNER / MANAGER / USER / DENY access levels
+            return ProtectionAccess.OWNER;
         }
 
-        return ProtectionAccess.ALLOW;
+        return ProtectionAccess.MEMBER;
     }
 
 }
