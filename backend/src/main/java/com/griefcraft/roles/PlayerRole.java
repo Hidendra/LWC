@@ -40,7 +40,7 @@ public class PlayerRole implements Role {
         return roleName;
     }
 
-    public ProtectionAccess getAccess(Player player) {
+    public ProtectionAccess getAccess(Protection protection, Player player) {
         return player.getName().equalsIgnoreCase(roleName) ? roleAccess : ProtectionAccess.NONE;
     }
 

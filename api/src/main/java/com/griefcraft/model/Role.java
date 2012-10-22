@@ -1,9 +1,8 @@
 package com.griefcraft.model;
 
-import com.griefcraft.ProtectionAccess;
-import com.griefcraft.entity.Player;
+import com.griefcraft.AccessProvider;
 
-public interface Role {
+public interface Role extends AccessProvider {
 
     /**
      * Get a unique integer that will be used to represent this role
@@ -22,12 +21,5 @@ public interface Role {
      * @return
      */
     public String getRoleName();
-
-    /**
-     * Get the access level for a player using this role
-     * @param player
-     * @return
-     */
-    public ProtectionAccess getAccess(Player player);
 
 }
