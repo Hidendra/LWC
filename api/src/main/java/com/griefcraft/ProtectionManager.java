@@ -36,12 +36,6 @@ import com.griefcraft.world.Location;
 public interface ProtectionManager {
 
     /**
-     * Register a protection type that can be used when protecting chests
-     * @param type
-     */
-    public void registerProtectionType(ProtectionType type);
-
-    /**
      * Find a protection at the given location
      *
      * @param location
@@ -57,7 +51,7 @@ public interface ProtectionManager {
      * @param location
      * @return
      */
-    public Protection createProtection(ProtectionType type, String owner, Location location);
+    public Protection createProtection(String owner, Location location);
 
     /**
      * The method that is called in the event no events cancel a player interact call.
@@ -67,19 +61,5 @@ public interface ProtectionManager {
      * @return
      */
     public boolean defaultPlayerInteractAction(Protection protection, Player player);
-
-    /**
-     * Get a protection type by its id
-     * @param id
-     * @return
-     */
-    public ProtectionType getProtectionTypeById(int id);
-
-    /**
-     * Get a protection type by its name
-     * @param name
-     * @return
-     */
-    public ProtectionType getProtectionTypeForName(String name);
 
 }

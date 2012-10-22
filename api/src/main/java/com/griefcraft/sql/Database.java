@@ -29,7 +29,6 @@
 
 package com.griefcraft.sql;
 
-import com.griefcraft.ProtectionType;
 import com.griefcraft.model.Protection;
 import com.griefcraft.world.Location;
 
@@ -54,12 +53,11 @@ public interface Database {
      * Create a protection in the world. The {@link com.griefcraft.model.Protection} object returned by this method
      * can be considered to be in the database already.
      *
-     * @param type
      * @param owner
      * @param location
      * @return
      */
-    public Protection createProtection(ProtectionType type, String owner, Location location);
+    public Protection createProtection(String owner, Location location);
 
     /**
      * Load a protection from the database at the given location

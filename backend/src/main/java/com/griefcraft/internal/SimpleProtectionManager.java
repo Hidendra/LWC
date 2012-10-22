@@ -33,14 +33,10 @@ import com.griefcraft.Engine;
 import com.griefcraft.ProtectionManager;
 import com.griefcraft.ProtectionMatcher;
 import com.griefcraft.ProtectionSet;
-import com.griefcraft.ProtectionType;
 import com.griefcraft.entity.Player;
 import com.griefcraft.model.Protection;
 import com.griefcraft.world.Block;
 import com.griefcraft.world.Location;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static com.griefcraft.I18n._;
 
@@ -51,23 +47,8 @@ public class SimpleProtectionManager implements ProtectionManager {
      */
     private Engine engine;
 
-    /**
-     * Protection types by name
-     */
-    private Map<String, ProtectionType> protectionTypeByName = new HashMap<String, ProtectionType>();
-
-    /**
-     * Protection types by id
-     */
-    private Map<Integer, ProtectionType> protectionTypeById = new HashMap<Integer, ProtectionType>();
-
     public SimpleProtectionManager(Engine engine) {
         this.engine = engine;
-    }
-
-    public void registerProtectionType(ProtectionType type) {
-        protectionTypeByName.put(type.getName().toLowerCase(), type);
-        protectionTypeById.put(type.getId(), type);
     }
 
     public Protection findProtection(Location location) {
@@ -84,9 +65,9 @@ public class SimpleProtectionManager implements ProtectionManager {
         return blocks.getResultant();
     }
 
-    public Protection createProtection(ProtectionType type, String owner, Location location) {
+    public Protection createProtection(String owner, Location location) {
         // TODO check arguments
-        return engine.getDatabase().createProtection(type, owner, location);
+        return engine.getDatabase().createProtection(owner, location);
     }
 
     public boolean defaultPlayerInteractAction(Protection protection, Player player) {
@@ -104,11 +85,4 @@ public class SimpleProtectionManager implements ProtectionManager {
         return true;
     }
 
-    public ProtectionType getProtectionTypeById(int id) {
-        return protectionTypeById.get(id);
-    }
-
-    public ProtectionType getProtectionTypeForName(String name) {
-        return protectionTypeByName.get(name.toLowerCase());
-    }
 }

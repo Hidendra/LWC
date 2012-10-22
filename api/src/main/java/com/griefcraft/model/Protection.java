@@ -29,8 +29,6 @@
 
 package com.griefcraft.model;
 
-import com.griefcraft.ProtectionAccess;
-import com.griefcraft.ProtectionType;
 import com.griefcraft.entity.Player;
 import com.griefcraft.world.World;
 
@@ -40,11 +38,6 @@ public class Protection extends AbstractSavable {
      * The protection's internal id
      */
     private int id;
-
-    /**
-     * The protection's type
-     */
-    private ProtectionType type;
 
     /**
      * The world this protection is in
@@ -107,25 +100,6 @@ public class Protection extends AbstractSavable {
         return false;
     }
 
-    /**
-     * Get the {@link ProtectionAccess} level a player has to this protection
-     * @param player
-     * @return
-     */
-    public ProtectionAccess getAccess(Player player) {
-        if (type == null) {
-            return ProtectionAccess.NONE;
-        }
-
-        return type.getAccess(this, player);
-    }
-
-
-    public void setType(ProtectionType type) {
-        this.type = type;
-        modified = true;
-    }
-
     public void setWorld(World world) {
         this.world = world;
     }
@@ -161,10 +135,6 @@ public class Protection extends AbstractSavable {
 
     public int getId() {
         return id;
-    }
-
-    public ProtectionType getType() {
-        return type;
     }
 
     public int getX() {

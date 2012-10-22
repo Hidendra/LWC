@@ -37,7 +37,6 @@ import com.griefcraft.commands.BaseCommands;
 import com.griefcraft.commands.BenchmarkCommands;
 import com.griefcraft.configuration.Configuration;
 import com.griefcraft.internal.SimpleProtectionManager;
-import com.griefcraft.internal.protections.PublicProtectionType;
 import com.griefcraft.roles.PlayerRoleDefinition;
 import com.griefcraft.sql.Database;
 import com.griefcraft.sql.DatabaseException;
@@ -101,9 +100,6 @@ public class SimpleEngine implements Engine {
 
         // Register any commands
         registerCommands();
-
-        // register default protection types
-        registerDefaultProtectionTypes();
 
         // register default roles
         registerDefaultRoles();
@@ -211,13 +207,6 @@ public class SimpleEngine implements Engine {
         } catch (CommandException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Register the default protection types
-     */
-    private void registerDefaultProtectionTypes() {
-        protectionManager.registerProtectionType(new PublicProtectionType());
     }
 
     /**

@@ -30,7 +30,6 @@
 package com.griefcraft.sql;
 
 import com.griefcraft.Engine;
-import com.griefcraft.ProtectionType;
 import com.griefcraft.model.Protection;
 import com.griefcraft.world.Location;
 
@@ -209,16 +208,15 @@ public class JDBCDatabase implements Database {
         return connection.prepareStatement("SELECT " + columns + " FROM " + details.getPrefix() + table + " " + query);
     }
 
-    public Protection createProtection(ProtectionType type, String owner, Location location) {
+    public Protection createProtection(String owner, Location location) {
         try {
-            PreparedStatement statement = prepareInsertQuery("protections", "(type, world, x, y, z, updated, created, accessed) VALUES (?, ?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), UNIX_TIMESTAMP())");
+            PreparedStatement statement = prepareInsertQuery("protections", "(world, x, y, z, updated, created, accessed) VALUES (?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), UNIX_TIMESTAMP())");
 
             try {
-                statement.setInt(1, type.getId());
-                statement.setString(2, location.getWorld().getName());
-                statement.setInt(3, location.getBlockX());
-                statement.setInt(4, location.getBlockY());
-                statement.setInt(5, location.getBlockZ());
+                statement.setString(1, location.getWorld().getName());
+                statement.setInt(2, location.getBlockX());
+                statement.setInt(3, location.getBlockY());
+                statement.setInt(4, location.getBlockZ());
                 statement.executeUpdate();
             } finally {
                 statement.close();
@@ -232,7 +230,7 @@ public class JDBCDatabase implements Database {
 
     public Protection loadProtection(Location location) {
         try {
-            PreparedStatement statement = prepareSelectQuery("protections", "id, type, world, x, y, z, updated, created, accessed", "WHERE x = ? AND y = ? AND z = ? AND world = ?");
+            PreparedStatement statement = prepareSelectQuery("protections", "id, world, x, y, z, updated, created, accessed", "WHERE x = ? AND y = ? AND z = ? AND world = ?");
 
             try {
                 statement.setInt(1, location.getBlockX());
@@ -261,7 +259,7 @@ public class JDBCDatabase implements Database {
 
     public Protection loadProtection(int id) {
         try {
-            PreparedStatement statement = prepareSelectQuery("protections", "id, type, world, x, y, z, updated, created, accessed", "WHERE id = ?");
+            PreparedStatement statement = prepareSelectQuery("protections", "id, world, x, y, z, updated, created, accessed", "WHERE id = ?");
 
             try {
                 statement.setInt(1, id);
@@ -299,7 +297,6 @@ public class JDBCDatabase implements Database {
      */
     private Protection resolveProtection(ResultSet set) throws SQLException {
         Protection protection = new Protection(set.getInt("id"));
-        protection.setType(engine.getProtectionManager().getProtectionTypeById(set.getInt("type")));
         protection.setWorld(engine.getServerLayer().getWorld(set.getString("world")));
         protection.setX(set.getInt("x"));
         protection.setY(set.getInt("y"));

@@ -37,7 +37,6 @@ import com.griefcraft.command.SenderType;
 import com.griefcraft.entity.Player;
 import com.griefcraft.event.events.BlockEvent;
 import com.griefcraft.event.notifiers.BlockEventNotifier;
-import com.griefcraft.internal.protections.PublicProtectionType;
 import com.griefcraft.model.Protection;
 import com.griefcraft.world.Block;
 
@@ -90,7 +89,7 @@ public class BaseCommands {
                     return false;
                 }
 
-                Protection protection = engine.getProtectionManager().createProtection(new PublicProtectionType(), player.getName(), block.getLocation());
+                Protection protection = engine.getProtectionManager().createProtection(player.getName(), block.getLocation());
                 if (protection != null) {
                     player.sendMessage(_("Protected~"));
                 } else {
