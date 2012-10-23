@@ -30,6 +30,7 @@
 package com.griefcraft.sql;
 
 import com.griefcraft.model.Protection;
+import com.griefcraft.model.Role;
 import com.griefcraft.world.Location;
 
 public interface Database {
@@ -87,5 +88,20 @@ public interface Database {
      * @param protection
      */
     public void removeProtection(Protection protection);
+
+    /**
+     * Save a role to the database. If the role needs to be created, this method is required
+     * to create it in the database as well.
+     *
+     * @param role
+     */
+    public void saveRole(Role role);
+
+    /**
+     * Remove a role from the database
+     *
+     * @param role
+     */
+    public void removeRole(Role role);
 
 }

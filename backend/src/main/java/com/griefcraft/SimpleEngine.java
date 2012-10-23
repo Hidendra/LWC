@@ -213,7 +213,7 @@ public class SimpleEngine implements Engine {
      * Register the default roles
      */
     private void registerDefaultRoles() {
-        roleManager.registerDefinition(new PlayerRoleDefinition());
+        roleManager.registerDefinition(new PlayerRoleDefinition(this));
     }
 
 }

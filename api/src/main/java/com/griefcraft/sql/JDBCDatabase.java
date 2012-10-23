@@ -31,6 +31,7 @@ package com.griefcraft.sql;
 
 import com.griefcraft.Engine;
 import com.griefcraft.model.Protection;
+import com.griefcraft.model.Role;
 import com.griefcraft.world.Location;
 
 import java.sql.Connection;
@@ -286,6 +287,14 @@ public class JDBCDatabase implements Database {
     }
 
     public void removeProtection(Protection protection) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public void saveRole(Role role) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public void removeRole(Role role) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 

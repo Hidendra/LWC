@@ -1,6 +1,7 @@
 package com.griefcraft.model;
 
 import com.griefcraft.AccessProvider;
+import com.griefcraft.Engine;
 import com.griefcraft.ProtectionAccess;
 
 public abstract class Role extends AbstractSavable implements AccessProvider {
@@ -23,9 +24,19 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
         /**
          * Role has not been modified
          */
-        UNMODIFIED
+        UNMODIFIED,
+
+        /**
+         * Role has been removed from the database
+         */
+        REMOVED;
 
     }
+
+    /**
+     * The Engine instance
+     */
+    private Engine engine;
 
     /**
      * The state this role is in
@@ -47,7 +58,8 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
      */
     private ProtectionAccess roleAccess;
 
-    public Role(Protection protection, String roleName, ProtectionAccess roleAccess) {
+    public Role(Engine engine, Protection protection, String roleName, ProtectionAccess roleAccess) {
+        this.engine = engine;
         this.protection = protection;
         this.roleName = roleName;
         this.roleAccess = roleAccess;
@@ -96,7 +108,8 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
     @Override
     public void saveImmediately() {
         // this will update or create the role depending on the current state
-        throw new UnsupportedOperationException("Not yet implemented");
+        engine.getDatabase().saveRole(this);
+        state = State.UNMODIFIED;
     }
 
     @Override
@@ -106,7 +119,8 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
 
     @Override
     public void remove() {
-        throw new UnsupportedOperationException("Not yet implemented");
+        engine.getDatabase().removeRole(this);
+        state = State.REMOVED;
     }
 
     @Override

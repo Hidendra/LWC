@@ -1,5 +1,6 @@
 package com.griefcraft.roles;
 
+import com.griefcraft.Engine;
 import com.griefcraft.ProtectionAccess;
 import com.griefcraft.entity.Player;
 import com.griefcraft.model.Protection;
@@ -7,8 +8,8 @@ import com.griefcraft.model.Role;
 
 public class PlayerRole extends Role {
 
-    public PlayerRole(Protection protection, String roleName, ProtectionAccess roleAccess) {
-        super(protection, roleName, roleAccess);
+    public PlayerRole(Engine engine, Protection protection, String roleName, ProtectionAccess roleAccess) {
+        super(engine, protection, roleName, roleAccess);
     }
 
     @Override
