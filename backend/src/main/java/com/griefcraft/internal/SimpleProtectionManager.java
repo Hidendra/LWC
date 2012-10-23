@@ -30,6 +30,7 @@
 package com.griefcraft.internal;
 
 import com.griefcraft.Engine;
+import com.griefcraft.ProtectionAccess;
 import com.griefcraft.ProtectionManager;
 import com.griefcraft.ProtectionMatcher;
 import com.griefcraft.ProtectionSet;
@@ -71,17 +72,18 @@ public class SimpleProtectionManager implements ProtectionManager {
     }
 
     public boolean defaultPlayerInteractAction(Protection protection, Player player) {
+        ProtectionAccess access = protection.getAccess(player);
 
-        // TODO do these checks elsewhere ? :p
+        /// TODO distinguish between left / right click.
+
         // if they're the owner, return immediately
-        if (protection.isOwner(player)) {
+        if (access.ordinal() > ProtectionAccess.NONE.ordinal()) {
             return false;
         }
 
         // they cannot access the protection o\
         // so send them a kind message
         player.sendMessage(_("This protection is locked by a magical spell."));
-
         return true;
     }
 

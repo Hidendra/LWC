@@ -29,10 +29,20 @@
 
 package com.griefcraft.model;
 
+import com.griefcraft.Engine;
+import com.griefcraft.ProtectionAccess;
 import com.griefcraft.entity.Player;
 import com.griefcraft.world.World;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Protection extends AbstractSavable {
+
+    /**
+     * The LWC engine instance
+     */
+    private final Engine engine;
 
     /**
      * The protection's internal id
@@ -79,25 +89,66 @@ public class Protection extends AbstractSavable {
      */
     private boolean modified = false;
 
+    /**
+     * A set of roles this protection contains
+     */
+    private final Set<Role> roles = new HashSet<Role>();
+
     @Override
     public String toString() {
         // TODO add in updated, created
         return String.format("Protection(id=%d, world=\"%s\", location=[%d, %d, %d])", id, world, x, y, z);
     }
 
-    public Protection(int id) {
+    public Protection(Engine engine, int id) {
+        this.engine = engine;
         this.id = id;
     }
 
     /**
-     * Check if a player is the owner of this protection
-     *
+     * Get the access level a player has to this protection
      * @param player
      * @return
      */
-    public boolean isOwner(Player player) {
-        // return player != null && player.getName().equals(owner);
-        return false;
+    public ProtectionAccess getAccess(Player player) {
+        ProtectionAccess access = ProtectionAccess.NONE;
+
+        for (Role role : roles) {
+            ProtectionAccess roleAccess = role.getAccess(this, player);
+
+            if (roleAccess == null) {
+                continue;
+            }
+
+            // check for immediate deny
+            if (roleAccess == ProtectionAccess.EXPLICIT_DENY) {
+                return ProtectionAccess.NONE;
+            }
+
+            // compare the access -- higher access has higher precedence.
+            if (roleAccess.ordinal() > access.ordinal()) {
+                access = roleAccess;
+            }
+        }
+
+        return access;
+    }
+
+    /**
+     * Add a role to a protection. It will be allowed to govern access to this protection immediately
+     * the next time the protection is used.
+     * @param role
+     */
+    public void addRole(Role role) {
+        roles.add(role);
+    }
+
+    /**
+     * Remove a role from the protection, which will prevent it from governing access on the protection
+     * @param role
+     */
+    public void removeRole(Role role) {
+        roles.remove(role);
     }
 
     public void setWorld(World world) {
@@ -172,7 +223,8 @@ public class Protection extends AbstractSavable {
 
     @Override
     public void saveImmediately() {
-        throw new UnsupportedOperationException("Not implemented");
+        engine.getDatabase().saveProtection(this);
+        modified = false;
     }
 
     @Override
@@ -182,7 +234,14 @@ public class Protection extends AbstractSavable {
 
     @Override
     public void remove() {
-        throw new UnsupportedOperationException("Not implemented");
+        // remove all roles for the protection
+        for (Role role : roles) {
+            role.remove();
+        }
+
+        // now remove the protection
+        engine.getDatabase().removeProtection(this);
+        modified = false;
     }
 
 }

@@ -5,13 +5,33 @@ package com.griefcraft;
  * the enum values are ranked in power of ascending order meaning ProtectionAccess(4) has more power than
  * ProtectionAccess(1) will. This also implies that the initial implementation is complete and that adding
  * any more access levels would be a pain.
+ *
+ * As well, the only exception to these rules is EXPLICIT_DENY which will immediately deny access to the
+ * protection. This will not always be used but may be useful in some cases.
  */
 public enum ProtectionAccess {
+
+    /**
+     * Immediately reject access to the protection.
+     */
+    EXPLICIT_DENY,
 
     /**
      * User has NO access to the protection
      */
     NONE,
+
+    /**
+     * The user can view the protection but not modify it in any way. The implementation of this depends
+     * on the mod and if the mod does not support preventing the inventory from being modified somehow
+     * then access will just be blocked.
+     */
+    GUEST,
+
+    /**
+     * The user can only deposit into the protection
+     */
+    DEPOSITONLY,
 
     /**
      * User has MEMBER access to the protection meaning they can open it and access it, but not admin

@@ -296,7 +296,7 @@ public class JDBCDatabase implements Database {
      * @return
      */
     private Protection resolveProtection(ResultSet set) throws SQLException {
-        Protection protection = new Protection(set.getInt("id"));
+        Protection protection = new Protection(engine, set.getInt("id"));
         protection.setWorld(engine.getServerLayer().getWorld(set.getString("world")));
         protection.setX(set.getInt("x"));
         protection.setY(set.getInt("y"));
