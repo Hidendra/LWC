@@ -29,6 +29,7 @@
 package com.griefcraft.modules.doors;
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Flag;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
@@ -141,7 +142,7 @@ public class DoorsModule extends JavaModule {
         changeDoorStates(true, ((block.getType() == Material.WOODEN_DOOR || block.getType() == Material.FENCE_GATE) ? null : block) /* They clicked it so it auto opens already */,
                 doubleDoorBlock);
 
-        if (action == Action.OPEN_AND_CLOSE) {
+        if (action == Action.OPEN_AND_CLOSE || protection.hasFlag(Flag.Type.AUTOCLOSE)) {
             // Abuse the fact that we still use final variables inside the task
             // The double door block object is initially only assigned if we need
             // it, so we just create a second variable ^^
