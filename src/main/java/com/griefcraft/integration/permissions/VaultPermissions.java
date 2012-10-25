@@ -52,7 +52,7 @@ public class VaultPermissions extends SuperPermsPermissions {
         String[] groups = perm.getPlayerGroups(player);
 
         // fallback to superperms if it appears that they have no groups
-        if (groups.length == 0) {
+        if (groups == null || groups.length == 0) {
             return super.getGroups(player);
         }
 
