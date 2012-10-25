@@ -93,4 +93,18 @@
             </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>mcstats.releases</id>
+            <name>mcstats.org releases</name>
+            <url>http://repo.mcstats.org/content/repositories/releases/</url>
+        </repository>
+
+        <snapshotRepository>
+            <id>mcstats.snapshots</id>
+            <name>mcstats.org snapshots</name>
+            <url>http://repo.mcstats.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
