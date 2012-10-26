@@ -67,7 +67,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
      *
      * @return
      */
-    public Engine getLWC() {
+    public Engine getEngine() {
         return engine;
     }
 

@@ -56,7 +56,7 @@ public class BukkitServerLayer extends ServerLayer {
             return null;
         }
 
-        return new BukkitPlayer(plugin.getLWC(), plugin, handle);
+        return new BukkitPlayer(plugin.getEngine(), plugin, handle);
     }
 
     @Override
