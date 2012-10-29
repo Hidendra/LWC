@@ -67,6 +67,7 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
 
     /**
      * Get the protection that this role is for
+     *
      * @return
      */
     public Protection getProtection() {
@@ -75,6 +76,7 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
 
     /**
      * Get the name of the role this defines, e.g a player's name for a PlayerRole
+     *
      * @return
      */
     public String getRoleName() {
@@ -83,6 +85,7 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
 
     /**
      * Get the {@link ProtectionAccess} this role can provide
+     *
      * @return
      */
     public ProtectionAccess getRoleAccess() {
@@ -91,6 +94,7 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
 
     /**
      * Get the state this role is in
+     *
      * @return
      */
     public State getState() {
@@ -99,6 +103,7 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
 
     /**
      * Change the state this role is in
+     *
      * @param state
      */
     public void setState(State state) {
@@ -144,6 +149,7 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
 
     /**
      * Get a unique integer that will be used to represent this role
+     *
      * @return
      */
     public abstract int getId();

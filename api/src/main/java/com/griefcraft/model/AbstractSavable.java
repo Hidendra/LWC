@@ -42,6 +42,7 @@ public abstract class AbstractSavable {
 
     /**
      * Checks if the object actually needs to be saved to the database or not
+     *
      * @return
      */
     public abstract boolean isSaveNeeded();

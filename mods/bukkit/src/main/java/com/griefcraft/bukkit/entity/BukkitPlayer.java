@@ -31,8 +31,8 @@ package com.griefcraft.bukkit.entity;
 
 import com.griefcraft.Engine;
 import com.griefcraft.bukkit.BukkitPlugin;
-import com.griefcraft.event.PlayerEventDelegate;
 import com.griefcraft.entity.Player;
+import com.griefcraft.event.PlayerEventDelegate;
 import com.griefcraft.util.Color;
 import com.griefcraft.world.Location;
 
@@ -52,7 +52,7 @@ public class BukkitPlayer extends Player {
      * The player's event delegate
      */
     private final PlayerEventDelegate eventDelegate;
-    
+
     public BukkitPlayer(Engine engine, BukkitPlugin plugin, org.bukkit.entity.Player handle) {
         if (handle == null) {
             throw new IllegalArgumentException("Player handle cannot be null");

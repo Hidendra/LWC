@@ -64,7 +64,7 @@ public class Configuration extends ConfigurationNode {
 
     /**
      * Gets the file
-     * 
+     *
      * @return
      */
     public File getFile() {

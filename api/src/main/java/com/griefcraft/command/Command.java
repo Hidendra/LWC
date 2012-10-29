@@ -34,8 +34,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Retention( RetentionPolicy.RUNTIME )
-@Target( ElementType.METHOD )
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
 public @interface Command {
 
     /**
@@ -51,7 +51,7 @@ public @interface Command {
      *
      * @return
      */
-    String[] aliases() default { };
+    String[] aliases() default {};
 
     /**
      * The command's usage. Shown on the help screen.
@@ -76,19 +76,21 @@ public @interface Command {
 
     /**
      * The minimum number of arguments required for the command
-     * 
+     *
      * @return
      */
     int min() default 0;
 
     /**
      * The maximum number of arguments for the command. -1 means an unlimited number of arguments.
+     *
      * @return
      */
     int max() default -1;
 
     /**
      * The type of sender the command accepts.
+     *
      * @return
      */
     SenderType accepts() default SenderType.ANY;

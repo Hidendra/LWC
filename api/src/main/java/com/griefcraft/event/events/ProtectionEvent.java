@@ -29,8 +29,8 @@
 
 package com.griefcraft.event.events;
 
-import com.griefcraft.model.Protection;
 import com.griefcraft.event.Event;
+import com.griefcraft.model.Protection;
 
 public class ProtectionEvent implements Event {
 

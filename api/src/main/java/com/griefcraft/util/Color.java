@@ -64,9 +64,9 @@ public class Color {
         char[] chrarray = text.toCharArray();
 
         // Iterate through the array
-        for (int index = 0; index < chrarray.length; index ++) {
+        for (int index = 0; index < chrarray.length; index++) {
             char chr = chrarray[index];
-            
+
             // Ignore anything that we don't want
             if (chr != '&') {
                 continue;
@@ -80,7 +80,7 @@ public class Color {
 
             // get the forward char
             char forward = chrarray[index + 1];
-            
+
             // is it in range?
             if ((forward >= '0' && forward <= '9') || (forward >= 'a' && forward <= 'f') || (forward >= 'k' && forward <= 'r')) {
                 // It is! Replace the char we are at now with the escape sequence
@@ -92,5 +92,5 @@ public class Color {
         return new String(chrarray);
     }
 
-    
+
 }

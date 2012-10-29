@@ -29,9 +29,9 @@
 
 package com.griefcraft.spout.listeners;
 
+import com.griefcraft.entity.Player;
 import com.griefcraft.spout.SpoutPlugin;
 import com.griefcraft.spout.world.SpoutBlock;
-import com.griefcraft.entity.Player;
 import com.griefcraft.world.Block;
 import com.griefcraft.world.World;
 import org.spout.api.event.EventHandler;

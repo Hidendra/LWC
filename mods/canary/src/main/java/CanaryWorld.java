@@ -32,7 +32,7 @@ public class CanaryWorld implements com.griefcraft.world.World {
      * The world handle
      */
     private World handle;
-    
+
     public CanaryWorld(World handle) {
         if (handle == null) {
             throw new IllegalArgumentException("World handle cannot be null");
@@ -40,7 +40,7 @@ public class CanaryWorld implements com.griefcraft.world.World {
 
         this.handle = handle;
     }
-    
+
     public String getName() {
         return "world"; /// No multi-world
     }

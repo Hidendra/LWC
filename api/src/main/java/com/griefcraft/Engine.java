@@ -38,6 +38,7 @@ public interface Engine {
 
     /**
      * Get the {@link RoleManager} which manages role associations
+     *
      * @return
      */
     public RoleManager getRoleManager();
@@ -65,6 +66,7 @@ public interface Engine {
 
     /**
      * Get the API version
+     *
      * @return
      */
     public String getBackendVersion();

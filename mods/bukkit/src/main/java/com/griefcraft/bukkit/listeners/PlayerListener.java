@@ -50,7 +50,7 @@ public class PlayerListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler( ignoreCancelled = true )
+    @EventHandler(ignoreCancelled = true)
     public void playerInteract(PlayerInteractEvent event) {
         Player player = plugin.wrapPlayer(event.getPlayer());
         World world = plugin.getWorld(event.getPlayer().getWorld().getName());

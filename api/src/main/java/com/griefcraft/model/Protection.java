@@ -107,6 +107,7 @@ public class Protection extends AbstractSavable {
 
     /**
      * Get the access level a player has to this protection
+     *
      * @param player
      * @return
      */
@@ -137,6 +138,7 @@ public class Protection extends AbstractSavable {
     /**
      * Add a role to a protection. It will be allowed to govern access to this protection immediately
      * the next time the protection is used.
+     *
      * @param role
      */
     public void addRole(Role role) {
@@ -145,6 +147,7 @@ public class Protection extends AbstractSavable {
 
     /**
      * Remove a role from the protection, which will prevent it from governing access on the protection
+     *
      * @param role
      */
     public void removeRole(Role role) {

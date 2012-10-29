@@ -39,7 +39,7 @@ public class CanaryBlock extends com.griefcraft.world.Block {
      * The local world handle
      */
     private World world;
-    
+
     public CanaryBlock(World world, Block handle) {
         if (handle == null) {
             throw new IllegalArgumentException("Block handle cannot be null");
@@ -48,7 +48,7 @@ public class CanaryBlock extends com.griefcraft.world.Block {
         this.handle = handle;
         this.world = world;
     }
-    
+
     public int getType() {
         return handle.getType();
     }

@@ -60,6 +60,7 @@ public final class Location {
 
     /**
      * Get the block x coordinate
+     *
      * @return
      */
     public int getBlockX() {
@@ -68,6 +69,7 @@ public final class Location {
 
     /**
      * Get the block y coordinate
+     *
      * @return
      */
     public int getBlockY() {
@@ -76,6 +78,7 @@ public final class Location {
 
     /**
      * Get the block z coordinate
+     *
      * @return
      */
     public int getBlockZ() {
@@ -84,6 +87,7 @@ public final class Location {
 
     /**
      * Get the world the location is in
+     *
      * @return
      */
     public World getWorld() {
@@ -92,6 +96,7 @@ public final class Location {
 
     /**
      * Get the x coordinate
+     *
      * @return
      */
     public double getX() {
@@ -100,6 +105,7 @@ public final class Location {
 
     /**
      * Get the y coordinate
+     *
      * @return
      */
     public double getY() {

@@ -38,7 +38,7 @@ public class BukkitWorld implements World {
      * The bukkit world handle
      */
     private final org.bukkit.World handle;
-    
+
     public BukkitWorld(org.bukkit.World handle) {
         if (handle == null) {
             throw new IllegalArgumentException("World handle cannot be null");

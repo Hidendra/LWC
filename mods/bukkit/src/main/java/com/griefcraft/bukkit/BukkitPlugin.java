@@ -93,9 +93,10 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
 
     /**
      * Called when a player uses a command
+     *
      * @param event
      */
-    @EventHandler( ignoreCancelled = true )
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
         // Create the internal object
         Player player = wrapPlayer(event.getPlayer());
@@ -110,9 +111,10 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
     /**
      * Called when the console uses a command.
      * Using LOWEST because of kTriggers
+     *
      * @param event
      */
-    @EventHandler( priority = EventPriority.LOWEST )
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onServerCommand(ServerCommandEvent event) {
         if (_onCommand(CommandContext.Type.SERVER, engine.getConsoleSender(), event.getCommand())) {
             // TODO how to cancel? just change the command to something else?
@@ -155,7 +157,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
             if (indexOfSpace != -1) {
                 String command = message.substring(0, indexOfSpace);
                 String arguments = message.substring(indexOfSpace + 1);
-    
+
                 return engine.getCommandHandler().handleCommand(new CommandContext(type, sender, command, arguments));
             } else { // No arguments
                 return engine.getCommandHandler().handleCommand(new CommandContext(type, sender, message));
@@ -189,7 +191,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
                 message = message.substring(1);
             }
         }
-        
+
         return message.trim();
     }
 

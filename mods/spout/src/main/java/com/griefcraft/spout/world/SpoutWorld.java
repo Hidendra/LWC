@@ -44,7 +44,7 @@ public class SpoutWorld implements World {
      * The spout world handle
      */
     private final org.spout.api.geo.World handle;
-    
+
     public SpoutWorld(SpoutPlugin plugin, org.spout.api.geo.World handle) {
         if (handle == null) {
             throw new IllegalArgumentException("World handle cannot be null");

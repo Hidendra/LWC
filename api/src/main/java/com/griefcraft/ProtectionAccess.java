@@ -5,7 +5,7 @@ package com.griefcraft;
  * the enum values are ranked in power of ascending order meaning ProtectionAccess(4) has more power than
  * ProtectionAccess(1) will. This also implies that the initial implementation is complete and that adding
  * any more access levels would be a pain.
- *
+ * <p/>
  * As well, the only exception to these rules is EXPLICIT_DENY which will immediately deny access to the
  * protection. This will not always be used but may be useful in some cases.
  */

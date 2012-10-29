@@ -38,10 +38,10 @@ public class LWC extends Plugin {
 
         // Set the name
         setName("LWC");
-        
+
         // Register our listeners
         etc.getLoader().addListener(PluginLoader.Hook.OPEN_INVENTORY, listener, this, PluginListener.Priority.MEDIUM);
-        
+
     }
 
     @Override

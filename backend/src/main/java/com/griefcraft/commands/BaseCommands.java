@@ -71,7 +71,7 @@ public class BaseCommands {
     @Command(
             command = "lwc create private",
             permission = "lwc.create.private",
-            aliases = { "cprivate" },
+            aliases = {"cprivate"},
             accepts = SenderType.PLAYER
     )
     public void createPrivateProtection(CommandContext context) {
@@ -104,7 +104,7 @@ public class BaseCommands {
     @Command(
             command = "lwc test",
             permission = "lwc.test",
-            aliases = { "ctest" },
+            aliases = {"ctest"},
             accepts = SenderType.PLAYER
     )
     public void lwcTest(CommandContext context) {
@@ -126,7 +126,7 @@ public class BaseCommands {
             description = "Removes all of the player's protections from the world",
             permission = "lwc.admin.purge",
             usage = "<player>",
-            aliases = { "purge" },
+            aliases = {"purge"},
             min = 1,
             max = 1
     )

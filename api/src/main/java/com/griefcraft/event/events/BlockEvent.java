@@ -38,7 +38,7 @@ public class BlockEvent implements Event {
      * The block object
      */
     private Block block;
-    
+
     public BlockEvent(Block block) {
         this.block = block;
     }
@@ -51,5 +51,5 @@ public class BlockEvent implements Event {
     public Block getBlock() {
         return block;
     }
-    
+
 }

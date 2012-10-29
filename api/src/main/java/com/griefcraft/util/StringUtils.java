@@ -120,14 +120,14 @@ public class StringUtils {
     /**
      * Splits a string, leaving quoted messages ("one argument") in the same argument.
      * Courtesy http://stackoverflow.com/questions/366202/
-     * 
+     *
      * @param str
      * @return
      */
     public static String[] split(String str) {
         List<String> matchList = new ArrayList<String>();
         Matcher regexMatcher = QUOTED_STRING_REGEX.matcher(str);
-        
+
         while (regexMatcher.find()) {
             if (regexMatcher.group(1) != null) {
                 // Add double-quoted string without the quotes
@@ -140,7 +140,7 @@ public class StringUtils {
                 matchList.add(regexMatcher.group());
             }
         }
-        
+
         return matchList.toArray(new String[matchList.size()]);
     }
 

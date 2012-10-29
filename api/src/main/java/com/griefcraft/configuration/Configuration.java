@@ -119,6 +119,6 @@ public interface Configuration {
      * Save the configuration file
      */
     public void save() throws IOException;
-    
-    
+
+
 }

@@ -66,11 +66,11 @@ public class SimpleCommandHandler implements CommandHandler {
 
     public boolean handleCommand(CommandContext context) throws CommandException {
         Tuple<Command, Method> found;
-        
+
         // Normalize the command name
         String commandName = normalizeCommand(context.getCommand());
         System.out.println("Used command: \"" + commandName + "\"");
-        
+
         String fullKey = (commandName + " " + context.getArguments()).trim();
 
         // First try the full command used
@@ -92,7 +92,7 @@ public class SimpleCommandHandler implements CommandHandler {
                 return true;
             }
         }
-        
+
         // Try only the first argument
         if (arguments.length > 0) {
 
@@ -141,21 +141,21 @@ public class SimpleCommandHandler implements CommandHandler {
                 Command command = method.getAnnotation(Command.class);
 
                 checkCommand(command);
-                
+
                 // Create the tuple
                 Tuple<Command, Method> tuple = new Tuple<Command, Method>(command, method);
 
                 // Add it to the commands
                 commands.put(normalizeCommand(command.command()), tuple);
-                
+
                 // Register all of the aliases
                 for (String alias : command.aliases()) {
                     commands.put(normalizeCommand(alias), tuple);
                 }
-                
+
                 // Add the instance
                 instances.put(command, object);
-                
+
                 // Add it to the registered list
                 registered.add(command);
             }
@@ -188,15 +188,15 @@ public class SimpleCommandHandler implements CommandHandler {
                 return;
             }
         }
-        
+
         // Grab the instance as well
         Object instance = instances.get(command);
-        
+
         // First fix the command name if it needs to be fixed
         // If we used the command /lwc admin clear, admin clear will be the arguments
         // We want the command to instead be "lwc admin clear"
         String[] realCommandNameArray = command.command().split(" ");
-        
+
         if (realCommandNameArray.length > 1) {
             // compare the base command (aliases will never have the same base command)
             if (realCommandNameArray[0].equals(context.getCommand().split(" ")[0])) {
@@ -204,7 +204,7 @@ public class SimpleCommandHandler implements CommandHandler {
                 context.setCommand(command.command());
             }
         }
-        
+
         // Fix the arguments
         String[] commandNameArray = context.getCommand().split(" ");
 
@@ -213,10 +213,10 @@ public class SimpleCommandHandler implements CommandHandler {
             // Get the old arguments
             // Basically we want to join the arguments starting at commandNameArray.length - 1 (guaranteed to be at least 1)
             String[] argumentsArray = context.getArgumentsArray();
-            
+
             // Now join it using the new starting index
             String joined = StringUtils.join(argumentsArray, commandNameArray.length - 1);
-            
+
             // Good, good, now we can set it to the context
             context.setArguments(joined);
         }
@@ -244,9 +244,9 @@ public class SimpleCommandHandler implements CommandHandler {
         try {
             method.invoke(instance, context);
         } catch (InvocationTargetException e) {
-            throw new CommandException(command.command() + " threw an exception!",  e);
+            throw new CommandException(command.command() + " threw an exception!", e);
         } catch (IllegalAccessException e) {
-            throw new CommandException(command.command() + " threw an exception!",  e);
+            throw new CommandException(command.command() + " threw an exception!", e);
         }
     }
 
@@ -259,10 +259,10 @@ public class SimpleCommandHandler implements CommandHandler {
     private void sendHelp(Command command, CommandSender sender) {
         // Header
         sender.sendMessage("&2=== &6/" + command.command() + " &2===");
-        
+
         // Usage
         sendUsage(command, sender);
-        
+
         // Description
         sendDescription(command, sender);
 
@@ -289,11 +289,11 @@ public class SimpleCommandHandler implements CommandHandler {
     private void sendDescription(Command command, CommandSender sender) {
         String description = command.description();
         String permission = command.permission();
-        
+
         if (!description.isEmpty()) {
             sender.sendMessage("&2Description: &6" + description);
         }
-        
+
         if (!permission.isEmpty()) {
             sender.sendMessage("&2Permission:  &6" + permission);
         }
@@ -307,7 +307,7 @@ public class SimpleCommandHandler implements CommandHandler {
      */
     private void sendAliases(Command command, CommandSender sender) {
         String text = "";
-        
+
         // Add aliases only if some are defined
         if (command.aliases().length > 0) {
             for (String alias : command.aliases()) {
@@ -334,9 +334,7 @@ public class SimpleCommandHandler implements CommandHandler {
 
         if (accepts == SenderType.CONSOLE && sender instanceof Player) {
             throw new CommandException("Only the console can use this command");
-        }
-
-        else if (accepts == SenderType.PLAYER && !(sender instanceof Player)) {
+        } else if (accepts == SenderType.PLAYER && !(sender instanceof Player)) {
             throw new CommandException("Only a player can use this command");
         }
     }
@@ -428,7 +426,7 @@ public class SimpleCommandHandler implements CommandHandler {
         if (command.startsWith("/")) {
             command = command.substring(1);
         }
-        
+
         return command.trim().toLowerCase();
     }
 

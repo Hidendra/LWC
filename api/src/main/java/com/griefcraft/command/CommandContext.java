@@ -90,7 +90,7 @@ public class CommandContext {
         this.sender = sender;
         this.command = command;
         this.arguments = arguments;
-        
+
         if (arguments.length() > 0) {
             argumentsArray = StringUtils.split(arguments);
         } else {
@@ -122,7 +122,7 @@ public class CommandContext {
 
     /**
      * Get the command type
-     * 
+     *
      * @return
      */
     public Type getType() {
@@ -131,7 +131,7 @@ public class CommandContext {
 
     /**
      * Get the command sender
-     * 
+     *
      * @return
      */
     public CommandSender getCommandSender() {
@@ -140,7 +140,7 @@ public class CommandContext {
 
     /**
      * Get the command that is being used
-     * 
+     *
      * @return
      */
     public String getCommand() {

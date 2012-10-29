@@ -30,10 +30,10 @@
 package com.griefcraft.event;
 
 import com.griefcraft.Engine;
-import com.griefcraft.model.Protection;
+import com.griefcraft.entity.Player;
 import com.griefcraft.event.events.BlockEvent;
 import com.griefcraft.event.events.ProtectionEvent;
-import com.griefcraft.entity.Player;
+import com.griefcraft.model.Protection;
 import com.griefcraft.world.Block;
 
 import static com.griefcraft.I18n._;
@@ -89,7 +89,7 @@ public final class PlayerEventDelegate {
         } catch (EventException e) {
             // TODO {0}
             player.sendMessage(_("&cA severe error occurred while processing the event: {0}"
-                                + "&cThe full stack trace has been printed out to the log file", e.getMessage()));
+                    + "&cThe full stack trace has been printed out to the log file", e.getMessage()));
             e.printStackTrace();
             return true; // Better safe than sorry
         }

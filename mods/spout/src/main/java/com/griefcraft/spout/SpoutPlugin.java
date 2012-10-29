@@ -154,7 +154,7 @@ public class SpoutPlugin extends CommonPlugin implements Listener {
             if (indexOfSpace != -1) {
                 String command = message.substring(0, indexOfSpace);
                 String arguments = message.substring(indexOfSpace + 1);
-    
+
                 return engine.getCommandHandler().handleCommand(new CommandContext(type, sender, command, arguments));
             } else { // No arguments
                 return engine.getCommandHandler().handleCommand(new CommandContext(type, sender, message));
@@ -188,7 +188,7 @@ public class SpoutPlugin extends CommonPlugin implements Listener {
                 message = message.substring(1);
             }
         }
-        
+
         return message.trim();
     }
 

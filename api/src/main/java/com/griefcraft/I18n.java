@@ -17,7 +17,8 @@ public class I18n {
      */
     private ResourceBundle bundle;
 
-    private I18n() { }
+    private I18n() {
+    }
 
     /**
      * Translate a message to the currently enabled message locale.
@@ -32,7 +33,7 @@ public class I18n {
     /**
      * Translate a message to the currently enabled message locale.
      *
-     * @param message the message to translate
+     * @param message   the message to translate
      * @param arguments the arguments to bind to any parameters in the message
      * @return The translated message
      */
@@ -58,7 +59,7 @@ public class I18n {
     /**
      * Translate a message with the given arguments
      *
-     * @param message the message to translate
+     * @param message   the message to translate
      * @param arguments the arguments to bind to any parameters in the message
      * @return The translated message
      */

@@ -48,11 +48,11 @@ public class Tuple<X, Y> {
 
     /**
      * Gets the first value in the tuple
-     * 
+     *
      * @return
      */
     public X first() {
-       return x; 
+        return x;
     }
 
     /**
@@ -73,7 +73,7 @@ public class Tuple<X, Y> {
         Tuple tuple = (Tuple) object;
         return tuple.x == x && tuple.y == y;
     }
-    
+
     @Override
     public int hashCode() {
         return x.hashCode() ^ y.hashCode();

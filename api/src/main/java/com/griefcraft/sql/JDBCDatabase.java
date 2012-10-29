@@ -60,8 +60,8 @@ public class JDBCDatabase implements Database {
          * The driver class
          */
         private String clazz;
-        
-        Driver (String clazz) {
+
+        Driver(String clazz) {
             this.clazz = clazz;
         }
 
@@ -135,7 +135,8 @@ public class JDBCDatabase implements Database {
         String connectionString = "jdbc:" + driver.toString().toLowerCase() + ":" + databasePath;
 
         // setup the database pool
-        pool = new ConnectionPool("lwc", 2, 15, 15, 180000, connectionString, details.getUsername(), details.getPassword());
+        pool = new ConnectionPool("lwc", 2 /* minPool */, 15 /* maxPool */, 15 /* maxSize */, 180000 /* idleTimeout */,
+                connectionString, details.getUsername(), details.getPassword());
         pool.setCaching(true);
         pool.init();
 
@@ -178,7 +179,8 @@ public class JDBCDatabase implements Database {
         } catch (SQLException e) {
             try {
                 conn.close();
-            } catch (SQLException ex) { }
+            } catch (SQLException ex) {
+            }
         }
     }
 
@@ -195,7 +197,8 @@ public class JDBCDatabase implements Database {
         } catch (SQLException e) {
             try {
                 stmt.close();
-            } catch (SQLException ex) { }
+            } catch (SQLException ex) {
+            }
         }
     }
 
@@ -323,7 +326,7 @@ public class JDBCDatabase implements Database {
          * The connection details
          */
         private final String hostname, database, prefix, username, password;
-        
+
         public JDBCConnectionDetails(Driver driver, String hostname, String database, String prefix, String username, String password) {
             if (driver == null) {
                 throw new IllegalArgumentException("JDBC Driver cannot be null");
@@ -360,7 +363,7 @@ public class JDBCDatabase implements Database {
 
         /**
          * Get the hostname to connect to
-         * 
+         *
          * @return
          */
         public String getHostname() {
@@ -369,7 +372,7 @@ public class JDBCDatabase implements Database {
 
         /**
          * Get the database to open
-         * 
+         *
          * @return
          */
         public String getDatabase() {
@@ -387,7 +390,7 @@ public class JDBCDatabase implements Database {
 
         /**
          * Get hte username to connect as
-         * 
+         *
          * @return
          */
         public String getUsername() {
@@ -402,7 +405,7 @@ public class JDBCDatabase implements Database {
         public String getPassword() {
             return password;
         }
-        
+
     }
 
 }

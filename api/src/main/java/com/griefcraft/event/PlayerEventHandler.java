@@ -203,6 +203,7 @@ public class PlayerEventHandler {
 
     /**
      * Check for notifiers and ensure a valid list is available
+     *
      * @param type
      */
     private void checkNotifiers(Type type) {

@@ -36,32 +36,35 @@ public abstract class Block {
 
     /**
      * Gets the block's type
+     *
      * @return
      */
     public abstract int getType();
 
     /**
      * Gets the block's data
+     *
      * @return
      */
     public abstract byte getData();
 
     /**
      * Get the world this block is located in
+     *
      * @return
      */
     public abstract World getWorld();
 
     /**
      * Gets the block's x coordinate
-     * 
+     *
      * @return
      */
     public abstract int getX();
 
     /**
      * Gets the block's y coordinate
-     * 
+     *
      * @return
      */
     public abstract int getY();
@@ -94,6 +97,7 @@ public abstract class Block {
 
     /**
      * Get the block's current location
+     *
      * @return
      */
     public Location getLocation() {

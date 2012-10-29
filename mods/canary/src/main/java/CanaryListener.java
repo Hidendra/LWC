@@ -29,5 +29,4 @@
 public class CanaryListener extends PluginListener {
 
 
-
 }

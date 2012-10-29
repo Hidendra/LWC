@@ -6,6 +6,7 @@ public interface RoleDefinition {
 
     /**
      * Get the unique role id to be associated with this role
+     *
      * @return
      */
     public int getId();

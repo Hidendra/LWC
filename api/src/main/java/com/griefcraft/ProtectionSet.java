@@ -105,6 +105,7 @@ public class ProtectionSet {
      * Check for protections on the available protectable blocks that haven't been checked yet.
      * This method is normally called after a block (or set of blocks) has been added to the matcher to
      * save processing time.
+     *
      * @return true if a protection was matched
      */
     public boolean checkForProtections() {

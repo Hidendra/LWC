@@ -11,6 +11,7 @@ public interface AccessProvider {
 
     /**
      * Get the access level to the given {@link Protection} for a {@link Player}
+     *
      * @param player
      * @return
      */

@@ -45,6 +45,7 @@ public abstract class Player extends PlayerEventHandler implements CommandSender
 
     /**
      * Get the player's current location
+     *
      * @return
      */
     public abstract Location getLocation();
