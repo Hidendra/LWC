@@ -168,13 +168,21 @@ public class SimpleEngine implements Engine {
      * Open and connect to the database
      */
     private void openDatabase() {
+        String driverName = configuration.getString("database.driver");
+        JDBCDatabase.Driver driver = JDBCDatabase.Driver.resolveDriver(driverName);
+
+        if (driver == null) {
+            consoleSender.sendMessage("UNKNOWN ERROR: \"" + driverName + "\"");
+            return;
+        }
+
         JDBCDatabase.JDBCConnectionDetails details = new JDBCDatabase.JDBCConnectionDetails(
                 JDBCDatabase.Driver.MYSQL,
-                "127.0.0.1",
-                "minecraft",
-                "",
-                "root",
-                ""
+                configuration.getString("database.hostname"),
+                configuration.getString("database.database"),
+                configuration.getString("database.prefix"),
+                configuration.getString("database.username"),
+                configuration.getString("database.password")
         );
 
         // Open the database

@@ -33,13 +33,13 @@ import com.griefcraft.Engine;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.Role;
 import com.griefcraft.world.Location;
+import snaq.db.ConnectionPool;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Properties;
+import java.sql.Statement;
 
 public class JDBCDatabase implements Database {
 
@@ -98,9 +98,9 @@ public class JDBCDatabase implements Database {
     private Engine engine;
 
     /**
-     * The connection to the database
+     * The connection pool
      */
-    private Connection connection;
+    private ConnectionPool pool = null;
 
     /**
      * The connection details to the server
@@ -114,14 +114,6 @@ public class JDBCDatabase implements Database {
 
         this.engine = engine;
         this.details = details;
-    }
-
-    public boolean isConnected() {
-        try {
-            return connection == null || connection.isClosed();
-        } catch (SQLException e) {
-            return false;
-        }
     }
 
     public boolean connect() throws DatabaseException {
@@ -142,35 +134,24 @@ public class JDBCDatabase implements Database {
         // Create the connection string
         String connectionString = "jdbc:" + driver.toString().toLowerCase() + ":" + databasePath;
 
-        // Create the properties object
-        // This will generally include connection details e.g username and password and also settings
-        Properties properties = new Properties();
+        // setup the database pool
+        pool = new ConnectionPool("lwc", 2, 15, 15, 180000, connectionString, details.getUsername(), details.getPassword());
+        pool.setCaching(true);
+        pool.init();
 
-        // For MySQL, append our connection specific details
-        if (driver == Driver.MYSQL) {
-            properties.put("autoReconnect", "true"); // Auto reconnect in the face of connection loss
-            properties.put("user", details.getUsername());
-            properties.put("password", details.getPassword());
-        }
-
-        // Now we can finally [try to] connect to the database
+        Connection connection = null;
+        Statement stmt = null;
         try {
-            java.sql.Driver override = null; // TODO lwc.getServerLayer().overrideJDBCDriver(driver);
-
-            if (override != null) {
-                connection = override.connect(connectionString, properties);
-            } else {
-                Class.forName(driver.getClassName());
-                connection = DriverManager.getConnection(connectionString, properties);
-            }
-
+            connection = pool.getConnection();
+            stmt = connection.createStatement();
+            stmt.executeQuery("SELECT 1;");
             return true;
         } catch (SQLException e) {
-            // Rethrow the exception as our own
-            throw new DatabaseException("Exception occurred while connecting to the database!", e);
-        } catch (ClassNotFoundException e) {
-            // Rethrow the exception as our own
-            throw new DatabaseException("Exception occurred while connecting to the database!", e);
+            e.printStackTrace();
+            return false;
+        } finally {
+            safeClose(stmt);
+            safeClose(connection);
         }
     }
 
@@ -185,33 +166,43 @@ public class JDBCDatabase implements Database {
     }
 
     /**
-     * Prepare an insert query
+     * Safely close a {@link Connection} object
      *
-     * @param table
-     * @param query
-     * @return
-     * @throws SQLException
+     * @param conn
      */
-    private PreparedStatement prepareInsertQuery(String table, String query) throws SQLException {
-        return connection.prepareStatement("INSERT INTO " + details.getPrefix() + table + " " + query);
+    private void safeClose(Connection conn) {
+        try {
+            if (conn != null) {
+                conn.close();
+            }
+        } catch (SQLException e) {
+            try {
+                conn.close();
+            } catch (SQLException ex) { }
+        }
     }
 
     /**
-     * Prepare a select query
+     * Safely close a {@link Statement} object
      *
-     * @param table
-     * @param columns
-     * @param query
-     * @return
-     * @throws SQLException
+     * @param stmt
      */
-    private PreparedStatement prepareSelectQuery(String table, String columns, String query) throws SQLException {
-        return connection.prepareStatement("SELECT " + columns + " FROM " + details.getPrefix() + table + " " + query);
+    private void safeClose(Statement stmt) {
+        try {
+            if (stmt != null) {
+                stmt.close();
+            }
+        } catch (SQLException e) {
+            try {
+                stmt.close();
+            } catch (SQLException ex) { }
+        }
     }
 
     public Protection createProtection(String owner, Location location) {
         try {
-            PreparedStatement statement = prepareInsertQuery("protections", "(world, x, y, z, updated, created, accessed) VALUES (?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), UNIX_TIMESTAMP())");
+            Connection connection = pool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protections (world, x, y, z, updated, created, accessed) VALUES (?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), UNIX_TIMESTAMP())");
 
             try {
                 statement.setString(1, location.getWorld().getName());
@@ -220,7 +211,8 @@ public class JDBCDatabase implements Database {
                 statement.setInt(4, location.getBlockZ());
                 statement.executeUpdate();
             } finally {
-                statement.close();
+                safeClose(statement);
+                safeClose(connection);
             }
         } catch (SQLException e) {
             handleException(e);
@@ -231,7 +223,8 @@ public class JDBCDatabase implements Database {
 
     public Protection loadProtection(Location location) {
         try {
-            PreparedStatement statement = prepareSelectQuery("protections", "id, world, x, y, z, updated, created, accessed", "WHERE x = ? AND y = ? AND z = ? AND world = ?");
+            Connection connection = pool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT id, world, x, y, z, updated, created, accessed FROM " + details.getPrefix() + "protections WHERE x = ? AND y = ? AND z = ? AND world = ?");
 
             try {
                 statement.setInt(1, location.getBlockX());
@@ -249,7 +242,8 @@ public class JDBCDatabase implements Database {
                     set.close();
                 }
             } finally {
-                statement.close();
+                safeClose(statement);
+                safeClose(connection);
             }
         } catch (SQLException e) {
             handleException(e);
@@ -260,7 +254,8 @@ public class JDBCDatabase implements Database {
 
     public Protection loadProtection(int id) {
         try {
-            PreparedStatement statement = prepareSelectQuery("protections", "id, world, x, y, z, updated, created, accessed", "WHERE id = ?");
+            Connection connection = pool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT id, world, x, y, z, updated, created, accessed FROM " + details.getPrefix() + "protections WHERE id = ?");
 
             try {
                 statement.setInt(1, id);
@@ -273,7 +268,8 @@ public class JDBCDatabase implements Database {
                     set.close();
                 }
             } finally {
-                statement.close();
+                safeClose(statement);
+                safeClose(connection);
             }
         } catch (SQLException e) {
             handleException(e);

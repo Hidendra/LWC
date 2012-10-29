@@ -1,2 +1,23 @@
 # In development config file for LWC 5.0.0
 # This should not be used on production servers
+
+# database connection details
+database:
+
+    # the db driver
+    driver: mysql
+
+    # the database server's hostname
+    hostname: '127.0.0.1'
+
+    # the database name to use (if appropriate)
+    database: lwc
+
+    # username to connect as
+    username: root
+
+    # password to connect with
+    password: ''
+
+    # the table prefix
+    prefix: ''
