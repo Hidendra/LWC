@@ -23,6 +23,10 @@
             <id>gettext-commons-site</id>
             <url>http://gettext-commons.googlecode.com/svn/maven-repository/</url>
         </repository>
+        <repository>
+            <id>hidendra</id>
+            <url>http://repo.mcstats.org/content/repositories/public</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
