@@ -29,9 +29,12 @@
 
 package com.griefcraft.sql;
 
+import com.griefcraft.model.AbstractAttribute;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.Role;
 import com.griefcraft.world.Location;
+
+import java.util.Set;
 
 public interface Database {
 
@@ -88,7 +91,7 @@ public interface Database {
      *
      * @param role
      */
-    public void saveRole(Role role);
+    public void saveOrCreateRole(Role role);
 
     /**
      * Remove a role from the database
@@ -96,5 +99,29 @@ public interface Database {
      * @param role
      */
     public void removeRole(Role role);
+
+    /**
+     * Save or create an attribute in the database.
+     *
+     * @param protection
+     * @param attribute
+     */
+    public void saveOrCreateProtectionAttribute(Protection protection, AbstractAttribute attribute);
+
+    /**
+     * Remove a protection's attribute from the database
+     *
+     * @param protection
+     * @param attribute
+     */
+    public void removeProtectionAttribute(Protection protection, AbstractAttribute attribute);
+
+    /**
+     * Load all of a protection's attributes from the database
+     *
+     * @param protection
+     * @return
+     */
+    public Set<AbstractAttribute> loadProtectionAttributes(Protection protection);
 
 }

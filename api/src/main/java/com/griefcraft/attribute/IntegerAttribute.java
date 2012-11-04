@@ -31,16 +31,16 @@ package com.griefcraft.attribute;
 
 import com.griefcraft.model.AbstractAttribute;
 
-public class StringAttribute extends AbstractAttribute<String> {
+public class IntegerAttribute extends AbstractAttribute<Integer> {
 
-    public StringAttribute(String name, String value) {
+    public IntegerAttribute(String name, int value) {
         super(name);
         this.value = value;
     }
 
     @Override
     public void loadValue(String value) {
-        this.value = value;
+        this.value = Integer.parseInt(value);
     }
 
 }

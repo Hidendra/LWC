@@ -29,15 +29,63 @@
 
 package com.griefcraft.model;
 
-public abstract class AbstractAttribute extends AbstractSavable {
+public abstract class AbstractAttribute<T> extends AbstractSavable {
 
     /**
      * The attributes name
      */
     private final String name;
 
+    /**
+     * The attribute's value
+     */
+    protected T value;
+
+    /**
+     * If the attribute has been modified
+     */
+    private boolean modified = false;
+
     public AbstractAttribute(String name) {
         this.name = name;
+    }
+
+    /**
+     * Load an attribute's value from the given string representation.
+     * This is the inverse of the function getStorableValue()
+     *
+     * @param value
+     */
+    public abstract void loadValue(String value);
+
+    /**
+     * Get the attribute's value
+     *
+     * @return
+     */
+    public T getValue() {
+        return value;
+    }
+
+    /**
+     * Set the attribute's value
+     *
+     * @param value
+     */
+    public void setValue(T value) {
+        this.value = value;
+        modified = true;
+    }
+
+    /**
+     * Get a string representation of the attribute which will be stored in the database.
+     * When the attribute is being loaded from the database loadValue() will be
+     * called so that the implementing class can decode the string.
+     *
+     * @return
+     */
+    public String getStorableValue() {
+        return value.toString();
     }
 
     /**
@@ -64,25 +112,27 @@ public abstract class AbstractAttribute extends AbstractSavable {
     }
 
     /**
-     * Get a string representation of the attribute which will be stored in the database.
-     * When the attribute is being loaded from the database loadValue() will be
-     * called so that the implementing class can decode the string.
-     *
-     * @return
-     */
-    public abstract String getStorableValue();
-
-    /**
-     * Load an attribute's value from the given string representation.
-     * This is the inverse of the function getStorableValue()
-     *
-     * @param value
-     */
-    public abstract void loadValue(String value);
-
-    /**
      * {@inheritDoc}
      */
-    public abstract boolean isSaveNeeded();
+    public boolean isSaveNeeded() {
+        return modified;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        AbstractAttribute o = (AbstractAttribute) obj;
+        return o.name.equals(o.name) && getStorableValue().equals(o.getStorableValue());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 1;
+        hash *= 17 + name.hashCode();
+        return hash;
+    }
 
 }

@@ -29,7 +29,9 @@
 
 package com.griefcraft;
 
+import com.griefcraft.attribute.ProtectionAttributeFactory;
 import com.griefcraft.entity.Player;
+import com.griefcraft.model.AbstractAttribute;
 import com.griefcraft.model.Protection;
 import com.griefcraft.world.Location;
 
@@ -46,7 +48,6 @@ public interface ProtectionManager {
     /**
      * Create a protection in the world
      *
-     * @param type
      * @param owner
      * @param location
      * @return
@@ -61,5 +62,21 @@ public interface ProtectionManager {
      * @return
      */
     public boolean defaultPlayerInteractAction(Protection protection, Player player);
+
+    /**
+     * Register an attribute factory that is used to create {@link com.griefcraft.model.AbstractAttribute} objects
+     * for protections when they are loaded.
+     *
+     * @param factory
+     */
+    public void registerAttributeFactory(ProtectionAttributeFactory factory);
+
+    /**
+     * Create a protection attribute for the given name
+     *
+     * @param name
+     * @return
+     */
+    public AbstractAttribute createProtectionAttribute(String name);
 
 }

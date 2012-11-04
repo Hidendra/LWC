@@ -51,12 +51,12 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
     /**
      * The role name for the player to grant access to
      */
-    private String roleName;
+    private final String roleName;
 
     /**
      * The access to grant to players that match this role
      */
-    private ProtectionAccess roleAccess;
+    private final ProtectionAccess roleAccess;
 
     public Role(Engine engine, Protection protection, String roleName, ProtectionAccess roleAccess) {
         this.engine = engine;
@@ -113,7 +113,7 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
     @Override
     public void saveImmediately() {
         // this will update or create the role depending on the current state
-        engine.getDatabase().saveRole(this);
+        engine.getDatabase().saveOrCreateRole(this);
         state = State.UNMODIFIED;
     }
 

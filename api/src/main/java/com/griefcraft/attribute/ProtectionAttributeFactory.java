@@ -31,16 +31,27 @@ package com.griefcraft.attribute;
 
 import com.griefcraft.model.AbstractAttribute;
 
-public class StringAttribute extends AbstractAttribute<String> {
+public interface ProtectionAttributeFactory<T> {
 
-    public StringAttribute(String name, String value) {
-        super(name);
-        this.value = value;
-    }
+    /**
+     * Get the attribute type that this factory can create. This must be a unique number so external plugins
+     * should choose a number that is in a range that is a bit higher than what LWC uses.
+     *
+     * @return
+     */
+    public int getType();
 
-    @Override
-    public void loadValue(String value) {
-        this.value = value;
-    }
+    /**
+     * Get the name that can be matched by commands such as /lwc set, etc.
+     *
+     * @return
+     */
+    public String getName();
+
+    /**
+     * Create an attribute
+     * @return
+     */
+    public AbstractAttribute<T> createAttribute();
 
 }

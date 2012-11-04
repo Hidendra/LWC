@@ -31,16 +31,16 @@ package com.griefcraft.attribute;
 
 import com.griefcraft.model.AbstractAttribute;
 
-public class StringAttribute extends AbstractAttribute<String> {
+public class BooleanAttribute extends AbstractAttribute<Boolean> {
 
-    public StringAttribute(String name, String value) {
+    public BooleanAttribute(String name, boolean value) {
         super(name);
         this.value = value;
     }
 
     @Override
     public void loadValue(String value) {
-        this.value = value;
+        this.value = Boolean.parseBoolean(value);
     }
 
 }

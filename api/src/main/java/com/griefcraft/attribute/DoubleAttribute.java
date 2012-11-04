@@ -31,16 +31,16 @@ package com.griefcraft.attribute;
 
 import com.griefcraft.model.AbstractAttribute;
 
-public class StringAttribute extends AbstractAttribute<String> {
+public class DoubleAttribute extends AbstractAttribute<Double> {
 
-    public StringAttribute(String name, String value) {
+    public DoubleAttribute(String name, double value) {
         super(name);
         this.value = value;
     }
 
     @Override
     public void loadValue(String value) {
-        this.value = value;
+        this.value = Double.parseDouble(value);
     }
 
 }

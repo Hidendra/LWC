@@ -34,10 +34,15 @@ import com.griefcraft.ProtectionAccess;
 import com.griefcraft.ProtectionManager;
 import com.griefcraft.ProtectionMatcher;
 import com.griefcraft.ProtectionSet;
+import com.griefcraft.attribute.ProtectionAttributeFactory;
 import com.griefcraft.entity.Player;
+import com.griefcraft.model.AbstractAttribute;
 import com.griefcraft.model.Protection;
 import com.griefcraft.world.Block;
 import com.griefcraft.world.Location;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.griefcraft.I18n._;
 
@@ -47,6 +52,11 @@ public class SimpleProtectionManager implements ProtectionManager {
      * The LWC engine instance
      */
     private Engine engine;
+
+    /**
+     * ProtectAttributeFactory storage
+     */
+    private final Map<String, ProtectionAttributeFactory> protectionFactories = new HashMap<String, ProtectionAttributeFactory>();
 
     public SimpleProtectionManager(Engine engine) {
         this.engine = engine;
@@ -85,6 +95,19 @@ public class SimpleProtectionManager implements ProtectionManager {
         // so send them a kind message
         player.sendMessage(_("This protection is locked by a magical spell."));
         return true;
+    }
+
+    public void registerAttributeFactory(ProtectionAttributeFactory factory) {
+        if (factory == null) {
+            throw new IllegalArgumentException("factory cannot be null");
+        }
+
+        protectionFactories.put(factory.getName(), factory);
+    }
+
+    public AbstractAttribute createProtectionAttribute(String name) {
+        ProtectionAttributeFactory factory = protectionFactories.get(name);
+        return factory == null ? null : factory.createAttribute();
     }
 
 }

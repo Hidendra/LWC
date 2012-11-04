@@ -30,6 +30,7 @@
 package com.griefcraft.sql;
 
 import com.griefcraft.Engine;
+import com.griefcraft.model.AbstractAttribute;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.Role;
 import com.griefcraft.world.Location;
@@ -40,6 +41,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashSet;
+import java.util.Set;
 
 public class JDBCDatabase implements Database {
 
@@ -289,12 +292,88 @@ public class JDBCDatabase implements Database {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    public void saveRole(Role role) {
+    public void saveOrCreateRole(Role role) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     public void removeRole(Role role) {
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public void saveOrCreateProtectionAttribute(Protection protection, AbstractAttribute attribute) {
+        try {
+            Connection connection = pool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_attributes SET protection_id = ?, attribute_name = ?, attribute_value = ?" +
+                    "                                                       ON DUPLICATE KEY UPDATE attribute_value = VALUES(attribute_value)");
+
+            try {
+                statement.setInt(1, protection.getId());
+                statement.setString(2, attribute.getName());
+                statement.setString(3, attribute.getStorableValue());
+                statement.executeUpdate();
+            } finally {
+                safeClose(statement);
+                safeClose(connection);
+            }
+        } catch (SQLException e) {
+            handleException(e);
+        }
+    }
+
+    public void removeProtectionAttribute(Protection protection, AbstractAttribute attribute) {
+        try {
+            Connection connection = pool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_attributes WHERE protection_id = ? AND attribute_name = ?");
+
+            try {
+                statement.setInt(1, protection.getId());
+                statement.setString(2, attribute.getName());
+                statement.executeUpdate();
+            } finally {
+                safeClose(statement);
+                safeClose(connection);
+            }
+        } catch (SQLException e) {
+            handleException(e);
+        }
+    }
+
+    public Set<AbstractAttribute> loadProtectionAttributes(Protection protection) {
+        Set<AbstractAttribute> attributes = new HashSet<AbstractAttribute>();
+
+        try {
+            Connection connection = pool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT attribute_name, attribute_value FROM " + details.getPrefix() + "protection_attributes WHERE protection_id = ?");
+
+            try {
+                statement.setInt(1, protection.getId());
+
+                ResultSet set = statement.executeQuery();
+
+                while (set.next()) {
+                    AbstractAttribute attribute = engine.getProtectionManager().createProtectionAttribute(set.getString("attribute_name"));
+
+                    if (attribute == null) {
+                        // the attribute is no longer registered
+                        // perhaps it was a plugin's attribute
+                        // but it was removed ?
+                        continue;
+                    }
+
+                    attribute.loadValue(set.getString("attribute_value"));
+                    attributes.add(attribute);
+                }
+
+                set.close();
+            } finally {
+                safeClose(statement);
+                safeClose(connection);
+            }
+        } catch (SQLException e) {
+            handleException(e);
+        }
+
+        return attributes;
     }
 
     /**
