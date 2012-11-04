@@ -67,7 +67,7 @@ public class SpoutServerLayer extends ServerLayer {
             return null;
         }
 
-        return new SpoutWorld(plugin, handle);
+        return new SpoutWorld(handle);
     }
 
     @Override

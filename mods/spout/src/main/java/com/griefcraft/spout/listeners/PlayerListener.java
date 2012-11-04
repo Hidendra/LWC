@@ -59,7 +59,7 @@ public class PlayerListener implements Listener {
         Player player = plugin.wrapPlayer(event.getPlayer());
         World world = plugin.getWorld(event.getPlayer().getWorld().getName());
         Point point = event.getInteractedPoint();
-        Block block = new SpoutBlock(world, event.getPlayer().getWorld().getBlock(point.getBlockX(), point.getBlockY(), point.getBlockZ(), plugin));
+        Block block = new SpoutBlock(world, event.getPlayer().getWorld().getBlock(point.getBlockX(), point.getBlockY(), point.getBlockZ()));
 
         // send the event for the player around the plugin (and maybe other plugins, too.)
         boolean result = player.getEventDelegate().onPlayerInteract(block);

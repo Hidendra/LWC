@@ -36,21 +36,15 @@ import com.griefcraft.world.World;
 public class SpoutWorld implements World {
 
     /**
-     * The plugin object
-     */
-    private final SpoutPlugin plugin;
-
-    /**
      * The spout world handle
      */
     private final org.spout.api.geo.World handle;
 
-    public SpoutWorld(SpoutPlugin plugin, org.spout.api.geo.World handle) {
+    public SpoutWorld(org.spout.api.geo.World handle) {
         if (handle == null) {
             throw new IllegalArgumentException("World handle cannot be null");
         }
 
-        this.plugin = plugin;
         this.handle = handle;
     }
 
@@ -59,7 +53,7 @@ public class SpoutWorld implements World {
     }
 
     public Block getBlockAt(int x, int y, int z) {
-        org.spout.api.geo.cuboid.Block blockHandle = handle.getBlock(x, y, z, plugin);
+        org.spout.api.geo.cuboid.Block blockHandle = handle.getBlock(x, y, z);
 
         // Make sure it isn't null
         if (blockHandle == null) {
