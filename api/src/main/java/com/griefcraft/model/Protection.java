@@ -34,7 +34,9 @@ import com.griefcraft.ProtectionAccess;
 import com.griefcraft.entity.Player;
 import com.griefcraft.world.World;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class Protection extends AbstractSavable {
@@ -94,6 +96,11 @@ public class Protection extends AbstractSavable {
      */
     private final Set<Role> roles = new HashSet<Role>();
 
+    /**
+     * The map of attributes this protection contains
+     */
+    private final Map<String, AbstractAttribute> attributes = new HashMap<String, AbstractAttribute>();
+
     @Override
     public String toString() {
         // TODO add in updated, created
@@ -152,6 +159,39 @@ public class Protection extends AbstractSavable {
      */
     public void removeRole(Role role) {
         roles.remove(role);
+    }
+
+    /**
+     * Add an attribute to the protection
+     *
+     * @param attribute
+     */
+    public void addAttribute(AbstractAttribute attribute) {
+        attributes.put(attribute.getName(), attribute);
+    }
+
+    /**
+     * Get an attribute from the protection. If it does not exist, NULL will be returned.
+     *
+     * @param name
+     * @return
+     */
+    public AbstractAttribute getAttribute(String name) {
+        return attributes.get(name);
+    }
+
+    /**
+     * Remove an attribute from the protection
+     *
+     * @param name
+     */
+    public void removeAttribute(String name) {
+        if (!attributes.containsKey(name)) {
+            return;
+        }
+
+        AbstractAttribute attribute = attributes.remove(name);
+        engine.getDatabase().removeProtectionAttribute(this, attribute);
     }
 
     public void setWorld(World world) {
