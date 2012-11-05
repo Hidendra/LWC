@@ -118,7 +118,7 @@
                     <targetBundle>Messages</targetBundle>
                     <poDirectory>po</poDirectory>
                     <sourceDirectory>${project.basedir}/../</sourceDirectory>
-                    <keywords>--keyword=_</keywords>
+                    <keywords>-k --keyword=_</keywords>
                     <outputFormat>properties</outputFormat>
                     <encoding>utf-8</encoding>
                 </configuration>
