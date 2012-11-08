@@ -7,33 +7,6 @@ import com.griefcraft.ProtectionAccess;
 public abstract class Role extends AbstractSavable implements AccessProvider {
 
     /**
-     * The state of the role
-     */
-    public enum State {
-
-        /**
-         * Role is new, needs to be inserted into the database
-         */
-        NEW,
-
-        /**
-         * Role has been modified
-         */
-        MODIFIED,
-
-        /**
-         * Role has not been modified
-         */
-        UNMODIFIED,
-
-        /**
-         * Role has been removed from the database
-         */
-        REMOVED;
-
-    }
-
-    /**
      * The Engine instance
      */
     private Engine engine;
@@ -135,13 +108,13 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
         }
 
         Role o = (Role) object;
-        return getId() == o.getId() && roleName.equals(o.roleName) && roleAccess == o.roleAccess && state == o.state;
+        return getType() == o.getType() && roleName.equals(o.roleName) && roleAccess == o.roleAccess && state == o.state;
     }
 
     @Override
     public int hashCode() {
         int hash = 1;
-        hash *= 17 + getId();
+        hash *= 17 + getType();
         hash *= 17 + roleName.hashCode();
         hash *= 17 + roleAccess.hashCode();
         return hash;
@@ -152,6 +125,6 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
      *
      * @return
      */
-    public abstract int getId();
+    public abstract int getType();
 
 }

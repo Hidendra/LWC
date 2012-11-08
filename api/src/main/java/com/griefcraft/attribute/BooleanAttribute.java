@@ -29,12 +29,13 @@
 
 package com.griefcraft.attribute;
 
+import com.griefcraft.Engine;
 import com.griefcraft.model.AbstractAttribute;
 
 public class BooleanAttribute extends AbstractAttribute<Boolean> {
 
-    public BooleanAttribute(String name, boolean value) {
-        super(name);
+    public BooleanAttribute(Engine engine, String name, boolean value) {
+        super(engine, name);
         this.value = value;
     }
 

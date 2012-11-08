@@ -29,7 +29,14 @@
 
 package com.griefcraft.model;
 
-public abstract class AbstractAttribute<T> extends AbstractSavable {
+import com.griefcraft.Engine;
+
+public abstract class AbstractAttribute<T> {
+
+    /**
+     * The Engine instance
+     */
+    private final Engine engine;
 
     /**
      * The attributes name
@@ -42,11 +49,12 @@ public abstract class AbstractAttribute<T> extends AbstractSavable {
     protected T value;
 
     /**
-     * If the attribute has been modified
+     * The attribute's state (saved or not)
      */
-    private boolean modified = false;
+    private State state = State.NEW;
 
-    public AbstractAttribute(String name) {
+    public AbstractAttribute(Engine engine, String name) {
+        this.engine = engine;
         this.name = name;
     }
 
@@ -74,7 +82,7 @@ public abstract class AbstractAttribute<T> extends AbstractSavable {
      */
     public void setValue(T value) {
         this.value = value;
-        modified = true;
+        state = State.MODIFIED;
     }
 
     /**
@@ -98,24 +106,21 @@ public abstract class AbstractAttribute<T> extends AbstractSavable {
     }
 
     /**
-     * {@inheritDoc}
+     * Get the state this attribute is in
+     *
+     * @return
      */
-    public void saveImmediately() {
-        throw new UnsupportedOperationException("AbstractSavable.save() is not yet implemented");
+    public State getState() {
+        return state;
     }
 
     /**
-     * {@inheritDoc}
+     * Change the state this attribute is in
+     *
+     * @param state
      */
-    public void remove() {
-        throw new UnsupportedOperationException("AbstractSavable.save() is not yet implemented");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isSaveNeeded() {
-        return modified;
+    public void setState(State state) {
+        this.state = state;
     }
 
     @Override

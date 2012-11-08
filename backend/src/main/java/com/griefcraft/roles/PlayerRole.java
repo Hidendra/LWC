@@ -13,7 +13,7 @@ public class PlayerRole extends Role {
     }
 
     @Override
-    public int getId() {
+    public int getType() {
         return 1; // adapted from LWCv4
     }
 

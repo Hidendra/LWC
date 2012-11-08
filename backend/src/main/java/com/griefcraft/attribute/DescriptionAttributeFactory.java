@@ -32,16 +32,41 @@ package com.griefcraft.attribute;
 import com.griefcraft.Engine;
 import com.griefcraft.model.AbstractAttribute;
 
-public class IntegerAttribute extends AbstractAttribute<Integer> {
+public class DescriptionAttributeFactory implements ProtectionAttributeFactory<String> {
 
-    public IntegerAttribute(Engine engine, String name, int value) {
-        super(engine, name);
-        this.value = value;
+    /**
+     * Attribute type
+     */
+    public static final int TYPE = 1;
+
+    /**
+     * Attribute name
+     */
+    public static final String NAME = "description";
+
+    /**
+     * The engine instance
+     */
+    private Engine engine;
+
+    public DescriptionAttributeFactory(Engine engine) {
+        this.engine = engine;
     }
 
-    @Override
-    public void loadValue(String value) {
-        this.value = Integer.parseInt(value);
+    public int getType() {
+        return TYPE;
     }
 
+    public String getName() {
+        return NAME;
+    }
+
+    public AbstractAttribute<String> createAttribute() {
+        return new AbstractAttribute<String>(engine, NAME) {
+            @Override
+            public void loadValue(String value) {
+                this.value = value;
+            }
+        };
+    }
 }

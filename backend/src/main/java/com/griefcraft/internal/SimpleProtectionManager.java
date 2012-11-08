@@ -102,11 +102,11 @@ public class SimpleProtectionManager implements ProtectionManager {
             throw new IllegalArgumentException("factory cannot be null");
         }
 
-        protectionFactories.put(factory.getName(), factory);
+        protectionFactories.put(factory.getName().toLowerCase(), factory);
     }
 
     public AbstractAttribute createProtectionAttribute(String name) {
-        ProtectionAttributeFactory factory = protectionFactories.get(name);
+        ProtectionAttributeFactory factory = protectionFactories.get(name.toLowerCase());
         return factory == null ? null : factory.createAttribute();
     }
 

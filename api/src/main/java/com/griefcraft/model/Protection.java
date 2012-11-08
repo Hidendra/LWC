@@ -87,9 +87,9 @@ public class Protection extends AbstractSavable {
     private int accessed;
 
     /**
-     * If the protection has been modified
+     * The protection's state
      */
-    private boolean modified = false;
+    private State state = State.NEW;
 
     /**
      * A set of roles this protection contains
@@ -168,6 +168,8 @@ public class Protection extends AbstractSavable {
      */
     public void addAttribute(AbstractAttribute attribute) {
         attributes.put(attribute.getName(), attribute);
+        attribute.setState(State.NEW);
+        state = State.MODIFIED;
     }
 
     /**
@@ -200,31 +202,31 @@ public class Protection extends AbstractSavable {
 
     public void setX(int x) {
         this.x = x;
-        modified = true;
+        state = State.MODIFIED;
     }
 
     public void setY(int y) {
         this.y = y;
-        modified = true;
+        state = State.MODIFIED;
     }
 
     public void setZ(int z) {
         this.z = z;
-        modified = true;
+        state = State.MODIFIED;
     }
 
     public void setUpdated(int updated) {
         this.updated = updated;
-        modified = true;
+        state = State.MODIFIED;
     }
 
     public void setCreated(int created) {
         this.created = created;
-        modified = true;
+        state = State.MODIFIED;
     }
 
     public void setModified(boolean modified) {
-        this.modified = modified;
+        state = State.MODIFIED;
     }
 
     public int getId() {
@@ -261,18 +263,44 @@ public class Protection extends AbstractSavable {
 
     public void setAccessed(int accessed) {
         this.accessed = accessed;
-        modified = true;
+        state = State.MODIFIED;
+    }
+
+    /**
+     * Get the state this protection is in
+     *
+     * @return
+     */
+    public State getState() {
+        return state;
+    }
+
+    /**
+     * Change the state this protection is in
+     *
+     * @param state
+     */
+    public void setState(State state) {
+        this.state = state;
     }
 
     @Override
     public void saveImmediately() {
         engine.getDatabase().saveProtection(this);
-        modified = false;
+        state = State.UNMODIFIED;
+
+        // save each attribute
+        for (AbstractAttribute<?> attribute : attributes.values()) {
+            if (attribute.getState() == State.NEW || attribute.getState() == State.MODIFIED) {
+                engine.getDatabase().saveOrCreateProtectionAttribute(this, attribute);
+                attribute.setState(State.UNMODIFIED);
+            }
+        }
     }
 
     @Override
     public boolean isSaveNeeded() {
-        return modified;
+        return state == State.MODIFIED;
     }
 
     @Override
@@ -284,7 +312,7 @@ public class Protection extends AbstractSavable {
 
         // now remove the protection
         engine.getDatabase().removeProtection(this);
-        modified = false;
+        state = State.UNMODIFIED;
     }
 
 }

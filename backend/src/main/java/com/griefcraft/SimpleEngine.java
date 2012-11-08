@@ -29,10 +29,12 @@
 
 package com.griefcraft;
 
+import com.griefcraft.attribute.DescriptionAttributeFactory;
 import com.griefcraft.command.CommandException;
 import com.griefcraft.command.CommandHandler;
 import com.griefcraft.command.ConsoleCommandSender;
 import com.griefcraft.command.SimpleCommandHandler;
+import com.griefcraft.commands.AttributeCommands;
 import com.griefcraft.commands.BaseCommands;
 import com.griefcraft.commands.BenchmarkCommands;
 import com.griefcraft.configuration.Configuration;
@@ -103,6 +105,9 @@ public class SimpleEngine implements Engine {
 
         // register default roles
         registerDefaultRoles();
+
+        // default attributes
+        registerDefaultAttributes();
     }
 
     /**
@@ -211,6 +216,7 @@ public class SimpleEngine implements Engine {
     private void registerCommands() {
         try {
             commandHandler.registerCommands(new BaseCommands(this));
+            commandHandler.registerCommands(new AttributeCommands(this));
             commandHandler.registerCommands(new BenchmarkCommands(this));
         } catch (CommandException e) {
             e.printStackTrace();
@@ -222,6 +228,10 @@ public class SimpleEngine implements Engine {
      */
     private void registerDefaultRoles() {
         roleManager.registerDefinition(new PlayerRoleDefinition(this));
+    }
+
+    private void registerDefaultAttributes() {
+        protectionManager.registerAttributeFactory(new DescriptionAttributeFactory(this));
     }
 
 }

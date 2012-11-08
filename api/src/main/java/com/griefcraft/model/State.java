@@ -27,21 +27,28 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.attribute;
+package com.griefcraft.model;
 
-import com.griefcraft.Engine;
-import com.griefcraft.model.AbstractAttribute;
+public enum State {
 
-public class IntegerAttribute extends AbstractAttribute<Integer> {
+    /**
+     * Object is new, needs to be inserted into the database
+     */
+    NEW,
 
-    public IntegerAttribute(Engine engine, String name, int value) {
-        super(engine, name);
-        this.value = value;
-    }
+    /**
+     * Object has been modified
+     */
+    MODIFIED,
 
-    @Override
-    public void loadValue(String value) {
-        this.value = Integer.parseInt(value);
-    }
+    /**
+     * Object has not been modified
+     */
+    UNMODIFIED,
+
+    /**
+     * Object has been removed from the database
+     */
+    REMOVED;
 
 }

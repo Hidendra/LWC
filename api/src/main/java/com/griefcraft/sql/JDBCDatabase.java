@@ -289,7 +289,20 @@ public class JDBCDatabase implements Database {
     }
 
     public void removeProtection(Protection protection) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        try {
+            Connection connection = pool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protections WHERE id = ?");
+
+            try {
+                statement.setInt(1, protection.getId());
+                statement.executeUpdate();
+            } finally {
+                safeClose(statement);
+                safeClose(connection);
+            }
+        } catch (SQLException e) {
+            handleException(e);
+        }
     }
 
     public void saveOrCreateRole(Role role) {
@@ -297,7 +310,21 @@ public class JDBCDatabase implements Database {
     }
 
     public void removeRole(Role role) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        try {
+            Connection connection = pool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_roles WHERE protection_id = ? AND type = ?");
+
+            try {
+                statement.setInt(1, role.getProtection().getId());
+                statement.setInt(2, role.getType());
+                statement.executeUpdate();
+            } finally {
+                safeClose(statement);
+                safeClose(connection);
+            }
+        } catch (SQLException e) {
+            handleException(e);
+        }
     }
 
     public void saveOrCreateProtectionAttribute(Protection protection, AbstractAttribute attribute) {

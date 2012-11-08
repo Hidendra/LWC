@@ -29,12 +29,13 @@
 
 package com.griefcraft.attribute;
 
+import com.griefcraft.Engine;
 import com.griefcraft.model.AbstractAttribute;
 
 public class DoubleAttribute extends AbstractAttribute<Double> {
 
-    public DoubleAttribute(String name, double value) {
-        super(name);
+    public DoubleAttribute(Engine engine, String name, double value) {
+        super(engine, name);
         this.value = value;
     }
 
