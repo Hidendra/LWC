@@ -1,14 +1,14 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Base translations for LWC.
+# Copyright (C) 2012 LWC'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the LWC package.
+# Tyler Blair <hidendra@griefcraft.com>, 2012.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-21 12:04-0300\n"
+"POT-Creation-Date: 2012-11-08 01:16-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,40 +24,68 @@ msgid ""
 "trace has been printed out to the log file"
 msgstr ""
 
-#: api/src/main/java/com/griefcraft/sql/JDBCDatabase.java:303
-msgid "world"
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:78
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:120
+msgid "&4Invalid attribute name."
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:80
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:87
+msgid "&4Invalid attribute value."
+msgstr ""
+
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:91
+msgid "&2Click on your protection to set the attribute"
+msgstr ""
+
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:97
+#, java-format
+msgid "&2Added the attribute {0} to the protection successfully."
+msgstr ""
+
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:124
+msgid "&2Click on your protection to remove the attribute"
+msgstr ""
+
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:133
+#, java-format
+msgid "&2Removed the attribute {0} from the protection successfully."
+msgstr ""
+
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:135
+#, java-format
+msgid "&4The protection does not have the attribute {0}"
+msgstr ""
+
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:79
 msgid "Click on a block to protect it!"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:89
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:88
 msgid "That block is not protectable"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:95
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:94
 msgid "Protected~"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:97
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:96
 msgid "Failed to protect for some reason ?"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:113
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:112
 msgid "Click on a block, please!~"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:119
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:118
 #, java-format
 msgid "You clicked on a block with the id {0}!"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:135
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:134
 #, java-format
 msgid "Purging player?: {0}"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/internal/SimpleProtectionManager.java:102
+#: backend/src/main/java/com/griefcraft/internal/SimpleProtectionManager.java:96
 msgid "This protection is locked by a magical spell."
 msgstr ""
