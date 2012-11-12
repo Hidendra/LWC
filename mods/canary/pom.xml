@@ -12,6 +12,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>hidendra</id>
+            <url>http://repo.mcstats.org/content/repositories/public</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>com.griefcraft.lwc</groupId>
@@ -21,10 +28,9 @@
         </dependency>
         <dependency>
             <groupId>net.canarymod</groupId>
-            <artifactId>crow</artifactId>
-            <version>4.10.10</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../../lib/CanaryMod-4.10.10.jar</systemPath>
+            <artifactId>canarymod</artifactId>
+            <version>5.3.11</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
