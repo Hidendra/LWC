@@ -33,6 +33,7 @@ import com.griefcraft.Engine;
 import com.griefcraft.model.AbstractAttribute;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.Role;
+import com.griefcraft.model.State;
 import com.griefcraft.world.Location;
 import snaq.db.ConnectionPool;
 
@@ -285,7 +286,27 @@ public class JDBCDatabase implements Database {
     }
 
     public void saveProtection(Protection protection) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        try {
+            Connection connection = pool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("UPDATE " + details.getPrefix() + "protections SET x = ?, y = ?, z = ?, world = ?, created = ?, updated = ?, accessed = ? WHERE id = ?");
+
+            try {
+                statement.setInt(1, protection.getX());
+                statement.setInt(2, protection.getY());
+                statement.setInt(3, protection.getZ());
+                statement.setString(4, protection.getWorld().getName());
+                statement.setInt(5, protection.getCreated());
+                statement.setInt(6, protection.getUpdated());
+                statement.setInt(7, protection.getAccessed());
+                statement.setInt(8, protection.getId());
+                statement.executeUpdate();
+            } finally {
+                safeClose(statement);
+                safeClose(connection);
+            }
+        } catch (SQLException e) {
+            handleException(e);
+        }
     }
 
     public void removeProtection(Protection protection) {
@@ -418,6 +439,7 @@ public class JDBCDatabase implements Database {
         protection.setUpdated(set.getInt("updated"));
         protection.setCreated(set.getInt("created"));
         protection.setAccessed(set.getInt("accessed"));
+        protection.setState(State.UNMODIFIED);
         return protection;
     }
 

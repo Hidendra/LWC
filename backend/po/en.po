@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-08 01:24-0400\n"
+"POT-Creation-Date: 2012-11-11 10:05-0400\n"
 "PO-Revision-Date: 2012-11-08 01:19-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -27,7 +27,7 @@ msgstr ""
 "trace has been printed out to the log file"
 
 #: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:78
-#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:120
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:121
 msgid "&4Invalid attribute name."
 msgstr "&4Invalid attribute name."
 
@@ -39,21 +39,21 @@ msgstr "&4Invalid attribute value."
 msgid "&2Click on your protection to set the attribute"
 msgstr "&2Click on your protection to set the attribute"
 
-#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:97
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:98
 #, java-format
 msgid "&2Added the attribute {0} to the protection successfully."
 msgstr "&2Added the attribute {0} to the protection successfully."
 
-#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:124
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:125
 msgid "&2Click on your protection to remove the attribute"
 msgstr "&2Click on your protection to remove the attribute"
 
-#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:133
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:134
 #, java-format
 msgid "&2Removed the attribute {0} from the protection successfully."
 msgstr "&2Removed the attribute {0} from the protection successfully."
 
-#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:135
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:136
 #, java-format
 msgid "&4The protection does not have the attribute {0}"
 msgstr "&4The protection does not have the attribute {0}"

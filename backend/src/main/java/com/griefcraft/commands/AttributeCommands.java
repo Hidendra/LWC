@@ -94,6 +94,7 @@ public class AttributeCommands {
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
                 protection.addAttribute(attribute);
+                protection.save();
                 player.sendMessage(_("&2Added the attribute {0} to the protection successfully.", attribute.getName().toLowerCase()));
                 return true;
             }

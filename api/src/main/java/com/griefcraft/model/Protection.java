@@ -108,8 +108,13 @@ public class Protection extends AbstractSavable {
     }
 
     public Protection(Engine engine, int id) {
+        super(engine);
         this.engine = engine;
         this.id = id;
+
+        for (AbstractAttribute<?> attribute : engine.getDatabase().loadProtectionAttributes(this)) {
+            addAttribute(attribute);
+        }
     }
 
     /**
@@ -286,8 +291,10 @@ public class Protection extends AbstractSavable {
 
     @Override
     public void saveImmediately() {
-        engine.getDatabase().saveProtection(this);
-        state = State.UNMODIFIED;
+        if (state == State.MODIFIED) {
+            engine.getDatabase().saveProtection(this);
+            state = State.UNMODIFIED;
+        }
 
         // save each attribute
         for (AbstractAttribute<?> attribute : attributes.values()) {
@@ -312,7 +319,7 @@ public class Protection extends AbstractSavable {
 
         // now remove the protection
         engine.getDatabase().removeProtection(this);
-        state = State.UNMODIFIED;
+        state = State.REMOVED;
     }
 
 }

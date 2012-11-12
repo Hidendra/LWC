@@ -29,10 +29,21 @@
 
 package com.griefcraft.model;
 
+import com.griefcraft.Engine;
+
 /**
  * Represents an object that can be saved to the database
  */
 public abstract class AbstractSavable {
+
+    /**
+     * The engine instance
+     */
+    private final Engine engine;
+
+    public AbstractSavable(Engine engine) {
+        this.engine = engine;
+    }
 
     /**
      * Flush the object to the database immediately without waiting
@@ -57,7 +68,7 @@ public abstract class AbstractSavable {
      * guaranteed to happen within any given amount of time.
      */
     public void save() {
-        throw new UnsupportedOperationException("AbstractSavable.save() is not yet implemented");
+        engine.getSavableQueue().push(this);
     }
 
 }

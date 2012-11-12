@@ -32,6 +32,7 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
     private final ProtectionAccess roleAccess;
 
     public Role(Engine engine, Protection protection, String roleName, ProtectionAccess roleAccess) {
+        super(engine);
         this.engine = engine;
         this.protection = protection;
         this.roleName = roleName;

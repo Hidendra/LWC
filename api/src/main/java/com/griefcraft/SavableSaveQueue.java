@@ -29,80 +29,49 @@
 
 package com.griefcraft;
 
-import com.griefcraft.command.CommandHandler;
-import com.griefcraft.command.ConsoleCommandSender;
-import com.griefcraft.configuration.Configuration;
-import com.griefcraft.sql.Database;
+import com.griefcraft.model.AbstractSavable;
 
-public interface Engine {
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+public class SavableSaveQueue {
 
     /**
-     * Get the {@link RoleManager} which manages role associations
+     * The queue of savables
+     */
+    private final BlockingQueue<AbstractSavable> queue = new LinkedBlockingQueue<AbstractSavable>();
+
+    public SavableSaveQueue() {
+        // TODO limit queries/sec
+        // TODO properly destroy thread, etc, or use server-specific implementations (e.g Bukkit's scheduler)
+        Thread thread = new Thread(new Worker(), "LWC Savable Thread");
+        thread.start();
+    }
+
+    /**
+     * Push a savable object into the queue to be saved
      *
-     * @return
+     * @param savable
      */
-    public RoleManager getRoleManager();
+    public void push(AbstractSavable savable) {
+        queue.offer(savable);
+    }
 
-    /**
-     * Get the protection manager
-     *
-     * @return
-     */
-    public ProtectionManager getProtectionManager();
+    private class Worker implements Runnable {
 
-    /**
-     * Get the server layer that provides some server specific utilities
-     *
-     * @return
-     */
-    public ServerLayer getServerLayer();
+        public void run() {
+            while (true) {
+                try {
+                    AbstractSavable savable = queue.take();
+                    savable.saveImmediately();
+                    System.out.println("Saving: " + savable.toString());
+                } catch (InterruptedException e) {
+                    continue;
+                }
+            }
+        }
 
-    /**
-     * Get information about the server mod itself
-     *
-     * @return
-     */
-    public ServerInfo getServerInfo();
-
-    /**
-     * Get the API version
-     *
-     * @return
-     */
-    public String getBackendVersion();
-
-    /**
-     * Get the command handler
-     *
-     * @return
-     */
-    public CommandHandler getCommandHandler();
-
-    /**
-     * Get the console sender, used to send messages to the console
-     *
-     * @return
-     */
-    public ConsoleCommandSender getConsoleSender();
-
-    /**
-     * Get the queue used to save savables to the database in the background
-     * @return
-     */
-    public SavableSaveQueue getSavableQueue();
-
-    /**
-     * Get the database object
-     *
-     * @return
-     */
-    public Database getDatabase();
-
-    /**
-     * Gets the configuration file
-     *
-     * @return
-     */
-    public Configuration getConfiguration();
+    }
 
 }

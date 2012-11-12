@@ -57,6 +57,11 @@ public class SimpleEngine implements Engine {
     private final RoleManager roleManager = new SimpleRoleManager();
 
     /**
+     * The savable background queue
+     */
+    private final SavableSaveQueue savableQueue = new SavableSaveQueue();
+
+    /**
      * The server layer
      */
     private ServerLayer serverLayer;
@@ -159,6 +164,10 @@ public class SimpleEngine implements Engine {
 
     public ConsoleCommandSender getConsoleSender() {
         return consoleSender;
+    }
+
+    public SavableSaveQueue getSavableQueue() {
+        return savableQueue;
     }
 
     public Database getDatabase() {

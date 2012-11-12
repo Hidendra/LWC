@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-08 01:35-0400\n"
+"POT-Creation-Date: 2012-11-12 00:10-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,7 +25,7 @@ msgid ""
 msgstr ""
 
 #: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:78
-#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:120
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:121
 msgid "&4Invalid attribute name."
 msgstr ""
 
@@ -37,21 +37,21 @@ msgstr ""
 msgid "&2Click on your protection to set the attribute"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:97
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:98
 #, java-format
 msgid "&2Added the attribute {0} to the protection successfully."
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:124
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:125
 msgid "&2Click on your protection to remove the attribute"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:133
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:134
 #, java-format
 msgid "&2Removed the attribute {0} from the protection successfully."
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:135
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:136
 #, java-format
 msgid "&4The protection does not have the attribute {0}"
 msgstr ""
