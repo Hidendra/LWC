@@ -452,11 +452,21 @@ public class LWC {
 
             if (block.getType() == Material.CHEST) {
                 doubleChestBlock = findAdjacentBlock(block, Material.CHEST);
-            } else if (block.getType() == Material.FURNACE) {
+            } else if (block.getType() == Material.FURNACE || block.getType() == Material.BURNING_FURNACE) {
                 Inventory inventory = holder.getInventory();
 
                 if (inventory.getItem(0) != null && inventory.getItem(1) != null) {
-                    return null;
+                    if (inventory.getItem(0).getType() == itemStack.getType()
+                            && inventory.getItem(0).getData().getData() == itemStack.getData().getData()
+                            && inventory.getItem(0).getMaxStackSize() >= (inventory.getItem(0).getAmount() + itemStack.getAmount())) {
+                        // ItemStack fits on Slot 0
+                    } else if (inventory.getItem(1).getType() == itemStack.getType()
+                            && inventory.getItem(1).getData().getData() == itemStack.getData().getData()
+                            && inventory.getItem(1).getMaxStackSize() >= (inventory.getItem(1).getAmount() + itemStack.getAmount())) {
+                        // ItemStack fits on Slot 1
+                    } else {
+                        return null;
+                    }
                 }
             }
 
