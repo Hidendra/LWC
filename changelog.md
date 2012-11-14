@@ -1,3 +1,23 @@
+### 4.3.1
+# 4.3.1
+* Compatibility with Bukkit 1.4.4+. This retains compatibility with Bukkit 1.2.5+
+* **NEW**: Add config option for allowing / disallowing cross world drop transferring (disabled by default)
+* **NEW**: Thanks to AlphA, add config support for blacklisting blocks that can be placed beside chests. As well, allow blacklisting specific players (e.g '[BuildCraft]') to block them from destroying protections
+* **FIX**: IC2 wrenches could break LWC protected machines (MCPC)
+* **FIX**: `/lwc admin reload` should reload cached configuration values
+* **FIX**: `/lwc limits <player>` did not give helpful output when used in the console
+* **FIX**: Send output of `/lwc limits <player>` to the right player
+* **FIX**: Hide an underlying issue in the database core where shared prepared statements could cause deadlocks
+* **FIX**: For the `StructureGrowEvent` event save CPU by not checking blocks that are not protectable
+* **FIX**: Fix a potential (rare) dupe when using magnet chests
+* **FIX**: For magnet chests, only pickup items that have lived for longer than their set pick up delay. Fixes instantly picking up items and also improves compatibility with plugins that want items to NOT be picked up.
+* **FIX**: For magnet chests, do not place items into the output slots of Furnace slots. This fixes exploits related to EXP. This is mostly in part to a patch by Brianum (Thanks!)
+* **OPT**: Highly optimize magnet chests to be significantly more efficient. This fixes a lot of issues with lots of wasted queries being done with magnet chests
+* **FIX**: Misc bug fixes in other locations
+* **FIX**: Run `/lwc admin cleanup` in a separate thread. While it will still slow the server down a lot, it will not freeze it and kick everyone off
+* **FIX**: When Vault is being used, fallback to SuperPerms if Vault does not return any groups for a player (which is often a bug)
+* **FIX**: Fix the `AUTOCLOSE` flag
+
 ### 4.3.0
 # LWC 4.3.0
 * Stronger Tekkit/MCPC support - don't allow pipes to be placed adjacent to chests you cannot access. This prevents players from siphoning items out of your chest as long as it doesn't already have a pipe attached to it.
