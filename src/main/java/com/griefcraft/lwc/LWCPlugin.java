@@ -367,9 +367,4 @@ public class LWCPlugin extends JavaPlugin {
     public File getFile() {
         return super.getFile();
     }
-
-    @Override
-    public ClassLoader getClassLoader() {
-        return super.getClassLoader();
-    }
 }
