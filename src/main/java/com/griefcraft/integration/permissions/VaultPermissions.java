@@ -48,17 +48,18 @@ public class VaultPermissions extends SuperPermsPermissions {
 
         Permission perm = serviceProvider.getProvider();
 
-        // the player's groups
-        String[] groups = perm.getPlayerGroups(player);
-
-        // fallback to superperms if it appears that they have no groups
-        if (groups == null || groups.length == 0) {
-            return super.getGroups(player);
-        }
-
         try {
+            // the player's groups
+            String[] groups = perm.getPlayerGroups(player);
+
+            // fallback to superperms if it appears that they have no groups
+            if (groups == null || groups.length == 0) {
+                return super.getGroups(player);
+            }
+
             return Arrays.asList(groups);
         } catch (UnsupportedOperationException e) {
+            // Can be thrown by vault or asList. Thrown by Vault when using SuperPerms - getPlayerGroups() will throw it :-(
             return super.getGroups(player);
         }
     }
