@@ -258,8 +258,15 @@ public class MagnetModule extends JavaModule {
                 for (int z = baseZ - radius; z < baseZ + radius; z++) {
                     Block block = location.getWorld().getBlockAt(x, y, z);
 
-                    if (block.getState() instanceof InventoryHolder) {
-                        found.add(block);
+                    try {
+                        if (block.getState() instanceof InventoryHolder) {
+                            found.add(block);
+                        }
+                    } catch (NullPointerException e) {
+                        // Avoid bug caused by what appears to be corruption
+                        // where a NPE is thrown inside getState() for signs
+                        // from the CB source, the location:
+                        //      lines = new String[sign.lines.length];
                     }
                 }
             }
