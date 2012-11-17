@@ -263,10 +263,8 @@ public class MagnetModule extends JavaModule {
                             found.add(block);
                         }
                     } catch (NullPointerException e) {
-                        // Avoid bug caused by what appears to be corruption
-                        // where a NPE is thrown inside getState() for signs
-                        // from the CB source, the location:
-                        //      lines = new String[sign.lines.length];
+                        LWC lwc = LWC.getInstance();
+                        lwc.log("Possibly invalid block found at [" + x + ", " + y + ", " + z + "]!");
                     }
                 }
             }
