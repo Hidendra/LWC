@@ -1135,7 +1135,13 @@ public class PhysDB extends Database {
                 statement.setInt(10, history.getId());
             }
 
-            int affectedRows = statement.executeUpdate();
+            int affectedRows;
+
+            if (statement instanceof AutoClosingPreparedStatement) {
+                affectedRows = ((AutoClosingPreparedStatement) statement).executeUpdate(false);
+            } else {
+                affectedRows = statement.executeUpdate();
+            }
 
             // set the history id if inserting
             if (!history.doesExist()) {
@@ -1150,6 +1156,8 @@ public class PhysDB extends Database {
                     generatedKeys.close();
                 }
             }
+
+            statement.close();
         } catch (SQLException e) {
             printException(e);
         }
