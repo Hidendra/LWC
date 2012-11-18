@@ -28,20 +28,18 @@
 
 package com.griefcraft.sql;
 
-import com.griefcraft.cache.LRUCache;
 import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Flag;
 import com.griefcraft.model.History;
 import com.griefcraft.model.Permission;
 import com.griefcraft.model.Protection;
-import com.griefcraft.modules.limits.LimitsModule;
-import com.griefcraft.scripting.Module;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -253,18 +251,6 @@ public class PhysDB extends Database {
             return;
         }
 
-        /**
-         * Updates that alter or rename a table go here
-         */
-        doUpdate301();
-        doUpdate302();
-        doUpdate330();
-        doUpdate400_1();
-        doUpdate400_4();
-        doUpdate400_4();
-        doUpdate400_5();
-        doUpdate400_6();
-
         Column column;
 
         Table protections = new Table(this, "protections");
@@ -434,7 +420,6 @@ public class PhysDB extends Database {
         }
 
         if (databaseVersion == 2) {
-            doUpdate400_2();
             incrementDatabaseVersion();
         }
         
@@ -1653,10 +1638,12 @@ public class PhysDB extends Database {
      */
     public void removeAllProtections() {
         try {
+            Connection connection = createConnection();
             Statement statement = connection.createStatement();
             statement.executeUpdate("DELETE FROM " + prefix + "protections");
             protectionCount = 0;
             statement.close();
+            connection.close();
         } catch (SQLException e) {
             printException(e);
         }
@@ -1670,9 +1657,11 @@ public class PhysDB extends Database {
      * @param columns
      */
     private void createIndex(String table, String indexName, String columns) {
+        Connection connection = null;
         Statement statement = null;
 
         try {
+            connection = createConnection();
             statement = connection.createStatement();
             statement.executeUpdate("CREATE INDEX" + (currentType == Type.SQLite ? " IF NOT EXISTS" : "") + " " + indexName + " ON " + prefix + table + " (" + columns + ")");
         } catch (Exception e) {
@@ -1680,6 +1669,12 @@ public class PhysDB extends Database {
             if (statement != null) {
                 try {
                     statement.close();
+                } catch (SQLException e) {
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
                 } catch (SQLException e) {
                 }
             }
@@ -1692,9 +1687,11 @@ public class PhysDB extends Database {
      * @param indexName
      */
     private void dropIndex(String table, String indexName) {
+        Connection connection = null;
         Statement statement = null;
 
         try {
+            connection = createConnection();
             statement = connection.createStatement();
 
             if (currentType == Type.SQLite) {
@@ -1710,304 +1707,9 @@ public class PhysDB extends Database {
                 } catch (SQLException e) {
                 }
             }
-        }
-    }
-
-    /**
-     * 3.01
-     */
-    private void doUpdate301() {
-        // check limits table
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeQuery("SELECT * FROM limits LIMIT 1");
-            statement.close();
-        } catch (Exception e) {
-            return;
-        }
-
-        // Convert limits
-        LWC lwc = LWC.getInstance();
-        Module rawModule = lwc.getModuleLoader().getModule(LimitsModule.class);
-
-        if (rawModule == null) {
-            log("Failed to load the Limits module. Something is wrong!");
-            return;
-        }
-
-        LimitsModule limits = (LimitsModule) rawModule;
-
-        // start going through the database
-        PreparedStatement statement = prepare("SELECT * FROM limits");
-        try {
-            ResultSet result = statement.executeQuery();
-
-            while (result.next()) {
-                int type = result.getInt("type");
-                int amount = result.getInt("amount");
-                String entity = result.getString("entity");
-
-                switch (type) {
-                    // Global
-                    case 2:
-                        limits.set("master.type", "default");
-                        limits.set("master.limit", amount);
-                        break;
-
-                    // Group
-                    case 0:
-                        limits.set("groups." + entity + ".type", "default");
-                        limits.set("groups." + entity + ".limit", amount);
-                        break;
-
-                    // Player
-                    case 1:
-                        limits.set("players." + entity + ".type", "default");
-                        limits.set("players." + entity + ".limit", amount);
-                        break;
-                }
-            }
-        } catch (SQLException e) {
-            printException(e);
-            return;
-        }
-
-        limits.save();
-        dropTable("limits");
-    }
-
-    /**
-     * 3.02
-     */
-    private void doUpdate302() {
-        if (prefix == null || prefix.length() == 0) {
-            return;
-        }
-
-        // check for the table
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
-            statement.execute("SELECT id FROM " + prefix + "protections limit 1");
-        } catch (SQLException e) {
-            // The table does not exist, let's go ahead and rename all of the tables
-            renameTable("protections", prefix + "protections");
-            renameTable("rights", prefix + "rights");
-            renameTable("menu_styles", prefix + "menu_styles");
-        } finally {
-            if (statement != null) {
+            if (connection != null) {
                 try {
-                    statement.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
-    }
-
-    /**
-     * 3.30
-     */
-    private void doUpdate330() {
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
-            statement.execute("SELECT last_accessed FROM " + prefix + "protections LIMIT 1");
-        } catch (SQLException e) {
-            addColumn(prefix + "protections", "last_accessed", "INTEGER");
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
-    }
-
-    /**
-     * 4.0.0, update 1
-     */
-    private void doUpdate400_1() {
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
-            statement.execute("SELECT rights FROM " + prefix + "protections LIMIT 1");
-        } catch (SQLException e) {
-            addColumn(prefix + "protections", "rights", "TEXT");
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
-    }
-
-    /**
-     * 4.0.0, update 2
-     */
-    private void doUpdate400_2() {
-        LWC lwc = LWC.getInstance();
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
-            statement.execute("SELECT id FROM " + prefix + "rights LIMIT 1");
-
-            log("Migrating LWC3 rights to LWC4 format");
-
-            // it exists ..!
-            Statement stmt = connection.createStatement();
-            ResultSet set = stmt.executeQuery("SELECT * FROM " + prefix + "rights");
-
-            // keep a mini-cache of protections, max size of 100k should be OK!
-            LRUCache<Integer, Protection> cache = new LRUCache<Integer, Protection>(1000 * 100);
-
-            while (set.next()) {
-                // load the data we will be using
-                int protectionId = set.getInt("chest");
-                String entity = set.getString("entity");
-                int access = set.getInt("rights");
-                int type = set.getInt("type");
-
-                // begin loading the protection
-                Protection protection = null;
-
-                // check cache
-                if (cache.containsKey(protectionId)) {
-                    protection = cache.get(protectionId);
-                } else {
-                    // else, load it...
-                    protection = loadProtection(protectionId);
-
-                    if (protection == null) {
-                        continue;
-                    }
-
-                    cache.put(protectionId, protection);
-                }
-
-                if (protection == null) {
-                    continue;
-                }
-
-                // create the permission
-                Permission permission = new Permission(entity, Permission.Type.values()[type], Permission.Access.values()[access]);
-
-                // add it to the protection and queue it for saving!
-                protection.addPermission(permission);
-            }
-
-            // Save all of the protections
-            for (Protection protection : cache.values()) {
-                protection.saveNow();
-            }
-
-            // Good!
-            set.close();
-            stmt.close();
-
-            // drop the rights table
-            dropTable(prefix + "rights");
-            precache();
-        } catch (SQLException e) {
-            // no need to convert!
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
-    }
-
-    /**
-     * 4.0.0, update 4
-     */
-    private void doUpdate400_4() {
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
-            statement.execute("SELECT data FROM " + prefix + "protections LIMIT 1");
-        } catch (SQLException e) {
-            dropColumn(prefix + "protections", "rights");
-            addColumn(prefix + "protections", "data", "TEXT");
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
-    }
-
-    /**
-     * 4.0.0, update 5
-     */
-    private void doUpdate400_5() {
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
-            statement.executeQuery("SELECT flags FROM " + prefix + "protections LIMIT 1");
-
-            // The flags column is still there ..!
-            // instead of looping through every protection, let's do this a better way
-            PreparedStatement pStatement = prepare("SELECT * FROM " + prefix + "protections WHERE flags = 8"); // exempt
-
-            for (Protection protection : resolveProtections(pStatement)) {
-                Flag flag = new Flag(Flag.Type.EXEMPTION);
-                protection.addFlag(flag);
-                protection.save();
-            }
-
-            pStatement = prepare("SELECT * FROM " + prefix + "protections WHERE flags = 3"); // redstone
-
-            for (Protection protection : resolveProtections(pStatement)) {
-                Flag flag = new Flag(Flag.Type.MAGNET);
-                protection.addFlag(flag);
-                protection.save();
-            }
-
-            pStatement = prepare("SELECT * FROM " + prefix + "protections WHERE flags = 2"); // redstone
-
-            for (Protection protection : resolveProtections(pStatement)) {
-                Flag flag = new Flag(Flag.Type.REDSTONE);
-                protection.addFlag(flag);
-                protection.save();
-            }
-
-            dropColumn(prefix + "protections", "flags");
-        } catch (SQLException e) {
-
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
-    }
-
-    /**
-     * 4.0.0, update 6 (alpha7)
-     */
-    private void doUpdate400_6() {
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
-            statement.executeQuery("SELECT x FROM " + prefix + "history LIMIT 1");
-        } catch (SQLException e) {
-            //  add x, y, z
-            addColumn(prefix + "history", "x", "INTEGER");
-            addColumn(prefix + "history", "y", "INTEGER");
-            addColumn(prefix + "history", "z", "INTEGER");
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
+                    connection.close();
                 } catch (SQLException e) {
                 }
             }

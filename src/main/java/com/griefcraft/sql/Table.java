@@ -137,19 +137,7 @@ public class Table {
 
         // execute it directly to the database
         Statement statement = null;
-        try {
-            statement = database.getConnection().createStatement();
-            statement.executeUpdate(buffer.toString());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
+        database.executeUpdateNoException(buffer.toString());
 
         // database.log("Synched table " + prefix + name + " (" + columns.size() + " columns)");
 
