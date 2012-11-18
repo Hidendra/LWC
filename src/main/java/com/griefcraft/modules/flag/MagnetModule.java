@@ -41,6 +41,7 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.entity.CraftItem;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.InventoryHolder;
@@ -97,15 +98,17 @@ public class MagnetModule extends JavaModule {
                         }
 
                         Item item = (Item) entity;
-                        ItemStack stack = item.getItemStack();
+
+                        // native stack handle
+                        net.minecraft.server.ItemStack stackHandle = ((net.minecraft.server.EntityItem) ((CraftItem) item).getHandle()).itemStack;
 
                         // check if it is in the blacklist
-                        if (itemBlacklist.contains(stack.getTypeId())) {
+                        if (itemBlacklist.contains(stackHandle.id)) {
                             continue;
                         }
 
                         // check if the item is valid
-                        if (stack.getAmount() <= 0) {
+                        if (stackHandle.count <= 0) {
                             continue;
                         }
 
@@ -130,7 +133,6 @@ public class MagnetModule extends JavaModule {
 
             while ((item = items.poll()) != null) {
                 World world = item.getWorld();
-                ItemStack itemStack = item.getItemStack();
 
                 if (item.isDead()) {
                     continue;
@@ -152,6 +154,8 @@ public class MagnetModule extends JavaModule {
                     if (!protection.hasFlag(Flag.Type.MAGNET)) {
                         continue;
                     }
+
+                    ItemStack itemStack = item.getItemStack();
 
                     // Remove the items and suck them up :3
                     Map<Integer, ItemStack> remaining = lwc.depositItems(block, itemStack);
