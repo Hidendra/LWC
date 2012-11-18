@@ -129,6 +129,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -962,7 +963,8 @@ public class LWC {
         sender.sendMessage("Loading protections via STREAM mode");
 
         try {
-            Statement resultStatement = physicalDatabase.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+            Connection connection = physicalDatabase.createConnection();
+            Statement resultStatement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
             if (physicalDatabase.getType() == Database.Type.MySQL) {
                 resultStatement.setFetchSize(Integer.MIN_VALUE);
@@ -1007,6 +1009,7 @@ public class LWC {
             // Close the streaming statement
             result.close();
             resultStatement.close();
+            connection.close();
 
             // flush all of the queries
             fullRemoveProtections(sender, toRemove);
@@ -1039,7 +1042,8 @@ public class LWC {
         String prefix = getPhysicalDatabase().getPrefix();
 
         // create the statement to use
-        Statement statement = getPhysicalDatabase().getConnection().createStatement();
+        Connection connection = getPhysicalDatabase().createConnection();
+        Statement statement = connection.createStatement();
 
         while (iter.hasNext()) {
             int protectionId = iter.next();
@@ -1063,6 +1067,7 @@ public class LWC {
         }
 
         statement.close();
+        connection.close();
     }
 
     /**
@@ -1420,7 +1425,7 @@ public class LWC {
 
             physicalDatabase.load();
 
-            log("Using database: " + StringUtil.capitalizeFirstLetter(physicalDatabase.getConnection().getMetaData().getDriverVersion()));
+            log("Using database: " + physicalDatabase.getType().toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

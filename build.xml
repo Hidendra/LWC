@@ -65,6 +65,9 @@
         <mkdir dir="${bin}/core/"/>
         <mkdir dir="${bin}/core/resources/"/>
 
+        <!-- shade dbpool -->
+        <unzip src="lib/dbpool-5.0.jar" dest="${bin}/core/" />
+
         <!-- Timestamp, bitches -->
         <tstamp>
             <!-- Date format: MONTH DD YYYY e.g January 25, 2012 -->
