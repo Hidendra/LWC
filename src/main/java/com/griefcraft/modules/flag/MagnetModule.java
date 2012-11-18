@@ -40,6 +40,7 @@ import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.InventoryHolder;
@@ -252,21 +253,23 @@ public class MagnetModule extends JavaModule {
         int baseX = location.getBlockX();
         int baseY = location.getBlockY();
         int baseZ = location.getBlockZ();
+        World world = location.getWorld();
 
-        for (int x = baseX - radius; x < baseX + radius; x++) {
-            for (int y = baseY - radius; y < baseY + radius; y++) {
-                for (int z = baseZ - radius; z < baseZ + radius; z++) {
-                    Block block = location.getWorld().getBlockAt(x, y, z);
+        // native handle
+        net.minecraft.server.WorldServer worldHandle = ((CraftWorld) world).getHandle();
 
-                    try {
-                        if (block.getState() instanceof InventoryHolder) {
-                            found.add(block);
-                        }
-                    } catch (NullPointerException e) {
-                        LWC lwc = LWC.getInstance();
-                        lwc.log("Possibly invalid block found at [" + x + ", " + y + ", " + z + "]!");
-                    }
+        List<net.minecraft.server.TileEntity> entities = (List<net.minecraft.server.TileEntity>) worldHandle.getTileEntities(baseX - radius,  baseY - radius, baseZ - radius, baseX + radius, baseY + radius, baseZ + radius);
+
+        for (net.minecraft.server.TileEntity entity : entities) {
+            Block block = world.getBlockAt(entity.x, entity.y, entity.z);
+
+            try {
+                if (block.getState() instanceof InventoryHolder) {
+                    found.add(block);
                 }
+            } catch (NullPointerException e) {
+                LWC lwc = LWC.getInstance();
+                lwc.log("Possibly invalid block found at [" + entity.x + ", " + entity.y + ", " + entity.z + "]!");
             }
         }
 
