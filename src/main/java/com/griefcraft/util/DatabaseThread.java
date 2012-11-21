@@ -30,7 +30,6 @@ package com.griefcraft.util;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
-import com.griefcraft.sql.Database;
 
 import java.util.Iterator;
 import java.util.Queue;
@@ -123,8 +122,6 @@ public class DatabaseThread implements Runnable {
      */
     private void flushDatabase() {
         if (!updateQueue.isEmpty()) {
-            Database database = lwc.getPhysicalDatabase();
-
             // Begin iterating through the queue
             Iterator<Protection> iter = updateQueue.iterator();
             while (iter.hasNext()) {
