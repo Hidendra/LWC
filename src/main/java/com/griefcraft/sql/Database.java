@@ -157,6 +157,22 @@ public abstract class Database {
     }
 
     /**
+     * Safe a connection safely by not leaking connection objects
+     */
+    protected void safeClose(PreparedStatement statement) {
+        if (statement != null) {
+            try {
+                statement.close();
+            } catch (Exception e) {
+                try {
+                    statement.close();
+                } catch (Exception ex) { }
+            }
+        }
+        // TODO force close in the connection pool if possible
+    }
+
+    /**
      * Create a connection in the database pool
      *
      * @return
@@ -207,8 +223,13 @@ public abstract class Database {
         // Create the pool
         LWC lwc = LWC.getInstance();
         String connectionString = "jdbc:" + currentType.toString().toLowerCase() + ":" + getDatabasePath();
-        pool = new ConnectionPool("lwc", 2 /* minPool */, 15 /* maxPool */, 15 /* maxSize */, 180000 /* idleTimeout */,
-                connectionString, lwc.getConfiguration().getString("database.username"), lwc.getConfiguration().getString("database.password"));
+        if (currentType == Type.MySQL) {
+            pool = new ConnectionPool("lwc", 2 /* minPool */, 15 /* maxPool */, 15 /* maxSize */, 180000 /* idleTimeout */,
+                    connectionString, lwc.getConfiguration().getString("database.username"), lwc.getConfiguration().getString("database.password"));
+        } else { // safe method -- only 1 connection
+            pool = new ConnectionPool("lwc", 1 /* minPool */, 1 /* maxPool */, 1 /* maxSize */, 180000 /* idleTimeout */,
+                    connectionString, lwc.getConfiguration().getString("database.username"), lwc.getConfiguration().getString("database.password"));
+        }
         pool.setCaching(true);
         pool.init();
 
