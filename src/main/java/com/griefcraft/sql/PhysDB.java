@@ -467,7 +467,11 @@ public class PhysDB extends Database {
 
             // ok
             statement.executeUpdate();
-        } catch (SQLException e) { }
+        } catch (SQLException e) {
+
+        } finally {
+            safeClose(statement);
+        }
     }
 
     /**
@@ -513,6 +517,7 @@ public class PhysDB extends Database {
 
             statement.executeUpdate();
         } catch (SQLException e) {
+            safeClose(statement);
             // Already exists
             try {
                 PreparedStatement statement2 = prepare("UPDATE " + prefix + "internal SET value = ? WHERE name = ?");
@@ -524,6 +529,8 @@ public class PhysDB extends Database {
                 // Something bad went wrong
                 printException(ex);
             }
+        } finally {
+            safeClose(statement);
         }
     }
 
@@ -551,6 +558,7 @@ public class PhysDB extends Database {
             // close everything
             set.close();
         } catch (Exception e) {
+            safeClose(statement);
             // Doesn't exist, create it
             try {
                 PreparedStatement statement2 = prepare("INSERT INTO " + prefix + "internal (name, value) VALUES(?, ?)");
@@ -561,6 +569,8 @@ public class PhysDB extends Database {
                 statement2.executeUpdate();
                 statement2.close();
             } catch (SQLException ex) { }
+        } finally {
+            safeClose(statement);
         }
 
         return databaseVersion;
