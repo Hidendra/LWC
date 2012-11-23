@@ -1416,6 +1416,8 @@ public class LWC {
         log("Permissions API: " + Colors.Red + permissions.getClass().getSimpleName());
         log("Currency API: " + Colors.Red + currency.getClass().getSimpleName());
 
+        plugin.getUpdater().init();
+
         log("Connecting to " + Database.DefaultType);
         try {
             physicalDatabase.connect();

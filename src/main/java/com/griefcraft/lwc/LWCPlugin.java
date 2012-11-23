@@ -222,9 +222,6 @@ public class LWCPlugin extends JavaPlugin {
 
         // Load the rest of LWC
         lwc.load();
-
-        // let the updater do its thang
-        updater.init();
     }
 
     /**
