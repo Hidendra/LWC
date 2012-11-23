@@ -223,7 +223,12 @@ public class LWCPlayerListener implements Listener {
                 // if they're left clicking a sign, don't cancel the event
                 // we don't cancel it so that the text doesn't disappear from the sign
                 // if it clashes with a block break event. silly Bukkit :-(
-                if (!((material == Material.SIGN_POST || material == Material.WALL_SIGN) && event.getAction() == Action.LEFT_CLICK_BLOCK)) {
+                if (material == Material.SIGN_POST || material == Material.WALL_SIGN) {
+                    if (event.getAction() != Action.LEFT_CLICK_BLOCK) {
+                        event.setCancelled(true);
+                        event.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
+                    }
+                } else {
                     event.setCancelled(true);
                     event.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
                 }
