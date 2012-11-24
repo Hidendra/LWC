@@ -62,7 +62,6 @@ public class AdminVersion extends JavaModule {
 
         Updater updater = lwc.getPlugin().getUpdater();
         // force a reload of the latest versions
-        updater.loadVersions(false);
         String pluginColor = Colors.Green;
         Version currVersion = LWCInfo.FULL_VERSION;
         Version latestVersion = updater.getLatestVersion();
