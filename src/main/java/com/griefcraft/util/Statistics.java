@@ -140,11 +140,11 @@ public class Statistics {
         double cachePercentFilled = ((double) cache.size() / cache.capacity()) * 100;
 
         String cacheColour = Colors.Green;
-        if (cachePercentFilled > 35 && cachePercentFilled < 75) {
+        if (cachePercentFilled > 75 && cachePercentFilled < 85) {
             cacheColour = Colors.Yellow;
-        } else if (cachePercentFilled >  75 && cachePercentFilled < 90) {
+        } else if (cachePercentFilled > 85 && cachePercentFilled < 95) {
             cacheColour = Colors.Rose;
-        } else if (cachePercentFilled > 90) {
+        } else if (cachePercentFilled > 95) {
             cacheColour = Colors.Red;
         }
 
