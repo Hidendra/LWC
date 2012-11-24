@@ -1408,21 +1408,12 @@ public class LWC {
             currency = new EssentialsCurrency();
         }
 
-        log("Permissions API: " + Colors.Red + permissions.getClass().getSimpleName());
-        log("Currency API: " + Colors.Red + currency.getClass().getSimpleName());
-
         plugin.getUpdater().init();
 
         log("Connecting to " + Database.DefaultType);
         try {
             physicalDatabase.connect();
-
-            // We're connected, perform any necessary database changes
-            log("Performing any necessary database updates");
-
             physicalDatabase.load();
-
-            log("Using database: " + StringUtil.capitalizeFirstLetter(physicalDatabase.getConnection().getMetaData().getDriverVersion()));
         } catch (Exception e) {
             e.printStackTrace();
         }
