@@ -842,8 +842,6 @@ public class PhysDB extends Database {
             for (Protection protection : protections) {
                 cache.add(protection);
             }
-
-            log("Precached " + protections.size() + " protections");
         } catch (SQLException e) {
             printException(e);
         } finally {
