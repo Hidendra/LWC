@@ -266,9 +266,6 @@ public class LWCPlugin extends JavaPlugin {
                 locale.addExtensionBundle(optionalBundle);
             }
 
-            int overrides = optionalBundle != null ? optionalBundle.keySet().size() : 0;
-            log("Loaded " + locale.keySet().size() + " locale strings (" + overrides + " overrides)");
-
             // and now check if a bundled locale the same as the server's locale exists
             try {
                 optionalBundle = new PropertyResourceBundle(new InputStreamReader(file.getInputStream(file.getJarEntry("lang/lwc_" + localization + ".properties")), "UTF-8"));

@@ -108,6 +108,8 @@ public class Statistics {
         sender.sendMessage("  Running time: " + Colors.Green + TimeUtil.timeToString(getTimeRunningSeconds()));
         sender.sendMessage("  Players: " + Colors.Green + Bukkit.getServer().getOnlinePlayers().length + "/" + Bukkit.getServer().getMaxPlayers());
         sender.sendMessage("  Item entities: " + Colors.Green + getEntityCount(Item.class) + "/" + getEntityCount(null));
+        sender.sendMessage("  Permissions API: " + Colors.Green + lwc.getPermissions().getClass().getSimpleName());
+        sender.sendMessage("  Currency API: " + Colors.Green + lwc.getCurrency().getClass().getSimpleName());
         sender.sendMessage(" ");
         sender.sendMessage(Colors.Red + " ==== Modules ====");
 
@@ -131,15 +133,32 @@ public class Statistics {
         sender.sendMessage(" ");
 
         sender.sendMessage(Colors.Red + " ==== Cache ==== ");
+
+        StringBuffer buffer = new StringBuffer();
         ProtectionCache cache = lwc.getProtectionCache();
-        sender.sendMessage("  Refs: " + cache.size() + "/" + cache.capacity());
-        sender.sendMessage("  Reads: " + formatNumber(cache.getReads()) + " | " + String.format("%.2f", getAverage(cache.getReads())) + " / second");
-        sender.sendMessage("  Writes: " + formatNumber(cache.getWrites()) + " | " + String.format("%.2f", getAverage(cache.getWrites())) + " / second");
+
+        double cachePercentFilled = ((double) cache.size() / cache.capacity()) * 100;
+
+        String cacheColour = Colors.Green;
+        if (cachePercentFilled > 35 && cachePercentFilled < 75) {
+            cacheColour = Colors.Yellow;
+        } else if (cachePercentFilled >  75 && cachePercentFilled < 90) {
+            cacheColour = Colors.Rose;
+        } else if (cachePercentFilled > 90) {
+            cacheColour = Colors.Red;
+        }
+
+        buffer.append("  Usage: " + cacheColour + String.format("%.2f", cachePercentFilled) + "% " + Colors.White + " ( " + cache.size() + "/" + cache.capacity() + " )");
+        buffer.append("  [ Reads: " + formatNumber(cache.getReads()) + " <=> " + String.format("%.2f", getAverage(cache.getReads())) + " r/s ]");
+        buffer.append("  [ Writes: " + formatNumber(cache.getWrites()) + " <=> " + String.format("%.2f", getAverage(cache.getWrites())) + " w/s ]");
+        sender.sendMessage(buffer.toString());
+        // sender.sendMessage("  Reads: " + formatNumber(cache.getReads()) + " | " + String.format("%.2f", getAverage(cache.getReads())) + " / second");
+        // sender.sendMessage("  Writes: " + formatNumber(cache.getWrites()) + " | " + String.format("%.2f", getAverage(cache.getWrites())) + " / second");
     }
 
     /**
      * Format a number
-     * 
+     *
      * @param number
      * @return
      */
