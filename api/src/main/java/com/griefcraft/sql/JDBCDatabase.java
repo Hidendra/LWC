@@ -30,9 +30,11 @@
 package com.griefcraft.sql;
 
 import com.griefcraft.Engine;
+import com.griefcraft.ProtectionAccess;
 import com.griefcraft.model.AbstractAttribute;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.Role;
+import com.griefcraft.model.RoleDefinition;
 import com.griefcraft.model.State;
 import com.griefcraft.world.Location;
 import snaq.db.ConnectionPool;
@@ -327,7 +329,23 @@ public class JDBCDatabase implements Database {
     }
 
     public void saveOrCreateRole(Role role) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        try {
+            Connection connection = pool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_roles SET protection_id = ?, type = ?, name = ?, role = ? ON DUPLICATE KEY UPDATE name = VALUES(name), role = VALUES(role)");
+
+            try {
+                statement.setInt(1, role.getProtection().getId());
+                statement.setInt(2, role.getType());
+                statement.setString(3, role.getRoleName());
+                statement.setInt(4, role.getRoleAccess().ordinal());
+                statement.executeUpdate();
+            } finally {
+                safeClose(statement);
+                safeClose(connection);
+            }
+        } catch (SQLException e) {
+            handleException(e);
+        }
     }
 
     public void removeRole(Role role) {
@@ -422,6 +440,39 @@ public class JDBCDatabase implements Database {
         }
 
         return attributes;
+    }
+
+    public Set<Role> loadProtectionRoles(Protection protection) {
+        Set<Role> roles = new HashSet<Role>();
+
+        try {
+            Connection connection = pool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT type, name, role FROM " + details.getPrefix() + "protection_roles WHERE protection_id = ?");
+
+            try {
+                statement.setInt(1, protection.getId());
+
+                ResultSet set = statement.executeQuery();
+
+                while (set.next()) {
+                    RoleDefinition definition = engine.getRoleManager().getDefinition(set.getInt("type"));
+                    Role role = definition.createRole(protection, set.getString("name"), ProtectionAccess.values()[set.getInt("role")]);
+
+                    if (role != null) {
+                        roles.add(role);
+                    }
+                }
+
+                set.close();
+            } finally {
+                safeClose(statement);
+                safeClose(connection);
+            }
+        } catch (SQLException e) {
+            handleException(e);
+        }
+
+        return roles;
     }
 
     /**

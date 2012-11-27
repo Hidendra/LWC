@@ -124,4 +124,12 @@ public interface Database {
      */
     public Set<AbstractAttribute> loadProtectionAttributes(Protection protection);
 
+    /**
+     * Load all of a protection's roles
+     *
+     * @param protection
+     * @return
+     */
+    public Set<Role> loadProtectionRoles(Protection protection);
+
 }

@@ -39,6 +39,11 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
         this.roleAccess = roleAccess;
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + ": roleName=\"" + roleName + "\" access=" + roleAccess.toString() + " protection=\"" + protection + "\"";
+    }
+
     /**
      * Get the protection that this role is for
      *
@@ -93,7 +98,7 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
 
     @Override
     public boolean isSaveNeeded() {
-        return state == State.MODIFIED;
+        return state == State.MODIFIED || state == State.NEW;
     }
 
     @Override

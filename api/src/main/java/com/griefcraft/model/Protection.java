@@ -115,6 +115,10 @@ public class Protection extends AbstractSavable {
         for (AbstractAttribute<?> attribute : engine.getDatabase().loadProtectionAttributes(this)) {
             addAttribute(attribute);
         }
+
+        for (Role role : engine.getDatabase().loadProtectionRoles(this)) {
+            addRole(role);
+        }
     }
 
     /**
@@ -301,6 +305,13 @@ public class Protection extends AbstractSavable {
             if (attribute.getState() == State.NEW || attribute.getState() == State.MODIFIED) {
                 engine.getDatabase().saveOrCreateProtectionAttribute(this, attribute);
                 attribute.setState(State.UNMODIFIED);
+            }
+        }
+
+        // save each role
+        for (Role role : roles) {
+            if (role.isSaveNeeded()) {
+                role.saveImmediately();
             }
         }
     }

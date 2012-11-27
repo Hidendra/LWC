@@ -38,6 +38,7 @@ import com.griefcraft.attribute.ProtectionAttributeFactory;
 import com.griefcraft.entity.Player;
 import com.griefcraft.model.AbstractAttribute;
 import com.griefcraft.model.Protection;
+import com.griefcraft.roles.PlayerRole;
 import com.griefcraft.world.Block;
 import com.griefcraft.world.Location;
 
@@ -77,8 +78,19 @@ public class SimpleProtectionManager implements ProtectionManager {
     }
 
     public Protection createProtection(String owner, Location location) {
-        // TODO check arguments
-        return engine.getDatabase().createProtection(owner, location);
+        // First create the protection
+        Protection protection = engine.getDatabase().createProtection(owner, location);
+
+        // ensure it was created
+        if (protection == null) {
+            return null;
+        }
+
+        // add the Owner role to the database for the player
+        protection.addRole(new PlayerRole(engine, protection, owner, ProtectionAccess.OWNER));
+        protection.save();
+
+        return protection;
     }
 
     public boolean defaultPlayerInteractAction(Protection protection, Player player) {
