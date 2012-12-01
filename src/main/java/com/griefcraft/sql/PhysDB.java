@@ -893,6 +893,11 @@ public class PhysDB extends Database {
         }
         // System.out.println("loadProtection() => QUERYING");
 
+        // not in cache; abort
+        if (LWC.getInstance().isInSafeMode()) {
+            return null;
+        }
+
         PreparedStatement statement = null;
         try {
             statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE x = ? AND y = ? AND z = ? AND world = ?");
