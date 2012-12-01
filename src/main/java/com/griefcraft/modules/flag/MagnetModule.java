@@ -28,6 +28,8 @@
 
 package com.griefcraft.modules.flag;
 
+import com.griefcraft.bukkit.EntityBlock;
+import com.griefcraft.bukkit.StorageMinecartBlock;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Flag;
 import com.griefcraft.model.Protection;
@@ -44,6 +46,7 @@ import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftItem;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.StorageMinecart;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
@@ -52,8 +55,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 
 public class MagnetModule extends JavaModule {
 
@@ -87,7 +88,85 @@ public class MagnetModule extends JavaModule {
     /**
      * The current entity queue
      */
-    private final Queue<Item> items = new LinkedList<Item>();
+    private final Queue<Node> items = new LinkedList<Node>();
+
+    /**
+     * A queue of the items that need to be worked on
+     */
+    private final Queue<Item> work = new LinkedList<Item>();
+
+    private final class Node {
+
+        /**
+         * The item that is to be picked up
+         */
+        final Item item;
+
+        /**
+         * The block that the item should be placed into
+         */
+        final Block block;
+
+        public Node(Item item, Block block) {
+            this.item = item;
+            this.block = block;
+        }
+
+    }
+
+    /**
+     * Sync task, freshens the item queue when it is empty
+     */
+    private class MagnetRefreshTask implements Runnable {
+
+        public void run() {
+            Server server = Bukkit.getServer();
+
+            if (work.size() == 0 && items.size() == 0) {
+                for (World world : server.getWorlds()) {
+                    for (Item item : world.getEntitiesByClass(Item.class)) {
+                        work.add(item);
+                    }
+                }
+            } else if (work.size() > 0) {
+                Item item;
+                int checked = 0;
+                while ((item = work.poll()) != null) {
+                    // native stack handle
+                    net.minecraft.server.ItemStack stackHandle = ((net.minecraft.server.EntityItem) ((CraftItem) item).getHandle()).itemStack;
+
+                    // check if it is in the blacklist
+                    if (itemBlacklist.contains(stackHandle.id)) {
+                        continue;
+                    }
+
+                    // check if the item is valid
+                    if (stackHandle.count <= 0) {
+                        continue;
+                    }
+
+                    // has the item been living long enough?
+                    if (item.getPickupDelay() > item.getTicksLived()) {
+                        continue; // a player wouldn't have had a chance to pick it up yet
+                    }
+
+                    // Check for usable blocks
+                    long start = System.currentTimeMillis();
+                    Block block = scanForInventoryBlock(item.getLocation(), radius);
+                    if (block == null) {
+                        continue;
+                    }
+
+                    items.offer(new Node(item, block));
+                    checked ++;
+
+                    if (checked > 500) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
 
     // does all of the work
     // searches the worlds for items and magnet chests nearby
@@ -96,63 +175,13 @@ public class MagnetModule extends JavaModule {
             final Server server = Bukkit.getServer();
             final LWC lwc = LWC.getInstance();
 
-            // Do we need to requeue?
-            if (items.size() == 0) {
-                Future<Void> itemLoader = server.getScheduler().callSyncMethod(lwc.getPlugin(), new Callable<Void>() {
-
-                    public Void call() {
-                        for (World world : server.getWorlds()) {
-                            for (Entity entity : world.getEntities()) {
-                                if (!(entity instanceof Item)) {
-                                    continue;
-                                }
-                                
-                                Item item = (Item) entity;
-                                
-                                // native stack handle
-                                net.minecraft.server.ItemStack stackHandle = ((net.minecraft.server.EntityItem) ((CraftItem) item).getHandle()).itemStack;
-                                
-                                // check if it is in the blacklist
-                                if (itemBlacklist.contains(stackHandle.id)) {
-                                    continue;
-                                }
-                                
-                                // check if the item is valid
-                                if (stackHandle.count <= 0) {
-                                    continue;
-                                }
-                                
-                                // has the item been living long enough?
-                                if (item.getPickupDelay() > item.getTicksLived()) {
-                                    continue; // a player wouldn't have had a chance to pick it up yet
-                                }
-                                
-                                // Check for usable blocks
-                                if (scanForInventoryBlock(item.getLocation(), radius) == null) {
-                                    continue;
-                                }
-                                
-                                items.offer(item);
-                            }
-                        }
-
-                        return null;
-                    }
-
-                });
-                
-                // load the items
-                try {
-                    itemLoader.get();
-                } catch (Exception e) { }
-            }
-
             // Throttle amount of items polled
             int count = 0;
-            Item item;
+            Node node;
 
-            int i = 1;
-            while ((item = items.poll()) != null) {
+            while ((node = items.poll()) != null) {
+                final Item item = node.item;
+                final Block block = node.block;
                 final World world = item.getWorld();
 
                 if (item.isDead()) {
@@ -164,39 +193,22 @@ public class MagnetModule extends JavaModule {
                     continue;
                 }
 
-                // create the future task that will grab the inventory blocks from the world
-                final Item finalItem = item;
-                Future<Block> inventoryBlockCallable = server.getScheduler().callSyncMethod(lwc.getPlugin(), new Callable<Block>() {
-
-                    public Block call() {
-                        return scanForInventoryBlock(finalItem.getLocation(), radius);
-                    }
-
-                });
-
-
-                Block testBlock = null;
-                try {
-                    testBlock = inventoryBlockCallable.get();
-                } catch (Exception e) { }
-
-                final Block block = testBlock;
-
                 if (block != null) {
-
                     Runnable runnable = new Runnable() {
                         public void run() {
-                            Protection protection = lwc.findProtection(block);
+                            Protection protection;
 
-                            if (protection == null) {
+                            if (block instanceof EntityBlock) {
+                                protection = lwc.getPhysicalDatabase().loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
+                            } else {
+                                protection = lwc.findProtection(block);
+                            }
+
+                            if (protection == null || !protection.hasFlag(Flag.Type.MAGNET)) {
                                 return;
                             }
 
-                            if (!protection.hasFlag(Flag.Type.MAGNET)) {
-                                return;
-                            }
-
-                            ItemStack itemStack = finalItem.getItemStack();
+                            ItemStack itemStack = item.getItemStack();
 
                             // Remove the items and suck them up :3
                             Map<Integer, ItemStack> remaining = lwc.depositItems(block, itemStack);
@@ -215,12 +227,12 @@ public class MagnetModule extends JavaModule {
                             }
 
                             // remove the item on the ground
-                            finalItem.remove();
+                            item.remove();
 
                             // if we have a remainder, we need to drop them
                             if (remaining.size() > 0) {
                                 for (ItemStack stack : remaining.values()) {
-                                    world.dropItemNaturally(finalItem.getLocation(), stack);
+                                    world.dropItemNaturally(item.getLocation(), stack);
                                 }
                             }
                         }
@@ -285,8 +297,8 @@ public class MagnetModule extends JavaModule {
         }
 
         // register our search thread schedule
-        MagnetTask searchThread = new MagnetTask();
-        lwc.getPlugin().getServer().getScheduler().scheduleAsyncRepeatingTask(lwc.getPlugin(), searchThread, 50, 50);
+        lwc.getPlugin().getServer().getScheduler().scheduleAsyncRepeatingTask(lwc.getPlugin(), new MagnetTask(), 50, 50);
+        lwc.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(lwc.getPlugin(), new MagnetRefreshTask(), 50, 50);
     }
 
     /**
@@ -317,6 +329,18 @@ public class MagnetModule extends JavaModule {
             } catch (NullPointerException e) {
                 LWC lwc = LWC.getInstance();
                 lwc.log("Possibly invalid block found at [" + entity.x + ", " + entity.y + ", " + entity.z + "]!");
+            }
+        }
+
+        // Storage minecarts
+        for (Entity minecartEntity : world.getEntitiesByClass(StorageMinecart.class)) {
+            StorageMinecart minecart = (StorageMinecart) minecartEntity;
+            Location l = minecart.getLocation();
+
+            if (l.getX() >= baseX - radius && l.getX() <= baseX + radius
+                    && l.getY() >= baseY - radius && l.getY() <= baseY + radius
+                    && l.getZ() >= baseZ - radius && l.getZ() <= baseZ + radius) {
+                return new StorageMinecartBlock(minecart);
             }
         }
 
