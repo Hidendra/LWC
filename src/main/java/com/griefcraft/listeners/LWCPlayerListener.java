@@ -37,6 +37,7 @@ import com.griefcraft.scripting.Module;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCDropItemEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
+import com.griefcraft.util.Colors;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -140,10 +141,16 @@ public class LWCPlayerListener implements Listener {
     }
 
     private boolean onPlayerEntityInteract(Player player, Entity entity, boolean cancelled) {
+        LWC lwc = LWC.getInstance();
+        if (lwc.isInSafeMode()) {
+            player.sendMessage(Colors.Red + "NOTE: The plugin LWC is in safe mode due to an outside error (database error, or plugin error)");
+            player.sendMessage(Colors.Red + "If you are the server admin, check the startup log for more information.");
+            return true;
+        }
+
         int A = EntityBlock.POSITION_OFFSET + entity.getUniqueId().hashCode();
 
         // attempt to load the protection for this cart
-        LWC lwc = LWC.getInstance();
         Protection protection = lwc.getPhysicalDatabase().loadProtection(entity.getWorld().getName(), A, A, A);
         LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
 
@@ -280,6 +287,13 @@ public class LWCPlayerListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
+        }
+
+        if (lwc.isInSafeMode() && lwc.isProtectable(material)) {
+            player.sendMessage(Colors.Red + "NOTE: The plugin LWC is in safe mode due to an outside error (database error, or plugin error)");
+            player.sendMessage(Colors.Red + "If you are the server admin, check the startup log for more information.");
+            event.setCancelled(true);
+            return;
         }
 
         try {
