@@ -28,6 +28,7 @@
 
 package com.griefcraft.modules.create;
 
+import com.griefcraft.bukkit.EntityBlock;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Action;
 import com.griefcraft.model.LWCPlayer;
@@ -42,6 +43,7 @@ import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.StringUtil;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class CreateModule extends JavaModule {
@@ -106,10 +108,22 @@ public class CreateModule extends JavaModule {
 
         // misc data we'll use later
         String playerName = player.getName();
+
         String worldName = block.getWorld().getName();
-        int blockX = block.getX();
-        int blockY = block.getY();
-        int blockZ = block.getZ();
+        int blockX;
+        int blockY;
+        int blockZ;
+
+        if (block instanceof EntityBlock) {
+            Entity entity = ((EntityBlock) block).getEntity();
+            blockX = EntityBlock.POSITION_OFFSET + entity.getUniqueId().hashCode();
+            blockY = EntityBlock.POSITION_OFFSET + entity.getUniqueId().hashCode();
+            blockZ = EntityBlock.POSITION_OFFSET + entity.getUniqueId().hashCode();
+        } else {
+            blockX = block.getX();
+            blockY = block.getY();
+            blockZ = block.getZ();
+        }
 
         lwc.removeModes(player);
         LWCProtectionRegisterEvent evt = new LWCProtectionRegisterEvent(player.getBukkitPlayer(), block);

@@ -28,6 +28,7 @@
 
 package com.griefcraft.modules.doors;
 
+import com.griefcraft.bukkit.StorageMinecartBlock;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Flag;
 import com.griefcraft.model.Protection;
@@ -113,6 +114,10 @@ public class DoorsModule extends JavaModule {
 
         Protection protection = event.getProtection();
         Block block = event.getEvent().getClickedBlock(); // The block they actually clicked :)
+
+        if (block instanceof StorageMinecartBlock) {
+            return;
+        }
 
         // Check if the block is even something that should be opened
         if (!isValid(block.getType())) {
