@@ -34,6 +34,7 @@ import com.griefcraft.listeners.LWCPlayerListener;
 import com.griefcraft.listeners.LWCServerListener;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.sql.Database;
+import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtil;
 import com.griefcraft.util.Updater;
 import com.griefcraft.util.locale.LWCResourceBundle;
@@ -97,6 +98,12 @@ public class LWCPlugin extends JavaPlugin {
         String commandName = command.getName().toLowerCase();
         String argString = StringUtil.join(args, 0);
         boolean isPlayer = (sender instanceof Player); // check if they're a player
+
+        if (lwc.isInSafeMode()) {
+            sender.sendMessage(Colors.Red + "NOTE: The plugin LWC is in safe mode due to an outside error (database error, or plugin error)");
+            sender.sendMessage(Colors.Red + "If you are the server admin, check the startup log for more information.");
+            return true;
+        }
 
         // these can only apply to players, not the console (who has absolute player :P)
         if (isPlayer) {
