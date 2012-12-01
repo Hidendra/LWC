@@ -28,6 +28,8 @@
 
 package com.griefcraft.lwc;
 
+import com.griefcraft.bukkit.EntityBlock;
+import com.griefcraft.bukkit.StorageMinecartBlock;
 import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.integration.ICurrency;
 import com.griefcraft.integration.IPermissions;
@@ -119,7 +121,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -444,53 +445,58 @@ public class LWC {
      * @return remaining items (if any)
      */
     public Map<Integer, ItemStack> depositItems(Block block, ItemStack itemStack) {
-        BlockState blockState;
+        Inventory inventory = null;
 
-        if ((blockState = block.getState()) != null && (blockState instanceof InventoryHolder)) {
-            Block doubleChestBlock = null;
-            InventoryHolder holder = (InventoryHolder) blockState;
+        if (block instanceof StorageMinecartBlock) {
+            inventory = ((StorageMinecartBlock) block).getMinecart().getInventory();
+        } else if (block.getState() instanceof InventoryHolder) {
+            inventory = ((InventoryHolder) block.getState()).getInventory();
+        }
 
-            if (block.getType() == Material.CHEST) {
-                doubleChestBlock = findAdjacentBlock(block, Material.CHEST);
-            } else if (block.getType() == Material.FURNACE || block.getType() == Material.BURNING_FURNACE) {
-                Inventory inventory = holder.getInventory();
+        if (inventory == null) {
+            return null;
+        }
 
-                if (inventory.getItem(0) != null && inventory.getItem(1) != null) {
-                    if (inventory.getItem(0).getType() == itemStack.getType()
-                            && inventory.getItem(0).getData().getData() == itemStack.getData().getData()
-                            && inventory.getItem(0).getMaxStackSize() >= (inventory.getItem(0).getAmount() + itemStack.getAmount())) {
-                        // ItemStack fits on Slot 0
-                    } else if (inventory.getItem(1).getType() == itemStack.getType()
-                            && inventory.getItem(1).getData().getData() == itemStack.getData().getData()
-                            && inventory.getItem(1).getMaxStackSize() >= (inventory.getItem(1).getAmount() + itemStack.getAmount())) {
-                        // ItemStack fits on Slot 1
-                    } else {
-                        return null;
-                    }
+        Block doubleChestBlock = null;
+
+        if (block.getType() == Material.CHEST) {
+            doubleChestBlock = findAdjacentBlock(block, Material.CHEST);
+        } else if (block.getType() == Material.FURNACE || block.getType() == Material.BURNING_FURNACE) {
+            if (inventory.getItem(0) != null && inventory.getItem(1) != null) {
+                if (inventory.getItem(0).getType() == itemStack.getType()
+                        && inventory.getItem(0).getData().getData() == itemStack.getData().getData()
+                        && inventory.getItem(0).getMaxStackSize() >= (inventory.getItem(0).getAmount() + itemStack.getAmount())) {
+                    // ItemStack fits on Slot 0
+                } else if (inventory.getItem(1).getType() == itemStack.getType()
+                        && inventory.getItem(1).getData().getData() == itemStack.getData().getData()
+                        && inventory.getItem(1).getMaxStackSize() >= (inventory.getItem(1).getAmount() + itemStack.getAmount())) {
+                    // ItemStack fits on Slot 1
+                } else {
+                    return null;
                 }
             }
+        }
 
-            if (itemStack.getAmount() <= 0) {
-                return new HashMap<Integer, ItemStack>();
+        if (itemStack.getAmount() <= 0) {
+            return new HashMap<Integer, ItemStack>();
+        }
+
+        Map<Integer, ItemStack> remaining = inventory.addItem(itemStack);
+
+        // we have remainders, deal with it
+        if (remaining.size() > 0) {
+            int key = remaining.keySet().iterator().next();
+            ItemStack remainingItemStack = remaining.get(key);
+
+            // is it a double chest ?????
+            if (doubleChestBlock != null) {
+                InventoryHolder holder2 = (InventoryHolder) doubleChestBlock.getState();
+                remaining = holder2.getInventory().addItem(remainingItemStack);
             }
 
-            Map<Integer, ItemStack> remaining = holder.getInventory().addItem(itemStack);
-
-            // we have remainders, deal with it
+            // recheck remaining in the event of double chest being used
             if (remaining.size() > 0) {
-                int key = remaining.keySet().iterator().next();
-                ItemStack remainingItemStack = remaining.get(key);
-
-                // is it a double chest ?????
-                if (doubleChestBlock != null) {
-                    InventoryHolder holder2 = (InventoryHolder) doubleChestBlock.getState();
-                    remaining = holder2.getInventory().addItem(remainingItemStack);
-                }
-
-                // recheck remaining in the event of double chest being used
-                if (remaining.size() > 0) {
-                    return remaining;
-                }
+                return remaining;
             }
         }
 
@@ -912,6 +918,9 @@ public class LWC {
      * @return
      */
     public static String materialToString(Block block) {
+        if (block instanceof EntityBlock) {
+            return ((EntityBlock) block).getEntity().getClass().getSimpleName(); // TODO
+        }
         return materialToString(block.getType());
     }
 
@@ -1112,6 +1121,10 @@ public class LWC {
      * @return
      */
     public boolean isProtectable(Block block) {
+        if (block instanceof EntityBlock) {
+            return true; // TODO
+        }
+
         return isProtectable(block.getType());
     }
 
@@ -1153,7 +1166,7 @@ public class LWC {
      */
     public Protection findProtection(Block block) {
         // If the block type is AIR, then we have a problem .. but attempt to load a protection anyway
-        if (block.getType() == Material.AIR) {
+        if (block.getType() == Material.AIR || block instanceof EntityBlock) {
             // We won't be able to match any other blocks anyway, so the least we can do is attempt to load a protection
             return physicalDatabase.loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
         }
@@ -1319,6 +1332,10 @@ public class LWC {
      * @return
      */
     public String resolveProtectionConfiguration(Material material, String node) {
+        if (material == null) {
+            return null;
+        }
+
         String cacheKey = material.toString() + node;
         if (protectionConfigurationCache.containsKey(cacheKey)) {
             return protectionConfigurationCache.get(cacheKey);

@@ -28,6 +28,7 @@
 
 package com.griefcraft.listeners;
 
+import com.griefcraft.bukkit.EntityBlock;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.LWCPlayer;
@@ -38,14 +39,20 @@ import com.griefcraft.scripting.event.LWCDropItemEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.StorageMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.hanging.HangingBreakEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.InventoryHolder;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -80,6 +87,151 @@ public class LWCPlayerListener implements Listener {
         if (evt.isCancelled()) {
             event.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void hangingBreakByEvent(HangingBreakByEntityEvent event) {
+        if (!(event.getRemover() instanceof Player)) {
+            System.out.println("event.getPlayer() != Player -> hangingBreak():LWC");
+            // TODO remove after some testing
+            return;
+        }
+
+        Entity entity = event.getEntity();
+
+        if (onPlayerEntityInteract((Player) event.getRemover(), entity, event.isCancelled())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void hangingBreak(HangingBreakEvent event) {
+        Entity entity = event.getEntity();
+        int A = EntityBlock.POSITION_OFFSET + entity.getUniqueId().hashCode();
+
+        // attempt to load the protection for this cart
+        LWC lwc = LWC.getInstance();
+        Protection protection = lwc.getPhysicalDatabase().loadProtection(entity.getWorld().getName(), A, A, A);
+
+        if (protection != null) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void storageMinecraftInventoryOpen(InventoryOpenEvent event) {
+        InventoryHolder holder = event.getInventory().getHolder();
+
+        if (!(holder instanceof StorageMinecart)) {
+            return;
+        }
+
+        if (!(event.getPlayer() instanceof Player)) {
+            System.out.println("event.getPlayer() != Player -> storageMinecraftInventoryOpen():LWC");
+            // TODO remove after some testing
+            return;
+        }
+
+        Entity entity = (Entity) holder;
+
+        if (onPlayerEntityInteract((Player) event.getPlayer(), entity, event.isCancelled())) {
+            event.setCancelled(true);
+        }
+    }
+
+    private boolean onPlayerEntityInteract(Player player, Entity entity, boolean cancelled) {
+        int A = EntityBlock.POSITION_OFFSET + entity.getUniqueId().hashCode();
+
+        // attempt to load the protection for this cart
+        LWC lwc = LWC.getInstance();
+        Protection protection = lwc.getPhysicalDatabase().loadProtection(entity.getWorld().getName(), A, A, A);
+        LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
+
+        try {
+            Set<String> actions = lwcPlayer.getActionNames();
+            Module.Result result;
+            boolean canAccess = lwc.canAccessProtection(player, protection);
+
+            // Calculate if the player has a pending action (i.e any action besides 'interacted')
+            int actionCount = actions.size();
+            boolean hasInteracted = actions.contains("interacted");
+            boolean hasPendingAction = (hasInteracted && actionCount > 1) || (!hasInteracted && actionCount > 0);
+
+            // If the event was cancelled and they have an action, warn them
+            if (cancelled) {
+                // only send it if a non-"interacted" action is set which is always set on the player
+                if (hasPendingAction) {
+                    lwc.sendLocale(player, "lwc.pendingaction");
+                }
+
+                // it's cancelled, do not continue !
+                return false;
+            }
+
+            // register in an action what protection they interacted with (if applicable.)
+            if (protection != null) {
+                com.griefcraft.model.Action action = new com.griefcraft.model.Action();
+                action.setName("interacted");
+                action.setPlayer(lwcPlayer);
+                action.setProtection(protection);
+
+                lwcPlayer.addAction(action);
+            }
+
+            // events are only used when they already have an action pending
+            boolean canAdmin = lwc.canAdminProtection(player, protection);
+            EntityBlock fakeBlock = new EntityBlock(entity);
+            PlayerInteractEvent fakeEvent = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, null, fakeBlock, null);
+
+            if (protection != null) {
+                LWCProtectionInteractEvent evt = new LWCProtectionInteractEvent(fakeEvent, protection, actions, canAccess, canAdmin);
+                lwc.getModuleLoader().dispatchEvent(evt);
+
+                result = evt.getResult();
+            } else {
+                LWCBlockInteractEvent evt = new LWCBlockInteractEvent(fakeEvent, fakeBlock, actions);
+                lwc.getModuleLoader().dispatchEvent(evt);
+
+                result = evt.getResult();
+            }
+
+            if (result == Module.Result.ALLOW) {
+                return false;
+            }
+
+            // optional.onlyProtectIfOwnerIsOnline
+            if (protection != null && !canAccess && lwc.getConfiguration().getBoolean("optional.onlyProtectWhenOwnerIsOnline", false)) {
+                Player owner = protection.getBukkitOwner();
+
+                // If they aren't online, allow them in :P
+                if (owner == null || !owner.isOnline()) {
+                    return false;
+                }
+            }
+
+            // optional.onlyProtectIfOwnerIsOffline
+            if (protection != null && !canAccess && lwc.getConfiguration().getBoolean("optional.onlyProtectWhenOwnerIsOffline", false)) {
+                Player owner = protection.getBukkitOwner();
+
+                // If they aren't online, allow them in :P
+                if (owner != null && owner.isOnline()) {
+                    return false;
+                }
+            }
+
+            if (result == Module.Result.DEFAULT) {
+                canAccess = lwc.enforceAccess(player, protection, fakeBlock, canAccess);
+            }
+
+            if (!canAccess || result == Module.Result.CANCEL) {
+                return true;
+            }
+        } catch (Exception e) {
+            lwc.sendLocale(player, "protection.internalerror", "id", "PLAYER_INTERACT");
+            e.printStackTrace();
+            return true;
+        }
+        return false;
     }
 
 /*
