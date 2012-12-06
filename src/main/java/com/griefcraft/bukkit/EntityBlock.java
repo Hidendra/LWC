@@ -29,11 +29,24 @@
 
 package com.griefcraft.bukkit;
 
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.entity.Entity;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.MetadataValue;
+import org.bukkit.plugin.Plugin;
 
-public class EntityBlock extends CraftBlock {
+import java.util.Collection;
+import java.util.List;
+
+public class EntityBlock implements Block {
 
     /**
      * The entity block id
@@ -51,31 +64,25 @@ public class EntityBlock extends CraftBlock {
     private Entity entity;
 
     public EntityBlock(Entity entity) {
-        super(null, 0, 0, 0);
         this.entity = entity;
     }
 
-    @Override
     public int getX() {
         return POSITION_OFFSET + entity.getUniqueId().hashCode();
     }
 
-    @Override
     public int getY() {
         return POSITION_OFFSET + entity.getUniqueId().hashCode();
     }
 
-    @Override
     public int getZ() {
         return POSITION_OFFSET + entity.getUniqueId().hashCode();
     }
 
-    @Override
     public int getTypeId() {
         return 5000;
     }
 
-    @Override
     public World getWorld() {
         return entity.getWorld();
     }
@@ -84,4 +91,159 @@ public class EntityBlock extends CraftBlock {
         return entity;
     }
 
+    public Location getLocation() {
+        return entity.getLocation();
+    }
+
+    public Chunk getChunk() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void setData(byte b) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void setData(byte b, boolean b2) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void setType(Material material) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public boolean setTypeId(int i) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public boolean setTypeId(int i, boolean b) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public boolean setTypeIdAndData(int i, byte b, boolean b2) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public BlockFace getFace(Block block) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public BlockState getState() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public Biome getBiome() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void setBiome(Biome biome) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public boolean isBlockPowered() {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public boolean isBlockIndirectlyPowered() {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public boolean isBlockFacePowered(BlockFace blockFace) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public boolean isBlockFaceIndirectlyPowered(BlockFace blockFace) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public int getBlockPower(BlockFace blockFace) {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public int getBlockPower() {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public boolean isEmpty() {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public boolean isLiquid() {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public double getTemperature() {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public double getHumidity() {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public PistonMoveReaction getPistonMoveReaction() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public boolean breakNaturally() {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public boolean breakNaturally(ItemStack itemStack) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public Collection<ItemStack> getDrops() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public Collection<ItemStack> getDrops(ItemStack itemStack) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public byte getData() {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public Block getRelative(int i, int i2, int i3) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public Block getRelative(BlockFace blockFace) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public Block getRelative(BlockFace blockFace, int i) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public Material getType() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public byte getLightLevel() {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public byte getLightFromSky() {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public byte getLightFromBlocks() {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void setMetadata(String s, MetadataValue metadataValue) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public List<MetadataValue> getMetadata(String s) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public boolean hasMetadata(String s) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void removeMetadata(String s, Plugin plugin) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }
