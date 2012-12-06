@@ -42,8 +42,6 @@ import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.entity.CraftItem;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.StorageMinecart;
@@ -137,15 +135,15 @@ public class MagnetModule extends JavaModule {
                     }
 
                     // native stack handle
-                    net.minecraft.server.ItemStack stackHandle = ((net.minecraft.server.EntityItem) ((CraftItem) item).getHandle()).itemStack;
+                    ItemStack stack = item.getItemStack();
 
                     // check if it is in the blacklist
-                    if (itemBlacklist.contains(stackHandle.id)) {
+                    if (itemBlacklist.contains(stack.getTypeId())) {
                         continue;
                     }
 
                     // check if the item is valid
-                    if (stackHandle.count <= 0) {
+                    if (stack.getAmount() <= 0) {
                         continue;
                     }
 
@@ -318,21 +316,20 @@ public class MagnetModule extends JavaModule {
         int baseZ = location.getBlockZ();
         World world = location.getWorld();
 
-        // native handle
-        net.minecraft.server.WorldServer worldHandle = ((CraftWorld) world).getHandle();
+        for (int x = baseX - radius; x < baseX + radius; x++) {
+            for (int y = baseY - radius; y < baseY + radius; y++) {
+                for (int z = baseZ - radius; z < baseZ + radius; z++) {
+                    Block block = world.getBlockAt(x, y, z);
 
-        List<net.minecraft.server.TileEntity> entities = (List<net.minecraft.server.TileEntity>) worldHandle.getTileEntities(baseX - radius,  baseY - radius, baseZ - radius, baseX + radius, baseY + radius, baseZ + radius);
-
-        for (net.minecraft.server.TileEntity entity : entities) {
-            Block block = world.getBlockAt(entity.x, entity.y, entity.z);
-
-            try {
-                if (block.getState() instanceof InventoryHolder) {
-                    return block;
+                    try {
+                        if (block.getState() instanceof InventoryHolder) {
+                            return block;
+                        }
+                    } catch (NullPointerException e) {
+                        LWC lwc = LWC.getInstance();
+                        lwc.log("Possibly invalid block found at [" + x + ", " + y + ", " + z + "]!");
+                    }
                 }
-            } catch (NullPointerException e) {
-                LWC lwc = LWC.getInstance();
-                lwc.log("Possibly invalid block found at [" + entity.x + ", " + entity.y + ", " + entity.z + "]!");
             }
         }
 
