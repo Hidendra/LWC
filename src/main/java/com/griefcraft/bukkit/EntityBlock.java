@@ -39,6 +39,9 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Painting;
+import org.bukkit.entity.StorageMinecart;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
@@ -65,6 +68,22 @@ public class EntityBlock implements Block {
 
     public EntityBlock(Entity entity) {
         this.entity = entity;
+    }
+
+    /**
+     * The name of these entity block. Used to represent the "material" for configuration, mainly.
+     * @return
+     */
+    public String getName() {
+        if (entity instanceof Painting) {
+            return "painting";
+        } else if (entity instanceof ItemFrame) {
+            return "item_frame";
+        } else if (entity instanceof StorageMinecart) {
+            return "storage_minecart";
+        }
+
+        return "entity";
     }
 
     public int getX() {
