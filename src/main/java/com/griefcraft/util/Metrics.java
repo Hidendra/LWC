@@ -390,6 +390,7 @@ public class Metrics {
         String osname = System.getProperty("os.name");
         String osarch = System.getProperty("os.arch");
         String osversion = System.getProperty("os.version");
+        String java_version = System.getProperty("java.version");
         int coreCount = Runtime.getRuntime().availableProcessors();
 
         // normalize os arch .. amd64 -> x86_64
@@ -402,6 +403,7 @@ public class Metrics {
         encodeDataPair(data, "osversion", osversion);
         encodeDataPair(data, "cores", Integer.toString(coreCount));
         encodeDataPair(data, "online-mode", Boolean.toString(onlineMode));
+        encodeDataPair(data, "java_version", java_version);
 
         // If we're pinging, append it
         if (isPing) {
