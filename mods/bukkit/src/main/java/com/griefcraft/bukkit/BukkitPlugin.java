@@ -33,11 +33,11 @@ import com.griefcraft.Engine;
 import com.griefcraft.ServerLayer;
 import com.griefcraft.SimpleEngine;
 import com.griefcraft.bukkit.command.BukkitConsoleCommandSender;
-import com.griefcraft.bukkit.configuration.BukkitConfiguration;
 import com.griefcraft.bukkit.listeners.PlayerListener;
 import com.griefcraft.command.CommandContext;
 import com.griefcraft.command.CommandException;
 import com.griefcraft.command.CommandSender;
+import com.griefcraft.configuration.YamlConfiguration;
 import com.griefcraft.entity.Player;
 import com.griefcraft.world.World;
 import org.bukkit.event.EventHandler;
@@ -126,7 +126,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
         logger = this.getLogger();
 
         // Create a new LWC engine
-        engine = SimpleEngine.createEngine(layer, new BukkitServerInfo(), new BukkitConsoleCommandSender(getServer().getConsoleSender()), new BukkitConfiguration(this));
+        engine = SimpleEngine.createEngine(layer, new BukkitServerInfo(), new BukkitConsoleCommandSender(getServer().getConsoleSender()));
 
         // Register events
         getServer().getPluginManager().registerEvents(this, this);

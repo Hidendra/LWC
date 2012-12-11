@@ -114,12 +114,18 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <filters>
+                                <filter>
+                                    <excludes>
+                                        <exclude>org/yaml/**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                             <artifactSet>
                                 <excludes>
-                                    <exclude>junit:junit</exclude>
-                                    <exclude>org.bukkit:bukkit</exclude>
-                                    <exclude>org.xnap.commons:gettext-commons</exclude>
-                                    <exclude>org.yaml:snakeyaml</exclude>
+                                    <exclude>org.bukkit:*</exclude>
+                                    <exclude>org.spout:*</exclude>
+                                    <exclude>org.yaml:*</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>

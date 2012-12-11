@@ -35,9 +35,9 @@ import com.griefcraft.SimpleEngine;
 import com.griefcraft.command.CommandContext;
 import com.griefcraft.command.CommandException;
 import com.griefcraft.command.CommandSender;
+import com.griefcraft.configuration.YamlConfiguration;
 import com.griefcraft.entity.Player;
 import com.griefcraft.spout.command.SpoutConsoleCommandSender;
-import com.griefcraft.spout.configuration.SpoutConfiguration;
 import com.griefcraft.spout.listeners.PlayerListener;
 import com.griefcraft.world.World;
 import org.spout.api.Spout;
@@ -98,7 +98,7 @@ public class SpoutPlugin extends CommonPlugin implements Listener {
         logger = this.getLogger();
 
         // Create a new LWC engine
-        engine = SimpleEngine.createEngine(layer, new SpoutServerInfo(), new SpoutConsoleCommandSender(), new SpoutConfiguration(this));
+        engine = SimpleEngine.createEngine(layer, new SpoutServerInfo(), new SpoutConsoleCommandSender());
 
         CommandExecutor executor = new CommandExecutor() {
             public void processCommand(CommandSource commandSource, Command command, org.spout.api.command.CommandContext commandContext) throws org.spout.api.exception.CommandException {

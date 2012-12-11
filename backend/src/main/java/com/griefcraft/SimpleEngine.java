@@ -39,6 +39,7 @@ import com.griefcraft.commands.AttributeCommands;
 import com.griefcraft.commands.BaseCommands;
 import com.griefcraft.commands.BenchmarkCommands;
 import com.griefcraft.configuration.Configuration;
+import com.griefcraft.configuration.YamlConfiguration;
 import com.griefcraft.internal.SimpleProtectionManager;
 import com.griefcraft.roles.PlayerRoleDefinition;
 import com.griefcraft.sql.Database;
@@ -92,11 +93,11 @@ public class SimpleEngine implements Engine {
      */
     private Configuration configuration;
 
-    private SimpleEngine(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender, Configuration configuration) {
+    private SimpleEngine(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender) {
         this.serverLayer = serverLayer;
         this.serverInfo = serverInfo;
         this.consoleSender = consoleSender;
-        this.configuration = configuration;
+        this.configuration = new YamlConfiguration("config.yml");
         this.commandHandler = new SimpleCommandHandler();
 
         consoleSender.sendMessage("Server: " + serverInfo.getServerMod() + " [" + serverInfo.getServerVersion() + "]");
@@ -117,12 +118,14 @@ public class SimpleEngine implements Engine {
     }
 
     /**
-     * Create an LWC engine using SimpleLWC
+     * Create an LWC Engine
      *
-     * @param configuration
+     * @param serverLayer
+     * @param serverInfo
+     * @param consoleSender
      * @return
      */
-    public static Engine createEngine(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender, Configuration configuration) {
+    public static Engine createEngine(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender) {
         if (serverLayer == null) {
             throw new IllegalArgumentException("Server layer object cannot be null");
         }
@@ -132,11 +135,8 @@ public class SimpleEngine implements Engine {
         if (consoleSender == null) {
             throw new IllegalArgumentException("Console sender object cannot be null");
         }
-        if (configuration == null) {
-            throw new IllegalArgumentException("Configuration object cannot be null");
-        }
 
-        return new SimpleEngine(serverLayer, serverInfo, consoleSender, configuration);
+        return new SimpleEngine(serverLayer, serverInfo, consoleSender);
     }
 
     public RoleManager getRoleManager() {

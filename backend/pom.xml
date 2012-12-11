@@ -93,6 +93,7 @@
                                 <excludes>
                                     <exclude>junit:junit</exclude>
                                     <exclude>org.xnap.commons:gettext-commons</exclude>
+                                    <exclude>org.yaml:*</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>
@@ -146,6 +147,8 @@
                             <artifactSet>
                                 <excludes>
                                     <exclude>junit:junit</exclude>
+                                    <exclude>org.xnap.commons:gettext-commons</exclude>
+                                    <exclude>org.yaml:*</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>
