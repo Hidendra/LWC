@@ -1,5 +1,6 @@
 /*
- * Copyright 2011 Tyler Blair. All rights reserved.
+ * Copyright (c) 2011, 2012, Tyler Blair
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -26,73 +27,38 @@
  * either expressed or implied, of anybody else.
  */
 
-import com.griefcraft.Engine;
 import com.griefcraft.ServerLayer;
-import com.griefcraft.SimpleEngine;
-import com.griefcraft.configuration.YamlConfiguration;
+import com.griefcraft.world.World;
 
-public class LWC extends Plugin {
-
-    /**
-     * The LWC engine
-     */
-    private Engine engine;
+public class CanaryServerLayer extends ServerLayer {
 
     /**
-     * The server layer
+     * The plugin object
      */
-    private final ServerLayer layer = new CanaryServerLayer(this);
+    private LWC plugin;
 
-    /**
-     * The listener class
-     */
-    private PluginListener listener = new CanaryListener(this);
-
-    @Override
-    public void enable() {
-
-        // Set the name
-        setName("LWC");
-
-        engine = SimpleEngine.createEngine(layer, new CanaryServerInfo(), new CanaryConsoleCommandSender(), new YamlConfiguration("config.yml"));
-
-        // Register our listeners
-        etc.getLoader().addListener(PluginLoader.Hook.OPEN_INVENTORY, listener, this, PluginListener.Priority.MEDIUM);
-        etc.getLoader().addListener(PluginLoader.Hook.BLOCK_RIGHTCLICKED, listener, this, PluginListener.Priority.MEDIUM);
-
+    public CanaryServerLayer(LWC plugin) {
+        this.plugin = plugin;
     }
 
     @Override
-    public void disable() {
-
+    public boolean isBlockProtectable(com.griefcraft.world.Block block) {
+        return block.getType() == 54; // TODO
     }
 
-    /**
-     * Get the LWC engine
-     *
-     * @return
-     */
-    public Engine getEngine() {
-        return engine;
+    @Override
+    public World getDefaultWorld() {
+        return new CanaryWorld(etc.getServer().getDefaultWorld());
     }
 
-    /**
-     * Wrap a native Canary player
-     *
-     * @param player
-     * @return
-     */
-    public com.griefcraft.entity.Player wrapPlayer(Player player) {
-        return layer.getPlayer(player.getName());
+    @Override
+    protected com.griefcraft.entity.Player internalGetPlayer(String playerName) {
+        return new CanaryPlayer(plugin, etc.getServer().getPlayer(playerName));
     }
 
-    /**
-     * Get a World object for the native Canary world
-     * @param worldName
-     * @return
-     */
-    public com.griefcraft.world.World getWorld(String worldName) {
-        return layer.getWorld(worldName);
+    @Override
+    protected World internalGetWorld(String worldName) {
+        return new CanaryWorld(etc.getServer().getWorld(worldName)[0]);
     }
 
 }

@@ -1,5 +1,6 @@
 /*
- * Copyright 2011 Tyler Blair. All rights reserved.
+ * Copyright (c) 2011, 2012, Tyler Blair
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -26,29 +27,21 @@
  * either expressed or implied, of anybody else.
  */
 
-public class CanaryListener extends PluginListener {
+import com.griefcraft.ServerInfo;
+import com.griefcraft.ServerMod;
 
-    /**
-     * The plugin object
-     */
-    private LWC plugin;
+public class CanaryServerInfo implements ServerInfo {
 
-    public CanaryListener(LWC plugin) {
-        this.plugin = plugin;
+    public ServerMod getServerMod() {
+        return ServerMod.CANARY;
     }
 
-    public boolean onBlockRightClick(Player nativePlayer, Block blockClicked, Item itemInHand) {
-        com.griefcraft.entity.Player player = plugin.wrapPlayer(nativePlayer);
-        com.griefcraft.world.World world = plugin.getWorld(nativePlayer.getWorld().getName());
-        com.griefcraft.world.Block block = new CanaryBlock(world, blockClicked);
-
-        // send the event for the player around the plugin (and maybe other plugins, too.)
-        return player.getEventDelegate().onPlayerInteract(block);
+    public String getServerVersion() {
+        return etc.getInstance().getVersionStr();
     }
 
-    @Override
-    public boolean onOpenInventory(HookParametersOpenInventory inventory) {
-        return false;
+    public String getLayerVersion() {
+        return "v0.01 (Java)";
     }
 
 }

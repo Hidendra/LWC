@@ -1,5 +1,6 @@
 /*
- * Copyright 2011 Tyler Blair. All rights reserved.
+ * Copyright (c) 2011, 2012, Tyler Blair
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -26,64 +27,16 @@
  * either expressed or implied, of anybody else.
  */
 
-import com.griefcraft.event.PlayerEventDelegate;
-import com.griefcraft.world.Location;
+import com.griefcraft.command.ConsoleCommandSender;
 
-public class CanaryPlayer extends com.griefcraft.entity.Player {
-
-    /**
-     * The plugin object
-     */
-    private LWC plugin;
-
-    /**
-     * The player handle
-     */
-    private Player handle;
-
-    /**
-     * The event delegate
-     */
-    private PlayerEventDelegate eventDelegate;
-
-    public CanaryPlayer(LWC plugin, Player handle) {
-        if (handle == null) {
-            throw new IllegalArgumentException("Player handle cannot be null");
-        }
-
-        this.plugin = plugin;
-        this.handle = handle;
-        this.eventDelegate = new PlayerEventDelegate(plugin.getEngine(), this);
-        // TODO create LWC engine in the plugin class
-    }
-
-    public String getName() {
-        return handle.getName();
-    }
-
-    @Override
-    public Location getLocation() {
-        // TODO cache the world somewhere else
-        return new Location(new CanaryWorld(handle.getWorld()), handle.getX(), handle.getY(), handle.getZ());
-    }
-
-    @Override
-    public PlayerEventDelegate getEventDelegate() {
-        return eventDelegate;
-    }
+public class CanaryConsoleCommandSender implements ConsoleCommandSender {
 
     public void sendMessage(String message) {
-        for (String line : message.split("\n")) {
-            handle.sendMessage(line);
-        }
-    }
-
-    public void sendLocalizedMessage(String node, Object... args) {
-        throw new UnsupportedOperationException("Not supported");
+        System.out.println("[LWC] " + message);
     }
 
     public boolean hasPermission(String node) {
-        // TODO Morph it somehow?
-        return handle.canUseCommand(node);
+        return true;
     }
+
 }
