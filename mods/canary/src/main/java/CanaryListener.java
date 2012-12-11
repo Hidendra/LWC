@@ -26,6 +26,11 @@
  * either expressed or implied, of anybody else.
  */
 
+import com.griefcraft.command.CommandContext;
+import com.griefcraft.command.CommandException;
+import com.griefcraft.command.CommandSender;
+import com.griefcraft.util.StringUtils;
+
 public class CanaryListener extends PluginListener {
 
     /**
@@ -37,6 +42,17 @@ public class CanaryListener extends PluginListener {
         this.plugin = plugin;
     }
 
+    @Override
+    public boolean onCommand(Player player, String[] split) {
+        return _onCommand(CommandContext.Type.PLAYER, plugin.wrapPlayer(player), StringUtils.join(split));
+    }
+
+    @Override
+    public boolean onConsoleCommand(String[] split) {
+        return _onCommand(CommandContext.Type.SERVER, plugin.getEngine().getConsoleSender(), StringUtils.join(split));
+    }
+
+    @Override
     public boolean onBlockRightClick(Player nativePlayer, Block blockClicked, Item itemInHand) {
         com.griefcraft.entity.Player player = plugin.wrapPlayer(nativePlayer);
         com.griefcraft.world.World world = plugin.getWorld(nativePlayer.getWorld().getName());
@@ -49,6 +65,62 @@ public class CanaryListener extends PluginListener {
     @Override
     public boolean onOpenInventory(HookParametersOpenInventory inventory) {
         return false;
+    }
+
+    /**
+     * Command processor
+     *
+     * @param sender
+     * @param message the name of the command followed by any arguments.
+     * @return true if the command event should be cancelled
+     */
+    private boolean _onCommand(CommandContext.Type type, CommandSender sender, String message) {
+        // Normalize the command, removing any prepended /, etc
+        message = normalizeCommand(message);
+
+        // Separate the command and arguments
+        int indexOfSpace = message.indexOf(' ');
+
+        try {
+            if (indexOfSpace != -1) {
+                String command = message.substring(0, indexOfSpace);
+                String arguments = message.substring(indexOfSpace + 1);
+
+                return plugin.getEngine().getCommandHandler().handleCommand(new CommandContext(type, sender, command, arguments));
+            } else { // No arguments
+                return plugin.getEngine().getCommandHandler().handleCommand(new CommandContext(type, sender, message));
+            }
+        } catch (CommandException e) {
+            // Notify the console
+            plugin.getEngine().getConsoleSender().sendMessage("An error was encountered while processing a command: " + e.getMessage());
+            e.printStackTrace();
+
+            // Notify the player / console
+            // TODO red this bitch up
+            sender.sendMessage("[LWC] An internal error occurred while processing this command");
+
+            // We failed.. oh we failed
+            return false;
+        }
+    }
+
+    /**
+     * Normalize a command, making player and console commands appear to be the same format
+     *
+     * @param message
+     * @return
+     */
+    private String normalizeCommand(String message) {
+        // Remove a prepended /
+        if (message.startsWith("/")) {
+            if (message.length() == 1) {
+                return "";
+            } else {
+                message = message.substring(1);
+            }
+        }
+
+        return message.trim();
     }
 
 }

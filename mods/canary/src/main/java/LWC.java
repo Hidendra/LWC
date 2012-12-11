@@ -29,7 +29,6 @@
 import com.griefcraft.Engine;
 import com.griefcraft.ServerLayer;
 import com.griefcraft.SimpleEngine;
-import com.griefcraft.configuration.YamlConfiguration;
 
 public class LWC extends Plugin {
 
@@ -59,6 +58,8 @@ public class LWC extends Plugin {
         // Register our listeners
         etc.getLoader().addListener(PluginLoader.Hook.OPEN_INVENTORY, listener, this, PluginListener.Priority.MEDIUM);
         etc.getLoader().addListener(PluginLoader.Hook.BLOCK_RIGHTCLICKED, listener, this, PluginListener.Priority.MEDIUM);
+        etc.getLoader().addListener(PluginLoader.Hook.COMMAND, listener, this, PluginListener.Priority.MEDIUM);
+        etc.getLoader().addListener(PluginLoader.Hook.SERVERCOMMAND, listener, this, PluginListener.Priority.MEDIUM);
 
     }
 

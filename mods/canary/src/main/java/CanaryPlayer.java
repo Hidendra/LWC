@@ -27,6 +27,7 @@
  */
 
 import com.griefcraft.event.PlayerEventDelegate;
+import com.griefcraft.util.Color;
 import com.griefcraft.world.Location;
 
 public class CanaryPlayer extends com.griefcraft.entity.Player {
@@ -74,7 +75,7 @@ public class CanaryPlayer extends com.griefcraft.entity.Player {
 
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
-            handle.sendMessage(line);
+            handle.sendMessage(Color.replaceColors(line));
         }
     }
 
@@ -84,6 +85,6 @@ public class CanaryPlayer extends com.griefcraft.entity.Player {
 
     public boolean hasPermission(String node) {
         // TODO Morph it somehow?
-        return handle.canUseCommand(node);
+        return true;
     }
 }
