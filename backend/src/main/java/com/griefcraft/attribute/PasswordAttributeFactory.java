@@ -50,7 +50,7 @@ import java.util.Set;
 public class PasswordAttributeFactory implements ProtectionAttributeFactory<String> {
 
     /**
-     * Players that are permitted to access this protection
+     * Players that are permitted to access certain protections
      * <ProtectionId, Set<Player>>
      */
     private static final Map<Integer, Set<String>> players = new HashMap<Integer, Set<String>>();
