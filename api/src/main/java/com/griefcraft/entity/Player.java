@@ -34,7 +34,15 @@ import com.griefcraft.event.PlayerEventDelegate;
 import com.griefcraft.event.PlayerEventHandler;
 import com.griefcraft.world.Location;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class Player extends PlayerEventHandler implements CommandSender {
+
+    /**
+     * Simple unpersisted attribute store for the player
+     */
+    private final Map<String, Object> attributes = new HashMap<String, Object>();
 
     /**
      * Gets the player's name
@@ -56,5 +64,25 @@ public abstract class Player extends PlayerEventHandler implements CommandSender
      * @return
      */
     public abstract PlayerEventDelegate getEventDelegate();
+
+    /**
+     * Set an attribute in the store
+     *
+     * @param name
+     * @param value
+     */
+    public void setAttribute(String name, Object value) {
+        attributes.put(name, value);
+    }
+
+    /**
+     * Get an attribute from the store
+     *
+     * @param name
+     * @return
+     */
+    public Object getAttribute(String name) {
+        return attributes.get(name);
+    }
 
 }

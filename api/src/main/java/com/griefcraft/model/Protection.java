@@ -145,7 +145,7 @@ public class Protection extends AbstractSavable {
 
             // check for immediate deny
             if (roleAccess == ProtectionAccess.EXPLICIT_DENY) {
-                return ProtectionAccess.NONE;
+                return roleAccess;
             }
 
             // compare the access -- higher access has higher precedence.
