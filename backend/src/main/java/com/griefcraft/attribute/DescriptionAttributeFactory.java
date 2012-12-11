@@ -62,11 +62,7 @@ public class DescriptionAttributeFactory implements ProtectionAttributeFactory<S
     }
 
     public AbstractAttribute<String> createAttribute() {
-        return new AbstractAttribute<String>(engine, NAME) {
-            @Override
-            public void loadValue(String value) {
-                this.value = value;
-            }
-        };
+        return new StringAttribute(engine, NAME, "");
     }
+
 }
