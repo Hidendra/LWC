@@ -85,4 +85,13 @@ public abstract class Player extends PlayerEventHandler implements CommandSender
         return attributes.get(name);
     }
 
+    /**
+     * Remove an attribute from the store
+     *
+     * @param name
+     */
+    public void removeAttribute(String name) {
+        attributes.remove(name);
+    }
+
 }

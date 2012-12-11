@@ -30,6 +30,7 @@
 package com.griefcraft;
 
 import com.griefcraft.attribute.DescriptionAttributeFactory;
+import com.griefcraft.attribute.PasswordAttributeFactory;
 import com.griefcraft.command.CommandException;
 import com.griefcraft.command.CommandHandler;
 import com.griefcraft.command.ConsoleCommandSender;
@@ -241,6 +242,7 @@ public class SimpleEngine implements Engine {
 
     private void registerDefaultAttributes() {
         protectionManager.registerAttributeFactory(new DescriptionAttributeFactory(this));
+        protectionManager.registerAttributeFactory(new PasswordAttributeFactory(this));
     }
 
 }
