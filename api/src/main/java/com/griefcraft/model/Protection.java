@@ -29,6 +29,7 @@
 
 package com.griefcraft.model;
 
+import com.griefcraft.AccessProvider;
 import com.griefcraft.Engine;
 import com.griefcraft.ProtectionAccess;
 import com.griefcraft.entity.Player;
@@ -101,6 +102,11 @@ public class Protection extends AbstractSavable {
      */
     private final Map<String, AbstractAttribute> attributes = new HashMap<String, AbstractAttribute>();
 
+    /**
+     * The possible access providers the protection has
+     */
+    private final Set<AccessProvider> accessProviders = new HashSet<AccessProvider>();
+
     @Override
     public String toString() {
         // TODO add in updated, created
@@ -130,8 +136,8 @@ public class Protection extends AbstractSavable {
     public ProtectionAccess getAccess(Player player) {
         ProtectionAccess access = ProtectionAccess.NONE;
 
-        for (Role role : roles) {
-            ProtectionAccess roleAccess = role.getAccess(this, player);
+        for (AccessProvider provider : accessProviders) {
+            ProtectionAccess roleAccess = provider.getAccess(this, player);
 
             if (roleAccess == null) {
                 continue;
@@ -159,6 +165,7 @@ public class Protection extends AbstractSavable {
      */
     public void addRole(Role role) {
         roles.add(role);
+        accessProviders.add(role);
     }
 
     /**
@@ -168,6 +175,7 @@ public class Protection extends AbstractSavable {
      */
     public void removeRole(Role role) {
         roles.remove(role);
+        accessProviders.remove(role);
     }
 
     /**
@@ -179,6 +187,10 @@ public class Protection extends AbstractSavable {
         attributes.put(attribute.getName(), attribute);
         attribute.setState(State.NEW);
         state = State.MODIFIED;
+
+        if (attribute instanceof AccessProvider) {
+            accessProviders.add((AccessProvider) attribute);
+        }
     }
 
     /**
@@ -203,6 +215,10 @@ public class Protection extends AbstractSavable {
 
         AbstractAttribute attribute = attributes.remove(name);
         engine.getDatabase().removeProtectionAttribute(this, attribute);
+
+        if (attribute instanceof AccessProvider) {
+            accessProviders.remove(attribute);
+        }
     }
 
     public void setWorld(World world) {
