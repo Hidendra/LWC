@@ -76,7 +76,7 @@
                             <artifactSet>
                                 <excludes>
                                     <exclude>junit:junit</exclude>
-                                    <exclude>org.bukkit:bukkit</exclude>
+                                    <exclude>net.canarymod:canarymod</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>
