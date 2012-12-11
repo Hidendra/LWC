@@ -34,15 +34,7 @@ import com.griefcraft.model.AbstractAttribute;
 public interface ProtectionAttributeFactory<T> {
 
     /**
-     * Get the attribute type that this factory can create. This must be a unique number so external plugins
-     * should choose a number that is in a range that is a bit higher than what LWC uses.
-     *
-     * @return
-     */
-    public int getType();
-
-    /**
-     * Get the name that can be matched by commands such as /lwc set, etc.
+     * Get the unique name for the attribute. This can also be matched by commands utilising attributes.
      *
      * @return
      */

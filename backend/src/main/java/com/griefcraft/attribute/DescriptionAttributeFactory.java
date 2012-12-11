@@ -35,11 +35,6 @@ import com.griefcraft.model.AbstractAttribute;
 public class DescriptionAttributeFactory implements ProtectionAttributeFactory<String> {
 
     /**
-     * Attribute type
-     */
-    public static final int TYPE = 1;
-
-    /**
      * Attribute name
      */
     public static final String NAME = "description";
@@ -51,10 +46,6 @@ public class DescriptionAttributeFactory implements ProtectionAttributeFactory<S
 
     public DescriptionAttributeFactory(Engine engine) {
         this.engine = engine;
-    }
-
-    public int getType() {
-        return TYPE;
     }
 
     public String getName() {
