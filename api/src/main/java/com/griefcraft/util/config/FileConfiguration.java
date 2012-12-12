@@ -48,7 +48,7 @@ public class FileConfiguration extends ConfigurationNode {
     private Yaml yaml;
     private File file;
 
-    public static final String CONFIG_PATH = "plugins/LWC/";
+    public static String CONFIG_PATH = "plugins/LWC/";
 
     /**
      * List of loaded config files

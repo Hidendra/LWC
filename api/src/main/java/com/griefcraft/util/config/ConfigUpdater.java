@@ -72,8 +72,11 @@ public class ConfigUpdater {
             return referenceConfigFileCache;
         }
 
+        String path = getClass().getResource("/config/config.yml").toString();
+        path = path.substring(path.indexOf('/'), path.lastIndexOf('!'));
+
         // Load our jar file
-        ZipFile jarFile = new ZipFile(URLDecoder.decode(ConfigUpdater.class.getProtectionDomain().getCodeSource().getLocation().getPath(), "UTF-8"));
+        ZipFile jarFile = new ZipFile(URLDecoder.decode(path, "UTF-8"));
 
         // Begin loading the files
         Enumeration entries = jarFile.entries();

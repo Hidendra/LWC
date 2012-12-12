@@ -27,16 +27,58 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.forge;
+import java.util.List;
 
-/**
- * Proxy used by just the client
- */
-public class ClientProxy extends CommonProxy {
+public class NativeCommandHandler implements y {
 
-    @Override
-    public void init() {
-        System.out.println("LWC => init()");
+    /**
+     * The command we are creating
+     */
+    private String command;
+
+    public NativeCommandHandler(String command) {
+        this.command = command;
+    }
+
+    /**
+     * Appears to be if the player has permission to use the command
+     *
+     * @param aa
+     * @return
+     */
+    public boolean b(aa aa) {
+        return true;
+    }
+
+    /**
+     * Command name
+     * @return
+     */
+    public String c() {
+        return command;
+    }
+
+    public List b() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public boolean a(int i) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public List a(aa aa, String[] strings) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void b(aa aa, String[] strings) {
+    }
+
+    public String a(aa aa) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public int compareTo(Object o) {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
 }

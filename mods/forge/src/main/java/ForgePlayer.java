@@ -1,5 +1,6 @@
 /*
- * Copyright 2011 Tyler Blair. All rights reserved.
+ * Copyright (c) 2011, 2012, Tyler Blair
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -26,47 +27,48 @@
  * either expressed or implied, of anybody else.
  */
 
+import com.griefcraft.entity.Player;
 import com.griefcraft.event.PlayerEventDelegate;
 import com.griefcraft.util.Color;
 import com.griefcraft.world.Location;
 
-public class CanaryPlayer extends com.griefcraft.entity.Player {
+public class ForgePlayer extends Player {
 
     /**
-     * The plugin object
+     * The mod handle
      */
-    private LWC plugin;
+    private LWC mod;
 
     /**
-     * The player handle
+     * Player handle
      */
-    private Player handle;
+    private qx handle;
 
     /**
      * The event delegate
      */
     private PlayerEventDelegate eventDelegate;
 
-    public CanaryPlayer(LWC plugin, Player handle) {
-        if (handle == null) {
-            throw new IllegalArgumentException("Player handle cannot be null");
-        }
-
-        this.plugin = plugin;
+    public ForgePlayer(qx handle) {
         this.handle = handle;
-        this.eventDelegate = new PlayerEventDelegate(plugin.getEngine(), this);
-        // TODO create LWC engine in the plugin class
+        this.mod = LWC.instance;
+        this.eventDelegate = new PlayerEventDelegate(LWC.instance.getEngine(), this);
     }
 
     @Override
     public String getName() {
-        return handle.getName();
+        return handle.bQ;
     }
 
     @Override
     public Location getLocation() {
-        // TODO cache the world somewhere else
-        return new Location(plugin.getWorld(handle.getWorld().getName()), handle.getX(), handle.getY(), handle.getZ());
+        try {
+            return new Location(new ForgeWorld(handle.p), (int) handle.t, (int) handle.u, (int) handle.v);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     @Override
@@ -76,23 +78,12 @@ public class CanaryPlayer extends com.griefcraft.entity.Player {
 
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
-            handle.sendMessage(Color.replaceColors(line));
+            handle.a(Color.replaceColors(line));
         }
-    }
-
-    public void sendLocalizedMessage(String node, Object... args) {
-        throw new UnsupportedOperationException("Not supported");
     }
 
     public boolean hasPermission(String node) {
-        // hard coded for now.. what ever shall we do :-)
-        if (node.equals("lwc.protect")) {
-            return handle.canUseCommand("/lwc");
-        } else if (node.startsWith("lwc.admin")) {
-            return handle.canUseCommand("/lwcadmin");
-        } else {
-            return handle.canUseCommand("/lwc");
-        }
+        return true; // TODO check for OP from lwc.admin.*, allow any others
     }
 
 }

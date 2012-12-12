@@ -27,16 +27,21 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.forge;
+import com.griefcraft.ServerInfo;
+import com.griefcraft.ServerMod;
 
-/**
- * Proxy used by just the server
- */
-public class ServerProxy extends CommonProxy {
+public class ForgeServerInfo implements ServerInfo {
 
-    @Override
-    public void init() {
-        System.out.println("LWC => init()");
+    public ServerMod getServerMod() {
+        return ServerMod.FORGE;
+    }
+
+    public String getServerVersion() {
+        return "1.4.5";
+    }
+
+    public String getLayerVersion() {
+        return "v0.01 (Java)";
     }
 
 }

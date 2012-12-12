@@ -27,8 +27,8 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.forge;
-
+import com.griefcraft.Engine;
+import com.griefcraft.ServerLayer;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -36,6 +36,9 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 
+/**
+ * FORGE DONE WRONG
+ */
 @Mod(modid = "LWC", name = "LWC", version = "5.0.0-UNSTABLE")
 @NetworkMod(clientSideRequired = false, serverSideRequired = true)
 public class LWC {
@@ -45,8 +48,18 @@ public class LWC {
     public static LWC instance;
 
     // Says where the client and server 'proxy' code is loaded.
-    @SidedProxy(clientSide="com.griefcraft.forge.ClientProxy", serverSide="com.griefcraft.forge.ServerProxy")
+    @SidedProxy(clientSide="LWCClientProxy", serverSide="LWCServerProxy")
     public static CommonProxy proxy;
+
+    /**
+     * The LWC engine
+     */
+    private Engine engine;
+
+    /**
+     * The server layer
+     */
+    private ServerLayer layer;
 
     @Mod.PreInit
     public void preInit(FMLPreInitializationEvent event) {
@@ -61,6 +74,47 @@ public class LWC {
     @Mod.PostInit
     public void postInit(FMLPostInitializationEvent event) {
 
+    }
+
+    /**
+     * Wrap a native Canary player
+     *
+     * @param player
+     * @return
+     */
+    public com.griefcraft.entity.Player wrapPlayer(qx player) {
+        return layer.getPlayer(player.bQ);
+    }
+
+    /**
+     * Get a World object for the native Canary world
+     * @param worldName
+     * @return
+     */
+    public com.griefcraft.world.World getWorld(String worldName) {
+        return layer.getWorld(worldName);
+    }
+
+    /**
+     * Get the LWC engine
+     *
+     * @return
+     */
+    public Engine getEngine() {
+        return engine;
+    }
+
+    /**
+     * Set the engine
+     *
+     * @param engine
+     */
+    public void setupServer(Engine engine, ServerLayer layer) {
+        if (this.engine != null) {
+            throw new UnsupportedOperationException("LWC was alread setup, and cannot be reset");
+        }
+        this.engine = engine;
+        this.layer = layer;
     }
 
 }

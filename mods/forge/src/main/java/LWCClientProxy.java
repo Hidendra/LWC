@@ -27,16 +27,14 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.forge;
-
 /**
- * Proxy used by both client and server
+ * Proxy used by just the client
  */
-public abstract class CommonProxy {
+public class LWCClientProxy extends CommonProxy {
 
-    /**
-     * Called when the mod is initialized
-     */
-    public abstract void init();
+    @Override
+    public void init() {
+        System.out.println("LWC => init()");
+    }
 
 }

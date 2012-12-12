@@ -27,10 +27,27 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>net.minecraft</groupId>
+            <artifactId>server</artifactId>
+            <version>1.4.5</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>cpw.mods.fml</groupId>
             <artifactId>minecraftforge-universal</artifactId>
             <version>6.3.0.372</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.10</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.21</version>
         </dependency>
         <dependency>
             <groupId>org.mcstats</groupId>
