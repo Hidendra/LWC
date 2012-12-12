@@ -84,7 +84,13 @@ public class CanaryPlayer extends com.griefcraft.entity.Player {
     }
 
     public boolean hasPermission(String node) {
-        // TODO Morph it somehow?
-        return true;
+        // hard coded for now.. what ever shall we do :-)
+        if (node.equals("lwc.protect")) {
+            return handle.canUseCommand("/lwc");
+        } else if (node.startsWith("lwc.admin")) {
+            return handle.canUseCommand("/lwcadmin");
+        } else {
+            return handle.canUseCommand("/lwc");
+        }
     }
 }

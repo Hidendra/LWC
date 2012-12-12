@@ -85,6 +85,7 @@ public class PasswordAttributeFactory implements ProtectionAttributeFactory<Stri
 
     @Command(
             command = "lwc password",
+            description = "Unlocks a protection if you have attempted to open one",
             permission = "lwc.password",
             aliases = {"cpassword"},
             accepts = SenderType.PLAYER,
