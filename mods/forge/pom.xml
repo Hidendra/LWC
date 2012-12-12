@@ -102,6 +102,7 @@
                                     <exclude>cpw.mods.fml:minecraftforge-universal</exclude>
                                     <exclude>org.bukkit:bukkit</exclude>
                                     <exclude>org.xnap.commons:gettext-commons</exclude>
+                                    <exclude>net.minecraft:*</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>
