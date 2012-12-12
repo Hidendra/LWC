@@ -43,15 +43,18 @@ public enum ServerMod {
     BUKKIT,
 
     /**
-     * TODO -- not implemented
      * Spout - http://spout.org
      */
     SPOUT,
 
     /**
-     * TODO -- partially implemented
      * Canary, the hMod successor - http://canarymod.net
      */
-    CANARY;
+    CANARY,
+
+    /**
+     * Minecraft Forge, a client/server mod - http://www.minecraftforge.net
+     */
+    FORGE;
 
 }
