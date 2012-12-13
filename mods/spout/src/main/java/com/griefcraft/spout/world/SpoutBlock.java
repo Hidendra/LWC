@@ -66,7 +66,7 @@ public class SpoutBlock extends Block {
         }
 
         // it is a spout block
-        return handle.getMaterial().getId();
+        return material.getId();
     }
 
     public byte getData() {
