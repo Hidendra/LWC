@@ -215,7 +215,7 @@ public class ProtectionSet {
      * @return
      */
     private ProtectionSet.BlockType getBlockType(Block block) {
-        return engine.getServerLayer().isBlockProtectable(block) ? ProtectionSet.BlockType.PROTECTABLE : ProtectionSet.BlockType.MATCHABLE;
+        return engine.getProtectionManager().isBlockProtectable(block) ? ProtectionSet.BlockType.PROTECTABLE : ProtectionSet.BlockType.MATCHABLE;
     }
 
 }

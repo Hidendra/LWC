@@ -29,7 +29,6 @@
 
 import com.griefcraft.ServerLayer;
 import com.griefcraft.entity.Player;
-import com.griefcraft.world.Block;
 import com.griefcraft.world.World;
 import net.minecraft.server.MinecraftServer;
 
@@ -44,11 +43,6 @@ public class ForgeServerLayer extends ServerLayer {
 
     public ForgeServerLayer() {
         mod = LWC.instance;
-    }
-
-    @Override
-    public boolean isBlockProtectable(Block block) {
-        return block.getType() == 54; // TODO
     }
 
     @Override

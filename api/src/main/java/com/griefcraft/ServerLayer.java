@@ -52,14 +52,6 @@ public abstract class ServerLayer {
     private final Map<String, World> worlds = new HashMap<String, World>();
 
     /**
-     * Check if the given block can be protected
-     *
-     * @param block
-     * @return true if the block can be protected
-     */
-    public abstract boolean isBlockProtectable(Block block);
-
-    /**
      * Get the default world
      *
      * @return

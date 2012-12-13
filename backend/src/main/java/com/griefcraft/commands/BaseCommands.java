@@ -30,7 +30,7 @@
 package com.griefcraft.commands;
 
 import com.griefcraft.Engine;
-import com.griefcraft.ServerLayer;
+import com.griefcraft.ProtectionManager;
 import com.griefcraft.command.Command;
 import com.griefcraft.command.CommandContext;
 import com.griefcraft.command.SenderType;
@@ -81,15 +81,15 @@ public class BaseCommands {
         player.onBlockInteract(new BlockEventNotifier() {
             @Override
             public boolean call(BlockEvent event) {
-                ServerLayer layer = engine.getServerLayer();
+                ProtectionManager manager = engine.getProtectionManager();
                 Block block = event.getBlock();
 
-                if (!layer.isBlockProtectable(block)) {
+                if (!manager.isBlockProtectable(block)) {
                     player.sendMessage(_("That block is not protectable"));
                     return false;
                 }
 
-                Protection protection = engine.getProtectionManager().createProtection(player.getName(), block.getLocation());
+                Protection protection = manager.createProtection(player.getName(), block.getLocation());
                 if (protection != null) {
                     player.sendMessage(_("Protected~"));
                 } else {

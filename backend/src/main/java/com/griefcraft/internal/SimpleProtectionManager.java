@@ -63,6 +63,10 @@ public class SimpleProtectionManager implements ProtectionManager {
         this.engine = engine;
     }
 
+    public boolean isBlockProtectable(Block block) {
+        return block.getType() == 54; // TODO
+    }
+
     public Protection findProtection(Location location) {
         ProtectionMatcher matcher = new SimpleProtectionMatcher(engine);
 

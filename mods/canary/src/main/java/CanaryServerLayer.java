@@ -42,11 +42,6 @@ public class CanaryServerLayer extends ServerLayer {
     }
 
     @Override
-    public boolean isBlockProtectable(com.griefcraft.world.Block block) {
-        return block.getType() == 54; // TODO
-    }
-
-    @Override
     public World getDefaultWorld() {
         return new CanaryWorld(etc.getServer().getDefaultWorld());
     }

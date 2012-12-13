@@ -33,7 +33,6 @@ import com.griefcraft.ServerLayer;
 import com.griefcraft.entity.Player;
 import com.griefcraft.spout.entity.SpoutPlayer;
 import com.griefcraft.spout.world.SpoutWorld;
-import com.griefcraft.world.Block;
 import com.griefcraft.world.World;
 import org.spout.api.Spout;
 
@@ -68,11 +67,6 @@ public class SpoutServerLayer extends ServerLayer {
         }
 
         return new SpoutWorld(handle);
-    }
-
-    @Override
-    public boolean isBlockProtectable(Block block) {
-        return block.getType() == 54; // TODO
     }
 
     @Override
