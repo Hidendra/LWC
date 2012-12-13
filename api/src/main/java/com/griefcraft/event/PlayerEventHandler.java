@@ -73,7 +73,7 @@ public class PlayerEventHandler {
      *
      * @param notifier
      */
-    public void onPlayerInteract(ProtectionEventNotifier notifier) {
+    public void onProtectionInteract(ProtectionEventNotifier notifier) {
         checkNotifier(notifier);
         addEventNotifier(Type.PLAYER_INTERACT_PROTECTION, notifier);
     }

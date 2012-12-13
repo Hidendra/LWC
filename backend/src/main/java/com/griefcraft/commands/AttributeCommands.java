@@ -30,7 +30,6 @@
 package com.griefcraft.commands;
 
 import com.griefcraft.Engine;
-import com.griefcraft.attribute.ProtectionAttributeFactory;
 import com.griefcraft.command.Command;
 import com.griefcraft.command.CommandContext;
 import com.griefcraft.command.SenderType;
@@ -89,7 +88,7 @@ public class AttributeCommands {
         }
 
         player.sendMessage(_("&2Click on your protection to set the attribute"));
-        player.onPlayerInteract(new ProtectionEventNotifier() {
+        player.onProtectionInteract(new ProtectionEventNotifier() {
             @Override
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
@@ -123,7 +122,7 @@ public class AttributeCommands {
         }
 
         player.sendMessage(_("&2Click on your protection to remove the attribute"));
-        player.onPlayerInteract(new ProtectionEventNotifier() {
+        player.onProtectionInteract(new ProtectionEventNotifier() {
             @Override
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
