@@ -29,17 +29,58 @@
 
 package com.griefcraft.event.notifiers;
 
+import com.griefcraft.entity.Player;
 import com.griefcraft.event.EventNotifier;
-import com.griefcraft.event.events.ProtectionEvent;
 
-public abstract class ProtectionEventNotifier extends EventNotifier<ProtectionEvent> {
+public class AnyEventNotifier extends EventNotifier {
 
-    public ProtectionEventNotifier(boolean temporary) {
-        super(temporary);
+    /**
+     * The slave event notifier if we are acting as the parent
+     */
+    private EventNotifier slave = null;
+
+    /**
+     * The player to send the message to if we are acting as a slave
+     */
+    private Player player = null;
+
+    /**
+     * The message to send to the player if we are acting as a slave
+     */
+    private String message = null;
+
+    /**
+     * Create an {@link AnyEventNotifier} as a parent. Once this notifier is called, it will kill the slave
+     * notifier that notifies of the inverse
+     *
+     * @param slave
+     */
+    public AnyEventNotifier(EventNotifier<?> slave) {
+        this.slave = slave;
     }
 
-    public ProtectionEventNotifier() {
-        super();
+    /**
+     * Create an {@link AnyEventNotifier} as a slave. It will simply send the message to the player if
+     * this notifier is triggered
+     *
+     * @param message
+     */
+    public AnyEventNotifier(Player player, String message) {
+        super(false); // Not temporary
+        this.player = player;
+        this.message = message;
+    }
+
+    @Override
+    public boolean call(Object event) {
+        if (slave != null) {
+            return slave.call(event);
+        } else if (message != null) {
+            player.sendMessage(message);
+            return true;
+        }
+
+        throw new UnsupportedOperationException("AnyEventNotifier is in an illegal state: no actions");
     }
 
 }

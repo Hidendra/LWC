@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-11 13:17-0400\n"
+"POT-Creation-Date: 2012-12-13 12:34-0400\n"
 "PO-Revision-Date: 2012-11-08 01:19-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -26,34 +26,34 @@ msgstr ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "
 "trace has been printed out to the log file"
 
-#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:78
-#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:121
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:77
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:120
 msgid "&4Invalid attribute name."
 msgstr "&4Invalid attribute name."
 
-#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:87
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:86
 msgid "&4Invalid attribute value."
 msgstr "&4Invalid attribute value."
 
-#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:91
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:90
 msgid "&2Click on your protection to set the attribute"
 msgstr "&2Click on your protection to set the attribute"
 
-#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:98
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:97
 #, java-format
 msgid "&2Added the attribute {0} to the protection successfully."
 msgstr "&2Added the attribute {0} to the protection successfully."
 
-#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:125
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:124
 msgid "&2Click on your protection to remove the attribute"
 msgstr "&2Click on your protection to remove the attribute"
 
-#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:134
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:133
 #, java-format
 msgid "&2Removed the attribute {0} from the protection successfully."
 msgstr "&2Removed the attribute {0} from the protection successfully."
 
-#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:136
+#: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:135
 #, java-format
 msgid "&4The protection does not have the attribute {0}"
 msgstr "&4The protection does not have the attribute {0}"
@@ -88,6 +88,6 @@ msgstr "You clicked on a block with the id {0}!"
 msgid "Purging player?: {0}"
 msgstr "Purging player?: {0}"
 
-#: backend/src/main/java/com/griefcraft/internal/SimpleProtectionManager.java:109
+#: backend/src/main/java/com/griefcraft/internal/SimpleProtectionManager.java:113
 msgid "This protection is locked by a magical spell."
 msgstr "This protection is locked by a magical spell."

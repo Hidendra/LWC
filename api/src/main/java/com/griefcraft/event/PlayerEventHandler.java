@@ -29,6 +29,8 @@
 
 package com.griefcraft.event;
 
+import com.griefcraft.entity.Player;
+import com.griefcraft.event.notifiers.AnyEventNotifier;
 import com.griefcraft.event.notifiers.BlockEventNotifier;
 import com.griefcraft.event.notifiers.ProtectionEventNotifier;
 
@@ -89,6 +91,31 @@ public class PlayerEventHandler {
     }
 
     /**
+     * Queues the notifier given, and will block the inverse.
+     * For example, if a {@link ProtectionEventNotifier} is given, and the player instead interacts with a block,
+     * they will be told to interact with a Protection instead. The same holds true for interacting with Blocks:
+     * if they instead interact with a Protection they'll be told to interact with a Block instead.
+     * This saves mucho boiler plate ;)
+     *
+     * @param notifier {@link ProtectionEventNotifier} or {@link BlockEventNotifier}
+     */
+    public void onAnyInteract(EventNotifier<?> notifier) {
+        checkNotifier(notifier);
+        final Player player = (Player) this;
+
+        if (notifier instanceof ProtectionEventNotifier) {
+            addEventNotifier(Type.PLAYER_INTERACT_PROTECTION, new AnyEventNotifier(notifier));
+            addEventNotifier(Type.PLAYER_INTERACT_BLOCK, new AnyEventNotifier(player, "&4Please interact with a protection, and not a block!"));
+        } else if (notifier instanceof BlockEventNotifier) {
+            addEventNotifier(Type.PLAYER_INTERACT_BLOCK, new AnyEventNotifier(notifier));
+            addEventNotifier(Type.PLAYER_INTERACT_PROTECTION, new AnyEventNotifier(player, "&4Please interact with a block, and not a protection!"));
+        } else {
+            throw new UnsupportedOperationException("The notifier must be a Protection- or Block- EventNotifier");
+        }
+
+    }
+
+    /**
      * Call an event for the given type
      *
      * @param type
@@ -104,6 +131,23 @@ public class PlayerEventHandler {
             if (notifier != null) {
                 // remove the temporary notifier association before calling it
                 temporaryNotifiers.remove(type);
+
+                // handle any event notifiers :-)
+                if (notifier instanceof AnyEventNotifier) {
+                    for (Map.Entry<Type, List<EventNotifier>> entry : notifiers.entrySet()) {
+                        List<EventNotifier> notifiers = entry.getValue();
+
+                        if (notifiers != null) {
+                            Iterator<EventNotifier> iter = notifiers.iterator();
+
+                            while (iter.hasNext()) {
+                                if (iter.next() instanceof AnyEventNotifier) {
+                                    iter.remove();
+                                }
+                            }
+                        }
+                    }
+                }
 
                 if (internalCallEvent(event, notifier)) {
                     return true;

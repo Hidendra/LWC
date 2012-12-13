@@ -34,4 +34,12 @@ import com.griefcraft.event.events.BlockEvent;
 
 public abstract class BlockEventNotifier extends EventNotifier<BlockEvent> {
 
+    public BlockEventNotifier(boolean temporary) {
+        super(temporary);
+    }
+
+    public BlockEventNotifier() {
+        super();
+    }
+
 }

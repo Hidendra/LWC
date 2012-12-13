@@ -78,7 +78,7 @@ public class BaseCommands {
         final Player player = (Player) context.getCommandSender();
         player.sendMessage(_("Click on a block to protect it!"));
 
-        player.onBlockInteract(new BlockEventNotifier() {
+        player.onAnyInteract(new BlockEventNotifier() {
             @Override
             public boolean call(BlockEvent event) {
                 ProtectionManager manager = engine.getProtectionManager();
@@ -112,7 +112,7 @@ public class BaseCommands {
         player.sendMessage(_("Click on a block, please!~"));
 
         // Wait for them to click on the block
-        player.onBlockInteract(new BlockEventNotifier() {
+        player.onAnyInteract(new BlockEventNotifier() {
             @Override
             public boolean call(BlockEvent event) {
                 player.sendMessage(_("You clicked on a block with the id {0}!", event.getBlock().getType()));

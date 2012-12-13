@@ -88,7 +88,7 @@ public class AttributeCommands {
         }
 
         player.sendMessage(_("&2Click on your protection to set the attribute"));
-        player.onProtectionInteract(new ProtectionEventNotifier() {
+        player.onAnyInteract(new ProtectionEventNotifier() {
             @Override
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
@@ -122,7 +122,7 @@ public class AttributeCommands {
         }
 
         player.sendMessage(_("&2Click on your protection to remove the attribute"));
-        player.onProtectionInteract(new ProtectionEventNotifier() {
+        player.onAnyInteract(new ProtectionEventNotifier() {
             @Override
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
