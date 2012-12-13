@@ -98,7 +98,7 @@ public class PlayerEventHandler {
      */
     protected boolean callEvent(Type type, Event event) throws EventException {
         // Check temporary notifier
-        if (temporaryNotifiers != null) {
+        {
             EventNotifier<?> notifier = temporaryNotifiers.get(type);
 
             if (notifier != null) {
