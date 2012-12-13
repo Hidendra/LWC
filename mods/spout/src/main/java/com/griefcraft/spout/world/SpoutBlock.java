@@ -31,7 +31,9 @@ package com.griefcraft.spout.world;
 
 import com.griefcraft.world.Block;
 import com.griefcraft.world.World;
+import org.spout.api.material.BlockMaterial;
 import org.spout.api.material.Material;
+import org.spout.vanilla.material.VanillaMaterial;
 
 // TODO implement hashCode / equals
 public class SpoutBlock extends Block {
@@ -56,6 +58,14 @@ public class SpoutBlock extends Block {
     }
 
     public int getType() {
+        BlockMaterial material = handle.getMaterial();
+
+        // use Vanilla MC ids if it's a non-Spout block
+        if (material instanceof VanillaMaterial) {
+            return ((VanillaMaterial) material).getMinecraftId();
+        }
+
+        // it is a spout block
         return handle.getMaterial().getId();
     }
 
