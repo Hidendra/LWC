@@ -153,7 +153,15 @@ public class MagnetModule extends JavaModule {
                     }
 
                     // Remove the items and suck them up :3
-                    Map<Integer, ItemStack> remaining = lwc.depositItems(block, itemStack);
+                    Map<Integer, ItemStack> remaining;
+
+                    try {
+                        remaining = lwc.depositItems(block, itemStack);
+                    } catch (Exception e) {
+                        lwc.log("Exception occurred while depositing into the block: " + block.toString());
+                        e.printStackTrace();
+                        return;
+                    }
 
                     // we cancelled the item drop for some reason
                     if (remaining == null) {
