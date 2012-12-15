@@ -265,4 +265,19 @@ public class EntityBlock implements Block {
     public void removeMetadata(String s, Plugin plugin) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
+    
+    // Stores the location of the block in the provided Location object.
+    // If the provided Location is null this method does nothing and returns null.
+    public Location getLocation(Location arg0) {
+        if (arg0 == null) return null;
+        
+        Location _loc = entity.getLocation();
+        arg0.setPitch(_loc.getPitch());
+        arg0.setWorld(_loc.getWorld());
+        arg0.setX(_loc.getX());
+        arg0.setY(_loc.getY());
+        arg0.setZ(_loc.getZ());
+        arg0.setYaw(_loc.getYaw());
+        return arg0;
+    }
 }
