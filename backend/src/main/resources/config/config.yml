@@ -1,6 +1,13 @@
 # In development config file for LWC 5.0.0
 # This should not be used on production servers
 
+protections:
+    protectables:
+        chest:
+            enabled: true
+        furnace:
+            enabled: true
+
 # database connection details
 database:
 
