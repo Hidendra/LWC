@@ -28,6 +28,8 @@
 
 package com.griefcraft.util.config;
 
+import com.griefcraft.lwc.LWC;
+
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -73,7 +75,7 @@ public class ConfigUpdater {
         }
 
         // Load our jar file
-        ZipFile jarFile = new ZipFile(URLDecoder.decode(ConfigUpdater.class.getProtectionDomain().getCodeSource().getLocation().getPath(), "UTF-8"));
+        ZipFile jarFile = new ZipFile(URLDecoder.decode(LWC.getInstance().getPlugin().getFile().getPath(), "UTF-8"));
 
         // Begin loading the files
         Enumeration entries = jarFile.entries();
