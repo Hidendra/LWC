@@ -35,6 +35,7 @@ import com.griefcraft.ProtectionManager;
 import com.griefcraft.ProtectionMatcher;
 import com.griefcraft.ProtectionSet;
 import com.griefcraft.attribute.ProtectionAttributeFactory;
+import com.griefcraft.configuration.Configuration;
 import com.griefcraft.entity.Player;
 import com.griefcraft.model.AbstractAttribute;
 import com.griefcraft.model.Protection;
@@ -64,7 +65,8 @@ public class SimpleProtectionManager implements ProtectionManager {
     }
 
     public boolean isBlockProtectable(Block block) {
-        return block.getType() == 54; // TODO
+        String enabled = getProtectionConfiguration("enabled", block.getName(), Integer.toString(block.getType()));
+        return enabled.equalsIgnoreCase("true") || enabled.equalsIgnoreCase("yes");
     }
 
     public Protection findProtection(Location location) {
@@ -126,6 +128,35 @@ public class SimpleProtectionManager implements ProtectionManager {
     public AbstractAttribute createProtectionAttribute(String name) {
         ProtectionAttributeFactory factory = protectionFactories.get(name.toLowerCase());
         return factory == null ? null : factory.createAttribute();
+    }
+
+    /**
+     * Get protection configuration
+     *
+     * @param node
+     * @param match a list of strings that can be matched. e.g [ chest, 54 ] -> will match protections.protectables.chest and protections.protectables.54
+     * @return
+     */
+    private String getProtectionConfiguration(String node, String... match) {
+        Configuration configuration = engine.getConfiguration();
+
+        String value = null;
+
+        // try highest nodes first
+        for (String m : match) {
+            value = configuration.getString("protections.protectables." + m + "." + node, null);
+
+            if (value != null) {
+                break;
+            }
+        }
+
+        if (value == null) {
+            // try the defaults
+            value = configuration.getString("protections." + node, "");
+        }
+
+        return value;
     }
 
 }

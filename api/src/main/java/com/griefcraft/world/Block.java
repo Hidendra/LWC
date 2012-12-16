@@ -29,6 +29,8 @@
 
 package com.griefcraft.world;
 
+import com.griefcraft.util.ItemConfig;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -93,6 +95,16 @@ public abstract class Block {
     @Override
     public String toString() {
         return String.format("Block(type=%d data=%d loc=[%d %d %d \"%s\"])", getType(), getData(), getX(), getY(), getZ(), getWorld().getName());
+    }
+
+    /**
+     * Get the block's name.
+     *
+     * @return the block's name. If the block is unknown, "unknown" is returned
+     */
+    public String getName() {
+        String name = ItemConfig.getName(getType());
+        return name == null ? "unknown" : name;
     }
 
     /**
