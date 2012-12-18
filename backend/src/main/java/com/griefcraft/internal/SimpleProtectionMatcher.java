@@ -29,10 +29,10 @@
 
 package com.griefcraft.internal;
 
+import com.griefcraft.Block;
 import com.griefcraft.Engine;
 import com.griefcraft.ProtectionMatcher;
 import com.griefcraft.ProtectionSet;
-import com.griefcraft.world.Block;
 
 public class SimpleProtectionMatcher implements ProtectionMatcher {
 

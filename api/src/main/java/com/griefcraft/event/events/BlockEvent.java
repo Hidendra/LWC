@@ -29,8 +29,8 @@
 
 package com.griefcraft.event.events;
 
+import com.griefcraft.Block;
 import com.griefcraft.event.Event;
-import com.griefcraft.world.Block;
 
 public class BlockEvent implements Event {
 

@@ -26,9 +26,9 @@
  * either expressed or implied, of anybody else.
  */
 
-import com.griefcraft.world.World;
+import com.griefcraft.World;
 
-public class CanaryBlock extends com.griefcraft.world.Block {
+public class CanaryBlock extends com.griefcraft.Block {
 
     /**
      * The block handle

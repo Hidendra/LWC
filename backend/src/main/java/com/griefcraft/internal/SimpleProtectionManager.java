@@ -29,7 +29,9 @@
 
 package com.griefcraft.internal;
 
+import com.griefcraft.Block;
 import com.griefcraft.Engine;
+import com.griefcraft.Location;
 import com.griefcraft.ProtectionAccess;
 import com.griefcraft.ProtectionManager;
 import com.griefcraft.ProtectionMatcher;
@@ -40,8 +42,6 @@ import com.griefcraft.entity.Player;
 import com.griefcraft.model.AbstractAttribute;
 import com.griefcraft.model.Protection;
 import com.griefcraft.roles.PlayerRole;
-import com.griefcraft.world.Block;
-import com.griefcraft.world.Location;
 
 import java.util.HashMap;
 import java.util.Map;

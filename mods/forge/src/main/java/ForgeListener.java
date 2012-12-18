@@ -27,6 +27,8 @@
  * either expressed or implied, of anybody else.
  */
 
+import com.griefcraft.Block;
+import com.griefcraft.World;
 import com.griefcraft.command.CommandContext;
 import com.griefcraft.command.CommandException;
 import com.griefcraft.command.CommandSender;
@@ -83,8 +85,8 @@ public class ForgeListener {
         }
 
         com.griefcraft.entity.Player player = mod.wrapPlayer(event.entityPlayer);
-        com.griefcraft.world.World world = player.getLocation().getWorld();
-        com.griefcraft.world.Block block = world.getBlockAt(event.x, event.y, event.z);
+        World world = player.getLocation().getWorld();
+        Block block = world.getBlockAt(event.x, event.y, event.z);
 
         // send the event for the player around the plugin (and maybe other plugins, too.)
         if (player.getEventDelegate().onPlayerInteract(block)) {

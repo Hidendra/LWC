@@ -30,13 +30,13 @@
 package com.griefcraft.sql;
 
 import com.griefcraft.Engine;
+import com.griefcraft.Location;
 import com.griefcraft.ProtectionAccess;
+import com.griefcraft.Role;
+import com.griefcraft.RoleDefinition;
 import com.griefcraft.model.AbstractAttribute;
 import com.griefcraft.model.Protection;
-import com.griefcraft.model.Role;
-import com.griefcraft.model.RoleDefinition;
 import com.griefcraft.model.State;
-import com.griefcraft.world.Location;
 import snaq.db.ConnectionPool;
 
 import java.sql.Connection;

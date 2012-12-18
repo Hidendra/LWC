@@ -29,9 +29,8 @@
 
 package com.griefcraft.spout.world;
 
-import com.griefcraft.spout.SpoutPlugin;
-import com.griefcraft.world.Block;
-import com.griefcraft.world.World;
+import com.griefcraft.Block;
+import com.griefcraft.World;
 
 public class SpoutWorld implements World {
 

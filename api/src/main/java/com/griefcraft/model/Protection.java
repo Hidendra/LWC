@@ -32,8 +32,9 @@ package com.griefcraft.model;
 import com.griefcraft.AccessProvider;
 import com.griefcraft.Engine;
 import com.griefcraft.ProtectionAccess;
+import com.griefcraft.Role;
+import com.griefcraft.World;
 import com.griefcraft.entity.Player;
-import com.griefcraft.world.World;
 
 import java.util.HashMap;
 import java.util.HashSet;

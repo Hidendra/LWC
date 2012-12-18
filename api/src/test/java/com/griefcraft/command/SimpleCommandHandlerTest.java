@@ -71,14 +71,15 @@ public class SimpleCommandHandlerTest {
 
         @Command(
                 command = "test command",
-                aliases = { "ctest", "wat" },
+                aliases = {"ctest", "wat"},
                 description = "A test command!",
                 max = 10,
                 min = 5,
                 permission = "test.command",
                 usage = ""
         )
-        public void command(CommandContext context) { }
+        public void command(CommandContext context) {
+        }
 
     }
 
@@ -88,7 +89,8 @@ public class SimpleCommandHandlerTest {
     private class InvalidArguments {
 
         @Command(command = "invalid-arguments")
-        public void command() { }
+        public void command() {
+        }
 
     }
 
@@ -98,7 +100,8 @@ public class SimpleCommandHandlerTest {
     private class TooManyArguments {
 
         @Command(command = "too-many-arguments")
-        public void command(CommandContext context, String somestring) { }
+        public void command(CommandContext context, String somestring) {
+        }
 
     }
 
@@ -107,8 +110,9 @@ public class SimpleCommandHandlerTest {
      */
     private class MinHigherThanMax {
 
-        @Command(command = "min-higher-than-max", min=10, max=1)
-        public void command(CommandContext context) { }
+        @Command(command = "min-higher-than-max", min = 10, max = 1)
+        public void command(CommandContext context) {
+        }
 
     }
 

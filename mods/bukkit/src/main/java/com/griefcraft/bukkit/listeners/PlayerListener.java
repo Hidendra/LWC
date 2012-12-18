@@ -29,11 +29,11 @@
 
 package com.griefcraft.bukkit.listeners;
 
+import com.griefcraft.Block;
+import com.griefcraft.World;
 import com.griefcraft.bukkit.BukkitPlugin;
 import com.griefcraft.bukkit.world.BukkitBlock;
 import com.griefcraft.entity.Player;
-import com.griefcraft.world.Block;
-import com.griefcraft.world.World;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

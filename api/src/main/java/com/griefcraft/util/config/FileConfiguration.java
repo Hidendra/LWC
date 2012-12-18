@@ -73,7 +73,7 @@ public class FileConfiguration extends ConfigurationNode {
 
     /**
      * Gets the file
-     * 
+     *
      * @return
      */
     public File getFile() {
@@ -169,12 +169,14 @@ public class FileConfiguration extends ConfigurationNode {
             if (is != null) {
                 try {
                     is.close();
-                } catch (IOException e) { }
+                } catch (IOException e) {
+                }
             }
             if (os != null) {
                 try {
                     os.close();
-                } catch (IOException e) { }
+                } catch (IOException e) {
+                }
             }
         }
     }

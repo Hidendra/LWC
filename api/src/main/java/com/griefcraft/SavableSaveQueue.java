@@ -31,7 +31,6 @@ package com.griefcraft;
 
 import com.griefcraft.model.AbstractSavable;
 
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 

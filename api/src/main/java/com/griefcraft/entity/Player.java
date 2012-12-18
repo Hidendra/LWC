@@ -29,10 +29,10 @@
 
 package com.griefcraft.entity;
 
+import com.griefcraft.Location;
 import com.griefcraft.command.CommandSender;
 import com.griefcraft.event.PlayerEventDelegate;
 import com.griefcraft.event.PlayerEventHandler;
-import com.griefcraft.world.Location;
 
 import java.util.HashMap;
 import java.util.Map;

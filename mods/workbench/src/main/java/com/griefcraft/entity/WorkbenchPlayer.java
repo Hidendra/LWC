@@ -1,8 +1,8 @@
 package com.griefcraft.entity;
 
 import com.griefcraft.Engine;
+import com.griefcraft.Location;
 import com.griefcraft.event.PlayerEventDelegate;
-import com.griefcraft.world.Location;
 
 public class WorkbenchPlayer extends Player {
 

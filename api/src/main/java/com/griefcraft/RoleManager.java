@@ -1,8 +1,5 @@
 package com.griefcraft;
 
-import com.griefcraft.model.Role;
-import com.griefcraft.model.RoleDefinition;
-
 public interface RoleManager {
 
     /**

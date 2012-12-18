@@ -89,10 +89,11 @@ public class LWC extends Plugin {
 
     /**
      * Get a World object for the native Canary world
+     *
      * @param worldName
      * @return
      */
-    public com.griefcraft.world.World getWorld(String worldName) {
+    public com.griefcraft.World getWorld(String worldName) {
         return layer.getWorld(worldName);
     }
 

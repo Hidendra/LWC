@@ -30,11 +30,11 @@
 package com.griefcraft.bukkit.entity;
 
 import com.griefcraft.Engine;
+import com.griefcraft.Location;
 import com.griefcraft.bukkit.BukkitPlugin;
 import com.griefcraft.entity.Player;
 import com.griefcraft.event.PlayerEventDelegate;
 import com.griefcraft.util.Color;
-import com.griefcraft.world.Location;
 
 public class BukkitPlayer extends Player {
 

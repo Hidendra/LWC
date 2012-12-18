@@ -28,8 +28,8 @@
  */
 
 import com.griefcraft.ServerLayer;
+import com.griefcraft.World;
 import com.griefcraft.entity.Player;
-import com.griefcraft.world.World;
 import net.minecraft.server.MinecraftServer;
 
 import java.lang.reflect.Field;

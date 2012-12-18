@@ -29,6 +29,7 @@
 
 package com.griefcraft.commands;
 
+import com.griefcraft.Block;
 import com.griefcraft.Engine;
 import com.griefcraft.ProtectionManager;
 import com.griefcraft.command.Command;
@@ -38,7 +39,6 @@ import com.griefcraft.entity.Player;
 import com.griefcraft.event.events.BlockEvent;
 import com.griefcraft.event.notifiers.BlockEventNotifier;
 import com.griefcraft.model.Protection;
-import com.griefcraft.world.Block;
 
 import static com.griefcraft.I18n._;
 

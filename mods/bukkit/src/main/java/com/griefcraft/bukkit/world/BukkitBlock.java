@@ -29,8 +29,8 @@
 
 package com.griefcraft.bukkit.world;
 
-import com.griefcraft.world.Block;
-import com.griefcraft.world.World;
+import com.griefcraft.Block;
+import com.griefcraft.World;
 
 // TODO implement hashCode / equals
 public class BukkitBlock extends Block {

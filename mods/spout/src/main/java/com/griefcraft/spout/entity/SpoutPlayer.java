@@ -30,11 +30,11 @@
 package com.griefcraft.spout.entity;
 
 import com.griefcraft.Engine;
+import com.griefcraft.Location;
 import com.griefcraft.entity.Player;
 import com.griefcraft.event.PlayerEventDelegate;
 import com.griefcraft.spout.SpoutPlugin;
 import com.griefcraft.util.Color;
-import com.griefcraft.world.Location;
 import org.spout.api.geo.discrete.Point;
 
 public class SpoutPlayer extends Player {

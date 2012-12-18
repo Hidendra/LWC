@@ -1,7 +1,5 @@
 package com.griefcraft;
 
-import com.griefcraft.model.RoleDefinition;
-
 import java.util.HashMap;
 import java.util.Map;
 

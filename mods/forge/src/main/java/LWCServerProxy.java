@@ -66,13 +66,13 @@ public class LWCServerProxy extends CommonProxy {
 
     /**
      * Inject the LWC commands into Minecraft
-     *
+     * <p/>
      * 1.4.5:
      * CommandHandler = x (implements z). Signature: "new CommandEvent("
      * instance = MinecraftServer.class => "private final z q"
-     *
+     * <p/>
      * We want to drop our handler in x's front door, local member "a" (private final Map) accessed via
-     *     y var5 = (y)this.a.get(var4);
+     * y var5 = (y)this.a.get(var4);
      * var4 = command name (no /)
      */
     private void injectCommands() throws Exception {

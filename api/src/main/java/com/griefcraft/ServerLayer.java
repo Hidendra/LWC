@@ -30,8 +30,6 @@
 package com.griefcraft;
 
 import com.griefcraft.entity.Player;
-import com.griefcraft.world.Block;
-import com.griefcraft.world.World;
 
 import java.util.HashMap;
 import java.util.Map;

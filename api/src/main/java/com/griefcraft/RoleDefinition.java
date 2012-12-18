@@ -1,6 +1,6 @@
-package com.griefcraft.model;
+package com.griefcraft;
 
-import com.griefcraft.ProtectionAccess;
+import com.griefcraft.model.Protection;
 
 public interface RoleDefinition {
 

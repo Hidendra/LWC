@@ -27,8 +27,8 @@
  * either expressed or implied, of anybody else.
  */
 
-import com.griefcraft.world.Block;
-import com.griefcraft.world.World;
+import com.griefcraft.Block;
+import com.griefcraft.World;
 
 import java.lang.reflect.Field;
 

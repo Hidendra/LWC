@@ -30,10 +30,10 @@
 package com.griefcraft.bukkit;
 
 import com.griefcraft.ServerLayer;
+import com.griefcraft.World;
 import com.griefcraft.bukkit.entity.BukkitPlayer;
 import com.griefcraft.bukkit.world.BukkitWorld;
 import com.griefcraft.entity.Player;
-import com.griefcraft.world.World;
 import org.bukkit.Bukkit;
 
 public class BukkitServerLayer extends ServerLayer {

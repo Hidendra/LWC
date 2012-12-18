@@ -26,6 +26,7 @@
  * either expressed or implied, of anybody else.
  */
 
+import com.griefcraft.World;
 import com.griefcraft.command.CommandContext;
 import com.griefcraft.command.CommandException;
 import com.griefcraft.command.CommandSender;
@@ -55,8 +56,8 @@ public class CanaryListener extends PluginListener {
     @Override
     public boolean onBlockRightClick(Player nativePlayer, Block blockClicked, Item itemInHand) {
         com.griefcraft.entity.Player player = plugin.wrapPlayer(nativePlayer);
-        com.griefcraft.world.World world = plugin.getWorld(nativePlayer.getWorld().getName());
-        com.griefcraft.world.Block block = new CanaryBlock(world, blockClicked);
+        World world = plugin.getWorld(nativePlayer.getWorld().getName());
+        com.griefcraft.Block block = new CanaryBlock(world, blockClicked);
 
         // send the event for the player around the plugin (and maybe other plugins, too.)
         return player.getEventDelegate().onPlayerInteract(block);

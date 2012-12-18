@@ -55,7 +55,7 @@ public class LRUCacheTest {
 
         // Should be initialObjects
         assertEquals(cache.size(), initialObjects);
-        
+
         // Overfill the array
         for (int i = 0; i < capacity * 2; i++) {
             cache.put(i, new Object());
@@ -63,7 +63,7 @@ public class LRUCacheTest {
 
         // It should only be at max capacity
         assertEquals(cache.size(), capacity);
-        
+
     }
 
     @Test
@@ -75,19 +75,19 @@ public class LRUCacheTest {
         int reads = 1000;
 
         LRUCache<Integer, Object> cache = new LRUCache<Integer, Object>(capacity);
-        
+
         // Counters should be 0 initially
         assertEquals(cache.getReads(), 0);
         assertEquals(cache.getWrites(), 0);
-        
+
         // Perform some writes
         for (int i = 0; i < writes; i++) {
             cache.put(i, new Object());
         }
-        
+
         // We should have *writes* writes
         assertEquals(cache.getWrites(), writes);
-        
+
         // And now some reads
         for (int i = 0; i < reads; i++) {
             cache.get(i);

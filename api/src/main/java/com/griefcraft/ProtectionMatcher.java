@@ -29,8 +29,6 @@
 
 package com.griefcraft;
 
-import com.griefcraft.world.Block;
-
 public interface ProtectionMatcher {
 
     /**

@@ -28,7 +28,7 @@
  */
 
 import com.griefcraft.ServerLayer;
-import com.griefcraft.world.World;
+import com.griefcraft.World;
 
 public class CanaryServerLayer extends ServerLayer {
 

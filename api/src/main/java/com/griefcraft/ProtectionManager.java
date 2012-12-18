@@ -33,8 +33,6 @@ import com.griefcraft.attribute.ProtectionAttributeFactory;
 import com.griefcraft.entity.Player;
 import com.griefcraft.model.AbstractAttribute;
 import com.griefcraft.model.Protection;
-import com.griefcraft.world.Block;
-import com.griefcraft.world.Location;
 
 public interface ProtectionManager {
 

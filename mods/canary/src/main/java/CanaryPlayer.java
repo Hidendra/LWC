@@ -26,9 +26,9 @@
  * either expressed or implied, of anybody else.
  */
 
+import com.griefcraft.Location;
 import com.griefcraft.event.PlayerEventDelegate;
 import com.griefcraft.util.Color;
-import com.griefcraft.world.Location;
 
 public class CanaryPlayer extends com.griefcraft.entity.Player {
 

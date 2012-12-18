@@ -2,9 +2,9 @@ package com.griefcraft.roles;
 
 import com.griefcraft.Engine;
 import com.griefcraft.ProtectionAccess;
+import com.griefcraft.Role;
+import com.griefcraft.RoleDefinition;
 import com.griefcraft.model.Protection;
-import com.griefcraft.model.Role;
-import com.griefcraft.model.RoleDefinition;
 
 public class PlayerRoleDefinition implements RoleDefinition {
 

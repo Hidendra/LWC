@@ -27,98 +27,25 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.world;
+package com.griefcraft;
 
-public final class Location {
-
-    /**
-     * The world this location is situated in
-     */
-    private final World world;
+public interface World {
 
     /**
-     * The x coordinate
-     */
-    private final double x;
-
-    /**
-     * The y coordinate
-     */
-    private final double y;
-
-    /**
-     * The z coordinate
-     */
-    private final double z;
-
-    public Location(World world, double x, double y, double z) {
-        this.world = world;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
-
-    /**
-     * Get the block x coordinate
+     * Gets the world's name
      *
      * @return
      */
-    public int getBlockX() {
-        return (int) x;
-    }
+    public String getName();
 
     /**
-     * Get the block y coordinate
+     * Get the block at the given coordinates
      *
+     * @param x
+     * @param y
+     * @param z
      * @return
      */
-    public int getBlockY() {
-        return (int) y;
-    }
-
-    /**
-     * Get the block z coordinate
-     *
-     * @return
-     */
-    public int getBlockZ() {
-        return (int) z;
-    }
-
-    /**
-     * Get the world the location is in
-     *
-     * @return
-     */
-    public World getWorld() {
-        return world;
-    }
-
-    /**
-     * Get the x coordinate
-     *
-     * @return
-     */
-    public double getX() {
-        return x;
-    }
-
-    /**
-     * Get the y coordinate
-     *
-     * @return
-     */
-    public double getY() {
-        return y;
-    }
-
-    /**
-     * Get the z coordinate
-     *
-     * @return
-     */
-    public double getZ() {
-        return z;
-    }
+    public Block getBlockAt(int x, int y, int z);
 
 }

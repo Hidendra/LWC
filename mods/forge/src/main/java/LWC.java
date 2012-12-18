@@ -29,6 +29,7 @@
 
 import com.griefcraft.Engine;
 import com.griefcraft.ServerLayer;
+import com.griefcraft.World;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -48,7 +49,7 @@ public class LWC {
     public static LWC instance;
 
     // Says where the client and server 'proxy' code is loaded.
-    @SidedProxy(clientSide="LWCClientProxy", serverSide="LWCServerProxy")
+    @SidedProxy(clientSide = "LWCClientProxy", serverSide = "LWCServerProxy")
     public static CommonProxy proxy;
 
     /**
@@ -88,10 +89,11 @@ public class LWC {
 
     /**
      * Get a World object for the native Canary world
+     *
      * @param worldName
      * @return
      */
-    public com.griefcraft.world.World getWorld(String worldName) {
+    public World getWorld(String worldName) {
         return layer.getWorld(worldName);
     }
 

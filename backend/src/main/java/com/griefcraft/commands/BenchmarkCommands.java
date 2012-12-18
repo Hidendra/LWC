@@ -30,10 +30,10 @@
 package com.griefcraft.commands;
 
 import com.griefcraft.Engine;
+import com.griefcraft.Location;
 import com.griefcraft.command.Command;
 import com.griefcraft.command.CommandContext;
 import com.griefcraft.command.SenderType;
-import com.griefcraft.world.Location;
 
 import java.util.Random;
 

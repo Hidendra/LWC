@@ -1,8 +1,8 @@
-package com.griefcraft.model;
+package com.griefcraft;
 
-import com.griefcraft.AccessProvider;
-import com.griefcraft.Engine;
-import com.griefcraft.ProtectionAccess;
+import com.griefcraft.model.AbstractSavable;
+import com.griefcraft.model.Protection;
+import com.griefcraft.model.State;
 
 public abstract class Role extends AbstractSavable implements AccessProvider {
 

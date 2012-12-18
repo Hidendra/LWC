@@ -42,6 +42,7 @@ public interface ProtectionAttributeFactory<T> {
 
     /**
      * Create an attribute
+     *
      * @return
      */
     public AbstractAttribute<T> createAttribute();

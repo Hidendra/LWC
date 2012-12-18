@@ -27,7 +27,7 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.world;
+package com.griefcraft;
 
 import com.griefcraft.util.ItemConfig;
 

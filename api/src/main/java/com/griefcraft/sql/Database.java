@@ -29,10 +29,10 @@
 
 package com.griefcraft.sql;
 
+import com.griefcraft.Location;
+import com.griefcraft.Role;
 import com.griefcraft.model.AbstractAttribute;
 import com.griefcraft.model.Protection;
-import com.griefcraft.model.Role;
-import com.griefcraft.world.Location;
 
 import java.util.Set;
 

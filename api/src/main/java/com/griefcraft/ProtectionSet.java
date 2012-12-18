@@ -30,8 +30,6 @@
 package com.griefcraft;
 
 import com.griefcraft.model.Protection;
-import com.griefcraft.world.Block;
-import com.griefcraft.world.Location;
 
 import java.util.ArrayList;
 import java.util.Collections;

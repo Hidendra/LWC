@@ -29,8 +29,8 @@
 
 package com.griefcraft.spout.world;
 
-import com.griefcraft.world.Block;
-import com.griefcraft.world.World;
+import com.griefcraft.Block;
+import com.griefcraft.World;
 import org.spout.api.material.BlockMaterial;
 import org.spout.api.material.Material;
 import org.spout.vanilla.material.VanillaMaterial;
