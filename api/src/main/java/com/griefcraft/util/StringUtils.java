@@ -63,7 +63,7 @@ public class StringUtils {
 
         // scan for spaces
         for (int index = 0; index < string.length; index++) {
-            if (string[index] == ' ' && index != string.length) {
+            if (string[index] == ' ' && (index + 1) != string.length) {
                 // convert chars after found spaces to uppercase
                 string[index + 1] = Character.toUpperCase(string[index + 1]);
             }

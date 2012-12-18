@@ -55,6 +55,6 @@ public enum ServerMod {
     /**
      * Minecraft Forge, a client/server mod - http://www.minecraftforge.net
      */
-    FORGE;
+    FORGE
 
 }

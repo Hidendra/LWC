@@ -48,6 +48,6 @@ public enum ProtectionAccess {
      * User has the same access as the user who created the protection. They can remove the protection,
      * add or remove ANY level to the protection (i.e other owners) but they cannot remove themself.
      */
-    OWNER;
+    OWNER
 
 }

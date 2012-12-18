@@ -49,6 +49,6 @@ public enum State {
     /**
      * Object has been removed from the database
      */
-    REMOVED;
+    REMOVED
 
 }
