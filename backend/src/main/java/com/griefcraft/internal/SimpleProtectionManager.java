@@ -112,8 +112,9 @@ public class SimpleProtectionManager implements ProtectionManager {
         // they cannot access the protection o\
         // so send them a kind message
         if (access != ProtectionAccess.EXPLICIT_DENY) {
-            player.sendMessage(_("This protection is locked by a magical spell."));
+            player.sendMessage(_("&4This protection is locked by a magical spell."));
         }
+
         return true;
     }
 
