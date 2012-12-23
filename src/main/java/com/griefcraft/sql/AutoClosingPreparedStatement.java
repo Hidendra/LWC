@@ -73,10 +73,12 @@ public class AutoClosingPreparedStatement implements PreparedStatement {
     }
 
     public void close() throws SQLException {
-        statement.close();
-
-        if (connection != null) {
-            connection.close();
+        try {
+            statement.close();
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
         }
     }
 
@@ -94,6 +96,10 @@ public class AutoClosingPreparedStatement implements PreparedStatement {
 
     public ResultSet executeQuery() throws SQLException {
         return new AutoClosingResultSet(this, statement.executeQuery());
+    }
+
+    public ResultSet executeQuery(String s) throws SQLException {
+        return new AutoClosingResultSet(this, statement.executeQuery(s));
     }
 
     public void setAsciiStream(int i, InputStream inputStream, int i2) throws SQLException {
@@ -414,10 +420,6 @@ public class AutoClosingPreparedStatement implements PreparedStatement {
 
     public void setFetchSize(int i) throws SQLException {
         statement.setFetchSize(i);
-    }
-
-    public ResultSet executeQuery(String s) throws SQLException {
-        return statement.executeQuery(s);
     }
 
     public void setByte(int i, byte b) throws SQLException {
