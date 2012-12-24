@@ -1,0 +1,187 @@
+diff -r -U 3 minecraft\net\minecraft\client\Minecraft.java minecraft_patched\net\minecraft\client\Minecraft.java
+--- minecraft\net\minecraft\client\Minecraft.java	Mon Dec 17 22:49:48 2012
++++ minecraft_patched\net\minecraft\client\Minecraft.java	Mon Dec 17 22:51:37 2012
+@@ -546,9 +546,8 @@
+          return;
+       }
+ 
+-      while(true) {
+          try {
+-            if(this.field_71425_J) {
++            while(this.field_71425_J) {
+                if(this.field_71434_R && this.field_71433_S != null) {
+                   this.func_71377_b(this.field_71433_S);
+                   return;
+@@ -566,7 +565,6 @@
+                   this.func_71373_a(new GuiMemoryErrorScreen());
+                   System.gc();
+                }
+-               continue;
+             }
+          } catch (MinecraftError var12) {
+             ;
+@@ -584,8 +582,6 @@
+             this.func_71405_e();
+          }
+ 
+-         return;
+-      }
+    }
+ 
+    private void func_71411_J() {
+diff -r -U 3 minecraft\net\minecraft\crash\CallableSuspiciousClasses.java minecraft_patched\net\minecraft\crash\CallableSuspiciousClasses.java
+--- minecraft\net\minecraft\crash\CallableSuspiciousClasses.java	Mon Dec 17 22:49:49 2012
++++ minecraft_patched\net\minecraft\crash\CallableSuspiciousClasses.java	Mon Dec 17 22:51:37 2012
+@@ -21,9 +21,14 @@
+ 
+    public String func_85085_a() {
+       StringBuilder var1 = new StringBuilder();
+-      Field var2 = ClassLoader.class.getDeclaredField("classes");
+-      var2.setAccessible(true);
+-      ArrayList var3 = new ArrayList((Vector)var2.get(CrashReport.class.getClassLoader()));
++      ArrayList var3;
++      try {
++	     Field var2 = ClassLoader.class.getDeclaredField("classes");
++	     var2.setAccessible(true);
++	     var3 = new ArrayList((Vector)var2.get(CrashReport.class.getClassLoader()));
++      } catch(Exception ex) {
++    	 return "";
++      }
+       boolean var4 = true;
+       boolean var5 = !CrashReport.class.getCanonicalName().equals("net.minecraft.CrashReport");
+       HashMap var6 = new HashMap();
+diff -r -U 3 minecraft\net\minecraft\client\audio\CodecMus.java minecraft_patched\net\minecraft\client\audio\CodecMus.java
+--- minecraft\net\minecraft\client\audio\CodecMus.java	Mon Dec 17 22:49:49 2012
++++ minecraft_patched\net\minecraft\client\audio\CodecMus.java	Mon Dec 17 22:51:37 2012
+@@ -1,5 +1,6 @@
+ package net.minecraft.src;
+ 
++import java.io.IOException;
+ import java.io.InputStream;
+ import net.minecraft.src.MusInputStream;
+ import paulscode.sound.codecs.CodecJOrbis;
+@@ -7,6 +8,10 @@
+ public class CodecMus extends CodecJOrbis {
+ 
+    protected InputStream openInputStream() {
+-      return new MusInputStream(this, this.url, this.urlConnection.getInputStream());
++      try {
++         return new MusInputStream(this, this.url, this.urlConnection.getInputStream());
++      } catch (IOException e) {
++         return null;
++      }
+    }
+ }
+diff -r -U 3 minecraft\net\minecraft\world\gen\structure\ComponentStrongholdRightTurn.java minecraft_patched\net\minecraft\world\gen\structure\ComponentStrongholdRightTurn.java
+--- minecraft\net\minecraft\world\gen\structure\ComponentStrongholdRightTurn.java	Mon Dec 17 22:49:49 2012
++++ minecraft_patched\net\minecraft\world\gen\structure\ComponentStrongholdRightTurn.java	Mon Dec 17 22:51:37 2012
+@@ -11,6 +11,10 @@
+ 
+ public class ComponentStrongholdRightTurn extends ComponentStrongholdLeftTurn {
+ 
++   public ComponentStrongholdRightTurn(int p_i3843_1_, Random p_i3843_2_, StructureBoundingBox p_i3843_3_, int p_i3843_4_) {
++      super(p_i3843_1_, p_i3843_2_, p_i3843_3_, p_i3843_4_);
++   }
++
+    public void func_74861_a(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_) {
+       if(this.field_74885_f != 2 && this.field_74885_f != 3) {
+          this.func_74989_b((ComponentStrongholdStairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
+diff -r -U 3 minecraft\net\minecraft\server\dedicated\DedicatedServer.java minecraft_patched\net\minecraft\server\dedicated\DedicatedServer.java
+--- minecraft\net\minecraft\server\dedicated\DedicatedServer.java	Mon Dec 17 22:49:49 2012
++++ minecraft_patched\net\minecraft\server\dedicated\DedicatedServer.java	Mon Dec 17 22:51:37 2012
+@@ -202,7 +202,7 @@
+       System.exit(0);
+    }
+ 
+-   protected void func_71190_q() {
++   public void func_71190_q() {
+       super.func_71190_q();
+       this.func_71333_ah();
+    }
+diff -r -U 3 minecraft\net\minecraft\entity\passive\EntityMooshroom.java minecraft_patched\net\minecraft\entity\passive\EntityMooshroom.java
+--- minecraft\net\minecraft\entity\passive\EntityMooshroom.java	Mon Dec 17 22:49:50 2012
++++ minecraft_patched\net\minecraft\entity\passive\EntityMooshroom.java	Mon Dec 17 22:51:37 2012
+@@ -56,10 +56,10 @@
+       return new EntityMooshroom(this.field_70170_p);
+    }
+ 
+-   // $FF: synthetic method
+-   public EntityCow func_70879_a(EntityAgeable p_70879_1_) {
+-      return this.func_70879_a(p_70879_1_);
+-   }
++//   // $FF: synthetic method
++//   public EntityCow func_70879_a(EntityAgeable p_70879_1_) {
++//      return this.func_70879_a(p_70879_1_);
++//   }
+ 
+    // $FF: synthetic method
+    public EntityAgeable func_90011_a(EntityAgeable p_90011_1_) {
+diff -r -U 3 minecraft\net\minecraft\client\gui\FontRenderer.java minecraft_patched\net\minecraft\client\gui\FontRenderer.java
+--- minecraft\net\minecraft\client\gui\FontRenderer.java	Mon Dec 17 22:49:50 2012
++++ minecraft_patched\net\minecraft\client\gui\FontRenderer.java	Mon Dec 17 22:51:37 2012
+@@ -611,8 +611,6 @@
+          case 10:
+             --var5;
+             break;
+-         case 32:
+-            var6 = var5;
+          case 167:
+             if(var5 < var3 - 1) {
+                ++var5;
+@@ -626,6 +624,8 @@
+                }
+             }
+             break;
++         case 32:
++             var6 = var5;
+          default:
+             var4 += this.func_78263_a(var8);
+             if(var7) {
+diff -r -U 3 minecraft\net\minecraft\server\integrated\IntegratedServer.java minecraft_patched\net\minecraft\server\integrated\IntegratedServer.java
+--- minecraft\net\minecraft\server\integrated\IntegratedServer.java	Mon Dec 17 22:49:50 2012
++++ minecraft_patched\net\minecraft\server\integrated\IntegratedServer.java	Mon Dec 17 22:51:37 2012
+@@ -98,7 +98,7 @@
+       return true;
+    }
+ 
+-   protected void func_71217_p() {
++   public void func_71217_p() {
+       boolean var1 = this.field_71348_o;
+       this.field_71348_o = this.field_71347_n.func_71752_f();
+       if(!var1 && this.field_71348_o) {
+diff -r -U 3 minecraft\net\minecraft\client\renderer\RenderGlobal.java minecraft_patched\net\minecraft\client\renderer\RenderGlobal.java
+--- minecraft\net\minecraft\client\renderer\RenderGlobal.java	Mon Dec 17 22:49:52 2012
++++ minecraft_patched\net\minecraft\client\renderer\RenderGlobal.java	Mon Dec 17 22:51:37 2012
+@@ -1447,7 +1447,7 @@
+          double var15 = this.field_72777_q.field_71451_h.field_70165_t - p_72726_2_;
+          double var17 = this.field_72777_q.field_71451_h.field_70163_u - p_72726_4_;
+          double var19 = this.field_72777_q.field_71451_h.field_70161_v - p_72726_6_;
+-         Object var21 = null;
++         EntityFX var21 = null;
+          if(p_72726_1_.equals("hugeexplosion")) {
+             this.field_72777_q.field_71452_i.func_78873_a(var21 = new EntityHugeExplodeFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_));
+          } else if(p_72726_1_.equals("largeexplode")) {
+diff -r -U 3 minecraft\net\minecraft\network\TcpMasterThread.java minecraft_patched\net\minecraft\network\TcpMasterThread.java
+--- minecraft\net\minecraft\network\TcpMasterThread.java	Mon Dec 17 22:49:52 2012
++++ minecraft_patched\net\minecraft\network\TcpMasterThread.java	Mon Dec 17 22:51:37 2012
+@@ -11,6 +11,7 @@
+       this.field_74504_a = p_i3285_1_;
+    }
+ 
++   @SuppressWarnings("deprecation")
+    public void run() {
+       try {
+          Thread.sleep(5000L);
+diff -r -U 3 minecraft\net\minecraft\world\storage\ThreadedFileIOBase.java minecraft_patched\net\minecraft\world\storage\ThreadedFileIOBase.java
+--- minecraft\net\minecraft\world\storage\ThreadedFileIOBase.java	Mon Dec 17 22:49:52 2012
++++ minecraft_patched\net\minecraft\world\storage\ThreadedFileIOBase.java	Mon Dec 17 22:51:37 2012
+@@ -20,7 +20,8 @@
+    }
+ 
+    public void run() {
+-      this.func_75736_b();
++      while(true)
++         this.func_75736_b();
+    }
+ 
+    private void func_75736_b() {
