@@ -12,6 +12,9 @@ lib/forge-full.jar
 You can also clean out some files that are not needed for reduced disk space. From the root mcp folder:
 
 rm -rf temp/src temp/cls temp/*.jar runtime/bin/python
+mv temp/bin/minecraft/paulscode bin_paulscode
+rm -rf temp/bin/minecraft/*
+mv bin_paulscode temp/bin/minecraft/
 
 NOTE: forge-full.jar
 
