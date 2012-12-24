@@ -159,6 +159,15 @@ public abstract class Database {
     }
 
     /**
+     * Get the connection pool object
+     *
+     * @return
+     */
+    public ConnectionPool getConnectionPool() {
+        return pool;
+    }
+
+    /**
      * Create a connection in the database pool
      *
      * @return
@@ -308,9 +317,7 @@ public abstract class Database {
             PreparedStatement preparedStatement;
 
             if (connection == null) {
-                pool.flush();
-                connection = createConnection();
-                log("Flushed database pool");
+                throw new DatabaseException("Connection pool is full!");
             }
 
             if (returnGeneratedKeys) {
