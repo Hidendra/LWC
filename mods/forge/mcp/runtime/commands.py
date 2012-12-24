@@ -180,6 +180,8 @@ class Commands(object):
 
         if sys.platform.startswith('linux'):
             self.osname = 'linux'
+        elif sys.platform.startswith('freebsd'):
+            self.osname = 'linux'
         elif sys.platform.startswith('darwin'):
             self.osname = 'osx'
         elif sys.platform.startswith('win'):

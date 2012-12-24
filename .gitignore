@@ -1,7 +1,6 @@
 .idea
 .settings
 .externalToolBuilders
-bin
 obj
 target
 build

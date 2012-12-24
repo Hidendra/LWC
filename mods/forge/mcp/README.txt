@@ -17,6 +17,10 @@ NOTE: forge-full.jar
 
 forge-full.jar is created using a full recompile with a full MCP + Forge install.
 
+NOTE: FreeBSD support
+
+Apply the freebsd patch: # patch -p0 < freebsd-support.patch
+
 To create forge-full.jar cd into bin/minecraft/ and run jar cf forge-full.jar ./
 
 After all of this LWC should build successfully on the new Minecraft version.
