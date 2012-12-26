@@ -132,6 +132,7 @@ public class Statistics {
         sender.sendMessage("  Engine: " + Colors.Green + Database.DefaultType);
         sender.sendMessage("  Protections: " + Colors.Green + formatNumber(lwc.getPhysicalDatabase().getProtectionCount()));
         sender.sendMessage("  Queries: " + Colors.Green + formatNumber(queries) + " | " + String.format("%.2f", getAverage(queries)) + " / second");
+        sender.sendMessage("  Queue: " + Colors.Green + lwc.getDatabaseThread().size());
         sender.sendMessage("  Pool: " + Colors.Green + pool.getCheckedOut() + Colors.White + " checked out, " + Colors.Green + pool.getFreeCount() + Colors.White + " available, " + Colors.Green + formatNumber(pool.getRequestCount()) + Colors.White + " requests");
         sender.sendMessage(" ");
 
