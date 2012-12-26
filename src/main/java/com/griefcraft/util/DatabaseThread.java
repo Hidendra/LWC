@@ -30,6 +30,7 @@ package com.griefcraft.util;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Iterator;
 import java.util.Queue;
@@ -50,7 +51,7 @@ public class DatabaseThread implements Runnable {
     /**
      * The thread we are running in
      */
-    private final Thread thread = new Thread(this);
+    private final BukkitTask task;
 
     /**
      * If the database thread is active and running
@@ -66,7 +67,7 @@ public class DatabaseThread implements Runnable {
         this.lwc = lwc;
         this.running = true;
         this.lastFlush = System.currentTimeMillis();
-        this.thread.start();
+        task = lwc.getPlugin().getServer().getScheduler().runTaskTimer(lwc.getPlugin(), this, 5, 5);
     }
 
     /**
@@ -102,9 +103,7 @@ public class DatabaseThread implements Runnable {
     public void stop() {
         // stop running and interrupt the thread
         running = false;
-        if (!thread.isInterrupted()) {
-            thread.interrupt();
-        }
+        task.cancel();
 
         // Flush the rest of the entries
         flushDatabase();
@@ -136,24 +135,7 @@ public class DatabaseThread implements Runnable {
     }
 
     public void run() {
-        while (running) {
-            // how many seconds between each flush
-            int interval = lwc.getConfiguration().getInt("core.flushInterval", 5);
-
-            long currentTime = System.currentTimeMillis();
-            long intervalMilliseconds = interval * 1000L;
-
-            // compare the current time to the last flush
-            if (currentTime - lastFlush > intervalMilliseconds) {
-                flushDatabase();
-            }
-
-            try {
-                Thread.sleep(1000L);
-            } catch (InterruptedException e) {
-                running = false;
-            }
-        }
+        flushDatabase();
     }
 
 }
