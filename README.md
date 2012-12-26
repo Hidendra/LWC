@@ -3,6 +3,8 @@ LWC
 
 *The* chest (and other blocks) protection plugin.
 
+This branch is for the rewrite and will tend to be volatile until more stable alpha builds are available.
+
 Compilation
 -----------
 
