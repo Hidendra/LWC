@@ -41,10 +41,20 @@ public class SavableSaveQueue {
      */
     private final BlockingQueue<AbstractSavable> queue = new LinkedBlockingQueue<AbstractSavable>();
 
+    /**
+     * The queue's thread
+     */
+    private Thread thread = null;
+
+    /**
+     * If the thread is running or not
+     */
+    private boolean running = false;
+
     public SavableSaveQueue() {
         // TODO limit queries/sec
         // TODO properly destroy thread, etc, or use server-specific implementations (e.g Bukkit's scheduler)
-        Thread thread = new Thread(new Worker(), "LWC Savable Thread");
+        thread = new Thread(new Worker(), "LWC Savable Thread");
         thread.start();
     }
 
@@ -57,10 +67,26 @@ public class SavableSaveQueue {
         queue.offer(savable);
     }
 
+    /**
+     * Flush the queue and then close it
+     */
+    public void flushAndClose() {
+        running = false;
+        thread.interrupt();
+        AbstractSavable savable;
+        while ((savable = queue.poll()) != null) {
+            savable.saveImmediately();
+        }
+    }
+
     private class Worker implements Runnable {
 
         public void run() {
             while (true) {
+                if (!running) {
+                    break;
+                }
+
                 try {
                     AbstractSavable savable = queue.take();
                     savable.saveImmediately();

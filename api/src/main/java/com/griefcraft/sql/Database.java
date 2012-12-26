@@ -47,6 +47,11 @@ public interface Database {
     public boolean connect() throws DatabaseException;
 
     /**
+     * Disconnct from the database
+     */
+    public void disconnect();
+
+    /**
      * Create a protection in the world. The {@link com.griefcraft.model.Protection} object returned by this method
      * can be considered to be in the database already.
      *

@@ -179,6 +179,13 @@ public class SimpleEngine implements Engine {
         return configuration;
     }
 
+    public void disable() {
+        consoleSender.sendMessage("Shutting down!");
+        savableQueue.flushAndClose();
+        database.disconnect();
+        database = null;
+    }
+
     /**
      * Open and connect to the database
      */

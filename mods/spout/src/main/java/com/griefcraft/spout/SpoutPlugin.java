@@ -132,6 +132,7 @@ public class SpoutPlugin extends CommonPlugin implements Listener {
 
     @Override
     public void onDisable() {
+        engine.disable();
         engine = null;
     }
 

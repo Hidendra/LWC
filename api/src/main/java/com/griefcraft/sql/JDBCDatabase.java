@@ -168,6 +168,11 @@ public class JDBCDatabase implements Database {
         }
     }
 
+    public void disconnect() {
+        pool.release();
+        pool = null;
+    }
+
     /**
      * Handle an exception thrown by this class
      *

@@ -106,4 +106,9 @@ public interface Engine {
      */
     public Configuration getConfiguration();
 
+    /**
+     * Called when the engine needs to be disabled
+     */
+    public void disable();
+
 }
