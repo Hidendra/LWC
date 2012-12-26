@@ -2,8 +2,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.griefcraft.lwc.mods</groupId>
-    <artifactId>canary</artifactId>
-    <name>LWC-Canary</name>
+    <artifactId>universal</artifactId>
+    <name>LWC-Universal</name>
     <url>griefcraft.com</url>
     <packaging>jar</packaging>
     <version>5.0.0-SNAPSHOT</version>
@@ -14,7 +14,7 @@
 
     <repositories>
         <repository>
-            <id>hidendra</id>
+            <id>Plugin Metrics</id>
             <url>http://repo.mcstats.org/content/repositories/public</url>
         </repository>
     </repositories>
@@ -27,9 +27,27 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>net.canarymod</groupId>
-            <artifactId>canarymod</artifactId>
-            <version>5.3.11</version>
+            <groupId>com.griefcraft.lwc.mods</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>5.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.griefcraft.lwc.mods</groupId>
+            <artifactId>canary</artifactId>
+            <version>5.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.griefcraft.lwc.mods</groupId>
+            <artifactId>forge</artifactId>
+            <version>5.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.griefcraft.lwc.mods</groupId>
+            <artifactId>spout</artifactId>
+            <version>5.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -39,23 +57,15 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.10</version>
-            <scope>test</scope>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.21</version>
         </dependency>
     </dependencies>
 
     <build>
         <finalName>${project.name}-${project.version}</finalName>
         <defaultGoal>clean package</defaultGoal>
-
-        <resources>
-            <resource>
-                <directory>${basedir}/src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
 
         <plugins>
             <plugin>
@@ -82,7 +92,12 @@
                             <artifactSet>
                                 <excludes>
                                     <exclude>junit:junit</exclude>
+                                    <exclude>cpw.mods.fml:*</exclude>
+                                    <exclude>org.bukkit:*</exclude>
+                                    <exclude>org.spout:*</exclude>
                                     <exclude>net.canarymod:*</exclude>
+                                    <exclude>org.xnap.commons:gettext-commons</exclude>
+                                    <exclude>net.minecraft:*</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>

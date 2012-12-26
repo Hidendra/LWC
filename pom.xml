@@ -35,6 +35,7 @@
         <module>mods/canary</module>
         <module>mods/workbench</module>
         <module>mods/forge</module>
+        <module>mods/universal</module>
     </modules>
 
     <build>
