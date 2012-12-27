@@ -34,6 +34,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.world.WorldServer;
 
+import java.util.Map;
+
 public class ForgeServerLayer extends ServerLayer {
 
     /**
@@ -41,8 +43,31 @@ public class ForgeServerLayer extends ServerLayer {
      */
     private LWC mod;
 
+    /**
+     * The internal Minecraft map of commands
+     */
+    private Map internal_commands = null;
+
     public ForgeServerLayer() {
         mod = LWC.instance;
+        try {
+            initCommandManager();
+        } catch (Throwable t) {
+            System.err.println(" !!!! LWC is likely not compatible with this version of Minecraft. You need to update!");
+            t.printStackTrace();
+        }
+    }
+
+    /**
+     * Initialize the command manager and hook into it. This resolves to NATIVE code during obfuscation.
+     */
+    public void initCommandManager() {
+        MinecraftServer server = ModLoader.getMinecraftServerInstance();
+        internal_commands = server.getCommandManager().getCommands();
+    }
+
+    public void onRegisterBaseCommand(String baseCommand) {
+        internal_commands.put(baseCommand, new NativeCommandHandler(baseCommand));
     }
 
     @Override

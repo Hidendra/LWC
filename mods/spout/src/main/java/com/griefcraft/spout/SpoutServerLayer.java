@@ -31,10 +31,18 @@ package com.griefcraft.spout;
 
 import com.griefcraft.ServerLayer;
 import com.griefcraft.World;
+import com.griefcraft.command.CommandContext;
+import com.griefcraft.command.CommandSender;
 import com.griefcraft.entity.Player;
 import com.griefcraft.spout.entity.SpoutPlayer;
 import com.griefcraft.spout.world.SpoutWorld;
 import org.spout.api.Spout;
+import org.spout.api.chat.ChatSection;
+import org.spout.api.command.Command;
+import org.spout.api.command.CommandExecutor;
+import org.spout.api.command.CommandSource;
+
+import java.util.List;
 
 public class SpoutServerLayer extends ServerLayer {
 
@@ -43,8 +51,35 @@ public class SpoutServerLayer extends ServerLayer {
      */
     private SpoutPlugin plugin;
 
+    CommandExecutor executor = new CommandExecutor() {
+        public void processCommand(CommandSource commandSource, Command command, org.spout.api.command.CommandContext commandContext) throws org.spout.api.exception.CommandException {
+            CommandContext.Type contextType = (commandSource instanceof org.spout.api.entity.Player) ? CommandContext.Type.PLAYER : CommandContext.Type.SERVER;
+            CommandSender sender;
+
+            if (contextType == CommandContext.Type.SERVER) {
+                sender = plugin.getInternalEngine().getConsoleSender();
+            } else {
+                sender = plugin.wrapPlayer((org.spout.api.entity.Player) commandSource);
+            }
+
+            List<ChatSection> sections = commandContext.getRawArgs();
+            String rawMessage = commandContext.getCommand();
+
+            for (ChatSection section : sections) {
+                rawMessage += " " + section.getPlainString();
+            }
+
+            plugin._onCommand(contextType, sender, rawMessage);
+        }
+    };
+
     public SpoutServerLayer(SpoutPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @Override
+    public void onRegisterBaseCommand(String baseCommand) {
+        plugin.getEngine().getRootCommand().addSubCommand(plugin, baseCommand).setExecutor(executor);
     }
 
     @Override
@@ -55,7 +90,7 @@ public class SpoutServerLayer extends ServerLayer {
             return null;
         }
 
-        return new SpoutPlayer(plugin.getLWC(), plugin, handle);
+        return new SpoutPlayer(plugin.getInternalEngine(), plugin, handle);
     }
 
     @Override

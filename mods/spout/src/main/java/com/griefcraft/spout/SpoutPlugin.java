@@ -40,14 +40,9 @@ import com.griefcraft.entity.Player;
 import com.griefcraft.spout.command.SpoutConsoleCommandSender;
 import com.griefcraft.spout.listeners.PlayerListener;
 import org.spout.api.Spout;
-import org.spout.api.chat.ChatSection;
-import org.spout.api.command.Command;
-import org.spout.api.command.CommandExecutor;
-import org.spout.api.command.CommandSource;
 import org.spout.api.event.Listener;
 import org.spout.api.plugin.CommonPlugin;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 public class SpoutPlugin extends CommonPlugin implements Listener {
@@ -68,7 +63,7 @@ public class SpoutPlugin extends CommonPlugin implements Listener {
      *
      * @return
      */
-    public Engine getLWC() {
+    public Engine getInternalEngine() {
         return engine;
     }
 
@@ -99,32 +94,6 @@ public class SpoutPlugin extends CommonPlugin implements Listener {
         // Create a new LWC engine
         engine = SimpleEngine.createEngine(layer, new SpoutServerInfo(), new SpoutConsoleCommandSender());
 
-        CommandExecutor executor = new CommandExecutor() {
-            public void processCommand(CommandSource commandSource, Command command, org.spout.api.command.CommandContext commandContext) throws org.spout.api.exception.CommandException {
-                CommandContext.Type contextType = (commandSource instanceof org.spout.api.entity.Player) ? CommandContext.Type.PLAYER : CommandContext.Type.SERVER;
-                CommandSender sender;
-
-                if (contextType == CommandContext.Type.SERVER) {
-                    sender = engine.getConsoleSender();
-                } else {
-                    sender = wrapPlayer((org.spout.api.entity.Player) commandSource);
-                }
-
-                List<ChatSection> sections = commandContext.getRawArgs();
-                String rawMessage = commandContext.getCommand();
-
-                for (ChatSection section : sections) {
-                    rawMessage += " " + section.getPlainString();
-                }
-
-                _onCommand(contextType, sender, rawMessage);
-            }
-        };
-
-        getEngine().getRootCommand().addSubCommand(this, "lwc").setExecutor(executor);
-        getEngine().getRootCommand().addSubCommand(this, "cprivate").setExecutor(executor);
-        getEngine().getRootCommand().addSubCommand(this, "cinfo").setExecutor(executor);
-
         // Register events
         Spout.getEngine().getEventManager().registerEvents(this, this);
         Spout.getEngine().getEventManager().registerEvents(new PlayerListener(this), this);
@@ -144,7 +113,7 @@ public class SpoutPlugin extends CommonPlugin implements Listener {
      * @param message the name of the command followed by any arguments.
      * @return true if the command event should be cancelled
      */
-    private boolean _onCommand(CommandContext.Type type, CommandSender sender, String message) {
+    protected boolean _onCommand(CommandContext.Type type, CommandSender sender, String message) {
         // Normalize the command, removing any prepended /, etc
         message = normalizeCommand(message);
 

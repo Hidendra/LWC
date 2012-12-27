@@ -98,7 +98,7 @@ public class SimpleEngine implements Engine {
         this.serverInfo = serverInfo;
         this.consoleSender = consoleSender;
         this.configuration = new YamlConfiguration("config.yml");
-        this.commandHandler = new SimpleCommandHandler();
+        this.commandHandler = new SimpleCommandHandler(this);
 
         consoleSender.sendMessage("Server: " + serverInfo.getServerMod() + " [" + serverInfo.getServerVersion() + "]");
         consoleSender.sendMessage("Layer: " + serverInfo.getLayerVersion());

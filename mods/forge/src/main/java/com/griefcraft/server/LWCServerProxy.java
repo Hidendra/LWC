@@ -30,19 +30,14 @@ package com.griefcraft.server;/*
 import com.griefcraft.CommonProxy;
 import com.griefcraft.Engine;
 import com.griefcraft.ForgeConsoleCommandSender;
-import com.griefcraft.listeners.ForgeListener;
 import com.griefcraft.ForgeServerInfo;
 import com.griefcraft.ForgeServerLayer;
 import com.griefcraft.LWC;
-import com.griefcraft.NativeCommandHandler;
 import com.griefcraft.ServerLayer;
 import com.griefcraft.SimpleEngine;
+import com.griefcraft.listeners.ForgeListener;
 import com.griefcraft.util.config.FileConfiguration;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.ModLoader;
 import net.minecraftforge.common.MinecraftForge;
-
-import java.util.Map;
 
 /**
  * Proxy used by just the server
@@ -55,43 +50,10 @@ public class LWCServerProxy extends CommonProxy {
         FileConfiguration.CONFIG_PATH = "mods/LWC/";
         MinecraftForge.EVENT_BUS.register(new ForgeListener(LWC.instance));
 
-        // try to inject commands
-        try {
-            injectCommands();
-        } catch (Exception e) {
-            System.out.println(" !!!!! LWC is most likely not updated for this version! Please update!");
-            System.out.println("If you are updated, please report this error");
-            e.printStackTrace();
-            return;
-        }
-
         // create an engine
         ServerLayer layer = new ForgeServerLayer();
         Engine engine = SimpleEngine.createEngine(layer, new ForgeServerInfo(), new ForgeConsoleCommandSender());
         LWC.instance.setupServer(engine, layer);
-    }
-
-    /**
-     * Inject the LWC commands into Minecraft
-     * <p/>
-     * 1.4.5:
-     * CommandHandler = x (implements z). Signature: "new CommandEvent("
-     * instance = MinecraftServer.class => "private final z q"
-     * <p/>
-     * We want to drop our handler in x's front door, local member "a" (private final Map) accessed via
-     * y var5 = (y)this.a.get(var4);
-     * var4 = command name (no /)
-     */
-    private void injectCommands() throws Exception {
-        MinecraftServer server = ModLoader.getMinecraftServerInstance();
-
-        Map commands = server.getCommandManager().getCommands();
-        commands.put("lwc", new NativeCommandHandler("lwc"));
-        commands.put("cprivate", new NativeCommandHandler("cprivate"));
-        commands.put("cset", new NativeCommandHandler("cset"));
-        commands.put("cpassword", new NativeCommandHandler("cpassword"));
-        commands.put("cinfo", new NativeCommandHandler("cpassword"));
-        // TODO go through every command and add the base & aliases
     }
 
 }

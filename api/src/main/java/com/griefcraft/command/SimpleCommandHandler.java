@@ -29,6 +29,7 @@
 
 package com.griefcraft.command;
 
+import com.griefcraft.Engine;
 import com.griefcraft.cache.LRUCache;
 import com.griefcraft.entity.Player;
 import com.griefcraft.util.StringUtils;
@@ -38,8 +39,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class SimpleCommandHandler implements CommandHandler {
 
@@ -47,6 +50,11 @@ public class SimpleCommandHandler implements CommandHandler {
      * The max amount of cached entries to keep
      */
     private final static int CACHE_SIZE = 50000;
+
+    /**
+     * Engine instance
+     */
+    private final Engine engine;
 
     /**
      * A map of all of the commands. It is keyed using the command's command. The method's instance
@@ -63,6 +71,15 @@ public class SimpleCommandHandler implements CommandHandler {
      * A cache of accepted commands
      */
     private final LRUCache<String, Tuple<Command, Method>> cache = new LRUCache<String, Tuple<Command, Method>>(CACHE_SIZE);
+
+    /**
+     * A set of the known base commands commands can use
+     */
+    private final Set<String> baseCommands = new HashSet<String>();
+
+    public SimpleCommandHandler(Engine engine) {
+        this.engine = engine;
+    }
 
     public boolean handleCommand(CommandContext context) throws CommandException {
         Tuple<Command, Method> found;
@@ -146,11 +163,15 @@ public class SimpleCommandHandler implements CommandHandler {
                 Tuple<Command, Method> tuple = new Tuple<Command, Method>(command, method);
 
                 // Add it to the commands
-                commands.put(normalizeCommand(command.command()), tuple);
+                String normalized = normalizeCommand(command.command());
+                commands.put(normalized, tuple);
+                postRegisterCommand(normalized);
 
                 // Register all of the aliases
                 for (String alias : command.aliases()) {
-                    commands.put(normalizeCommand(alias), tuple);
+                    normalized = normalizeCommand(alias);
+                    commands.put(normalized, tuple);
+                    postRegisterCommand(normalized);
                 }
 
                 // Add the instance
@@ -162,6 +183,25 @@ public class SimpleCommandHandler implements CommandHandler {
         }
 
         return registered;
+    }
+
+    /**
+     * Called after a command has been registered
+     * @param normalized
+     */
+    private void postRegisterCommand(String normalized) {
+        int indexOfSpace = normalized.indexOf(' ');
+
+        if (indexOfSpace != -1) {
+            normalized = normalized.substring(0, indexOfSpace);
+        }
+
+        if (!baseCommands.contains(normalized)) {
+            if (engine != null) {
+                engine.getServerLayer().onRegisterBaseCommand(normalized);
+            }
+            baseCommands.add(normalized);
+        }
     }
 
     /**

@@ -41,7 +41,7 @@ public class SimpleCommandHandlerTest {
 
     @Before
     public void init() {
-        handler = new SimpleCommandHandler();
+        handler = new SimpleCommandHandler(null);
     }
 
     @Test
