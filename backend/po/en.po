@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-18 02:24-0400\n"
+"POT-Creation-Date: 2012-12-27 16:09-0400\n"
 "PO-Revision-Date: 2012-11-08 01:19-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -58,32 +58,32 @@ msgstr "&2Removed the attribute {0} from the protection successfully."
 msgid "&4The protection does not have the attribute {0}"
 msgstr "&4The protection does not have the attribute {0}"
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:79
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:82
 msgid "Click on a block to protect it!"
 msgstr "Click on a block to protect it!"
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:88
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:91
 msgid "That block is not protectable"
 msgstr "That block is not protectable"
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:94
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:97
 msgid "Protected~"
 msgstr "Protected~"
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:96
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:99
 msgid "Failed to protect for some reason ?"
 msgstr "Failed to protect for some reason ?"
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:112
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:139
 msgid "Click on a block, please!~"
 msgstr "Click on a block, please!~"
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:118
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:145
 #, java-format
 msgid "You clicked on a block with the id {0}!"
 msgstr "You clicked on a block with the id {0}!"
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:134
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:161
 #, java-format
 msgid "Purging player?: {0}"
 msgstr "Purging player?: {0}"
@@ -91,3 +91,7 @@ msgstr "Purging player?: {0}"
 #: backend/src/main/java/com/griefcraft/internal/SimpleProtectionManager.java:115
 msgid "&4This protection is locked by a magical spell."
 msgstr "&4This protection is locked by a magical spell."
+
+#, fuzzy
+#~ msgid "Click on a protection to read info about it."
+#~ msgstr "&2Click on your protection to set the attribute"

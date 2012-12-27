@@ -123,6 +123,7 @@ public class SpoutPlugin extends CommonPlugin implements Listener {
 
         getEngine().getRootCommand().addSubCommand(this, "lwc").setExecutor(executor);
         getEngine().getRootCommand().addSubCommand(this, "cprivate").setExecutor(executor);
+        getEngine().getRootCommand().addSubCommand(this, "cinfo").setExecutor(executor);
 
         // Register events
         Spout.getEngine().getEventManager().registerEvents(this, this);

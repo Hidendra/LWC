@@ -32,12 +32,15 @@ package com.griefcraft.commands;
 import com.griefcraft.Block;
 import com.griefcraft.Engine;
 import com.griefcraft.ProtectionManager;
+import com.griefcraft.Role;
 import com.griefcraft.command.Command;
 import com.griefcraft.command.CommandContext;
 import com.griefcraft.command.SenderType;
 import com.griefcraft.entity.Player;
 import com.griefcraft.event.events.BlockEvent;
+import com.griefcraft.event.events.ProtectionEvent;
 import com.griefcraft.event.notifiers.BlockEventNotifier;
+import com.griefcraft.event.notifiers.ProtectionEventNotifier;
 import com.griefcraft.model.Protection;
 
 import static com.griefcraft.I18n._;
@@ -94,6 +97,30 @@ public class BaseCommands {
                     player.sendMessage(_("Protected~"));
                 } else {
                     player.sendMessage(_("Failed to protect for some reason ?"));
+                }
+
+                return true;
+            }
+        });
+    }
+
+    @Command(
+            command = "lwc info",
+            permission = "lwc.info",
+            aliases = {"cinfo"},
+            accepts = SenderType.PLAYER
+    )
+    public void info(CommandContext context) {
+        final Player player = (Player) context.getCommandSender();
+        player.sendMessage("Click on a protection to read info about it.");
+
+        player.onAnyInteract(new ProtectionEventNotifier() {
+            @Override
+            public boolean call(ProtectionEvent event) {
+                Protection protection = event.getProtection();
+
+                for (Role role : protection.getRoles()) {
+                    player.sendMessage(role.getClass().getSimpleName() + " RoleName=\"" + role.getRoleName() + "\" Access=" + role.getRoleAccess());
                 }
 
                 return true;

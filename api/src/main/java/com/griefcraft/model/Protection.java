@@ -36,6 +36,7 @@ import com.griefcraft.Role;
 import com.griefcraft.World;
 import com.griefcraft.entity.Player;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -220,6 +221,14 @@ public class Protection extends AbstractSavable {
         if (attribute instanceof AccessProvider) {
             accessProviders.remove(attribute);
         }
+    }
+
+    /**
+     * Returns an unmodifiable {@link Set} of the roles this protection contains
+     * @return
+     */
+    public Set<Role> getRoles() {
+        return Collections.unmodifiableSet(roles);
     }
 
     public void setWorld(World world) {

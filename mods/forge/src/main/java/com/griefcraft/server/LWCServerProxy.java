@@ -90,6 +90,7 @@ public class LWCServerProxy extends CommonProxy {
         commands.put("cprivate", new NativeCommandHandler("cprivate"));
         commands.put("cset", new NativeCommandHandler("cset"));
         commands.put("cpassword", new NativeCommandHandler("cpassword"));
+        commands.put("cinfo", new NativeCommandHandler("cpassword"));
         // TODO go through every command and add the base & aliases
     }
 
