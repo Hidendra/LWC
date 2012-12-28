@@ -66,10 +66,6 @@ public class CanaryPlayer extends com.griefcraft.entity.Player {
         }
     }
 
-    public void sendLocalizedMessage(String node, Object... args) {
-        throw new UnsupportedOperationException("Not supported");
-    }
-
     public boolean hasPermission(String node) {
         // hard coded for now.. what ever shall we do :-)
         if (node.equals("lwc.protect")) {
