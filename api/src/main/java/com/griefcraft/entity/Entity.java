@@ -38,6 +38,6 @@ public interface Entity {
      *
      * @return
      */
-    public abstract Location getLocation();
+    public Location getLocation();
 
 }
