@@ -29,6 +29,7 @@
 
 package com.griefcraft;
 
+import com.griefcraft.entity.Entity;
 import com.griefcraft.entity.Player;
 import com.griefcraft.event.EventException;
 import com.griefcraft.event.PlayerEventHandler;
@@ -49,48 +50,51 @@ public class SimpleEventHelper implements EventHelper {
         this.engine = engine;
     }
 
-    public boolean onBlockInteract(Player player, Block block) {
-
-        boolean cancel; // If the event should be cancelled
+    public boolean onBlockInteract(Entity entity, Block block) {
+        boolean cancel = false; // If the event should be cancelled
 
         // Match the block to a protection
         Protection protection = engine.getProtectionManager().findProtection(block.getLocation()); // TODO :-)
         engine.getConsoleSender().sendMessage("Protection found: " + protection);
 
-        // Give events the first stab
-        try {
+        if (entity instanceof Player) {
+            Player player = (Player) entity;
 
-            if (protection == null) {
-                cancel = player.callEvent(PlayerEventHandler.Type.PLAYER_INTERACT_BLOCK, new BlockEvent(block));
-            } else {
-                cancel = player.callEvent(PlayerEventHandler.Type.PLAYER_INTERACT_PROTECTION, new ProtectionEvent(protection));
-            }
-
-            // default event action
-            if (!cancel && protection != null) {
-                ProtectionAccess access = protection.getAccess(player);
-
-                /// TODO distinguish between left / right click.
-
-                // if they're the owner, return immediately
-                if (access.ordinal() > ProtectionAccess.NONE.ordinal()) {
-                    return false;
+            try {
+                if (protection == null) {
+                    cancel = player.callEvent(PlayerEventHandler.Type.PLAYER_INTERACT_BLOCK, new BlockEvent(block));
+                } else {
+                    cancel = player.callEvent(PlayerEventHandler.Type.PLAYER_INTERACT_PROTECTION, new ProtectionEvent(protection));
                 }
 
-                // they cannot access the protection o\
-                // so send them a kind message
-                if (access != ProtectionAccess.EXPLICIT_DENY) {
-                    player.sendMessage(_("&4This protection is locked by a magical spell."));
-                }
+                // default event action
+                if (!cancel && protection != null) {
+                    ProtectionAccess access = protection.getAccess(player);
 
-                return true;
+                    /// TODO distinguish between left / right click.
+
+                    // if they're the owner, return immediately
+                    if (access.ordinal() > ProtectionAccess.NONE.ordinal()) {
+                        return false;
+                    }
+
+                    // they cannot access the protection o\
+                    // so send them a kind message
+                    if (access != ProtectionAccess.EXPLICIT_DENY) {
+                        player.sendMessage(_("&4This protection is locked by a magical spell."));
+                    }
+
+                    return true;
+                }
+            } catch (EventException e) {
+                // TODO {0}
+                player.sendMessage(_("&cA severe error occurred while processing the event: {0}"
+                        + "&cThe full stack trace has been printed out to the log file", e.getMessage()));
+                e.printStackTrace();
+                return true; // Better safe than sorry
             }
-        } catch (EventException e) {
-            // TODO {0}
-            player.sendMessage(_("&cA severe error occurred while processing the event: {0}"
-                    + "&cThe full stack trace has been printed out to the log file", e.getMessage()));
-            e.printStackTrace();
-            return true; // Better safe than sorry
+        } else {
+            engine.getConsoleSender().sendMessage("Unhandled Entity in onBlockInteract() : " + entity.getClass().getSimpleName());
         }
 
         return cancel;

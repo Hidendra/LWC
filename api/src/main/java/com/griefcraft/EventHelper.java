@@ -29,17 +29,17 @@
 
 package com.griefcraft;
 
-import com.griefcraft.entity.Player;
+import com.griefcraft.entity.Entity;
 
 public interface EventHelper {
 
     /**
      * Called when a player interacts with a block
      *
-     * @param player
+     * @param entity
      * @param block
      * @return true if the event is to be cancelled, false otherwise
      */
-    public boolean onBlockInteract(Player player, Block block);
+    public boolean onBlockInteract(Entity entity, Block block);
 
 }
