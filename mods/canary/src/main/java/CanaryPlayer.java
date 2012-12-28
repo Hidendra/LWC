@@ -27,7 +27,6 @@
  */
 
 import com.griefcraft.Location;
-import com.griefcraft.event.PlayerEventDelegate;
 import com.griefcraft.util.Color;
 
 public class CanaryPlayer extends com.griefcraft.entity.Player {
@@ -42,11 +41,6 @@ public class CanaryPlayer extends com.griefcraft.entity.Player {
      */
     private Player handle;
 
-    /**
-     * The event delegate
-     */
-    private PlayerEventDelegate eventDelegate;
-
     public CanaryPlayer(LWC plugin, Player handle) {
         if (handle == null) {
             throw new IllegalArgumentException("Player handle cannot be null");
@@ -54,8 +48,6 @@ public class CanaryPlayer extends com.griefcraft.entity.Player {
 
         this.plugin = plugin;
         this.handle = handle;
-        this.eventDelegate = new PlayerEventDelegate(plugin.getEngine(), this);
-        // TODO create LWC engine in the plugin class
     }
 
     @Override
@@ -65,13 +57,7 @@ public class CanaryPlayer extends com.griefcraft.entity.Player {
 
     @Override
     public Location getLocation() {
-        // TODO cache the world somewhere else
         return new Location(plugin.getWorld(handle.getWorld().getName()), handle.getX(), handle.getY(), handle.getZ());
-    }
-
-    @Override
-    public PlayerEventDelegate getEventDelegate() {
-        return eventDelegate;
     }
 
     public void sendMessage(String message) {

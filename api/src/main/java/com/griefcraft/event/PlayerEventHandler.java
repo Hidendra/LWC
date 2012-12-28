@@ -123,7 +123,7 @@ public class PlayerEventHandler {
      * @return true if the event should be cancelled, false otherwise
      * @throws EventException
      */
-    protected boolean callEvent(Type type, Event event) throws EventException {
+    public boolean callEvent(Type type, Event event) throws EventException {
         // Check temporary notifier
         {
             EventNotifier<?> notifier = temporaryNotifiers.get(type);

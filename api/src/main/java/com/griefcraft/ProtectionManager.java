@@ -30,7 +30,6 @@
 package com.griefcraft;
 
 import com.griefcraft.attribute.ProtectionAttributeFactory;
-import com.griefcraft.entity.Player;
 import com.griefcraft.model.AbstractAttribute;
 import com.griefcraft.model.Protection;
 
@@ -60,15 +59,6 @@ public interface ProtectionManager {
      * @return
      */
     public Protection createProtection(String owner, Location location);
-
-    /**
-     * The method that is called in the event no events cancel a player interact call.
-     *
-     * @param protection
-     * @param player
-     * @return
-     */
-    public boolean defaultPlayerInteractAction(Protection protection, Player player);
 
     /**
      * Register an attribute factory that is used to create {@link com.griefcraft.model.AbstractAttribute} objects

@@ -28,7 +28,6 @@ package com.griefcraft;/*
  */
 
 import com.griefcraft.entity.Player;
-import com.griefcraft.event.PlayerEventDelegate;
 import com.griefcraft.util.Color;
 import com.griefcraft.world.ForgeWorld;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -45,15 +44,9 @@ public class ForgePlayer extends Player {
      */
     private EntityPlayerMP handle;
 
-    /**
-     * The event delegate
-     */
-    private PlayerEventDelegate eventDelegate;
-
     public ForgePlayer(EntityPlayerMP handle) {
         this.handle = handle;
         this.mod = LWC.instance;
-        this.eventDelegate = new PlayerEventDelegate(LWC.instance.getEngine(), this);
     }
 
     @Override
@@ -70,11 +63,6 @@ public class ForgePlayer extends Player {
         }
 
         return null;
-    }
-
-    @Override
-    public PlayerEventDelegate getEventDelegate() {
-        return eventDelegate;
     }
 
     public void sendMessage(String message) {

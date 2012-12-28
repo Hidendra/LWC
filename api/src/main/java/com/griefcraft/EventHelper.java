@@ -27,54 +27,19 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.spout.entity;
+package com.griefcraft;
 
-import com.griefcraft.Engine;
-import com.griefcraft.Location;
 import com.griefcraft.entity.Player;
-import com.griefcraft.spout.SpoutPlugin;
-import com.griefcraft.util.Color;
-import org.spout.api.geo.discrete.Point;
 
-public class SpoutPlayer extends Player {
+public interface EventHelper {
 
     /**
-     * The plugin object
+     * Called when a player interacts with a block
+     *
+     * @param player
+     * @param block
+     * @return true if the event is to be cancelled, false otherwise
      */
-    private final SpoutPlugin plugin;
+    public boolean onBlockInteract(Player player, Block block);
 
-    /**
-     * The player handle
-     */
-    private final org.spout.api.entity.Player handle;
-
-    public SpoutPlayer(Engine engine, SpoutPlugin plugin, org.spout.api.entity.Player handle) {
-        if (handle == null) {
-            throw new IllegalArgumentException("Player handle cannot be null");
-        }
-
-        this.plugin = plugin;
-        this.handle = handle;
-    }
-
-    @Override
-    public String getName() {
-        return handle.getName();
-    }
-
-    @Override
-    public Location getLocation() {
-        Point phandle = handle.getTransform().getPosition();
-        return new Location(plugin.getWorld(phandle.getWorld().getName()), phandle.getX(), phandle.getY(), phandle.getZ());
-    }
-
-    public void sendMessage(String message) {
-        for (String line : message.split("\n")) {
-            handle.sendMessage(Color.replaceColors(line));
-        }
-    }
-
-    public boolean hasPermission(String node) {
-        return handle.hasPermission(node);
-    }
 }

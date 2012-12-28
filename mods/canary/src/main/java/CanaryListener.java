@@ -60,7 +60,7 @@ public class CanaryListener extends PluginListener {
         com.griefcraft.Block block = new CanaryBlock(world, blockClicked);
 
         // send the event for the player around the plugin (and maybe other plugins, too.)
-        return player.getEventDelegate().onPlayerInteract(block);
+        return plugin.getEngine().getEventHelper().onBlockInteract(player, block);
     }
 
     @Override

@@ -107,6 +107,13 @@ public interface Engine {
     public Configuration getConfiguration();
 
     /**
+     * Get the {@link EventHelper} instance
+     *
+     * @return
+     */
+    public EventHelper getEventHelper();
+
+    /**
      * Called when the engine needs to be disabled
      */
     public void disable();

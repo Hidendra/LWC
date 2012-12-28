@@ -38,15 +38,12 @@ import com.griefcraft.ProtectionMatcher;
 import com.griefcraft.ProtectionSet;
 import com.griefcraft.attribute.ProtectionAttributeFactory;
 import com.griefcraft.configuration.Configuration;
-import com.griefcraft.entity.Player;
 import com.griefcraft.model.AbstractAttribute;
 import com.griefcraft.model.Protection;
 import com.griefcraft.roles.PlayerRole;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.griefcraft.I18n._;
 
 public class SimpleProtectionManager implements ProtectionManager {
 
@@ -97,25 +94,6 @@ public class SimpleProtectionManager implements ProtectionManager {
         protection.save();
 
         return protection;
-    }
-
-    public boolean defaultPlayerInteractAction(Protection protection, Player player) {
-        ProtectionAccess access = protection.getAccess(player);
-
-        /// TODO distinguish between left / right click.
-
-        // if they're the owner, return immediately
-        if (access.ordinal() > ProtectionAccess.NONE.ordinal()) {
-            return false;
-        }
-
-        // they cannot access the protection o\
-        // so send them a kind message
-        if (access != ProtectionAccess.EXPLICIT_DENY) {
-            player.sendMessage(_("&4This protection is locked by a magical spell."));
-        }
-
-        return true;
     }
 
     public void registerAttributeFactory(ProtectionAttributeFactory factory) {

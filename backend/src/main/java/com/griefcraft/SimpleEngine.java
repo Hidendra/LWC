@@ -65,6 +65,11 @@ public class SimpleEngine implements Engine {
     private final SaveQueue saveQueue = new SaveQueue();
 
     /**
+     * The {@link EventHelper} instance that assists in consolidating event handling
+     */
+    private final EventHelper eventHelper = new SimpleEventHelper(this);
+
+    /**
      * The server layer
      */
     private ServerLayer serverLayer;
@@ -178,6 +183,10 @@ public class SimpleEngine implements Engine {
 
     public Configuration getConfiguration() {
         return configuration;
+    }
+
+    public EventHelper getEventHelper() {
+        return eventHelper;
     }
 
     public void disable() {

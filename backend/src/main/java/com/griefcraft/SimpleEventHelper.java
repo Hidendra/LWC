@@ -27,46 +27,30 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.event;
+package com.griefcraft;
 
-import com.griefcraft.Block;
-import com.griefcraft.Engine;
 import com.griefcraft.entity.Player;
+import com.griefcraft.event.EventException;
+import com.griefcraft.event.PlayerEventHandler;
 import com.griefcraft.event.events.BlockEvent;
 import com.griefcraft.event.events.ProtectionEvent;
 import com.griefcraft.model.Protection;
 
 import static com.griefcraft.I18n._;
 
-/**
- * Used to provide handling for any event in one central location. This takes the burden of having to deal
- * with event specific code in each server's plugin version, so we can then focus on implementing the bare
- * minimum required on the server side.
- */
-public final class PlayerEventDelegate {
+public class SimpleEventHelper implements EventHelper {
 
     /**
-     * The LWC engine
+     * The {@link Engine} instance
      */
     private final Engine engine;
 
-    /**
-     * The player this delegate sends requests to
-     */
-    private final Player player;
-
-    public PlayerEventDelegate(Engine engine, Player player) {
+    public SimpleEventHelper(Engine engine) {
         this.engine = engine;
-        this.player = player;
     }
 
-    /**
-     * Called when the player interacts with a block. Returns TRUE to cancel this event.
-     *
-     * @param block
-     * @return true to cancel the event
-     */
-    public boolean onPlayerInteract(Block block) {
+    public boolean onBlockInteract(Player player, Block block) {
+
         boolean cancel; // If the event should be cancelled
 
         // Match the block to a protection
@@ -84,7 +68,22 @@ public final class PlayerEventDelegate {
 
             // default event action
             if (!cancel && protection != null) {
-                cancel = engine.getProtectionManager().defaultPlayerInteractAction(protection, player);
+                ProtectionAccess access = protection.getAccess(player);
+
+                /// TODO distinguish between left / right click.
+
+                // if they're the owner, return immediately
+                if (access.ordinal() > ProtectionAccess.NONE.ordinal()) {
+                    return false;
+                }
+
+                // they cannot access the protection o\
+                // so send them a kind message
+                if (access != ProtectionAccess.EXPLICIT_DENY) {
+                    player.sendMessage(_("&4This protection is locked by a magical spell."));
+                }
+
+                return true;
             }
         } catch (EventException e) {
             // TODO {0}

@@ -33,7 +33,6 @@ import com.griefcraft.Engine;
 import com.griefcraft.Location;
 import com.griefcraft.bukkit.BukkitPlugin;
 import com.griefcraft.entity.Player;
-import com.griefcraft.event.PlayerEventDelegate;
 import com.griefcraft.util.Color;
 
 public class BukkitPlayer extends Player {
@@ -48,11 +47,6 @@ public class BukkitPlayer extends Player {
      */
     private final org.bukkit.entity.Player handle;
 
-    /**
-     * The player's event delegate
-     */
-    private final PlayerEventDelegate eventDelegate;
-
     public BukkitPlayer(Engine engine, BukkitPlugin plugin, org.bukkit.entity.Player handle) {
         if (handle == null) {
             throw new IllegalArgumentException("Player handle cannot be null");
@@ -60,7 +54,6 @@ public class BukkitPlayer extends Player {
 
         this.plugin = plugin;
         this.handle = handle;
-        this.eventDelegate = new PlayerEventDelegate(engine, this);
     }
 
     @Override
@@ -72,11 +65,6 @@ public class BukkitPlayer extends Player {
     public Location getLocation() {
         org.bukkit.Location lhandle = handle.getLocation();
         return new Location(plugin.getWorld(lhandle.getWorld().getName()), lhandle.getX(), lhandle.getY(), lhandle.getZ());
-    }
-
-    @Override
-    public PlayerEventDelegate getEventDelegate() {
-        return eventDelegate;
     }
 
     public void sendMessage(String message) {

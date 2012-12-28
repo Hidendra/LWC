@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-28 00:11-0400\n"
+"POT-Creation-Date: 2012-12-28 03:11-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,13 +16,6 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-#: api/src/main/java/com/griefcraft/event/PlayerEventDelegate.java:91
-#, java-format
-msgid ""
-"&cA severe error occurred while processing the event: {0}&cThe full stack "
-"trace has been printed out to the log file"
-msgstr ""
 
 #: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:77
 #: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:120
@@ -86,6 +79,13 @@ msgstr ""
 msgid "Purging player?: {0}"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/internal/SimpleProtectionManager.java:115
+#: backend/src/main/java/com/griefcraft/SimpleEventHelper.java:83
 msgid "&4This protection is locked by a magical spell."
+msgstr ""
+
+#: backend/src/main/java/com/griefcraft/SimpleEventHelper.java:90
+#, java-format
+msgid ""
+"&cA severe error occurred while processing the event: {0}&cThe full stack "
+"trace has been printed out to the log file"
 msgstr ""

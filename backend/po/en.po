@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-27 16:09-0400\n"
+"POT-Creation-Date: 2012-12-28 03:11-0400\n"
 "PO-Revision-Date: 2012-11-08 01:19-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -16,15 +16,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.5.4\n"
-
-#: api/src/main/java/com/griefcraft/event/PlayerEventDelegate.java:91
-#, java-format
-msgid ""
-"&cA severe error occurred while processing the event: {0}&cThe full stack "
-"trace has been printed out to the log file"
-msgstr ""
-"&cA severe error occurred while processing the event: {0}&cThe full stack "
-"trace has been printed out to the log file"
 
 #: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:77
 #: backend/src/main/java/com/griefcraft/commands/AttributeCommands.java:120
@@ -88,9 +79,18 @@ msgstr "You clicked on a block with the id {0}!"
 msgid "Purging player?: {0}"
 msgstr "Purging player?: {0}"
 
-#: backend/src/main/java/com/griefcraft/internal/SimpleProtectionManager.java:115
+#: backend/src/main/java/com/griefcraft/SimpleEventHelper.java:83
 msgid "&4This protection is locked by a magical spell."
 msgstr "&4This protection is locked by a magical spell."
+
+#: backend/src/main/java/com/griefcraft/SimpleEventHelper.java:90
+#, java-format
+msgid ""
+"&cA severe error occurred while processing the event: {0}&cThe full stack "
+"trace has been printed out to the log file"
+msgstr ""
+"&cA severe error occurred while processing the event: {0}&cThe full stack "
+"trace has been printed out to the log file"
 
 #, fuzzy
 #~ msgid "Click on a protection to read info about it."

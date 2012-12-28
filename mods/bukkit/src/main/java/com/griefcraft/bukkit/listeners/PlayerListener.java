@@ -57,7 +57,7 @@ public class PlayerListener implements Listener {
         Block block = new BukkitBlock(world, event.getClickedBlock());
 
         // send the event for the player around the plugin (and maybe other plugins, too.)
-        boolean result = player.getEventDelegate().onPlayerInteract(block);
+        boolean result = plugin.getEngine().getEventHelper().onBlockInteract(player, block);
 
         // cancel it if need be
         if (result) {

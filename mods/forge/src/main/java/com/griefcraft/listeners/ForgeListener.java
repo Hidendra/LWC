@@ -91,7 +91,7 @@ public class ForgeListener {
         Block block = world.getBlockAt(event.x, event.y, event.z);
 
         // send the event for the player around the plugin (and maybe other plugins, too.)
-        if (player.getEventDelegate().onPlayerInteract(block)) {
+        if (mod.getEngine().getEventHelper().onBlockInteract(player, block)) {
             event.setCanceled(true);
             event.setResult(Event.Result.DENY);
         }
