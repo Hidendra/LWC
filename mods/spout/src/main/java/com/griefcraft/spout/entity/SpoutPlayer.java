@@ -62,7 +62,6 @@ public class SpoutPlayer extends Player {
         return handle.getName();
     }
 
-    @Override
     public Location getLocation() {
         Point phandle = handle.getTransform().getPosition();
         return new Location(plugin.getWorld(phandle.getWorld().getName()), phandle.getX(), phandle.getY(), phandle.getZ());

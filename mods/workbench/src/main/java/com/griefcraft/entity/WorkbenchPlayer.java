@@ -25,7 +25,6 @@ public class WorkbenchPlayer extends Player {
         return handle.getUsername();
     }
 
-    @Override
     public Location getLocation() {
         throw new UnsupportedOperationException("Not implemented");
     }

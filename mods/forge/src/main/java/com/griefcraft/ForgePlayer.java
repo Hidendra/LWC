@@ -54,7 +54,6 @@ public class ForgePlayer extends Player {
         return handle.getEntityName();
     }
 
-    @Override
     public Location getLocation() {
         try {
             return new Location(new ForgeWorld(handle.worldObj), (int) handle.posX, (int) handle.posY, (int) handle.posZ);

@@ -61,7 +61,6 @@ public class BukkitPlayer extends Player {
         return handle.getName();
     }
 
-    @Override
     public Location getLocation() {
         org.bukkit.Location lhandle = handle.getLocation();
         return new Location(plugin.getWorld(lhandle.getWorld().getName()), lhandle.getX(), lhandle.getY(), lhandle.getZ());

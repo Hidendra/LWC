@@ -55,7 +55,6 @@ public class CanaryPlayer extends com.griefcraft.entity.Player {
         return handle.getName();
     }
 
-    @Override
     public Location getLocation() {
         return new Location(plugin.getWorld(handle.getWorld().getName()), handle.getX(), handle.getY(), handle.getZ());
     }
