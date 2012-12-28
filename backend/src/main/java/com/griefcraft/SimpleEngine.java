@@ -45,6 +45,7 @@ import com.griefcraft.roles.PlayerRoleDefinition;
 import com.griefcraft.sql.Database;
 import com.griefcraft.sql.DatabaseException;
 import com.griefcraft.sql.JDBCDatabase;
+import com.griefcraft.sql.MemoryDatabase;
 
 public class SimpleEngine implements Engine {
 
@@ -191,24 +192,32 @@ public class SimpleEngine implements Engine {
      */
     private void openDatabase() {
         String driverName = configuration.getString("database.driver");
-        JDBCDatabase.Driver driver = JDBCDatabase.Driver.resolveDriver(driverName);
+        String databaseType = "unknown";
 
-        if (driver == null) {
-            consoleSender.sendMessage("UNKNOWN ERROR: \"" + driverName + "\"");
-            return;
+        if (driverName.equalsIgnoreCase("memory")) {
+            database = new MemoryDatabase(this);
+            databaseType = "memory";
+        } else {
+            JDBCDatabase.Driver driver = JDBCDatabase.Driver.resolveDriver(driverName);
+
+            if (driver == null) {
+                consoleSender.sendMessage("UNKNOWN ERROR: \"" + driverName + "\"");
+                return;
+            }
+
+            JDBCDatabase.JDBCConnectionDetails details = new JDBCDatabase.JDBCConnectionDetails(
+                    JDBCDatabase.Driver.MYSQL,
+                    configuration.getString("database.hostname"),
+                    configuration.getString("database.database"),
+                    configuration.getString("database.prefix"),
+                    configuration.getString("database.username"),
+                    configuration.getString("database.password")
+            );
+
+            // Open the database
+            database = new JDBCDatabase(this, details);
+            databaseType = details.getDriver().toString();
         }
-
-        JDBCDatabase.JDBCConnectionDetails details = new JDBCDatabase.JDBCConnectionDetails(
-                JDBCDatabase.Driver.MYSQL,
-                configuration.getString("database.hostname"),
-                configuration.getString("database.database"),
-                configuration.getString("database.prefix"),
-                configuration.getString("database.username"),
-                configuration.getString("database.password")
-        );
-
-        // Open the database
-        database = new JDBCDatabase(this, details);
 
         boolean result;
 
@@ -221,7 +230,7 @@ public class SimpleEngine implements Engine {
         }
 
         if (result) {
-            consoleSender.sendMessage("Connected to the database (" + details.getDriver() + ")");
+            consoleSender.sendMessage("Connected to the database (" + databaseType + ")");
         } else {
             consoleSender.sendMessage("Failed to connect to the database");
         }
