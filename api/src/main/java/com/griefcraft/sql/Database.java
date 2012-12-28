@@ -52,14 +52,12 @@ public interface Database {
     public void disconnect();
 
     /**
-     * Create a protection in the world. The {@link com.griefcraft.model.Protection} object returned by this method
-     * can be considered to be in the database already.
+     * Create a protection in the world.
      *
-     * @param owner
      * @param location
      * @return
      */
-    public Protection createProtection(String owner, Location location);
+    public Protection createProtection(Location location);
 
     /**
      * Load a protection from the database at the given location

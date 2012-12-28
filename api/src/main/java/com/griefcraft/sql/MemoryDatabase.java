@@ -99,7 +99,7 @@ public class MemoryDatabase implements Database {
         protectionsId.set(0);
     }
 
-    public Protection createProtection(String owner, Location location) {
+    public Protection createProtection(Location location) {
         Protection protection = new Protection(engine, protectionsId.getAndIncrement());
         protection.setWorld(location.getWorld());
         protection.setX(location.getBlockX());

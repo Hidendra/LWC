@@ -85,7 +85,7 @@ public class SimpleProtectionManager implements ProtectionManager {
 
     public Protection createProtection(String owner, Location location) {
         // First create the protection
-        Protection protection = engine.getDatabase().createProtection(owner, location);
+        Protection protection = engine.getDatabase().createProtection(location);
 
         // ensure it was created
         if (protection == null) {

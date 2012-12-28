@@ -219,7 +219,7 @@ public class JDBCDatabase implements Database {
         }
     }
 
-    public Protection createProtection(String owner, Location location) {
+    public Protection createProtection(Location location) {
         try {
             Connection connection = pool.getConnection();
             PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protections (world, x, y, z, updated, created, accessed) VALUES (?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), UNIX_TIMESTAMP())");
