@@ -64,6 +64,15 @@ public class CanaryListener extends PluginListener {
     }
 
     @Override
+    public boolean onBlockBreak(Player nativePlayer, Block blockBroken) {
+        com.griefcraft.entity.Player player = plugin.wrapPlayer(nativePlayer);
+        World world = plugin.getWorld(nativePlayer.getWorld().getName());
+        com.griefcraft.Block block = new CanaryBlock(world, blockBroken);
+
+        return plugin.getEngine().getEventHelper().onBlockBreak(player, block);
+    }
+
+    @Override
     public boolean onOpenInventory(HookParametersOpenInventory inventory) {
         return false;
     }

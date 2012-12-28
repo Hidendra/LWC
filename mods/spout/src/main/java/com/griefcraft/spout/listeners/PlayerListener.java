@@ -50,7 +50,7 @@ public class PlayerListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler()
+    @EventHandler
     public void playerInteract(PlayerInteractEvent event) {
         if (event.isCancelled()) {
             return;

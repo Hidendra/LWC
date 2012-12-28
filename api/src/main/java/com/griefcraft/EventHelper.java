@@ -34,12 +34,21 @@ import com.griefcraft.entity.Entity;
 public interface EventHelper {
 
     /**
-     * Called when a player interacts with a block
+     * Called when an entity interacts with a block in the world
      *
      * @param entity
      * @param block
      * @return true if the event is to be cancelled, false otherwise
      */
     public boolean onBlockInteract(Entity entity, Block block);
+
+    /**
+     * Called when an entity breaks a block in the world
+     *
+     * @param entity
+     * @param block
+     * @return
+     */
+    public boolean onBlockBreak(Entity entity, Block block);
 
 }

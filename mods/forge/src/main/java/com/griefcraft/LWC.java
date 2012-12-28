@@ -111,7 +111,7 @@ public class LWC {
      */
     public void setupServer(Engine engine, ServerLayer layer) {
         if (this.engine != null) {
-            throw new UnsupportedOperationException("LWC was alread setup, and cannot be reset");
+            throw new UnsupportedOperationException("LWC was already setup, and cannot be reset");
         }
         this.engine = engine;
         this.layer = layer;

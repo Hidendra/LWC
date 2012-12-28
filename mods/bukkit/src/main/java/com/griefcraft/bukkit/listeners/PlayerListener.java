@@ -37,6 +37,7 @@ import com.griefcraft.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class PlayerListener implements Listener {
@@ -63,6 +64,21 @@ public class PlayerListener implements Listener {
         if (result) {
             event.setCancelled(true);
             event.setUseInteractedBlock(Event.Result.DENY);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void blockBreak(BlockBreakEvent event) {
+        Player player = plugin.wrapPlayer(event.getPlayer());
+        World world = plugin.getWorld(event.getPlayer().getWorld().getName());
+        Block block = new BukkitBlock(world, event.getBlock());
+
+        // send the event for the player around the plugin (and maybe other plugins, too.)
+        boolean result = plugin.getEngine().getEventHelper().onBlockBreak(player, block);
+
+        // cancel it if need be
+        if (result) {
+            event.setCancelled(true);
         }
     }
 

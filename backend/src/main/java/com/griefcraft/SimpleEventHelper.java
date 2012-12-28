@@ -100,4 +100,37 @@ public class SimpleEventHelper implements EventHelper {
         return cancel;
     }
 
+    public boolean onBlockBreak(Entity entity, Block block) {
+        boolean cancel = false;
+
+        Protection protection = engine.getProtectionManager().findProtection(block.getLocation());
+
+        if (protection == null) {
+            return false;
+        }
+
+        if (entity instanceof Player) {
+            Player player = (Player) entity;
+
+            if (protection.getAccess(player).ordinal() >= ProtectionAccess.MEMBER.ordinal()) {
+                ProtectionAccess access = protection.getAccess(player);
+
+                // if they're the owner, return immediately
+                if (access.ordinal() > ProtectionAccess.NONE.ordinal()) {
+                    return false;
+                }
+
+                // they cannot access the protection o\
+                // so send them a kind message
+                if (access != ProtectionAccess.EXPLICIT_DENY) {
+                    player.sendMessage(_("&4This protection is locked by a magical spell."));
+                }
+
+                return true;
+            }
+        }
+
+        return cancel;
+    }
+
 }
