@@ -31,6 +31,7 @@ package com.griefcraft.model;
 
 import com.griefcraft.AccessProvider;
 import com.griefcraft.Engine;
+import com.griefcraft.Location;
 import com.griefcraft.ProtectionAccess;
 import com.griefcraft.Role;
 import com.griefcraft.World;
@@ -229,6 +230,14 @@ public class Protection extends AbstractSavable {
      */
     public Set<Role> getRoles() {
         return Collections.unmodifiableSet(roles);
+    }
+
+    /**
+     * Get the current location of the protection
+     * @return
+     */
+    public Location getLocation() {
+        return new Location(getWorld(), getX(), getY(), getZ());
     }
 
     public void setWorld(World world) {

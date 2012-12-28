@@ -58,6 +58,29 @@ public final class Location {
         this.z = z;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof Location)) {
+            return false;
+        }
+
+        Location l = (Location) o;
+        return l.getWorld().getName().equals(world.getName()) && x == l.x && y == l.y && z == l.z;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = world.getName().hashCode();
+        hash *= 17 + x;
+        hash *= 17 + y;
+        hash *= 17 + z;
+        return hash;
+    }
+
     /**
      * Get the block x coordinate
      *
