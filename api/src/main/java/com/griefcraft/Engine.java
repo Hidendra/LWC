@@ -90,7 +90,7 @@ public interface Engine {
      *
      * @return
      */
-    public SavableSaveQueue getSavableQueue();
+    public SaveQueue getSaveQueue();
 
     /**
      * Get the database object

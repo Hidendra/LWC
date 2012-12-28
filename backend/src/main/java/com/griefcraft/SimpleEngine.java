@@ -62,7 +62,7 @@ public class SimpleEngine implements Engine {
     /**
      * The savable background queue
      */
-    private final SavableSaveQueue savableQueue = new SavableSaveQueue();
+    private final SaveQueue saveQueue = new SaveQueue();
 
     /**
      * The server layer
@@ -168,8 +168,8 @@ public class SimpleEngine implements Engine {
         return consoleSender;
     }
 
-    public SavableSaveQueue getSavableQueue() {
-        return savableQueue;
+    public SaveQueue getSaveQueue() {
+        return saveQueue;
     }
 
     public Database getDatabase() {
@@ -182,7 +182,7 @@ public class SimpleEngine implements Engine {
 
     public void disable() {
         consoleSender.sendMessage("Shutting down!");
-        savableQueue.flushAndClose();
+        saveQueue.flushAndClose();
         database.disconnect();
         database = null;
     }

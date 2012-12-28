@@ -34,7 +34,7 @@ import com.griefcraft.model.AbstractSavable;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class SavableSaveQueue {
+public class SaveQueue {
 
     /**
      * The queue of savables
@@ -51,7 +51,7 @@ public class SavableSaveQueue {
      */
     private boolean running = false;
 
-    public SavableSaveQueue() {
+    public SaveQueue() {
         // TODO limit queries/sec
         // TODO properly destroy thread, etc, or use server-specific implementations (e.g Bukkit's scheduler)
         thread = new Thread(new Worker(), "LWC Savable Thread");

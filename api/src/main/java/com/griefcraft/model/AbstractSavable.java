@@ -68,7 +68,7 @@ public abstract class AbstractSavable {
      * guaranteed to happen within any given amount of time.
      */
     public void save() {
-        engine.getSavableQueue().push(this);
+        engine.getSaveQueue().push(this);
     }
 
 }
