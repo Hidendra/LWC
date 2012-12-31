@@ -90,7 +90,7 @@ public class SpoutBlock extends Block {
     }
 
     public void setType(int type) {
-        handle.setMaterial(Material.get(type));
+        handle.setMaterial((BlockMaterial) Material.get(type));
     }
 
     public void setData(byte data) {
