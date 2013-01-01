@@ -73,16 +73,18 @@ public class Updater {
         downloadFiles();
 
         final LWC lwc = LWC.getInstance();
-        lwc.getPlugin().getServer().getScheduler().scheduleAsyncDelayedTask(lwc.getPlugin(), new Runnable() {
-            public void run() {
-                Version latest = getLatestVersion();
+        if (lwc.getConfiguration().getBoolean("core.updateNotifier", true)) {
+            lwc.getPlugin().getServer().getScheduler().scheduleAsyncDelayedTask(lwc.getPlugin(), new Runnable() {
+                public void run() {
+                    Version latest = getLatestVersion();
 
-                if (latest.newerThan(LWCInfo.FULL_VERSION)) {
-                    lwc.log("An update is available. You are on version \"" + LWCInfo.FULL_VERSION.toString() + "\". The latest version is: \"" + latest.toString() + "\"");
-                    lwc.log("LWC updates can be found on the Bukkit Dev page at: http://dev.bukkit.org/server-mods/lwc/");
+                    if (latest.newerThan(LWCInfo.FULL_VERSION)) {
+                        lwc.log("An update is available. You are on version \"" + LWCInfo.FULL_VERSION.toString() + "\". The latest version is: \"" + latest.toString() + "\"");
+                        lwc.log("LWC updates can be found on the Bukkit Dev page at: http://dev.bukkit.org/server-mods/lwc/");
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     /**

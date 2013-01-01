@@ -39,6 +39,9 @@ core:
     # no supported permission plugin is found, e.g group.vip matches the player's group as vip
     groupPrefix: 'group.'
 
+    # If you will be notified of LWC updates
+    updateNotifier: true
+
 # "Fun" options
 optional:
 
