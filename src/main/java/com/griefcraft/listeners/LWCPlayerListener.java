@@ -273,6 +273,10 @@ public class LWCPlayerListener implements Listener {
         // The inventory they are using
         Inventory inventory = event.getInventory();
 
+        if (inventory == null) {
+            return;
+        }
+
         // Location of the container
         Location location;
         InventoryHolder holder = event.getInventory().getHolder();
@@ -285,21 +289,8 @@ public class LWCPlayerListener implements Listener {
             return;
         }
 
-        // Should be container
-        InventoryType.SlotType slotType = event.getSlotType();
-
-        // If it doesn't have a location we can't protect it :p
-        if (inventory == null || location == null) {
-            return;
-        }
-
-        // ignore the player inventory
-        if (inventory.getClass().getSimpleName().endsWith("InventoryPlayer")) {
-            return;
-        }
-
         // If it's not a container, we don't want it
-        if (slotType != InventoryType.SlotType.CONTAINER) {
+        if (event.getSlotType() != InventoryType.SlotType.CONTAINER) {
             return;
         }
 
