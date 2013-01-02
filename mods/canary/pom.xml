@@ -29,7 +29,7 @@
         <dependency>
             <groupId>net.canarymod</groupId>
             <artifactId>canarymod</artifactId>
-            <version>5.3.11</version>
+            <version>5.5.11</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
