@@ -222,13 +222,17 @@ public class JDBCDatabase implements Database {
     public Protection createProtection(Location location) {
         try {
             Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protections (world, x, y, z, updated, created, accessed) VALUES (?, ?, ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), UNIX_TIMESTAMP())");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protections (world, x, y, z, updated, created, accessed) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
             try {
                 statement.setString(1, location.getWorld().getName());
                 statement.setInt(2, location.getBlockX());
                 statement.setInt(3, location.getBlockY());
                 statement.setInt(4, location.getBlockZ());
+                int epoch = (int) (System.currentTimeMillis() / 1000L);
+                statement.setInt(5, epoch);
+                statement.setInt(6, epoch);
+                statement.setInt(7, epoch);
                 statement.executeUpdate();
             } finally {
                 safeClose(statement);
