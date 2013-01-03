@@ -53,10 +53,6 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
         // first add the base block, as it must exist on the protection if it matches
         blocks.add(base);
 
-        /////
-        // TODO add a convenience method inside Block for checking if it matches a set of IDs
-        /////
-
         // Double chest
         if (baseType == 54) {
             Block adjacentChest = base.findBlockRelativeToXZ(54);
@@ -67,7 +63,7 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
         }
 
         // Doors (not the block below the door)
-        else if (baseType == 64 || baseType == 71) {
+        else if (base.typeMatchesOneOf(64, 71)) {
             Block otherDoor = base.findBlockRelativeToY(64, 71);
 
             // add the other half of the door
@@ -82,7 +78,7 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
             Block above = base.getRelative(0, 1, 0);
 
             // door above the current block
-            if (above.getType() == 64 || above.getType() == 71) {
+            if (above.typeMatchesOneOf(64, 71)) {
                 blocks.add(above);
                 blocks.add(above.getRelative(0, 1, 0)); // top of the door
             }

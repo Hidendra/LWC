@@ -117,6 +117,22 @@ public abstract class Block {
     }
 
     /**
+     * Check if the block matches one of the provided type ids
+     *
+     * @param ids
+     * @return
+     */
+    public boolean typeMatchesOneOf(int... ids) {
+        for (int id : ids) {
+            if (id == getType()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Get a block relative to this block
      *
      * @param deltaX
