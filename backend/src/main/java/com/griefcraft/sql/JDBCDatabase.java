@@ -401,8 +401,7 @@ public class JDBCDatabase implements Database {
     public void saveOrCreateProtectionAttribute(Protection protection, AbstractAttribute attribute) {
         try {
             Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_attributes SET protection_id = ?, attribute_name = ?, attribute_value = ?" +
-                    "                                                       ON DUPLICATE KEY UPDATE attribute_value = VALUES(attribute_value)");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_attributes (protection_id, attribute_name, attribute_value) VALUES (?, ?, ?)");
 
             try {
                 statement.setInt(1, protection.getId());
@@ -414,7 +413,22 @@ public class JDBCDatabase implements Database {
                 safeClose(connection);
             }
         } catch (SQLException e) {
-            handleException(e);
+            try {
+                Connection connection = pool.getConnection();
+                PreparedStatement statement = connection.prepareStatement("UPDATE " + details.getPrefix() + "protection_attributes SET attribute_value = ? WHERE protection_id = ? AND attribute_name = ?");
+
+                try {
+                    statement.setString(1, attribute.getStorableValue());
+                    statement.setInt(2, protection.getId());
+                    statement.setString(3, attribute.getName());
+                    statement.executeUpdate();
+                } finally {
+                    safeClose(statement);
+                    safeClose(connection);
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
