@@ -54,6 +54,7 @@ public class SaveQueue {
     public SaveQueue() {
         // TODO limit queries/sec
         // TODO properly destroy thread, etc, or use server-specific implementations (e.g Bukkit's scheduler)
+        running = true;
         thread = new Thread(new Worker(), "LWC Savable Thread");
         thread.start();
     }
