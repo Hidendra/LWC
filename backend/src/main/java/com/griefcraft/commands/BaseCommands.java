@@ -119,6 +119,7 @@ public class BaseCommands {
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
 
+                player.sendMessage("Roles(" + protection.getRoles().size() + ")");
                 for (Role role : protection.getRoles()) {
                     player.sendMessage(role.getClass().getSimpleName() + " RoleName=\"" + role.getRoleName() + "\" Access=" + role.getRoleAccess());
                 }

@@ -79,6 +79,7 @@ public class SimpleProtectionManager implements ProtectionManager {
 
         // ensure it was created
         if (protection == null) {
+            System.out.println("createProtection returned null!");
             return null;
         }
 

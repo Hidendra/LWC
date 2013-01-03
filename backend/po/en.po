@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-02 14:35-0400\n"
+"POT-Creation-Date: 2013-01-03 01:02-0400\n"
 "PO-Revision-Date: 2012-11-08 01:19-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -65,16 +65,16 @@ msgstr "Protected~"
 msgid "Failed to protect for some reason ?"
 msgstr "Failed to protect for some reason ?"
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:139
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:140
 msgid "Click on a block, please!~"
 msgstr "Click on a block, please!~"
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:145
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:146
 #, java-format
 msgid "You clicked on a block with the id {0}!"
 msgstr "You clicked on a block with the id {0}!"
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:161
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:162
 #, java-format
 msgid "Purging player?: {0}"
 msgstr "Purging player?: {0}"
