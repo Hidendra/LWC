@@ -301,8 +301,8 @@ public class MagnetModule extends JavaModule {
         }
 
         // register our search thread schedule
-        lwc.getPlugin().getServer().getScheduler().scheduleAsyncRepeatingTask(lwc.getPlugin(), new MagnetTask(), 50, 50);
-        lwc.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(lwc.getPlugin(), new MagnetRefreshTask(), 50, 50);
+        // lwc.getPlugin().getServer().getScheduler().scheduleAsyncRepeatingTask(lwc.getPlugin(), new MagnetTask(), 50, 50);
+        // lwc.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(lwc.getPlugin(), new MagnetRefreshTask(), 50, 50);
     }
 
 }
