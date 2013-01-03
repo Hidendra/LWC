@@ -15,6 +15,7 @@ CREATE TABLE protection_roles (
   PRIMARY KEY (protection_id,type,name)
 ) ;
 CREATE INDEX protection_id ON protection_roles (protection_id);
+CREATE UNIQUE INDEX roles ON protection_roles (protection_id, type, name);
 
 DROP TABLE IF EXISTS protections;
 CREATE TABLE protections (

@@ -346,7 +346,7 @@ public class JDBCDatabase implements Database {
     public void saveOrCreateRole(Role role) {
         try {
             Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_roles SET protection_id = ?, type = ?, name = ?, role = ? ON DUPLICATE KEY UPDATE name = VALUES(name), role = VALUES(role)");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_roles (protection_id, type, name, role) VALUES (?, ?, ?, ?)");
 
             try {
                 statement.setInt(1, role.getProtection().getId());
@@ -359,7 +359,24 @@ public class JDBCDatabase implements Database {
                 safeClose(connection);
             }
         } catch (SQLException e) {
-            handleException(e);
+            try {
+                Connection connection = pool.getConnection();
+                PreparedStatement statement = connection.prepareStatement("UPDATE " + details.getPrefix() + "protection_roles SET name = ?, role = ? WHERE protection_id = ? AND type = ? AND name = ?");
+
+                try {
+                    statement.setString(1, role.getRoleName());
+                    statement.setInt(2, role.getRoleAccess().ordinal());
+                    statement.setInt(3, role.getProtection().getId());
+                    statement.setInt(4, role.getType());
+                    statement.setString(5, role.getRoleName());
+                    statement.executeUpdate();
+                } finally {
+                    safeClose(statement);
+                    safeClose(connection);
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
