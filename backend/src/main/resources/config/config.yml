@@ -12,7 +12,7 @@ protections:
 database:
 
     # the db driver
-    driver: mysql
+    driver: sqlite
 
     # The path to the database if required (for SQLite, not MySQL)
     databasePath: '%home%/lwc.db'
