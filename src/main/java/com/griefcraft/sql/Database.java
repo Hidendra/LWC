@@ -223,7 +223,7 @@ public abstract class Database {
         LWC lwc = LWC.getInstance();
         String connectionString = "jdbc:" + currentType.toString().toLowerCase() + ":" + getDatabasePath();
         if (currentType == Type.MySQL) {
-            pool = new ConnectionPool("lwc", 2 /* minPool */, 15 /* maxPool */, 15 /* maxSize */, 180000 /* idleTimeout */,
+            pool = new ConnectionPool("lwc", 2 /* minPool */, 40 /* maxPool */, 40 /* maxSize */, 180000 /* idleTimeout */,
                     connectionString, lwc.getConfiguration().getString("database.username"), lwc.getConfiguration().getString("database.password"));
         } else { // safe method -- only 1 connection
             pool = new ConnectionPool("lwc", 1 /* minPool */, 1 /* maxPool */, 1 /* maxSize */, 180000 /* idleTimeout */,
