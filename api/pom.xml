@@ -27,9 +27,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>snaq.db</groupId>
-            <artifactId>dbpool</artifactId>
-            <version>5.0</version>
+            <groupId>c3p0</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.1.2</version>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>

@@ -216,9 +216,10 @@ public class SimpleEngine implements Engine {
             }
 
             JDBCDatabase.JDBCConnectionDetails details = new JDBCDatabase.JDBCConnectionDetails(
-                    JDBCDatabase.Driver.MYSQL,
+                    JDBCDatabase.Driver.resolveDriver(configuration.getString("database.driver")),
                     configuration.getString("database.hostname"),
                     configuration.getString("database.database"),
+                    configuration.getString("database.databasePath"),
                     configuration.getString("database.prefix"),
                     configuration.getString("database.username"),
                     configuration.getString("database.password")

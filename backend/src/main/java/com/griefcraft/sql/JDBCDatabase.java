@@ -37,7 +37,8 @@ import com.griefcraft.RoleDefinition;
 import com.griefcraft.model.AbstractAttribute;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.State;
-import snaq.db.ConnectionPool;
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.mchange.v2.c3p0.DataSources;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -106,7 +107,7 @@ public class JDBCDatabase implements Database {
     /**
      * The connection pool
      */
-    private ConnectionPool pool = null;
+    private ComboPooledDataSource pool = null;
 
     /**
      * The connection details to the server
@@ -138,7 +139,7 @@ public class JDBCDatabase implements Database {
         // for MySQL and other RDBMS this will be the name of the database in the server
         // and also the hostname
         if (driver == Driver.SQLITE) {
-            databasePath = details.getDatabase();
+            databasePath = details.getDatabasePath().replaceAll("%home%", engine.getServerLayer().getEngineHomeFolder().getPath());
         } else {
             databasePath = "//" + details.getHostname() + "/" + details.getDatabase();
         }
@@ -147,19 +148,18 @@ public class JDBCDatabase implements Database {
         String connectionString = "jdbc:" + driver.toString().toLowerCase() + ":" + databasePath;
 
         // setup the database pool
-        pool = new ConnectionPool("lwc", 2 /* minPool */, 15 /* maxPool */, 15 /* maxSize */, 180000 /* idleTimeout */,
-                connectionString, details.getUsername(), details.getPassword());
-        pool.setCaching(true);
-        pool.init();
+        pool = new ComboPooledDataSource();
 
         Connection connection = null;
         Statement stmt = null;
         try {
-            connection = pool.getConnection();
-            stmt = connection.createStatement();
-            stmt.executeQuery("SELECT 1;");
+            pool.setDriverClass(driver.getClassName());
+            pool.setJdbcUrl(connectionString);
+            pool.setUser(details.getUsername());
+            pool.setPassword(details.getPassword());
+            pool.setPreferredTestQuery("SELECT 1;");
             return true;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         } finally {
@@ -169,7 +169,7 @@ public class JDBCDatabase implements Database {
     }
 
     public void disconnect() {
-        pool.release();
+        pool.close();
         pool = null;
     }
 
@@ -515,9 +515,9 @@ public class JDBCDatabase implements Database {
         /**
          * The connection details
          */
-        private final String hostname, database, prefix, username, password;
+        private final String hostname, database, databasePath, prefix, username, password;
 
-        public JDBCConnectionDetails(Driver driver, String hostname, String database, String prefix, String username, String password) {
+        public JDBCConnectionDetails(Driver driver, String hostname, String database, String databasePath, String prefix, String username, String password) {
             if (driver == null) {
                 throw new IllegalArgumentException("JDBC Driver cannot be null");
             }
@@ -526,6 +526,9 @@ public class JDBCDatabase implements Database {
             }
             if (database == null) {
                 throw new IllegalArgumentException("Database cannot be null");
+            }
+            if (databasePath == null) {
+                throw new IllegalArgumentException("Database path cannot be null");
             }
             if (username == null) {
                 throw new IllegalArgumentException("Username cannot be null");
@@ -537,6 +540,7 @@ public class JDBCDatabase implements Database {
             this.driver = driver;
             this.hostname = hostname;
             this.database = database;
+            this.databasePath = databasePath;
             this.prefix = prefix;
             this.username = username;
             this.password = password;
@@ -567,6 +571,15 @@ public class JDBCDatabase implements Database {
          */
         public String getDatabase() {
             return database;
+        }
+
+        /**
+         * Get the path to the database if needed (e.g for sqlite)
+         *
+         * @return
+         */
+        public String getDatabasePath() {
+            return databasePath;
         }
 
         /**

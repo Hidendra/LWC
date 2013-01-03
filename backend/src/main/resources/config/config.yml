@@ -14,6 +14,9 @@ database:
     # the db driver
     driver: mysql
 
+    # The path to the database if required (for SQLite, not MySQL)
+    databasePath: '%home%/lwc.db'
+
     # the database server's hostname
     hostname: '127.0.0.1'
 
