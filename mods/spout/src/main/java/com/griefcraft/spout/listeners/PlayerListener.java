@@ -36,8 +36,11 @@ import com.griefcraft.spout.SpoutPlugin;
 import com.griefcraft.spout.world.SpoutBlock;
 import org.spout.api.event.EventHandler;
 import org.spout.api.event.Listener;
+import org.spout.api.event.Result;
+import org.spout.api.event.block.BlockChangeEvent;
 import org.spout.api.event.player.PlayerInteractEvent;
 import org.spout.api.geo.discrete.Point;
+import org.spout.vanilla.event.cause.PlayerBreakCause;
 
 public class PlayerListener implements Listener {
 
@@ -63,6 +66,33 @@ public class PlayerListener implements Listener {
 
         // send the event for the player around the plugin (and maybe other plugins, too.)
         boolean result = plugin.getInternalEngine().getEventHelper().onBlockInteract(player, block);
+
+        // cancel it if need be
+        if (result) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onBlockChange(BlockChangeEvent event) {
+        if (event.isCancelled() || event.getCause() == null) {
+            return;
+        }
+
+        if (event.getCause() instanceof PlayerBreakCause) {
+            onBlockBreak(event, (PlayerBreakCause) event.getCause());
+        }
+        // also PlayerPlacementCause, etc
+    }
+
+    private void onBlockBreak(BlockChangeEvent event, PlayerBreakCause cause) {
+        Player player = plugin.wrapPlayer(cause.getSource());
+        World world = plugin.getWorld(player.getLocation().getWorld().getName());
+        Point point = event.getBlock().getPosition();
+        Block block = new SpoutBlock(world, cause.getSource().getWorld().getBlock(point.getBlockX(), point.getBlockY(), point.getBlockZ()));
+
+        // send the event for the player around the plugin (and maybe other plugins, too.)
+        boolean result = plugin.getInternalEngine().getEventHelper().onBlockBreak(player, block);
 
         // cancel it if need be
         if (result) {

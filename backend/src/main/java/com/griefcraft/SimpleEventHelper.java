@@ -119,12 +119,6 @@ public class SimpleEventHelper implements EventHelper {
                 return false;
             }
 
-            // they cannot access the protection o\
-            // so send them a kind message
-            if (access != ProtectionAccess.EXPLICIT_DENY) {
-                player.sendMessage(_("&4This protection is locked by a magical spell."));
-            }
-
             return true;
         }
 
