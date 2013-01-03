@@ -781,7 +781,6 @@ public class Protection {
             return;
         }
 
-        System.out.println("save()");
         LWC.getInstance().getDatabaseThread().addProtection(this);
         queuedForSave = true;
     }
@@ -794,7 +793,6 @@ public class Protection {
             return;
         }
 
-        System.out.println("saveNow()");
         // encode JSON objects
         encodeRights();
         encodeFlags();
