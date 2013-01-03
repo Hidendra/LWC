@@ -133,11 +133,19 @@ public class MemoryDatabase implements Database {
         // it will remove itself from the Protection object
     }
 
+    public void removeRoles(Protection protection) {
+        // it will remove itself from the Protection object
+    }
+
     public void saveOrCreateProtectionAttribute(Protection protection, AbstractAttribute attribute) {
         // no need to create
     }
 
     public void removeProtectionAttribute(Protection protection, AbstractAttribute attribute) {
+        // it will remove itself from the Protection object
+    }
+
+    public void removeProtectionAttributes(Protection protection) {
         // it will remove itself from the Protection object
     }
 

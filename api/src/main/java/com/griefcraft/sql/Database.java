@@ -104,6 +104,13 @@ public interface Database {
     public void removeRole(Role role);
 
     /**
+     * Remove all roles for a protection from the database
+     *
+     * @param protection
+     */
+    public void removeRoles(Protection protection);
+
+    /**
      * Save or create an attribute in the database.
      *
      * @param protection
@@ -118,6 +125,13 @@ public interface Database {
      * @param attribute
      */
     public void removeProtectionAttribute(Protection protection, AbstractAttribute attribute);
+
+    /**
+     * Remove all protection attributes from a protection from the database
+     *
+     * @param protection
+     */
+    public void removeProtectionAttributes(Protection protection);
 
     /**
      * Load all of a protection's attributes from the database

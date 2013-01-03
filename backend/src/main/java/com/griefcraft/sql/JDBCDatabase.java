@@ -327,6 +327,9 @@ public class JDBCDatabase implements Database {
     }
 
     public void removeProtection(Protection protection) {
+        removeRoles(protection);
+        removeProtectionAttributes(protection);
+
         try {
             Connection connection = pool.getConnection();
             PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protections WHERE id = ?");
@@ -383,11 +386,29 @@ public class JDBCDatabase implements Database {
     public void removeRole(Role role) {
         try {
             Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_roles WHERE protection_id = ? AND type = ?");
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_roles WHERE protection_id = ? AND type = ? AND name = ?");
 
             try {
                 statement.setInt(1, role.getProtection().getId());
                 statement.setInt(2, role.getType());
+                statement.setString(3, role.getRoleName());
+                statement.executeUpdate();
+            } finally {
+                safeClose(statement);
+                safeClose(connection);
+            }
+        } catch (SQLException e) {
+            handleException(e);
+        }
+    }
+
+    public void removeRoles(Protection protection) {
+        try {
+            Connection connection = pool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_roles WHERE protection_id = ?");
+
+            try {
+                statement.setInt(1, protection.getId());
                 statement.executeUpdate();
             } finally {
                 safeClose(statement);
@@ -440,6 +461,23 @@ public class JDBCDatabase implements Database {
             try {
                 statement.setInt(1, protection.getId());
                 statement.setString(2, attribute.getName());
+                statement.executeUpdate();
+            } finally {
+                safeClose(statement);
+                safeClose(connection);
+            }
+        } catch (SQLException e) {
+            handleException(e);
+        }
+    }
+
+    public void removeProtectionAttributes(Protection protection) {
+        try {
+            Connection connection = pool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_attributes WHERE protection_id = ?");
+
+            try {
+                statement.setInt(1, protection.getId());
                 statement.executeUpdate();
             } finally {
                 safeClose(statement);
