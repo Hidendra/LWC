@@ -57,7 +57,10 @@ public class DatabaseMigrator {
                 List<Protection> tmp = fromDatabase.loadProtections();
 
                 for (Protection protection : tmp) {
-                    // sync it to the live database
+                    // first ensure the protection was created
+                    toDatabase.executeUpdateNoException("INSERT INTO " + toDatabase.getPrefix() + "protections (id) VALUES (" + protection.getId() + ")");
+
+                    // sync it with the live database
                     protection.saveNow();
                 }
 
