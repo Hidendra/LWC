@@ -51,7 +51,7 @@ public abstract class ServerLayer {
     private final Map<String, World> worlds = new HashMap<String, World>();
 
     /**
-     * Get the home folder for the engine. This is typically the mods or plugins folder
+     * Get the home folder for the engine. This is typically a folder inside of the mods or plugins folder
      *
      * @return
      */
