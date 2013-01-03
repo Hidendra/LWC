@@ -30,6 +30,8 @@
 import com.griefcraft.ServerLayer;
 import com.griefcraft.World;
 
+import java.io.File;
+
 public class CanaryServerLayer extends ServerLayer {
 
     /**
@@ -39,6 +41,11 @@ public class CanaryServerLayer extends ServerLayer {
 
     public CanaryServerLayer(LWC plugin) {
         this.plugin = plugin;
+    }
+
+    @Override
+    public File getEngineHomeFolder() {
+        return plugin.getDirectory();
     }
 
     @Override

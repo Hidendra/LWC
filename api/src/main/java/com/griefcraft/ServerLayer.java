@@ -31,6 +31,7 @@ package com.griefcraft;
 
 import com.griefcraft.entity.Player;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,6 +49,13 @@ public abstract class ServerLayer {
      * A map of all of the currently known worlds
      */
     private final Map<String, World> worlds = new HashMap<String, World>();
+
+    /**
+     * Get the home folder for the engine. This is typically the mods or plugins folder
+     *
+     * @return
+     */
+    public abstract File getEngineHomeFolder();
 
     /**
      * Get the default world

@@ -45,7 +45,7 @@ public class YamlConfiguration implements Configuration {
         this.configuration = FileConfiguration.load(config);
 
         // Saves the default config if it's not there
-        if (!new File("plugins/LWC/config.yml").exists()) {
+        if (!configuration.getFile().exists()) {
             configuration.save();
         }
     }

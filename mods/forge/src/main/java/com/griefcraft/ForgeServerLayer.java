@@ -34,6 +34,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.world.WorldServer;
 
+import java.io.File;
 import java.util.Map;
 
 public class ForgeServerLayer extends ServerLayer {
@@ -68,6 +69,11 @@ public class ForgeServerLayer extends ServerLayer {
 
     public void onRegisterBaseCommand(String baseCommand) {
         internal_commands.put(baseCommand, new NativeCommandHandler(baseCommand));
+    }
+
+    @Override
+    public File getEngineHomeFolder() {
+        return new File("mods/LWC/");
     }
 
     @Override

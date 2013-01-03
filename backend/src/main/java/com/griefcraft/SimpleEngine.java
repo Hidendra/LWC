@@ -46,6 +46,7 @@ import com.griefcraft.sql.Database;
 import com.griefcraft.sql.DatabaseException;
 import com.griefcraft.sql.JDBCDatabase;
 import com.griefcraft.sql.MemoryDatabase;
+import com.griefcraft.util.config.FileConfiguration;
 
 public class SimpleEngine implements Engine {
 
@@ -100,6 +101,7 @@ public class SimpleEngine implements Engine {
     private Configuration configuration;
 
     private SimpleEngine(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender) {
+        FileConfiguration.init(this);
         this.serverLayer = serverLayer;
         this.serverInfo = serverInfo;
         this.consoleSender = consoleSender;

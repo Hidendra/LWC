@@ -47,7 +47,6 @@ public class LWCServerProxy extends CommonProxy {
     @Override
     public void init() {
         System.out.println("LWC => init()");
-        FileConfiguration.CONFIG_PATH = "mods/LWC/";
         MinecraftForge.EVENT_BUS.register(new ForgeListener(LWC.instance));
 
         // create an engine

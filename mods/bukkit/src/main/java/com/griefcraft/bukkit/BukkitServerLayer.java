@@ -36,6 +36,8 @@ import com.griefcraft.bukkit.world.BukkitWorld;
 import com.griefcraft.entity.Player;
 import org.bukkit.Bukkit;
 
+import java.io.File;
+
 public class BukkitServerLayer extends ServerLayer {
 
     /**
@@ -45,6 +47,11 @@ public class BukkitServerLayer extends ServerLayer {
 
     public BukkitServerLayer(BukkitPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @Override
+    public File getEngineHomeFolder() {
+        return plugin.getDataFolder();
     }
 
     @Override

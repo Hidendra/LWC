@@ -42,6 +42,7 @@ import org.spout.api.command.Command;
 import org.spout.api.command.CommandExecutor;
 import org.spout.api.command.CommandSource;
 
+import java.io.File;
 import java.util.List;
 
 public class SpoutServerLayer extends ServerLayer {
@@ -75,6 +76,11 @@ public class SpoutServerLayer extends ServerLayer {
 
     public SpoutServerLayer(SpoutPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @Override
+    public File getEngineHomeFolder() {
+        return plugin.getDataFolder();
     }
 
     @Override

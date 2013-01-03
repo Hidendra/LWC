@@ -28,6 +28,7 @@
 
 package com.griefcraft.util.config;
 
+import com.griefcraft.Engine;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
@@ -45,10 +46,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FileConfiguration extends ConfigurationNode {
+    private static Engine engine;
     private Yaml yaml;
     private File file;
-
-    public static String CONFIG_PATH = "plugins/LWC/";
 
     /**
      * List of loaded config files
@@ -69,6 +69,15 @@ public class FileConfiguration extends ConfigurationNode {
 
         yaml = new Yaml(new SafeConstructor(), new Representer(), options);
         this.file = file;
+    }
+
+    /**
+     * Initialize the file configuration with the {@link Engine} object
+     *
+     * @param engine
+     */
+    public static void init(Engine engine) {
+        FileConfiguration.engine = engine;
     }
 
     /**
@@ -118,8 +127,8 @@ public class FileConfiguration extends ConfigurationNode {
             return loaded.get(config);
         }
 
-        File file = new File(CONFIG_PATH + config);
-        File folder = new File(CONFIG_PATH);
+        File folder = engine.getServerLayer().getEngineHomeFolder();
+        File file = new File(folder, config);
 
         if (!folder.exists()) {
             folder.mkdir();
@@ -131,7 +140,7 @@ public class FileConfiguration extends ConfigurationNode {
                 return null;
             }
 
-            extractFile("/config/" + config, CONFIG_PATH + config);
+            extractFile("/config/" + config, engine.getServerLayer().getEngineHomeFolder().getPath() + config);
         }
 
         FileConfiguration configuration = new FileConfiguration(file);
