@@ -27,7 +27,7 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.internal;
+package com.griefcraft;
 
 import com.griefcraft.Block;
 import com.griefcraft.Engine;

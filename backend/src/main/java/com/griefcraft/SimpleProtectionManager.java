@@ -27,15 +27,8 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.internal;
+package com.griefcraft;
 
-import com.griefcraft.Block;
-import com.griefcraft.Engine;
-import com.griefcraft.Location;
-import com.griefcraft.ProtectionAccess;
-import com.griefcraft.ProtectionManager;
-import com.griefcraft.ProtectionMatcher;
-import com.griefcraft.ProtectionSet;
 import com.griefcraft.attribute.ProtectionAttributeFactory;
 import com.griefcraft.configuration.Configuration;
 import com.griefcraft.model.AbstractAttribute;

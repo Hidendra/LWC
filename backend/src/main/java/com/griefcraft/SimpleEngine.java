@@ -40,7 +40,6 @@ import com.griefcraft.commands.BaseCommands;
 import com.griefcraft.commands.BenchmarkCommands;
 import com.griefcraft.configuration.Configuration;
 import com.griefcraft.configuration.YamlConfiguration;
-import com.griefcraft.internal.SimpleProtectionManager;
 import com.griefcraft.roles.PlayerRoleDefinition;
 import com.griefcraft.sql.Database;
 import com.griefcraft.sql.DatabaseException;
