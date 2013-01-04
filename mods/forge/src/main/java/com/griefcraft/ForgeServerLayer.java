@@ -73,7 +73,7 @@ public class ForgeServerLayer extends ServerLayer {
 
     @Override
     public File getEngineHomeFolder() {
-        return new File("mods/LWC/");
+        return new File("coremods/LWC/");
     }
 
     @Override

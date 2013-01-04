@@ -40,7 +40,7 @@ public class ItemConfig {
                 String[] split = line.split(",");
                 String name = split[0];
                 int id = Integer.parseInt(split[1]);
-                System.out.println(id + " => " + name);
+                // System.out.println(id + " => " + name);
                 items.put(id, name);
             }
         } catch (Exception e) {

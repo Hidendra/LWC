@@ -29,6 +29,7 @@ package com.griefcraft.listeners;/*
 
 import com.griefcraft.Block;
 import com.griefcraft.LWC;
+import com.griefcraft.PlayerBreakBlockEvent;
 import com.griefcraft.World;
 import com.griefcraft.command.CommandContext;
 import com.griefcraft.command.CommandException;
@@ -92,6 +93,19 @@ public class ForgeListener {
 
         // send the event for the player around the plugin (and maybe other plugins, too.)
         if (mod.getEngine().getEventHelper().onBlockInteract(player, block)) {
+            event.setCanceled(true);
+            event.setResult(Event.Result.DENY);
+        }
+    }
+
+    @ForgeSubscribe
+    public void playerBlockBreak(PlayerBreakBlockEvent event) {
+        com.griefcraft.entity.Player player = mod.wrapPlayer((EntityPlayerMP) event.entityPlayer);
+        World world = player.getLocation().getWorld();
+        Block block = world.getBlockAt(event.blockX, event.blockY, event.blockZ);
+
+        // XXX Forge doesn't send an interact event when digging a block so we check the block so messages are sent
+        if (mod.getEngine().getEventHelper().onBlockInteract(player, block) || mod.getEngine().getEventHelper().onBlockBreak(player, block)) {
             event.setCanceled(true);
             event.setResult(Event.Result.DENY);
         }
