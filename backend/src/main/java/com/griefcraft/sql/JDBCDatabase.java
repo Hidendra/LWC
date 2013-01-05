@@ -51,6 +51,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 public class JDBCDatabase implements Database {
@@ -151,6 +152,12 @@ public class JDBCDatabase implements Database {
 
         // Create the connection string
         String connectionString = "jdbc:" + driver.toString().toLowerCase() + ":" + databasePath;
+
+        // Disable c3p0 logging
+        Properties prop = new Properties(System.getProperties());
+        prop.put("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");
+        prop.put("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL", "OFF"); // or any other
+        System.setProperties(prop);
 
         // setup the database pool
         pool = new ComboPooledDataSource();
