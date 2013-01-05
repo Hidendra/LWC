@@ -1,1 +1,7 @@
 version: ${project.version}
+git:
+    branch: ${git.branch}
+    describe: ${git.commit.id.describe}
+    commitId: ${git.commit.id}
+    commitTime: ${git.commit.time}
+    buildTime: ${git.build.time}

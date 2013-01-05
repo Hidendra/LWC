@@ -116,6 +116,7 @@ public class SimpleEngine implements Engine {
         consoleSender.sendMessage("Server: " + serverInfo.getServerMod() + " [" + serverInfo.getServerVersion() + "]");
         consoleSender.sendMessage("Layer: " + serverInfo.getLayerVersion());
         consoleSender.sendMessage("Backend: " + getBackendVersion());
+        consoleSender.sendMessage("This version was built on: " + internalConfig.get("git.buildTime"));
 
         // connect to the db
         openDatabase();
@@ -165,7 +166,7 @@ public class SimpleEngine implements Engine {
     }
 
     public String getBackendVersion() {
-        return internalConfig.getString("version");
+        return internalConfig.getString("version") + " (" + internalConfig.getString("git.describe") + "@" + internalConfig.getString("git.branch") + ")";
     }
 
     public ServerInfo getServerInfo() {
