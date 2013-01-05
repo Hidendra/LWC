@@ -28,6 +28,7 @@
 
 package com.griefcraft.util.config;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -93,7 +94,7 @@ public class ConfigUpdater {
             String realName = name.substring(name.indexOf('/') + 1);
 
             // Insert it
-            FileConfiguration configuration = new FileConfiguration(null);
+            FileConfiguration configuration = new FileConfiguration((File) null);
             configuration.load(jarFile.getInputStream(file));
             referenceConfigFileCache.put(realName, configuration);
         }

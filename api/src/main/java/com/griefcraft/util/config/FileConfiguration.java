@@ -49,6 +49,7 @@ public class FileConfiguration extends ConfigurationNode {
     private static Engine engine;
     private Yaml yaml;
     private File file;
+    private InputStream is;
 
     /**
      * List of loaded config files
@@ -69,6 +70,17 @@ public class FileConfiguration extends ConfigurationNode {
 
         yaml = new Yaml(new SafeConstructor(), new Representer(), options);
         this.file = file;
+    }
+
+    protected FileConfiguration(InputStream is) {
+        super(new HashMap<String, Object>());
+
+        DumperOptions options = new DumperOptions();
+        options.setIndent(4);
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+
+        yaml = new Yaml(new SafeConstructor(), new Representer(), options);
+        this.is = is;
     }
 
     /**
@@ -150,6 +162,18 @@ public class FileConfiguration extends ConfigurationNode {
         // Run the config updater
         updater.update(configuration);
 
+        return configuration;
+    }
+
+    /**
+     * Create and/or load a configuration file
+     *
+     * @param is
+     * @return
+     */
+    public static FileConfiguration loadViaInputStream(InputStream is) {
+        FileConfiguration configuration = new FileConfiguration(is);
+        configuration.load(is);
         return configuration;
     }
 

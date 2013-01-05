@@ -99,6 +99,11 @@ public class SimpleEngine implements Engine {
      */
     private Configuration configuration;
 
+    /**
+     * The internal config (engine.yml inside of the jar file)
+     */
+    private Configuration internalConfig;
+
     private SimpleEngine(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender) {
         FileConfiguration.init(this);
         this.serverLayer = serverLayer;
@@ -106,6 +111,7 @@ public class SimpleEngine implements Engine {
         this.consoleSender = consoleSender;
         this.configuration = new YamlConfiguration("config.yml");
         this.commandHandler = new SimpleCommandHandler(this);
+        internalConfig = new YamlConfiguration(getClass().getResourceAsStream("/engine.yml"));
 
         consoleSender.sendMessage("Server: " + serverInfo.getServerMod() + " [" + serverInfo.getServerVersion() + "]");
         consoleSender.sendMessage("Layer: " + serverInfo.getLayerVersion());
@@ -159,7 +165,7 @@ public class SimpleEngine implements Engine {
     }
 
     public String getBackendVersion() {
-        return "v5-volatile-test (Java)";
+        return internalConfig.getString("version");
     }
 
     public ServerInfo getServerInfo() {

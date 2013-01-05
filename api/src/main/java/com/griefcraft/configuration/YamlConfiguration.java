@@ -33,6 +33,7 @@ import com.griefcraft.util.config.FileConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class YamlConfiguration implements Configuration {
 
@@ -41,6 +42,11 @@ public class YamlConfiguration implements Configuration {
      */
     private final FileConfiguration configuration;
 
+    /**
+     * If we are using an input stream to load the config
+     */
+    private boolean inputStream = false;
+
     public YamlConfiguration(String config) {
         this.configuration = FileConfiguration.load(config);
 
@@ -48,6 +54,11 @@ public class YamlConfiguration implements Configuration {
         if (!configuration.getFile().exists()) {
             configuration.save();
         }
+    }
+
+    public YamlConfiguration(InputStream is) {
+        this.configuration = FileConfiguration.loadViaInputStream(is);
+        inputStream = true;
     }
 
     public void set(String key, Object value) {
@@ -91,6 +102,10 @@ public class YamlConfiguration implements Configuration {
     }
 
     public void save() throws IOException {
+        if (inputStream) {
+            throw new UnsupportedOperationException("Configuration was loaded from an InputStream. Cannot save()");
+        }
+
         configuration.save();
     }
 
