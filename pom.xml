@@ -18,6 +18,12 @@
         <url>http://ci.griefcraft.com</url>
     </ciManagement>
 
+    <scm>
+        <developerConnection>scm:git:git@github.com:Hidendra/LWC.git</developerConnection>
+        <connection>scm:git:git://github.com/Hidendra/LWC.git</connection>
+        <url>https://github.com/Hidendra/LWC</url>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
