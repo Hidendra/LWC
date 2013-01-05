@@ -40,6 +40,11 @@ import com.griefcraft.model.State;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.mchange.v2.c3p0.DataSources;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -158,6 +163,7 @@ public class JDBCDatabase implements Database {
             pool.setUser(details.getUsername());
             pool.setPassword(details.getPassword());
             pool.setPreferredTestQuery("SELECT 1;");
+            verifyBase();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -165,6 +171,61 @@ public class JDBCDatabase implements Database {
         } finally {
             safeClose(stmt);
             safeClose(connection);
+        }
+    }
+
+    /**
+     * Verify the base SQL. If the base tables were not created, create them
+     */
+    private void verifyBase() {
+        boolean baseRequired;
+
+        Connection connection = null;
+        Statement stmt = null;
+        try {
+            connection = pool.getConnection();
+            stmt = connection.createStatement();
+            stmt.executeQuery("SELECT 1 FROM " + details.getPrefix() + "protections");
+            baseRequired = false;
+        } catch (SQLException e) {
+            baseRequired = true;
+        } finally {
+            safeClose(stmt);
+            safeClose(connection);
+        }
+
+        if (baseRequired) {
+            String base = "";
+            engine.getConsoleSender().sendMessage("Creating base database via base.sql");
+
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/sql/base.sql")));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    base += line + "\n";
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // fix the prefix
+            base = base.replaceAll("%PREFIX%", details.getPrefix());
+
+            try {
+                // convert the SQL to a stream so we can use a (mostly) unmodified ScriptRunner class
+                InputStream stream = new ByteArrayInputStream(base.getBytes("UTF-8"));
+
+                // create a connection for our attempt
+                connection = pool.getConnection();
+
+                ScriptRunner runner = new ScriptRunner(connection, false, false);
+                runner.setLogWriter(null);
+                runner.runScript(new InputStreamReader(stream));
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                safeClose(connection);
+            }
         }
     }
 
