@@ -166,7 +166,7 @@ public class SimpleEngine implements Engine {
     }
 
     public String getBackendVersion() {
-        return internalConfig.getString("version") + " (" + internalConfig.getString("git.describe") + "@" + internalConfig.getString("git.branch") + ")";
+        return internalConfig.getString("version") + " (" + internalConfig.getString("git.describe") + ")";
     }
 
     public ServerInfo getServerInfo() {
