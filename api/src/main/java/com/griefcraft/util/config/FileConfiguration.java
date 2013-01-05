@@ -152,7 +152,7 @@ public class FileConfiguration extends ConfigurationNode {
                 return null;
             }
 
-            extractFile("/config/" + config, engine.getServerLayer().getEngineHomeFolder().getPath() + config);
+            extractFile("/config/" + config, file.getPath());
         }
 
         FileConfiguration configuration = new FileConfiguration(file);
