@@ -39,6 +39,7 @@ import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
 
 public class DoorsModule extends JavaModule {
 
@@ -114,6 +115,7 @@ public class DoorsModule extends JavaModule {
 
         Protection protection = event.getProtection();
         Block block = event.getEvent().getClickedBlock(); // The block they actually clicked :)
+        Player player = event.getPlayer();
 
         if (block instanceof StorageMinecartBlock) {
             return;
@@ -140,6 +142,13 @@ public class DoorsModule extends JavaModule {
         // Only waste CPU if we need the double door block
         if (doubleDoors) {
             doubleDoorBlock = getDoubleDoor(block);
+
+            if (doubleDoorBlock != null) {
+                Protection other = lwc.findProtection(doubleDoorBlock);
+                if (!lwc.canAccessProtection(player, other)) {
+                    doubleDoorBlock = null; // don't open the other door :-)
+                }
+            }
         }
 
         // Either way we are going to be toggling the door open
