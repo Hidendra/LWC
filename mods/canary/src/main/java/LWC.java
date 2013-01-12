@@ -29,9 +29,6 @@
 import com.griefcraft.Engine;
 import com.griefcraft.ServerLayer;
 import com.griefcraft.SimpleEngine;
-import mcstats.Metrics;
-
-import java.io.IOException;
 
 public class LWC extends Plugin {
 
