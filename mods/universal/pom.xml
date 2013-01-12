@@ -50,17 +50,6 @@
             <version>5.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.10</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.21</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -98,6 +87,9 @@
                                     <exclude>net.canarymod:*</exclude>
                                     <exclude>org.xnap.commons:gettext-commons</exclude>
                                     <exclude>net.minecraft:*</exclude>
+                                    <exclude>org.ow2.asm:*</exclude>
+                                    <exclude>org.yaml:*</exclude>
+                                    <exclude>c3p0:*</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>

@@ -50,16 +50,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.21</version>
-        </dependency>
-        <dependency>
-            <groupId>org.xerial</groupId>
-            <artifactId>sqlite-jdbc</artifactId>
-            <version>3.7.2</version>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.10</version>
@@ -112,6 +102,7 @@
                                     <exclude>org.bukkit:*</exclude>
                                     <exclude>org.spout:*</exclude>
                                     <exclude>org.yaml:*</exclude>
+                                    <exclude>c3p0:*</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>

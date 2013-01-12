@@ -132,12 +132,6 @@ public class JDBCDatabase implements Database {
     public boolean connect() throws DatabaseException {
         Driver driver = details.getDriver();
 
-        try {
-            Class.forName(driver.getClassName());
-        } catch (Exception e) {
-            throw new DatabaseException("Failed to load database class", e);
-        }
-
         // Get the path to the database
         String databasePath;
 

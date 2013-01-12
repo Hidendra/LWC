@@ -33,12 +33,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.10</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.10</version>
@@ -83,6 +77,8 @@
                                 <excludes>
                                     <exclude>junit:junit</exclude>
                                     <exclude>net.canarymod:*</exclude>
+                                    <exclude>org.yaml:*</exclude>
+                                    <exclude>c3p0:*</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>

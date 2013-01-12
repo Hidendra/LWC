@@ -70,6 +70,11 @@ public class SimpleEngine implements Engine {
     private final EventHelper eventHelper = new SimpleEventHelper(this);
 
     /**
+     * The {@link LibraryDownloader} responsible for downloading library files
+     */
+    private final LibraryDownloader downloader = new LibraryDownloader(this);
+
+    /**
      * The server layer
      */
     private ServerLayer serverLayer;
@@ -105,13 +110,17 @@ public class SimpleEngine implements Engine {
     private Configuration internalConfig;
 
     private SimpleEngine(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender) {
-        FileConfiguration.init(this);
         this.serverLayer = serverLayer;
         this.serverInfo = serverInfo;
         this.consoleSender = consoleSender;
-        this.configuration = new YamlConfiguration("config.yml");
-        this.commandHandler = new SimpleCommandHandler(this);
+
+        downloader.init();
+        System.setProperty("org.sqlite.lib.path", downloader.getNativeLibraryFolder());
+        FileConfiguration.init(this);
+
+        configuration = new YamlConfiguration("config.yml");
         internalConfig = new YamlConfiguration(getClass().getResourceAsStream("/engine.yml"));
+        commandHandler = new SimpleCommandHandler(this);
 
         consoleSender.sendMessage("Server: " + serverInfo.getServerMod() + " [" + serverInfo.getServerVersion() + "]");
         consoleSender.sendMessage("Layer: " + serverInfo.getLayerVersion());
@@ -209,7 +218,7 @@ public class SimpleEngine implements Engine {
      */
     private void openDatabase() {
         String driverName = configuration.getString("database.driver");
-        String databaseType = "unknown";
+        String databaseType;
 
         if (driverName.equalsIgnoreCase("memory")) {
             database = new MemoryDatabase(this);

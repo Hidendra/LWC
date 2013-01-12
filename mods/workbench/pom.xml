@@ -77,6 +77,8 @@
                                 <excludes>
                                     <exclude>junit:junit</exclude>
                                     <exclude>net.minecraft:*</exclude>
+                                    <exclude>org.yaml:*</exclude>
+                                    <exclude>c3p0:*</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>

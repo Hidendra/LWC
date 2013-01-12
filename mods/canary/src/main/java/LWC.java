@@ -29,6 +29,9 @@
 import com.griefcraft.Engine;
 import com.griefcraft.ServerLayer;
 import com.griefcraft.SimpleEngine;
+import mcstats.Metrics;
+
+import java.io.IOException;
 
 public class LWC extends Plugin {
 
@@ -61,6 +64,11 @@ public class LWC extends Plugin {
         etc.getLoader().addListener(PluginLoader.Hook.COMMAND, listener, this, PluginListener.Priority.MEDIUM);
         etc.getLoader().addListener(PluginLoader.Hook.SERVERCOMMAND, listener, this, PluginListener.Priority.MEDIUM);
 
+        try {
+            new Metrics(getName(), "5.0.0-SNAPSHOT").start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

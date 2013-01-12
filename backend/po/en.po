@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-03 01:02-0400\n"
+"POT-Creation-Date: 2013-01-12 04:54-0400\n"
 "PO-Revision-Date: 2012-11-08 01:19-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -78,6 +78,19 @@ msgstr "You clicked on a block with the id {0}!"
 #, java-format
 msgid "Purging player?: {0}"
 msgstr "Purging player?: {0}"
+
+#: backend/src/main/java/com/griefcraft/LibraryDownloader.java:195
+msgid "Libraries required! These will now be downloaded."
+msgstr "Libraries required! These will now be downloaded."
+
+#: backend/src/main/java/com/griefcraft/LibraryDownloader.java:206
+#, java-format
+msgid "[{0}/{1}] Downloading file {2} => {3}"
+msgstr "[{0}/{1}] Downloading file {2} => {3}"
+
+#: backend/src/main/java/com/griefcraft/LibraryDownloader.java:271
+msgid "Library downloads complete!"
+msgstr "Library downloads complete!"
 
 #: backend/src/main/java/com/griefcraft/SimpleEventHelper.java:84
 msgid "&4This protection is locked by a magical spell."
