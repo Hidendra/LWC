@@ -32,7 +32,7 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Flag;
 import com.griefcraft.model.Protection;
-import com.nitnelave.CreeperHeal.CreeperHeal;
+import com.nitnelave.CreeperHeal.CreeperConfig;
 import com.nitnelave.CreeperHeal.WorldConfig;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
@@ -130,8 +130,7 @@ public class LWCEntityListener implements Listener {
         Plugin creeperHealPlugin = plugin.getServer().getPluginManager().getPlugin("CreeperHeal");
 
         if (creeperHealPlugin != null) {
-            CreeperHeal creeperHeal = (CreeperHeal) creeperHealPlugin;
-            WorldConfig worldConfig = creeperHeal.loadWorld(entity.getWorld());
+            WorldConfig worldConfig = CreeperConfig.loadWorld(entity.getWorld());
 
             if (worldConfig == null) {
                 return false; // Uh-oh?
