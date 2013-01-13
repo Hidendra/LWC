@@ -9,6 +9,8 @@
     <version>5.0.0-SNAPSHOT</version>
 
     <properties>
+        <!-- Supported Minecraft version -->
+        <minecraft.version>1.4.7</minecraft.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -60,7 +62,7 @@
 
     <build>
         <outputDirectory>${project.basedir}/mcp/bin/minecraft</outputDirectory>
-        <finalName>${project.name}-${project.version}</finalName>
+        <finalName>${project.name}-${project.version}-MC${minecraft.version}</finalName>
         <defaultGoal>clean package</defaultGoal>
 
         <resources>
