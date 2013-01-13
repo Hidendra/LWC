@@ -67,7 +67,7 @@ public class SimpleEngine implements Engine {
     /**
      * The {@link EventHelper} instance that assists in consolidating event handling
      */
-    private final EventHelper eventHelper = new SimpleEventHelper(this);
+    private final EventHelper eventHelper = new SimpleEventHelper(ahis);
 
     /**
      * The {@link LibraryDownloader} responsible for downloading library files
