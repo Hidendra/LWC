@@ -27,7 +27,7 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft.modules.password;
+package com.griefcraft;
 
 import com.griefcraft.Engine;
 import com.griefcraft.attribute.PasswordAttributeFactory;
