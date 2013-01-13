@@ -43,6 +43,7 @@ import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -786,9 +787,18 @@ public class Protection {
     }
 
     /**
-     * Force a protection update to the live database
+     * Force a protection update to the database
      */
     public void saveNow() {
+        saveNow(null);
+    }
+
+    /**
+     * Force a protection update to the database
+     *
+     * @param connection the preferred connection. If null, one will be created.
+     */
+    public void saveNow(Connection connection) {
         if (removed) {
             return;
         }
@@ -799,7 +809,7 @@ public class Protection {
 
         // only save the protection if it was modified
         if (modified && !removing) {
-            LWC.getInstance().getPhysicalDatabase().saveProtection(this);
+            LWC.getInstance().getPhysicalDatabase().saveProtection(connection, this);
             modified = false;
             queuedForSave = false;
         }
