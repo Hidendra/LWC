@@ -32,6 +32,8 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -113,13 +115,29 @@ public class DatabaseThread implements Runnable {
      */
     private void flushDatabase(boolean flushAll) {
         long start = System.currentTimeMillis();
+        Connection connection = null;
         if (!updateQueue.isEmpty()) {
-            while (!updateQueue.isEmpty()) {
-                Protection protection = updateQueue.poll();
-                protection.saveNow();
+            try {
+                connection = lwc.getPhysicalDatabase().createConnection();
+                connection.setAutoCommit(false);
+                while (!updateQueue.isEmpty()) {
+                    Protection protection = updateQueue.poll();
+                    protection.saveNow(connection);
 
-                if (!flushAll && System.currentTimeMillis() - start > MAX_WORK_TIME) {
-                    break;
+                    if (!flushAll && System.currentTimeMillis() - start > MAX_WORK_TIME) {
+                        break;
+                    }
+                }
+                connection.commit();
+                connection.setAutoCommit(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (connection != null) {
+                        connection.close();
+                    }
+                } catch (SQLException e) {
                 }
             }
         }

@@ -1730,6 +1730,16 @@ public class PhysDB extends Database {
      * @param protection
      */
     public void saveProtection(Protection protection) {
+        saveProtection(null, protection);
+    }
+
+    /**
+     * Save a protection to the database
+     *
+     * @param connection the preferred connection to use, if null, one will be created.
+     * @param protection
+     */
+    public void saveProtection(Connection connection, Protection protection) {
         PreparedStatement statement = null;
         try {
             statement = prepare("UPDATE " + prefix + "protections SET type = ?, blockId = ?, world = ?, data = ?, owner = ?, password = ?, x = ?, y = ?, z = ?, date = ?, last_accessed = ? WHERE id = ?");
