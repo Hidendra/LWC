@@ -27,103 +27,69 @@
  * either expressed or implied, of anybody else.
  */
 
-package com.griefcraft;
+package com.griefcraft.scripting;
 
-import com.griefcraft.command.CommandHandler;
-import com.griefcraft.command.ConsoleCommandSender;
-import com.griefcraft.configuration.Configuration;
-import com.griefcraft.scripting.ModuleManager;
-import com.griefcraft.sql.Database;
+import com.griefcraft.Engine;
 
-public interface Engine {
+public abstract class JavaModule implements Module {
 
     /**
-     * Get the {@link RoleManager} which manages role associations
+     * The name of the module
+     */
+    private String name;
+
+    /**
+     * The module's description
+     */
+    private String description;
+
+    /**
+     * {@inheritDoc}
+     */
+    public abstract void initialize(Engine engine);
+
+    /**
+     * {@inheritDoc}
+     */
+    public void reload() { }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void terminate() { }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Set the name of this module
+     *
+     * @param name
+     */
+    protected void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Get the description of the module
      *
      * @return
      */
-    public RoleManager getRoleManager();
+    public String getDescription() {
+        return description;
+    }
 
     /**
-     * Get the protection manager
+     * Set the description for the module
      *
-     * @return
+     * @param description
      */
-    public ProtectionManager getProtectionManager();
-
-    /**
-     * Get the server layer that provides some server specific utilities
-     *
-     * @return
-     */
-    public ServerLayer getServerLayer();
-
-    /**
-     * Get information about the server mod itself
-     *
-     * @return
-     */
-    public ServerInfo getServerInfo();
-
-    /**
-     * Get the API version
-     *
-     * @return
-     */
-    public String getBackendVersion();
-
-    /**
-     * Get the command handler
-     *
-     * @return
-     */
-    public CommandHandler getCommandHandler();
-
-    /**
-     * Get the console sender, used to send messages to the console
-     *
-     * @return
-     */
-    public ConsoleCommandSender getConsoleSender();
-
-    /**
-     * Get the queue used to save savables to the database in the background
-     *
-     * @return
-     */
-    public SaveQueue getSaveQueue();
-
-    /**
-     * Get the database object
-     *
-     * @return
-     */
-    public Database getDatabase();
-
-    /**
-     * Gets the configuration file
-     *
-     * @return
-     */
-    public Configuration getConfiguration();
-
-    /**
-     * Get the {@link EventHelper} instance
-     *
-     * @return
-     */
-    public EventHelper getEventHelper();
-
-    /**
-     * Get the {@link ModuleManager} instance
-     *
-     * @return
-     */
-    public ModuleManager getModuleManager();
-
-    /**
-     * Called when the engine needs to be disabled
-     */
-    public void disable();
+    protected void setDescription(String description) {
+        this.description = description;
+    }
 
 }

@@ -30,7 +30,6 @@
 package com.griefcraft;
 
 import com.griefcraft.attribute.DescriptionAttributeFactory;
-import com.griefcraft.attribute.PasswordAttributeFactory;
 import com.griefcraft.command.CommandException;
 import com.griefcraft.command.CommandHandler;
 import com.griefcraft.command.ConsoleCommandSender;
@@ -41,6 +40,8 @@ import com.griefcraft.commands.BenchmarkCommands;
 import com.griefcraft.configuration.Configuration;
 import com.griefcraft.configuration.YamlConfiguration;
 import com.griefcraft.roles.PlayerRoleDefinition;
+import com.griefcraft.scripting.ModuleManager;
+import com.griefcraft.scripting.SimpleModuleManager;
 import com.griefcraft.sql.Database;
 import com.griefcraft.sql.DatabaseException;
 import com.griefcraft.sql.JDBCDatabase;
@@ -73,6 +74,11 @@ public class SimpleEngine implements Engine {
      * The {@link LibraryDownloader} responsible for downloading library files
      */
     private final LibraryDownloader downloader = new LibraryDownloader(this);
+
+    /**
+     * The global module manager
+     */
+    private final ModuleManager moduleManager = new SimpleModuleManager(this);
 
     /**
      * The server layer
@@ -138,6 +144,9 @@ public class SimpleEngine implements Engine {
 
         // default attributes
         registerDefaultAttributes();
+
+        // load modules
+        moduleManager.loadAll();
     }
 
     /**
@@ -204,6 +213,10 @@ public class SimpleEngine implements Engine {
 
     public EventHelper getEventHelper() {
         return eventHelper;
+    }
+
+    public ModuleManager getModuleManager() {
+        return moduleManager;
     }
 
     public void disable() {
@@ -285,7 +298,6 @@ public class SimpleEngine implements Engine {
 
     private void registerDefaultAttributes() {
         protectionManager.registerAttributeFactory(new DescriptionAttributeFactory(this));
-        protectionManager.registerAttributeFactory(new PasswordAttributeFactory(this));
     }
 
 }

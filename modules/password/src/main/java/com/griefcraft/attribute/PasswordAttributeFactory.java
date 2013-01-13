@@ -32,6 +32,8 @@ package com.griefcraft.attribute;
 import com.griefcraft.AccessProvider;
 import com.griefcraft.Engine;
 import com.griefcraft.ProtectionAccess;
+import com.griefcraft.attribute.ProtectionAttributeFactory;
+import com.griefcraft.attribute.StringAttribute;
 import com.griefcraft.command.Command;
 import com.griefcraft.command.CommandContext;
 import com.griefcraft.command.CommandException;

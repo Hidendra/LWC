@@ -36,12 +36,17 @@
     <modules>
         <module>api</module>
         <module>backend</module>
+
+        <!-- Server Mods -->
         <module>mods/bukkit</module>
         <module>mods/spout</module>
         <module>mods/canary</module>
         <module>mods/workbench</module>
         <module>mods/forge</module>
         <module>mods/universal</module>
+
+        <!-- Modules -->
+        <module>modules/password</module>
     </modules>
 
     <build>
