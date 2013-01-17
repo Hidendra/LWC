@@ -177,11 +177,15 @@ class Commands(object):
         self.checkfolders()
         self.startlogger()
         self.logger.info('== MCP %s ==', Commands.fullversion())
+        self.cygwin = False
 
         if sys.platform.startswith('linux'):
             self.osname = 'linux'
         elif sys.platform.startswith('freebsd'):
             self.osname = 'linux'
+        elif sys.platform.startswith('cygwin'):
+            self.osname = 'linux'
+            self.cygwin = True
         elif sys.platform.startswith('darwin'):
             self.osname = 'osx'
         elif sys.platform.startswith('win'):
@@ -899,7 +903,11 @@ class Commands(object):
 
         # add retroguard.jar to copy of client or server classpath
         rgcp = [self.retroguard] + rgcplk[side]
-        rgcp = os.pathsep.join(rgcp)
+        if self.cygwin == True:
+            rgcp = ";".join(rgcp)
+        else:
+            rgcp = os.pathsep.join(rgcp)
+
         forkcmd = rgcmd.format(classpath=rgcp, conffile=rgconflk[side])
         try:
             self.runcmd(forkcmd)
