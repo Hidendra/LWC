@@ -43,21 +43,33 @@ public class CanaryServerLayer extends ServerLayer {
         this.plugin = plugin;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public File getEngineHomeFolder() {
         return plugin.getDirectory();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public World getDefaultWorld() {
         return new CanaryWorld(etc.getServer().getDefaultWorld());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected com.griefcraft.entity.Player internalGetPlayer(String playerName) {
         return new CanaryPlayer(plugin, etc.getServer().getPlayer(playerName));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected World internalGetWorld(String worldName) {
         return new CanaryWorld(etc.getServer().getWorld(worldName)[0]);

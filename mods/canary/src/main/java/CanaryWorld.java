@@ -41,10 +41,16 @@ public class CanaryWorld implements com.griefcraft.World {
         this.handle = handle;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getName() {
         return "world"; /// No multi-world
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public com.griefcraft.Block getBlockAt(int x, int y, int z) {
         Block block = handle.getBlockAt(x, y, z);
 

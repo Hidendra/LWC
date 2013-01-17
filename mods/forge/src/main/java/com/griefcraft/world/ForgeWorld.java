@@ -50,10 +50,16 @@ public class ForgeWorld implements World {
         return handle;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getName() {
         return handle.getWorldInfo().getWorldName();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Block getBlockAt(int x, int y, int z) {
         return new ForgeBlock(this, x, y, z);
     }

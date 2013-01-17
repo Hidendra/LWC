@@ -49,11 +49,17 @@ public class BukkitServerLayer extends ServerLayer {
         this.plugin = plugin;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public File getEngineHomeFolder() {
         return plugin.getDataFolder();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Player internalGetPlayer(String playerName) {
         org.bukkit.entity.Player handle = Bukkit.getPlayer(playerName);
@@ -65,6 +71,9 @@ public class BukkitServerLayer extends ServerLayer {
         return new BukkitPlayer(plugin.getEngine(), plugin, handle);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected World internalGetWorld(String worldName) {
         org.bukkit.World handle = Bukkit.getWorld(worldName);
@@ -76,6 +85,9 @@ public class BukkitServerLayer extends ServerLayer {
         return new BukkitWorld(handle);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public World getDefaultWorld() {
         return getWorld(Bukkit.getWorlds().get(0).getName());

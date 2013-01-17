@@ -47,10 +47,16 @@ public class BukkitWorld implements World {
         this.handle = handle;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getName() {
         return handle.getName();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Block getBlockAt(int x, int y, int z) {
         org.bukkit.block.Block blockHandle = handle.getBlockAt(x, y, z);
 

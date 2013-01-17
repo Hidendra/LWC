@@ -34,15 +34,18 @@ import com.griefcraft.util.Color;
 
 public class SpoutConsoleCommandSender implements ConsoleCommandSender {
 
-    public SpoutConsoleCommandSender() {
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
             System.out.println("[LWC] " + Color.replaceColors(line));
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean hasPermission(String node) {
         return true;
     }

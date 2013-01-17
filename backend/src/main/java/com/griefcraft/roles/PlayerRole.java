@@ -41,11 +41,17 @@ public class PlayerRole extends Role {
         super(engine, protection, roleName, roleAccess);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getType() {
         return 1; // adapted from LWCv4
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ProtectionAccess getAccess(Protection protection, Player player) {
         return player.getName().equalsIgnoreCase(getRoleName()) ? getRoleAccess() : ProtectionAccess.NONE;
     }

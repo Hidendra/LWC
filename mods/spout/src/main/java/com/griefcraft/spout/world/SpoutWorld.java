@@ -47,10 +47,16 @@ public class SpoutWorld implements World {
         this.handle = handle;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getName() {
         return handle.getName();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Block getBlockAt(int x, int y, int z) {
         org.spout.api.geo.cuboid.Block blockHandle = handle.getBlock(x, y, z);
 
@@ -61,4 +67,5 @@ public class SpoutWorld implements World {
 
         return new SpoutBlock(this, blockHandle);
     }
+
 }

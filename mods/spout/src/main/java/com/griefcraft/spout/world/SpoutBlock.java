@@ -57,6 +57,9 @@ public class SpoutBlock extends Block {
         this.handle = handle;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getType() {
         BlockMaterial material = handle.getMaterial();
 
@@ -69,30 +72,51 @@ public class SpoutBlock extends Block {
         return material.getId();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public byte getData() {
         return (byte) handle.getData();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public World getWorld() {
         return world;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getX() {
         return handle.getX();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getY() {
         return handle.getY();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getZ() {
         return handle.getZ();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setType(int type) {
         handle.setMaterial((BlockMaterial) Material.get(type));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setData(byte data) {
         handle.setData(data);
     }

@@ -78,16 +78,25 @@ public class SpoutServerLayer extends ServerLayer {
         this.plugin = plugin;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public File getEngineHomeFolder() {
         return plugin.getDataFolder();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onRegisterBaseCommand(String baseCommand) {
         plugin.getEngine().getRootCommand().addSubCommand(plugin, baseCommand).setExecutor(executor);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Player internalGetPlayer(String playerName) {
         org.spout.api.entity.Player handle = Spout.getEngine().getPlayer(playerName, false);
@@ -99,6 +108,9 @@ public class SpoutServerLayer extends ServerLayer {
         return new SpoutPlayer(plugin.getInternalEngine(), plugin, handle);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected World internalGetWorld(String worldName) {
         org.spout.api.geo.World handle = Spout.getEngine().getWorld(worldName);
@@ -110,6 +122,9 @@ public class SpoutServerLayer extends ServerLayer {
         return new SpoutWorld(handle);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public World getDefaultWorld() {
         return getWorld(Spout.getEngine().getDefaultWorld().getName());

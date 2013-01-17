@@ -59,41 +59,65 @@ public class ForgeBlock extends Block {
         this.z = z;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getType() {
         return world.getHandle().getBlockId(x, y, z);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public byte getData() {
         return (byte) world.getHandle().getBlockMetadata(x, y, z);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public World getWorld() {
         return world;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getX() {
         return x;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getY() {
         return y;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getZ() {
         return z;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setType(int type) {
         world.getHandle().setBlock(x, y, z, type);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setData(byte data) {
         world.getHandle().setBlockMetadata(x, y, z, data);

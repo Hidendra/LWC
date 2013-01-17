@@ -57,22 +57,34 @@ public class SpoutPlayer extends Player {
         this.handle = handle;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return handle.getName();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Location getLocation() {
         Point phandle = handle.getTransform().getPosition();
         return new Location(plugin.getWorld(phandle.getWorld().getName()), phandle.getX(), phandle.getY(), phandle.getZ());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
             handle.sendMessage(Color.replaceColors(line));
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean hasPermission(String node) {
         return handle.hasPermission(node);
     }

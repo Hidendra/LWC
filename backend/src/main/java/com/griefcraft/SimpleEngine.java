@@ -171,54 +171,93 @@ public class SimpleEngine implements Engine {
         return new SimpleEngine(serverLayer, serverInfo, consoleSender);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public RoleManager getRoleManager() {
         return roleManager;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ProtectionManager getProtectionManager() {
         return protectionManager;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ServerLayer getServerLayer() {
         return serverLayer;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getBackendVersion() {
         return internalConfig.getString("version") + " (" + internalConfig.getString("git.describe") + ")";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ServerInfo getServerInfo() {
         return serverInfo;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public CommandHandler getCommandHandler() {
         return commandHandler;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ConsoleCommandSender getConsoleSender() {
         return consoleSender;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public SaveQueue getSaveQueue() {
         return saveQueue;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Database getDatabase() {
         return database;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Configuration getConfiguration() {
         return configuration;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public EventHelper getEventHelper() {
         return eventHelper;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ModuleManager getModuleManager() {
         return moduleManager;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void disable() {
         consoleSender.sendMessage("Shutting down!");
         saveQueue.flushAndClose();

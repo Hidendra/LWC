@@ -39,6 +39,9 @@ public class SimpleRoleManager implements RoleManager {
      */
     private Map<Integer, RoleDefinition> definitions = new HashMap<Integer, RoleDefinition>();
 
+    /**
+     * {@inheritDoc}
+     */
     public void registerDefinition(RoleDefinition definition) {
         if (definitions.containsKey(definition.getId())) {
             // TODO our own exception
@@ -48,7 +51,11 @@ public class SimpleRoleManager implements RoleManager {
         definitions.put(definition.getId(), definition);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public RoleDefinition getDefinition(int id) {
         return definitions.get(id);
     }
+
 }

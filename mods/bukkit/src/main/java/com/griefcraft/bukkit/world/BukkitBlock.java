@@ -54,34 +54,58 @@ public class BukkitBlock extends Block {
         this.handle = handle;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getType() {
         return handle.getTypeId();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public byte getData() {
         return handle.getData();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public World getWorld() {
         return world;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getX() {
         return handle.getX();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getY() {
         return handle.getY();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getZ() {
         return handle.getZ();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setType(int type) {
         handle.setTypeId(type);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setData(byte data) {
         handle.setData(data);
     }

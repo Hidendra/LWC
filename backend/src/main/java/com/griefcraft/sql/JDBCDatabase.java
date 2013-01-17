@@ -129,6 +129,9 @@ public class JDBCDatabase implements Database {
         this.details = details;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean connect() throws DatabaseException {
         Driver driver = details.getDriver();
 
@@ -230,6 +233,9 @@ public class JDBCDatabase implements Database {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void disconnect() {
         pool.close();
         pool = null;
@@ -281,6 +287,9 @@ public class JDBCDatabase implements Database {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Protection createProtection(Location location) {
         try {
             Connection connection = pool.getConnection();
@@ -307,6 +316,9 @@ public class JDBCDatabase implements Database {
         return loadProtection(location);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Protection loadProtection(Location location) {
         try {
             Connection connection = pool.getConnection();
@@ -338,6 +350,9 @@ public class JDBCDatabase implements Database {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Protection loadProtection(int id) {
         try {
             Connection connection = pool.getConnection();
@@ -364,6 +379,9 @@ public class JDBCDatabase implements Database {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void saveProtection(Protection protection) {
         try {
             Connection connection = pool.getConnection();
@@ -388,6 +406,9 @@ public class JDBCDatabase implements Database {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void removeProtection(Protection protection) {
         removeRoles(protection);
         removeProtectionAttributes(protection);
@@ -408,6 +429,9 @@ public class JDBCDatabase implements Database {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void saveOrCreateRole(Role role) {
         try {
             Connection connection = pool.getConnection();
@@ -445,6 +469,9 @@ public class JDBCDatabase implements Database {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void removeRole(Role role) {
         try {
             Connection connection = pool.getConnection();
@@ -464,6 +491,9 @@ public class JDBCDatabase implements Database {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void removeRoles(Protection protection) {
         try {
             Connection connection = pool.getConnection();
@@ -481,6 +511,9 @@ public class JDBCDatabase implements Database {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void saveOrCreateProtectionAttribute(Protection protection, AbstractAttribute attribute) {
         try {
             Connection connection = pool.getConnection();
@@ -515,6 +548,9 @@ public class JDBCDatabase implements Database {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void removeProtectionAttribute(Protection protection, AbstractAttribute attribute) {
         try {
             Connection connection = pool.getConnection();
@@ -533,6 +569,9 @@ public class JDBCDatabase implements Database {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void removeProtectionAttributes(Protection protection) {
         try {
             Connection connection = pool.getConnection();
@@ -550,6 +589,9 @@ public class JDBCDatabase implements Database {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Set<AbstractAttribute> loadProtectionAttributes(Protection protection) {
         Set<AbstractAttribute> attributes = new HashSet<AbstractAttribute>();
 
@@ -588,6 +630,9 @@ public class JDBCDatabase implements Database {
         return attributes;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Set<Role> loadProtectionRoles(Protection protection) {
         Set<Role> roles = new HashSet<Role>();
 

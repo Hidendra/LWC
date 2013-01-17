@@ -47,12 +47,18 @@ public class BukkitConsoleCommandSender implements ConsoleCommandSender {
         this.handle = handle;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
             handle.sendMessage("[LWC] " + Color.replaceColors(line));
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean hasPermission(String node) {
         return true;
     }

@@ -49,34 +49,58 @@ public class CanaryBlock extends com.griefcraft.Block {
         this.world = world;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getType() {
         return handle.getType();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public byte getData() {
         return (byte) handle.getData();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public World getWorld() {
         return world;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getX() {
         return handle.getX();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getY() {
         return handle.getY();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getZ() {
         return handle.getZ();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setType(int type) {
         handle.setType(type);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setData(byte data) {
         handle.setData(data);
     }

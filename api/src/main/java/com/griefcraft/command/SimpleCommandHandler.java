@@ -81,6 +81,9 @@ public class SimpleCommandHandler implements CommandHandler {
         this.engine = engine;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean handleCommand(CommandContext context) throws CommandException {
         Tuple<Command, Method> found;
 
@@ -132,6 +135,9 @@ public class SimpleCommandHandler implements CommandHandler {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public List<Command> registerCommands(Object object) throws CommandException {
         List<Command> registered = new ArrayList<Command>();
         Class<?> clazz = object.getClass();

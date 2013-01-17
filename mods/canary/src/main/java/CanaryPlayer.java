@@ -50,21 +50,33 @@ public class CanaryPlayer extends com.griefcraft.entity.Player {
         this.handle = handle;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return handle.getName();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Location getLocation() {
         return new Location(plugin.getWorld(handle.getWorld().getName()), handle.getX(), handle.getY(), handle.getZ());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
             handle.sendMessage(Color.replaceColors(line));
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean hasPermission(String node) {
         // hard coded for now.. what ever shall we do :-)
         if (node.equals("lwc.protect")) {

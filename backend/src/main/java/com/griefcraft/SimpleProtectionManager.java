@@ -54,11 +54,17 @@ public class SimpleProtectionManager implements ProtectionManager {
         this.engine = engine;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean isBlockProtectable(Block block) {
         String enabled = getProtectionConfiguration("enabled", block.getName(), Integer.toString(block.getType()));
         return enabled.equalsIgnoreCase("true") || enabled.equalsIgnoreCase("yes");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Protection findProtection(Location location) {
         ProtectionMatcher matcher = new SimpleProtectionMatcher(engine);
 
@@ -73,6 +79,9 @@ public class SimpleProtectionManager implements ProtectionManager {
         return blocks.getResultant();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Protection createProtection(String owner, Location location) {
         // First create the protection
         Protection protection = engine.getDatabase().createProtection(location);
@@ -90,6 +99,9 @@ public class SimpleProtectionManager implements ProtectionManager {
         return protection;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void registerAttributeFactory(ProtectionAttributeFactory factory) {
         if (factory == null) {
             throw new IllegalArgumentException("factory cannot be null");
@@ -98,6 +110,9 @@ public class SimpleProtectionManager implements ProtectionManager {
         protectionFactories.put(factory.getName().toLowerCase(), factory);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public AbstractAttribute createProtectionAttribute(String name) {
         ProtectionAttributeFactory factory = protectionFactories.get(name.toLowerCase());
         return factory == null ? null : factory.createAttribute();

@@ -48,10 +48,16 @@ public class DescriptionAttributeFactory implements ProtectionAttributeFactory<S
         this.engine = engine;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getName() {
         return NAME;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public AbstractAttribute<String> createAttribute() {
         return new StringAttribute(engine, NAME, "");
     }

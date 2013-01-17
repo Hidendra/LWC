@@ -56,22 +56,34 @@ public class BukkitPlayer extends Player {
         this.handle = handle;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return handle.getName();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Location getLocation() {
         org.bukkit.Location lhandle = handle.getLocation();
         return new Location(plugin.getWorld(lhandle.getWorld().getName()), lhandle.getX(), lhandle.getY(), lhandle.getZ());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
             handle.sendMessage(Color.replaceColors(line));
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean hasPermission(String node) {
         return handle.hasPermission(node);
     }

@@ -50,6 +50,9 @@ public class SimpleEventHelper implements EventHelper {
         this.engine = engine;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean onBlockInteract(Entity entity, Block block) {
         boolean cancel = false; // If the event should be cancelled
 
@@ -100,6 +103,9 @@ public class SimpleEventHelper implements EventHelper {
         return cancel;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean onBlockBreak(Entity entity, Block block) {
         boolean cancel = false;
 

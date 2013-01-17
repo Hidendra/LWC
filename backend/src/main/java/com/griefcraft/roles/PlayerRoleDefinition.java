@@ -46,10 +46,16 @@ public class PlayerRoleDefinition implements RoleDefinition {
         this.engine = engine;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getId() {
         return 1; // adapted from LWCv4
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Role createRole(Protection protection, String roleName, ProtectionAccess roleAccess) {
         return new PlayerRole(engine, protection, roleName, roleAccess);
     }

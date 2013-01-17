@@ -20,19 +20,31 @@ public class WorkbenchPlayer extends Player {
         this.handle = handle;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return handle.getUsername();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Location getLocation() {
         throw new UnsupportedOperationException("Not implemented");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void sendMessage(String message) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean hasPermission(String node) {
         throw new UnsupportedOperationException("Not implemented");
     }
