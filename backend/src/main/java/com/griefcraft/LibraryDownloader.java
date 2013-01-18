@@ -42,11 +42,8 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
-import java.util.Enumeration;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 import static com.griefcraft.I18n._;
 
@@ -81,6 +78,7 @@ public class LibraryDownloader {
      */
     protected void init() {
         DEST_LIBRARY_FOLDER = new File(engine.getServerLayer().getEngineHomeFolder(), "lib").getPath() + File.separator;
+        DEST_LIBRARY_FOLDER = DEST_LIBRARY_FOLDER.replaceAll("\\\\", "/");
 
         // resource libraries
         try {
