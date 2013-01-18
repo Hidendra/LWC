@@ -31,6 +31,9 @@ import com.griefcraft.entity.Player;
 import com.griefcraft.util.Color;
 import com.griefcraft.world.ForgeWorld;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.integrated.IntegratedServer;
+import net.minecraft.src.ModLoader;
 
 public class ForgePlayer extends Player {
 
@@ -71,7 +74,34 @@ public class ForgePlayer extends Player {
     }
 
     public boolean hasPermission(String node) {
-        return true; // TODO check for OP from lwc.admin.*, allow any others
+        // no handled Perm plugin
+        return noPermissionPlugin(node);
+    }
+
+    /**
+     * No permission plugin is available so try to resolve permissions by if they are using a special command (OP required)
+     *
+     * @param node
+     * @return
+     */
+    private boolean noPermissionPlugin(String node) {
+        if (node.equals("lwc.protect")) {
+            return true;
+        } else if (node.startsWith("lwc.admin")) {
+            return isOP();
+        } else {
+            return isOP();
+        }
+    }
+
+    private boolean isOP() {
+        MinecraftServer server = ModLoader.getMinecraftServerInstance();
+
+        if (server.isSinglePlayer()) {
+            return server instanceof IntegratedServer && server.getServerOwner().equalsIgnoreCase(getName());
+        } else {
+            return server.getConfigurationManager().getOps().contains(getName());
+        }
     }
 
 }

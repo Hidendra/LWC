@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-13 01:19-0400\n"
+"POT-Creation-Date: 2013-01-17 21:11-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -92,11 +92,11 @@ msgstr ""
 msgid "Library downloads complete!"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/SimpleEventHelper.java:84
+#: backend/src/main/java/com/griefcraft/SimpleEventHelper.java:87
 msgid "&4This protection is locked by a magical spell."
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/SimpleEventHelper.java:91
+#: backend/src/main/java/com/griefcraft/SimpleEventHelper.java:94
 #, java-format
 msgid ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "
