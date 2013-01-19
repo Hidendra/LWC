@@ -40,12 +40,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.mcstats</groupId>
-            <artifactId>metrics</artifactId>
-            <version>1.2-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.10</version>
