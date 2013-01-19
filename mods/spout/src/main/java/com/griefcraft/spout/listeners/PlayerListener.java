@@ -36,11 +36,10 @@ import com.griefcraft.spout.SpoutPlugin;
 import com.griefcraft.spout.world.SpoutBlock;
 import org.spout.api.event.EventHandler;
 import org.spout.api.event.Listener;
-import org.spout.api.event.Result;
 import org.spout.api.event.block.BlockChangeEvent;
 import org.spout.api.event.player.PlayerInteractEvent;
 import org.spout.api.geo.discrete.Point;
-import org.spout.vanilla.event.cause.PlayerBreakCause;
+import org.spout.vanilla.plugin.event.cause.PlayerBreakCause;
 
 public class PlayerListener implements Listener {
 
