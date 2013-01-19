@@ -103,7 +103,7 @@ public class AttributeCommands {
     // TODO better word for unset ?
     @Command(
             command = "lwc unset",
-            permission = "lwc.attribute.unset",
+            permission = "lwc.attribute.delete",
             aliases = {"cunset"},
             accepts = SenderType.PLAYER,
             min = 1,
