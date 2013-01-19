@@ -58,12 +58,6 @@
             <scope>system</scope>
             <systemPath>${basedir}/mcp/lib/forge-full.jar</systemPath>
         </dependency>
-        <dependency>
-            <groupId>com.ForgeEssentials</groupId>
-            <artifactId>core</artifactId>
-            <version>1.4.6-0.1.1.186</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 
     <build>
