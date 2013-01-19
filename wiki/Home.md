@@ -10,10 +10,3 @@ LWC v5 is significantly different than v4 so it is highly recommended that you p
 
 * **[[Converting from LWC v4|v5/Converting from LWC v4]]**
 * **[[Major differences from LWC v4|v5/Major differences from LWC v4]]**
-
-### Index
-
-* **[[Installation|v5/Installation]]**
-* **[[Getting Started|v5/Getting Started]]**
-* **[[Permissions|v5/Permissions]]**
-* **[[Mixins (name TBD)|v5/Mixins]]** - Pluggable modules for LWC to enhance functionality not available by default
