@@ -98,6 +98,7 @@
                                     <exclude>org.yaml:*</exclude>
                                     <exclude>c3p0:*</exclude>
                                     <exclude>com.ForgeEssentials:*</exclude>
+                                    <exclude>org.xnap.commons:*</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>
