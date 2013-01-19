@@ -52,7 +52,7 @@ public class LibraryDownloader {
     /**
      * URL to the base update site
      */
-    public final static String UPDATE_SITE = "http://update.griefcraft.com";
+    public final static String UPDATE_SITE = "http://update.getlwc.org";
 
     /**
      * The folder where libraries are stored
