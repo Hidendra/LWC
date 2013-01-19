@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-19 00:49-0400\n"
+"POT-Creation-Date: 2013-01-19 13:14-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,27 +49,59 @@ msgstr ""
 msgid "&4The protection does not have the attribute {0}"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:82
-msgid "Click on a block to protect it!"
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:84
+msgid "&eClick on a block to protect it!"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:91
-msgid "That block is not protectable"
-msgstr ""
-
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:97
-msgid "Protected~"
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:93
+msgid "&4That block is not protectable"
 msgstr ""
 
 #: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:99
-msgid "Failed to protect for some reason ?"
+msgid ""
+"&2Created a new protection successfully.\n"
+"Want to give another player access to your protection?\n"
+"Use: &e/lwc add member NAME"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:115
-msgid "Click on a protection to view info on it."
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:103
+msgid ""
+"&4Failed to create the protection. Your block is most likely not protected."
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:142
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:119
+msgid "&eClick on a protection to remove the lock!"
+msgstr ""
+
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:128
+msgid "&2The protection has been removed successfully."
+msgstr ""
+
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:130
+msgid "&4You do not have the required access level to do that!"
+msgstr ""
+
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:146
+msgid "&eClick on a protection to view info on it."
+msgstr ""
+
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:155
+#, java-format
+msgid "&7{0}&f: Role is for \"&7{1}&f\" with the access &7{1}&f\n"
+msgstr ""
+
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:158
+#, java-format
+msgid ""
+"Location: &7[{0} {1} {2}]&f in the world \"&7{3}&f\"\n"
+"Created on: &7{4}\n"
+"Last updated on: &7{5}\n"
+"Last accessed on: &7{6}\n"
+"&eRoles(size={7}):\n"
+"{8}"
+msgstr ""
+
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:182
 #, java-format
 msgid "Purging player?: {0}"
 msgstr ""
