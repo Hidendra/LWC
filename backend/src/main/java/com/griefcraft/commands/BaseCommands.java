@@ -112,7 +112,7 @@ public class BaseCommands {
     )
     public void info(CommandContext context) {
         final Player player = (Player) context.getCommandSender();
-        player.sendMessage("Click on a protection to read info about it.");
+        player.sendMessage(_("Click on a protection to view info on it."));
 
         player.onAnyInteract(new ProtectionEventNotifier() {
             @Override
@@ -124,26 +124,6 @@ public class BaseCommands {
                     player.sendMessage(role.getClass().getSimpleName() + " RoleName=\"" + role.getRoleName() + "\" Access=" + role.getRoleAccess());
                 }
 
-                return true;
-            }
-        });
-    }
-
-    @Command(
-            command = "lwc test",
-            permission = "lwc.test",
-            aliases = {"ctest"},
-            accepts = SenderType.PLAYER
-    )
-    public void lwcTest(CommandContext context) {
-        final Player player = (Player) context.getCommandSender();
-        player.sendMessage(_("Click on a block, please!~"));
-
-        // Wait for them to click on the block
-        player.onAnyInteract(new BlockEventNotifier() {
-            @Override
-            public boolean call(BlockEvent event) {
-                player.sendMessage(_("You clicked on a block with the id {0}!", event.getBlock().getType()));
                 return true;
             }
         });

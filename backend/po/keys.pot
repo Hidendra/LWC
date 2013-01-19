@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-18 23:40-0400\n"
+"POT-Creation-Date: 2013-01-19 00:49-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -65,16 +65,11 @@ msgstr ""
 msgid "Failed to protect for some reason ?"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:140
-msgid "Click on a block, please!~"
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:115
+msgid "Click on a protection to view info on it."
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:146
-#, java-format
-msgid "You clicked on a block with the id {0}!"
-msgstr ""
-
-#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:162
+#: backend/src/main/java/com/griefcraft/commands/BaseCommands.java:142
 #, java-format
 msgid "Purging player?: {0}"
 msgstr ""
