@@ -28,29 +28,14 @@
  */
 
 import com.griefcraft.ServerInfo;
-import com.griefcraft.ServerMod;
 
 public class CanaryServerInfo implements ServerInfo {
 
     /**
      * {@inheritDoc}
      */
-    public ServerMod getServerMod() {
-        return ServerMod.CANARY;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public String getServerVersion() {
         return etc.getInstance().getVersionStr();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getLayerVersion() {
-        return "v0.01 (Java)";
     }
 
 }

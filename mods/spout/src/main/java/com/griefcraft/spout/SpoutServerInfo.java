@@ -30,7 +30,6 @@
 package com.griefcraft.spout;
 
 import com.griefcraft.ServerInfo;
-import com.griefcraft.ServerMod;
 import org.spout.api.Spout;
 
 public class SpoutServerInfo implements ServerInfo {
@@ -38,22 +37,8 @@ public class SpoutServerInfo implements ServerInfo {
     /**
      * {@inheritDoc}
      */
-    public ServerMod getServerMod() {
-        return ServerMod.SPOUT;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public String getServerVersion() {
         return Spout.getAPIVersion();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getLayerVersion() {
-        return "v0.01 (Java)"; // TODO
     }
 
 }

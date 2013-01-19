@@ -29,32 +29,53 @@
 
 package com.griefcraft;
 
-public enum ServerMod {
+public class ServerMod {
 
     /**
-     * TODO -- not even released
-     * Official Minecraft Mod API
+     * The name of the mod
      */
-    WORKBENCH,
+    public final String name;
 
     /**
-     * Bukkit - http://bukkit.org
+     * The layer's author (person who wrote the bridging code)
      */
-    BUKKIT,
+    private final String author;
 
     /**
-     * Spout - http://spout.org
+     * The layer's version
      */
-    SPOUT,
+    private final String version;
+
+    public ServerMod(String name, String author, String version) {
+        this.name = name;
+        this.author = author;
+        this.version = version;
+    }
 
     /**
-     * Canary, the hMod successor - http://canarymod.net
+     * Get the layer's name
+     *
+     * @return
      */
-    CANARY,
+    public String getName() {
+        return name;
+    }
 
     /**
-     * Minecraft Forge, a client/server mod - http://www.minecraftforge.net
+     * Get the layer's author (person who wrote the bridging code)
+     *
+     * @return
      */
-    FORGE
+    public String getAuthor() {
+        return author;
+    }
 
+    /**
+     * Get the layer version
+     *
+     * @return
+     */
+    public String getVersion() {
+        return version;
+    }
 }

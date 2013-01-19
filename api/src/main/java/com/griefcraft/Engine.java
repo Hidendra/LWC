@@ -38,6 +38,13 @@ import com.griefcraft.sql.Database;
 public interface Engine {
 
     /**
+     * Get info about the server mod this server is running
+     *
+     * @return
+     */
+    public ServerMod getServerMod();
+
+    /**
      * Get the {@link RoleManager} which manages role associations
      *
      * @return

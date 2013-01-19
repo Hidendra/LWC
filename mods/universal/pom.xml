@@ -56,6 +56,13 @@
         <finalName>${project.name}-${project.version}</finalName>
         <defaultGoal>clean package</defaultGoal>
 
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -90,6 +97,7 @@
                                     <exclude>org.ow2.asm:*</exclude>
                                     <exclude>org.yaml:*</exclude>
                                     <exclude>c3p0:*</exclude>
+                                    <exclude>com.ForgeEssentials:*</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>

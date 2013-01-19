@@ -58,6 +58,12 @@
             <scope>system</scope>
             <systemPath>${basedir}/mcp/lib/forge-full.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>com.ForgeEssentials</groupId>
+            <artifactId>core</artifactId>
+            <version>1.4.6-0.1.1.186</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -105,6 +111,7 @@
                                     <exclude>org.ow2.asm:*</exclude>
                                     <exclude>org.yaml:*</exclude>
                                     <exclude>c3p0:*</exclude>
+                                    <exclude>com.ForgeEssentials:*</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>

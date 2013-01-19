@@ -32,24 +32,10 @@ package com.griefcraft;
 public interface ServerInfo {
 
     /**
-     * Get the server mod this server is running
-     *
-     * @return
-     */
-    public ServerMod getServerMod();
-
-    /**
      * Get the version of the server that is running
      *
      * @return
      */
     public String getServerVersion();
-
-    /**
-     * Get the version of the server <-> plugin layer
-     *
-     * @return
-     */
-    public String getLayerVersion();
 
 }

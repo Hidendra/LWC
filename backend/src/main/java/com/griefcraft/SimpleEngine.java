@@ -115,6 +115,11 @@ public class SimpleEngine implements Engine {
      */
     private Configuration internalConfig;
 
+    /**
+     * The server mod that is powering this engine
+     */
+    private ServerMod serverMod;
+
     private SimpleEngine(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender) {
         this.serverLayer = serverLayer;
         this.serverInfo = serverInfo;
@@ -128,8 +133,12 @@ public class SimpleEngine implements Engine {
         internalConfig = new YamlConfiguration(getClass().getResourceAsStream("/engine.yml"));
         commandHandler = new SimpleCommandHandler(this);
 
-        consoleSender.sendMessage("Server: " + serverInfo.getServerMod() + " [" + serverInfo.getServerVersion() + "]");
-        consoleSender.sendMessage("Layer: " + serverInfo.getLayerVersion());
+        // load layer info (ServerMod)
+        Configuration layerConfig = new YamlConfiguration(getClass().getResourceAsStream("/layer.yml"));
+        serverMod = new ServerMod(layerConfig.getString("name"), layerConfig.getString("author"), layerConfig.getString("version"));
+
+        consoleSender.sendMessage("Server: " + serverMod.getName() + " (" + serverInfo.getServerVersion() + ")");
+        consoleSender.sendMessage("Layer: " + serverMod.getVersion() + " (authored by: " + serverMod.getAuthor() + ")");
         consoleSender.sendMessage("Backend: " + getBackendVersion());
         consoleSender.sendMessage("This version was built on: " + internalConfig.get("git.buildTime"));
 
@@ -169,6 +178,13 @@ public class SimpleEngine implements Engine {
         }
 
         return new SimpleEngine(serverLayer, serverInfo, consoleSender);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ServerMod getServerMod() {
+        return serverMod;
     }
 
     /**

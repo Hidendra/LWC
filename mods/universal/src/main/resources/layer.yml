@@ -1,0 +1,3 @@
+name: Universal (any mod)
+author: Tyler Blair <hidendra@griefcraft.com>
+version: ${project.version}

@@ -1,0 +1,3 @@
+name: Spout
+author: Tyler Blair <hidendra@griefcraft.com>
+version: ${project.version}

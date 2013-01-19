@@ -29,16 +29,8 @@ package com.griefcraft;/*
 
 public class ForgeServerInfo implements ServerInfo {
 
-    public ServerMod getServerMod() {
-        return ServerMod.FORGE;
-    }
-
     public String getServerVersion() {
         return "1.4.7";
-    }
-
-    public String getLayerVersion() {
-        return "v0.01 (Java)";
     }
 
 }

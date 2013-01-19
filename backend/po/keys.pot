@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-17 21:11-0400\n"
+"POT-Creation-Date: 2013-01-18 23:40-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -79,16 +79,16 @@ msgstr ""
 msgid "Purging player?: {0}"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/LibraryDownloader.java:195
+#: backend/src/main/java/com/griefcraft/LibraryDownloader.java:193
 msgid "Libraries required! These will now be downloaded."
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/LibraryDownloader.java:206
+#: backend/src/main/java/com/griefcraft/LibraryDownloader.java:204
 #, java-format
 msgid "[{0}/{1}] Downloading file {2} => {3}"
 msgstr ""
 
-#: backend/src/main/java/com/griefcraft/LibraryDownloader.java:271
+#: backend/src/main/java/com/griefcraft/LibraryDownloader.java:269
 msgid "Library downloads complete!"
 msgstr ""
 

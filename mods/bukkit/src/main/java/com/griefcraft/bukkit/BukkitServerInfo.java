@@ -30,7 +30,6 @@
 package com.griefcraft.bukkit;
 
 import com.griefcraft.ServerInfo;
-import com.griefcraft.ServerMod;
 import org.bukkit.Bukkit;
 
 public class BukkitServerInfo implements ServerInfo {
@@ -38,22 +37,8 @@ public class BukkitServerInfo implements ServerInfo {
     /**
      * {@inheritDoc}
      */
-    public ServerMod getServerMod() {
-        return ServerMod.BUKKIT;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public String getServerVersion() {
         return Bukkit.getVersion();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getLayerVersion() {
-        return "v0.01 (Java)"; // TODO
     }
 
 }
