@@ -38,7 +38,6 @@ import com.griefcraft.model.AbstractAttribute;
 import com.griefcraft.model.Protection;
 import com.griefcraft.model.State;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import com.mchange.v2.c3p0.DataSources;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -142,7 +141,7 @@ public class JDBCDatabase implements Database {
         // for MySQL and other RDBMS this will be the name of the database in the server
         // and also the hostname
         if (driver == Driver.SQLITE) {
-            databasePath = details.getDatabasePath().replaceAll("%home%", engine.getServerLayer().getEngineHomeFolder().getPath());
+            databasePath = details.getDatabasePath().replaceAll("%home%", engine.getServerLayer().getEngineHomeFolder().getPath().replaceAll("\\\\", "/"));
         } else {
             databasePath = "//" + details.getHostname() + "/" + details.getDatabase();
         }
