@@ -1,3 +1,4 @@
+gettext-commons-0.9.6.jar
 snakeyaml-1.10.jar
 c3p0-0.9.1.2.jar
 sqlite.jar
