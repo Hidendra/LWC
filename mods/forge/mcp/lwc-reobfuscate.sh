@@ -16,5 +16,5 @@ echo "Matched distribution jar file: \"$LWC_JAR\""
 
 echo " >>> Updating jar file"
 
-jar uf "$LWC_RELATIVE_JAR" com
+jar uf "$LWC_RELATIVE_JAR" org
 cd ../../
