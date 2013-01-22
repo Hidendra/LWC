@@ -1,4 +1,4 @@
 name: LWC
 author: Hidendra
-main: org.getlwckit.BukkitPlugin
+main: org.getlwc.bukkit.BukkitPlugin
 version: ${project.version}

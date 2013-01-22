@@ -49,7 +49,7 @@ public class LWC {
     public static LWC instance;
 
     // Says where the client and server 'proxy' code is loaded.
-    @SidedProxy(clientSide = "com.getlwc.client.LWCClientProxy", serverSide = "com.getlwc.server.LWCServerProxy")
+    @SidedProxy(clientSide = "org.getlwc.client.LWCClientProxy", serverSide = "org.getlwc.server.LWCServerProxy")
     public static CommonProxy proxy;
 
     /**

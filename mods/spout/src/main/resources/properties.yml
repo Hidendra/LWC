@@ -1,5 +1,5 @@
 name: LWC
 author: Hidendra
-main: org.getlwcut.SpoutPlugin
+main: org.getlwc.spout.SpoutPlugin
 version: ${project.version}
 platform: SERVER
