@@ -27,7 +27,7 @@
  * either expressed or implied, of anybody else.
  */
 
-import com.griefcraft.ServerInfo;
+import org.getlwc.ServerInfo;
 
 public class CanaryServerInfo implements ServerInfo {
 

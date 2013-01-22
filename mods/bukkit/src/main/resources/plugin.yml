@@ -1,4 +1,4 @@
 name: LWC
 author: Hidendra
-main: com.griefcraft.bukkit.BukkitPlugin
+main: org.getlwckit.BukkitPlugin
 version: ${project.version}

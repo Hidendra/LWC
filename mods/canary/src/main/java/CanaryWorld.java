@@ -26,7 +26,7 @@
  * either expressed or implied, of anybody else.
  */
 
-public class CanaryWorld implements com.griefcraft.World {
+public class CanaryWorld implements org.getlwc.World {
 
     /**
      * The world handle
@@ -51,7 +51,7 @@ public class CanaryWorld implements com.griefcraft.World {
     /**
      * {@inheritDoc}
      */
-    public com.griefcraft.Block getBlockAt(int x, int y, int z) {
+    public org.getlwc.Block getBlockAt(int x, int y, int z) {
         Block block = handle.getBlockAt(x, y, z);
 
         if (block == null) {

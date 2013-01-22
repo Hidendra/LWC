@@ -27,8 +27,7 @@
  * either expressed or implied, of anybody else.
  */
 
-import com.griefcraft.ServerLayer;
-import com.griefcraft.World;
+import org.getlwc.ServerLayer;
 
 import java.io.File;
 
@@ -55,7 +54,7 @@ public class CanaryServerLayer extends ServerLayer {
      * {@inheritDoc}
      */
     @Override
-    public World getDefaultWorld() {
+    public org.getlwc.World getDefaultWorld() {
         return new CanaryWorld(etc.getServer().getDefaultWorld());
     }
 
@@ -63,7 +62,7 @@ public class CanaryServerLayer extends ServerLayer {
      * {@inheritDoc}
      */
     @Override
-    protected com.griefcraft.entity.Player internalGetPlayer(String playerName) {
+    protected org.getlwc.entity.Player internalGetPlayer(String playerName) {
         return new CanaryPlayer(plugin, etc.getServer().getPlayer(playerName));
     }
 
@@ -71,7 +70,7 @@ public class CanaryServerLayer extends ServerLayer {
      * {@inheritDoc}
      */
     @Override
-    protected World internalGetWorld(String worldName) {
+    protected org.getlwc.World internalGetWorld(String worldName) {
         return new CanaryWorld(etc.getServer().getWorld(worldName)[0]);
     }
 

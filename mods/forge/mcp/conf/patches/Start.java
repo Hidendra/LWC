@@ -1,12 +1,10 @@
+import net.minecraft.client.Minecraft;
+
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
-
-import net.minecraft.client.Minecraft;
 
 public class Start
 {

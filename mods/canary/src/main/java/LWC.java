@@ -26,9 +26,9 @@
  * either expressed or implied, of anybody else.
  */
 
-import com.griefcraft.Engine;
-import com.griefcraft.ServerLayer;
-import com.griefcraft.SimpleEngine;
+import org.getlwc.Engine;
+import org.getlwc.ServerLayer;
+import org.getlwc.SimpleEngine;
 
 public class LWC extends Plugin {
 
@@ -82,7 +82,7 @@ public class LWC extends Plugin {
      * @param player
      * @return
      */
-    public com.griefcraft.entity.Player wrapPlayer(Player player) {
+    public org.getlwc.entity.Player wrapPlayer(Player player) {
         return layer.getPlayer(player.getName());
     }
 
@@ -92,7 +92,7 @@ public class LWC extends Plugin {
      * @param worldName
      * @return
      */
-    public com.griefcraft.World getWorld(String worldName) {
+    public org.getlwc.World getWorld(String worldName) {
         return layer.getWorld(worldName);
     }
 

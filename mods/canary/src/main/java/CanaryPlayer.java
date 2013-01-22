@@ -26,10 +26,9 @@
  * either expressed or implied, of anybody else.
  */
 
-import com.griefcraft.Location;
-import com.griefcraft.util.Color;
+import org.getlwc.util.Color;
 
-public class CanaryPlayer extends com.griefcraft.entity.Player {
+public class CanaryPlayer extends org.getlwc.entity.Player {
 
     /**
      * The plugin object
@@ -61,8 +60,8 @@ public class CanaryPlayer extends com.griefcraft.entity.Player {
     /**
      * {@inheritDoc}
      */
-    public Location getLocation() {
-        return new Location(plugin.getWorld(handle.getWorld().getName()), handle.getX(), handle.getY(), handle.getZ());
+    public org.getlwc.Location getLocation() {
+        return new org.getlwc.Location(plugin.getWorld(handle.getWorld().getName()), handle.getX(), handle.getY(), handle.getZ());
     }
 
     /**

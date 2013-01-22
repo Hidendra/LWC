@@ -26,9 +26,7 @@
  * either expressed or implied, of anybody else.
  */
 
-import com.griefcraft.World;
-
-public class CanaryBlock extends com.griefcraft.Block {
+public class CanaryBlock extends org.getlwc.Block {
 
     /**
      * The block handle
@@ -38,9 +36,9 @@ public class CanaryBlock extends com.griefcraft.Block {
     /**
      * The local world handle
      */
-    private World world;
+    private org.getlwc.World world;
 
-    public CanaryBlock(World world, Block handle) {
+    public CanaryBlock(org.getlwc.World world, Block handle) {
         if (handle == null) {
             throw new IllegalArgumentException("Block handle cannot be null");
         }
@@ -66,7 +64,7 @@ public class CanaryBlock extends com.griefcraft.Block {
     /**
      * {@inheritDoc}
      */
-    public World getWorld() {
+    public org.getlwc.World getWorld() {
         return world;
     }
 

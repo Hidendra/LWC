@@ -26,11 +26,10 @@
  * either expressed or implied, of anybody else.
  */
 
-import com.griefcraft.World;
-import com.griefcraft.command.CommandContext;
-import com.griefcraft.command.CommandException;
-import com.griefcraft.command.CommandSender;
-import com.griefcraft.util.StringUtils;
+import org.getlwc.command.CommandContext;
+import org.getlwc.command.CommandException;
+import org.getlwc.command.CommandSender;
+import org.getlwc.util.StringUtils;
 
 public class CanaryListener extends PluginListener {
 
@@ -55,9 +54,9 @@ public class CanaryListener extends PluginListener {
 
     @Override
     public boolean onBlockRightClick(Player nativePlayer, Block blockClicked, Item itemInHand) {
-        com.griefcraft.entity.Player player = plugin.wrapPlayer(nativePlayer);
-        World world = plugin.getWorld(nativePlayer.getWorld().getName());
-        com.griefcraft.Block block = new CanaryBlock(world, blockClicked);
+        org.getlwc.entity.Player player = plugin.wrapPlayer(nativePlayer);
+        org.getlwc.World world = plugin.getWorld(nativePlayer.getWorld().getName());
+        org.getlwc.Block block = new CanaryBlock(world, blockClicked);
 
         // send the event for the player around the plugin (and maybe other plugins, too.)
         return plugin.getEngine().getEventHelper().onBlockInteract(player, block);
@@ -65,9 +64,9 @@ public class CanaryListener extends PluginListener {
 
     @Override
     public boolean onBlockBreak(Player nativePlayer, Block blockBroken) {
-        com.griefcraft.entity.Player player = plugin.wrapPlayer(nativePlayer);
-        World world = plugin.getWorld(nativePlayer.getWorld().getName());
-        com.griefcraft.Block block = new CanaryBlock(world, blockBroken);
+        org.getlwc.entity.Player player = plugin.wrapPlayer(nativePlayer);
+        org.getlwc.World world = plugin.getWorld(nativePlayer.getWorld().getName());
+        org.getlwc.Block block = new CanaryBlock(world, blockBroken);
 
         return plugin.getEngine().getEventHelper().onBlockBreak(player, block);
     }

@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.griefcraft.lwc.mods</groupId>
+    <groupId>org.getlwc.mods</groupId>
     <artifactId>universal</artifactId>
     <name>LWC-Universal</name>
     <url>griefcraft.com</url>
@@ -21,31 +21,31 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.griefcraft.lwc</groupId>
+            <groupId>org.getlwc</groupId>
             <artifactId>backend</artifactId>
             <version>5.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.griefcraft.lwc.mods</groupId>
+            <groupId>org.getlwc.mods</groupId>
             <artifactId>bukkit</artifactId>
             <version>5.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.griefcraft.lwc.mods</groupId>
+            <groupId>org.getlwc.mods</groupId>
             <artifactId>canary</artifactId>
             <version>5.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.griefcraft.lwc.mods</groupId>
+            <groupId>org.getlwc.mods</groupId>
             <artifactId>forge</artifactId>
             <version>5.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.griefcraft.lwc.mods</groupId>
+            <groupId>org.getlwc.mods</groupId>
             <artifactId>spout</artifactId>
             <version>5.0.0-SNAPSHOT</version>
             <scope>compile</scope>
@@ -112,7 +112,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <FMLCorePlugin>com.griefcraft.asm.LWCCorePlugin</FMLCorePlugin>
+                            <FMLCorePlugin>org.getlwc.asm.LWCCorePlugin</FMLCorePlugin>
                         </manifestEntries>
                     </archive>
                 </configuration>

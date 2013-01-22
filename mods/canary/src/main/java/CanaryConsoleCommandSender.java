@@ -27,7 +27,7 @@
  * either expressed or implied, of anybody else.
  */
 
-import com.griefcraft.command.ConsoleCommandSender;
+import org.getlwc.command.ConsoleCommandSender;
 
 public class CanaryConsoleCommandSender implements ConsoleCommandSender {
 
