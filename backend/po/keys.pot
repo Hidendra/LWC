@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-22 08:46-0400\n"
+"POT-Creation-Date: 2013-01-27 14:58-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -91,7 +91,7 @@ msgstr ""
 
 #: backend/src/main/java/org/getlwc/commands/BaseCommands.java:155
 #, java-format
-msgid "&7{0}&f: Role is for \"&7{1}&f\" with the access &7{1}&f\n"
+msgid "&7{0}&f: Role is for \"&7{1}&f\" with the access &7{2}&f\n"
 msgstr ""
 
 #: backend/src/main/java/org/getlwc/commands/BaseCommands.java:158

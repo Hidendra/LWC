@@ -29,6 +29,8 @@
 
 package org.getlwc;
 
+import java.util.EnumSet;
+
 /**
  * Access levels for protections. ordinal values are used here meaning they must remain in a constant order. As well,
  * the enum values are ranked in power of ascending order meaning ProtectionAccess(4) has more power than
@@ -77,6 +79,27 @@ public enum ProtectionAccess {
      * User has the same access as the user who created the protection. They can remove the protection,
      * add or remove ANY level to the protection (i.e other owners) but they cannot remove themself.
      */
-    OWNER
+    OWNER;
+
+    /**
+     * Access levels that normal players can set
+     */
+    public final static EnumSet<ProtectionAccess> USABLE_ACCESS_LEVELS = EnumSet.range(NONE, OWNER);
+
+    /**
+     * Match a {@link ProtectionAccess} given a name.
+     *
+     * @param name
+     * @return NULL if no {@link ProtectionAccess} is matched
+     */
+    public static ProtectionAccess match(String name) {
+        for (ProtectionAccess access : values()) {
+            if (access.toString().equalsIgnoreCase(name)) {
+                return access;
+            }
+        }
+
+        return null;
+    }
 
 }

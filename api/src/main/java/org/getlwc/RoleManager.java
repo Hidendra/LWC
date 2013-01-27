@@ -29,6 +29,8 @@
 
 package org.getlwc;
 
+import org.getlwc.model.Protection;
+
 public interface RoleManager {
 
     /**
@@ -45,5 +47,14 @@ public interface RoleManager {
      * @return the {@link Role} object mapped to the id given. If none is found, NULL is returned
      */
     public RoleDefinition getDefinition(int id);
+
+    /**
+     * Match a role name against definitions. e.g "player" should return PlayerRole. "g:player"
+     * should return GroupRole if groups are present.
+     *
+     * @param name
+     * @return
+     */
+    public Role matchAndCreateRoleByName(Protection protection, String name, ProtectionAccess access);
 
 }

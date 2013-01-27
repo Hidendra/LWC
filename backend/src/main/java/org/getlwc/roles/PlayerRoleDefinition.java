@@ -53,6 +53,14 @@ public class PlayerRoleDefinition implements RoleDefinition {
         return 1; // adapted from LWCv4
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    public String matchRoleName(String name) {
+        return !name.contains(":") ? name : null;
+    }
+
     /**
      * {@inheritDoc}
      */

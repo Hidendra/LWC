@@ -29,6 +29,8 @@
 
 package org.getlwc;
 
+import org.getlwc.model.Protection;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +58,21 @@ public class SimpleRoleManager implements RoleManager {
      */
     public RoleDefinition getDefinition(int id) {
         return definitions.get(id);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Role matchAndCreateRoleByName(Protection protection, String name, ProtectionAccess access) {
+        for (RoleDefinition definition : definitions.values()) {
+            String realName = definition.matchRoleName(name);
+
+            if (realName != null) {
+                return definition.createRole(protection, realName, access);
+            }
+        }
+
+        return null;
     }
 
 }

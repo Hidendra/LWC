@@ -34,6 +34,7 @@ import org.getlwc.command.CommandException;
 import org.getlwc.command.CommandHandler;
 import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.command.SimpleCommandHandler;
+import org.getlwc.commands.AddRemoveCommands;
 import org.getlwc.commands.AttributeCommands;
 import org.getlwc.commands.BaseCommands;
 import org.getlwc.commands.BenchmarkCommands;
@@ -337,6 +338,7 @@ public class SimpleEngine implements Engine {
     private void registerCommands() {
         try {
             commandHandler.registerCommands(new BaseCommands(this));
+            commandHandler.registerCommands(new AddRemoveCommands(this));
             commandHandler.registerCommands(new AttributeCommands(this));
             commandHandler.registerCommands(new BenchmarkCommands(this));
         } catch (CommandException e) {
