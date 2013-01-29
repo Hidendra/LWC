@@ -98,7 +98,7 @@ public class BaseCommands {
                 if (protection != null) {
                     player.sendMessage(_("&2Created a new protection successfully.\n" +
                             "Want to give another player access to your protection?\n" +
-                            "Use: &e/lwc add member NAME"));
+                            "Use: &e/lwc modify member NAME"));
                 } else {
                     player.sendMessage(_("&4Failed to create the protection. Your block is most likely not protected."));
                 }

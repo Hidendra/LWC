@@ -179,6 +179,7 @@ public class Protection extends AbstractSavable {
     public void removeRole(Role role) {
         roles.remove(role);
         accessProviders.remove(role);
+        engine.getDatabase().removeRole(role);
     }
 
     /**
