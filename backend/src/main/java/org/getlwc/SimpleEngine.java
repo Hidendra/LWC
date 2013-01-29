@@ -30,6 +30,7 @@
 package org.getlwc;
 
 import org.getlwc.attribute.DescriptionAttributeFactory;
+import org.getlwc.attribute.PasswordAttributeFactory;
 import org.getlwc.command.CommandException;
 import org.getlwc.command.CommandHandler;
 import org.getlwc.command.ConsoleCommandSender;
@@ -355,6 +356,7 @@ public class SimpleEngine implements Engine {
 
     private void registerDefaultAttributes() {
         protectionManager.registerAttributeFactory(new DescriptionAttributeFactory(this));
+        protectionManager.registerAttributeFactory(new PasswordAttributeFactory(this));
     }
 
 }

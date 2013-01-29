@@ -17,13 +17,6 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>${project.basedir}/modules/password/target/</directory>
-            <outputDirectory>/LWC/modules/</outputDirectory>
-            <includes>
-                <include>*.jar</include>
-            </includes>
-        </fileSet>
-        <fileSet>
             <directory>${project.basedir}/docs/</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
