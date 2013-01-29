@@ -95,29 +95,6 @@ public class StringUtils {
     }
 
     /**
-     * Check if the command has the correct flag
-     *
-     * @param args
-     * @param checkFlag
-     * @return
-     */
-    public static boolean hasFlag(String[] args, String checkFlag) {
-        String flag = args[0].toLowerCase();
-        return flag.equals(checkFlag) || flag.equals("-" + checkFlag);
-    }
-
-    /**
-     * Check if the command has the correct flag
-     *
-     * @param command
-     * @param checkFlag
-     * @return
-     */
-    public static boolean hasFlag(String command, String checkFlag) {
-        return command.equals(checkFlag) || command.equals("-" + checkFlag);
-    }
-
-    /**
      * Splits a string, leaving quoted messages ("one argument") in the same argument.
      * Courtesy http://stackoverflow.com/questions/366202/
      *
@@ -181,7 +158,11 @@ public class StringUtils {
         }
 
         for (int i = offset; i < arr.length; i++) {
-            str += arr[i] + delim;
+            str += arr[i];
+
+            if (i + 1 != arr.length) {
+                str += delim;
+            }
         }
 
         return str.trim();
