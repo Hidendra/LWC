@@ -44,9 +44,6 @@
         <module>mods/workbench</module>
         <module>mods/forge</module>
         <module>mods/universal</module>
-
-        <!-- Modules -->
-        <module>modules/password</module>
     </modules>
 
     <build>
