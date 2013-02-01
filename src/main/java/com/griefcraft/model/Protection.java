@@ -188,11 +188,6 @@ public class Protection {
     private String creation;
 
     /**
-     * If the protection is currently queued for a save
-     */
-    private boolean queuedForSave = false;
-
-    /**
      * Immutable flag for the protection. When removed, this bool is switched to true and any setters
      * will no longer work. However, everything is still intact and in memory at this point (for now.)
      */
@@ -777,13 +772,11 @@ public class Protection {
      * Queue the protection to be saved
      */
     public void save() {
-        if (removed || !modified || queuedForSave) {
+        if (removed) {
             return;
         }
 
-        System.out.println("save()");
         LWC.getInstance().getDatabaseThread().addProtection(this);
-        queuedForSave = true;
     }
 
     /**
@@ -794,7 +787,6 @@ public class Protection {
             return;
         }
 
-        System.out.println("saveNow()");
         // encode JSON objects
         encodeRights();
         encodeFlags();
@@ -802,8 +794,6 @@ public class Protection {
         // only save the protection if it was modified
         if (modified && !removing) {
             LWC.getInstance().getPhysicalDatabase().saveProtection(this);
-            modified = false;
-            queuedForSave = false;
         }
 
         // check the cache for history updates
@@ -867,22 +857,6 @@ public class Protection {
 
         cachedBlock = world.getBlockAt(x, y, z);
         return cachedBlock;
-    }
-
-    /**
-     * @return true if the protection has been modified
-     */
-    public boolean isModified() {
-        return modified;
-    }
-
-    /**
-     * Change if the protection has been modified or not
-     *
-     * @param modified
-     */
-    public void setModified(boolean modified) {
-        this.modified = modified;
     }
 
     /**

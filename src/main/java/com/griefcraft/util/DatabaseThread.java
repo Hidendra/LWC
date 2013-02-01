@@ -39,11 +39,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class DatabaseThread implements Runnable {
 
     /**
-     * The maximum number of milliseconds work is done for
-     */
-    private static final long MAX_WORK_TIME = 100L;
-
-    /**
      * The LWC object
      */
     private final LWC lwc;
@@ -58,9 +53,21 @@ public class DatabaseThread implements Runnable {
      */
     private final BukkitTask task;
 
+    /**
+     * If the database thread is active and running
+     */
+    private boolean running = false;
+
+    /**
+     * The last time the queue was flushed to the database
+     */
+    private long lastFlush = -1L;
+
     public DatabaseThread(LWC lwc) {
         this.lwc = lwc;
-        task = lwc.getPlugin().getServer().getScheduler().runTaskTimerAsynchronously(lwc.getPlugin(), this, 20, 20);
+        this.running = true;
+        this.lastFlush = System.currentTimeMillis();
+        task = lwc.getPlugin().getServer().getScheduler().runTaskTimer(lwc.getPlugin(), this, 5, 5);
     }
 
     /**
@@ -95,38 +102,40 @@ public class DatabaseThread implements Runnable {
      */
     public void stop() {
         // stop running and interrupt the thread
+        running = false;
         task.cancel();
 
         // Flush the rest of the entries
-        flushDatabase(true);
+        flushDatabase();
     }
 
     /**
      * Recommend a flush as soon as possible. This does not guarantee the database will be flushed immediately.
      */
     public void flush() {
-        flushDatabase(false);
+        lastFlush = System.currentTimeMillis() - 9999999L;
     }
 
     /**
      * Flush the protections to the database
      */
-    private void flushDatabase(boolean flushAll) {
-        long start = System.currentTimeMillis();
+    private void flushDatabase() {
         if (!updateQueue.isEmpty()) {
-            while (!updateQueue.isEmpty()) {
-                Protection protection = updateQueue.poll();
+            // Begin iterating through the queue
+            Iterator<Protection> iter = updateQueue.iterator();
+            while (iter.hasNext()) {
+                Protection protection = iter.next();
+                iter.remove();
                 protection.saveNow();
-
-                if (!flushAll && System.currentTimeMillis() - start > MAX_WORK_TIME) {
-                    break;
-                }
             }
         }
+
+        // update the time we last flushed at
+        lastFlush = System.currentTimeMillis();
     }
 
     public void run() {
-        flushDatabase(false);
+        flushDatabase();
     }
 
 }
