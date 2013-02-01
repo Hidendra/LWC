@@ -113,7 +113,7 @@ public class LimitsV2 extends JavaModule {
         }
 
     }
-
+    
     public final class BlockLimit extends Limit {
 
         /**
@@ -136,21 +136,6 @@ public class LimitsV2 extends JavaModule {
          */
         public Material getMaterial() {
             return material;
-        }
-
-    }
-
-    public final class SignLimit extends Limit {
-
-        public SignLimit(int limit) {
-            super(limit);
-        }
-
-        @Override
-        public int getProtectionCount(Player player, Material material) {
-            LWC lwc = LWC.getInstance();
-            return lwc.getPhysicalDatabase().getProtectionCount(player.getName(), Material.SIGN_POST.getId())
-                    + lwc.getPhysicalDatabase().getProtectionCount(player.getName(), Material.WALL_SIGN.getId());
         }
 
     }
@@ -259,15 +244,7 @@ public class LimitsV2 extends JavaModule {
             String colour = Colors.Yellow;
 
             if (target != null) {
-                Material material = null;
-
-                if (limit instanceof BlockLimit) {
-                    material = ((BlockLimit) limit).getMaterial();
-                } else if (limit instanceof SignLimit) {
-                    material = Material.SIGN_POST;
-                }
-
-                boolean reachedLimit = hasReachedLimit(target, material);
+                boolean reachedLimit = hasReachedLimit(target, ((limit instanceof BlockLimit) ? ((BlockLimit) limit).getMaterial() : null));
                 colour = reachedLimit ? Colors.Red : Colors.Green;
             }
 
@@ -278,9 +255,6 @@ public class LimitsV2 extends JavaModule {
                 BlockLimit blockLimit = (BlockLimit) limit;
                 String currentProtected = target != null ? (Integer.toString(limit.getProtectionCount(target, blockLimit.getMaterial())) + "/") : "";
                 sender.sendMessage(lwc.materialToString(blockLimit.getMaterial()) + ": " + colour + currentProtected + stringLimit);
-            } else if (limit instanceof SignLimit) {
-                String currentProtected = target != null ? (Integer.toString(limit.getProtectionCount(target, null)) + "/") : "";
-                sender.sendMessage("Sign: " + colour + currentProtected + stringLimit);
             } else {
                 sender.sendMessage(limit.getClass().getSimpleName() + ": " + Colors.Yellow + stringLimit);
             }
@@ -296,6 +270,7 @@ public class LimitsV2 extends JavaModule {
      * @return
      */
     public boolean hasReachedLimit(Player player, Material material) {
+        LWC lwc = LWC.getInstance();
         Limit limit = getEffectiveLimit(player, material);
 
         // if they don't have a limit it's not possible to reach it ^^
@@ -446,10 +421,6 @@ public class LimitsV2 extends JavaModule {
             // Record the default limit if found
             if (limit instanceof DefaultLimit) {
                 defaultLimit = limit;
-            } else if (limit instanceof SignLimit) {
-                if (material == Material.WALL_SIGN || material == Material.SIGN_POST) {
-                    return limit;
-                }
             } else if (limit instanceof BlockLimit) {
                 BlockLimit blockLimit = (BlockLimit) limit;
 
@@ -514,8 +485,6 @@ public class LimitsV2 extends JavaModule {
             // Match default
             if (key.equalsIgnoreCase("default")) {
                 limits.add(new DefaultLimit(limit));
-            } else if (key.equalsIgnoreCase("sign")) {
-                limits.add(new SignLimit(limit));
             } else {
                 // attempt to resolve it as a block id
                 int blockId = -1;
