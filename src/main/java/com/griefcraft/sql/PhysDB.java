@@ -947,69 +947,6 @@ public class PhysDB extends Database {
      * Load the first protection within a block's radius
      *
      * @param world
-     * @param baseX
-     * @param baseY
-     * @param baseZ
-     * @param radius
-     * @return list of Protection objects found
-     */
-    public Protection loadProtection(String world, int baseX, int baseY, int baseZ, int radius) {
-        if (hasAllProtectionsCached()) {
-            ProtectionCache cache = LWC.getInstance().getProtectionCache();
-
-            if (cache.size() < 1000) {
-                for (Protection protection : cache.getReferences().keySet()) {
-                    int x = protection.getX();
-                    int y = protection.getY();
-                    int z = protection.getZ();
-
-                    if (x >= baseX - radius && x <= baseX + radius && y >= baseY - radius && y <= baseY + radius && z >= baseZ - radius && z <= baseZ + radius) {
-                        return protection;
-                    }
-                }
-            } else {
-                for (int x = baseX - radius; x < baseX + radius; x++) {
-                    for (int y = baseY - radius; y < baseY + radius; y++) {
-                        for (int z = baseZ - radius; z < baseZ + radius; z++) {
-                            Protection protection = cache.getProtection(world + ":" + x + ":" + y + ":" + z);
-
-                            if (protection != null) {
-                                return protection;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        PreparedStatement statement = null;
-        try {
-            statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE world = ? AND x >= ? AND x <= ? AND y >= ? AND y <= ? AND z >= ? AND z <= ? LIMIT 1");
-
-            statement.setString(1, world);
-            statement.setInt(2, baseX - radius);
-            statement.setInt(3, baseX + radius);
-            statement.setInt(4, baseY - radius);
-            statement.setInt(5, baseY + radius);
-            statement.setInt(6, baseZ - radius);
-            statement.setInt(7, baseZ + radius);
-
-            return resolveProtection(statement);
-        } catch (Exception e) {
-            printException(e);
-        } finally {
-            safeClose(statement);
-        }
-
-        return null;
-    }
-
-    /**
-     * Load the first protection within a block's radius
-     *
-     * @param world
      * @param x
      * @param y
      * @param z

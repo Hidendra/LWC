@@ -76,15 +76,6 @@ public class ProtectionCache {
     }
 
     /**
-     * Gets the direct reference of the references cache
-     *
-     * @return
-     */
-    public LRUCache<Protection, Object> getReferences() {
-        return references;
-    }
-
-    /**
      * Gets the total amount of reads performed on the cache
      *
      * @return
