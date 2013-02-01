@@ -66,7 +66,12 @@ public class JDBCDatabase implements Database {
          * SQLite, a stateless, serverless database format ideal for servers that cannot run a separate process for
          * e.g MySQL.
          */
-        SQLITE("org.sqlite.JDBC");
+        SQLITE("org.sqlite.JDBC"),
+
+        /**
+         * H2. http://www.h2database.com
+         */
+        H2("org.h2.Driver");
 
         /**
          * The driver class
@@ -140,7 +145,7 @@ public class JDBCDatabase implements Database {
         // For SQLite the 'database' value will be the path to the sqlite database
         // for MySQL and other RDBMS this will be the name of the database in the server
         // and also the hostname
-        if (driver == Driver.SQLITE) {
+        if (driver == Driver.SQLITE || driver == Driver.H2) {
             databasePath = details.getDatabasePath().replaceAll("%home%", engine.getServerLayer().getEngineHomeFolder().getPath().replaceAll("\\\\", "/"));
         } else {
             databasePath = "//" + details.getHostname() + "/" + details.getDatabase();
@@ -166,6 +171,12 @@ public class JDBCDatabase implements Database {
             pool.setUser(details.getUsername());
             pool.setPassword(details.getPassword());
             pool.setPreferredTestQuery("SELECT 1;");
+
+            if (driver == Driver.H2) {
+                pool.setUser("sa");
+                pool.setPassword("");
+            }
+
             verifyBase();
             return true;
         } catch (Exception e) {
@@ -198,37 +209,49 @@ public class JDBCDatabase implements Database {
         }
 
         if (baseRequired) {
-            String base = "";
             engine.getConsoleSender().sendMessage("Creating base database via base.sql");
 
-            try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/sql/base.sql")));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    base += line + "\n";
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            executeInternalSQLFile("/sql/base/base.sql");
+            executeInternalSQLFile("/sql/base/base." + details.getDriver().toString().toLowerCase() + ".sql");
+        }
+    }
+
+    /**
+     * Execute an internal SQL file
+     *
+     * @param path
+     */
+    private void executeInternalSQLFile(String path) {
+        String file = "";
+
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(path)));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                file += line + "\n";
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-            // fix the prefix
-            base = base.replaceAll("%PREFIX%", details.getPrefix());
+        // fix the prefix
+        file = file.replaceAll("%PREFIX%", details.getPrefix());
 
-            try {
-                // convert the SQL to a stream so we can use a (mostly) unmodified ScriptRunner class
-                InputStream stream = new ByteArrayInputStream(base.getBytes("UTF-8"));
+        Connection connection = null;
+        try {
+            // convert the SQL to a stream so we can use a (mostly) unmodified ScriptRunner class
+            InputStream stream = new ByteArrayInputStream(file.getBytes("UTF-8"));
 
-                // create a connection for our attempt
-                connection = pool.getConnection();
+            // create a connection for our attempt
+            connection = pool.getConnection();
 
-                ScriptRunner runner = new ScriptRunner(connection, false, false);
-                runner.setLogWriter(null);
-                runner.runScript(new InputStreamReader(stream));
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                safeClose(connection);
-            }
+            ScriptRunner runner = new ScriptRunner(connection, false, false);
+            runner.setLogWriter(null);
+            runner.runScript(new InputStreamReader(stream));
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            safeClose(connection);
         }
     }
 
