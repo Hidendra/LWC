@@ -242,15 +242,8 @@ public abstract class Database {
             connection.close();
             return true;
         } catch (SQLException e) {
-            log("###########################");
-            log("###########################");
-            log("### NOTE: LWC has failed to connect to the database (" + currentType + ")");
-            log("###       The error received from the server is: \"" + e.getMessage() + "\"");
-            log("###");
-            log("### RESOLVING: Once you have fixed this error, simply restart the server again");
-            log("###########################");
-            log("###########################");
-            connected = false;
+            log("Failed to connect to " + currentType);
+            e.printStackTrace();
             return false;
         }
     }

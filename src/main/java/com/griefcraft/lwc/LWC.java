@@ -203,11 +203,6 @@ public class LWC {
      */
     private final Map<String, String> protectionConfigurationCache = new HashMap<String, String>();
 
-    /**
-     * Global-wide safe mode. Prevents interaction with protectable blocks due to a severe error.
-     */
-    public boolean safeMode = false;
-
     public LWC(LWCPlugin plugin) {
         this.plugin = plugin;
         LWC.instance = this;
@@ -224,14 +219,6 @@ public class LWC {
      */
     public static LWC getInstance() {
         return instance;
-    }
-
-    /**
-     * Checks if LWC is in safe mode and returns true if it is
-     * @return
-     */
-    public boolean isInSafeMode() {
-        return safeMode;
     }
 
     /**
@@ -1446,13 +1433,8 @@ public class LWC {
 
         log("Connecting to " + Database.DefaultType);
         try {
-            if (physicalDatabase.connect()) {
-                physicalDatabase.load();
-            } else {
-                log("Failed to connect to database, aborting startup attempt and going into safe mode");
-                safeMode = true;
-                return;
-            }
+            physicalDatabase.connect();
+            physicalDatabase.load();
         } catch (Exception e) {
             e.printStackTrace();
         }
