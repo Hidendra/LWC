@@ -223,10 +223,10 @@ public abstract class Database {
         LWC lwc = LWC.getInstance();
         String connectionString = "jdbc:" + currentType.toString().toLowerCase() + ":" + getDatabasePath();
         if (currentType == Type.MySQL) {
-            pool = new ConnectionPool("lwc", 2 /* minPool */, 5 /* maxPool */, 5 /* maxSize */, 180000 /* idleTimeout */,
+            pool = new ConnectionPool("lwc", 2 /* minPool */, 40 /* maxPool */, 40 /* maxSize */, 180000 /* idleTimeout */,
                     connectionString, lwc.getConfiguration().getString("database.username"), lwc.getConfiguration().getString("database.password"));
         } else { // safe method -- only 1 connection
-            pool = new ConnectionPool("lwc", 1 /* minPool */, 2 /* maxPool */, 2 /* maxSize */, 180000 /* idleTimeout */,
+            pool = new ConnectionPool("lwc", 1 /* minPool */, 1 /* maxPool */, 1 /* maxSize */, 180000 /* idleTimeout */,
                     connectionString, lwc.getConfiguration().getString("database.username"), lwc.getConfiguration().getString("database.password"));
         }
         pool.setCaching(true);
@@ -302,7 +302,7 @@ public abstract class Database {
      * @return
      */
     public PreparedStatement prepare(String sql) {
-        return prepare(null, sql);
+        return prepare(sql, false);
     }
 
     /**
@@ -313,34 +313,8 @@ public abstract class Database {
      * @return
      */
     public PreparedStatement prepare(String sql, boolean returnGeneratedKeys) {
-        return prepare(null, sql, returnGeneratedKeys);
-    }
-
-    /**
-     * Prepare a statement unless it's already cached (and if so, just return it)
-     *
-     * @param connection the preferred connection to use. if null, one will be created
-     * @param sql
-     * @return
-     */
-    public PreparedStatement prepare(Connection connection, String sql) {
-        return prepare(null, sql, false);
-    }
-
-    /**
-     * Prepare a statement unless it's already cached (and if so, just return it)
-     *
-     * @param connection the preferred connection to use. if null, one will be created
-     * @param sql
-     * @param returnGeneratedKeys
-     * @return
-     */
-    public PreparedStatement prepare(Connection connection, String sql, boolean returnGeneratedKeys) {
         try {
-            if (connection == null) {
-                connection = createConnection();
-            }
-
+            Connection connection = createConnection();
             PreparedStatement preparedStatement;
 
             if (connection == null) {
