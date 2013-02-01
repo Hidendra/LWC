@@ -545,11 +545,6 @@ public class ConfigurationNode {
             }
 
             node = (Map<String, Object>) o;
-
-            // we removed the root :-)
-            if (node == null) {
-                break;
-            }
         }
     }
 }
