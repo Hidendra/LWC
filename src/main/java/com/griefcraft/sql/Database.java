@@ -307,12 +307,6 @@ public abstract class Database {
             Connection connection = createConnection();
             PreparedStatement preparedStatement;
 
-            if (connection == null) {
-                pool.flush();
-                connection = createConnection();
-                log("Flushed database pool");
-            }
-
             if (returnGeneratedKeys) {
                 preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             } else {
