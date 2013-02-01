@@ -99,10 +99,10 @@ public class WallMatcher implements ProtectionFinder.Matcher {
 
         // Blocks such as wall signs
         if (PROTECTABLES_WALL.contains(block.getType())) {
-            byte EAST = 0x05;
-            byte WEST = 0x04;
-            byte SOUTH = 0x03;
-            byte NORTH = 0x02;
+            byte EAST = 0x02;
+            byte WEST = 0x03;
+            byte SOUTH = 0x05;
+            byte NORTH = 0x04;
 
             if (matchingFace == BlockFace.EAST && (direction & EAST) == EAST) {
                 return block;
