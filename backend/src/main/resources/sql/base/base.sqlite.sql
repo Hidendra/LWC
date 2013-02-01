@@ -1,4 +1,4 @@
-CREATE TABLE %PREFIX%protections (
+CREATE TABLE __PREFIX__protections (
   id INTEGER NOT NULL PRIMARY KEY,
   x INTEGER NOT NULL,
   y INTEGER NOT NULL,
@@ -8,4 +8,4 @@ CREATE TABLE %PREFIX%protections (
   updated INTEGER NOT NULL,
   accessed INTEGER NOT NULL
 );
-CREATE UNIQUE INDEX %PREFIX%position ON %PREFIX%protections (x, y, z, world);
+CREATE UNIQUE INDEX __PREFIX__position ON __PREFIX__protections (x, y, z, world);

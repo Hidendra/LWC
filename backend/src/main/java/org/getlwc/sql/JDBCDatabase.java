@@ -235,7 +235,7 @@ public class JDBCDatabase implements Database {
         }
 
         // fix the prefix
-        file = file.replaceAll("%PREFIX%", details.getPrefix());
+        file = file.replaceAll("__PREFIX__", details.getPrefix());
 
         Connection connection = null;
         try {
