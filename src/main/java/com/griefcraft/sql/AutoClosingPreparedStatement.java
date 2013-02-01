@@ -81,14 +81,8 @@ public class AutoClosingPreparedStatement implements PreparedStatement {
     }
 
     public int executeUpdate() throws SQLException {
-        return executeUpdate(true);
-    }
-
-    public int executeUpdate(boolean closeStatement) throws SQLException {
         int ret = statement.executeUpdate();
-        if (closeStatement) {
-            close();
-        }
+        close();
         return ret;
     }
 
