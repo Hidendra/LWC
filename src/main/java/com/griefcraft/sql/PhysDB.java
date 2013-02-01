@@ -738,8 +738,6 @@ public class PhysDB extends Database {
                 }
             }
 
-            protection.setModified(false);
-
             return protection;
         } catch (SQLException e) {
             printException(e);
