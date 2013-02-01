@@ -1135,7 +1135,7 @@ public class LWC {
      */
     public boolean isProtectable(Block block) {
         if (block instanceof EntityBlock) {
-            return Boolean.parseBoolean(resolveProtectionConfiguration(((EntityBlock) block).getName(), "enabled"));
+            return true; // TODO
         }
 
         return isProtectable(block.getType());
@@ -1382,23 +1382,6 @@ public class LWC {
         }
         
         protectionConfigurationCache.put(cacheKey, value);
-        return value;
-    }
-
-    /**
-     * Get the appropriate config value for the block (protections.block.node)
-     *
-     * @param name
-     * @param node
-     * @return
-     */
-    public String resolveProtectionConfiguration(String name, String node) {
-        String value = configuration.getString("protections." + node);
-
-        if (value == null) {
-            value = configuration.getString("protections.blocks." + name + "." + node);
-        }
-
         return value;
     }
 
