@@ -383,9 +383,7 @@ public class LimitsModule extends JavaModule {
         Player player = event.getPlayer();
         Block block = event.getBlock();
 
-        Material material = Material.getMaterial(block.getTypeId());
-
-        if (material != null && hasReachedLimit(player, block)) {
+        if (hasReachedLimit(player, block)) {
             lwc.sendLocale(player, "protection.exceeded");
             event.setCancelled(true);
         }
