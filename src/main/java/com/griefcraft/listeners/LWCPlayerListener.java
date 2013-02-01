@@ -38,12 +38,8 @@ import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCDropItemEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.util.Colors;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.ContainerBlock;
-import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.StorageMinecart;
@@ -53,15 +49,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -423,96 +415,6 @@ public class LWCPlayerListener implements Listener {
 
         // remove the place from the player cache and reset anything they can access
         LWCPlayer.removePlayer(event.getPlayer());
-    }
-
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-        LWC lwc = LWC.getInstance();
-
-        if (!(event.getWhoClicked() instanceof Player)) {
-            return;
-        }
-
-        // Player interacting with the inventory
-        Player player = (Player) event.getWhoClicked();
-
-        // The inventory they are using
-        Inventory inventory = event.getInventory();
-
-        // Location of the container
-        Location location;
-        InventoryHolder holder = event.getInventory().getHolder();
-
-        if (holder instanceof BlockState) {
-            location = ((BlockState) holder).getLocation();
-        } else if (holder instanceof DoubleChest) {
-            location = ((DoubleChest) holder).getLocation();
-        } else {
-            return;
-        }
-
-        // Should be container
-        InventoryType.SlotType slotType = event.getSlotType();
-
-        // If it doesn't have a location we can't protect it :p
-        if (inventory == null || location == null) {
-            return;
-        }
-
-        // ignore the player inventory
-        if (inventory.getClass().getSimpleName().endsWith("InventoryPlayer")) {
-            return;
-        }
-
-        // If it's not a container, we don't want it
-        if (slotType != InventoryType.SlotType.CONTAINER) {
-            return;
-        }
-
-        // Nifty trick: these will different IFF they are interacting with the player's inventory or hotbar instead of the block's inventory
-        if (event.getSlot() != event.getRawSlot()) {
-            return;
-        }
-
-        // The item they are taking/swapping with
-        ItemStack item = event.getCurrentItem();
-
-        // Item their cursor has
-        ItemStack cursor = event.getCursor();
-
-        // Are they inserting a stack?
-        if (item != null && cursor != null && item.getType() == cursor.getType()) {
-            // If they are clicking an item of the stack type, they are inserting it into the inventory,
-            // not switching it
-            // As long as the item isn't a degradable item, we can explicitly allow it if they have the same durability
-            if (item.getDurability() == cursor.getDurability()) {
-                return;
-            }
-        }
-
-        // They are trying to take an item :p
-        if ((item != null && cursor == null) || (item != null && cursor != null)) {
-            // Attempt to load the protection at that location
-            Protection protection = lwc.findProtection(location.getBlock());
-
-            // If no protection was found we can safely ignore it
-            if (protection == null) {
-                return;
-            }
-
-            // If it's not a donation chest, ignore if
-            if (protection.getType() != Protection.Type.DONATION) {
-                return;
-            }
-
-            // Can they admin it? (remove items/etc)
-            boolean canAdmin = lwc.canAdminProtection(player, protection);
-
-            // nope.avi
-            if (!canAdmin) {
-                event.setCancelled(true);
-            }
-        }
     }
 
 }
