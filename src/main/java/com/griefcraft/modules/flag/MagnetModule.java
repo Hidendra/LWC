@@ -52,17 +52,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 
 public class MagnetModule extends JavaModule {
 
     private Configuration configuration = Configuration.load("magnet.yml");
-
-    /**
-     * The LWC object
-     */
-    private LWC lwc;
 
     /**
      * If this module is enabled
@@ -93,67 +86,53 @@ public class MagnetModule extends JavaModule {
     // searches the worlds for items and magnet chests nearby
     private class MagnetTask implements Runnable {
         public void run() {
-            final Server server = Bukkit.getServer();
-            final LWC lwc = LWC.getInstance();
+            Server server = Bukkit.getServer();
+            LWC lwc = LWC.getInstance();
 
             // Do we need to requeue?
             if (items.size() == 0) {
-                Future<Void> itemLoader = server.getScheduler().callSyncMethod(lwc.getPlugin(), new Callable<Void>() {
-
-                    public Void call() {
-                        for (World world : server.getWorlds()) {
-                            for (Entity entity : world.getEntities()) {
-                                if (!(entity instanceof Item)) {
-                                    continue;
-                                }
-                                
-                                Item item = (Item) entity;
-                                
-                                // native stack handle
-                                net.minecraft.server.ItemStack stackHandle = ((net.minecraft.server.EntityItem) ((CraftItem) item).getHandle()).itemStack;
-                                
-                                // check if it is in the blacklist
-                                if (itemBlacklist.contains(stackHandle.id)) {
-                                    continue;
-                                }
-                                
-                                // check if the item is valid
-                                if (stackHandle.count <= 0) {
-                                    continue;
-                                }
-                                
-                                // has the item been living long enough?
-                                if (item.getPickupDelay() > item.getTicksLived()) {
-                                    continue; // a player wouldn't have had a chance to pick it up yet
-                                }
-                                
-                                // Check for usable blocks
-                                if (scanForInventoryBlock(item.getLocation(), radius) == null) {
-                                    continue;
-                                }
-                                
-                                items.offer(item);
-                            }
+                for (World world : server.getWorlds()) {
+                    for (Entity entity : world.getEntities()) {
+                        if (!(entity instanceof Item)) {
+                            continue;
                         }
 
-                        return null;
-                    }
+                        Item item = (Item) entity;
 
-                });
-                
-                // load the items
-                try {
-                    itemLoader.get();
-                } catch (Exception e) { }
+                        // native stack handle
+                        net.minecraft.server.ItemStack stackHandle = ((net.minecraft.server.EntityItem) ((CraftItem) item).getHandle()).itemStack;
+
+                        // check if it is in the blacklist
+                        if (itemBlacklist.contains(stackHandle.id)) {
+                            continue;
+                        }
+
+                        // check if the item is valid
+                        if (stackHandle.count <= 0) {
+                            continue;
+                        }
+
+                        // has the item been living long enough?
+                        if (item.getPickupDelay() > item.getTicksLived()) {
+                            continue; // a player wouldn't have had a chance to pick it up yet
+                        }
+
+                        // Check for usable blocks
+                        if (scanForInventoryBlocks(item.getLocation(), radius).size() == 0) {
+                            continue;
+                        }
+
+                        items.offer(item);
+                    }
+                }
             }
 
             // Throttle amount of items polled
             int count = 0;
             Item item;
 
-            int i = 1;
             while ((item = items.poll()) != null) {
-                final World world = item.getWorld();
+                World world = item.getWorld();
 
                 if (item.isDead()) {
                     continue;
@@ -164,69 +143,47 @@ public class MagnetModule extends JavaModule {
                     continue;
                 }
 
-                // create the future task that will grab the inventory blocks from the world
-                final Item finalItem = item;
-                Future<Block> inventoryBlockCallable = server.getScheduler().callSyncMethod(lwc.getPlugin(), new Callable<Block>() {
+                List<Block> blocks = scanForInventoryBlocks(item.getLocation(), radius);
+                for (Block block : blocks) {
+                    Protection protection = lwc.findProtection(block);
 
-                    public Block call() {
-                        return scanForInventoryBlock(finalItem.getLocation(), radius);
+                    if (protection == null) {
+                        continue;
                     }
 
-                });
+                    if (!protection.hasFlag(Flag.Type.MAGNET)) {
+                        continue;
+                    }
 
+                    ItemStack itemStack = item.getItemStack();
 
-                Block testBlock = null;
-                try {
-                    testBlock = inventoryBlockCallable.get();
-                } catch (Exception e) { }
+                    // Remove the items and suck them up :3
+                    Map<Integer, ItemStack> remaining = lwc.depositItems(block, itemStack);
 
-                final Block block = testBlock;
+                    // we cancelled the item drop for some reason
+                    if (remaining == null) {
+                        continue;
+                    }
 
-                if (block != null) {
+                    if (remaining.size() == 1) {
+                        ItemStack other = remaining.values().iterator().next();
 
-                    Runnable runnable = new Runnable() {
-                        public void run() {
-                            Protection protection = lwc.findProtection(block);
-
-                            if (protection == null) {
-                                return;
-                            }
-
-                            if (!protection.hasFlag(Flag.Type.MAGNET)) {
-                                return;
-                            }
-
-                            ItemStack itemStack = finalItem.getItemStack();
-
-                            // Remove the items and suck them up :3
-                            Map<Integer, ItemStack> remaining = lwc.depositItems(block, itemStack);
-
-                            // we cancelled the item drop for some reason
-                            if (remaining == null) {
-                                return;
-                            }
-
-                            if (remaining.size() == 1) {
-                                ItemStack other = remaining.values().iterator().next();
-
-                                if (itemStack.getTypeId() == other.getTypeId() && itemStack.getAmount() == other.getAmount()) {
-                                    return;
-                                }
-                            }
-
-                            // remove the item on the ground
-                            finalItem.remove();
-
-                            // if we have a remainder, we need to drop them
-                            if (remaining.size() > 0) {
-                                for (ItemStack stack : remaining.values()) {
-                                    world.dropItemNaturally(finalItem.getLocation(), stack);
-                                }
-                            }
+                        if (itemStack.getTypeId() == other.getTypeId() && itemStack.getAmount() == other.getAmount()) {
+                            continue;
                         }
-                    };
+                    }
 
-                    server.getScheduler().scheduleSyncDelayedTask(lwc.getPlugin(), runnable);
+                    // remove the item on the ground
+                    item.remove();
+
+                    // if we have a remainder, we need to drop them
+                    if (remaining.size() > 0) {
+                        for (ItemStack stack : remaining.values()) {
+                            world.dropItemNaturally(item.getLocation(), stack);
+                        }
+                    }
+
+                    break;
                 }
 
                 // Time to throttle?
@@ -263,7 +220,6 @@ public class MagnetModule extends JavaModule {
 
     @Override
     public void load(LWC lwc) {
-        this.lwc = lwc;
         enabled = configuration.getBoolean("magnet.enabled", false);
         itemBlacklist = new ArrayList<Integer>();
         radius = configuration.getInt("magnet.radius", 3);
@@ -286,17 +242,18 @@ public class MagnetModule extends JavaModule {
 
         // register our search thread schedule
         MagnetTask searchThread = new MagnetTask();
-        lwc.getPlugin().getServer().getScheduler().scheduleAsyncRepeatingTask(lwc.getPlugin(), searchThread, 50, 50);
+        lwc.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(lwc.getPlugin(), searchThread, 50, 50);
     }
 
     /**
-     * Scan for one inventory block around the given block inside the given radius
+     * Scan for inventory blocks around the given block inside the given radius
      *
      * @param location
      * @param radius
      * @return
      */
-    private Block scanForInventoryBlock(Location location, int radius) {
+    private List<Block> scanForInventoryBlocks(Location location, int radius) {
+        List<Block> found = new ArrayList<Block>();
         int baseX = location.getBlockX();
         int baseY = location.getBlockY();
         int baseZ = location.getBlockZ();
@@ -312,7 +269,7 @@ public class MagnetModule extends JavaModule {
 
             try {
                 if (block.getState() instanceof InventoryHolder) {
-                    return block;
+                    found.add(block);
                 }
             } catch (NullPointerException e) {
                 LWC lwc = LWC.getInstance();
@@ -320,7 +277,7 @@ public class MagnetModule extends JavaModule {
             }
         }
 
-        return null;
+        return found;
     }
 
 }
