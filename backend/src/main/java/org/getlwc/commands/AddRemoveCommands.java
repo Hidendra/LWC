@@ -42,6 +42,13 @@ public class AddRemoveCommands {
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
 
+                ProtectionAccess currAccess = protection.getAccess(player);
+
+                if (currAccess.ordinal() < ProtectionAccess.MANAGER.ordinal()) {
+                    player.sendMessage("&4Access denied.");
+                    return true;
+                }
+
                 // the access role to apply to the next matched role
                 ProtectionAccess access = null;
 
@@ -68,6 +75,16 @@ public class AddRemoveCommands {
                                 }
                             }
 
+                            if (role.getRoleAccess() == ProtectionAccess.OWNER && currAccess != ProtectionAccess.OWNER) {
+                                player.sendMessage("&4Only owners can remove other owners.");
+                                continue;
+                            }
+
+                            if (role.getRoleAccess() == ProtectionAccess.MANAGER && currAccess != ProtectionAccess.OWNER) {
+                                player.sendMessage("&4Only owners can remove managers.");
+                                continue;
+                            }
+
                             if (delete != null) {
                                 player.sendMessage("&eRemoving role: &7" + curr);
                                 protection.removeRole(delete);
@@ -89,12 +106,17 @@ public class AddRemoveCommands {
                             player.sendMessage("&4Protection access level &7" + access + "&4 is not allowed.");
                             access = null;
                         }
-                    } else {
-                        if (access == null) {
-                            player.sendMessage("&4Invalid access level for name \"" + curr + "\". Valid levels: &7" + ProtectionAccess.USABLE_ACCESS_LEVELS);
-                            return true;
+
+                        if (access == ProtectionAccess.OWNER && currAccess != ProtectionAccess.OWNER) {
+                            player.sendMessage("&4Only owners can add other owners.");
+                            access = null;
                         }
 
+                        if (access == ProtectionAccess.MANAGER && currAccess != ProtectionAccess.OWNER) {
+                            player.sendMessage("&4Only owners can add managers.");
+                            access = null;
+                        }
+                    } else {
                         Role role = engine.getRoleManager().matchAndCreateRoleByName(protection, curr, access);
 
                         if (role == null) {

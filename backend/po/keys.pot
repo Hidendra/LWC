@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-28 22:43-0400\n"
+"POT-Creation-Date: 2013-02-01 11:21-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,34 +21,39 @@ msgstr ""
 msgid "&4You do not have permission to use this command."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:77
-#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:120
+#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:78
+#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:128
 msgid "&4Invalid attribute name."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:86
+#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:87
 msgid "&4Invalid attribute value."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:90
+#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:91
 msgid "&2Click on your protection to set the attribute"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:97
+#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:99
+#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:140
+msgid "&4Only managers and above can modify the attributes of a protection."
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:105
 #, java-format
 msgid "&2Added the attribute {0} to the protection successfully."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:124
+#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:132
 msgid "&2Click on your protection to remove the attribute"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:133
+#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:147
 #, java-format
 msgid "&2Removed the attribute {0} from the protection successfully."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:135
+#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:149
 #, java-format
 msgid "&4The protection does not have the attribute {0}"
 msgstr ""

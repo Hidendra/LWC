@@ -30,6 +30,7 @@
 package org.getlwc.commands;
 
 import org.getlwc.Engine;
+import org.getlwc.ProtectionAccess;
 import org.getlwc.command.Command;
 import org.getlwc.command.CommandContext;
 import org.getlwc.command.SenderType;
@@ -92,7 +93,14 @@ public class AttributeCommands {
             @Override
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
-                protection.addAttribute(attribute);
+
+                ProtectionAccess currAccess = protection.getAccess(player);
+                if (currAccess.ordinal() < ProtectionAccess.MANAGER.ordinal()) {
+                    player.sendMessage(_("&4Only managers and above can modify the attributes of a protection."));
+                    return true;
+                }
+
+               protection.addAttribute(attribute);
                 protection.save();
                 player.sendMessage(_("&2Added the attribute {0} to the protection successfully.", attribute.getName().toLowerCase()));
                 return true;
@@ -126,6 +134,12 @@ public class AttributeCommands {
             @Override
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
+
+                ProtectionAccess currAccess = protection.getAccess(player);
+                if (currAccess.ordinal() < ProtectionAccess.MANAGER.ordinal()) {
+                    player.sendMessage(_("&4Only managers and above can modify the attributes of a protection."));
+                    return true;
+                }
 
                 // verify the attribute
                 if (protection.getAttribute(attributeName) != null) {
