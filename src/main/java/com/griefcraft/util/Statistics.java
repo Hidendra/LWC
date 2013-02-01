@@ -39,7 +39,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.plugin.Plugin;
-import snaq.db.ConnectionPool;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -128,11 +127,9 @@ public class Statistics {
         sender.sendMessage(" ");
 
         sender.sendMessage(Colors.Red + " ==== Database ====");
-        ConnectionPool pool = lwc.getPhysicalDatabase().getConnectionPool();
         sender.sendMessage("  Engine: " + Colors.Green + Database.DefaultType);
         sender.sendMessage("  Protections: " + Colors.Green + formatNumber(lwc.getPhysicalDatabase().getProtectionCount()));
         sender.sendMessage("  Queries: " + Colors.Green + formatNumber(queries) + " | " + String.format("%.2f", getAverage(queries)) + " / second");
-        sender.sendMessage("  Pool: " + Colors.Green + pool.getCheckedOut() + Colors.White + " checked out, " + Colors.Green + pool.getFreeCount() + Colors.White + " available, " + Colors.Green + formatNumber(pool.getRequestCount()) + Colors.White + " requests");
         sender.sendMessage(" ");
 
         sender.sendMessage(Colors.Red + " ==== Cache ==== ");
