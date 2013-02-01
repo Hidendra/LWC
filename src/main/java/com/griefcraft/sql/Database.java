@@ -150,7 +150,6 @@ public abstract class Database {
             try {
                 statement.close();
             } catch (Exception e) {
-                e.printStackTrace();
                 try {
                     statement.close();
                 } catch (Exception ex) { }

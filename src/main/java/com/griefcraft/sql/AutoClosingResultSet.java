@@ -44,12 +44,10 @@ public class AutoClosingResultSet implements ResultSet {
     }
 
     public void close() throws SQLException {
-        try {
-            set.close();
-        } finally {
-            if (statement != null) {
-                statement.close();
-            }
+        set.close();
+
+        if (statement != null) {
+            statement.close();
         }
     }
 
