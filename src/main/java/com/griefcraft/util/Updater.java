@@ -237,7 +237,7 @@ public class Updater {
 
                     // begin transferring
                     byte[] buffer = new byte[1024];
-                    int read;
+                    int read = 0;
 
                     while ((read = inputStream.read(buffer)) > 0) {
                         outputStream.write(buffer, 0, read);
