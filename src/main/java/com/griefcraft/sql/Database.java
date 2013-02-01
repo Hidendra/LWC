@@ -36,7 +36,6 @@ import com.griefcraft.util.Updater;
 import com.griefcraft.util.config.Configuration;
 import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import org.bukkit.Bukkit;
-import snaq.db.ConnectionPool;
 
 import java.io.File;
 import java.net.URL;
@@ -46,6 +45,9 @@ import java.sql.Driver;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 public abstract class Database {
 
@@ -88,16 +90,23 @@ public abstract class Database {
     public Type currentType;
 
     /**
+     * Store cached prepared statements.
+     * <p/>
+     * Since SQLite JDBC doesn't cache them.. we do it ourselves :S
+     */
+    private Map<String, PreparedStatement> statementCache = new HashMap<String, PreparedStatement>();
+
+    /**
+     * The connection to the database
+     */
+    protected Connection connection = null;
+
+    /**
      * The default database engine being used. This is set via config
      *
      * @default SQLite
      */
     public static Type DefaultType = Type.NONE;
-
-    /**
-     * The connection pool
-     */
-    private ConnectionPool pool;
 
     /**
      * If we are connected to sqlite
@@ -114,6 +123,11 @@ public abstract class Database {
      */
     protected String prefix = "";
 
+    /**
+     * If the high level statement cache should be used. If this is false, already cached statements are ignored
+     */
+    private boolean useStatementCache = true;
+
     public Database() {
         currentType = DefaultType;
 
@@ -126,6 +140,27 @@ public abstract class Database {
     public Database(Type currentType) {
         this();
         this.currentType = currentType;
+    }
+
+    /**
+     * Set the value of auto commit
+     *
+     * @param autoCommit
+     * @return TRUE if successful, FALSE if exception was thrown
+     */
+    public boolean setAutoCommit(boolean autoCommit) {
+        try {
+            // Commit the database if we are setting auto commit back to true
+            if (autoCommit) {
+                connection.commit();
+            }
+
+            connection.setAutoCommit(autoCommit);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
@@ -157,25 +192,12 @@ public abstract class Database {
     }
 
     /**
-     * Create a connection in the database pool
-     *
-     * @return
-     */
-    public Connection createConnection() {
-        try {
-            return pool.getConnection();
-        } catch (SQLException e) {
-            return null;
-        }
-    }
-
-    /**
      * Connect to MySQL
      *
      * @return if the connection was succesful
      */
     public boolean connect() throws Exception {
-        if (pool != null) {
+        if (connection != null) {
             return true;
         }
 
@@ -204,21 +226,21 @@ public abstract class Database {
         // Load the driver class
         Driver driver = (Driver) classLoader.loadClass(className).newInstance();
 
-        // Create the pool
-        LWC lwc = LWC.getInstance();
-        String connectionString = "jdbc:" + currentType.toString().toLowerCase() + ":" + getDatabasePath();
-        pool = new ConnectionPool("lwc", 2 /* minPool */, 15 /* maxPool */, 15 /* maxSize */, 180000 /* idleTimeout */,
-                connectionString, lwc.getConfiguration().getString("database.username"), lwc.getConfiguration().getString("database.password"));
-        pool.setCaching(true);
-        pool.init();
+        // Create the properties to pass to the driver
+        Properties properties = new Properties();
+
+        // if we're using mysql, append the database info
+        if (currentType == Type.MySQL) {
+            LWC lwc = LWC.getInstance();
+            properties.put("autoReconnect", "true");
+            properties.put("user", lwc.getConfiguration().getString("database.username"));
+            properties.put("password", lwc.getConfiguration().getString("database.password"));
+        }
 
         // Connect to the database
         try {
-            Connection connection = pool.getConnection();
-            Statement stmt = connection.createStatement();
-            stmt.executeQuery("SELECT 1;");
-            stmt.close();
-            connection.close();
+            connection = driver.connect("jdbc:" + currentType.toString().toLowerCase() + ":" + getDatabasePath(), properties);
+            connected = true;
             return true;
         } catch (SQLException e) {
             log("Failed to connect to " + currentType);
@@ -228,10 +250,24 @@ public abstract class Database {
     }
 
     public void dispose() {
-        if (pool != null) {
-            pool.release();
+        statementCache.clear();
+
+        try {
+            if (connection != null) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        pool = null;
+
+        connection = null;
+    }
+
+    /**
+     * @return the connection to the database
+     */
+    public Connection getConnection() {
+        return connection;
     }
 
     /**
@@ -286,8 +322,16 @@ public abstract class Database {
      * @return
      */
     public PreparedStatement prepare(String sql, boolean returnGeneratedKeys) {
+        if (connection == null) {
+            return null;
+        }
+
+        if (useStatementCache && statementCache.containsKey(sql)) {
+            Statistics.addQuery();
+            return statementCache.get(sql);
+        }
+
         try {
-            Connection connection = createConnection();
             PreparedStatement preparedStatement;
 
             if (returnGeneratedKeys) {
@@ -296,9 +340,10 @@ public abstract class Database {
                 preparedStatement = connection.prepareStatement(sql);
             }
 
+            statementCache.put(sql, preparedStatement);
             Statistics.addQuery();
 
-            return new AutoClosingPreparedStatement(connection, preparedStatement);
+            return preparedStatement;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -352,13 +397,8 @@ public abstract class Database {
      * @return true if an exception was thrown
      */
     public boolean executeUpdateNoException(String query) {
-        Connection connection = createConnection();
         Statement statement = null;
         boolean exception = false;
-
-        if (connection == null) {
-            return true; // could not create
-        }
 
         try {
             statement = connection.createStatement();
@@ -370,7 +410,6 @@ public abstract class Database {
                 if (statement != null) {
                     statement.close();
                 }
-                connection.close();
             } catch (SQLException e) {
             }
         }
@@ -383,6 +422,25 @@ public abstract class Database {
      */
     public boolean isConnected() {
         return connected;
+    }
+
+    /**
+     * Returns true if the high level statement cache should be used. If this is false, already cached statements are ignored
+     *
+     * @return
+     */
+    public boolean useStatementCache() {
+        return useStatementCache;
+    }
+
+    /**
+     * Set if the high level statement cache should be used.
+     *
+     * @param useStatementCache
+     * @return
+     */
+    public void setUseStatementCache(boolean useStatementCache) {
+        this.useStatementCache = useStatementCache;
     }
 
 }
