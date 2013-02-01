@@ -161,6 +161,7 @@
             <fileset dir="${bin}/economy/"/>
 
             <manifest>
+                <attribute name="Class-Path" value="LWC.jar"/>
                 <attribute name="Implementation-Title" value="LWC"/>
                 <attribute name="Implementation-Vendor" value="Hidendra"/>
                 <attribute name="Implementation-Version" value="${BUILD_NUMBER}"/>
@@ -176,6 +177,7 @@
             <fileset dir="${bin}/spout/"/>
 
             <manifest>
+                <attribute name="Class-Path" value="LWC.jar"/>
                 <attribute name="Implementation-Title" value="LWC"/>
                 <attribute name="Implementation-Vendor" value="Hidendra"/>
                 <attribute name="Implementation-Version" value="${BUILD_NUMBER}"/>
