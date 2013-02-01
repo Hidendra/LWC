@@ -40,7 +40,6 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
@@ -251,8 +250,7 @@ public class BackupManager {
                         database.load();
 
                         // TODO separate stream logic to somewhere else :)
-                        Connection connection =  database.createConnection();
-                        Statement resultStatement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+                        Statement resultStatement = database.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
                         if (lwc.getPhysicalDatabase().getType() == Database.Type.MySQL) {
                             resultStatement.setFetchSize(Integer.MIN_VALUE);
@@ -326,7 +324,6 @@ public class BackupManager {
                         // close the sql statements
                         result.close();
                         resultStatement.close();
-                        connection.close();
 
                         // close the backup file
                         backup.close();

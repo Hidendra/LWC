@@ -124,6 +124,8 @@ public class DatabaseThread implements Runnable {
     private void flushDatabase() {
         if (!updateQueue.isEmpty()) {
             Database database = lwc.getPhysicalDatabase();
+            database.setAutoCommit(false);
+            database.setUseStatementCache(false);
 
             // Begin iterating through the queue
             Iterator<Protection> iter = updateQueue.iterator();
@@ -132,6 +134,10 @@ public class DatabaseThread implements Runnable {
                 iter.remove();
                 protection.saveNow();
             }
+
+            // Commit the changes to the database
+            database.setUseStatementCache(true);
+            database.setAutoCommit(true);
         }
 
         // update the time we last flushed at

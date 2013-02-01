@@ -37,7 +37,6 @@ import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtil;
 import org.bukkit.command.CommandSender;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -69,8 +68,14 @@ public class AdminQuery extends JavaModule {
         if (args[0].equals("query")) {
             String query = StringUtil.join(args, 1);
 
-            lwc.getPhysicalDatabase().executeUpdateNoException(query);
-            sender.sendMessage(Colors.Green + "Done.");
+            try {
+                Statement statement = lwc.getPhysicalDatabase().getConnection().createStatement();
+                statement.executeUpdate(query);
+                statement.close();
+                sender.sendMessage(Colors.Green + "Done.");
+            } catch (SQLException e) {
+                sender.sendMessage(Colors.Red + "Err: " + e.getMessage());
+            }
         }
 
         // Specific query, but the where statement is given
@@ -87,8 +92,7 @@ public class AdminQuery extends JavaModule {
             // execute the query
             try {
                 PhysDB database = lwc.getPhysicalDatabase();
-                Connection connection = database.createConnection();
-                Statement statement = connection.createStatement();
+                Statement statement = database.getConnection().createStatement();
 
                 // choose the statement
                 if (args[0].startsWith("update")) {

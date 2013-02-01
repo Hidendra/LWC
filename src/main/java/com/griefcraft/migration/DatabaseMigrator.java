@@ -47,6 +47,8 @@ public class DatabaseMigrator {
      */
     public boolean migrate(PhysDB fromDatabase, PhysDB toDatabase) {
         try {
+            toDatabase.getConnection().setAutoCommit(false);
+
             // some prelim data
             int startProtections = toDatabase.getProtectionCount();
             int protectionCount = fromDatabase.getProtectionCount();
@@ -61,6 +63,7 @@ public class DatabaseMigrator {
                     protection.saveNow();
                 }
 
+                toDatabase.getConnection().commit();
                 if (expectedProtections != (protectionCount = fromDatabase.getProtectionCount())) {
                     logger.info("Weird, only " + protectionCount + " protections are in the database? Continuing...");
                 }
@@ -77,6 +80,9 @@ public class DatabaseMigrator {
                     history.sync();
                 }
             }
+
+            fromDatabase.getConnection().close();
+            toDatabase.getConnection().setAutoCommit(true);
         } catch (Exception e) {
             e.printStackTrace();
             return false;

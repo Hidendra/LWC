@@ -40,7 +40,6 @@ import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -125,8 +124,7 @@ public class AdminCleanup extends JavaModule {
             String prefix = lwc.getPhysicalDatabase().getPrefix();
 
             // create the statement to use
-            Connection connection = lwc.getPhysicalDatabase().createConnection();
-            Statement statement = connection.createStatement();
+            Statement statement = lwc.getPhysicalDatabase().getConnection().createStatement();
 
             while (iter.hasNext()) {
                 int protectionId = iter.next();
@@ -149,7 +147,6 @@ public class AdminCleanup extends JavaModule {
             }
 
             statement.close();
-            connection.close();
         }
 
         public void run() {
@@ -176,8 +173,7 @@ public class AdminCleanup extends JavaModule {
                 database.connect();
                 database.load();
 
-                Connection connection = database.createConnection();
-                Statement resultStatement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+                Statement resultStatement = database.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
                 if (lwc.getPhysicalDatabase().getType() == Database.Type.MySQL) {
                     resultStatement.setFetchSize(Integer.MIN_VALUE);
@@ -244,7 +240,6 @@ public class AdminCleanup extends JavaModule {
                 // close the sql statements
                 result.close();
                 resultStatement.close();
-                connection.close();
 
                 // flush all of the queries
                 push(toRemove);
