@@ -28,6 +28,8 @@
 
 package com.griefcraft.modules.flag;
 
+import com.griefcraft.bukkit.EntityBlock;
+import com.griefcraft.bukkit.StorageMinecartBlock;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Flag;
 import com.griefcraft.model.Protection;
@@ -40,7 +42,10 @@ import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.StorageMinecart;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -98,11 +103,11 @@ public class MagnetModule extends JavaModule {
         /**
          * The block that the item should be placed into
          */
-        final Protection protection;
+        final Block block;
 
-        public Node(Item item, Protection protection) {
+        public Node(Item item, Block block) {
             this.item = item;
-            this.protection = protection;
+            this.block = block;
         }
 
     }
@@ -129,11 +134,6 @@ public class MagnetModule extends JavaModule {
                         continue;
                     }
 
-                    if (checked > 500) {
-                        break;
-                    }
-                    checked ++;
-
                     // native stack handle
                     ItemStack stack = item.getItemStack();
 
@@ -153,22 +153,18 @@ public class MagnetModule extends JavaModule {
                     }
 
                     // Check for usable blocks
-                    Location location = item.getLocation();
-                    Protection protection = lwc.getPhysicalDatabase().loadProtection(location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ(), radius);
-
-                    // nothing found
-                    if (protection == null) {
+                    long start = System.currentTimeMillis();
+                    Block block = scanForInventoryBlock(item.getLocation(), radius);
+                    if (block == null) {
                         continue;
                     }
 
-                    if (!protection.hasFlag(Flag.Type.MAGNET)) {
-                        continue;
+                    items.offer(new Node(item, block));
+                    checked ++;
+
+                    if (checked > 500) {
+                        break;
                     }
-
-                    // load the protection's block
-                    protection.getBlock();
-
-                    items.offer(new Node(item, protection));
                 }
             }
         }
@@ -187,8 +183,7 @@ public class MagnetModule extends JavaModule {
 
             while ((node = items.poll()) != null) {
                 final Item item = node.item;
-                final Protection protection = node.protection;
-                final Block block = protection.getBlock();
+                final Block block = node.block;
                 final World world = item.getWorld();
 
                 if (item.isDead()) {
@@ -203,6 +198,18 @@ public class MagnetModule extends JavaModule {
                 if (block != null) {
                     Runnable runnable = new Runnable() {
                         public void run() {
+                            Protection protection;
+
+                            if (block instanceof EntityBlock) {
+                                protection = lwc.getPhysicalDatabase().loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
+                            } else {
+                                protection = lwc.findProtection(block);
+                            }
+
+                            if (protection == null || !protection.hasFlag(Flag.Type.MAGNET)) {
+                                return;
+                            }
+
                             ItemStack itemStack = item.getItemStack();
 
                             // Remove the items and suck them up :3
@@ -294,6 +301,51 @@ public class MagnetModule extends JavaModule {
         // register our search thread schedule
         lwc.getPlugin().getServer().getScheduler().scheduleAsyncRepeatingTask(lwc.getPlugin(), new MagnetTask(), 50, 50);
         lwc.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(lwc.getPlugin(), new MagnetRefreshTask(), 50, 50);
+    }
+
+    /**
+     * Scan for one inventory block around the given block inside the given radius
+     *
+     * @param location
+     * @param radius
+     * @return
+     */
+    private Block scanForInventoryBlock(Location location, int radius) {
+        int baseX = location.getBlockX();
+        int baseY = location.getBlockY();
+        int baseZ = location.getBlockZ();
+        World world = location.getWorld();
+
+        for (int x = baseX - radius; x < baseX + radius; x++) {
+            for (int y = baseY - radius; y < baseY + radius; y++) {
+                for (int z = baseZ - radius; z < baseZ + radius; z++) {
+                    Block block = world.getBlockAt(x, y, z);
+
+                    try {
+                        if (block.getState() instanceof InventoryHolder) {
+                            return block;
+                        }
+                    } catch (NullPointerException e) {
+                        LWC lwc = LWC.getInstance();
+                        lwc.log("Possibly invalid block found at [" + x + ", " + y + ", " + z + "]!");
+                    }
+                }
+            }
+        }
+
+        // Storage minecarts
+        for (Entity minecartEntity : world.getEntitiesByClass(StorageMinecart.class)) {
+            StorageMinecart minecart = (StorageMinecart) minecartEntity;
+            Location l = minecart.getLocation();
+
+            if (l.getX() >= baseX - radius && l.getX() <= baseX + radius
+                    && l.getY() >= baseY - radius && l.getY() <= baseY + radius
+                    && l.getZ() >= baseZ - radius && l.getZ() <= baseZ + radius) {
+                return new StorageMinecartBlock(minecart);
+            }
+        }
+
+        return null;
     }
 
 }
