@@ -1730,20 +1730,20 @@ public class PhysDB extends Database {
     public void saveProtection(Protection protection) {
         PreparedStatement statement = null;
         try {
-            statement = prepare("UPDATE " + prefix + "protections SET type = ?, blockId = ?, world = ?, data = ?, owner = ?, password = ?, x = ?, y = ?, z = ?, date = ?, last_accessed = ? WHERE id = ?");
+            statement = prepare("REPLACE INTO " + prefix + "protections (id, type, blockId, world, data, owner, password, x, y, z, date, last_accessed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-            statement.setInt(1, protection.getType().ordinal());
-            statement.setInt(2, protection.getBlockId());
-            statement.setString(3, protection.getWorld());
-            statement.setString(4, protection.getData().toJSONString());
-            statement.setString(5, protection.getOwner());
-            statement.setString(6, protection.getPassword());
-            statement.setInt(7, protection.getX());
-            statement.setInt(8, protection.getY());
-            statement.setInt(9, protection.getZ());
-            statement.setString(10, protection.getCreation());
-            statement.setLong(11, protection.getLastAccessed());
-            statement.setInt(12, protection.getId());
+            statement.setInt(1, protection.getId());
+            statement.setInt(2, protection.getType().ordinal());
+            statement.setInt(3, protection.getBlockId());
+            statement.setString(4, protection.getWorld());
+            statement.setString(5, protection.getData().toJSONString());
+            statement.setString(6, protection.getOwner());
+            statement.setString(7, protection.getPassword());
+            statement.setInt(8, protection.getX());
+            statement.setInt(9, protection.getY());
+            statement.setInt(10, protection.getZ());
+            statement.setString(11, protection.getCreation());
+            statement.setLong(12, protection.getLastAccessed());
 
             statement.executeUpdate();
         } catch (SQLException e) {
