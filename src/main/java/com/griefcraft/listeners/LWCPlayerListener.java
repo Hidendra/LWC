@@ -42,6 +42,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.ContainerBlock;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -446,20 +447,11 @@ public class LWCPlayerListener implements Listener {
         Location location;
         InventoryHolder holder = event.getInventory().getHolder();
 
-        try {
-            if (holder instanceof BlockState) {
-                location = ((BlockState) holder).getLocation();
-            } else if (holder instanceof DoubleChest) {
-                location = ((DoubleChest) holder).getLocation();
-            } else {
-                return;
-            }
-        } catch (Exception e) {
-            Location ploc = player.getLocation();
-            String holderName = holder != null ? holder.getClass().getSimpleName() : "Unknown Block";
-            lwc.log("Exception with getting the location of a " + holderName + " has occurred NEAR the player: " + player.getName() + " [" + ploc.getBlockX() + " " + ploc.getBlockY() + " " + ploc.getBlockZ() + "]");
-            lwc.log("The exact location of the block is not possible to obtain. This is caused by a Minecraft or Bukkit exception normally.");
-            e.printStackTrace();
+        if (holder instanceof BlockState) {
+            location = ((BlockState) holder).getLocation();
+        } else if (holder instanceof DoubleChest) {
+            location = ((DoubleChest) holder).getLocation();
+        } else {
             return;
         }
 
