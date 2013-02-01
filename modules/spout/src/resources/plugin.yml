@@ -1,8 +1,0 @@
-name: LWC-Spout
-main: com.griefcraft.bukkit.LWCSpoutPlugin
-version: 0.0
-website: http://griefcraft.com
-author: Hidendra
-description: Adds Spout functionality to LWC
-depend: [ 'Spout' ]
-load: POSTWORLD
