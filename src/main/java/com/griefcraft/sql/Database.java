@@ -41,6 +41,7 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -204,10 +205,7 @@ public abstract class Database {
         }
 
         // Load the driver class
-        classLoader.loadClass(className).newInstance();
-        try {
-            Class.forName(className);
-        } catch (Exception e) { }
+        Driver driver = (Driver) classLoader.loadClass(className).newInstance();
 
         // Create the pool
         LWC lwc = LWC.getInstance();
