@@ -32,6 +32,8 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.sql.Database.Type;
 import com.griefcraft.util.Statistics;
 
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -134,6 +136,7 @@ public class Table {
         buffer.append(";");
 
         // execute it directly to the database
+        Statement statement = null;
         database.executeUpdateNoException(buffer.toString());
 
         // database.log("Synched table " + prefix + name + " (" + columns.size() + " columns)");
