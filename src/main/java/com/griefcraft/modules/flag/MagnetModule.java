@@ -132,10 +132,6 @@ public class MagnetModule extends JavaModule {
                 Item item;
                 int checked = 0;
                 while ((item = work.poll()) != null) {
-                    if (item.isDead()) {
-                        continue;
-                    }
-
                     // native stack handle
                     net.minecraft.server.ItemStack stackHandle = ((net.minecraft.server.EntityItem) ((CraftItem) item).getHandle()).itemStack;
 
