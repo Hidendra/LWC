@@ -127,7 +127,7 @@
         </javac>
     </target>
 
-    <target name="buildall" description="Build the distribution files" depends="lwc,economy,spout">
+    <target name="buildall" description="Build the distribution files" depends="lwc,economy">
         <copy tofile="${build}/VERSION" file="VERSION" overwrite="yes"/>
     </target>
 
