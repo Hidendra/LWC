@@ -44,7 +44,6 @@ import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -207,15 +206,7 @@ public class MagnetModule extends JavaModule {
                             ItemStack itemStack = item.getItemStack();
 
                             // Remove the items and suck them up :3
-                            Map<Integer, ItemStack> remaining = new HashMap<Integer, ItemStack>();
-
-                            try {
-                                remaining = lwc.depositItems(block, itemStack);
-                            } catch (Exception e) {
-                                lwc.log("Exception occurred while depositing into the block: " + block.toString());
-                                e.printStackTrace();
-                                return;
-                            }
+                            Map<Integer, ItemStack> remaining = lwc.depositItems(block, itemStack);
 
                             // we cancelled the item drop for some reason
                             if (remaining == null) {
