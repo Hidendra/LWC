@@ -1,3 +1,0 @@
-name: Password
-description: A module that allows passwords to be set on protections
-main: org.getlwc.PasswordModule
