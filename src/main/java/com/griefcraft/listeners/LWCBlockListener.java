@@ -157,13 +157,6 @@ public class LWCBlockListener implements Listener {
         Block block = event.getBlock();
         Material material = block.getType();
 
-        if (lwc.isInSafeMode() && lwc.isProtectable(material)) {
-            player.sendMessage(Colors.Red + "NOTE: The plugin LWC is in safe mode due to an outside error (database error, or plugin error)");
-            player.sendMessage(Colors.Red + "If you are the server admin, check the startup log for more information.");
-            event.setCancelled(true);
-            return;
-        }
-
         boolean ignoreBlockDestruction = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreBlockDestruction"));
 
         if (ignoreBlockDestruction) {
