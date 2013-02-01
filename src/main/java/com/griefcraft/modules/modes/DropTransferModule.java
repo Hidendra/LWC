@@ -38,6 +38,8 @@ import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCDropItemEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
+import com.herocraftonline.heroes.Heroes;
+import com.herocraftonline.heroes.characters.Hero;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -45,6 +47,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Map;
 import java.util.Set;
@@ -97,6 +100,20 @@ public class DropTransferModule extends JavaModule {
         Player bPlayer = event.getPlayer();
         Item item = event.getEvent().getItemDrop();
         ItemStack itemStack = item.getItemStack();
+
+        // Heroes
+        try {
+            Plugin heroesPlugin = lwc.getPlugin().getServer().getPluginManager().getPlugin("Heroes");
+
+            if (heroesPlugin != null) {
+                Heroes heroes = (Heroes) heroesPlugin;
+                Hero hero = heroes.getCharacterManager().getHero(bPlayer);
+
+                if (hero != null && hero.isInCombat()) {
+                    return;
+                }
+            }
+        } catch (Exception e) { }
 
         LWCPlayer player = lwc.wrapPlayer(bPlayer);
         int protectionId = getPlayerDropTransferTarget(player);
