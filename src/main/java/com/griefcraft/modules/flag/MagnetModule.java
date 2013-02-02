@@ -78,7 +78,9 @@ public class MagnetModule extends JavaModule {
     /**
      * The current entity queue
      */
-    private final Queue<Item> items = new LinkedList<Item>();
+    private final Queue<MagnetNode> items = new LinkedList<MagnetNode>();
+
+    private class MagnetNode { Item item; Protection protection; }
 
     // does all of the work
     // searches the worlds for items and magnet chests nearby
@@ -108,99 +110,105 @@ public class MagnetModule extends JavaModule {
                             continue;
                         }
 
-                        //// has the item been living long enough?
+                        if (item.isDead()) {
+                            continue;
+                        }
+
+                        if (isShowcaseItem(item)) {
+                            // it's being used by the Showcase plugin ... ignore it
+                            continue;
+                        }
+
+                        // has the item been living long enough?
                         if (item.getPickupDelay() > item.getTicksLived()) {
                             continue; // a player wouldn't have had a chance to pick it up yet
                         }
 
-                        items.offer(item);
+                        Location location = item.getLocation();
+                        int x = location.getBlockX();
+                        int y = location.getBlockY();
+                        int z = location.getBlockZ();
+
+                        List<Protection> protections = lwc.getPhysicalDatabase().loadProtections(world.getName(), x, y, z, radius);
+
+                        for (Protection protection : protections) {
+                            if (protection.hasFlag(Flag.Type.MAGNET)) {
+                                protection.getBlock();
+
+                                // we only want inventory blocks
+                                if (!(protection.getBlock().getState() instanceof InventoryHolder)) {
+                                    continue;
+                                }
+
+                                MagnetNode node = new MagnetNode();
+                                node.item = item;
+                                node.protection = protection;
+                                items.offer(node);
+                                break;
+                            }
+                        }
                     }
                 }
             }
 
             // Throttle amount of items polled
             int count = 0;
-            Item item;
+            MagnetNode node;
 
-            while ((item = items.poll()) != null) {
+            while ((node = items.poll()) != null) {
+                Item item = node.item;
+                Protection protection = node.protection;
+
                 World world = item.getWorld();
                 ItemStack itemStack = item.getItemStack();
+                Location location = item.getLocation();
+                Block block = protection.getBlock();
 
                 if (item.isDead()) {
                     continue;
                 }
 
-                Location location = item.getLocation();
-                int x = location.getBlockX();
-                int y = location.getBlockY();
-                int z = location.getBlockZ();
+                // Remove the items and suck them up :3
+                Map<Integer, ItemStack> remaining;
 
-                if (isShowcaseItem(item)) {
-                    // it's being used by the Showcase plugin ... ignore it
+                try {
+                    remaining = lwc.depositItems(block, itemStack);
+                } catch (Exception e) {
+                    lwc.log("Exception occurred while depositing into the block: " + block.toString());
+                    e.printStackTrace();
+                    return;
+                }
+
+                // we cancelled the item drop for some reason
+                if (remaining == null) {
                     continue;
                 }
 
-                List<Protection> protections = lwc.getPhysicalDatabase().loadProtections(world.getName(), x, y, z, radius);
-                Block block;
-                Protection protection;
+                if (remaining.size() == 1) {
+                    ItemStack other = remaining.values().iterator().next();
 
-                for (Protection temp : protections) {
-                    protection = temp;
-                    block = world.getBlockAt(protection.getX(), protection.getY(), protection.getZ());
-
-                    // we only want inventory blocks
-                    if (!(block.getState() instanceof InventoryHolder)) {
+                    if (itemStack.getTypeId() == other.getTypeId() && itemStack.getAmount() == other.getAmount()) {
                         continue;
                     }
-
-                    if (!protection.hasFlag(Flag.Type.MAGNET)) {
-                        continue;
-                    }
-
-                    // Remove the items and suck them up :3
-                    Map<Integer, ItemStack> remaining;
-
-                    try {
-                        remaining = lwc.depositItems(block, itemStack);
-                    } catch (Exception e) {
-                        lwc.log("Exception occurred while depositing into the block: " + block.toString());
-                        e.printStackTrace();
-                        return;
-                    }
-
-                    // we cancelled the item drop for some reason
-                    if (remaining == null) {
-                        continue;
-                    }
-
-                    if (remaining.size() == 1) {
-                        ItemStack other = remaining.values().iterator().next();
-
-                        if (itemStack.getTypeId() == other.getTypeId() && itemStack.getAmount() == other.getAmount()) {
-                            continue;
-                        }
-                    }
-
-                    // remove the item on the ground
-                    item.remove();
-
-                    // if we have a remainder, we need to drop them
-                    if (remaining.size() > 0) {
-                        for (ItemStack stack : remaining.values()) {
-                            world.dropItemNaturally(location, stack);
-                        }
-                    }
-
-                    break;
                 }
 
-                // Time to throttle?
+                // remove the item on the ground
+                item.remove();
+
+                // if we have a remainder, we need to drop them
+                if (remaining.size() > 0) {
+                    for (ItemStack stack : remaining.values()) {
+                        world.dropItemNaturally(location, stack);
+                    }
+                }
+
                 if (count > perSweep) {
                     break;
                 }
 
-                count++;
+                count ++;
             }
+
         }
     }
 
