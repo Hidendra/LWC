@@ -913,23 +913,54 @@ public class PhysDB extends Database {
      * Load the first protection within a block's radius
      *
      * @param world
-     * @param x
-     * @param y
-     * @param z
+     * @param baseX
+     * @param baseY
+     * @param baseZ
      * @param radius
      * @return list of Protection objects found
      */
-    public List<Protection> loadProtections(String world, int x, int y, int z, int radius) {
+    public List<Protection> loadProtections(String world, int baseX, int baseY, int baseZ, int radius) {
+        if (hasAllProtectionsCached()) {
+            ProtectionCache cache = LWC.getInstance().getProtectionCache();
+            List<Protection> protections = new ArrayList<Protection>();
+
+            if (cache.size() < 1000) {
+                for (Protection protection : cache.getReferences().keySet()) {
+                    int x = protection.getX();
+                    int y = protection.getY();
+                    int z = protection.getZ();
+
+                    if (x >= baseX - radius && x <= baseX + radius && y >= baseY - radius && y <= baseY + radius && z >= baseZ - radius && z <= baseZ + radius) {
+                        protections.add(protection);
+                    }
+                }
+            } else {
+                for (int x = baseX - radius; x < baseX + radius; x++) {
+                    for (int y = baseY - radius; y < baseY + radius; y++) {
+                        for (int z = baseZ - radius; z < baseZ + radius; z++) {
+                            Protection protection = cache.getProtection(world + ":" + x + ":" + y + ":" + z);
+
+                            if (protection != null) {
+                                protections.add(protection);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return protections;
+        }
+
         try {
             PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE world = ? AND x >= ? AND x <= ? AND y >= ? AND y <= ? AND z >= ? AND z <= ?");
 
             statement.setString(1, world);
-            statement.setInt(2, x - radius);
-            statement.setInt(3, x + radius);
-            statement.setInt(4, y - radius);
-            statement.setInt(5, y + radius);
-            statement.setInt(6, z - radius);
-            statement.setInt(7, z + radius);
+            statement.setInt(2, baseX - radius);
+            statement.setInt(3, baseX + radius);
+            statement.setInt(4, baseY - radius);
+            statement.setInt(5, baseY + radius);
+            statement.setInt(6, baseZ - radius);
+            statement.setInt(7, baseZ + radius);
 
             return resolveProtections(statement);
         } catch (Exception e) {

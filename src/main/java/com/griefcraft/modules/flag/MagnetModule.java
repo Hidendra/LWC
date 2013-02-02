@@ -91,6 +91,7 @@ public class MagnetModule extends JavaModule {
 
             // Do we need to requeue?
             if (items.size() == 0) {
+                long start = System.currentTimeMillis();
                 for (World world : server.getWorlds()) {
                     for (Entity entity : world.getEntities()) {
                         if (!(entity instanceof Item)) {
@@ -129,7 +130,9 @@ public class MagnetModule extends JavaModule {
                         int y = location.getBlockY();
                         int z = location.getBlockZ();
 
+                        long kstart = System.currentTimeMillis();
                         List<Protection> protections = lwc.getPhysicalDatabase().loadProtections(world.getName(), x, y, z, radius);
+                        System.out.println("loadProtections() in " + (System.currentTimeMillis() - kstart) + "ms");
 
                         for (Protection protection : protections) {
                             if (protection.hasFlag(Flag.Type.MAGNET)) {
@@ -149,6 +152,7 @@ public class MagnetModule extends JavaModule {
                         }
                     }
                 }
+                lwc.log("magnet regenned in " + (System.currentTimeMillis() - start) + "ms");
             }
 
             // Throttle amount of items polled
