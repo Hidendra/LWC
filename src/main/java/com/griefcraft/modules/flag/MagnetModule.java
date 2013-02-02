@@ -108,6 +108,11 @@ public class MagnetModule extends JavaModule {
                             continue;
                         }
 
+                        //// has the item been living long enough?
+                        if (item.getPickupDelay() > item.getTicksLived()) {
+                            continue; // a player wouldn't have had a chance to pick it up yet
+                        }
+
                         items.offer(item);
                     }
                 }
