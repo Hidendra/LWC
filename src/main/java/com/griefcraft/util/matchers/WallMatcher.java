@@ -135,10 +135,10 @@ public class WallMatcher implements ProtectionFinder.Matcher {
 
         // Blocks such as trap doors
         else if (PROTECTABLES_WALL_REVERSE.contains(block.getType())) {
-            byte EAST = 0x01;
-            byte WEST = 0x00;
-            byte SOUTH = 0x02;
-            byte NORTH = 0x03;
+            byte EAST = 0x2;
+            byte WEST = 0x3;
+            byte SOUTH = 0x0;
+            byte NORTH = 0x1;
 
             if (matchingFace == BlockFace.WEST && (direction & EAST) == EAST) {
                 return block;
