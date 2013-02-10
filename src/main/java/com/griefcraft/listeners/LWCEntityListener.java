@@ -32,8 +32,8 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Flag;
 import com.griefcraft.model.Protection;
-import com.nitnelave.CreeperHeal.CreeperConfig;
-import com.nitnelave.CreeperHeal.WorldConfig;
+import com.nitnelave.CreeperHeal.config.CreeperConfig;
+import com.nitnelave.CreeperHeal.config.WorldConfig;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
@@ -137,9 +137,9 @@ public class LWCEntityListener implements Listener {
             }
 
             if (entity instanceof Creeper) {
-                return "true".equalsIgnoreCase(worldConfig.creepers);
+                return worldConfig.creepers;
             } else if (entity instanceof TNTPrimed) {
-                return "true".equalsIgnoreCase(worldConfig.tnt);
+                return worldConfig.tnt;
             }
         }
 
