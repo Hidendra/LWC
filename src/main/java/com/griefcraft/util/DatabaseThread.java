@@ -39,6 +39,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class DatabaseThread implements Runnable {
 
     /**
+     * The amount of time in milliseconds in between sending a keepalive packet to keep the MySQL connection alive
+     */
+    private static final int KEEPALIVE_INTERVAL = 5 * 60 * 1000;
+
+    /**
      * The LWC object
      */
     private final LWC lwc;
@@ -62,6 +67,11 @@ public class DatabaseThread implements Runnable {
      * The last time the queue was flushed to the database
      */
     private long lastFlush = -1L;
+
+    /**
+     * The time the next keepalive packet will be sent at
+     */
+    private long nextKeepalivePacket = 0;
 
     public DatabaseThread(LWC lwc) {
         this.lwc = lwc;
@@ -142,12 +152,21 @@ public class DatabaseThread implements Runnable {
 
         // update the time we last flushed at
         lastFlush = System.currentTimeMillis();
+
+        if (System.currentTimeMillis() > nextKeepalivePacket) {
+            nextKeepalivePacket = System.currentTimeMillis() + KEEPALIVE_INTERVAL;
+            lwc.getPhysicalDatabase().pingDatabase();
+        }
     }
 
     public void run() {
         while (running) {
             // how many seconds between each flush
             int interval = lwc.getConfiguration().getInt("core.flushInterval", 5);
+
+            if (interval > 120) {
+                interval = 120;
+            }
 
             long currentTime = System.currentTimeMillis();
             long intervalMilliseconds = interval * 1000L;
