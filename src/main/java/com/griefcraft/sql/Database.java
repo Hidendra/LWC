@@ -143,6 +143,27 @@ public abstract class Database {
     }
 
     /**
+     * Ping the database to keep the connection alive
+     */
+    public void pingDatabase() {
+        Statement stmt = null;
+        try {
+            stmt = connection.createStatement();
+            stmt.executeQuery("SELECT 1;");
+            stmt.close();
+        } catch (SQLException e) {
+            log("Keepalive packet (ping) failed!");
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException e) { }
+        }
+    }
+
+    /**
      * Set the value of auto commit
      *
      * @param autoCommit
