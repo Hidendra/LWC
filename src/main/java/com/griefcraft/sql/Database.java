@@ -34,7 +34,6 @@ import com.griefcraft.scripting.ModuleException;
 import com.griefcraft.util.Statistics;
 import com.griefcraft.util.Updater;
 import com.griefcraft.util.config.Configuration;
-import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import org.bukkit.Bukkit;
 
 import java.io.File;
@@ -197,18 +196,6 @@ public abstract class Database {
      * @param exception
      */
     protected void printException(Exception exception) {
-        // check for disconnect
-        if (exception instanceof CommunicationsException) {
-            // reconnect!
-            try {
-                connect();
-            } catch (Exception e) {
-                throw new ModuleException(e);
-            }
-
-            return;
-        }
-
         throw new ModuleException(exception);
     }
 
