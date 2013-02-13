@@ -123,7 +123,7 @@ public class DropTransferModule extends JavaModule {
                 com.garbagemule.MobArena.MobArena mobarena = (com.garbagemule.MobArena.MobArena) mobarenaPlugin;
 
                 if (mobarena.getArenaMaster().getArenaAtLocation(bPlayer.getLocation()) != null) {
-                    event.setCancelled(true);
+                    return;
                 }
             }
         } catch (Exception e) { }
