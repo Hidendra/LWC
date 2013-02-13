@@ -115,6 +115,19 @@ public class DropTransferModule extends JavaModule {
             }
         } catch (Exception e) { }
 
+        // MobArena
+        try {
+            Plugin mobarenaPlugin = lwc.getPlugin().getServer().getPluginManager().getPlugin("MobArena");
+
+            if (mobarenaPlugin != null) {
+                com.garbagemule.MobArena.MobArena mobarena = (com.garbagemule.MobArena.MobArena) mobarenaPlugin;
+
+                if (mobarena.getArenaMaster().getArenaAtLocation(bPlayer.getLocation()) != null) {
+                    event.setCancelled(true);
+                }
+            }
+        } catch (Exception e) { }
+
         LWCPlayer player = lwc.wrapPlayer(bPlayer);
         int protectionId = getPlayerDropTransferTarget(player);
 

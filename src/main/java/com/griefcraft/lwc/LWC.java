@@ -89,7 +89,6 @@ import com.griefcraft.modules.modes.NoSpamModule;
 import com.griefcraft.modules.modes.PersistModule;
 import com.griefcraft.modules.modify.ModifyModule;
 import com.griefcraft.modules.owners.OwnersModule;
-import com.griefcraft.modules.pluginsupport.MobArena;
 import com.griefcraft.modules.pluginsupport.Towny;
 import com.griefcraft.modules.pluginsupport.WorldGuard;
 import com.griefcraft.modules.redstone.RedstoneModule;
@@ -1514,9 +1513,6 @@ public class LWC {
         registerModule(new FixModule());
         registerModule(new HistoryModule());
         registerModule(new ConfirmModule());
-
-        // plugin support
-        registerModule(new MobArena());
 
         // admin commands
         registerModule(new BaseAdminModule());
