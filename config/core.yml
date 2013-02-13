@@ -94,6 +94,9 @@ database:
     # the protections table show up as lwc_protections
     prefix: 'lwc_'
 
+    # The interval between pinging the MySQL server to keep it alive (in seconds)
+    ping_interval: 300
+
 # The protections nodes allows you to define, remove and modify which blocks LWC is allowed to protect
 # This means that you could make any block you want protectable, or remove existing protectable blocks
 # (e.g trap doors, etc.)
