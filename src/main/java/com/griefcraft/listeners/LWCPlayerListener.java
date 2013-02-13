@@ -319,7 +319,7 @@ public class LWCPlayerListener implements Listener {
             // If they are clicking an item of the stack type, they are inserting it into the inventory,
             // not switching it
             // As long as the item isn't a degradable item, we can explicitly allow it if they have the same durability
-            if (item.getDurability() == cursor.getDurability()) {
+            if (item.getDurability() == cursor.getDurability() && item.getAmount() == cursor.getAmount()) {
                 return;
             }
         }
