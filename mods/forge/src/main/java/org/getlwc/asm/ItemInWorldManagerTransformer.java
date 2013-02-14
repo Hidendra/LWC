@@ -185,7 +185,7 @@ public class ItemInWorldManagerTransformer implements IClassTransformer
                         toInject.add(new VarInsnNode(ILOAD, mdIndex));
                         toInject.add(new VarInsnNode(ALOAD, 0));
                         toInject.add(new FieldInsnNode(GETFIELD, (String) hm.get("javaClassName"), (String) hm.get("entityPlayerFieldName"), "L" + hm.get("entityPlayerMPJavaClassName") + ";"));
-                        toInject.add(new MethodInsnNode(INVOKESTATIC, "com/getlwc/ForgeEventHelper", "onBlockHarvested", "(L" + hm.get("worldJavaClassName") + ";IIIL" + hm.get("blockJavaClassName") + ";IL" + hm.get("entityPlayerJavaClassName") + ";)Z"));
+                        toInject.add(new MethodInsnNode(INVOKESTATIC, "org/getlwc/ForgeEventHelper", "onBlockHarvested", "(L" + hm.get("worldJavaClassName") + ";IIIL" + hm.get("blockJavaClassName") + ";IL" + hm.get("entityPlayerJavaClassName") + ";)Z"));
 
                         // Start LWC - return from onBlockHarvested()
                         LabelNode cancel = new LabelNode(new Label());
