@@ -34,6 +34,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.src.ModLoader;
 import org.getlwc.entity.Player;
+import org.getlwc.modsupport.ForgeEssentials;
 import org.getlwc.util.Color;
 import org.getlwc.world.ForgeWorld;
 
@@ -79,8 +80,7 @@ public class ForgePlayer extends Player {
         try {
             Class.forName("com.ForgeEssentials.api.permissions.PermissionsAPI");
 
-            com.ForgeEssentials.permission.query.PermQuery query = new com.ForgeEssentials.permission.query.PermQueryPlayer(handle, node);
-            return com.ForgeEssentials.api.permissions.PermissionsAPI.checkPermAllowed(query);
+            return ForgeEssentials.checkPermission(handle, node);
         } catch (Exception e) { } // Not installed - OK
 
         // no handled Perm plugin
