@@ -40,7 +40,7 @@ public class LWCCorePlugin implements IFMLLoadingPlugin {
     }
 
     public String[] getASMTransformerClass() {
-        return new String[] { "com.getlwc.asm.ItemInWorldManagerTransformer" };
+        return new String[] { "org.getlwc.asm.ItemInWorldManagerTransformer" };
     }
 
     public String getModContainerClass() {
