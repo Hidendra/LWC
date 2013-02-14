@@ -77,7 +77,7 @@
                     <dateFormat>dd.MM.yyyy '@' HH:mm:ss z</dateFormat>
 
                     <!-- true is default here, it prints some more information during the build -->
-                    <verbose>true</verbose>
+                    <verbose>false</verbose>
 
                     <!--
                         If you'd like to tell the plugin where your .git directory is,
