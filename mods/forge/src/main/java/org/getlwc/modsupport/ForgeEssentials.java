@@ -1,6 +1,6 @@
 package org.getlwc.modsupport;
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 
 public class ForgeEssentials {
 
@@ -11,7 +11,7 @@ public class ForgeEssentials {
      * @param node
      * @return
      */
-    public static boolean checkPermission(EntityPlayerMP handle, String node) {
+    public static boolean checkPermission(EntityPlayer handle, String node) {
         try {
             Class.forName("com.ForgeEssentials.api.permissions.PermissionsAPI");
 

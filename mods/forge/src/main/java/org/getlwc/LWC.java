@@ -34,8 +34,9 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 
 /**
  * FORGE DONE WRONG
@@ -69,12 +70,17 @@ public class LWC {
 
     @Mod.Init
     public void load(FMLInitializationEvent event) {
-        proxy.init();
+
     }
 
     @Mod.PostInit
     public void postInit(FMLPostInitializationEvent event) {
 
+    }
+
+    @Mod.ServerStarting
+    public void serverStarting(FMLServerStartingEvent event) {
+        proxy.init();
     }
 
     /**
@@ -83,7 +89,7 @@ public class LWC {
      * @param player
      * @return
      */
-    public org.getlwc.entity.Player wrapPlayer(EntityPlayerMP player) {
+    public org.getlwc.entity.Player wrapPlayer(EntityPlayer player) {
         return layer.getPlayer(player.getEntityName());
     }
 

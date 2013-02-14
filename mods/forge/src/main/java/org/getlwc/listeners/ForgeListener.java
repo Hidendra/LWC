@@ -30,7 +30,7 @@
 package org.getlwc.listeners;
 
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.Event;
@@ -72,8 +72,8 @@ public class ForgeListener {
 
         // UNSAFE
         // grep 'implements aa'
-        else if (sender instanceof EntityPlayerMP) {
-            EntityPlayerMP player = (EntityPlayerMP) sender;
+        else if (sender instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) sender;
             result = _onCommand(CommandContext.Type.PLAYER, mod.wrapPlayer(player), message);
         }
 
@@ -89,7 +89,7 @@ public class ForgeListener {
             return;
         }
 
-        org.getlwc.entity.Player player = mod.wrapPlayer((EntityPlayerMP) event.entityPlayer);
+        org.getlwc.entity.Player player = mod.wrapPlayer((EntityPlayer) event.entityPlayer);
         World world = player.getLocation().getWorld();
         Block block = world.getBlockAt(event.x, event.y, event.z);
 
@@ -102,7 +102,7 @@ public class ForgeListener {
 
     @ForgeSubscribe
     public void playerBlockBreak(PlayerBreakBlockEvent event) {
-        org.getlwc.entity.Player player = mod.wrapPlayer((EntityPlayerMP) event.entityPlayer);
+        org.getlwc.entity.Player player = mod.wrapPlayer(event.entityPlayer);
         World world = player.getLocation().getWorld();
         Block block = world.getBlockAt(event.blockX, event.blockY, event.blockZ);
 

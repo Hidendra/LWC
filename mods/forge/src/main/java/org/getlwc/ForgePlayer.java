@@ -29,7 +29,7 @@
 
 package org.getlwc;
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.src.ModLoader;
@@ -48,9 +48,9 @@ public class ForgePlayer extends Player {
     /**
      * Player handle
      */
-    private EntityPlayerMP handle;
+    private EntityPlayer handle;
 
-    public ForgePlayer(EntityPlayerMP handle) {
+    public ForgePlayer(EntityPlayer handle) {
         this.handle = handle;
         this.mod = LWC.instance;
     }

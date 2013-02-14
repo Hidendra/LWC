@@ -29,7 +29,7 @@
 
 package org.getlwc;
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.world.WorldServer;
@@ -91,8 +91,8 @@ public class ForgeServerLayer extends ServerLayer {
             // loop over the player list
             for (Object object : server.getConfigurationManager().playerEntityList) {
                 // NATIVE
-                if (object instanceof EntityPlayerMP) {
-                    EntityPlayerMP handle = (EntityPlayerMP) object;
+                if (object instanceof EntityPlayer) {
+                    EntityPlayer handle = (EntityPlayer) object;
 
                     if (handle.getEntityName().equals(playerName)) {
                         return new ForgePlayer(handle);
