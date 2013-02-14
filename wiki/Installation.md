@@ -12,4 +12,4 @@ Start (or restart) your server
 
 ## Step 3
 
-There is no step 3. Party!
+There is no step 3. Party! LWC will setup the base install for you automatically using recommended settings. It will be usable immediately.
