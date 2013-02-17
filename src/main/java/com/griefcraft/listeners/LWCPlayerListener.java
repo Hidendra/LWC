@@ -41,6 +41,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.DoubleChest;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -56,6 +57,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.EnumSet;
+import java.util.Map;
 import java.util.Set;
 
 public class LWCPlayerListener implements Listener {
@@ -314,39 +316,70 @@ public class LWCPlayerListener implements Listener {
         // Item their cursor has
         ItemStack cursor = event.getCursor();
 
+        if (item.getType() == Material.AIR) {
+            return;
+        }
+
         // Are they inserting a stack?
-        if (item != null && cursor != null && item.getType() == cursor.getType()) {
+        if (cursor != null && item.getType() == cursor.getType()) {
+            boolean enchantmentsEqual = areEnchantmentsEqual(item, cursor);
+
             // If they are clicking an item of the stack type, they are inserting it into the inventory,
             // not switching it
             // As long as the item isn't a degradable item, we can explicitly allow it if they have the same durability
-            if (item.getDurability() == cursor.getDurability() && item.getAmount() == cursor.getAmount()) {
+            if (item.getDurability() == cursor.getDurability() && item.getAmount() == cursor.getAmount() && enchantmentsEqual) {
                 return;
             }
         }
 
-        // They are trying to take an item :p
-        if ((item != null && cursor == null) || (item != null && cursor != null)) {
-            // Attempt to load the protection at that location
-            Protection protection = lwc.findProtection(location.getBlock());
+        // Attempt to load the protection at that location
+        Protection protection = lwc.findProtection(location.getBlock());
 
-            // If no protection was found we can safely ignore it
-            if (protection == null) {
-                return;
-            }
+        // If no protection was found we can safely ignore it
+        if (protection == null) {
+            return;
+        }
 
-            // If it's not a donation chest, ignore if
-            if (protection.getType() != Protection.Type.DONATION) {
-                return;
-            }
+        // If it's not a donation chest, ignore if
+        if (protection.getType() != Protection.Type.DONATION) {
+            return;
+        }
 
-            // Can they admin it? (remove items/etc)
-            boolean canAdmin = lwc.canAdminProtection(player, protection);
+        // Can they admin it? (remove items/etc)
+        boolean canAdmin = lwc.canAdminProtection(player, protection);
 
-            // nope.avi
-            if (!canAdmin) {
-                event.setCancelled(true);
+        // nope.avi
+        if (!canAdmin) {
+            event.setCancelled(true);
+        }
+    }
+
+    /**
+     * Compares the enchantments on two item stacks and checks that they are equal (identical)
+     *
+     * @param stack1
+     * @param stack2
+     * @return
+     */
+    private boolean areEnchantmentsEqual(ItemStack stack1, ItemStack stack2) {
+        if (stack1 == null || stack2 == null) {
+            return false;
+        }
+
+        Map<Enchantment, Integer> enchantments1 = stack1.getEnchantments();
+        Map<Enchantment, Integer> enchantments2 = stack2.getEnchantments();
+
+        if (enchantments1.size() != enchantments2.size()) {
+            return false;
+        }
+
+        for (Enchantment enchantment : enchantments1.keySet()) {
+            if (!enchantments2.containsKey(enchantment) || enchantments1.get(enchantment) != enchantments2.get(enchantment)) {
+                return false;
             }
         }
+
+        return true;
     }
 
 }
