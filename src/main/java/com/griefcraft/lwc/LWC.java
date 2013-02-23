@@ -676,9 +676,9 @@ public class LWC {
             Protection.Type type = protection.getType();
 
             if (type == Protection.Type.PASSWORD) {
-                sendLocale(player, "protection.general.locked.password", "block", materialToString(block));
+                sendLocale(player, "protection.general.locked.password", "block", materialToString(block), "owner", protection.getOwner());
             } else if (type == Protection.Type.PRIVATE || type == Protection.Type.DONATION) {
-                sendLocale(player, "protection.general.locked.private", "block", materialToString(block));
+                sendLocale(player, "protection.general.locked.private", "block", materialToString(block), "owner", protection.getOwner());
             }
         }
 
