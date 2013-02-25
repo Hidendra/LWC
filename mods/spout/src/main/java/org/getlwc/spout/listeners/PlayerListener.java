@@ -39,7 +39,7 @@ import org.spout.api.event.Listener;
 import org.spout.api.event.block.BlockChangeEvent;
 import org.spout.api.event.player.PlayerInteractEvent;
 import org.spout.api.geo.discrete.Point;
-import org.spout.vanilla.api.event.cause.PlayerBreakCause;
+import org.spout.vanilla.event.cause.PlayerBreakCause;
 
 public class PlayerListener implements Listener {
 

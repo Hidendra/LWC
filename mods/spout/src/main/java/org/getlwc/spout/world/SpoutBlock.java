@@ -33,7 +33,7 @@ import org.getlwc.Block;
 import org.getlwc.World;
 import org.spout.api.material.BlockMaterial;
 import org.spout.api.material.Material;
-import org.spout.vanilla.api.material.VanillaMaterial;
+import org.spout.vanilla.material.VanillaMaterial;
 
 // TODO implement hashCode / equals
 public class SpoutBlock extends Block {
