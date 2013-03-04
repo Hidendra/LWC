@@ -101,6 +101,8 @@ public class DebugModule extends JavaModule {
         player.sendMessage(" ");
         doPermission(player, "lwc.mod");
         doPermission(player, "lwc.admin");
+        player.sendMessage("isMod: " + strval(lwc.isMod(player)));
+        player.sendMessage("isAdmin: " + strval(lwc.isAdmin(player)));
     }
 
     /**

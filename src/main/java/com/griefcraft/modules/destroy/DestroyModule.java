@@ -54,6 +54,12 @@ public class DestroyModule extends JavaModule {
         boolean isOwner = protection.isOwner(player);
 
         if (isOwner) {
+            if (!lwc.isAdmin(player) && Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock().getType(), "readonly-remove"))) {
+                lwc.sendLocale(player, "protection.accessdenied");
+                event.setCancelled(true);
+                return;
+            }
+
             // bind the player of destroyed the protection
             // We don't need to save the history we modify because it will be saved anyway immediately after this
             for (History history : protection.getRelatedHistory(History.Type.TRANSACTION)) {

@@ -138,6 +138,14 @@ protections:
     # Creation messages and protection notices will not be shown for this protection
     quiet: false
 
+    # Set to true to prevent users from modifying a protection they own of a certain type (or any protection).
+    # ONLY lwc admins will be able to modify the protection
+    readonly-modify: false
+
+    # Set to true to prevent users from removing a protection they own of a certain type (or any protection).
+    # ONLY lwc admins will be able to modify the protection
+    readonly-remove: false
+
     # Current and custom protections are defined here by their block name or id
     # If you use the Id, you MUST encase it in quotes, for example (chest):
     # '54':
