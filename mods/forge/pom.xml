@@ -39,7 +39,7 @@
 
     <properties>
         <!-- Supported Minecraft version -->
-        <minecraft.version>1.4.7</minecraft.version>
+        <minecraft.version>1.5.0</minecraft.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

@@ -94,7 +94,7 @@ public class ForgePlayer extends Player {
      * @return
      */
     private boolean noPermissionPlugin(String node) {
-        if (node.equals("lwc.protect")) {
+        if (!node.startsWith("lwc.mod") && !node.startsWith("lwc.admin")) {
             return true;
         } else if (node.startsWith("lwc.admin")) {
             return isOP();

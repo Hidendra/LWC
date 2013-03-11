@@ -84,7 +84,7 @@ public class ItemInWorldManagerTransformer implements IClassTransformer
         mcpStrings.put("entityPlayerMPJavaClassName", "net/minecraft/entity/player/EntityPlayerMP");
     }
 
-    public byte[] transform(String name, byte[] bytes)
+    public byte[] transform(String name, String s2, byte[] bytes)
     {
         // // System.out.println("transforming: "+name);
         if (name.equals(obfStrings.get("className")))

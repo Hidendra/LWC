@@ -114,7 +114,8 @@ public class ForgeBlock extends Block {
      */
     @Override
     public void setType(int type) {
-        world.getHandle().setBlock(x, y, z, type);
+        throw new UnsupportedOperationException("block.setType() is unsupported");
+        // world.getHandle().setBlock(x, y, z, type);
     }
 
     /**
@@ -122,7 +123,8 @@ public class ForgeBlock extends Block {
      */
     @Override
     public void setData(byte data) {
-        world.getHandle().setBlockMetadata(x, y, z, data);
+        throw new UnsupportedOperationException("block.setData() is unsupported");
+        // world.getHandle().setBlockMetadata(x, y, z, data);
     }
 
 }
