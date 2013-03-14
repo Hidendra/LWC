@@ -55,6 +55,11 @@ public class LimitsV2 extends JavaModule {
     public final static int UNLIMITED = Integer.MAX_VALUE;
 
     /**
+     * If the limits module is enabled
+     */
+    private boolean enabled = true;
+
+    /**
      * The limits configuration
      */
     private final Configuration configuration = Configuration.load("limitsv2.yml");
@@ -177,17 +182,23 @@ public class LimitsV2 extends JavaModule {
     }
     
     public LimitsV2() {
-        loadLimits();
+        enabled = LWC.getInstance().getConfiguration().getBoolean("optional.useProtectionLimits", true);
+
+        if (enabled) {
+            loadLimits();
+        }
     }
 
     @Override
     public void onReload(LWCReloadEvent event) {
-        reload();
+        if (enabled) {
+            reload();
+        }
     }
 
     @Override
     public void onRegisterProtection(LWCProtectionRegisterEvent event) {
-        if (event.isCancelled()) {
+        if (!enabled || event.isCancelled()) {
             return;
         }
 
@@ -203,7 +214,7 @@ public class LimitsV2 extends JavaModule {
 
     @Override
     public void onCommand(LWCCommandEvent event) {
-        if (event.isCancelled()) {
+        if (!enabled || event.isCancelled()) {
             return;
         }
 
