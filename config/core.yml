@@ -68,6 +68,9 @@ optional:
     blacklistedPlayers:
     - plr
 
+    # If protections limits will be enabled (defaults to unlimited protections)
+    useProtectionLimits: true
+
 # Database information for LWC
 database:
 

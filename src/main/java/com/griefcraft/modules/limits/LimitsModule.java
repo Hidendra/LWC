@@ -89,6 +89,15 @@ public class LimitsModule extends JavaModule {
     private int UNLIMITED = Integer.MAX_VALUE;
 
     /**
+     * If protection limits are enabled
+     */
+    private boolean enabled = true;
+
+    public LimitsModule() {
+        enabled = LWC.getInstance().getConfiguration().getBoolean("optional.useProtectionLimits", true);
+    }
+
+    /**
      * Set a config value in the configuration
      *
      * @param path
@@ -375,7 +384,7 @@ public class LimitsModule extends JavaModule {
 
     @Override
     public void onRegisterProtection(LWCProtectionRegisterEvent event) {
-        if (event.isCancelled()) {
+        if (!enabled || event.isCancelled()) {
             return;
         }
 
