@@ -39,6 +39,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -72,6 +73,26 @@ public class LimitsV2 extends JavaModule {
      * A map of all of the group limits - downcasted to lowercase to simplify comparisons
      */
     private final Map<String, List<Limit>> groupLimits = new HashMap<String, List<Limit>>();
+
+    /**
+     * A map mapping string representations of materials to their Material counterpart
+     */
+    private final Map<String, Material> materialCache = new HashMap<String, Material>();
+
+    {
+        for (Material material : Material.values()) {
+            String materialName = LWC.normalizeMaterialName(material);
+
+            // add the name & the block id
+            materialCache.put(materialName, material);
+            materialCache.put(material.getId() + "", material);
+            materialCache.put(materialName, material);
+
+            if (!materialName.equals(material.toString().toLowerCase())) {
+                materialCache.put(material.toString().toLowerCase(), material);
+            }
+        }
+    }
 
     public abstract class Limit {
 
@@ -314,6 +335,57 @@ public class LimitsV2 extends JavaModule {
     }
 
     /**
+     * Find limits that are attached to the player via permissions (e.g lwc.protect.*.10 = 10 of any protection)
+     *
+     * @param player
+     * @return
+     */
+    private List<Limit> findLimitsViaPermissions(Player player) {
+        List<Limit> limits = new LinkedList<Limit>();
+
+        for (PermissionAttachmentInfo pai : player.getEffectivePermissions()) {
+            String permission = pai.getPermission();
+            boolean value = pai.getValue();
+
+            if (!value || !permission.startsWith("lwc.protect.")) {
+                continue;
+            }
+
+            String[] split = permission.substring("lwc.protect.".length()).split(".");
+
+            if (split.length != 2) {
+                continue;
+            }
+
+            String matchName = split[0];
+            String strCount = split[1];
+
+            int count;
+            try {
+                count = Integer.parseInt(strCount);
+            } catch (NumberFormatException e) {
+                continue;
+            }
+
+            if (matchName.equals("*")) {
+                limits.add(new DefaultLimit(count));
+            } else if (matchName.equals("sign")) {
+                limits.add(new SignLimit(count));
+            } else {
+                Material material = materialCache.get(matchName);
+
+                if (material == null) {
+                    continue;
+                }
+
+                limits.add(new BlockLimit(material, count));
+            }
+        }
+
+        return limits;
+    }
+
+    /**
      * Gets the list of limits that may apply to the player.
      * For group limits, it uses the highest one found.
      *
@@ -328,6 +400,20 @@ public class LimitsV2 extends JavaModule {
         String playerName = player.getName().toLowerCase();
         if (playerLimits.containsKey(playerName)) {
             limits.addAll(playerLimits.get(playerName));
+        }
+
+        for (Limit limit : findLimitsViaPermissions(player)) {
+            Limit matched = findLimit(limits, limit);
+
+            if (matched != null) {
+                // Is our limit better?
+                if (limit.getLimit() > matched.getLimit()) {
+                    limits.remove(matched);
+                    limits.add(limit);
+                }
+            } else {
+                limits.add(limit);
+            }
         }
 
         // Look over the group limits

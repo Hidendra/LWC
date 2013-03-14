@@ -236,7 +236,7 @@ public class LWC {
      */
     public static String materialToString(Material material) {
         if (material != null) {
-            String materialName = normalizeName(material);
+            String materialName = normalizeMaterialName(material);
 
             // attempt to match the locale
             String locale = LWC.getInstance().getPlugin().getMessageParser().parseMessage(materialName.toLowerCase());
@@ -261,7 +261,7 @@ public class LWC {
      * @param material
      * @return
      */
-    private static String normalizeName(Material material) {
+    public static String normalizeMaterialName(Material material) {
         String name = StringUtils.replace(material.toString().toLowerCase(), "block", "");
 
         // some name normalizations
@@ -1322,7 +1322,7 @@ public class LWC {
         
         List<String> names = new ArrayList<String>();
 
-        String materialName = normalizeName(material);
+        String materialName = normalizeMaterialName(material);
 
         // add the name & the block id
         names.add(materialName);
