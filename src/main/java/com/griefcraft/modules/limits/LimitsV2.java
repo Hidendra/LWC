@@ -180,7 +180,7 @@ public class LimitsV2 extends JavaModule {
         }
 
     }
-    
+
     public LimitsV2() {
         enabled = LWC.getInstance().getConfiguration().getBoolean("optional.useProtectionLimits", true);
 
