@@ -311,7 +311,13 @@ public class LWCPlayerListener implements Listener {
         }
 
         // The item they are taking/swapping with
-        ItemStack item = event.getCurrentItem();
+        ItemStack item;
+
+        try {
+            item = event.getCurrentItem();
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return;
+        }
 
         // Item their cursor has
         ItemStack cursor = event.getCursor();
