@@ -76,7 +76,11 @@ public class LWCMCPCSupport extends JavaModule implements Listener {
                 data = Integer.parseInt(idParts[1].trim());
             }
 
-            blacklistedBlocks.add(hashCode(id, data));
+            if (data == 0) {
+                blacklistedBlocks.add(id);
+            } else {
+                blacklistedBlocks.add(hashCode(id, data));
+            }
         }
     }
 
@@ -110,7 +114,7 @@ public class LWCMCPCSupport extends JavaModule implements Listener {
         Block block = event.getBlock();
 
         // check if the block is blacklisted
-        boolean blockIsBlacklisted = blacklistedBlocks.contains(hashCode(block.getTypeId(), block.getData()));
+        boolean blockIsBlacklisted = blacklistedBlocks.contains(block.getTypeId()) || blacklistedBlocks.contains(hashCode(block.getTypeId(), block.getData()));
 
         if (blockIsBlacklisted) {
             // it's blacklisted, check for a protected chest
