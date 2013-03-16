@@ -1339,10 +1339,6 @@ public class LWC {
             names.add(material.toString().toLowerCase());
         }
 
-        if (material == Material.TRAPPED_CHEST) {
-            names.add("chest");
-        }
-
         // Add the wildcards last so it can be overriden
         names.add("*");
         names.add(material.getId() + ":*");
