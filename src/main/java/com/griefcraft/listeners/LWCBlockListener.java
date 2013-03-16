@@ -37,6 +37,7 @@ import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
 import com.griefcraft.scripting.event.LWCRedstoneEvent;
 import com.griefcraft.util.Colors;
+import com.griefcraft.util.matchers.DoubleChestMatcher;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -184,7 +185,7 @@ public class LWCBlockListener implements Listener {
         // when destroying a chest, it's possible they are also destroying a double chest
         // in the event they're trying to destroy a double chest, we should just move
         // the protection to the chest that is not destroyed, if it is not that one already.
-        if (canAdmin && block.getType() == Material.CHEST) {
+        if (canAdmin && DoubleChestMatcher.PROTECTABLES_CHESTS.contains(block.getType())) {
             Block doubleChest = lwc.findAdjacentDoubleChest(block);
 
             if (doubleChest != null) {
@@ -380,14 +381,14 @@ public class LWCBlockListener implements Listener {
         }
 
         // If it's a chest, make sure they aren't placing it beside an already registered chest
-        if (block.getType() == Material.CHEST) {
+        if (DoubleChestMatcher.PROTECTABLES_CHESTS.contains(block.getType())) {
             BlockFace[] faces = new BlockFace[]{BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
 
             for (BlockFace blockFace : faces) {
                 Block face = block.getRelative(blockFace);
 
                 //They're placing it beside a chest, check if it's already protected
-                if (face.getType() == Material.CHEST) {
+                if (face.getType() == block.getType()) {
                     if (lwc.findProtection(face) != null) {
                         return;
                     }

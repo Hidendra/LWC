@@ -44,7 +44,7 @@ public class DoubleChestMatcher implements ProtectionFinder.Matcher {
     /**
      * Blocks that act like double chests
      */
-    public static final Set<Material> PROTECTABLES_CHESTS = EnumSet.of(Material.CHEST);
+    public static final Set<Material> PROTECTABLES_CHESTS = EnumSet.of(Material.CHEST, Material.TRAPPED_CHEST);
 
     /**
      * Possible faces around the base block that protections could be at
@@ -63,7 +63,7 @@ public class DoubleChestMatcher implements ProtectionFinder.Matcher {
             Block relative = block.getRelative(face);
 
             // we only want chests
-            if (PROTECTABLES_CHESTS.contains(relative.getType())) {
+            if (block.getType() == relative.getType()) {
                 finder.addBlock(relative);
                 return true;
             }

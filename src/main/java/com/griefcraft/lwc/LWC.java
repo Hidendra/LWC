@@ -111,6 +111,7 @@ import com.griefcraft.util.Statistics;
 import com.griefcraft.util.StringUtil;
 import com.griefcraft.util.config.Configuration;
 import com.griefcraft.util.locale.LocaleUtil;
+import com.griefcraft.util.matchers.DoubleChestMatcher;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -323,13 +324,17 @@ public class LWC {
     }
 
     /**
-     * Look for a double chest adjacent to a block
+     * Look for a double chest adjacent to a chest
      *
      * @param block
      * @return
      */
     public Block findAdjacentDoubleChest(Block block) {
-        return findAdjacentBlock(block, Material.CHEST);
+        if (block.getType() != Material.CHEST && block.getType() != Material.TRAPPED_CHEST) {
+            throw new UnsupportedOperationException("findAdjacentDoubleChest() cannot be called on a: " + block.getType());
+        }
+
+        return findAdjacentBlock(block, block.getType());
     }
 
     /**
@@ -448,8 +453,8 @@ public class LWC {
             Block doubleChestBlock = null;
             InventoryHolder holder = (InventoryHolder) blockState;
 
-            if (block.getType() == Material.CHEST) {
-                doubleChestBlock = findAdjacentBlock(block, Material.CHEST);
+            if (DoubleChestMatcher.PROTECTABLES_CHESTS.contains(block.getType())) {
+                doubleChestBlock = findAdjacentDoubleChest(block);
             } else if (block.getType() == Material.FURNACE || block.getType() == Material.BURNING_FURNACE) {
                 Inventory inventory = holder.getInventory();
 
@@ -1081,8 +1086,8 @@ public class LWC {
             }
 
             // possibility of a double chest
-            if (block.getType() == Material.CHEST) {
-                Block doubleChest = findAdjacentBlock(block, Material.CHEST);
+            if (DoubleChestMatcher.PROTECTABLES_CHESTS.contains(block.getType())) {
+                Block doubleChest = findAdjacentDoubleChest(block);
 
                 if (doubleChest != null) {
                     removeInventory(doubleChest);
