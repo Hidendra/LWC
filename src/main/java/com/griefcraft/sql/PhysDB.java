@@ -38,6 +38,7 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.scripting.Module;
 import com.griefcraft.util.config.Configuration;
+import com.griefcraft.util.config.ConfigurationNode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
@@ -458,6 +459,32 @@ public class PhysDB extends Database {
                 lwc.log("Added Hoppers to Blacklisted Blocks in core.yml (optional.blacklistedBlocks)");
                 lwc.log("This means that Hoppers CANNOT be placed around protections a player does not have access to");
                 lwc.log("If you DO NOT want this feature, simply remove " + Material.HOPPER.getId() + " (Hoppers) from blacklistedBlocks :-)");
+            }
+
+            incrementDatabaseVersion();
+        }
+
+        if (databaseVersion == 5) {
+            ConfigurationNode blocks = lwc.getConfiguration().getNode("protections.blocks");
+
+            boolean foundTrappedChest = false;
+
+            for (String key : blocks.getKeys(null)) {
+                if (key.equalsIgnoreCase("trapped_chest") || key.equals(Integer.toString(Material.TRAPPED_CHEST.getId()))) {
+                    foundTrappedChest = true;
+                    break;
+                }
+            }
+
+            if (!foundTrappedChest) {
+                lwc.getConfiguration().setProperty("protections.blocks.trapped_chest.enabled", true);
+                lwc.getConfiguration().setProperty("protections.blocks.trapped_chest.autoRegister", "private");
+                lwc.getConfiguration().save();
+                Configuration.reload();
+
+                lwc.log("Added Trapped Chests to core.yml as default protectable (ENABLED & AUTO REGISTERED)");
+                lwc.log("Trapped chests are nearly the same as reg chests but can light up! They can also be double chests.");
+                lwc.log("If you DO NOT want this as protected, simply remove it from core.yml! (search/look for trapped_chests under protections -> blocks");
             }
 
             incrementDatabaseVersion();
