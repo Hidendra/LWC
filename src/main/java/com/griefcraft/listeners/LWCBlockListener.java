@@ -54,7 +54,10 @@ import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.PistonBaseMaterial;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class LWCBlockListener implements Listener {
 
@@ -63,8 +66,14 @@ public class LWCBlockListener implements Listener {
      */
     private LWCPlugin plugin;
 
+    /**
+     * A set of blacklisted blocks
+     */
+    private final Set<Integer> blacklistedBlocks = new HashSet<Integer>();
+
     public LWCBlockListener(LWCPlugin plugin) {
         this.plugin = plugin;
+        loadAndProcessConfig();
     }
 
     @EventHandler
@@ -320,6 +329,22 @@ public class LWCBlockListener implements Listener {
             return;
         }
 
+        // check if the block is blacklisted
+        boolean blockIsBlacklisted = blacklistedBlocks.contains(block.getTypeId()) || blacklistedBlocks.contains(hashCode(block.getTypeId(), block.getData()));
+
+        if (blockIsBlacklisted) {
+            // it's blacklisted, check for a protected chest
+            for (Protection protection : lwc.findAdjacentProtectionsOnAllSides(block)) {
+                if (protection != null) {
+                    if (!lwc.canAccessProtection(player, protection)) {
+                        // they can't access the protection ..
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+        }
+
         // Update the cache if a protection is matched here
         Protection current = lwc.findProtection(block);
         if (current != null && current.getProtectionFinder() != null) {
@@ -393,6 +418,43 @@ public class LWCBlockListener implements Listener {
             lwc.sendLocale(player, "protection.internalerror", "id", "PLAYER_INTERACT");
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Load and process the configuration
+     */
+    public void loadAndProcessConfig() {
+        List<String> ids = LWC.getInstance().getConfiguration().getStringList("optional.blacklistedBlocks", new ArrayList<String>());
+
+        for (String sId : ids) {
+            String[] idParts = sId.trim().split(":");
+
+            int id = Integer.parseInt(idParts[0].trim());
+            int data = 0;
+
+            if (idParts.length > 1) {
+                data = Integer.parseInt(idParts[1].trim());
+            }
+
+            if (data == 0) {
+                blacklistedBlocks.add(id);
+            } else {
+                blacklistedBlocks.add(hashCode(id, data));
+            }
+        }
+    }
+
+    /**
+     * Get the hashcode of two integers
+     *
+     * @param int1
+     * @param int2
+     * @return
+     */
+    private int hashCode(int int1, int int2) {
+        int hash = int1 * 17;
+        hash *= 37 + int2;
+        return hash;
     }
 
 }
