@@ -299,10 +299,6 @@ public class LWCPlugin extends JavaPlugin {
      */
     private void preload() {
         updater = new Updater();
-        playerListener = new LWCPlayerListener(this);
-        blockListener = new LWCBlockListener(this);
-        entityListener = new LWCEntityListener(this);
-        serverListener = new LWCServerListener(this);
 
         // Set the SQLite native library path
         System.setProperty("org.sqlite.lib.path", updater.getOSSpecificFolder());
@@ -322,10 +318,10 @@ public class LWCPlugin extends JavaPlugin {
      */
     private void registerEvents() {
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
-        pluginManager.registerEvents(playerListener, this);
-        pluginManager.registerEvents(entityListener, this);
-        pluginManager.registerEvents(blockListener, this);
-        pluginManager.registerEvents(serverListener, this);
+        pluginManager.registerEvents(playerListener = new LWCPlayerListener(this), this);
+        pluginManager.registerEvents(entityListener = new LWCEntityListener(this), this);
+        pluginManager.registerEvents(blockListener = new LWCBlockListener(this), this);
+        pluginManager.registerEvents(serverListener = new LWCServerListener(this), this);
     }
 
     /**
