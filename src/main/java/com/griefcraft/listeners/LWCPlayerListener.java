@@ -281,7 +281,17 @@ public class LWCPlayerListener implements Listener {
 
         // Location of the container
         Location location;
-        InventoryHolder holder = event.getInventory().getHolder();
+        InventoryHolder holder = null;
+
+        try {
+            holder = event.getInventory().getHolder();
+        } catch (AbstractMethodError e) {
+            lwc.log("Caught issue with Bukkit's Inventory.getHolder() method! This is occuring NEAR the player: " + player.getName());
+            lwc.log("This player is located at: " + player.getLocation().toString());
+            lwc.log("This should be reported to the Bukkit developers.");
+            e.printStackTrace();
+            return;
+        }
 
         try {
             if (holder instanceof BlockState) {
