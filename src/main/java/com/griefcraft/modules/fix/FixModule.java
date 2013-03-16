@@ -34,6 +34,7 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
+import com.griefcraft.util.matchers.DoubleChestMatcher;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -60,7 +61,7 @@ public class FixModule extends JavaModule {
         }
 
         // Should we fix orientation?
-        if (block.getType() == Material.CHEST || block.getType() == Material.FURNACE || block.getType() == Material.DISPENSER) {
+        if (DoubleChestMatcher.PROTECTABLES_CHESTS.contains(block.getType()) || block.getType() == Material.FURNACE || block.getType() == Material.DISPENSER) {
             lwc.adjustChestDirection(block, event.getEvent().getBlockFace());
             lwc.sendLocale(player, "lwc.fix.fixed", "block", block.getType().toString().toLowerCase());
             player.removeAction(player.getAction("fix"));
