@@ -195,13 +195,14 @@ public class LWCPlugin extends JavaPlugin {
 
         loadLocales();
         loadDatabase();
+
+        // Load the rest of LWC
+        lwc.load();
+
         try {
             registerEvents();
         } catch (NoSuchFieldError e) {
         }
-
-        // Load the rest of LWC
-        lwc.load();
     }
 
     /**

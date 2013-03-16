@@ -37,6 +37,8 @@ import com.griefcraft.model.Permission;
 import com.griefcraft.model.Protection;
 import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.scripting.Module;
+import com.griefcraft.util.config.Configuration;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -400,6 +402,7 @@ public class PhysDB extends Database {
      * Perform any database updates
      */
     public void performDatabaseUpdates() {
+        LWC lwc = LWC.getInstance();
 
         // Indexes
         if (databaseVersion == 0) {
@@ -440,6 +443,23 @@ public class PhysDB extends Database {
         
         if (databaseVersion == 3) {
             createIndex("protections", "protections_type", "type");
+            incrementDatabaseVersion();
+        }
+
+        if (databaseVersion == 4) {
+            List<String> blacklistedBlocks = lwc.getConfiguration().getStringList("optional.blacklistedBlocks", new ArrayList<String>());
+
+            if (!blacklistedBlocks.contains("154")) {
+                blacklistedBlocks.add(Integer.toString(Material.HOPPER.getId()));
+                lwc.getConfiguration().setProperty("optional.blacklistedBlocks", blacklistedBlocks);
+                lwc.getConfiguration().save();
+                Configuration.reload();
+
+                lwc.log("Added Hoppers to Blacklisted Blocks in core.yml (optional.blacklistedBlocks)");
+                lwc.log("This means that Hoppers CANNOT be placed around protections a player does not have access to");
+                lwc.log("If you DO NOT want this feature, simply remove " + Material.HOPPER.getId() + " (Hoppers) from blacklistedBlocks :-)");
+            }
+
             incrementDatabaseVersion();
         }
 
