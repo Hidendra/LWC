@@ -41,7 +41,7 @@ public class ConfigurationNode {
      */
     protected final Map<String, Object> cache = new HashMap<String, Object>();
 
-    public ConfigurationNode(Map<String, Object> root) {
+    ConfigurationNode(Map<String, Object> root) {
         this.root = root;
     }
 
