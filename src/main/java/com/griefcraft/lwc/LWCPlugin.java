@@ -63,26 +63,6 @@ public class LWCPlugin extends JavaPlugin {
     private LWC lwc;
 
     /**
-     * The block listener
-     */
-    private LWCBlockListener blockListener;
-
-    /**
-     * The entity listener
-     */
-    private LWCEntityListener entityListener;
-
-    /**
-     * The player listener
-     */
-    private LWCPlayerListener playerListener;
-
-    /**
-     * The server listener
-     */
-    private LWCServerListener serverListener;
-
-    /**
      * The message parser to parse messages with
      */
     private MessageParser messageParser;
@@ -318,10 +298,10 @@ public class LWCPlugin extends JavaPlugin {
      */
     private void registerEvents() {
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
-        pluginManager.registerEvents(playerListener = new LWCPlayerListener(this), this);
-        pluginManager.registerEvents(entityListener = new LWCEntityListener(this), this);
-        pluginManager.registerEvents(blockListener = new LWCBlockListener(this), this);
-        pluginManager.registerEvents(serverListener = new LWCServerListener(this), this);
+        pluginManager.registerEvents(new LWCPlayerListener(this), this);
+        pluginManager.registerEvents(new LWCEntityListener(this), this);
+        pluginManager.registerEvents(new LWCBlockListener(this), this);
+        pluginManager.registerEvents(new LWCServerListener(this), this);
     }
 
     /**
