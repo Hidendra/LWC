@@ -275,7 +275,7 @@ public class LWCPlayerListener implements Listener {
         // The inventory they are using
         Inventory inventory = event.getInventory();
 
-        if (inventory == null) {
+        if (inventory == null || event.getSlot() < 0) {
             return;
         }
 
