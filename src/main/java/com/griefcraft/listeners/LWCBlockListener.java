@@ -324,11 +324,6 @@ public class LWCBlockListener implements Listener {
         Player player = event.getPlayer();
         Block block = event.getBlockPlaced();
 
-        // The placable block must be protectable
-        if (!lwc.isProtectable(block)) {
-            return;
-        }
-
         // check if the block is blacklisted
         boolean blockIsBlacklisted = blacklistedBlocks.contains(block.getTypeId()) || blacklistedBlocks.contains(hashCode(block.getTypeId(), block.getData()));
 
@@ -343,6 +338,11 @@ public class LWCBlockListener implements Listener {
                     }
                 }
             }
+        }
+
+        // The placable block must be protectable
+        if (!lwc.isProtectable(block)) {
+            return;
         }
 
         // Update the cache if a protection is matched here
