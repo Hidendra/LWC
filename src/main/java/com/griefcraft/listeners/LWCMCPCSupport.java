@@ -118,12 +118,12 @@ public class LWCMCPCSupport extends JavaModule implements Listener {
 
         if (blockIsBlacklisted) {
             // it's blacklisted, check for a protected chest
-            Protection protection = lwc.findAdjacentProtectionOnAllSides(block);
-
-            if (protection != null) {
-                if (!lwc.canAccessProtection(player, protection)) {
-                    // they can't access the protection ..
-                    event.setCancelled(true);
+            for (Protection protection : lwc.findAdjacentProtectionsOnAllSides(block)) {
+                if (protection != null) {
+                    if (!lwc.canAccessProtection(player, protection)) {
+                        // they can't access the protection ..
+                        event.setCancelled(true);
+                    }
                 }
             }
         }
