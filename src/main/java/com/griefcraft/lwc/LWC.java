@@ -548,20 +548,21 @@ public class LWC {
      * @param ignore
      * @return
      */
-    public Protection findAdjacentProtectionOnAllSides(Block block, Block... ignore) {
+    public List<Protection> findAdjacentProtectionsOnAllSides(Block block, Block... ignore) {
         BlockFace[] faces = new BlockFace[]{BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN};
         List<Block> ignoreList = Arrays.asList(ignore);
+        List<Protection> found = new ArrayList<Protection>();
 
         for (BlockFace face : faces) {
             Protection protection;
             Block adjacentBlock = block.getRelative(face);
 
             if (!ignoreList.contains(adjacentBlock) && (protection = findProtection(adjacentBlock)) != null) {
-                return protection;
+                found.add(protection);
             }
         }
 
-        return null;
+        return found;
     }
 
     /**
