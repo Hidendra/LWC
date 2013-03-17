@@ -32,7 +32,7 @@ package org.getlwc;
 public class ForgeServerInfo implements ServerInfo {
 
     public String getServerVersion() {
-        return "1.4.7";
+        return "1.5.0";
     }
 
 }
