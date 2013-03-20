@@ -154,7 +154,7 @@ public class DatabaseThread implements Runnable {
         // update the time we last flushed at
         lastFlush = System.currentTimeMillis();
 
-        if (System.currentTimeMillis() > nextKeepalivePacket) {
+        if (System.currentTimeMillis() > nextKeepalivePacket && lwc.getPhysicalDatabase().isConnected()) {
             nextKeepalivePacket = System.currentTimeMillis() + (pingInterval * 1000);
             lwc.getPhysicalDatabase().pingDatabase();
         }
