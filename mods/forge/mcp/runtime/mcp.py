@@ -139,7 +139,7 @@ def updatemd5_side(commands, side):
     return False
 
 
-def reobfuscate_side(commands, side, reobf_all=False):
+def reobfuscate_side(commands, side, reobf_all=False, srg_names=False):
     if not commands.checkmd5s(side):
         commands.logger.warning('!! Can not find %s md5s !!', SIDE_NAME[side])
         return False
@@ -157,7 +157,7 @@ def reobfuscate_side(commands, side, reobf_all=False):
     commands.logger.info('> Reobfuscating jar')
     commands.applyrg(side, True)
     commands.logger.info('> Extracting modified classes')
-    commands.unpackreobfclasses(side, reobf_all)
+    commands.unpackreobfclasses(side, reobf_all, srg_names=srg_names)
     commands.logger.info('- Done in %.2f seconds', time.time() - starttime)
     return True
 

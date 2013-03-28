@@ -4,7 +4,8 @@ echo " >>> Extracting Forge over bin"
 unzip -qo lib/forge-full.jar -d bin/minecraft/
 
 echo " >>> Reobfuscating"
-sh reobfuscate.sh
+# sh reobfuscate.sh --srgnames
+python runtime/reobfuscate.py --srgnames
 
 echo " >>> Proceeding to final phase"
 
@@ -16,5 +17,5 @@ echo "Matched distribution jar file: \"$LWC_JAR\""
 
 echo " >>> Updating jar file"
 
-jar uf "$LWC_RELATIVE_JAR" org
+jar uf "$LWC_RELATIVE_JAR" ./
 cd ../../

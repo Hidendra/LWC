@@ -21,6 +21,19 @@ _CONSTANTS = [
     (
         {
             'GL11': [
+                'glClear',
+            ],
+        },
+        {
+            'GL11': {
+                256: 'GL_DEPTH_BUFFER_BIT',
+                16640: 'GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT',
+            },
+        }
+    ),
+    (
+        {
+            'GL11': [
                 'glBegin',
                 'glDrawArrays',
                 'glDrawElements',
