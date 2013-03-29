@@ -134,6 +134,9 @@ public class LWCPlugin extends JavaPlugin {
             } else if (commandName.equals("callowexplosions") || commandName.equals("ctnt")) {
                 aliasCommand = "flag";
                 aliasArgs = ("allowexplosions " + argString).split(" ");
+            } else if (commandName.equals("chopper")) {
+                aliasCommand = "flag";
+                aliasArgs = ("hopper " + argString).split(" ");
             }
 
             // Mode aliases
