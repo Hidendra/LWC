@@ -112,6 +112,10 @@ protections:
     # BLOCK redstone to the protection
     denyRedstone: false
 
+    # If true, hoppers will by blocked by DEFAULT and /chopper on will enable hopper use on them
+    # If false, hoppers will be enabled by DEFAULT and /chopper on will disable hopper use on them
+    denyHoppers: true
+
     # Settable to private, public, or off. It defines what protections are registered as when you place them on
     # the ground
     autoRegister: off

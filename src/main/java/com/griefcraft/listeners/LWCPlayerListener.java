@@ -30,6 +30,7 @@ package com.griefcraft.listeners;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
+import com.griefcraft.model.Flag;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.Module;
@@ -48,6 +49,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -74,6 +76,54 @@ public class LWCPlayerListener implements Listener {
 
     public LWCPlayerListener(LWCPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onItemMove(InventoryMoveItemEvent event) {
+        LWC lwc = LWC.getInstance();
+
+        // The inventory they are using
+        Inventory inventory = event.getSource();
+
+        if (inventory == null) {
+            return;
+        }
+
+        // Location of the container
+        Location location;
+        InventoryHolder holder;
+
+        try {
+            holder = inventory.getHolder();
+        } catch (AbstractMethodError e) {
+            return;
+        }
+
+        try {
+            if (holder instanceof BlockState) {
+                location = ((BlockState) holder).getLocation();
+            } else if (holder instanceof DoubleChest) {
+                location = ((DoubleChest) holder).getLocation();
+            } else {
+                return;
+            }
+        } catch (Exception e) {
+            return;
+        }
+
+        // Attempt to load the protection at that location
+        Protection protection = lwc.findProtection(location.getBlock());
+
+        // If no protection was found we can safely ignore it
+        if (protection == null) {
+            return;
+        }
+
+        boolean denyHoppers = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock().getType(), "denyHoppers"));
+
+        if ((denyHoppers && !protection.hasFlag(Flag.Type.HOPPER)) || (!denyHoppers && protection.hasFlag(Flag.Type.HOPPER))) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH)

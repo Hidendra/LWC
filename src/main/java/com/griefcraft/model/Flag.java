@@ -63,7 +63,12 @@ public class Flag {
         /**
          * Allows explosions to blow a protection up
          */
-        ALLOWEXPLOSIONS;
+        ALLOWEXPLOSIONS,
+
+        /**
+         * Controls whether or not hoppers can be used on a protection
+         */
+        HOPPER;
 
         Type() {
             this(false);

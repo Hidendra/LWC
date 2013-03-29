@@ -52,6 +52,9 @@ commands:
   credstone:
     description: Enable or disable redstone on a protection
     usage: /<command> <on|off>
+  chopper:
+    description: Enable or disable hoppers on a protection
+    usage: /<command> <on|off>
   cmagnet:
     description: Enable or disable the magnet flag on an inventory protection, which makes it pick up items automatically around it.
     usage: /<command> <on|off>
