@@ -79,14 +79,22 @@ public class LWCPlayerListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onItemMove(InventoryMoveItemEvent event) {
+    public void onMoveItem(InventoryMoveItemEvent event) {
+        if (handleMoveItem(event.getSource()) || handleMoveItem(event.getDestination())) {
+            event.setCancelled(true);
+        }
+    }
+
+    /**
+     * Handle the item move even
+     *
+     * @param inventory
+     */
+    private boolean handleMoveItem(Inventory inventory) {
         LWC lwc = LWC.getInstance();
 
-        // The inventory they are using
-        Inventory inventory = event.getSource();
-
         if (inventory == null) {
-            return;
+            return false;
         }
 
         // Location of the container
@@ -96,7 +104,7 @@ public class LWCPlayerListener implements Listener {
         try {
             holder = inventory.getHolder();
         } catch (AbstractMethodError e) {
-            return;
+            return false;
         }
 
         try {
@@ -105,10 +113,10 @@ public class LWCPlayerListener implements Listener {
             } else if (holder instanceof DoubleChest) {
                 location = ((DoubleChest) holder).getLocation();
             } else {
-                return;
+                return false;
             }
         } catch (Exception e) {
-            return;
+            return false;
         }
 
         // Attempt to load the protection at that location
@@ -116,14 +124,16 @@ public class LWCPlayerListener implements Listener {
 
         // If no protection was found we can safely ignore it
         if (protection == null) {
-            return;
+            return false;
         }
 
         boolean denyHoppers = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock().getType(), "denyHoppers"));
 
         if ((denyHoppers && !protection.hasFlag(Flag.Type.HOPPER)) || (!denyHoppers && protection.hasFlag(Flag.Type.HOPPER))) {
-            event.setCancelled(true);
+            return true;
         }
+
+        return false;
     }
 
     @EventHandler(priority = EventPriority.HIGH)
