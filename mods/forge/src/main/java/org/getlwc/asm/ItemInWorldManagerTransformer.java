@@ -55,15 +55,15 @@ public class ItemInWorldManagerTransformer implements IClassTransformer
         /* thisPlayerMP */
         obfStrings.put("entityPlayerFieldName", "b");
         /* net/minecraft/src/World */
-        obfStrings.put("worldJavaClassName", "zv");
+        obfStrings.put("worldJavaClassName", "aab");
         /* net/minecraft/src/World.getBlockMetadata() */
         obfStrings.put("getBlockMetadataMethodName", "h");
         /* net/minecraft/src/Block */
-        obfStrings.put("blockJavaClassName", "aou");
+        obfStrings.put("blockJavaClassName", "apa");
         /* net/minecraft/src/Block.blocksList[] */
         obfStrings.put("blocksListFieldName", "r");
         /* net/minecraft/src/EntityPlayer */
-        obfStrings.put("entityPlayerJavaClassName", "sk");
+        obfStrings.put("entityPlayerJavaClassName", "sq");
         /* net/minecraft/src/EntityPlayerMP */
         obfStrings.put("entityPlayerMPJavaClassName", "jc");
         
