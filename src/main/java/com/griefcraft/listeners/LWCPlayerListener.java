@@ -396,6 +396,12 @@ public class LWCPlayerListener implements Listener {
             return;
         }
 
+        // if it's not a right click or a shift click it should be a left click (no shift)
+        // this is for when players are INSERTing items (i.e. item in hand and left clicking)
+        if (player.getItemInHand() == null && (!event.isRightClick() && !event.isShiftClick())) {
+            return;
+        }
+
         // Are they inserting a stack?
         if (cursor != null && item.getType() == cursor.getType()) {
             boolean enchantmentsEqual = areEnchantmentsEqual(item, cursor);
@@ -450,7 +456,14 @@ public class LWCPlayerListener implements Listener {
         }
 
         for (Enchantment enchantment : enchantments1.keySet()) {
-            if (!enchantments2.containsKey(enchantment) || enchantments1.get(enchantment) != enchantments2.get(enchantment)) {
+            if (!enchantments2.containsKey(enchantment)) {
+                return false;
+            }
+
+            int level1 = enchantments1.get(enchantment);
+            int level2 = enchantments2.get(enchantment);
+
+            if (level1 != level2) {
                 return false;
             }
         }
