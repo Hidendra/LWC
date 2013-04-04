@@ -1418,7 +1418,10 @@ public class LWC {
 
         log("Connecting to " + Database.DefaultType);
         try {
-            physicalDatabase.connect();
+            if (!physicalDatabase.connect()) {
+                Bukkit.getPluginManager().disablePlugin(plugin);
+                return;
+            }
             physicalDatabase.load();
         } catch (Exception e) {
             e.printStackTrace();
