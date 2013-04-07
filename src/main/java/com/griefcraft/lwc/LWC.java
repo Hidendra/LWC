@@ -1004,7 +1004,7 @@ public class LWC {
                 // Remove it from the cache if it's in there
                 Protection cached = protectionCache.getProtection(protection.getCacheKey());
                 if (cached != null) {
-                    protectionCache.remove(cached);
+                    cached.removeCache();
                 }
 
                 completed++;
