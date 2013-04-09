@@ -375,7 +375,7 @@ public class LWCPlayerListener implements Listener {
         // backwards compatibility
         try {
             doubleClick = event.isDoubleClick();
-        } catch (Exception e) { } // OK, just old build
+        } catch (Throwable e) { } // OK, just old build
 
         if (!doubleClick) {
             // If it's not a container, we don't want it
