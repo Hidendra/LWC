@@ -370,47 +370,56 @@ public class LWCPlayerListener implements Listener {
             return;
         }
 
-        // If it's not a container, we don't want it
-        if (event.getSlotType() != InventoryType.SlotType.CONTAINER) {
-            return;
-        }
+        boolean doubleClick = false;
 
-        // Nifty trick: these will different IFF they are interacting with the player's inventory or hotbar instead of the block's inventory
-        if (event.getSlot() != event.getRawSlot()) {
-            return;
-        }
-
-        // The item they are taking/swapping with
-        ItemStack item;
-
+        // backwards compatibility
         try {
-            item = event.getCurrentItem();
-        } catch (ArrayIndexOutOfBoundsException e) {
-            return;
-        }
+            doubleClick = event.isDoubleClick();
+        } catch (Exception e) { } // OK, just old build
 
-        // Item their cursor has
-        ItemStack cursor = event.getCursor();
-
-        if (item == null || item.getType() == null || item.getType() == Material.AIR) {
-            return;
-        }
-
-        // if it's not a right click or a shift click it should be a left click (no shift)
-        // this is for when players are INSERTing items (i.e. item in hand and left clicking)
-        if (player.getItemInHand() == null && (!event.isRightClick() && !event.isShiftClick())) {
-            return;
-        }
-
-        // Are they inserting a stack?
-        if (cursor != null && item.getType() == cursor.getType()) {
-            boolean enchantmentsEqual = areEnchantmentsEqual(item, cursor);
-
-            // If they are clicking an item of the stack type, they are inserting it into the inventory,
-            // not switching it
-            // As long as the item isn't a degradable item, we can explicitly allow it if they have the same durability
-            if (item.getDurability() == cursor.getDurability() && item.getAmount() == cursor.getAmount() && enchantmentsEqual) {
+        if (!doubleClick) {
+            // If it's not a container, we don't want it
+            if (event.getSlotType() != InventoryType.SlotType.CONTAINER) {
                 return;
+            }
+
+            // Nifty trick: these will different IFF they are interacting with the player's inventory or hotbar instead of the block's inventory
+            if (event.getSlot() != event.getRawSlot()) {
+                return;
+            }
+
+            // The item they are taking/swapping with
+            ItemStack item;
+
+            try {
+                item = event.getCurrentItem();
+            } catch (ArrayIndexOutOfBoundsException e) {
+                return;
+            }
+
+            // Item their cursor has
+            ItemStack cursor = event.getCursor();
+
+            if (item == null || item.getType() == null || item.getType() == Material.AIR) {
+                return;
+            }
+
+            // if it's not a right click or a shift click it should be a left click (no shift)
+            // this is for when players are INSERTing items (i.e. item in hand and left clicking)
+            if (player.getItemInHand() == null && (!event.isRightClick() && !event.isShiftClick())) {
+                return;
+            }
+
+            // Are they inserting a stack?
+            if (cursor != null && item.getType() == cursor.getType()) {
+                boolean enchantmentsEqual = areEnchantmentsEqual(item, cursor);
+
+                // If they are clicking an item of the stack type, they are inserting it into the inventory,
+                // not switching it
+                // As long as the item isn't a degradable item, we can explicitly allow it if they have the same durability
+                if (item.getDurability() == cursor.getDurability() && item.getAmount() == cursor.getAmount() && enchantmentsEqual) {
+                    return;
+                }
             }
         }
 
