@@ -363,7 +363,7 @@ public class EconomyModule extends JavaModule {
 
         String value;
         // Check for a block override charge
-        if ((value = lwc.resolveProtectionConfiguration(block.getType(), "charge")) != null) {
+        if ((value = lwc.resolveProtectionConfiguration(block, "charge")) != null) {
             try {
                 charge = Double.parseDouble(value);
             } catch (NumberFormatException e) {

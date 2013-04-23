@@ -650,7 +650,7 @@ public class LWC {
 
         boolean permShowNotices = hasPermission(player, "lwc.shownotices");
         if ((permShowNotices && configuration.getBoolean("core.showNotices", true))
-                && !Boolean.parseBoolean(resolveProtectionConfiguration(block.getType(), "quiet"))) {
+                && !Boolean.parseBoolean(resolveProtectionConfiguration(block, "quiet"))) {
             boolean isOwner = protection.isOwner(player);
             boolean showMyNotices = configuration.getBoolean("core.showMyNotices", true);
 
@@ -1108,16 +1108,6 @@ public class LWC {
     }
 
     /**
-     * Check a block to see if it is protectable
-     *
-     * @param block
-     * @return
-     */
-    public boolean isProtectable(Block block) {
-        return isProtectable(block.getType());
-    }
-
-    /**
      * Remove the inventory from a block
      *
      * @param block
@@ -1300,28 +1290,31 @@ public class LWC {
     }
 
     /**
-     * Check if a material is protectable
+     * Check a block to see if it is protectable
      *
-     * @param material
+     * @param block
      * @return
      */
-    public boolean isProtectable(Material material) {
+    public boolean isProtectable(Block block) {
+        Material material = block.getType();
+
         if (material == null) {
             return false;
         }
 
-        return Boolean.parseBoolean(resolveProtectionConfiguration(material, "enabled"));
+        return Boolean.parseBoolean(resolveProtectionConfiguration(block, "enabled"));
     }
 
     /**
      * Get the appropriate config value for the block (protections.block.node)
      *
-     * @param material
+     * @param block
      * @param node
      * @return
      */
-    public String resolveProtectionConfiguration(Material material, String node) {
-        String cacheKey = material.toString() + node;
+    public String resolveProtectionConfiguration(Block block, String node) {
+        Material material = block.getType();
+        String cacheKey = block.getData() + "-" + material.toString() + "-" + node;
         if (protectionConfigurationCache.containsKey(cacheKey)) {
             return protectionConfigurationCache.get(cacheKey);
         }
@@ -1333,7 +1326,8 @@ public class LWC {
         // add the name & the block id
         names.add(materialName);
         names.add(material.getId() + "");
-        names.add(material.getId() + ":" + material.getData().getModifiers());
+        names.add(material.getId() + ":" + block.getData());
+        names.add(materialName + ":" + block.getData());
 
         if (!materialName.equals(material.toString().toLowerCase())) {
             names.add(material.toString().toLowerCase());

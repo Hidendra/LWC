@@ -115,7 +115,7 @@ public class LWCBlockListener implements Listener {
         List<BlockState> blocks = event.getBlocks();
 
         for (BlockState block : blocks) {
-            if (!lwc.isProtectable(block.getType())) {
+            if (!lwc.isProtectable(block.getBlock())) {
                 continue;
             }
 
@@ -167,7 +167,7 @@ public class LWCBlockListener implements Listener {
         Block block = event.getBlock();
         Material material = block.getType();
 
-        boolean ignoreBlockDestruction = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreBlockDestruction"));
+        boolean ignoreBlockDestruction = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(block, "ignoreBlockDestruction"));
 
         if (ignoreBlockDestruction) {
             return;
@@ -353,7 +353,7 @@ public class LWCBlockListener implements Listener {
             lwc.getProtectionCache().add(current);
         }
 
-        String autoRegisterType = lwc.resolveProtectionConfiguration(block.getType(), "autoRegister");
+        String autoRegisterType = lwc.resolveProtectionConfiguration(block, "autoRegister");
 
         // is it auto protectable?
         if (!autoRegisterType.equalsIgnoreCase("private") && !autoRegisterType.equalsIgnoreCase("public")) {
@@ -408,7 +408,7 @@ public class LWCBlockListener implements Listener {
             // All good!
             Protection protection = lwc.getPhysicalDatabase().registerProtection(block.getTypeId(), type, block.getWorld().getName(), player.getName(), "", block.getX(), block.getY(), block.getZ());
 
-            if (!Boolean.parseBoolean(lwc.resolveProtectionConfiguration(block.getType(), "quiet"))) {
+            if (!Boolean.parseBoolean(lwc.resolveProtectionConfiguration(block, "quiet"))) {
                 lwc.sendLocale(player, "protection.onplace.create.finalize", "type", lwc.getPlugin().getMessageParser().parseMessage(autoRegisterType.toLowerCase()), "block", LWC.materialToString(block));
             }
 

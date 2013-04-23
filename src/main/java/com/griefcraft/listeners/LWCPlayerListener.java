@@ -80,17 +80,17 @@ public class LWCPlayerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onMoveItem(InventoryMoveItemEvent event) {
-        if (handleMoveItem(event.getSource()) || handleMoveItem(event.getDestination())) {
+        if (handleMoveItemEvent(event.getSource()) || handleMoveItemEvent(event.getDestination())) {
             event.setCancelled(true);
         }
     }
 
     /**
-     * Handle the item move even
+     * Handle the item move event
      *
      * @param inventory
      */
-    private boolean handleMoveItem(Inventory inventory) {
+    private boolean handleMoveItemEvent(Inventory inventory) {
         LWC lwc = LWC.getInstance();
 
         if (inventory == null) {
@@ -127,7 +127,7 @@ public class LWCPlayerListener implements Listener {
             return false;
         }
 
-        boolean denyHoppers = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock().getType(), "denyHoppers"));
+        boolean denyHoppers = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock(), "denyHoppers"));
 
         if ((denyHoppers && !protection.hasFlag(Flag.Type.HOPPER)) || (!denyHoppers && protection.hasFlag(Flag.Type.HOPPER))) {
             return true;
@@ -212,13 +212,13 @@ public class LWCPlayerListener implements Listener {
             boolean hasPendingAction = (hasInteracted && actionCount > 1) || (!hasInteracted && actionCount > 0);
 
             if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-                boolean ignoreLeftClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreLeftClick"));
+                boolean ignoreLeftClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(block, "ignoreLeftClick"));
 
                 if (ignoreLeftClick) {
                     return;
                 }
             } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                boolean ignoreRightClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(material, "ignoreRightClick"));
+                boolean ignoreRightClick = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(block, "ignoreRightClick"));
 
                 if (ignoreRightClick) {
                     return;
