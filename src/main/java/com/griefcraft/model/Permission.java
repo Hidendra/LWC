@@ -128,12 +128,12 @@ public class Permission {
     public Permission(String name) {
         this.name = name;
     }
-    
+
     public Permission(String name, Type type) {
         this(name);
         this.type = type;
     }
-    
+
     public Permission(String name, Type type, Access access) {
         this(name, type);
         this.access = access;
@@ -162,7 +162,7 @@ public class Permission {
      */
     public static Permission decodeJSON(JSONObject node) {
         Permission permission = new Permission();
-        
+
         Access access = Access.values()[((Long) node.get("rights")).intValue()];
         if (access.ordinal() == 0) {
             access = Access.PLAYER;
@@ -223,7 +223,7 @@ public class Permission {
     public void setType(Type type) {
         this.type = type;
     }
-    
+
     public void setVolatile(boolean isVolatile) {
         this.isVolatile = isVolatile;
     }

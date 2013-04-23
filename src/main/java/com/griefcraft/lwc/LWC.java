@@ -920,6 +920,7 @@ public class LWC {
 
     /**
      * Fast remove all protections for a player. ~100k protections / second.
+     *
      * @param sender
      * @param player
      * @param shouldRemoveBlocks
@@ -1184,12 +1185,12 @@ public class LWC {
     /**
      * Matches all possible blocks that can be considered a 'protection'
      * e.g clicking a chest will match double chests, clicking a door or block below a door
-     *     matches the whole door
+     * matches the whole door
      *
      * @param world
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param z the z coordinate
+     * @param x     the x coordinate
+     * @param y     the y coordinate
+     * @param z     the z coordinate
      * @return the List of possible blocks
      */
     public List<Block> getProtectionSet(World world, int x, int y, int z) {
@@ -1318,7 +1319,7 @@ public class LWC {
         if (protectionConfigurationCache.containsKey(cacheKey)) {
             return protectionConfigurationCache.get(cacheKey);
         }
-        
+
         List<String> names = new ArrayList<String>();
 
         String materialName = normalizeMaterialName(material);
@@ -1346,7 +1347,7 @@ public class LWC {
                 value = temp;
             }
         }
-        
+
         protectionConfigurationCache.put(cacheKey, value);
         return value;
     }
@@ -1472,7 +1473,7 @@ public class LWC {
                         return 1;
                     }
                 });
-                
+
                 // Database type
                 Metrics.Graph databaseGraph = metrics.createGraph("Database Engine");
                 databaseGraph.addPlotter(new Metrics.Plotter(physicalDatabase.getType().toString()) {
@@ -1645,7 +1646,7 @@ public class LWC {
         } catch (IllegalArgumentException e) {
             // It's normal for this to be thrown if nothing was matched
         }
-        
+
         for (String value : arguments) {
             boolean remove = false;
             boolean isAdmin = false;
@@ -1685,7 +1686,7 @@ public class LWC {
                 type = Permission.Type.TOWN;
                 value = value.substring(5);
             }
-            
+
             if (value.toLowerCase().startsWith("item:")) {
                 type = Permission.Type.ITEM;
                 value = value.substring(5);

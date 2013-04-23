@@ -132,7 +132,7 @@ public class LimitsV2 extends JavaModule {
         public DefaultLimit(int limit) {
             super(limit);
         }
-        
+
         @Override
         public int getProtectionCount(Player player, Material material) {
             return LWC.getInstance().getPhysicalDatabase().getProtectionCount(player.getName());
@@ -274,7 +274,7 @@ public class LimitsV2 extends JavaModule {
 
     /**
      * Sends the list of limits to the player
-     * 
+     *
      * @param sender the commandsender to send the limits to
      * @param target the player limits are being shown for, can be null
      * @param limits
@@ -286,7 +286,7 @@ public class LimitsV2 extends JavaModule {
             if (limit == null) {
                 continue;
             }
-            
+
             String stringLimit = limit.getLimit() == UNLIMITED ? "Unlimited" : Integer.toString(limit.getLimit());
             String colour = Colors.Yellow;
 
@@ -596,12 +596,12 @@ public class LimitsV2 extends JavaModule {
     private List<Limit> findLimits(String node) {
         List<Limit> limits = new LinkedList<Limit>();
         List<String> keys = configuration.getKeys(node);
-        
+
         for (String key : keys) {
             String value = configuration.getString(node + "." + key);
 
             int limit;
-            
+
             if (value.equalsIgnoreCase("unlimited")) {
                 limit = UNLIMITED;
             } else {
@@ -657,7 +657,7 @@ public class LimitsV2 extends JavaModule {
                 if (limit instanceof BlockLimit) {
                     BlockLimit cmp1 = (BlockLimit) limit;
                     BlockLimit cmp2 = (BlockLimit) compare;
-                    
+
                     if (cmp1.getMaterial() == cmp2.getMaterial()) {
                         return limit;
                     }

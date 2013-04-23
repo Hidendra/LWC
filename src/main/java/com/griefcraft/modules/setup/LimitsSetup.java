@@ -62,7 +62,7 @@ public class LimitsSetup extends JavaModule {
 
         // we have the right command
         event.setCancelled(true);
-        
+
         // Load limits v2
         LimitsV2 limits = (LimitsV2) lwc.getModuleLoader().getModule(LimitsV2.class);
 
@@ -73,7 +73,7 @@ public class LimitsSetup extends JavaModule {
         } else {
             String name = args[1];
             boolean isGroup = false;
-            
+
             if (name.startsWith("g:")) {
                 isGroup = true;
                 name = name.substring(2);
@@ -85,7 +85,7 @@ public class LimitsSetup extends JavaModule {
                 if (!isGroup) {
                     List<LimitsV2.Limit> found = limits.getPlayerLimits().get(name.toLowerCase());
                     Player target = lwc.getPlugin().getServer().getPlayer(name);
-                    
+
                     if (found == null) {
                         sender.sendMessage(Colors.Red + "Player override not found.");
                     } else {
@@ -107,7 +107,7 @@ public class LimitsSetup extends JavaModule {
                 // Generate the base path
                 String path;
                 boolean modified = false;
-                
+
                 if (name.equalsIgnoreCase("default")) {
                     path = "defaults.";
                 } else if (isGroup) {
@@ -115,11 +115,11 @@ public class LimitsSetup extends JavaModule {
                 } else {
                     path = "players." + getCaseCorrectPlayerName(configuration, name) + ".";
                 }
-                
+
                 // If they only gave an integer, we assume it's to be the default
                 if (args.length == 3) {
                     Object value;
-                    
+
                     if (args[2].equalsIgnoreCase("unlimited")) {
                         value = "unlimited";
                     } else {
@@ -130,7 +130,7 @@ public class LimitsSetup extends JavaModule {
                             return;
                         }
                     }
-                    
+
                     configuration.setProperty(path + "default", value);
                     modified = true;
                 } else {
@@ -144,7 +144,7 @@ public class LimitsSetup extends JavaModule {
                         String value = args[index + 1];
 
                         Object intValue;
-                        
+
                         if (value.equalsIgnoreCase("unlimited")) {
                             intValue = value;
                         } else {
@@ -156,7 +156,7 @@ public class LimitsSetup extends JavaModule {
                                 return;
                             }
                         }
-                        
+
                         // Is it a default?
                         if (key.equalsIgnoreCase("default")) {
                             configuration.setProperty(path + "default", intValue);
@@ -183,7 +183,7 @@ public class LimitsSetup extends JavaModule {
                         }
                     }
                 }
-                
+
                 // If we modified the config we need to save it and reload
                 if (modified) {
                     configuration.save();

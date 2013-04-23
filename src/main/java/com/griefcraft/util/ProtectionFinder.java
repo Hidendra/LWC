@@ -125,10 +125,10 @@ public class ProtectionFinder {
      * Do a full sweeping match of all the blocks for a given protection
      */
     public void fullMatchBlocks() {
-        
+
         // Reset the blocks
         blocks.clear();
-        
+
         // Add the base block
         blocks.add(baseBlock);
 
@@ -138,7 +138,7 @@ public class ProtectionFinder {
                 break;
             }
         }
-        
+
     }
 
     /**
@@ -148,28 +148,28 @@ public class ProtectionFinder {
      */
     public Matcher[] getProtectionMatchers() {
         Material material = baseBlock.getType();
-        
+
         // Double chests
         if (DoubleChestMatcher.PROTECTABLES_CHESTS.contains(material)) {
             return new Matcher[] {
                     new DoubleChestMatcher()
             };
         }
-        
+
         // Gravity
         else if (GravityMatcher.PROTECTABLES_POSTS.contains(material)) {
             return new Matcher[] {
                     new GravityMatcher()
             };
         }
-        
+
         // Doors
         else if (DoorMatcher.PROTECTABLES_DOORS.contains(material)) {
             return new Matcher[] {
                     new DoorMatcher()
             };
         }
-        
+
         // Anything else
         else {
             return new Matcher[] {
@@ -178,7 +178,7 @@ public class ProtectionFinder {
                     new WallMatcher()
             };
         }
-        
+
     }
 
     /**
@@ -230,7 +230,7 @@ public class ProtectionFinder {
 
     /**
      * Try and load a protection for a given block. If succeded, cache it locally
-     * 
+     *
      * @param block
      * @param noAutoCache if a match is found, don't cache it to be the protection we use
      * @return
@@ -259,12 +259,12 @@ public class ProtectionFinder {
                 block.getType() == Material.REDSTONE_TORCH_ON) {
             return Result.E_ABORT;
         }
-        
+
         // don't bother trying to load it if it is not protectable
         if (!lwc.isProtectable(block)) {
             return Result.E_NOT_FOUND;
         }
-        
+
         // Null-check
         if (block.getWorld() == null) {
             lwc.log("World is null for the block " + block);
@@ -344,7 +344,7 @@ public class ProtectionFinder {
         // reset the matched protectables
         protectables.clear();
         searched = false;
-        
+
         // if there's only 1 block it was already checked (the base block)
         int size = blocks.size();
         if (size == 1) {
@@ -354,7 +354,7 @@ public class ProtectionFinder {
         // go through the blocks
         for (int index = 1; index < size; index++) {
             Block block = blocks.get(index);
-            
+
             // Is it protectable?
             if (lwc.isProtectable(block)) {
                 protectables.add(block);
@@ -369,7 +369,7 @@ public class ProtectionFinder {
 
         /**
          * Check if the block matches any VALID protections.
-         * 
+         *
          * @return
          */
         public boolean matches(ProtectionFinder finder);

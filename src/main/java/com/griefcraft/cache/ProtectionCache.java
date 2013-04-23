@@ -41,7 +41,7 @@ public class ProtectionCache {
     private final LWC lwc;
 
     /**
-     * Hard references to protections still cached 
+     * Hard references to protections still cached
      */
     private final LRUCache<Protection, Object> references;
 
@@ -126,7 +126,7 @@ public class ProtectionCache {
 
     /**
      * Gets the amount of protections that are cached
-     * 
+     *
      * @return
      */
     public int size() {
@@ -135,7 +135,7 @@ public class ProtectionCache {
 
     /**
      * Cache a protection
-     * 
+     *
      * @param protection
      */
     public void add(Protection protection) {
@@ -191,12 +191,12 @@ public class ProtectionCache {
      */
     public Protection getProtection(String cacheKey) {
         Protection protection;
-        
+
         // Check the direct cache first
         if ((protection = byCacheKey.get(cacheKey)) != null) {
             return protection;
         }
-        
+
         // now use the 'others' cache
         return byKnownBlock.get(cacheKey);
     }

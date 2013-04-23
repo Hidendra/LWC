@@ -204,7 +204,7 @@ public class DoorsModule extends JavaModule {
 
             // Now xor both data values with 0x4, the flag that states if the door is open
             door.setData((byte) (door.getData() ^ 0x4));
-            
+
             // Play the door open/close sound
             door.getWorld().playEffect(door.getLocation(), Effect.DOOR_TOGGLE, 0);
 

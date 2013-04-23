@@ -38,7 +38,7 @@ public class LocaleUtil {
      */
     public static String iso639ToEnglish(String iso639) {
         String cmp = iso639.toLowerCase();
-        
+
         if (cmp.equals("cz")) {
             return "Czech";
         } else if (cmp.equals("da")) {
@@ -69,5 +69,5 @@ public class LocaleUtil {
         // default to english so that it can't be abused
         return "English";
     }
-    
+
 }

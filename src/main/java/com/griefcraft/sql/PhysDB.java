@@ -440,7 +440,7 @@ public class PhysDB extends Database {
             doUpdate400_2();
             incrementDatabaseVersion();
         }
-        
+
         if (databaseVersion == 3) {
             createIndex("protections", "protections_type", "type");
             incrementDatabaseVersion();
@@ -498,7 +498,7 @@ public class PhysDB extends Database {
 
     /**
      * Set the database version and sync it to the database
-     * 
+     *
      * @param databaseVersion
      */
     public void setDatabaseVersion(int databaseVersion) {
@@ -526,7 +526,7 @@ public class PhysDB extends Database {
         try {
             PreparedStatement statement = prepare("SELECT value FROM " + prefix + "internal WHERE name = ?");
             statement.setString(1, key);
-            
+
             ResultSet set = statement.executeQuery();
             if (set.next()) {
                 String value = set.getString("value");
@@ -1177,7 +1177,7 @@ public class PhysDB extends Database {
                 // now sync the history object to the database
                 transaction.saveNow();
             }
-            
+
             // Cache it
             if (protection != null) {
                 cache.add(protection);
@@ -1245,7 +1245,7 @@ public class PhysDB extends Database {
 
     /**
      * Invalid all history objects for a player
-     * 
+     *
      * @param player
      */
     public void invalidateHistory(String player) {

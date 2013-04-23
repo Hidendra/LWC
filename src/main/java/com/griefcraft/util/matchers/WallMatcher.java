@@ -41,7 +41,7 @@ import java.util.Set;
  * TODO fix buttons and levers
  */
 public class WallMatcher implements ProtectionFinder.Matcher {
-    
+
     /**
      * Blocks that can be attached to the wall and be protected.
      * This assumes that the block is DESTROYED if the wall they are attached to is broken.
