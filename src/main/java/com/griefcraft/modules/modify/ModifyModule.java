@@ -68,7 +68,7 @@ public class ModifyModule extends JavaModule {
         Player bPlayer = event.getPlayer();
         event.setResult(Result.CANCEL);
 
-        if (!lwc.isAdmin(bPlayer) && Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock().getType(), "readonly-modify"))) {
+        if (!lwc.isAdmin(bPlayer) && Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock(), "readonly-modify"))) {
             lwc.sendLocale(player, "protection.accessdenied");
             return;
         }

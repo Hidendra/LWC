@@ -64,7 +64,7 @@ public class LWCEntityListener implements Listener {
         Protection protection = plugin.getLWC().findProtection(block);
 
         if (protection != null) {
-            boolean allowEntityInteract = Boolean.parseBoolean(plugin.getLWC().resolveProtectionConfiguration(block.getType(), "allowEntityInteract"));
+            boolean allowEntityInteract = Boolean.parseBoolean(plugin.getLWC().resolveProtectionConfiguration(block, "allowEntityInteract"));
 
             if (!allowEntityInteract) {
                 event.setCancelled(true);
@@ -81,7 +81,7 @@ public class LWCEntityListener implements Listener {
 
         if (protection != null) {
             // protections.allowEntityBreakDoor
-            boolean allowEntityBreakDoor = Boolean.parseBoolean(plugin.getLWC().resolveProtectionConfiguration(block.getType(), "allowEntityBreakDoor"));
+            boolean allowEntityBreakDoor = Boolean.parseBoolean(plugin.getLWC().resolveProtectionConfiguration(block, "allowEntityBreakDoor"));
 
             if (!allowEntityBreakDoor) {
                 event.setCancelled(true);
@@ -101,7 +101,7 @@ public class LWCEntityListener implements Listener {
             Protection protection = plugin.getLWC().findProtection(block);
 
             if (protection != null) {
-                boolean ignoreExplosions = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock().getType(), "ignoreExplosions"));
+                boolean ignoreExplosions = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock(), "ignoreExplosions"));
 
                 if (ignoreExplosions || protection.hasFlag(Flag.Type.ALLOWEXPLOSIONS)) {
                     // If creeper heal is active for the block, halt all thrusters!

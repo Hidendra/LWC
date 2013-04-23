@@ -60,7 +60,7 @@ public class FreeModule extends JavaModule {
         Player player = event.getPlayer();
         event.setResult(Result.CANCEL);
 
-        if (!lwc.isAdmin(player) && Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock().getType(), "readonly-remove"))) {
+        if (!lwc.isAdmin(player) && Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock(), "readonly-remove"))) {
             lwc.sendLocale(player, "protection.accessdenied");
             return;
         }
