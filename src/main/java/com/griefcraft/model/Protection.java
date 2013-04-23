@@ -90,7 +90,7 @@ public class Protection {
         RESERVED2,
 
         /**
-         * Allows players to deposit items into 
+         * Allows players to deposit items into
          */
         DONATION;
 
@@ -454,7 +454,7 @@ public class Protection {
 
         while (iter.hasNext()) {
             Permission permission = iter.next();
-            
+
             if (permission.isVolatile()) {
                 iter.remove();
             }
@@ -512,7 +512,7 @@ public class Protection {
 
     /**
      * Checks if the protection has the correct block in the world
-     * 
+     *
      * @return
      */
     public boolean isBlockInWorld() {
@@ -752,12 +752,12 @@ public class Protection {
      */
     public void radiusRemoveCache() {
         ProtectionCache cache = LWC.getInstance().getProtectionCache();
-        
+
         for (int x = -3; x <= 3; x++) {
             for (int y = -3; y <= 3; y++) {
                 for (int z = -3; z <= 3; z++) {
                     String cacheKey = world + ":" + (this.x + x) + ":" + (this.y + y) + ":" + (this.z + z);
-                    
+
                     // get the protection for that entry
                     Protection protection = cache.getProtection(cacheKey);
                     if (protection != null && id == protection.getId()) {

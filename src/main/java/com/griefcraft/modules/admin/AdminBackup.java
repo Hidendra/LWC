@@ -58,7 +58,7 @@ public class AdminBackup extends JavaModule {
 
         // we have the right command
         event.setCancelled(true);
-        
+
         if (args.length == 1) {
             lwc.sendSimpleUsage(sender, "/lwc admin backup <action>");
             return;
@@ -66,7 +66,7 @@ public class AdminBackup extends JavaModule {
 
         // The action they want to perform
         String action = args[1].toLowerCase();
-        
+
         if (action.equals("create")) {
             // Dumb code for now
             Backup created = lwc.getBackupManager().createBackup();

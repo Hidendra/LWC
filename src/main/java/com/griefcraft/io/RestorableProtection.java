@@ -141,7 +141,7 @@ public class RestorableProtection implements Restorable {
     public void setId(int id) {
         this.id = id;
     }
-    
+
     public int getProtectionType() {
         return protectionType;
     }

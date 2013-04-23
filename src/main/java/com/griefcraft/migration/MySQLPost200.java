@@ -73,10 +73,10 @@ public class MySQLPost200 implements MigrationUtility {
         // rev up those sqlite databases because I sure am hungry for some data...
         DatabaseMigrator migrator = new DatabaseMigrator();
         lwc.reloadDatabase();
-        
+
         // Load the sqlite database
         PhysDB sqlite = new PhysDB(Type.SQLite);
-        
+
         try {
             sqlite.connect();
             sqlite.load();

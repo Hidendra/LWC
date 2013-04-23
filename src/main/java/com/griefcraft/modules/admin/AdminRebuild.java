@@ -123,10 +123,10 @@ public class AdminRebuild extends JavaModule {
                 iter.remove();
                 continue;
             }
-            
+
             // Protection's creator
             String creator = history.getString("creator");
-            
+
             if (creator == null) {
                 sender.sendMessage(String.format("Unable to match owner at Id:%d", history.getId()));
                 failed ++;
@@ -136,7 +136,7 @@ public class AdminRebuild extends JavaModule {
 
             // Bruteforce that shit, yo
             Block block = findProtectableBlock(x, y, z);
-            
+
             if (block == null) {
                 sender.sendMessage(String.format("Unable to match block at Id:%d [%d, %d, %d] (this is probably OK)", history.getId(), x, y, z));
                 failed ++;
@@ -147,7 +147,7 @@ public class AdminRebuild extends JavaModule {
             // Create the protection!
             Protection protection = lwc.getPhysicalDatabase().registerProtection(block.getTypeId(), Protection.Type.PRIVATE,
                     block.getWorld().getName(), creator, "", x, y, z);
-            
+
             if (protection == null) {
                 sender.sendMessage(String.format("Failed to create protection at Id:%d", history.getId()));
                 failed ++;
@@ -174,7 +174,7 @@ public class AdminRebuild extends JavaModule {
 
     /**
      * Look for a protectable block in each world. Return the first one found. Starts in the main world.
-     * 
+     *
      * @param x
      * @param y
      * @param z

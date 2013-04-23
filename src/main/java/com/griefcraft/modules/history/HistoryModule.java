@@ -69,7 +69,7 @@ public class HistoryModule extends JavaModule {
         LWC lwc = event.getLWC();
         Player player = event.getPlayer();
         Protection protection = event.getProtection();
-        
+
         historyTool(lwc, player, protection.getX(), protection.getY(), protection.getZ());
         event.setResult(Result.CANCEL);
         lwc.removeModes(player);
@@ -105,7 +105,7 @@ public class HistoryModule extends JavaModule {
     private void historyTool(LWC lwc, Player player, int x, int y, int z) {
         LWCPlayer lwcPlayer = lwc.wrapPlayer(player);
         Action action = lwcPlayer.getAction("history");
-        
+
         if (action == null) {
             player.sendMessage(Colors.Red + "History action is null!");
             return;
@@ -116,7 +116,7 @@ public class HistoryModule extends JavaModule {
 
         // load the history objects for the protection
         List<History> relatedHistory = null;
-        
+
         if (lwc.isAdmin(player)) {
             relatedHistory = lwc.getPhysicalDatabase().loadHistory(x, y, z);
         } else {

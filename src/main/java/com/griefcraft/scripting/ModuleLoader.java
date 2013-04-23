@@ -260,7 +260,7 @@ public class ModuleLoader {
                 } else if (parameter == LWCReloadEvent.class) {
                     event = Event.RELOAD_EVENT;
                 }
-                
+
                 // ok!
                 if (event != null) {
                     List<Module> modules = fastModuleCache.get(event);
@@ -290,7 +290,7 @@ public class ModuleLoader {
         String methodName = method.getName();
 
         String cacheKey = object.getClass().getSimpleName() + methodName;
-        
+
         // Check the cache
         if (overrideCache.containsKey(cacheKey)) {
             return overrideCache.get(cacheKey);

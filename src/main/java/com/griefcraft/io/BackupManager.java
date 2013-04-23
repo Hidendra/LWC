@@ -188,7 +188,7 @@ public class BackupManager {
      */
     public Backup loadBackup(String name) throws IOException {
         File file;
-        
+
         // Try to load the compressed version
         file = new File(BACKUP_FOLDER, name + FILE_EXTENSION_COMPRESSED);
 
@@ -239,7 +239,7 @@ public class BackupManager {
 
                         // amount of protections
                         int totalProtections = lwc.getPhysicalDatabase().getProtectionCount();
-                        
+
                         // Write the header
                         backup.writeHeader();
 
@@ -267,11 +267,11 @@ public class BackupManager {
                                 System.out.println("[Backup] Parsed protections: " + count + "/" + totalProtections);
                             }
                             count ++;
-                            
+
                             if (protections.size() != BATCH_SIZE) {
                                 // Wait until we have BATCH_SIZE protections
                                 protections.add(tprotection);
-                                
+
                                 if (protections.size() != totalProtections) {
                                     continue;
                                 }
@@ -287,7 +287,7 @@ public class BackupManager {
                                     return null;
                                 }
                             });
-                            
+
                             // Get all of the blocks
                             getBlocks.get();
 
@@ -308,7 +308,7 @@ public class BackupManager {
                                     // Now write the protection after the block if we are writing protections
                                     if (flags.contains(Flag.BACKUP_PROTECTIONS)) {
                                         RestorableProtection rprotection = RestorableProtection.wrapProtection(protection);
-                                        
+
                                         // Write it
                                         backup.writeRestorable(rprotection);
                                     }
@@ -327,19 +327,19 @@ public class BackupManager {
 
                         // close the backup file
                         backup.close();
-                        
+
                         System.out.println("Backup completed!");
                     } catch (Exception e) { // database.connect() throws Exception
                         System.out.println("Backup exception caught: " + e.getMessage());
                     }
                 }
             });
-            
+
             return backup;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
         return null;
     }
 

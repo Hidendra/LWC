@@ -88,11 +88,11 @@ public class WorldGuard extends JavaModule {
         LWC lwc = event.getLWC();
         CommandSender sender = event.getSender();
         String[] args = event.getArgs();
-        
+
         if (!args[0].equals("purgeregion") && !args[0].equals("protectregion")) {
             return;
         }
-        
+
         // The command name to send to them
         String commandName = args[0];
 
@@ -150,12 +150,12 @@ public class WorldGuard extends JavaModule {
 
         BlockVector minimum = region.getMinimumPoint();
         BlockVector maximum = region.getMaximumPoint();
-        
+
         // Min values
         int minBlockX = minimum.getBlockX();
         int minBlockY = minimum.getBlockY();
         int minBlockZ = minimum.getBlockZ();
-        
+
         // Max values
         int maxBlockX = maximum.getBlockX();
         int maxBlockY = maximum.getBlockY();
@@ -180,7 +180,7 @@ public class WorldGuard extends JavaModule {
 
             // the number of blocks that were registered
             int registered = 0;
-            
+
             for (int x = minBlockX; x <= maxBlockX; x++) {
                 for (int y = minBlockY; y <= maxBlockY; y++) {
                     for (int z = minBlockZ; z <= maxBlockZ; z++) {
@@ -204,7 +204,7 @@ public class WorldGuard extends JavaModule {
                     }
                 }
             }
-            
+
             sender.sendMessage("Registered " + registered + " blocks in the region " + regionName);
             sender.sendMessage("Currently, the owner of these protections is \"" + ownerName + "\". To change this to someone else, run:");
             sender.sendMessage("/lwc admin updateprotections set owner = 'NewOwner' where owner = '" + ownerName + "'");

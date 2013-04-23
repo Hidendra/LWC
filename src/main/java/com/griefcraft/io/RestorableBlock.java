@@ -42,7 +42,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RestorableBlock implements Restorable {
-    
+
     /**
      * The block id
      */
@@ -77,11 +77,11 @@ public class RestorableBlock implements Restorable {
      * The items in this block's inventory if it has one
      */
     private final Map<Integer, ItemStack> items = new HashMap<Integer, ItemStack>();
-    
+
     public int getType() {
         return 1; // TODO ENUM, HOPEFULLY I'LL REMEMBER IF I PUT THIS TODO EVERYWHERE
     }
-    
+
     public void restore() {
         LWC lwc = LWC.getInstance();
 
@@ -103,7 +103,7 @@ public class RestorableBlock implements Restorable {
                 // Begin screwing with shit :p
                 block.setTypeId(id);
                 block.setData((byte) data);
-                
+
                 if (items.size() > 0) {
                     if (!(block.getState() instanceof InventoryHolder)) {
                         System.out.println(String.format("The block at [%d, %d, %d] has backed up items but no longer supports them. Why? %s", x, y, z, block.toString()));
@@ -111,7 +111,7 @@ public class RestorableBlock implements Restorable {
 
                     // Get the block's inventory
                     Inventory inventory = ((InventoryHolder) block.getState()).getInventory();
-                    
+
                     // Set all of the items to it
                     for (Map.Entry<Integer, ItemStack> entry : items.entrySet()) {
                         int slot = entry.getKey();

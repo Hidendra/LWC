@@ -39,7 +39,7 @@ public class LWCInfo {
 
     /**
      * Sets LWC's version
-     * 
+     *
      * @param version
      */
     public static void setVersion(String version) {

@@ -165,7 +165,7 @@ public class Backup {
             rblock.setZ(inputStream.readInt());
             rblock.setData(inputStream.read() & 0xFF);
             int itemCount = inputStream.readShort();
-            
+
             for (int i = 0; i < itemCount; i++) {
                 // Read in us some RestorableItems
                 int slot = inputStream.readShort();
@@ -179,7 +179,7 @@ public class Backup {
                 // add it to the block
                 rblock.setSlot(slot, itemStack);
             }
-            
+
             // Woo!
             return rblock;
         }
@@ -243,7 +243,7 @@ public class Backup {
 
     /**
      * Read the backup's header
-     * 
+     *
      * @throws IOException
      */
     protected void readHeader() throws IOException {

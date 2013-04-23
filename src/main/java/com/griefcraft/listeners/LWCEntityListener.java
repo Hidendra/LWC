@@ -94,7 +94,7 @@ public class LWCEntityListener implements Listener {
         if (!LWC.ENABLED || event.isCancelled()) {
             return;
         }
-        
+
         LWC lwc = LWC.getInstance();
 
         for (Block block : event.blockList()) {
