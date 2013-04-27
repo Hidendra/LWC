@@ -2,12 +2,12 @@
 # Copyright (C) 2012 LWC'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the LWC package.
 # Tyler Blair <hidendra@griefcraft.com>, 2012.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: LWC\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-01 11:21-0400\n"
+"POT-Creation-Date: 2013-04-27 01:00-0300\n"
 "PO-Revision-Date: 2012-11-08 01:19-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -138,11 +138,11 @@ msgstr "[{0}/{1}] Downloading file {2} => {3}"
 msgid "Library downloads complete!"
 msgstr "Library downloads complete!"
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:87
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:117
 msgid "&4This protection is locked by a magical spell."
 msgstr "&4This protection is locked by a magical spell."
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:94
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:123
 #, java-format
 msgid ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "

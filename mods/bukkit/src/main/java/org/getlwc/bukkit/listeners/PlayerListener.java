@@ -33,6 +33,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.getlwc.Block;
 import org.getlwc.World;
@@ -57,10 +58,8 @@ public class PlayerListener implements Listener {
         World world = plugin.getWorld(event.getPlayer().getWorld().getName());
         Block block = new BukkitBlock(world, event.getClickedBlock());
 
-        // send the event for the player around the plugin (and maybe other plugins, too.)
         boolean result = plugin.getEngine().getEventHelper().onBlockInteract(player, block);
 
-        // cancel it if need be
         if (result) {
             event.setCancelled(true);
             event.setUseInteractedBlock(Event.Result.DENY);
@@ -73,8 +72,20 @@ public class PlayerListener implements Listener {
         World world = plugin.getWorld(event.getPlayer().getWorld().getName());
         Block block = new BukkitBlock(world, event.getBlock());
 
-        // send the event for the player around the plugin (and maybe other plugins, too.)
         boolean result = plugin.getEngine().getEventHelper().onBlockBreak(player, block);
+
+        if (result) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void signChange(SignChangeEvent event) {
+        Player player = plugin.wrapPlayer(event.getPlayer());
+        World world = plugin.getWorld(event.getPlayer().getWorld().getName());
+        Block block = new BukkitBlock(world, event.getBlock());
+
+        boolean result = plugin.getEngine().getEventHelper().onSignChange(player, block);
 
         // cancel it if need be
         if (result) {

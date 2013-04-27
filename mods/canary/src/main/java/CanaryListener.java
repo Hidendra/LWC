@@ -72,6 +72,15 @@ public class CanaryListener extends PluginListener {
     }
 
     @Override
+    public boolean onSignChange(Player nativePlayer, Sign sign) {
+        org.getlwc.entity.Player player = plugin.wrapPlayer(nativePlayer);
+        org.getlwc.World world = plugin.getWorld(nativePlayer.getWorld().getName());
+        org.getlwc.Block block = new CanaryBlock(world, sign.getBlock());
+
+        return plugin.getEngine().getEventHelper().onSignChange(player, block);
+    }
+
+    @Override
     public boolean onOpenInventory(HookParametersOpenInventory inventory) {
         return false;
     }

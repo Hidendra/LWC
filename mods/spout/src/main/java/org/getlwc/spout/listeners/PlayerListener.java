@@ -63,10 +63,8 @@ public class PlayerListener implements Listener {
         Point point = event.getInteractedPoint();
         Block block = new SpoutBlock(world, event.getPlayer().getWorld().getBlock(point.getBlockX(), point.getBlockY(), point.getBlockZ()));
 
-        // send the event for the player around the plugin (and maybe other plugins, too.)
         boolean result = plugin.getInternalEngine().getEventHelper().onBlockInteract(player, block);
 
-        // cancel it if need be
         if (result) {
             event.setCancelled(true);
         }
@@ -90,10 +88,8 @@ public class PlayerListener implements Listener {
         Point point = event.getBlock().getPosition();
         Block block = new SpoutBlock(world, cause.getSource().getWorld().getBlock(point.getBlockX(), point.getBlockY(), point.getBlockZ()));
 
-        // send the event for the player around the plugin (and maybe other plugins, too.)
         boolean result = plugin.getInternalEngine().getEventHelper().onBlockBreak(player, block);
 
-        // cancel it if need be
         if (result) {
             event.setCancelled(true);
         }

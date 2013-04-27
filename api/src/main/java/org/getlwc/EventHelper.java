@@ -51,4 +51,13 @@ public interface EventHelper {
      */
     public boolean onBlockBreak(Entity entity, Block block);
 
+    /**
+     * Called when an entity changes text on a sign
+     *
+     * @param entity
+     * @param block
+     * @return
+     */
+    public boolean onSignChange(Entity entity, Block block);
+
 }

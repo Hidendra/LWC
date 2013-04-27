@@ -51,10 +51,40 @@ public class SimpleEventHelper implements EventHelper {
     }
 
     /**
+     * A generic method that checks if an entity is allowed to interact with the given block.
+     *
+     * @param entity
+     * @param block
+     * @return true if the given entity can access the block (i.e. no protection there OR they can access the protection)
+     */
+    private boolean silentAccessCheck(Entity entity, Block block) {
+        Protection protection = engine.getProtectionManager().findProtection(block.getLocation());
+
+        if (protection == null) {
+            return true;
+        }
+
+        if (entity instanceof Player) {
+            Player player = (Player) entity;
+
+            ProtectionAccess access = protection.getAccess(player);
+
+            // if they're the owner, return immediately
+            if (access.ordinal() > ProtectionAccess.NONE.ordinal()) {
+                return true;
+            }
+
+            return false;
+        } else {
+            throw new UnsupportedOperationException("Unsupported Entity: " + entity.getClass().getSimpleName());
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     public boolean onBlockInteract(Entity entity, Block block) {
-        boolean cancel = false; // If the event should be cancelled
+        boolean cancel = false;
 
         // Match the block to a protection
         Protection protection = engine.getProtectionManager().findProtection(block.getLocation()); // TODO :-)
@@ -76,7 +106,7 @@ public class SimpleEventHelper implements EventHelper {
 
                     /// TODO distinguish between left / right click.
 
-                    // if they're the owner, return immediately
+                    // check if they can access the protection
                     if (access.ordinal() > ProtectionAccess.NONE.ordinal()) {
                         return false;
                     }
@@ -90,14 +120,13 @@ public class SimpleEventHelper implements EventHelper {
                     return true;
                 }
             } catch (EventException e) {
-                // TODO {0}
                 player.sendMessage(_("&cA severe error occurred while processing the event: {0}"
                         + "&cThe full stack trace has been printed out to the log file", e.getMessage()));
                 e.printStackTrace();
                 return true; // Better safe than sorry
             }
         } else {
-            engine.getConsoleSender().sendMessage("Unhandled Entity in onBlockInteract() : " + entity.getClass().getSimpleName());
+            throw new UnsupportedOperationException("Unsupported Entity: " + entity.getClass().getSimpleName());
         }
 
         return cancel;
@@ -107,28 +136,14 @@ public class SimpleEventHelper implements EventHelper {
      * {@inheritDoc}
      */
     public boolean onBlockBreak(Entity entity, Block block) {
-        boolean cancel = false;
+        return !silentAccessCheck(entity, block);
+    }
 
-        Protection protection = engine.getProtectionManager().findProtection(block.getLocation());
-
-        if (protection == null) {
-            return false;
-        }
-
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
-
-            ProtectionAccess access = protection.getAccess(player);
-
-            // if they're the owner, return immediately
-            if (access.ordinal() > ProtectionAccess.NONE.ordinal()) {
-                return false;
-            }
-
-            return true;
-        }
-
-        return cancel;
+    /**
+     * {@inheritDoc}
+     */
+    public boolean onSignChange(Entity entity, Block block) {
+        return !silentAccessCheck(entity, block);
     }
 
 }
