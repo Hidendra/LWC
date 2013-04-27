@@ -87,7 +87,6 @@ public class PlayerListener implements Listener {
 
         boolean result = plugin.getEngine().getEventHelper().onSignChange(player, block);
 
-        // cancel it if need be
         if (result) {
             event.setCancelled(true);
         }
