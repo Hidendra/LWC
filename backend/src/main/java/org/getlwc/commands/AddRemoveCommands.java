@@ -25,6 +25,7 @@ public class AddRemoveCommands {
 
     @Command(
             command = "lwc modify",
+            description = "Add/remove/modify access roles that are on a protection",
             usage = "[access] [-]<role name>( [access] [-]<role name>...)",
             permission = "lwc.modify",
             aliases = {"cmodify"},

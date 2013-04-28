@@ -50,6 +50,7 @@ public class BenchmarkCommands {
 
     @Command(
             command = "lwc test insert",
+            description = "Benchmark tests",
             accepts = SenderType.CONSOLE
     )
     public void insertTest(CommandContext context) {
@@ -66,6 +67,7 @@ public class BenchmarkCommands {
 
     @Command(
             command = "lwc test select",
+            description = "Benchmark tests",
             accepts = SenderType.CONSOLE
     )
     public void selectTest(CommandContext context) {

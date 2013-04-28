@@ -56,6 +56,7 @@ public class AttributeCommands {
 
     @Command(
             command = "lwc set",
+            description = "Set an attribute on a protection",
             permission = "lwc.attribute.set",
             aliases = {"cset"},
             accepts = SenderType.PLAYER,
@@ -111,6 +112,7 @@ public class AttributeCommands {
     // TODO better word for unset ?
     @Command(
             command = "lwc unset",
+            description = "Remove an attribute from a protection",
             permission = "lwc.attribute.delete",
             aliases = {"cunset"},
             accepts = SenderType.PLAYER,

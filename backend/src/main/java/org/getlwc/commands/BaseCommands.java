@@ -67,7 +67,8 @@ public class BaseCommands {
      * @param context
      */
     @Command(
-            command = "lwc"
+            command = "lwc",
+            description = "LWC!"
     )
     public void lwc(CommandContext context) {
         context.getCommandSender().sendMessage("/lwc");
@@ -111,6 +112,7 @@ public class BaseCommands {
 
     @Command(
             command = "lwc delete",
+            description = "Remove a protection",
             permission = "lwc.remove.protection",
             aliases = {"cremove","cunlock"},
             accepts = SenderType.PLAYER
@@ -138,6 +140,7 @@ public class BaseCommands {
 
     @Command(
             command = "lwc info",
+            description = "Retrieve info about a protection",
             permission = "lwc.info",
             aliases = {"cinfo"},
             accepts = SenderType.PLAYER
