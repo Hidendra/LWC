@@ -75,6 +75,7 @@ public class BaseCommands {
 
     @Command(
             command = "lwc create",
+            description = "Register a protection",
             permission = "lwc.create",
             aliases = {"cprivate","clock"},
             accepts = SenderType.PLAYER

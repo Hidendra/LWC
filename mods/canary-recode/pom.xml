@@ -17,10 +17,6 @@
             <id>hidendra</id>
             <url>http://repo.mcstats.org/content/repositories/public</url>
         </repository>
-        <repository>
-            <id>canary</id>
-            <url>http://repo.visualillusionsent.net</url>
-        </repository>
     </repositories>
 
     <dependencies>
@@ -33,7 +29,7 @@
         <dependency>
             <groupId>net.canarymod</groupId>
             <artifactId>CanaryLib</artifactId>
-            <version>0.6-SNAPSHOT</version>
+            <version>0.7-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

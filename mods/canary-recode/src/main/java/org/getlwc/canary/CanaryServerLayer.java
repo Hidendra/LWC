@@ -6,7 +6,6 @@ import net.canarymod.api.Server;
 import net.canarymod.chat.MessageReceiver;
 import net.canarymod.commandsys.CanaryCommand;
 import net.canarymod.commandsys.Command;
-import net.canarymod.commandsys.CommandManager;
 import org.getlwc.ServerLayer;
 import org.getlwc.World;
 import org.getlwc.canary.entity.CanaryPlayer;
@@ -19,8 +18,6 @@ import org.getlwc.util.StringUtils;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.util.Map;
 
 public class CanaryServerLayer extends ServerLayer {
 
@@ -108,20 +105,7 @@ public class CanaryServerLayer extends ServerLayer {
                 }
             };
 
-            // Register the command into the help menu
-            Canary.help().registerCommand(plugin, canaryCommand);
-
-            // Canary command manager
-            CommandManager manager = Canary.commands();
-
-            Field commandsField = manager.getClass().getDeclaredField("commands");
-            commandsField.setAccessible(true);
-
-            // grab the map
-            Map<String, CanaryCommand> commandsMap = (Map<String, CanaryCommand>) commandsField.get(manager);
-
-            // add our command
-            commandsMap.put(baseCommand.toLowerCase(), canaryCommand);
+            Canary.commands().registerCommand(canaryCommand, plugin, false);
 
             /**
              * TODO I shouldn't need to reflect into Canary.
