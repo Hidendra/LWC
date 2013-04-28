@@ -59,11 +59,11 @@ public class CanaryServerLayer extends ServerLayer {
                 }
 
                 public String[] permissions() {
-                    return new String[] { command.permission() };
+                    return new String[] { command.permission() }; // required
                 }
 
                 public String description() {
-                    return command.description();
+                    return command.description(); // required
                 }
 
                 public String toolTip() {
@@ -120,7 +120,7 @@ public class CanaryServerLayer extends ServerLayer {
             // grab the map
             Map<String, CanaryCommand> commandsMap = (Map<String, CanaryCommand>) commandsField.get(manager);
 
-            // add out command
+            // add our command
             commandsMap.put(baseCommand.toLowerCase(), canaryCommand);
 
             /**
