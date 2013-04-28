@@ -30,6 +30,7 @@
 package org.getlwc.spout.listeners;
 
 import org.getlwc.Block;
+import org.getlwc.ExplosionType;
 import org.getlwc.World;
 import org.getlwc.entity.Entity;
 import org.getlwc.entity.Player;
@@ -45,6 +46,10 @@ import org.spout.api.geo.discrete.Point;
 import org.spout.vanilla.event.block.SignUpdateEvent;
 import org.spout.vanilla.event.cause.PlayerBreakCause;
 import org.spout.vanilla.event.cause.PlayerPlacementCause;
+import org.spout.vanilla.event.entity.EntityExplodeEvent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SpoutListener implements Listener {
 
@@ -109,6 +114,34 @@ public class SpoutListener implements Listener {
         Block block = new SpoutBlock(world, ((EntityCause) event.getSource()).getSource().getWorld().getBlock(point.getBlockX(), point.getBlockY(), point.getBlockZ()));
 
         boolean result = plugin.getInternalEngine().getEventHelper().onSignChange(entity, block);
+
+        if (result) {
+            event.setCancelled(true);
+        }
+    }
+
+    // Vanilla event
+    @EventHandler
+    public void entityExplode(EntityExplodeEvent event) {
+        ExplosionType type = null;
+
+        System.out.println(event.getEntity() + " " + event.getEntity().getClass().getSimpleName());
+
+        if (type == null) {
+            throw new UnsupportedOperationException("Unsupported explosion entity: " + event.getEntity());
+        }
+
+        World world = plugin.getWorld(event.getEpicenter().getWorld().getName());
+        List<Block> affected = new ArrayList<Block>();
+
+        for (org.spout.api.geo.cuboid.Block block : event.getBlocks()) {
+            affected.add(world.getBlockAt(block.getX(), block.getY(), block.getZ()));
+        }
+
+        /**
+         * TODO - does not support removing specific blocks
+         */
+        boolean result = plugin.getInternalEngine().getEventHelper().onExplosion(type, affected);
 
         if (result) {
             event.setCancelled(true);

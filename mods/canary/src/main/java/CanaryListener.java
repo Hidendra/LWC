@@ -26,10 +26,14 @@
  * either expressed or implied, of anybody else.
  */
 
+import org.getlwc.ExplosionType;
 import org.getlwc.command.CommandContext;
 import org.getlwc.command.CommandException;
 import org.getlwc.command.CommandSender;
 import org.getlwc.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CanaryListener extends PluginListener {
 
@@ -87,6 +91,32 @@ public class CanaryListener extends PluginListener {
         org.getlwc.Block block = new CanaryBlock(world, sign.getBlock());
 
         return plugin.getEngine().getEventHelper().onSignChange(player, block);
+    }
+
+    @Override
+    public boolean onExplosion(Block baseBlock, BaseEntity entity, java.util.List blocksAffected) {
+        org.getlwc.World world = plugin.getWorld(baseBlock.getWorld().getName());
+
+        ExplosionType type = null;
+
+        if (entity.getName().equalsIgnoreCase("PrimedTnT")) {
+            type = ExplosionType.TNT;
+        } else if (entity.getName().equalsIgnoreCase("Creeper")) {
+            type = ExplosionType.CREEPER;
+        }
+
+        if (type == null) {
+            throw new UnsupportedOperationException("Unsupported explosion entity: " + entity);
+        }
+
+        List<org.getlwc.Block> affected = new ArrayList<org.getlwc.Block>();
+
+        for (Object object : blocksAffected) {
+            Block block = (Block) object;
+            affected.add(world.getBlockAt(block.getX(), block.getY(), block.getZ()));
+        }
+
+        return plugin.getEngine().getEventHelper().onExplosion(type, affected);
     }
 
     @Override

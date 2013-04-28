@@ -31,6 +31,8 @@ package org.getlwc;
 
 import org.getlwc.entity.Entity;
 
+import java.util.List;
+
 public interface EventHelper {
 
     /**
@@ -68,5 +70,14 @@ public interface EventHelper {
      * @return
      */
     public boolean onSignChange(Entity entity, Block block);
+
+    /**
+     * Called when an explosion occurs in the world
+     *
+     * @param type
+     * @param blocksAffected
+     * @return
+     */
+    public boolean onExplosion(ExplosionType type, List<Block> blocksAffected);
 
 }

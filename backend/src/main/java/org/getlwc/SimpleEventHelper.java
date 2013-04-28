@@ -37,6 +37,8 @@ import org.getlwc.event.events.BlockEvent;
 import org.getlwc.event.events.ProtectionEvent;
 import org.getlwc.model.Protection;
 
+import java.util.List;
+
 import static org.getlwc.I18n._;
 
 public class SimpleEventHelper implements EventHelper {
@@ -143,6 +145,8 @@ public class SimpleEventHelper implements EventHelper {
      * {@inheritDoc}
      */
     public boolean onBlockPlace(Entity entity, Block block) {
+        System.out.println("[internal] Block placed @ " + block);
+
         // Nothing yet.
         // - blacklisting blocks
         // - match neighbouring protection (e.g. double chest). if there is one there don't do anything
@@ -154,7 +158,19 @@ public class SimpleEventHelper implements EventHelper {
      * {@inheritDoc}
      */
     public boolean onSignChange(Entity entity, Block block) {
+        System.out.println("[internal] Signed changed @ " + block);
+
         return !silentAccessCheck(entity, block);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean onExplosion(ExplosionType type, List<Block> blocksAffected) {
+        System.out.println("[internal] Explosion occurred! type=" + type + " blocks affected=" + blocksAffected.size());
+        // TODO
+
+        return false;
     }
 
 }

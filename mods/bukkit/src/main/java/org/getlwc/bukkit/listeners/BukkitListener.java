@@ -29,18 +29,24 @@
 
 package org.getlwc.bukkit.listeners;
 
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.getlwc.Block;
+import org.getlwc.ExplosionType;
 import org.getlwc.World;
 import org.getlwc.bukkit.BukkitPlugin;
 import org.getlwc.bukkit.world.BukkitBlock;
 import org.getlwc.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BukkitListener implements Listener {
 
@@ -100,6 +106,37 @@ public class BukkitListener implements Listener {
         Block block = new BukkitBlock(world, event.getBlock());
 
         boolean result = plugin.getEngine().getEventHelper().onSignChange(player, block);
+
+        if (result) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void entityExplode(EntityExplodeEvent event) {
+        ExplosionType type = null;
+
+        if (event.getEntityType() == EntityType.PRIMED_TNT) {
+            type = ExplosionType.TNT;
+        } else if (event.getEntityType() == EntityType.CREEPER) {
+            type = ExplosionType.CREEPER;
+        }
+
+        if (type == null) {
+            throw new UnsupportedOperationException("Unsupported explosion entity: " + event.getEntityType());
+        }
+
+        World world = plugin.getWorld(event.getLocation().getWorld().getName());
+        List<Block> affected = new ArrayList<Block>();
+
+        for (org.bukkit.block.Block block : event.blockList()) {
+            affected.add(world.getBlockAt(block.getX(), block.getY(), block.getZ()));
+        }
+
+        /**
+         * TODO - does not support removing specific blocks
+         */
+        boolean result = plugin.getEngine().getEventHelper().onExplosion(type, affected);
 
         if (result) {
             event.setCancelled(true);
