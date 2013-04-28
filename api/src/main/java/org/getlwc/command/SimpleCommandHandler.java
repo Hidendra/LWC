@@ -173,13 +173,13 @@ public class SimpleCommandHandler implements CommandHandler {
                 // Add it to the commands
                 String normalized = normalizeCommand(command.command());
                 commands.put(normalized, tuple);
-                postRegisterCommand(normalized);
+                postRegisterCommand(normalized, command);
 
                 // Register all of the aliases
                 for (String alias : command.aliases()) {
                     normalized = normalizeCommand(alias);
                     commands.put(normalized, tuple);
-                    postRegisterCommand(normalized);
+                    postRegisterCommand(normalized, command);
                 }
 
                 // Add the instance
@@ -197,7 +197,7 @@ public class SimpleCommandHandler implements CommandHandler {
      * Called after a command has been registered
      * @param normalized
      */
-    private void postRegisterCommand(String normalized) {
+    private void postRegisterCommand(String normalized, Command command) {
         int indexOfSpace = normalized.indexOf(' ');
 
         if (indexOfSpace != -1) {
@@ -206,7 +206,7 @@ public class SimpleCommandHandler implements CommandHandler {
 
         if (!baseCommands.contains(normalized)) {
             if (engine != null) {
-                engine.getServerLayer().onRegisterBaseCommand(normalized);
+                engine.getServerLayer().onRegisterBaseCommand(normalized, command);
             }
             baseCommands.add(normalized);
         }

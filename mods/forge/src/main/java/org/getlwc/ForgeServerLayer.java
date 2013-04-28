@@ -33,6 +33,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.world.WorldServer;
+import org.getlwc.command.Command;
 import org.getlwc.entity.Player;
 import org.getlwc.world.ForgeWorld;
 
@@ -69,7 +70,8 @@ public class ForgeServerLayer extends ServerLayer {
         internal_commands = server.getCommandManager().getCommands();
     }
 
-    public void onRegisterBaseCommand(String baseCommand) {
+    @Override
+    public void onRegisterBaseCommand(String baseCommand, Command command) {
         internal_commands.put(baseCommand, new NativeCommandHandler(baseCommand));
     }
 

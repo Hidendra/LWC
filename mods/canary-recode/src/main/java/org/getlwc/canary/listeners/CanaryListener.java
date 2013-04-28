@@ -1,0 +1,125 @@
+package org.getlwc.canary.listeners;
+
+import net.canarymod.api.entity.TNTPrimed;
+import net.canarymod.api.entity.living.monster.Creeper;
+import net.canarymod.hook.HookHandler;
+import net.canarymod.hook.player.BlockDestroyHook;
+import net.canarymod.hook.player.BlockLeftClickHook;
+import net.canarymod.hook.player.BlockPlaceHook;
+import net.canarymod.hook.player.BlockRightClickHook;
+import net.canarymod.hook.player.SignChangeHook;
+import net.canarymod.hook.world.ExplosionHook;
+import net.canarymod.plugin.PluginListener;
+import org.getlwc.Block;
+import org.getlwc.ExplosionType;
+import org.getlwc.World;
+import org.getlwc.canary.LWC;
+import org.getlwc.canary.world.CanaryBlock;
+import org.getlwc.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class CanaryListener implements PluginListener {
+
+    /**
+     * Plugin object
+     */
+    private LWC plugin;
+
+    public CanaryListener(LWC plugin) {
+        this.plugin = plugin;
+    }
+
+    @HookHandler(ignoreCanceled = true)
+    public void blockLeftClick(BlockLeftClickHook hook) {
+        Player player = plugin.wrapPlayer(hook.getPlayer());
+        World world = plugin.getWorld(hook.getPlayer().getWorld().getName());
+        Block block = new CanaryBlock(world, hook.getBlock());
+
+        boolean result = plugin.getEngine().getEventHelper().onBlockInteract(player, block);
+
+        if (result) {
+            hook.setCanceled();
+        }
+    }
+
+    @HookHandler(ignoreCanceled = true)
+    public void blockRightClick(BlockRightClickHook hook) {
+        Player player = plugin.wrapPlayer(hook.getPlayer());
+        World world = plugin.getWorld(hook.getPlayer().getWorld().getName());
+        Block block = new CanaryBlock(world, hook.getBlockClicked());
+
+        boolean result = plugin.getEngine().getEventHelper().onBlockInteract(player, block);
+
+        if (result) {
+            hook.setCanceled();
+        }
+    }
+
+    @HookHandler(ignoreCanceled = true)
+    public void blockDestroy(BlockDestroyHook hook) {
+        Player player = plugin.wrapPlayer(hook.getPlayer());
+        World world = plugin.getWorld(hook.getPlayer().getWorld().getName());
+        Block block = new CanaryBlock(world, hook.getBlock());
+
+        boolean result = plugin.getEngine().getEventHelper().onBlockBreak(player, block);
+
+        if (result) {
+            hook.setCanceled();
+        }
+    }
+
+    @HookHandler(ignoreCanceled = true)
+    public void blockPlace(BlockPlaceHook hook) {
+        Player player = plugin.wrapPlayer(hook.getPlayer());
+        World world = plugin.getWorld(hook.getPlayer().getWorld().getName());
+        Block block = new CanaryBlock(world, hook.getBlockPlaced());
+
+        boolean result = plugin.getEngine().getEventHelper().onBlockPlace(player, block);
+
+        if (result) {
+            hook.setCanceled();
+        }
+    }
+
+    @HookHandler(ignoreCanceled = true)
+    public void signChange(SignChangeHook hook) {
+        Player player = plugin.wrapPlayer(hook.getPlayer());
+        World world = plugin.getWorld(hook.getPlayer().getWorld().getName());
+        Block block = new CanaryBlock(world, hook.getSign().getBlock());
+
+        boolean result = plugin.getEngine().getEventHelper().onSignChange(player, block);
+
+        if (result) {
+            hook.setCanceled();
+        }
+    }
+
+    @HookHandler(ignoreCanceled = true)
+    public void entityExplode(ExplosionHook hook) {
+        ExplosionType type = null;
+
+        if (hook.getEntity() instanceof TNTPrimed) {
+            type = ExplosionType.TNT;
+        } else if (hook.getEntity() instanceof Creeper) {
+            type = ExplosionType.CREEPER;
+        } else {
+            throw new UnsupportedOperationException("Unsupported entity: " + hook.getEntity().getClass().getSimpleName() + " " + hook.getEntity().getName());
+        }
+
+        World world = plugin.getWorld(hook.getEntity().getWorld().getName());
+        List<Block> affected = new ArrayList<Block>();
+
+        for (net.canarymod.api.world.blocks.Block block : hook.getAffectedBlocks()) {
+            affected.add(world.getBlockAt(block.getX(), block.getY(), block.getZ()));
+        }
+
+        boolean result = plugin.getEngine().getEventHelper().onExplosion(type, affected);
+
+        if (result) {
+            hook.setCanceled();
+        }
+    }
+
+}

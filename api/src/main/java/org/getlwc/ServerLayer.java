@@ -29,6 +29,7 @@
 
 package org.getlwc;
 
+import org.getlwc.command.Command;
 import org.getlwc.entity.Player;
 
 import java.io.File;
@@ -84,7 +85,7 @@ public abstract class ServerLayer {
      *
      * @param baseCommand
      */
-    public void onRegisterBaseCommand(String baseCommand) { }
+    public void onRegisterBaseCommand(String baseCommand, Command command) { }
 
     /**
      * Get a player from the server
