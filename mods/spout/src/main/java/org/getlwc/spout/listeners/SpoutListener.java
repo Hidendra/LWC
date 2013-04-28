@@ -31,24 +31,29 @@ package org.getlwc.spout.listeners;
 
 import org.getlwc.Block;
 import org.getlwc.World;
+import org.getlwc.entity.Entity;
 import org.getlwc.entity.Player;
 import org.getlwc.spout.SpoutPlugin;
 import org.getlwc.spout.world.SpoutBlock;
 import org.spout.api.event.EventHandler;
 import org.spout.api.event.Listener;
 import org.spout.api.event.block.BlockChangeEvent;
+import org.spout.api.event.cause.EntityCause;
+import org.spout.api.event.cause.PlayerCause;
 import org.spout.api.event.player.PlayerInteractEvent;
 import org.spout.api.geo.discrete.Point;
+import org.spout.vanilla.event.block.SignUpdateEvent;
 import org.spout.vanilla.event.cause.PlayerBreakCause;
+import org.spout.vanilla.event.cause.PlayerPlacementCause;
 
-public class PlayerListener implements Listener {
+public class SpoutListener implements Listener {
 
     /**
      * The plugin object
      */
     private SpoutPlugin plugin;
 
-    public PlayerListener(SpoutPlugin plugin) {
+    public SpoutListener(SpoutPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -78,8 +83,36 @@ public class PlayerListener implements Listener {
 
         if (event.getCause() instanceof PlayerBreakCause) {
             onBlockBreak(event, (PlayerBreakCause) event.getCause());
+        } else if (event.getCause() instanceof PlayerPlacementCause) {
+            onBlockPlace(event, (PlayerPlacementCause) event.getCause());
         }
         // also PlayerPlacementCause, etc
+    }
+
+    @EventHandler
+    public void signUpdate(SignUpdateEvent event) {
+        if (event.isCancelled() || event.getSource() == null) {
+            return;
+        }
+
+        Entity entity;
+
+        if (event.getSource() instanceof PlayerCause) {
+            entity = plugin.wrapPlayer(((PlayerCause) event.getSource()).getSource());
+        } else {
+            throw new UnsupportedOperationException("Unsupported event source for SignUpdateEvent: " + event.getSource().getClass().getSimpleName());
+        }
+
+
+        World world = plugin.getWorld(entity.getLocation().getWorld().getName());
+        Point point = event.getSign().getPosition();
+        Block block = new SpoutBlock(world, ((EntityCause) event.getSource()).getSource().getWorld().getBlock(point.getBlockX(), point.getBlockY(), point.getBlockZ()));
+
+        boolean result = plugin.getInternalEngine().getEventHelper().onSignChange(entity, block);
+
+        if (result) {
+            event.setCancelled(true);
+        }
     }
 
     private void onBlockBreak(BlockChangeEvent event, PlayerBreakCause cause) {
@@ -89,6 +122,19 @@ public class PlayerListener implements Listener {
         Block block = new SpoutBlock(world, cause.getSource().getWorld().getBlock(point.getBlockX(), point.getBlockY(), point.getBlockZ()));
 
         boolean result = plugin.getInternalEngine().getEventHelper().onBlockBreak(player, block);
+
+        if (result) {
+            event.setCancelled(true);
+        }
+    }
+
+    private void onBlockPlace(BlockChangeEvent event, PlayerPlacementCause cause) {
+        Player player = plugin.wrapPlayer(cause.getSource());
+        World world = plugin.getWorld(player.getLocation().getWorld().getName());
+        Point point = event.getBlock().getPosition();
+        Block block = new SpoutBlock(world, cause.getSource().getWorld().getBlock(point.getBlockX(), point.getBlockY(), point.getBlockZ()));
+
+        boolean result = plugin.getInternalEngine().getEventHelper().onBlockPlace(player, block);
 
         if (result) {
             event.setCancelled(true);

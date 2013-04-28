@@ -33,6 +33,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.getlwc.Block;
@@ -41,14 +42,14 @@ import org.getlwc.bukkit.BukkitPlugin;
 import org.getlwc.bukkit.world.BukkitBlock;
 import org.getlwc.entity.Player;
 
-public class PlayerListener implements Listener {
+public class BukkitListener implements Listener {
 
     /**
      * The plugin object
      */
     private BukkitPlugin plugin;
 
-    public PlayerListener(BukkitPlugin plugin) {
+    public BukkitListener(BukkitPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -73,6 +74,19 @@ public class PlayerListener implements Listener {
         Block block = new BukkitBlock(world, event.getBlock());
 
         boolean result = plugin.getEngine().getEventHelper().onBlockBreak(player, block);
+
+        if (result) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void blockPlace(BlockPlaceEvent event) {
+        Player player = plugin.wrapPlayer(event.getPlayer());
+        World world = plugin.getWorld(event.getPlayer().getWorld().getName());
+        Block block = new BukkitBlock(world, event.getBlock());
+
+        boolean result = plugin.getEngine().getEventHelper().onBlockPlace(player, block);
 
         if (result) {
             event.setCancelled(true);

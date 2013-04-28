@@ -38,7 +38,7 @@ import org.getlwc.command.CommandException;
 import org.getlwc.command.CommandSender;
 import org.getlwc.entity.Player;
 import org.getlwc.spout.command.SpoutConsoleCommandSender;
-import org.getlwc.spout.listeners.PlayerListener;
+import org.getlwc.spout.listeners.SpoutListener;
 import org.spout.api.Spout;
 import org.spout.api.event.Listener;
 import org.spout.api.plugin.CommonPlugin;
@@ -96,7 +96,7 @@ public class SpoutPlugin extends CommonPlugin implements Listener {
 
         // Register events
         Spout.getEngine().getEventManager().registerEvents(this, this);
-        Spout.getEngine().getEventManager().registerEvents(new PlayerListener(this), this);
+        Spout.getEngine().getEventManager().registerEvents(new SpoutListener(this), this);
 
     }
 

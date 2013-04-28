@@ -72,6 +72,15 @@ public class CanaryListener extends PluginListener {
     }
 
     @Override
+    public boolean onBlockPlace(Player nativePlayer, Block blockPlaced, Block blockClicked, Item itemInHand) {
+        org.getlwc.entity.Player player = plugin.wrapPlayer(nativePlayer);
+        org.getlwc.World world = plugin.getWorld(nativePlayer.getWorld().getName());
+        org.getlwc.Block block = new CanaryBlock(world, blockPlaced);
+
+        return plugin.getEngine().getEventHelper().onBlockPlace(player, block);
+    }
+
+    @Override
     public boolean onSignChange(Player nativePlayer, Sign sign) {
         org.getlwc.entity.Player player = plugin.wrapPlayer(nativePlayer);
         org.getlwc.World world = plugin.getWorld(nativePlayer.getWorld().getName());

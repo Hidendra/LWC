@@ -142,6 +142,17 @@ public class SimpleEventHelper implements EventHelper {
     /**
      * {@inheritDoc}
      */
+    public boolean onBlockPlace(Entity entity, Block block) {
+        // Nothing yet.
+        // - blacklisting blocks
+        // - match neighbouring protection (e.g. double chest). if there is one there don't do anything
+        // - auto protect
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public boolean onSignChange(Entity entity, Block block) {
         return !silentAccessCheck(entity, block);
     }

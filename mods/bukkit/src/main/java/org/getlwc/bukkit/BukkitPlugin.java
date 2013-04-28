@@ -40,7 +40,7 @@ import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
 import org.getlwc.World;
 import org.getlwc.bukkit.command.BukkitConsoleCommandSender;
-import org.getlwc.bukkit.listeners.PlayerListener;
+import org.getlwc.bukkit.listeners.BukkitListener;
 import org.getlwc.command.CommandContext;
 import org.getlwc.command.CommandException;
 import org.getlwc.command.CommandSender;
@@ -129,7 +129,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
 
         // Register events
         getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+        getServer().getPluginManager().registerEvents(new BukkitListener(this), this);
 
     }
 

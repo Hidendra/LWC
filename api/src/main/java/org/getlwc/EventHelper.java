@@ -52,6 +52,15 @@ public interface EventHelper {
     public boolean onBlockBreak(Entity entity, Block block);
 
     /**
+     * Called when an entity places a block in the world
+     *
+     * @param entity
+     * @param block
+     * @return
+     */
+    public boolean onBlockPlace(Entity entity, Block block);
+
+    /**
      * Called when an entity changes text on a sign
      *
      * @param entity
