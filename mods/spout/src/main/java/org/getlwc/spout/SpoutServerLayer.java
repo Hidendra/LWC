@@ -90,7 +90,7 @@ public class SpoutServerLayer extends ServerLayer {
      * {@inheritDoc}
      */
     @Override
-    public void onRegisterBaseCommand(String baseCommand) {
+    public void onRegisterBaseCommand(String baseCommand, org.getlwc.command.Command command) {
         plugin.getEngine().getRootCommand().addSubCommand(plugin, baseCommand).setExecutor(executor);
     }
 
