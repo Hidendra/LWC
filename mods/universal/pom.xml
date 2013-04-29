@@ -8,6 +8,13 @@
     <packaging>jar</packaging>
     <version>5.0.0-SNAPSHOT</version>
 
+    <parent>
+        <groupId>org.getlwc</groupId>
+        <artifactId>lwc-parent</artifactId>
+        <version>5.0.0-SNAPSHOT</version>
+        <relativePath>../../</relativePath>
+    </parent>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
