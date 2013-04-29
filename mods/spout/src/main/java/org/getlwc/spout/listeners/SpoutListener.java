@@ -43,6 +43,7 @@ import org.spout.api.event.cause.EntityCause;
 import org.spout.api.event.cause.PlayerCause;
 import org.spout.api.event.player.PlayerInteractEvent;
 import org.spout.api.geo.discrete.Point;
+import org.spout.vanilla.event.block.RedstoneChangeEvent;
 import org.spout.vanilla.event.block.SignUpdateEvent;
 import org.spout.vanilla.event.cause.PlayerBreakCause;
 import org.spout.vanilla.event.cause.PlayerPlacementCause;
@@ -114,6 +115,23 @@ public class SpoutListener implements Listener {
         Block block = new SpoutBlock(world, ((EntityCause) event.getSource()).getSource().getWorld().getBlock(point.getBlockX(), point.getBlockY(), point.getBlockZ()));
 
         boolean result = plugin.getInternalEngine().getEventHelper().onSignChange(entity, block);
+
+        if (result) {
+            event.setCancelled(true);
+        }
+    }
+
+    // Vanilla
+    @EventHandler
+    public void redstoneChange(RedstoneChangeEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
+        World world = plugin.getWorld(event.getBlock().getWorld().getName());
+        Block block = new SpoutBlock(world, event.getBlock());
+
+        boolean result = plugin.getInternalEngine().getEventHelper().onRedstoneChange(block, event.getPreviousPower(), event.getNewPower());
 
         if (result) {
             event.setCancelled(true);

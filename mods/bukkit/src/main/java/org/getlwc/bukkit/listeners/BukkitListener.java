@@ -35,6 +35,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -109,6 +110,17 @@ public class BukkitListener implements Listener {
 
         if (result) {
             event.setCancelled(true);
+        }
+    }
+
+    public void redstoneChange(BlockRedstoneEvent event) {
+        World world = plugin.getWorld(event.getBlock().getWorld().getName());
+        Block block = new BukkitBlock(world, event.getBlock());
+
+        boolean result = plugin.getEngine().getEventHelper().onRedstoneChange(block, event.getOldCurrent(), event.getNewCurrent());
+
+        if (result) {
+            event.setNewCurrent(event.getOldCurrent());
         }
     }
 

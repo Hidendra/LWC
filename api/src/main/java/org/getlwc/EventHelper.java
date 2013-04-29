@@ -80,4 +80,14 @@ public interface EventHelper {
      */
     public boolean onExplosion(ExplosionType type, List<Block> blocksAffected);
 
+    /**
+     * Called when the redstone level changes on a block
+     *
+     * @param block
+     * @param oldLevel
+     * @param newLevel
+     * @return
+     */
+    public boolean onRedstoneChange(Block block, int oldLevel, int newLevel);
+
 }

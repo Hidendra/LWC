@@ -9,6 +9,7 @@ import net.canarymod.hook.player.BlockPlaceHook;
 import net.canarymod.hook.player.BlockRightClickHook;
 import net.canarymod.hook.player.SignChangeHook;
 import net.canarymod.hook.world.ExplosionHook;
+import net.canarymod.hook.world.RedstoneChangeHook;
 import net.canarymod.plugin.PluginListener;
 import org.getlwc.Block;
 import org.getlwc.ExplosionType;
@@ -90,6 +91,18 @@ public class CanaryListener implements PluginListener {
         Block block = new CanaryBlock(world, hook.getSign().getBlock());
 
         boolean result = plugin.getEngine().getEventHelper().onSignChange(player, block);
+
+        if (result) {
+            hook.setCanceled();
+        }
+    }
+
+    @HookHandler(ignoreCanceled = true)
+    public void redstoneChange(RedstoneChangeHook hook) {
+        World world = plugin.getWorld(hook.getSourceBlock().getWorld().getName());
+        Block block = new CanaryBlock(world, hook.getSourceBlock());
+
+        boolean result = plugin.getEngine().getEventHelper().onRedstoneChange(block, hook.getOldLevel(), hook.getNewLevel());
 
         if (result) {
             hook.setCanceled();

@@ -94,6 +94,16 @@ public class CanaryListener extends PluginListener {
     }
 
     @Override
+    public int onRedstoneChange(Block nativeBlock, int oldLevel, int newLevel) {
+        org.getlwc.World world = plugin.getWorld(nativeBlock.getWorld().getName());
+        org.getlwc.Block block = new CanaryBlock(world, nativeBlock);
+
+        boolean cancel = plugin.getEngine().getEventHelper().onRedstoneChange(block, oldLevel, newLevel);
+
+        return cancel ? oldLevel : newLevel;
+    }
+
+    @Override
     public boolean onExplosion(Block baseBlock, BaseEntity entity, java.util.List blocksAffected) {
         org.getlwc.World world = plugin.getWorld(baseBlock.getWorld().getName());
 

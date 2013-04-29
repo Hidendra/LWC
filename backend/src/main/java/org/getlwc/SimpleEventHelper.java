@@ -173,4 +173,27 @@ public class SimpleEventHelper implements EventHelper {
         return false;
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean onRedstoneChange(Block block, int oldLevel, int newLevel) {
+        ProtectionManager manager = engine.getProtectionManager();
+
+        if (!manager.isBlockProtectable(block)) {
+            return false;
+        }
+
+        Protection protection = manager.findProtection(block.getLocation());
+
+        /**
+         * TODO globally disable redstone on protections for now
+         */
+        if (protection != null) {
+            return true;
+        }
+
+        return false;
+    }
+
 }
