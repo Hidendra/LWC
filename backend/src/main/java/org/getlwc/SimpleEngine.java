@@ -192,6 +192,13 @@ public class SimpleEngine implements Engine {
     /**
      * {@inheritDoc}
      */
+    public String getCompiledMinecraftVersion() {
+        return configuration.getString("minecraft.version");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public RoleManager getRoleManager() {
         return roleManager;
     }

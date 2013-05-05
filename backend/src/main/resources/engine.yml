@@ -1,4 +1,6 @@
 version: ${project.version}
+minecraft:
+    version: ${minecraft.version}
 git:
     branch: ${git.branch}
     describe: ${git.commit.id.describe}

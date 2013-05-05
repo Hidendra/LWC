@@ -31,8 +31,17 @@ package org.getlwc;
 
 public class ForgeServerInfo implements ServerInfo {
 
+    /**
+     * The plugin instance
+     */
+    private LWC plugin;
+
+    public ForgeServerInfo(LWC plugin) {
+        this.plugin = plugin;
+    }
+
     public String getServerVersion() {
-        return "1.5.0";
+        return plugin.getEngine().getCompiledMinecraftVersion();
     }
 
 }

@@ -45,6 +45,13 @@ public interface Engine {
     public ServerMod getServerMod();
 
     /**
+     * Get the version of minecraft this was compiled with
+     *
+     * @return
+     */
+    public String getCompiledMinecraftVersion();
+
+    /**
      * Get the {@link RoleManager} which manages role associations
      *
      * @return
