@@ -75,7 +75,7 @@ File.open(SRG_FILE, 'r') do |file|
   while (line = file.gets)
 
     # Try to match method name
-    if (match = line.match(/MD: ([a-zA-Z]+)\/([a-zA-Z]+) ([()A-Za-z]+) ([a-zA-Z\/]+)\/([a-zA-Z\/]+) ([()A-Za-z]+)/))
+    if (match = line.match(/MD: ([a-zA-Z]+)\/([a-zA-Z]+) ([()A-Za-z]+) ([a-zA-Z\/]+)\/([a-zA-Z0-9_]+) ([()A-Za-z]+)/))
       obfuscatedClass, obfuscated, signature, unobfuscatedClass, methodName, signature2 = match.captures
 
       mappings["methods"].each_pair do |klass, v|
@@ -109,7 +109,7 @@ File.open(SRG_FILE, 'r') do |file|
   while (line = file.gets)
 
     # Try to match method name
-    if (match = line.match(/FD: ([a-zA-Z]+)\/([a-zA-Z]+) ([a-zA-Z\/]+)\/([a-zA-Z]+)/))
+    if (match = line.match(/FD: ([a-zA-Z]+)\/([a-zA-Z]+) ([a-zA-Z\/]+)\/([a-zA-Z0-9_]+)/))
       obfuscatedClass, obfuscated, unobfuscatedClass, fieldName = match.captures
 
       mappings["fields"].each_pair do |klass, v|
