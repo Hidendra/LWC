@@ -34,7 +34,7 @@ file_exists = File.exists?(MAP_FILE)
 puts "==== mappings.yml detected: " + (file_exists ? File.expand_path(MAP_FILE) : "NOT FOUND")
 
 if ! file_exists
-  puts "NO mappings.yml FOUND! Ensure this exists and LWC is setup correctly: " + SRG_FILE
+  puts "NO mappings.yml FOUND! Ensure this exists and LWC is setup correctly: " + MAP_FILE
   exit
 end
 
