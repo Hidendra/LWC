@@ -24,6 +24,9 @@ classes:
   Explosion:
     mcp: net.minecraft.world.Explosion
     obf: zw
+  ChunkPosition:
+    mcp: net.minecraft.world.ChunkPosition
+    obf: aat
 methods:
   ForgeEventHelper:
     onBlockHarvested:
@@ -57,3 +60,4 @@ fields:
     explosionY: d
     explosionZ: e
     field_77289_h: i
+    affectedBlockPositions: h

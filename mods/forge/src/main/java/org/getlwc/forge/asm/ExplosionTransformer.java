@@ -33,6 +33,7 @@ import org.getlwc.forge.LWC;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
@@ -72,6 +73,28 @@ public class ExplosionTransformer extends org.getlwc.forge.asm.AbstractSingleCla
             MethodNode method = (MethodNode) iter.next();
 
             if (method.desc.equals("()V") && method.name.equals(getMethodName("Explosion", "doExplosionA"))) {
+                // find offset for h.addAll ( affectedBlockPositions )
+                int offset = -1;
+
+                for (int index = 0; index < method.instructions.size(); index ++) {
+
+                    if (method.instructions.get(index).getType() == AbstractInsnNode.METHOD_INSN) {
+                        MethodInsnNode node = (MethodInsnNode) method.instructions.get(index);
+
+                        if (node.owner.equals("java/util/List") && node.name.equals("addAll")) {
+                            offset = index;
+                            break;
+                        }
+
+                    }
+
+                }
+
+                if (offset == -1) {
+                    System.out.println("Could not find addAll instruction point in Explosion");
+                    break;
+                }
+
                 // new label for the end of our code
                 LabelNode lmm1Node = new LabelNode(new Label());
 
@@ -90,8 +113,10 @@ public class ExplosionTransformer extends org.getlwc.forge.asm.AbstractSingleCla
                 instructions.add(new VarInsnNode(ALOAD, 0));
                 instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("Explosion"), getFieldName("Explosion", "field_77289_h"), "I"));
                 instructions.add(new VarInsnNode(ALOAD, 0));
+                instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("Explosion"), getFieldName("Explosion", "affectedBlockPositions"), "Ljava/util/List;"));
+                instructions.add(new VarInsnNode(ALOAD, 0));
                 instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("Explosion"), getFieldName("Explosion", "exploder"), "L" + getJavaClassName("Entity") + ";"));
-                instructions.add(new MethodInsnNode(INVOKESTATIC, getJavaClassName("ForgeEventHelper"), getMethodName("ForgeEventHelper", "onExplosion"), "(L" + getJavaClassName("World") + ";DDDIL" + getJavaClassName("Entity") + ";)Z"));
+                instructions.add(new MethodInsnNode(INVOKESTATIC, getJavaClassName("ForgeEventHelper"), getMethodName("ForgeEventHelper", "onExplosion"), "(L" + getJavaClassName("World") + ";DDDILjava/util/List;L" + getJavaClassName("Entity") + ";)Z"));
 
                 // return from onExplosion()
                 LabelNode cancel = new LabelNode(new Label());
@@ -105,7 +130,7 @@ public class ExplosionTransformer extends org.getlwc.forge.asm.AbstractSingleCla
                 // finished instruction list
 
                 // inject the instructions
-                method.instructions.insert(instructions);
+                method.instructions.insert(method.instructions.get(offset), instructions);
 
                 LWC.instance.getEngine().getConsoleSender().sendMessage("[ASM] Injected " + TARGET_CLASS);
 

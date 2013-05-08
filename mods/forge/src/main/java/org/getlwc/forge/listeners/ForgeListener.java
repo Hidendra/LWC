@@ -47,9 +47,6 @@ import org.getlwc.forge.event.EntityExplodeEvent;
 import org.getlwc.forge.event.PlayerBreakBlockEvent;
 import org.getlwc.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ForgeListener {
 
     /**
@@ -134,18 +131,7 @@ public class ForgeListener {
             throw new UnsupportedOperationException("Unsupported explosion entity: " + event.entity);
         }
 
-        List<Block> affected = new ArrayList<Block>();
-
-        int radius = 5;
-        for (int x = event.getExplosionX() - radius; x < event.getExplosionX() + radius; x++) {
-            for (int y = event.getExplosionY() - radius; y < event.getExplosionY() + radius; y++) {
-                for (int z = event.getExplosionZ() - radius; z < event.getExplosionZ() + radius; z++) {
-                    affected.add(world.getBlockAt(x, y, z));
-                }
-            }
-        }
-
-        if (mod.getEngine().getEventHelper().onExplosion(type, affected)) {
+        if (mod.getEngine().getEventHelper().onExplosion(type, event.getAffectedBlocks())) {
             event.setCanceled(true);
             event.setResult(Event.Result.DENY);
         }

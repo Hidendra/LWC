@@ -31,6 +31,9 @@ package org.getlwc.forge.event;
 
 import net.minecraft.entity.Entity;
 import net.minecraftforge.event.entity.EntityEvent;
+import org.getlwc.Block;
+
+import java.util.List;
 
 public class EntityExplodeEvent extends EntityEvent {
 
@@ -54,12 +57,18 @@ public class EntityExplodeEvent extends EntityEvent {
      */
     private int radius;
 
-    public EntityExplodeEvent(Entity entity, int explosionX, int explosionY, int explosionZ, int radius) {
+    /**
+     * A list of affected blocks
+     */
+    private List<Block> affectedBlocks;
+
+    public EntityExplodeEvent(Entity entity, int explosionX, int explosionY, int explosionZ, int radius, List<Block> affectedBlocks) {
         super(entity);
         this.explosionX = explosionX;
         this.explosionY = explosionY;
         this.explosionZ = explosionZ;
         this.radius = radius;
+        this.affectedBlocks = affectedBlocks;
     }
 
     public int getExplosionX() {
@@ -76,5 +85,9 @@ public class EntityExplodeEvent extends EntityEvent {
 
     public int getRadius() {
         return radius;
+    }
+
+    public List<Block> getAffectedBlocks() {
+        return affectedBlocks;
     }
 }

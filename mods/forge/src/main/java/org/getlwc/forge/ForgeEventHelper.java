@@ -32,8 +32,13 @@ package org.getlwc.forge;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
+import org.getlwc.Block;
+import org.getlwc.World;
 import org.getlwc.forge.event.EntityExplodeEvent;
 import org.getlwc.forge.event.PlayerBreakBlockEvent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ForgeEventHelper {
 
@@ -57,16 +62,31 @@ public class ForgeEventHelper {
     /**
      * Called when an explosion occurs in the world
      *
-     * @param world
+     * @param nativeWorld
      * @param explosionX
      * @param explosionY
      * @param explosionZ
      * @param explosionRadius
+     * @param affectedLocations
      * @param entity
      * @return
      */
-    public static boolean onExplosion(net.minecraft.world.World world, double explosionX, double explosionY, double explosionZ, int explosionRadius, net.minecraft.entity.Entity entity) {
-        EntityExplodeEvent event = new EntityExplodeEvent(entity, (int) explosionX, (int) explosionY, (int) explosionZ, explosionRadius);
+    public static boolean onExplosion(net.minecraft.world.World nativeWorld, double explosionX, double explosionY, double explosionZ, int explosionRadius, List<net.minecraft.world.ChunkPosition> affectedLocations, net.minecraft.entity.Entity entity) {
+        List<Block> affectedBlocks = new ArrayList<Block>();
+        World world = LWC.instance.getWorld(nativeWorld.getWorldInfo().getWorldName());
+
+        for (net.minecraft.world.ChunkPosition loc : affectedLocations) {
+            Block block = world.getBlockAt(loc.x, loc.y, loc.z);
+
+            // Check that it isn't air (we don't need to know about air internally)
+            if (block.getType() == 0) {
+                continue;
+            }
+
+            affectedBlocks.add(block);
+        }
+
+        EntityExplodeEvent event = new EntityExplodeEvent(entity, (int) explosionX, (int) explosionY, (int) explosionZ, explosionRadius, affectedBlocks);
         MinecraftForge.EVENT_BUS.post(event);
         return event.isCanceled() || event.getResult() == Event.Result.DENY;
     }
