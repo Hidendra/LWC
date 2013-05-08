@@ -29,19 +29,12 @@
 
 package org.getlwc;
 
+import org.getlwc.configuration.YamlConfiguration;
+
 public class ForgeServerInfo implements ServerInfo {
 
-    /**
-     * The plugin instance
-     */
-    private LWC plugin;
-
-    public ForgeServerInfo(LWC plugin) {
-        this.plugin = plugin;
-    }
-
     public String getServerVersion() {
-        return plugin.getEngine().getCompiledMinecraftVersion();
+        return new YamlConfiguration(getClass().getResourceAsStream("/engine.yml")).getString("minecraft.version");
     }
 
 }

@@ -52,7 +52,7 @@ public class LWCServerProxy extends CommonProxy {
 
         // create an engine
         ServerLayer layer = new ForgeServerLayer();
-        Engine engine = SimpleEngine.createEngine(layer, new ForgeServerInfo(LWC.instance), new ForgeConsoleCommandSender());
+        Engine engine = SimpleEngine.createEngine(layer, new ForgeServerInfo(), new ForgeConsoleCommandSender());
         LWC.instance.setupServer(engine, layer);
     }
 
