@@ -1,0 +1,44 @@
+# Mappings used for ASM
+
+classes:
+    # LWC
+    ForgeEventHelper:
+        mcp: org.getlwc.ForgeEventHelper
+        obf: org.getlwc.ForgeEventHelper
+
+    # Minecraft
+    ItemInWorldManager:
+        mcp: net.minecraft.item.ItemInWorldManager
+        obf: jd
+    World:
+        mcp: net.minecraft.world.World
+        obf: aab
+    Block:
+        mcp: net.minecraft.block.Block
+        obf: apa
+    EntityPlayer:
+        mcp: net.minecraft.entity.EntityPlayer
+        obf: sq
+    EntityPlayerMP:
+        mcp: net.minecraft.entity.EntityPlayerMP
+        obf: jc
+
+# methods.ClassName.UnobfuscatedMethod: ObfuscatedMethod
+methods:
+    # LWC
+    ForgeEventHelper:
+        onBlockHarvested: onBlockHarvested
+
+    # Minecraft
+    ItemInWorldManager:
+        removeBlock: d
+    World:
+        getBlockMetadata: h
+
+# fields.ClassName.UnobfuscatedField: ObfuscatedField
+fields:
+    ItemInWorldManager:
+        theWorld: a
+        thisPlayerMP: b
+    Block:
+        blocksList: r

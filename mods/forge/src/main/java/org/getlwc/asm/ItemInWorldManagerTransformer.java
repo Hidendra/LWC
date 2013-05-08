@@ -1,6 +1,34 @@
+/*
+ * Copyright (c) 2011-2013 Tyler Blair
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are
+ * permitted provided that the following conditions are met:
+ *
+ *    1. Redistributions of source code must retain the above copyright notice, this list of
+ *       conditions and the following disclaimer.
+ *
+ *    2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *       of conditions and the following disclaimer in the documentation and/or other materials
+ *       provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR,
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those of the
+ * authors and contributors and should not be interpreted as representing official policies,
+ * either expressed or implied, of anybody else.
+ */
+
 package org.getlwc.asm;
 
-import cpw.mods.fml.relauncher.IClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
@@ -15,201 +43,129 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import java.util.HashMap;
 import java.util.Iterator;
 
 import static org.objectweb.asm.Opcodes.*;
 
-/**
- * 
- * Taken from bspkrs's treecapitator mod, adds a more generic event-style system to it.
- * https://github.com/keepcalm/BlockBreak
- * 
- * @author bspkrs
- *
- */
-public class ItemInWorldManagerTransformer implements IClassTransformer
-{
-    /* Obfuscated Names for ItemInWorldManager Transformation */
-    
-    /* removeBlock */
-    private final String  targetMethodDesc = "(III)Z";
-    
-    private final HashMap obfStrings;
-    private final HashMap mcpStrings;
-    
-    public ItemInWorldManagerTransformer()
-    {
-        /*
-         * create a HashMap to store the obfuscated names of classes, methods, and fields used in the transformation
-         */
-        obfStrings = new HashMap();
-        /* net.minecraft.src.ItemInWorldManager */
-        obfStrings.put("className", "jd");
-        /* net/minecraft/src/ItemInWorldManager */
-        obfStrings.put("javaClassName", "jd");
-        /* removeBlock */
-        obfStrings.put("targetMethodName", "d");
-        /* theWorld */
-        obfStrings.put("worldFieldName", "a");
-        /* thisPlayerMP */
-        obfStrings.put("entityPlayerFieldName", "b");
-        /* net/minecraft/src/World */
-        obfStrings.put("worldJavaClassName", "aab");
-        /* net/minecraft/src/World.getBlockMetadata() */
-        obfStrings.put("getBlockMetadataMethodName", "h");
-        /* net/minecraft/src/Block */
-        obfStrings.put("blockJavaClassName", "apa");
-        /* net/minecraft/src/Block.blocksList[] */
-        obfStrings.put("blocksListFieldName", "r");
-        /* net/minecraft/src/EntityPlayer */
-        obfStrings.put("entityPlayerJavaClassName", "sq");
-        /* net/minecraft/src/EntityPlayerMP */
-        obfStrings.put("entityPlayerMPJavaClassName", "jc");
-        
-        /*
-         * create a HashMap to store the MCP names of classes, methods, and fields used in the transformation
-         */
-        mcpStrings = new HashMap();
-        mcpStrings.put("className", "net.minecraft.item.ItemInWorldManager");
-        mcpStrings.put("javaClassName", "net/minecraft/item/ItemInWorldManager");
-        mcpStrings.put("targetMethodName", "removeBlock");
-        mcpStrings.put("worldFieldName", "theWorld");
-        mcpStrings.put("entityPlayerFieldName", "thisPlayerMP");
-        mcpStrings.put("worldJavaClassName", "net/minecraft/world/World");
-        mcpStrings.put("getBlockMetadataMethodName", "getBlockMetadata");
-        mcpStrings.put("blockJavaClassName", "net/minecraft/block/Block");
-        mcpStrings.put("blocksListFieldName", "blocksList");
-        mcpStrings.put("entityPlayerJavaClassName", "net/minecraft/entity/player/EntityPlayer");
-        mcpStrings.put("entityPlayerMPJavaClassName", "net/minecraft/entity/player/EntityPlayerMP");
+public class ItemInWorldManagerTransformer extends AbstractSingleClassTransformer {
+
+    /**
+     * The class we are targeting
+     */
+    private static final String TARGET_CLASS = "ItemInWorldManager";
+
+    public ItemInWorldManagerTransformer() {
+        super(TARGET_CLASS);
     }
 
-    public byte[] transform(String name, String s2, byte[] bytes)
-    {
-        // // System.out.println("transforming: "+name);
-        if (name.equals(obfStrings.get("className")))
-        {
-            return transformItemInWorldManager(bytes, obfStrings);
-        }
-        else if (name.equals(mcpStrings.get("className")))
-        {
-            return transformItemInWorldManager(bytes, mcpStrings);
-        }
-        
-        return bytes;
-    }
+    @Override
+    public byte[] transform(byte[] bytes) {
 
-    private byte[] transformItemInWorldManager(byte[] bytes, HashMap hm)
-    {
-        // System.out.println("Class Transformation running on ItemInWorldManager...");
-        
         ClassNode classNode = new ClassNode();
-        ClassReader classReader = new ClassReader(bytes);
-        classReader.accept(classNode, 0);
-        
+        ClassReader reader = new ClassReader(bytes);
+        reader.accept(classNode, 0);
+
         // find method to inject into
-        Iterator<MethodNode> methods = classNode.methods.iterator();
-        while (methods.hasNext())
-        {
-            MethodNode m = methods.next();
-            if (m.name.equals(hm.get("targetMethodName")) && m.desc.equals(targetMethodDesc))
-            {
-                // System.out.println("Found target method " + m.name + m.desc + "! Searching for landmarks...");
+        Iterator iter = classNode.methods.iterator();
+
+        while (iter.hasNext()) {
+            MethodNode method = (MethodNode) iter.next();
+
+            if (method.desc.equals("(III)Z") && method.name.equals(getMethodName("ItemInWorldManager", "removeBlock"))) {
+
                 int blockIndex = 4;
                 int mdIndex = 5;
-                
-                // find injection point in method (use IFNULL inst)
-                for (int index = 0; index < m.instructions.size(); index++)
-                {
-                    // // System.out.println("Processing INSN at " + index +
-                    // " of type " + m.instructions.get(index).getType() +
-                    // ", OpCode " + m.instructions.get(index).getOpcode());
-                    // find local Block object node and from that, local object
-                    // index
-                    if (m.instructions.get(index).getType() == AbstractInsnNode.FIELD_INSN)
-                    {
-                        FieldInsnNode blocksListNode = (FieldInsnNode) m.instructions.get(index);
-                        if (blocksListNode.owner.equals(hm.get("blockJavaClassName")) && blocksListNode.name.equals(hm.get("blocksListFieldName")))
-                        {
+
+                // find injection point in method (use IFNULL)
+                for (int index = 0; index < method.instructions.size(); index++) {
+
+                    // find local Block object node and from that, local object index
+                    if (method.instructions.get(index).getType() == AbstractInsnNode.FIELD_INSN) {
+                        FieldInsnNode blocksListNode = (FieldInsnNode) method.instructions.get(index);
+
+                        if (blocksListNode.owner.equals(getJavaClassName("Block")) && blocksListNode.name.equals(getFieldName("Block", "blocksList"))) {
                             int offset = 1;
-                            while (m.instructions.get(index + offset).getOpcode() != ASTORE)
-                                offset++;
-                            // System.out.println("Found Block object ASTORE Node at " + (index + offset));
-                            VarInsnNode blockNode = (VarInsnNode) m.instructions.get(index + offset);
+
+                            while (method.instructions.get(index + offset).getOpcode() != ASTORE) {
+                                offset ++;
+                            }
+
+                            VarInsnNode blockNode = (VarInsnNode) method.instructions.get(index + offset);
                             blockIndex = blockNode.var;
-                            // System.out.println("Block object is in local object " + blockIndex);
                         }
                     }
-                    
-                    // find local metadata variable node and from that, local
-                    // variable index
-                    if (m.instructions.get(index).getType() == AbstractInsnNode.METHOD_INSN)
-                    {
-                        MethodInsnNode mdNode = (MethodInsnNode) m.instructions.get(index);
-                        if (mdNode.owner.equals(hm.get("worldJavaClassName")) && mdNode.name.equals(hm.get("getBlockMetadataMethodName")))
-                        {
+
+                    // find local metadata variable node and from that, local variable index
+                    if (method.instructions.get(index).getType() == AbstractInsnNode.METHOD_INSN) {
+                        MethodInsnNode methodNode = (MethodInsnNode) method.instructions.get(index);
+
+                        if (methodNode.owner.equals(getJavaClassName("World")) && methodNode.name.equals(getMethodName("World", "getBlockMetadata"))) {
                             int offset = 1;
-                            while (m.instructions.get(index + offset).getOpcode() != ISTORE)
-                                offset++;
-                            // System.out.println("Found metadata local variable ISTORE Node at " + (index + offset));
-                            VarInsnNode mdFieldNode = (VarInsnNode) m.instructions.get(index + offset);
-                            mdIndex = mdFieldNode.var;
-                            // System.out.println("Metadata is in local variable " + mdIndex);
+
+                            while (method.instructions.get(index + offset).getOpcode() != ISTORE) {
+                                offset ++;
+                            }
+
+                            VarInsnNode mdNode = (VarInsnNode) method.instructions.get(index + offset);
+                            mdIndex = mdNode.var;
                         }
                     }
-                    
-                    if (m.instructions.get(index).getOpcode() == IFNULL)
-                    {
-                        // System.out.println("Found IFNULL Node at " + index);
-                        
+
+                    // inject our event
+                    if (method.instructions.get(index).getOpcode() == IFNULL) {
+
                         int offset = 1;
-                        while (m.instructions.get(index + offset).getOpcode() != ALOAD)
-                            offset++;
-                        
-                        // System.out.println("Found ALOAD Node at offset " + offset + " from IFNULL Node");
-                        // System.out.println("Patching method " + (String) hm.get("javaClassName") + "/" + m.name + m.desc + "...");
-                        
-                        // make a new label node for the end of our code
+
+                        while (method.instructions.get(index + offset).getOpcode() != ALOAD) {
+                            offset ++;
+                        }
+
+                        // new label for the end of our code
                         LabelNode lmm1Node = new LabelNode(new Label());
-                        
-                        // make new instruction list
-                        InsnList toInject = new InsnList();
-                        
+
+                        // instructions to inject
+                        InsnList instructions = new InsnList();
+
                         // construct instruction nodes for list
-                        toInject.add(new VarInsnNode(ALOAD, 0));
-                        toInject.add(new FieldInsnNode(GETFIELD, (String) hm.get("javaClassName"), (String) hm.get("worldFieldName"), "L" + hm.get("worldJavaClassName") + ";"));
-                        toInject.add(new VarInsnNode(ILOAD, 1));
-                        toInject.add(new VarInsnNode(ILOAD, 2));
-                        toInject.add(new VarInsnNode(ILOAD, 3));
-                        toInject.add(new VarInsnNode(ALOAD, blockIndex));
-                        toInject.add(new VarInsnNode(ILOAD, mdIndex));
-                        toInject.add(new VarInsnNode(ALOAD, 0));
-                        toInject.add(new FieldInsnNode(GETFIELD, (String) hm.get("javaClassName"), (String) hm.get("entityPlayerFieldName"), "L" + hm.get("entityPlayerMPJavaClassName") + ";"));
-                        toInject.add(new MethodInsnNode(INVOKESTATIC, "org/getlwc/ForgeEventHelper", "onBlockHarvested", "(L" + hm.get("worldJavaClassName") + ";IIIL" + hm.get("blockJavaClassName") + ";IL" + hm.get("entityPlayerJavaClassName") + ";)Z"));
+                        instructions.add(new VarInsnNode(ALOAD, 0));
+                        instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("ItemInWorldManager"), getFieldName("ItemInWorldManager", "theWorld"), "L" + getJavaClassName("World") + ";"));
+                        instructions.add(new VarInsnNode(ILOAD, 1));
+                        instructions.add(new VarInsnNode(ILOAD, 2));
+                        instructions.add(new VarInsnNode(ILOAD, 3));
+                        instructions.add(new VarInsnNode(ALOAD, blockIndex));
+                        instructions.add(new VarInsnNode(ILOAD, mdIndex));
+                        instructions.add(new VarInsnNode(ALOAD, 0));
+                        instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("ItemInWorldManager"), getFieldName("ItemInWorldManager", "thisPlayerMP"), "L" + getJavaClassName("EntityPlayerMP") + ";"));
+                        instructions.add(new MethodInsnNode(INVOKESTATIC, getJavaClassName("ForgeEventHelper"), getMethodName("ForgeEventHelper", "onBlockHarvested"), "(L" + getJavaClassName("World") + ";IIIL" + getJavaClassName("Block") + ";IL" + getJavaClassName("EntityPlayer") + ";)Z"));
 
-                        // Start LWC - return from onBlockHarvested()
+                        // return from onBlockHarvested()
                         LabelNode cancel = new LabelNode(new Label());
-                        toInject.add(new JumpInsnNode(IFNE, cancel));
-                        toInject.add(new JumpInsnNode(GOTO, lmm1Node)); // continue breaking the block
-                        toInject.add(cancel);
-                        toInject.add(new InsnNode(ICONST_0)); // cancel the block break
-                        toInject.add(new InsnNode(IRETURN));
-                        // End LWC
+                        instructions.add(new JumpInsnNode(IFNE, cancel));
+                        instructions.add(new JumpInsnNode(GOTO, lmm1Node));
+                        instructions.add(cancel);
+                        instructions.add(new InsnNode(ICONST_0));
+                        instructions.add(new InsnNode(IRETURN));
+                        // end
 
-                        toInject.add(lmm1Node);
+                        instructions.add(lmm1Node);
+                        // finished instruction list
 
-                        m.instructions.insertBefore(m.instructions.get(index + offset), toInject);
-                        
-                        // System.out.println("Method " + (String) hm.get("javaClassName") + "/" + m.name + m.desc + " at index " + (index + offset - 1));
-                        // System.out.println("Patching Complete!");
+                        // inject the instructions
+                        method.instructions.insertBefore(method.instructions.get(index + offset), instructions);
+
                         break;
                     }
+
                 }
+
             }
+
         }
-        
+
+
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         classNode.accept(writer);
         return writer.toByteArray();
     }
+
 }
