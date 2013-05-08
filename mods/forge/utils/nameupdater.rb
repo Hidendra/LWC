@@ -90,7 +90,7 @@ File.open(SRG_FILE, 'r') do |file|
             if methodName == mName and storedSignature == signature
               if obfuscated != obfuscatedName
                 printf "method %s/%s %s: %s => %s\n", klass, methodName, storedSignature, obfuscatedName, obfuscated
-                mappings["methods"][klass][methodName] = obfuscated
+                mappings["methods"][klass][methodName]["obf"] = obfuscated
               else
                 printf "method %s/%s %s: unchanged\n", klass, methodName, storedSignature
               end
