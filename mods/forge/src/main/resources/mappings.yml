@@ -53,6 +53,10 @@ methods:
     doExplosionA:
       obf: a
       signature: ()V
+  NetClientHandler:
+    handleUpdateSign:
+      obf: a
+      signature: (L#Packet130UpdateSign;)V
 fields:
   ItemInWorldManager:
     theWorld: a

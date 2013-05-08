@@ -80,7 +80,7 @@ File.open(SRG_FILE, 'r') do |file|
   while (line = file.gets)
 
     # Try to match method name
-    if (match = line.match(/MD: ([a-zA-Z]+)\/([a-zA-Z]+) ([()A-Za-z]+) ([a-zA-Z\/]+)\/([a-zA-Z0-9_]+) ([()A-Za-z]+)/))
+    if (match = line.match(/MD: ([a-zA-Z]+)\/([a-zA-Z]+) ([()A-Za-z0-9;\/]+) ([a-zA-Z0-9\/]+)\/([a-zA-Z0-9_]+) ([()A-Za-z0-9;\/]+)/))
       obfuscatedClass, obfuscated, signature, unobfuscatedClass, methodName, signature2 = match.captures
 
       mappings["methods"].each_pair do |klass, v|
@@ -91,6 +91,13 @@ File.open(SRG_FILE, 'r') do |file|
           v.each_pair do |mName, z|
             obfuscatedName = z["obf"]
             storedSignature = z["signature"]
+
+            # replace simple symbols in the signature with the obfuscated or unobfuscated variant
+            if (storedSignature.include? '#')
+              mappings["classes"].each_pair do |c_class_name, c_v|
+                storedSignature = storedSignature.gsub('#' + c_class_name, c_v["obf"])
+              end
+            end
 
             if methodName == mName and storedSignature == signature
               if obfuscated != obfuscatedName
@@ -114,7 +121,7 @@ File.open(SRG_FILE, 'r') do |file|
   while (line = file.gets)
 
     # Try to match method name
-    if (match = line.match(/FD: ([a-zA-Z]+)\/([a-zA-Z]+) ([a-zA-Z\/]+)\/([a-zA-Z0-9_]+)/))
+    if (match = line.match(/FD: ([a-zA-Z]+)\/([a-zA-Z]+) ([a-zA-Z0-9\/]+)\/([a-zA-Z0-9_]+)/))
       obfuscatedClass, obfuscated, unobfuscatedClass, fieldName = match.captures
 
       mappings["fields"].each_pair do |klass, v|

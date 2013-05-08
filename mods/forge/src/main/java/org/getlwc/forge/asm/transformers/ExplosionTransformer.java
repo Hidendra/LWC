@@ -30,6 +30,7 @@
 package org.getlwc.forge.asm.transformers;
 
 import org.getlwc.forge.LWC;
+import org.getlwc.forge.asm.AbstractSingleClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
@@ -46,9 +47,14 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import java.util.Iterator;
 
-import static org.objectweb.asm.Opcodes.*;
+import static org.objectweb.asm.Opcodes.ALOAD;
+import static org.objectweb.asm.Opcodes.GETFIELD;
+import static org.objectweb.asm.Opcodes.GOTO;
+import static org.objectweb.asm.Opcodes.IFNE;
+import static org.objectweb.asm.Opcodes.INVOKESTATIC;
+import static org.objectweb.asm.Opcodes.RETURN;
 
-public class ExplosionTransformer extends org.getlwc.forge.asm.AbstractSingleClassTransformer {
+public class ExplosionTransformer extends AbstractSingleClassTransformer {
 
     /**
      * The class we are targeting
