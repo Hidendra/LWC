@@ -29,6 +29,7 @@
 
 package org.getlwc.asm;
 
+import org.getlwc.LWC;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
@@ -152,6 +153,8 @@ public class ItemInWorldManagerTransformer extends AbstractSingleClassTransforme
 
                         // inject the instructions
                         method.instructions.insertBefore(method.instructions.get(index + offset), instructions);
+
+                        LWC.instance.getEngine().getConsoleSender().sendMessage("[ASM] Injected ItemInWorldManager");
 
                         break;
                     }

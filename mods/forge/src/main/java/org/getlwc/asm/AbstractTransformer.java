@@ -38,11 +38,7 @@ public abstract class AbstractTransformer implements IClassTransformer {
     /**
      * The class/method/field name mappings used by ASM
      */
-    protected static final Configuration mappings;
-
-    static {
-        mappings = new YamlConfiguration(AbstractTransformer.class.getResourceAsStream("/mappings.yml"));
-    }
+    protected static Configuration mappings;
 
     /**
      * Transform a class
@@ -53,5 +49,14 @@ public abstract class AbstractTransformer implements IClassTransformer {
      * @return
      */
     public abstract byte[] transform(String name, String transformedName, byte[] bytes);
+
+    /**
+     * Init and load the mappings file if it has not yet been loaded
+     */
+    public static void init() {
+        if (mappings == null) {
+            mappings = new YamlConfiguration(AbstractTransformer.class.getResourceAsStream("/mappings.yml"));
+        }
+    }
 
 }

@@ -21,7 +21,7 @@ classes:
 methods:
   ForgeEventHelper:
     onBlockHarvested:
-      obf: d
+      obf: onBlockHarvested
       signature: n/a
   ItemInWorldManager:
     removeBlock:
@@ -30,7 +30,7 @@ methods:
   World:
     getBlockMetadata:
       obf: h
-      signature: ()I
+      signature: (III)I
 fields:
   ItemInWorldManager:
     theWorld: a

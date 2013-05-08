@@ -50,10 +50,16 @@ public abstract class AbstractSingleClassTransformer extends AbstractTransformer
      */
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes) {
-        if (name.equals(getClassName(name, false))) {
+
+        if (mappings == null) {
+            // System.out.println("mappings null, name = " + name);
+            return bytes;
+        }
+
+        if (name.equals(getClassName(className, false))) {
             obfuscated = false;
             return transform(bytes);
-        } else if (name.equals(getClassName(name, true))) {
+        } else if (name.equals(getClassName(className, true))) {
             obfuscated = true;
             return transform(bytes);
         }
@@ -145,7 +151,7 @@ public abstract class AbstractSingleClassTransformer extends AbstractTransformer
      * @return
      */
     public String getFieldName(String className, String fieldName) {
-        return getFieldName(className, fieldName);
+        return getFieldName(className, fieldName, obfuscated);
     }
 
     /**

@@ -37,6 +37,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import net.minecraft.entity.player.EntityPlayer;
+import org.getlwc.asm.AbstractTransformer;
 
 /**
  * FORGE DONE WRONG
@@ -123,6 +124,7 @@ public class LWC {
         }
         this.engine = engine;
         this.layer = layer;
+        AbstractTransformer.init();
     }
 
 }

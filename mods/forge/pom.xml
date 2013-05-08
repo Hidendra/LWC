@@ -137,7 +137,7 @@
                                     <exclude>net.minecraft:*</exclude>
                                     <exclude>forgenet.minecraft:*</exclude>
                                     <exclude>org.ow2.asm:*</exclude>
-                                    <!-- <exclude>org.yaml:*</exclude> -->
+                                    <exclude>org.yaml:*</exclude>
                                     <exclude>c3p0:*</exclude>
                                     <exclude>org.xnap.commons:*</exclude>
                                     <exclude>com.ForgeEssentials:*</exclude>
