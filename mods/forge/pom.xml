@@ -203,7 +203,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <FMLCorePlugin>org.getlwc.asm.LWCCorePlugin</FMLCorePlugin>
+                            <FMLCorePlugin>org.getlwc.forge.asm.LWCCorePlugin</FMLCorePlugin>
                         </manifestEntries>
                     </archive>
                 </configuration>
