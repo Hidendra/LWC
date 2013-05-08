@@ -35,7 +35,7 @@ import org.getlwc.configuration.YamlConfiguration;
 public class ForgeServerInfo implements ServerInfo {
 
     public String getServerVersion() {
-        return new YamlConfiguration(getClass().getResourceAsStream("/engine.yml")).getString("minecraft.version");
+        return "Compiled on: Minecraft " + new YamlConfiguration(getClass().getResourceAsStream("/engine.yml")).getString("minecraft.version");
     }
 
 }

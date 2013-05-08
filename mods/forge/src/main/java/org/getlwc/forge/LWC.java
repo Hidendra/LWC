@@ -41,6 +41,7 @@ import org.getlwc.Engine;
 import org.getlwc.ServerLayer;
 import org.getlwc.World;
 import org.getlwc.forge.asm.AbstractTransformer;
+import org.getlwc.forge.asm.LWCCorePlugin;
 
 /**
  * FORGE DONE WRONG
@@ -74,7 +75,13 @@ public class LWC {
 
     @Mod.Init
     public void load(FMLInitializationEvent event) {
-
+        if (!LWCCorePlugin.INITIALIZED) {
+            System.out.println("!!! ====================== !!!");
+            System.out.println("======  LWC MUST BE PLACED IN coremods/ !!");
+            System.out.println("======  Without it inside of coremods you will be missing a lot of events!");
+            System.out.println("======  LWC will not load further. Please take note and move it to coremods/ :-)");
+            System.out.println("!!! ====================== !!!");
+        }
     }
 
     @Mod.PostInit
@@ -84,7 +91,9 @@ public class LWC {
 
     @Mod.ServerStarting
     public void serverStarting(FMLServerStartingEvent event) {
-        proxy.init();
+        if (LWCCorePlugin.INITIALIZED) {
+            proxy.init();
+        }
     }
 
     /**

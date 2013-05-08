@@ -35,11 +35,17 @@ import java.util.Map;
 
 public class LWCCorePlugin implements IFMLLoadingPlugin {
 
+    /**
+     * If the core mod has been initialized
+     */
+    public static boolean INITIALIZED = false;
+
     public String[] getLibraryRequestClass() {
         return null;
     }
 
     public String[] getASMTransformerClass() {
+        INITIALIZED = true;
         return new String[] {
                 "org.getlwc.forge.asm.ItemInWorldManagerTransformer",
                 "org.getlwc.forge.asm.ExplosionTransformer"

@@ -27,6 +27,9 @@ classes:
   ChunkPosition:
     mcp: net.minecraft.world.ChunkPosition
     obf: aat
+  NetClientHandler:
+    mcp: net.minecraft.client.multiplayer.NetClientHandler
+    obf: bdk
 methods:
   ForgeEventHelper:
     onBlockHarvested:
