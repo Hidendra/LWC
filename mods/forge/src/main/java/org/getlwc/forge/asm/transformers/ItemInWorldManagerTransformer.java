@@ -27,7 +27,7 @@
  * either expressed or implied, of anybody else.
  */
 
-package org.getlwc.forge.asm;
+package org.getlwc.forge.asm.transformers;
 
 import org.getlwc.forge.LWC;
 import org.objectweb.asm.ClassReader;

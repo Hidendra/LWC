@@ -47,8 +47,8 @@ public class LWCCorePlugin implements IFMLLoadingPlugin {
     public String[] getASMTransformerClass() {
         INITIALIZED = true;
         return new String[] {
-                "org.getlwc.forge.asm.ItemInWorldManagerTransformer",
-                "org.getlwc.forge.asm.ExplosionTransformer"
+                "org.getlwc.forge.asm.transformers.ItemInWorldManagerTransformer",
+                "org.getlwc.forge.asm.transformers.ExplosionTransformer"
         };
     }
 
