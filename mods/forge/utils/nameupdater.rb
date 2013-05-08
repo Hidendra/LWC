@@ -54,7 +54,7 @@ File.open(SRG_FILE, 'r') do |file|
   while (line = file.gets)
 
     # Try to match class name
-    if (match = line.match(/CL: ([a-zA-Z]+) ([a-zA-Z\/]+)/))
+    if (match = line.match(/CL: ([a-zA-Z]+) ([a-zA-Z0-9\/]+)/))
       obfuscated, unobfuscated = match.captures
 
       mappings["classes"].each_pair do |klass, v|

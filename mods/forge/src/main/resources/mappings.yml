@@ -30,6 +30,9 @@ classes:
   NetClientHandler:
     mcp: net.minecraft.client.multiplayer.NetClientHandler
     obf: bdk
+  Packet130UpdateSign:
+    mcp: net.minecraft.network.packet.Packet130UpdateSign
+    obf: fj
 methods:
   ForgeEventHelper:
     onBlockHarvested:
