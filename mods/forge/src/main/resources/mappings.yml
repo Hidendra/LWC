@@ -1,44 +1,39 @@
-# Mappings used for ASM
-
+---
 classes:
-    # LWC
-    ForgeEventHelper:
-        mcp: org.getlwc.ForgeEventHelper
-        obf: org.getlwc.ForgeEventHelper
-
-    # Minecraft
-    ItemInWorldManager:
-        mcp: net.minecraft.item.ItemInWorldManager
-        obf: jd
-    World:
-        mcp: net.minecraft.world.World
-        obf: aab
-    Block:
-        mcp: net.minecraft.block.Block
-        obf: apa
-    EntityPlayer:
-        mcp: net.minecraft.entity.EntityPlayer
-        obf: sq
-    EntityPlayerMP:
-        mcp: net.minecraft.entity.EntityPlayerMP
-        obf: jc
-
-# methods.ClassName.UnobfuscatedMethod: ObfuscatedMethod
+  ForgeEventHelper:
+    mcp: org.getlwc.ForgeEventHelper
+    obf: org.getlwc.ForgeEventHelper
+  ItemInWorldManager:
+    mcp: net.minecraft.item.ItemInWorldManager
+    obf: jd
+  World:
+    mcp: net.minecraft.world.World
+    obf: aab
+  Block:
+    mcp: net.minecraft.block.Block
+    obf: apa
+  EntityPlayer:
+    mcp: net.minecraft.entity.player.EntityPlayer
+    obf: sq
+  EntityPlayerMP:
+    mcp: net.minecraft.entity.player.EntityPlayerMP
+    obf: jc
 methods:
-    # LWC
-    ForgeEventHelper:
-        onBlockHarvested: onBlockHarvested
-
-    # Minecraft
-    ItemInWorldManager:
-        removeBlock: d
-    World:
-        getBlockMetadata: h
-
-# fields.ClassName.UnobfuscatedField: ObfuscatedField
+  ForgeEventHelper:
+    onBlockHarvested:
+      obf: d
+      signature: n/a
+  ItemInWorldManager:
+    removeBlock:
+      obf: d
+      signature: (III)Z
+  World:
+    getBlockMetadata:
+      obf: h
+      signature: ()I
 fields:
-    ItemInWorldManager:
-        theWorld: a
-        thisPlayerMP: b
-    Block:
-        blocksList: r
+  ItemInWorldManager:
+    theWorld: a
+    thisPlayerMP: b
+  Block:
+    blocksList: r

@@ -131,7 +131,7 @@ public abstract class AbstractSingleClassTransformer extends AbstractTransformer
      */
     public String getMethodName(String className, String methodName, boolean obfuscated) {
         if (obfuscated) {
-            return mappings.getString("methods." + className + "." + methodName);
+            return mappings.getString("methods." + className + "." + methodName + ".obf");
         } else {
             return methodName;
         }

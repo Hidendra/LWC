@@ -17,6 +17,7 @@ LWC.iws
 *.iml
 
 # Forge
+mods/forge/utils/*.txt
 mods/forge/mcp/CHANGELOG
 mods/forge/mcp/cleanup.*
 mods/forge/mcp/decompile.*
