@@ -6,18 +6,23 @@ require 'yaml'
 SRG_FILE="../mcp/temp/client_ro.srg"
 
 # Location of the mappings file we need to lookup
-MAP_FILE="../src/main/resources/mappings.yml"
+RESOURCES_FOLDER="../src/main/resources/"
+MAP_FILE="#{RESOURCES_FOLDER}mappings.yml"
 
 puts "==== This is the LWC ASM mapping updater."
 puts "  == This pulls from client_ro.srg to get updated names so ensure MCP/Forge have been updated!"
 puts
 
 server_version=`grep ServerVersion ../mcp/conf/version.cfg | sed 's/ServerVersion = //g'`
+version_found = false
 
 if server_version =~ /[a-zA-Z0-9.]+/
+  server_version = server_version.split.join(' ')
   puts "==== Detected Minecraft version: " + server_version
+  version_found = true
 else
   puts "==== Unable to detect Minecraft version. This may just mean MCP's version.cfg changed which is OK."
+  puts "==== This means that mappings_MCVERSION.yml will not be automatically generated."
 end
 
 file_exists = File.exists?(SRG_FILE)
@@ -134,8 +139,19 @@ File.open(SRG_FILE, 'r') do |file|
   end
 end
 
-puts "\n==== Done. Dumping results back to mappings.yml!"
+puts "\n==== Done."
+puts "\n==== Dumping results to mappings.yml"
 
 File.open(MAP_FILE, "w") do |file|
   file.write mappings.to_yaml
+end
+
+if version_found
+  generate_file="#{RESOURCES_FOLDER}mappings_#{server_version}.yml"
+
+  puts "==== Dumping results to mappings_#{server_version}.yml"
+
+  File.open(generate_file, "w") do |file|
+    file.write mappings.to_yaml
+  end
 end

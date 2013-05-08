@@ -30,8 +30,12 @@
 package org.getlwc.forge.asm;
 
 import cpw.mods.fml.relauncher.IClassTransformer;
+import net.minecraft.src.ModLoader;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.configuration.YamlConfiguration;
+import org.getlwc.forge.LWC;
+
+import java.io.InputStream;
 
 public abstract class AbstractTransformer implements IClassTransformer {
 
@@ -55,7 +59,19 @@ public abstract class AbstractTransformer implements IClassTransformer {
      */
     public static void init() {
         if (mappings == null) {
-            mappings = new YamlConfiguration(AbstractTransformer.class.getResourceAsStream("/mappings.yml"));
+            String minecraftVersion = ModLoader.getMinecraftServerInstance().getMinecraftVersion();
+            InputStream stream = AbstractTransformer.class.getResourceAsStream("/mappings_" + minecraftVersion + ".yml");
+
+            if (stream != null) {
+                mappings = new YamlConfiguration(stream);
+                LWC.instance.getEngine().getConsoleSender().sendMessage("[ASM] Loaded native class mappings for Minecraft " + minecraftVersion);
+            } else {
+                mappings = new YamlConfiguration(AbstractTransformer.class.getResourceAsStream("/mappings.yml"));
+                LWC.instance.getEngine().getConsoleSender().sendMessage("[ASM] ================   NOTE !!!   ================");
+                LWC.instance.getEngine().getConsoleSender().sendMessage("[ASM] There are no included native mappings for MINECRAFT " + minecraftVersion);
+                LWC.instance.getEngine().getConsoleSender().sendMessage("[ASM] If this is a major version change then LWC IS MOST LIKELY BROKEN!");
+                LWC.instance.getEngine().getConsoleSender().sendMessage("[ASM] MAKE SURE YOU ARE USING THE LATEST VERSION!");
+            }
         }
     }
 

@@ -1,0 +1,63 @@
+---
+classes:
+  ForgeEventHelper:
+    mcp: org.getlwc.forge.ForgeEventHelper
+    obf: org.getlwc.forge.ForgeEventHelper
+  ItemInWorldManager:
+    mcp: net.minecraft.item.ItemInWorldManager
+    obf: jd
+  World:
+    mcp: net.minecraft.world.World
+    obf: aab
+  Block:
+    mcp: net.minecraft.block.Block
+    obf: apa
+  Entity:
+    mcp: net.minecraft.entity.Entity
+    obf: mp
+  EntityPlayer:
+    mcp: net.minecraft.entity.player.EntityPlayer
+    obf: sq
+  EntityPlayerMP:
+    mcp: net.minecraft.entity.player.EntityPlayerMP
+    obf: jc
+  Explosion:
+    mcp: net.minecraft.world.Explosion
+    obf: zw
+  ChunkPosition:
+    mcp: net.minecraft.world.ChunkPosition
+    obf: aat
+methods:
+  ForgeEventHelper:
+    onBlockHarvested:
+      obf: onBlockHarvested
+      signature: n/a
+    onExplosion:
+      obf: onExplosion
+      signature: n/a
+  ItemInWorldManager:
+    removeBlock:
+      obf: d
+      signature: (III)Z
+  World:
+    getBlockMetadata:
+      obf: h
+      signature: (III)I
+  Explosion:
+    doExplosionA:
+      obf: a
+      signature: ()V
+fields:
+  ItemInWorldManager:
+    theWorld: a
+    thisPlayerMP: b
+  Block:
+    blocksList: r
+  Explosion:
+    worldObj: k
+    exploder: f
+    explosionX: c
+    explosionY: d
+    explosionZ: e
+    field_77289_h: i
+    affectedBlockPositions: h
