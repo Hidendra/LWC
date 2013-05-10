@@ -1,0 +1,15 @@
+[{
+  "modid": "LWC",
+  "name": "LWC",
+  "description": "This Addon adds the awesome Technology of GregTech-Intergalactical to your World! Fusionreactors, Lightningrods and many other Technologies and convenient Recipes are added by this Addon, if you let them enabled in the allmighty Config, of course",
+  "version": "${project.version}",
+  "mcversion": "${minecraft.version}",
+  "logoFile": "",
+  "url": "http://getlwc.org",
+  "updateUrl": "",
+  "authors": ["Hidendra"],
+  "credits": "Everyone who has helped LWC get to where it is today :)",
+  "parent": "",
+  "screenshots": [],
+  "dependencies": []
+}]
