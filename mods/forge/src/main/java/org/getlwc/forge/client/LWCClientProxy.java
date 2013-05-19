@@ -30,14 +30,13 @@
 package org.getlwc.forge.client;
 
 import net.minecraftforge.common.MinecraftForge;
-import org.getlwc.forge.CommonProxy;
 import org.getlwc.Engine;
+import org.getlwc.SimpleEngine;
+import org.getlwc.forge.CommonProxy;
 import org.getlwc.forge.ForgeConsoleCommandSender;
 import org.getlwc.forge.ForgeServerInfo;
 import org.getlwc.forge.ForgeServerLayer;
 import org.getlwc.forge.LWC;
-import org.getlwc.ServerLayer;
-import org.getlwc.SimpleEngine;
 import org.getlwc.forge.listeners.ForgeListener;
 
 /**
@@ -51,8 +50,8 @@ public class LWCClientProxy extends CommonProxy {
         MinecraftForge.EVENT_BUS.register(new ForgeListener(LWC.instance));
 
         // create an engine
-        ServerLayer layer = new ForgeServerLayer();
-        Engine engine = SimpleEngine.createEngine(layer, new ForgeServerInfo(), new ForgeConsoleCommandSender());
+        ForgeServerLayer layer = new ForgeServerLayer();
+        Engine engine = SimpleEngine.getOrCreateEngine(layer, new ForgeServerInfo(), new ForgeConsoleCommandSender());
         LWC.instance.setupServer(engine, layer);
     }
 

@@ -91,20 +91,21 @@ File.open(SRG_FILE, 'r') do |file|
           v.each_pair do |mName, z|
             obfuscatedName = z["obf"]
             storedSignature = z["signature"]
+            originalSignature = storedSignature
 
             # replace simple symbols in the signature with the obfuscated or unobfuscated variant
             if (storedSignature.include? '#')
               mappings["classes"].each_pair do |c_class_name, c_v|
-                storedSignature = storedSignature.gsub('#' + c_class_name, c_v["obf"])
+                storedSignature = storedSignature.gsub('#' + c_class_name + ';', c_v["obf"] + ';')
               end
             end
 
             if methodName == mName and storedSignature == signature
               if obfuscated != obfuscatedName
-                printf "method %s/%s %s: %s => %s\n", klass, methodName, storedSignature, obfuscatedName, obfuscated
+                printf "method %s/%s %s: %s=%s => %s\n", klass, methodName, originalSignature, storedSignature, obfuscatedName, obfuscated
                 mappings["methods"][klass][methodName]["obf"] = obfuscated
               else
-                printf "method %s/%s %s: unchanged\n", klass, methodName, storedSignature
+                printf "method %s/%s %s=%s: unchanged\n", klass, methodName, originalSignature, storedSignature
               end
             end
           end

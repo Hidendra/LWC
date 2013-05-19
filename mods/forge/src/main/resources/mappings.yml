@@ -27,12 +27,18 @@ classes:
   ChunkPosition:
     mcp: net.minecraft.world.ChunkPosition
     obf: aat
-  NetClientHandler:
-    mcp: net.minecraft.client.multiplayer.NetClientHandler
-    obf: bdk
+  NetServerHandler:
+    mcp: net.minecraft.network.NetServerHandler
+    obf: jh
   Packet130UpdateSign:
     mcp: net.minecraft.network.packet.Packet130UpdateSign
     obf: fj
+  TileEntitySign:
+    mcp: net.minecraft.tileentity.TileEntitySign
+    obf: aqm
+  ItemStack:
+    mcp: net.minecraft.item.ItemStack
+    obf: wm
 methods:
   ForgeEventHelper:
     onBlockHarvested:
@@ -40,6 +46,12 @@ methods:
       signature: n/a
     onExplosion:
       obf: onExplosion
+      signature: n/a
+    onUpdateSign:
+      obf: onUpdateSign
+      signature: n/a
+    onBlockPlace:
+      obf: onBlockPlace
       signature: n/a
   ItemInWorldManager:
     removeBlock:
@@ -53,10 +65,18 @@ methods:
     doExplosionA:
       obf: a
       signature: ()V
-  NetClientHandler:
+  NetServerHandler:
     handleUpdateSign:
       obf: a
       signature: (L#Packet130UpdateSign;)V
+  TileEntitySign:
+    isEditable:
+      obf: a
+      signature: ()Z
+  ItemStack:
+    tryPlaceItemIntoWorld:
+      obf: a
+      signature: (L#EntityPlayer;L#World;IIIIFFF)Z
 fields:
   ItemInWorldManager:
     theWorld: a
@@ -71,3 +91,8 @@ fields:
     explosionZ: e
     field_77289_h: i
     affectedBlockPositions: h
+  Packet130UpdateSign:
+    xPosition: a
+    yPosition: b
+    zPosition: c
+    signLines: d

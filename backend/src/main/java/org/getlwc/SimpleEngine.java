@@ -53,6 +53,11 @@ import org.getlwc.util.config.FileConfiguration;
 public class SimpleEngine implements Engine {
 
     /**
+     * The instance of the engine
+     */
+    private static Engine instance = null;
+
+    /**
      * The protection manager
      */
     private final ProtectionManager protectionManager = new SimpleProtectionManager(this);
@@ -143,7 +148,49 @@ public class SimpleEngine implements Engine {
         consoleSender.sendMessage("Layer: " + serverMod.getVersion() + " (authored by: " + serverMod.getAuthor() + ")");
         consoleSender.sendMessage("Backend: " + getBackendVersion());
         consoleSender.sendMessage("This version was built on: " + internalConfig.get("git.buildTime"));
+    }
 
+    /**
+     * Gets the Engine instance. Does not create the engine if it has not been created.
+     *
+     * @return
+     */
+    public static Engine getInstance() {
+        return instance;
+    }
+
+    /**
+     * Create an LWC Engine
+     *
+     * @param serverLayer
+     * @param serverInfo
+     * @param consoleSender
+     * @return
+     */
+    public static Engine getOrCreateEngine(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender) {
+        if (instance != null) {
+            return instance;
+        }
+
+        if (serverLayer == null) {
+            throw new IllegalArgumentException("Server layer object cannot be null");
+        }
+        if (serverInfo == null) {
+            throw new IllegalArgumentException("Server info object cannot be null");
+        }
+        if (consoleSender == null) {
+            throw new IllegalArgumentException("Console sender object cannot be null");
+        }
+
+        instance = new SimpleEngine(serverLayer, serverInfo, consoleSender);
+
+        return instance;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void onLoad() {
         // connect to the db
         openDatabase();
 
@@ -158,28 +205,6 @@ public class SimpleEngine implements Engine {
 
         // load modules
         moduleManager.loadAll();
-    }
-
-    /**
-     * Create an LWC Engine
-     *
-     * @param serverLayer
-     * @param serverInfo
-     * @param consoleSender
-     * @return
-     */
-    public static Engine createEngine(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender) {
-        if (serverLayer == null) {
-            throw new IllegalArgumentException("Server layer object cannot be null");
-        }
-        if (serverInfo == null) {
-            throw new IllegalArgumentException("Server info object cannot be null");
-        }
-        if (consoleSender == null) {
-            throw new IllegalArgumentException("Console sender object cannot be null");
-        }
-
-        return new SimpleEngine(serverLayer, serverInfo, consoleSender);
     }
 
     /**

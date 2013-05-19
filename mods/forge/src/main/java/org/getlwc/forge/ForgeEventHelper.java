@@ -30,6 +30,8 @@
 package org.getlwc.forge;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.packet.Packet130UpdateSign;
+import net.minecraft.tileentity.TileEntitySign;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
 import org.getlwc.Block;
@@ -38,6 +40,7 @@ import org.getlwc.forge.event.EntityExplodeEvent;
 import org.getlwc.forge.event.PlayerBreakBlockEvent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ForgeEventHelper {
@@ -89,6 +92,38 @@ public class ForgeEventHelper {
         EntityExplodeEvent event = new EntityExplodeEvent(entity, (int) explosionX, (int) explosionY, (int) explosionZ, explosionRadius, affectedBlocks);
         MinecraftForge.EVENT_BUS.post(event);
         return event.isCanceled() || event.getResult() == Event.Result.DENY;
+    }
+
+    /**
+     * Called when a block is placed in the world
+     *
+     * @param itemStack
+     * @param player
+     * @param x
+     * @param y
+     * @param z
+     * @param side
+     * @param hitX
+     * @param hitY
+     * @param hitZ
+     * @return
+     */
+    public static boolean onBlockPlace(net.minecraft.item.ItemStack itemStack, net.minecraft.entity.player.EntityPlayer player, net.minecraft.world.World nativeWorld, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+        //
+        System.out.println("=> onBlockPlace");
+        return false;
+    }
+
+    /**
+     * Called when a sign is updated in the world
+     *
+     * @param packet
+     * @param sign
+     * @return
+     */
+    public static boolean onUpdateSign(Packet130UpdateSign packet, TileEntitySign sign) {
+        System.out.println("=> onUpdateSign packet_lines=" + Arrays.toString(packet.signLines) + " sign_lines=" + Arrays.toString(sign.signText));
+        return false;
     }
 
 }

@@ -29,8 +29,8 @@
 
 package org.getlwc.forge.asm;
 
+import cpw.mods.fml.relauncher.FMLInjectionData;
 import cpw.mods.fml.relauncher.IClassTransformer;
-import net.minecraft.src.ModLoader;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.configuration.YamlConfiguration;
 import org.getlwc.forge.LWC;
@@ -59,7 +59,7 @@ public abstract class AbstractTransformer implements IClassTransformer {
      */
     public static void init() {
         if (mappings == null) {
-            String minecraftVersion = ModLoader.getMinecraftServerInstance().getMinecraftVersion();
+            String minecraftVersion = (String) FMLInjectionData.data()[4];
             InputStream stream = AbstractTransformer.class.getResourceAsStream("/mappings_" + minecraftVersion + ".yml");
 
             if (stream != null) {

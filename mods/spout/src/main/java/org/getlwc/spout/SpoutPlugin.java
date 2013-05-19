@@ -92,7 +92,8 @@ public class SpoutPlugin extends CommonPlugin implements Listener {
         logger = this.getLogger();
 
         // Create a new LWC engine
-        engine = SimpleEngine.createEngine(layer, new SpoutServerInfo(), new SpoutConsoleCommandSender());
+        engine = SimpleEngine.getOrCreateEngine(layer, new SpoutServerInfo(), new SpoutConsoleCommandSender());
+        engine.onLoad();
 
         // Register events
         Spout.getEngine().getEventManager().registerEvents(this, this);

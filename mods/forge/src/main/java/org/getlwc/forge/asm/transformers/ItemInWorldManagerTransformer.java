@@ -72,7 +72,7 @@ public class ItemInWorldManagerTransformer extends org.getlwc.forge.asm.Abstract
         while (iter.hasNext()) {
             MethodNode method = (MethodNode) iter.next();
 
-            if (method.desc.equals("(III)Z") && method.name.equals(getMethodName("ItemInWorldManager", "removeBlock"))) {
+            if (methodEquals(method, "ItemInWorldManager", "removeBlock")) {
 
                 int blockIndex = 4;
                 int mdIndex = 5;
@@ -121,8 +121,7 @@ public class ItemInWorldManagerTransformer extends org.getlwc.forge.asm.Abstract
                             offset ++;
                         }
 
-                        // new label for the end of our code
-                        LabelNode lmm1Node = new LabelNode(new Label());
+                        LabelNode end = new LabelNode(new Label());
 
                         // instructions to inject
                         InsnList instructions = new InsnList();
@@ -139,22 +138,14 @@ public class ItemInWorldManagerTransformer extends org.getlwc.forge.asm.Abstract
                         instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("ItemInWorldManager"), getFieldName("ItemInWorldManager", "thisPlayerMP"), "L" + getJavaClassName("EntityPlayerMP") + ";"));
                         instructions.add(new MethodInsnNode(INVOKESTATIC, getJavaClassName("ForgeEventHelper"), getMethodName("ForgeEventHelper", "onBlockHarvested"), "(L" + getJavaClassName("World") + ";IIIL" + getJavaClassName("Block") + ";IL" + getJavaClassName("EntityPlayer") + ";)Z"));
 
-                        // return from onBlockHarvested()
-                        LabelNode cancel = new LabelNode(new Label());
-                        instructions.add(new JumpInsnNode(IFNE, cancel));
-                        instructions.add(new JumpInsnNode(GOTO, lmm1Node));
-                        instructions.add(cancel);
-                        instructions.add(new InsnNode(ICONST_0));
+                        instructions.add(new JumpInsnNode(IFEQ, end));
+                        instructions.add(new InsnNode(ICONST_1));
                         instructions.add(new InsnNode(IRETURN));
-                        // end
-
-                        instructions.add(lmm1Node);
+                        instructions.add(end);
                         // finished instruction list
 
                         // inject the instructions
                         method.instructions.insertBefore(method.instructions.get(index + offset), instructions);
-
-                        LWC.instance.getEngine().getConsoleSender().sendMessage("[ASM] Injected " + TARGET_CLASS);
 
                         break;
                     }
@@ -165,10 +156,16 @@ public class ItemInWorldManagerTransformer extends org.getlwc.forge.asm.Abstract
 
         }
 
-
-        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        classNode.accept(writer);
-        return writer.toByteArray();
+        try {
+            ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+            classNode.accept(writer);
+            LWC.instance.getEngine().getConsoleSender().sendMessage("[ASM] Patched " + TARGET_CLASS + " (" + getClassName(TARGET_CLASS) + ") successfully!");
+            return writer.toByteArray();
+        } catch (Exception e) {
+            LWC.instance.getEngine().getConsoleSender().sendMessage("[ASM] Failed to patch " + TARGET_CLASS + " (" + getClassName(TARGET_CLASS) + ")");
+            e.printStackTrace();
+            return bytes;
+        }
     }
 
 }

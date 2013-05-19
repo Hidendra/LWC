@@ -38,7 +38,6 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import net.minecraft.entity.player.EntityPlayer;
 import org.getlwc.Engine;
-import org.getlwc.ServerLayer;
 import org.getlwc.World;
 import org.getlwc.forge.asm.AbstractTransformer;
 import org.getlwc.forge.asm.LWCCorePlugin;
@@ -66,7 +65,7 @@ public class LWC {
     /**
      * The server layer
      */
-    private ServerLayer layer;
+    private ForgeServerLayer layer;
 
     @Mod.PreInit
     public void preInit(FMLPreInitializationEvent event) {
@@ -93,6 +92,8 @@ public class LWC {
     public void serverStarting(FMLServerStartingEvent event) {
         if (LWCCorePlugin.INITIALIZED) {
             proxy.init();
+            layer.init();
+            engine.onLoad();
         }
     }
 
@@ -130,13 +131,21 @@ public class LWC {
      *
      * @param engine
      */
-    public void setupServer(Engine engine, ServerLayer layer) {
+    public void setupServer(Engine engine, ForgeServerLayer layer) {
         if (this.engine != null) {
             throw new UnsupportedOperationException("LWC was already setup, and cannot be reset");
         }
         this.engine = engine;
         this.layer = layer;
         AbstractTransformer.init();
+    }
+
+    public ForgeServerLayer getServerLayer() {
+        return layer;
+    }
+
+    public void setServerLayer(ForgeServerLayer layer) {
+        this.layer = layer;
     }
 
 }

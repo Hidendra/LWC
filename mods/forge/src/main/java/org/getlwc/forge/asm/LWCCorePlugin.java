@@ -29,11 +29,20 @@
 
 package org.getlwc.forge.asm;
 
+import cpw.mods.fml.relauncher.IFMLCallHook;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
+import net.minecraftforge.common.MinecraftForge;
+import org.getlwc.Engine;
+import org.getlwc.SimpleEngine;
+import org.getlwc.forge.ForgeConsoleCommandSender;
+import org.getlwc.forge.ForgeServerInfo;
+import org.getlwc.forge.ForgeServerLayer;
+import org.getlwc.forge.LWC;
+import org.getlwc.forge.listeners.ForgeListener;
 
 import java.util.Map;
 
-public class LWCCorePlugin implements IFMLLoadingPlugin {
+public class LWCCorePlugin implements IFMLLoadingPlugin, IFMLCallHook {
 
     /**
      * If the core mod has been initialized
@@ -48,7 +57,9 @@ public class LWCCorePlugin implements IFMLLoadingPlugin {
         INITIALIZED = true;
         return new String[] {
                 "org.getlwc.forge.asm.transformers.ItemInWorldManagerTransformer",
-                "org.getlwc.forge.asm.transformers.ExplosionTransformer"
+                "org.getlwc.forge.asm.transformers.ExplosionTransformer",
+                "org.getlwc.forge.asm.transformers.SignUpdateTransformer",
+                "org.getlwc.forge.asm.transformers.ItemStackTransformer"
         };
     }
 
@@ -57,11 +68,24 @@ public class LWCCorePlugin implements IFMLLoadingPlugin {
     }
 
     public String getSetupClass() {
-        return null;
+        return "org.getlwc.forge.asm.LWCCorePlugin";
     }
 
     public void injectData(Map<String, Object> data) {
 
     }
 
+    public Void call() throws Exception {
+        //
+        System.out.println("plugin.call()  LWC.instance=" + LWC.instance);
+        System.out.println("LWC => init()");
+        LWC.instance = new LWC();
+        MinecraftForge.EVENT_BUS.register(new ForgeListener(LWC.instance));
+
+        // create an engine
+        ForgeServerLayer layer = new ForgeServerLayer();
+        Engine engine = SimpleEngine.getOrCreateEngine(layer, new ForgeServerInfo(), new ForgeConsoleCommandSender());
+        LWC.instance.setupServer(engine, layer);
+        return null;
+    }
 }

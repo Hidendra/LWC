@@ -29,6 +29,9 @@
 
 package org.getlwc.forge.asm;
 
+import org.objectweb.asm.tree.LocalVariableNode;
+import org.objectweb.asm.tree.MethodNode;
+
 public abstract class AbstractSingleClassTransformer extends AbstractTransformer {
 
     /**
@@ -74,6 +77,32 @@ public abstract class AbstractSingleClassTransformer extends AbstractTransformer
      * @return
      */
     public abstract byte[] transform(byte[] bytes);
+
+    /**
+     * Check if a given {@link MethodNode} equals the method in the given method
+     *
+     * @param method
+     * @param className
+     * @param methodName
+     * @return
+     */
+    public boolean methodEquals(MethodNode method, String className, String methodName) {
+        return method.desc.equals(getMethodSignature(className, methodName)) && method.name.equals(getMethodName(className, methodName));
+    }
+
+    /**
+     * Check if the variable matches the given class
+     *
+     * @param variable
+     * @param className
+     * @return
+     */
+    public boolean variableMatchesClass(LocalVariableNode variable, String className) {
+        // // variable desc=Laqm; name=tileentitysign
+        String signature = "L" + getJavaClassName(className) + ";";
+
+        return variable.desc.equals(signature);
+    }
 
     /**
      * Get a class name
@@ -141,6 +170,54 @@ public abstract class AbstractSingleClassTransformer extends AbstractTransformer
         } else {
             return methodName;
         }
+    }
+
+    /**
+     * Get the signature of a method
+     *
+     * @param className
+     * @param methodName
+     * @return
+     */
+    public String getMethodSignature(String className, String methodName) {
+        return getMethodSignature(className, methodName, obfuscated);
+    }
+
+    /**
+     * Get the signature of a method
+     *
+     * @param className
+     * @param methodName
+     * @param obfuscated
+     * @return
+     */
+    public String getMethodSignature(String className, String methodName, boolean obfuscated) {
+        String signature = mappings.getString("methods." + className + "." + methodName + ".signature");
+
+        // replace all #ClassName resolvers
+        while (signature.contains("#")) {
+            String matchedClass = "";
+            int index = signature.indexOf('#') + 1;
+            char chr;
+
+            while ((chr = signature.charAt(index)) != ';') {
+                matchedClass += chr;
+                index ++;
+
+                if (index >= signature.length()) {
+                    break;
+                }
+
+                if (index > 1000) {
+                    System.out.println("Invalid signature detected for class " + className + " method " + methodName + " signature " + signature);
+                    return "";
+                }
+            }
+
+            signature = signature.replaceAll("#" + matchedClass, getJavaClassName(matchedClass, obfuscated));
+        }
+
+        return signature;
     }
 
     /**

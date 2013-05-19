@@ -49,8 +49,7 @@ import java.util.Iterator;
 
 import static org.objectweb.asm.Opcodes.ALOAD;
 import static org.objectweb.asm.Opcodes.GETFIELD;
-import static org.objectweb.asm.Opcodes.GOTO;
-import static org.objectweb.asm.Opcodes.IFNE;
+import static org.objectweb.asm.Opcodes.IFEQ;
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 import static org.objectweb.asm.Opcodes.RETURN;
 
@@ -78,7 +77,7 @@ public class ExplosionTransformer extends AbstractSingleClassTransformer {
         while (iter.hasNext()) {
             MethodNode method = (MethodNode) iter.next();
 
-            if (method.desc.equals("()V") && method.name.equals(getMethodName("Explosion", "doExplosionA"))) {
+            if (methodEquals(method, "Explosion", "doExplosionA")) {
                 // find offset for h.addAll ( affectedBlockPositions )
                 int offset = -1;
 
@@ -101,8 +100,7 @@ public class ExplosionTransformer extends AbstractSingleClassTransformer {
                     break;
                 }
 
-                // new label for the end of our code
-                LabelNode lmm1Node = new LabelNode(new Label());
+                LabelNode end = new LabelNode(new Label());
 
                 // instructions to inject
                 InsnList instructions = new InsnList();
@@ -124,30 +122,29 @@ public class ExplosionTransformer extends AbstractSingleClassTransformer {
                 instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("Explosion"), getFieldName("Explosion", "exploder"), "L" + getJavaClassName("Entity") + ";"));
                 instructions.add(new MethodInsnNode(INVOKESTATIC, getJavaClassName("ForgeEventHelper"), getMethodName("ForgeEventHelper", "onExplosion"), "(L" + getJavaClassName("World") + ";DDDILjava/util/List;L" + getJavaClassName("Entity") + ";)Z"));
 
-                // return from onExplosion()
-                LabelNode cancel = new LabelNode(new Label());
-                instructions.add(new JumpInsnNode(IFNE, cancel));
-                instructions.add(new JumpInsnNode(GOTO, lmm1Node));
-                instructions.add(cancel);
+                instructions.add(new JumpInsnNode(IFEQ, end));
                 instructions.add(new InsnNode(RETURN));
-                // end
-
-                instructions.add(lmm1Node);
+                instructions.add(end);
                 // finished instruction list
 
                 // inject the instructions
                 method.instructions.insert(method.instructions.get(offset), instructions);
-
-                LWC.instance.getEngine().getConsoleSender().sendMessage("[ASM] Injected " + TARGET_CLASS);
 
                 break;
             }
 
         }
 
-        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        classNode.accept(writer);
-        return writer.toByteArray();
+        try {
+            ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+            classNode.accept(writer);
+            LWC.instance.getEngine().getConsoleSender().sendMessage("[ASM] Patched " + TARGET_CLASS + " (" + getClassName(TARGET_CLASS) + ") successfully!");
+            return writer.toByteArray();
+        } catch (Exception e) {
+            LWC.instance.getEngine().getConsoleSender().sendMessage("[ASM] Failed to patch " + TARGET_CLASS + " (" + getClassName(TARGET_CLASS) + ")");
+            e.printStackTrace();
+            return bytes;
+        }
     }
 
 }

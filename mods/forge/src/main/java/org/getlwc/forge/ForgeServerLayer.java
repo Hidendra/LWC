@@ -57,6 +57,12 @@ public class ForgeServerLayer extends ServerLayer {
 
     public ForgeServerLayer() {
         mod = LWC.instance;
+    }
+
+    /**
+     * Initialize the server layer
+     */
+    public void init() {
         try {
             initCommandManager();
         } catch (Throwable t) {
@@ -68,7 +74,7 @@ public class ForgeServerLayer extends ServerLayer {
     /**
      * Initialize the command manager and hook into it. This resolves to NATIVE code during obfuscation.
      */
-    public void initCommandManager() {
+    private void initCommandManager() {
         MinecraftServer server = ModLoader.getMinecraftServerInstance();
         internal_commands = server.getCommandManager().getCommands();
     }

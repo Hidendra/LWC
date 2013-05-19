@@ -136,6 +136,11 @@ public interface Engine {
     public ModuleManager getModuleManager();
 
     /**
+     * Called when the plugin is ready to be fully loaded. Initialization is completed here.
+     */
+    public void onLoad();
+
+    /**
      * Called when the engine needs to be disabled
      */
     public void disable();
