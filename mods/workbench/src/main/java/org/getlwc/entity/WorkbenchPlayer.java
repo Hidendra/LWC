@@ -1,6 +1,7 @@
 package org.getlwc.entity;
 
 import org.getlwc.Engine;
+import org.getlwc.ItemStack;
 import org.getlwc.Location;
 
 public class WorkbenchPlayer extends Player {
@@ -23,7 +24,6 @@ public class WorkbenchPlayer extends Player {
     /**
      * {@inheritDoc}
      */
-    @Override
     public String getName() {
         return handle.getUsername();
     }
@@ -46,6 +46,11 @@ public class WorkbenchPlayer extends Player {
      * {@inheritDoc}
      */
     public boolean hasPermission(String node) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public ItemStack getItemInHand() {
         throw new UnsupportedOperationException("Not implemented");
     }
 
