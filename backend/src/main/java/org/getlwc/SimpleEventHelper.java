@@ -158,7 +158,7 @@ public class SimpleEventHelper implements EventHelper {
      * {@inheritDoc}
      */
     public boolean onSignChange(Entity entity, Block block) {
-        System.out.println("[internal] Signed changed @ " + block);
+        System.out.println("[internal] Sign changed @ " + block);
 
         return !silentAccessCheck(entity, block);
     }

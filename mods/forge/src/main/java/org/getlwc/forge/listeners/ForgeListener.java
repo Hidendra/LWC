@@ -45,6 +45,8 @@ import org.getlwc.command.CommandSender;
 import org.getlwc.forge.LWC;
 import org.getlwc.forge.event.EntityExplodeEvent;
 import org.getlwc.forge.event.PlayerBreakBlockEvent;
+import org.getlwc.forge.event.PlayerPlaceBlockEvent;
+import org.getlwc.forge.event.PlayerUpdateSignEvent;
 import org.getlwc.util.StringUtils;
 
 public class ForgeListener {
@@ -110,6 +112,30 @@ public class ForgeListener {
 
         // XXX Forge doesn't send an interact event when digging a block so we check the block so messages are sent
         if (mod.getEngine().getEventHelper().onBlockInteract(player, block) || mod.getEngine().getEventHelper().onBlockBreak(player, block)) {
+            event.setCanceled(true);
+            event.setResult(Event.Result.DENY);
+        }
+    }
+
+    @ForgeSubscribe
+    public void playerBlockPlace(PlayerPlaceBlockEvent event) {
+        org.getlwc.entity.Player player = mod.wrapPlayer(event.entityPlayer);
+        World world = player.getLocation().getWorld();
+        Block block = world.getBlockAt(event.blockX, event.blockY, event.blockZ);
+
+        if (mod.getEngine().getEventHelper().onBlockPlace(player, block)) {
+            event.setCanceled(true);
+            event.setResult(Event.Result.DENY);
+        }
+    }
+
+    @ForgeSubscribe
+    public void playerUpdateSign(PlayerUpdateSignEvent event) {
+        org.getlwc.entity.Player player = mod.wrapPlayer(event.entityPlayer);
+        World world = player.getLocation().getWorld();
+        Block block = world.getBlockAt(event.sign.xCoord, event.sign.yCoord, event.sign.zCoord);
+
+        if (mod.getEngine().getEventHelper().onSignChange(player, block)) {
             event.setCanceled(true);
             event.setResult(Event.Result.DENY);
         }

@@ -96,3 +96,5 @@ fields:
     yPosition: b
     zPosition: c
     signLines: d
+  NetServerHandler:
+    playerEntity: c

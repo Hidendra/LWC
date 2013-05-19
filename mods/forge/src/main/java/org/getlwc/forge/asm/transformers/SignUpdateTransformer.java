@@ -7,6 +7,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
@@ -20,6 +21,7 @@ import java.util.Iterator;
 
 import static org.objectweb.asm.Opcodes.ALOAD;
 import static org.objectweb.asm.Opcodes.ASTORE;
+import static org.objectweb.asm.Opcodes.GETFIELD;
 import static org.objectweb.asm.Opcodes.IFEQ;
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 import static org.objectweb.asm.Opcodes.RETURN;
@@ -96,9 +98,11 @@ public class SignUpdateTransformer extends AbstractSingleClassTransformer {
                         InsnList instructions = new InsnList();
 
                         // construct instruction nodes for list
+                        instructions.add(new VarInsnNode(ALOAD, 0));
+                        instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("NetServerHandler"), getFieldName("NetServerHandler", "playerEntity"), "L" + getJavaClassName("EntityPlayerMP") + ";"));
                         instructions.add(new VarInsnNode(ALOAD, 1));
                         instructions.add(new VarInsnNode(ALOAD, signIndex)); // jbe - 7
-                        instructions.add(new MethodInsnNode(INVOKESTATIC, getJavaClassName("ForgeEventHelper"), getMethodName("ForgeEventHelper", "onUpdateSign"), "(L" + getJavaClassName("Packet130UpdateSign") + ";L" + getJavaClassName("TileEntitySign") + ";)Z"));
+                        instructions.add(new MethodInsnNode(INVOKESTATIC, getJavaClassName("ForgeEventHelper"), getMethodName("ForgeEventHelper", "onUpdateSign"), "(L" + getJavaClassName("EntityPlayerMP") + ";L" + getJavaClassName("Packet130UpdateSign") + ";L" + getJavaClassName("TileEntitySign") + ";)Z"));
 
                         instructions.add(new JumpInsnNode(IFEQ, end));
                         instructions.add(new InsnNode(RETURN));

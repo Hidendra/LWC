@@ -76,16 +76,17 @@ public class LWCCorePlugin implements IFMLLoadingPlugin, IFMLCallHook {
     }
 
     public Void call() throws Exception {
-        //
-        System.out.println("plugin.call()  LWC.instance=" + LWC.instance);
-        System.out.println("LWC => init()");
-        LWC.instance = new LWC();
-        MinecraftForge.EVENT_BUS.register(new ForgeListener(LWC.instance));
+        if (LWC.instance == null) {
+            System.out.println("LWC => init()");
+            LWC.instance = new LWC();
 
-        // create an engine
-        ForgeServerLayer layer = new ForgeServerLayer();
-        Engine engine = SimpleEngine.getOrCreateEngine(layer, new ForgeServerInfo(), new ForgeConsoleCommandSender());
-        LWC.instance.setupServer(engine, layer);
+            // create an engine
+            ForgeServerLayer layer = new ForgeServerLayer();
+            Engine engine = SimpleEngine.getOrCreateEngine(layer, new ForgeServerInfo(), new ForgeConsoleCommandSender());
+            LWC.instance.setupServer(engine, layer);
+            MinecraftForge.EVENT_BUS.register(new ForgeListener(LWC.instance));
+        }
+
         return null;
     }
 }

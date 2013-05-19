@@ -38,9 +38,10 @@ import org.getlwc.Block;
 import org.getlwc.World;
 import org.getlwc.forge.event.EntityExplodeEvent;
 import org.getlwc.forge.event.PlayerBreakBlockEvent;
+import org.getlwc.forge.event.PlayerPlaceBlockEvent;
+import org.getlwc.forge.event.PlayerUpdateSignEvent;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ForgeEventHelper {
@@ -57,7 +58,7 @@ public class ForgeEventHelper {
      * @param entityPlayer
      */
     public static boolean onBlockHarvested(net.minecraft.world.World world, int x, int y, int z, net.minecraft.block.Block block, int metadata, EntityPlayer entityPlayer) {
-        PlayerBreakBlockEvent event = new PlayerBreakBlockEvent(world, x, y, z, block, metadata, entityPlayer);
+        Event event = new PlayerBreakBlockEvent(world, x, y, z, block, metadata, entityPlayer);
         MinecraftForge.EVENT_BUS.post(event);
         return event.isCanceled() || event.getResult() == Event.Result.DENY;
     }
@@ -89,7 +90,7 @@ public class ForgeEventHelper {
             affectedBlocks.add(block);
         }
 
-        EntityExplodeEvent event = new EntityExplodeEvent(entity, (int) explosionX, (int) explosionY, (int) explosionZ, explosionRadius, affectedBlocks);
+        Event event = new EntityExplodeEvent(entity, (int) explosionX, (int) explosionY, (int) explosionZ, explosionRadius, affectedBlocks);
         MinecraftForge.EVENT_BUS.post(event);
         return event.isCanceled() || event.getResult() == Event.Result.DENY;
     }
@@ -109,9 +110,10 @@ public class ForgeEventHelper {
      * @return
      */
     public static boolean onBlockPlace(net.minecraft.item.ItemStack itemStack, net.minecraft.entity.player.EntityPlayer player, net.minecraft.world.World nativeWorld, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-        //
-        System.out.println("=> onBlockPlace");
-        return false;
+        System.out.println("onBlockPlace()");
+        Event event = new PlayerPlaceBlockEvent(nativeWorld, x, y, z, itemStack, player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.isCanceled() || event.getResult() == Event.Result.DENY;
     }
 
     /**
@@ -121,9 +123,10 @@ public class ForgeEventHelper {
      * @param sign
      * @return
      */
-    public static boolean onUpdateSign(Packet130UpdateSign packet, TileEntitySign sign) {
-        System.out.println("=> onUpdateSign packet_lines=" + Arrays.toString(packet.signLines) + " sign_lines=" + Arrays.toString(sign.signText));
-        return false;
+    public static boolean onUpdateSign(net.minecraft.entity.player.EntityPlayerMP player, Packet130UpdateSign packet, TileEntitySign sign) {
+        Event event = new PlayerUpdateSignEvent(player, packet, sign);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.isCanceled() || event.getResult() == Event.Result.DENY;
     }
 
 }
