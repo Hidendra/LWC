@@ -49,17 +49,13 @@ public class ItemStackTransformer extends AbstractSingleClassTransformer {
             MethodNode method = (MethodNode) iter.next();
 
             if (methodEquals(method, "ItemStack", "tryPlaceItemIntoWorld")) {
-                System.out.println("In tryPlaceItemIntoWorld");
-
                 int offset = 0;
 
                 while (method.instructions.get(offset).getOpcode() != ALOAD) {
                     offset ++;
                 }
 
-                // variable desc=Lfj; name=par1Packet130UpdateSign
-                // variable desc=Laqm; name=tileentitysign
-                System.out.println("Injecting to offset " + offset);
+                // System.out.println("Injecting to offset " + offset);
 
                 LabelNode end = new LabelNode(new Label());
 

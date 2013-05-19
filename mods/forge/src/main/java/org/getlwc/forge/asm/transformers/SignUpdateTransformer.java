@@ -49,8 +49,6 @@ public class SignUpdateTransformer extends AbstractSingleClassTransformer {
             MethodNode method = (MethodNode) iter.next();
 
             if (methodEquals(method, "NetServerHandler", "handleUpdateSign")) {
-                System.out.println("In handleUpdateSign");
-
                 int signIndex = -1;
 
                 for (Object o : method.localVariables) {
@@ -60,10 +58,10 @@ public class SignUpdateTransformer extends AbstractSingleClassTransformer {
                         signIndex = variable.index;
                     }
 
-                    System.out.println("index=" + variable.index + " desc=" + variable.desc + " name=" + variable.name);
+                    // System.out.println("index=" + variable.index + " desc=" + variable.desc + " name=" + variable.name);
                 }
 
-                System.out.println("sign index = " +signIndex);
+                // System.out.println("sign index = " +signIndex);
 
                 if (signIndex == -1) {
                     System.out.println("Failed to find TileEntitySign in NetServerHandler");
@@ -90,9 +88,7 @@ public class SignUpdateTransformer extends AbstractSingleClassTransformer {
                             offset ++;
                         }
 
-                        // variable desc=Lfj; name=par1Packet130UpdateSign
-                        // variable desc=Laqm; name=tileentitysign
-                        System.out.println("Injecting to offset " + offset);
+                        // System.out.println("Injecting to offset " + offset);
 
                         LabelNode end = new LabelNode(new Label());
 

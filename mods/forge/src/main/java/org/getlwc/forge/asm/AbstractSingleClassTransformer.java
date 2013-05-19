@@ -98,7 +98,6 @@ public abstract class AbstractSingleClassTransformer extends AbstractTransformer
      * @return
      */
     public boolean variableMatchesClass(LocalVariableNode variable, String className) {
-        // // variable desc=Laqm; name=tileentitysign
         String signature = "L" + getJavaClassName(className) + ";";
 
         return variable.desc.equals(signature);
