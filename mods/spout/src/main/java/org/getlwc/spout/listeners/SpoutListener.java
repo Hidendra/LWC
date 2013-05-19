@@ -35,14 +35,18 @@ import org.getlwc.World;
 import org.getlwc.entity.Entity;
 import org.getlwc.entity.Player;
 import org.getlwc.spout.SpoutPlugin;
+import org.getlwc.spout.entity.SpoutEntity;
 import org.getlwc.spout.world.SpoutBlock;
 import org.spout.api.event.EventHandler;
 import org.spout.api.event.Listener;
 import org.spout.api.event.block.BlockChangeEvent;
 import org.spout.api.event.cause.EntityCause;
 import org.spout.api.event.cause.PlayerCause;
+import org.spout.api.event.entity.EntityInteractBlockEvent;
 import org.spout.api.event.player.PlayerInteractEvent;
+import org.spout.api.event.server.protection.EntityCanBreakEvent;
 import org.spout.api.geo.discrete.Point;
+import org.spout.vanilla.event.block.BlockGrowEvent;
 import org.spout.vanilla.event.block.RedstoneChangeEvent;
 import org.spout.vanilla.event.block.SignUpdateEvent;
 import org.spout.vanilla.event.cause.PlayerBreakCause;
@@ -77,6 +81,32 @@ public class SpoutListener implements Listener {
         boolean result = plugin.getInternalEngine().getEventHelper().onBlockInteract(player, block);
 
         if (result) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void entityInteract(EntityInteractBlockEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
+        Entity entity  = new SpoutEntity(plugin, event.getEntity());
+        World world = plugin.getWorld(event.getEntity().getWorld().getName());
+        Block block = new SpoutBlock(world, event.getInteractedWith());
+
+        if (plugin.getInternalEngine().getEventHelper().onBlockInteract(entity, block)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void entityBreakDoor(EntityCanBreakEvent event) {
+        Entity entity  = new SpoutEntity(plugin, event.getEntity());
+        World world = plugin.getWorld(event.getEntity().getWorld().getName());
+        Block block = new SpoutBlock(world, event.getBlock());
+
+        if (plugin.getInternalEngine().getEventHelper().onBlockBreak(entity, block)) {
             event.setCancelled(true);
         }
     }

@@ -29,6 +29,8 @@
 
 package org.getlwc.bukkit.listeners;
 
+import org.bukkit.block.BlockState;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -37,14 +39,21 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.entity.EntityBreakDoorEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityInteractEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.StructureGrowEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.getlwc.Block;
 import org.getlwc.ExplosionType;
 import org.getlwc.World;
 import org.getlwc.bukkit.BukkitPlugin;
+import org.getlwc.bukkit.entity.BukkitEntity;
 import org.getlwc.bukkit.world.BukkitBlock;
+import org.getlwc.entity.Entity;
 import org.getlwc.entity.Player;
 
 import java.util.List;
@@ -73,12 +82,34 @@ public class BukkitListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
+    public void entityInteract(EntityInteractEvent event) {
+        Entity entity  = new BukkitEntity(plugin, event.getEntity());
+        World world = plugin.getWorld(event.getEntity().getWorld().getName());
+        Block block = new BukkitBlock(world, event.getBlock());
+
+        if (plugin.getEngine().getEventHelper().onBlockInteract(entity, block)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
     public void blockBreak(BlockBreakEvent event) {
         Player player = plugin.wrapPlayer(event.getPlayer());
         World world = plugin.getWorld(event.getPlayer().getWorld().getName());
         Block block = new BukkitBlock(world, event.getBlock());
 
         if (plugin.getEngine().getEventHelper().onBlockBreak(player, block)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void entityBreakDoor(EntityBreakDoorEvent event) {
+        Entity entity  = new BukkitEntity(plugin, event.getEntity());
+        World world = plugin.getWorld(event.getEntity().getWorld().getName());
+        Block block = new BukkitBlock(world, event.getBlock());
+
+        if (plugin.getEngine().getEventHelper().onBlockBreak(entity, block)) {
             event.setCancelled(true);
         }
     }
@@ -126,6 +157,13 @@ public class BukkitListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
+    public void inventoryMoveItem(InventoryMoveItemEvent event) {
+        if (handleMoveItemEvent(event.getSource()) || handleMoveItemEvent(event.getDestination())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
     public void entityExplode(EntityExplodeEvent event) {
         ExplosionType type = null;
 
@@ -148,6 +186,45 @@ public class BukkitListener implements Listener {
         if (plugin.getEngine().getEventHelper().onExplosion(type, affected)) {
             event.setCancelled(true);
         }
+    }
+
+    /**
+     * Handles the {@link InventoryMoveItemEvent} event, for the source/dest inventories
+     *
+     * @param inventory
+     * @return
+     */
+    private boolean handleMoveItemEvent(Inventory inventory) {
+        if (inventory == null) {
+            return false;
+        }
+
+        // Location of the container
+        org.bukkit.Location location;
+        InventoryHolder holder;
+
+        try {
+            holder = inventory.getHolder();
+        } catch (AbstractMethodError e) {
+            return false;
+        }
+
+        try {
+            if (holder instanceof BlockState) {
+                location = ((BlockState) holder).getLocation();
+            } else if (holder instanceof DoubleChest) {
+                location = ((DoubleChest) holder).getLocation();
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+
+        World world = plugin.getWorld(location.getWorld().getName());
+        Block block = new BukkitBlock(world, location.getBlock());
+
+        return plugin.getEngine().getEventHelper().onInventoryMoveItem(block.getLocation());
     }
 
 }

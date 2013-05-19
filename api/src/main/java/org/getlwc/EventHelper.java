@@ -99,4 +99,12 @@ public interface EventHelper {
      */
     public boolean onRedstoneChange(Block block, int oldLevel, int newLevel);
 
+    /**
+     * Called when a move item event occurs at the given location
+     *
+     * @param location
+     * @return
+     */
+    public boolean onInventoryMoveItem(Location location);
+
 }

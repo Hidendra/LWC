@@ -34,6 +34,13 @@ import org.getlwc.Location;
 public interface Entity {
 
     /**
+     * Get the entity's name
+     *
+     * @return
+     */
+    public String getName();
+
+    /**
      * Get the player's current location
      *
      * @return

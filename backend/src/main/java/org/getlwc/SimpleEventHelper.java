@@ -182,7 +182,6 @@ public class SimpleEventHelper implements EventHelper {
         return true;
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -202,6 +201,14 @@ public class SimpleEventHelper implements EventHelper {
             return true;
         }
 
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean onInventoryMoveItem(Location location) {
+        System.out.println("[internal] onInventoryMoveItem @ " + location);
         return false;
     }
 

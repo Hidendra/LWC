@@ -60,7 +60,6 @@ public class SpoutPlayer extends Player {
     /**
      * {@inheritDoc}
      */
-    @Override
     public String getName() {
         return handle.getName();
     }

@@ -43,13 +43,6 @@ public abstract class Player extends PlayerEventHandler implements Entity, Comma
     private final Map<String, Object> attributes = new HashMap<String, Object>();
 
     /**
-     * Gets the player's name
-     *
-     * @return
-     */
-    public abstract String getName();
-
-    /**
      * Set an attribute in the store
      *
      * @param name

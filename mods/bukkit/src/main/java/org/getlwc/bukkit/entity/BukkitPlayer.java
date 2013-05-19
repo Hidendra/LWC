@@ -59,7 +59,6 @@ public class BukkitPlayer extends Player {
     /**
      * {@inheritDoc}
      */
-    @Override
     public String getName() {
         return handle.getName();
     }
