@@ -254,6 +254,31 @@ public class SimpleEventHelper implements EventHelper {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public boolean onPistonExtend(Block piston, Location extending) {
+        Protection protection = engine.getProtectionManager().findProtection(extending);
+
+        // TODO only block for blocks that can be pulled by pistons ...
+        return protection != null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean onPistonRetract(Block piston, Location retracting) {
+        if (piston.getType() != 29 /* sticky piston */) {
+            // A piston that cannot pull anything when retracting *should* be harmless so they can simply be globally allowed
+            return false;
+        }
+
+        Protection protection = engine.getProtectionManager().findProtection(retracting);
+
+        // TODO only block for blocks that can be pulled by pistons ...
+        return protection != null;
+    }
+
+    /**
      * Compares the enchantments on two item stacks and checks that they are equal (identical)
      *
      * @param stack1

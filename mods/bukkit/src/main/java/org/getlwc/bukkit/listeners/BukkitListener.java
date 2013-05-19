@@ -36,6 +36,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
@@ -242,6 +244,26 @@ public class BukkitListener implements Listener {
          * TODO - does not support removing specific blocks
          */
         if (plugin.getEngine().getEventHelper().onExplosion(type, affected)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void pistonExtend(BlockPistonExtendEvent event) {
+        World world = plugin.getWorld(event.getBlock().getWorld().getName());
+        Block block = new BukkitBlock(world, event.getBlock());
+
+        if (plugin.getEngine().getEventHelper().onPistonExtend(block, plugin.castLocation(event.getBlock().getRelative(event.getDirection()).getLocation()))) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void pistonRetract(BlockPistonRetractEvent event) {
+        World world = plugin.getWorld(event.getBlock().getWorld().getName());
+        Block block = new BukkitBlock(world, event.getBlock());
+
+        if (plugin.getEngine().getEventHelper().onPistonRetract(block, plugin.castLocation(event.getRetractLocation()))) {
             event.setCancelled(true);
         }
     }

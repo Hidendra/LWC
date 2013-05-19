@@ -122,4 +122,22 @@ public interface EventHelper {
      */
     public boolean onInventoryClickItem(Player player, Location location, ItemStack clicked, ItemStack cursor, int slot, int rawSlot, boolean rightClick, boolean shiftClick, boolean doubleClick);
 
+    /**
+     * Called when a piston extends
+     *
+     * @param piston
+     * @param extending the location the piston will push
+     * @return
+     */
+    public boolean onPistonExtend(Block piston, Location extending);
+
+    /**
+     * Called when a piston retracts
+     *
+     * @param piston
+     * @param retracting the location the piston will retract from (or attempt to pull if sticky)
+     * @return
+     */
+    public boolean onPistonRetract(Block piston, Location retracting);
+
 }
