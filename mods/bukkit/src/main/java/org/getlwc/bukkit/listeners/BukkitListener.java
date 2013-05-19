@@ -39,8 +39,10 @@ import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.world.StructureGrowEvent;
 import org.getlwc.Block;
 import org.getlwc.ExplosionType;
+import org.getlwc.Location;
 import org.getlwc.World;
 import org.getlwc.bukkit.BukkitPlugin;
 import org.getlwc.bukkit.world.BukkitBlock;
@@ -113,6 +115,15 @@ public class BukkitListener implements Listener {
         }
     }
 
+    @EventHandler(ignoreCancelled = true)
+    public void structureGrow(StructureGrowEvent event) {
+        World world = plugin.getWorld(event.getLocation().getWorld().getName());
+        List<Block> blocks = castBlockStateList(world, event.getBlocks());
+
+        if (plugin.getEngine().getEventHelper().onStructureGrow(castLocation(event.getLocation()), blocks)) {
+            event.setCancelled(true);
+        }
+    }
 
     @EventHandler(ignoreCancelled = true)
     public void redstoneChange(BlockRedstoneEvent event) {
@@ -141,11 +152,7 @@ public class BukkitListener implements Listener {
         }
 
         World world = plugin.getWorld(event.getLocation().getWorld().getName());
-        List<Block> affected = new ArrayList<Block>();
-
-        for (org.bukkit.block.Block block : event.blockList()) {
-            affected.add(world.getBlockAt(block.getX(), block.getY(), block.getZ()));
-        }
+        List<Block> affected = castBlockList(world, event.blockList());
 
         /**
          * TODO - does not support removing specific blocks
@@ -155,6 +162,30 @@ public class BukkitListener implements Listener {
         if (result) {
             event.setCancelled(true);
         }
+    }
+
+    private Location castLocation(org.bukkit.Location location) {
+        return new Location(plugin.getWorld(location.getWorld().getName()), location.getX(), location.getY(), location.getZ());
+    }
+
+    private List<Block> castBlockList(World world, List<org.bukkit.block.Block> list) {
+        List<Block> ret = new ArrayList<Block>();
+
+        for (org.bukkit.block.Block block : list) {
+            ret.add(world.getBlockAt(block.getX(), block.getY(), block.getZ()));
+        }
+
+        return ret;
+    }
+
+    private List<Block> castBlockStateList(World world, List<org.bukkit.block.BlockState> list) {
+        List<Block> ret = new ArrayList<Block>();
+
+        for (org.bukkit.block.BlockState block : list) {
+            ret.add(world.getBlockAt(block.getX(), block.getY(), block.getZ()));
+        }
+
+        return ret;
     }
 
 }

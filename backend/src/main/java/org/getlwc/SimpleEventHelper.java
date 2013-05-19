@@ -173,6 +173,15 @@ public class SimpleEventHelper implements EventHelper {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public boolean onStructureGrow(Location location, List<Block> blocks) {
+        System.out.println("[internal] onStructureGrow loc=" + location + " blocks.size()=" + blocks.size());
+
+        return true;
+    }
+
 
     /**
      * {@inheritDoc}

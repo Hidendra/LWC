@@ -81,6 +81,15 @@ public interface EventHelper {
     public boolean onExplosion(ExplosionType type, List<Block> blocksAffected);
 
     /**
+     * Called when a structure grows in the world (e.g. a tree sapling)
+     *
+     * @param location
+     * @param blocks
+     * @return
+     */
+    public boolean onStructureGrow(Location location, List<Block> blocks);
+
+    /**
      * Called when the redstone level changes on a block
      *
      * @param block
