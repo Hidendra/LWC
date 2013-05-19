@@ -103,7 +103,7 @@
                                     <exclude>net.minecraft:*</exclude>
                                     <exclude>org.ow2.asm:*</exclude>
                                     <exclude>org.yaml:*</exclude>
-                                    <exclude>c3p0:*</exclude>
+                                    <exclude>com.mchange:*</exclude>
                                     <exclude>com.ForgeEssentials:*</exclude>
                                     <exclude>org.xnap.commons:*</exclude>
                                 </excludes>

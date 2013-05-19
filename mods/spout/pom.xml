@@ -103,7 +103,7 @@
                                     <exclude>org.bukkit:*</exclude>
                                     <exclude>org.spout:*</exclude>
                                     <exclude>org.yaml:*</exclude>
-                                    <exclude>c3p0:*</exclude>
+                                    <exclude>com.mchange:*</exclude>
                                     <exclude>org.xnap.commons:*</exclude>
                                 </excludes>
                             </artifactSet>
