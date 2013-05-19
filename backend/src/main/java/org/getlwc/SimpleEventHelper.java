@@ -38,6 +38,7 @@ import org.getlwc.event.events.ProtectionEvent;
 import org.getlwc.model.Protection;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.getlwc.I18n._;
 
@@ -210,6 +211,81 @@ public class SimpleEventHelper implements EventHelper {
     public boolean onInventoryMoveItem(Location location) {
         System.out.println("[internal] onInventoryMoveItem @ " + location);
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean onInventoryClickItem(Player player, Location location, ItemStack clicked, ItemStack cursor, int slot, int rawSlot, boolean rightClick, boolean shiftClick, boolean doubleClick) {
+        if (!doubleClick) {
+            // Nifty trick: these will different IFF they are interacting with the player's inventory or hotbar instead of the block's inventory
+            if (slot != rawSlot) {
+                return false;
+            }
+
+            if (clicked == null || clicked.getType() == 0) {
+                return false;
+            }
+
+            // if it's not a right click or a shift click it should be a left click (no shift)
+            // this is for when players are INSERTing items (i.e. item in hand and left clicking)
+            if (player.getItemInHand() == null && (!rightClick && !shiftClick)) {
+                return false;
+            }
+
+            // Are they inserting a stack?
+            if (cursor != null && clicked.getType() == cursor.getType()) {
+                boolean enchantmentsEqual = areEnchantmentsEqual(clicked, cursor);
+
+                // If they are clicking an item of the stack type, they are inserting it into the inventory,
+                // not switching it
+                // As long as the item isn't a degradable item, we can explicitly allow it if they have the same durability
+                if (clicked.getDurability() == cursor.getDurability() && clicked.getAmount() == cursor.getAmount() && enchantmentsEqual) {
+                    return false;
+                }
+            }
+        }
+
+        // check for protection
+        // check for DEPOSITONLY, etc
+        System.out.println("[internal] onInventoryClickItem() Passed deposit checks");
+
+        return true;
+    }
+
+    /**
+     * Compares the enchantments on two item stacks and checks that they are equal (identical)
+     *
+     * @param stack1
+     * @param stack2
+     * @return
+     */
+    private boolean areEnchantmentsEqual(ItemStack stack1, ItemStack stack2) {
+        if (stack1 == null || stack2 == null) {
+            return false;
+        }
+
+        Map<Integer, Integer> enchantments1 = stack1.getEnchantments();
+        Map<Integer, Integer> enchantments2 = stack2.getEnchantments();
+
+        if (enchantments1.size() != enchantments2.size()) {
+            return false;
+        }
+
+        for (Integer enchantment : enchantments1.keySet()) {
+            if (!enchantments2.containsKey(enchantment)) {
+                return false;
+            }
+
+            int level1 = enchantments1.get(enchantment);
+            int level2 = enchantments2.get(enchantment);
+
+            if (level1 != level2) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }

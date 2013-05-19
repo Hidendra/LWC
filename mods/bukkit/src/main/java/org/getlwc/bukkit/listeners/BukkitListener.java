@@ -42,7 +42,9 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityBreakDoorEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.Inventory;
@@ -160,6 +162,62 @@ public class BukkitListener implements Listener {
     public void inventoryMoveItem(InventoryMoveItemEvent event) {
         if (handleMoveItemEvent(event.getSource()) || handleMoveItemEvent(event.getDestination())) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void inventoryClickItem(InventoryClickEvent event) {
+        if (!(event.getWhoClicked() instanceof org.bukkit.entity.Player)) {
+            return;
+        }
+
+        // Player interacting with the inventory
+        Player player = plugin.wrapPlayer((org.bukkit.entity.Player) event.getWhoClicked());
+
+        // The inventory they are using
+        Inventory inventory = event.getInventory();
+
+        if (inventory == null || event.getSlot() < 0) {
+            return;
+        }
+
+        // Location of the container
+        org.bukkit.Location location;
+        InventoryHolder holder = null;
+
+        try {
+            holder = event.getInventory().getHolder();
+        } catch (AbstractMethodError e) {
+            return;
+        }
+
+        try {
+            if (holder instanceof BlockState) {
+                location = ((BlockState) holder).getLocation();
+            } else if (holder instanceof DoubleChest) {
+                location = ((DoubleChest) holder).getLocation();
+            } else {
+                return;
+            }
+        } catch (Exception e) {
+            return;
+        }
+
+        if (event.getSlotType() != InventoryType.SlotType.CONTAINER) {
+            return;
+        }
+
+        boolean doubleClick = false;
+
+        // backwards compatibility
+        try {
+            // doubleClick = event.isDoubleClick();
+        } catch (Throwable e) { } // OK, just old build
+
+        //
+        if (plugin.getEngine().getEventHelper().onInventoryClickItem(player, plugin.castLocation(location), plugin.castItemStack(event.getCurrentItem()), plugin.castItemStack(event.getCursor()), event.getSlot(), event.getRawSlot(), event.isRightClick(), event.isShiftClick(), doubleClick)) {
+            event.setCancelled(true);
+            event.setResult(Event.Result.DENY);
         }
     }
 

@@ -37,10 +37,16 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import org.getlwc.Engine;
+import org.getlwc.ItemStack;
 import org.getlwc.World;
 import org.getlwc.forge.asm.AbstractTransformer;
 import org.getlwc.forge.asm.LWCCorePlugin;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * FORGE DONE WRONG
@@ -146,6 +152,37 @@ public class LWC {
 
     public void setServerLayer(ForgeServerLayer layer) {
         this.layer = layer;
+    }
+
+    /**
+     * Cast a map of enchantments to our native enchantment mappings
+     *
+     * @param enchantments
+     * @return
+     */
+    public Map<Integer, Integer> castEnchantments(NBTTagList enchantments) {
+        Map<Integer, Integer> ret = new HashMap<Integer, Integer>();
+
+        for (int index = 0; index < enchantments.tagCount(); index ++) {
+            NBTTagCompound compound = (NBTTagCompound) enchantments.tagAt(index);
+
+            ret.put((int) compound.getShort("id"), (int) compound.getShort("lvl"));
+        }
+
+        return ret;
+    }
+
+    /**
+     * Cast an item stack to our native ItemStack
+     * @param item
+     * @return
+     */
+    public ItemStack castItemStack(net.minecraft.item.ItemStack item) {
+        if (item == null) {
+            return null;
+        }
+
+        return new ItemStack(item.itemID, item.stackSize, (short) item.getItemDamage(), item.getMaxStackSize(), castEnchantments(item.getEnchantmentTagList()));
     }
 
 }

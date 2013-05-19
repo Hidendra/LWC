@@ -30,6 +30,7 @@
 package org.getlwc.bukkit.entity;
 
 import org.getlwc.Engine;
+import org.getlwc.ItemStack;
 import org.getlwc.Location;
 import org.getlwc.bukkit.BukkitPlugin;
 import org.getlwc.entity.Player;
@@ -85,5 +86,13 @@ public class BukkitPlayer extends Player {
      */
     public boolean hasPermission(String node) {
         return handle.hasPermission(node);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ItemStack getItemInHand() {
+        return plugin.castItemStack(handle.getItemInHand());
     }
 }

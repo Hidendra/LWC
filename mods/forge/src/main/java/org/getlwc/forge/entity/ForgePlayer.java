@@ -33,6 +33,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.src.ModLoader;
+import org.getlwc.ItemStack;
 import org.getlwc.Location;
 import org.getlwc.entity.Player;
 import org.getlwc.forge.LWC;
@@ -57,7 +58,6 @@ public class ForgePlayer extends Player {
         this.mod = LWC.instance;
     }
 
-    @Override
     public String getName() {
         return handle.getEntityName();
     }
@@ -120,4 +120,11 @@ public class ForgePlayer extends Player {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ItemStack getItemInHand() {
+        return mod.castItemStack(handle.getHeldItem());
+    }
 }

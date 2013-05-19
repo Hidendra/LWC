@@ -27,8 +27,12 @@
  */
 
 import org.getlwc.Engine;
+import org.getlwc.ItemStack;
 import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class LWC extends Plugin {
 
@@ -97,6 +101,35 @@ public class LWC extends Plugin {
      */
     public org.getlwc.World getWorld(String worldName) {
         return layer.getWorld(worldName);
+    }
+
+    /**
+     * Cast a map of enchantments to our native enchantment mappings
+     *
+     * @param enchantments
+     * @return
+     */
+    public Map<Integer, Integer> castEnchantments(Enchantment[] enchantments) {
+        Map<Integer, Integer> ret = new HashMap<Integer, Integer>();
+
+        for (Enchantment enchantment : enchantments) {
+            ret.put(enchantment.getType().getType(), enchantment.getLevel());
+        }
+
+        return ret;
+    }
+
+    /**
+     * Cast an item stack to our native ItemStack
+     * @param item
+     * @return
+     */
+    public ItemStack castItemStack(Item item) {
+        if (item == null) {
+            return null;
+        }
+
+        return new ItemStack(item.getItemId(), item.getAmount(), (short) item.getDamage(), item.getMaxAmount(), castEnchantments(item.getEnchantments()));
     }
 
 }

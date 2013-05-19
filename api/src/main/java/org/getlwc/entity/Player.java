@@ -29,6 +29,7 @@
 
 package org.getlwc.entity;
 
+import org.getlwc.ItemStack;
 import org.getlwc.command.CommandSender;
 import org.getlwc.event.PlayerEventHandler;
 
@@ -41,6 +42,13 @@ public abstract class Player extends PlayerEventHandler implements Entity, Comma
      * Simple unpersisted attribute store for the player
      */
     private final Map<String, Object> attributes = new HashMap<String, Object>();
+
+    /**
+     * Get the item in the player's hand
+     *
+     * @return
+     */
+    public abstract ItemStack getItemInHand();
 
     /**
      * Set an attribute in the store

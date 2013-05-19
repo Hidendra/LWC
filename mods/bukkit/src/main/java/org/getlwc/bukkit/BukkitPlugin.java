@@ -37,6 +37,7 @@ import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.getlwc.Block;
 import org.getlwc.Engine;
+import org.getlwc.ItemStack;
 import org.getlwc.Location;
 import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
@@ -49,7 +50,9 @@ import org.getlwc.command.CommandSender;
 import org.getlwc.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class BukkitPlugin extends JavaPlugin implements Listener {
@@ -241,6 +244,35 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
         }
 
         return ret;
+    }
+
+    /**
+     * Cast a map of enchantments to our native enchantment mappings
+     *
+     * @param enchantments
+     * @return
+     */
+    public Map<Integer, Integer> castEnchantments(Map<org.bukkit.enchantments.Enchantment, Integer> enchantments) {
+        Map<Integer, Integer> ret = new HashMap<Integer, Integer>();
+
+        for (Map.Entry<org.bukkit.enchantments.Enchantment, Integer> entry : enchantments.entrySet()) {
+            ret.put(entry.getKey().getId(), entry.getValue());
+        }
+
+        return ret;
+    }
+
+    /**
+     * Cast an item stack to our native ItemStack
+     * @param item
+     * @return
+     */
+    public ItemStack castItemStack(org.bukkit.inventory.ItemStack item) {
+        if (item == null) {
+            return null;
+        }
+
+        return new ItemStack(item.getTypeId(), item.getAmount(), item.getDurability(), item.getMaxStackSize(), castEnchantments(item.getEnchantments()));
     }
 
 }

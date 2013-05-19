@@ -30,6 +30,7 @@
 package org.getlwc;
 
 import org.getlwc.entity.Entity;
+import org.getlwc.entity.Player;
 
 import java.util.List;
 
@@ -106,5 +107,19 @@ public interface EventHelper {
      * @return
      */
     public boolean onInventoryMoveItem(Location location);
+
+
+    /**
+     * Called when a player clicks a slot in an inventory
+     *
+     * @param player
+     * @param location
+     * @param clicked
+     * @param rightClick
+     * @param shiftClick
+     * @param doubleClick
+     * @return
+     */
+    public boolean onInventoryClickItem(Player player, Location location, ItemStack clicked, ItemStack cursor, int slot, int rawSlot, boolean rightClick, boolean shiftClick, boolean doubleClick);
 
 }

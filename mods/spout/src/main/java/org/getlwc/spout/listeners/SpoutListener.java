@@ -46,7 +46,6 @@ import org.spout.api.event.entity.EntityInteractBlockEvent;
 import org.spout.api.event.player.PlayerInteractEvent;
 import org.spout.api.event.server.protection.EntityCanBreakEvent;
 import org.spout.api.geo.discrete.Point;
-import org.spout.vanilla.event.block.BlockGrowEvent;
 import org.spout.vanilla.event.block.RedstoneChangeEvent;
 import org.spout.vanilla.event.block.SignUpdateEvent;
 import org.spout.vanilla.event.cause.PlayerBreakCause;

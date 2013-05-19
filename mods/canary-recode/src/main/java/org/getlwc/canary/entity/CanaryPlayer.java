@@ -1,5 +1,6 @@
 package org.getlwc.canary.entity;
 
+import org.getlwc.ItemStack;
 import org.getlwc.Location;
 import org.getlwc.canary.LWC;
 import org.getlwc.entity.Player;
@@ -22,7 +23,6 @@ public class CanaryPlayer extends Player {
         this.handle = handle;
     }
 
-    @Override
     public String getName() {
         return handle.getName();
     }
@@ -39,6 +39,11 @@ public class CanaryPlayer extends Player {
 
     public Location getLocation() {
         return new Location(null, handle.getX(), handle.getY(), handle.getZ());
+    }
+
+    @Override
+    public ItemStack getItemInHand() {
+        return plugin.castItemStack(handle.getItemInHand());
     }
 
 }

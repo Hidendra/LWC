@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-28 18:43-0300\n"
+"POT-Creation-Date: 2013-05-19 16:53-0300\n"
 "PO-Revision-Date: 2012-11-08 01:19-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -138,11 +138,11 @@ msgstr "[{0}/{1}] Downloading file {2} => {3}"
 msgid "Library downloads complete!"
 msgstr "Library downloads complete!"
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:119
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:120
 msgid "&4This protection is locked by a magical spell."
 msgstr "&4This protection is locked by a magical spell."
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:125
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:126
 #, java-format
 msgid ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "

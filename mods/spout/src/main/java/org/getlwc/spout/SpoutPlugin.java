@@ -29,7 +29,9 @@
 
 package org.getlwc.spout;
 
+import gnu.trove.map.TObjectIntMap;
 import org.getlwc.Engine;
+import org.getlwc.ItemStack;
 import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
 import org.getlwc.World;
@@ -40,9 +42,13 @@ import org.getlwc.entity.Player;
 import org.getlwc.spout.command.SpoutConsoleCommandSender;
 import org.getlwc.spout.listeners.SpoutListener;
 import org.spout.api.Spout;
+import org.spout.api.component.Component;
 import org.spout.api.event.Listener;
 import org.spout.api.plugin.CommonPlugin;
+import org.spout.vanilla.material.enchantment.Enchantment;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class SpoutPlugin extends CommonPlugin implements Listener {
@@ -74,6 +80,9 @@ public class SpoutPlugin extends CommonPlugin implements Listener {
      * @return
      */
     public Player wrapPlayer(org.spout.api.entity.Player player) {
+        for (Component comp : player.values()) {
+            System.out.println("Component: " + comp.getClass().getSimpleName());
+        }
         return layer.getPlayer(player.getName());
     }
 
@@ -161,6 +170,35 @@ public class SpoutPlugin extends CommonPlugin implements Listener {
         }
 
         return message.trim();
+    }
+
+    /**
+     * Cast a map of enchantments to our native enchantment mappings
+     *
+     * @param enchantments
+     * @return
+     */
+    public Map<Integer, Integer> castEnchantments(TObjectIntMap<Enchantment> enchantments) {
+        Map<Integer, Integer> ret = new HashMap<Integer, Integer>();
+
+        for (Enchantment enchantment : enchantments.keys(new Enchantment[0])) {
+            ret.put(enchantment.getId(), enchantments.get(enchantment));
+        }
+
+        return ret;
+    }
+
+    /**
+     * Cast an item stack to our native ItemStack
+     * @param item
+     * @return
+     */
+    public ItemStack castItemStack(org.spout.api.inventory.ItemStack item) {
+        if (item == null) {
+            return null;
+        }
+
+        return new ItemStack(item.getMaterial().getId(), item.getAmount(), item.getData(), item.getMaxStackSize(), castEnchantments(Enchantment.getEnchantments(item)));
     }
 
 }

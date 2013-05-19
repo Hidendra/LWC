@@ -26,6 +26,7 @@
  * either expressed or implied, of anybody else.
  */
 
+import org.getlwc.ItemStack;
 import org.getlwc.util.Color;
 
 public class CanaryPlayer extends org.getlwc.entity.Player {
@@ -52,7 +53,6 @@ public class CanaryPlayer extends org.getlwc.entity.Player {
     /**
      * {@inheritDoc}
      */
-    @Override
     public String getName() {
         return handle.getName();
     }
@@ -87,4 +87,11 @@ public class CanaryPlayer extends org.getlwc.entity.Player {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ItemStack getItemInHand() {
+        return plugin.castItemStack(handle.getItemStackInHand());
+    }
 }

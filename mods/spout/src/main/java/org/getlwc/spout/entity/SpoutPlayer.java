@@ -30,11 +30,13 @@
 package org.getlwc.spout.entity;
 
 import org.getlwc.Engine;
+import org.getlwc.ItemStack;
 import org.getlwc.Location;
 import org.getlwc.entity.Player;
 import org.getlwc.spout.SpoutPlugin;
 import org.getlwc.util.Color;
 import org.spout.api.geo.discrete.Point;
+import org.spout.vanilla.component.entity.inventory.PlayerInventory;
 
 public class SpoutPlayer extends Player {
 
@@ -86,5 +88,19 @@ public class SpoutPlayer extends Player {
      */
     public boolean hasPermission(String node) {
         return handle.hasPermission(node);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ItemStack getItemInHand() {
+        PlayerInventory inventory = handle.get(PlayerInventory.class);
+
+        if (inventory == null) {
+            throw new UnsupportedOperationException("Player " + getName() + " has no PlayerInventory!");
+        }
+
+        return plugin.castItemStack(inventory.getHeldItem());
     }
 }
