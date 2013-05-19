@@ -48,8 +48,6 @@ public class ItemStackTransformer extends AbstractSingleClassTransformer {
         while (iter.hasNext()) {
             MethodNode method = (MethodNode) iter.next();
 
-            System.out.println(" => m: " + method.name + "/" + method.desc);
-
             if (methodEquals(method, "ItemStack", "tryPlaceItemIntoWorld")) {
                 int offset = 0;
 
