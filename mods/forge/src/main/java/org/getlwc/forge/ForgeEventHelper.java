@@ -110,7 +110,6 @@ public class ForgeEventHelper {
      * @return
      */
     public static boolean onBlockPlace(net.minecraft.item.ItemStack itemStack, net.minecraft.entity.player.EntityPlayer player, net.minecraft.world.World nativeWorld, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-        System.out.println("onBlockPlace()");
         Event event = new PlayerPlaceBlockEvent(nativeWorld, x, y, z, itemStack, player);
         MinecraftForge.EVENT_BUS.post(event);
         return event.isCanceled() || event.getResult() == Event.Result.DENY;
