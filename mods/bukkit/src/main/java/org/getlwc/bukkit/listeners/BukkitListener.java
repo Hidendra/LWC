@@ -113,6 +113,8 @@ public class BukkitListener implements Listener {
         }
     }
 
+
+    @EventHandler(ignoreCancelled = true)
     public void redstoneChange(BlockRedstoneEvent event) {
         World world = plugin.getWorld(event.getBlock().getWorld().getName());
         Block block = new BukkitBlock(world, event.getBlock());
