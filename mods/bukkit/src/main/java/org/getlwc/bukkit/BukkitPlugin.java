@@ -35,7 +35,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.getlwc.Block;
 import org.getlwc.Engine;
+import org.getlwc.Location;
 import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
 import org.getlwc.World;
@@ -46,6 +48,8 @@ import org.getlwc.command.CommandException;
 import org.getlwc.command.CommandSender;
 import org.getlwc.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class BukkitPlugin extends JavaPlugin implements Listener {
@@ -193,6 +197,50 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
         }
 
         return message.trim();
+    }
+
+    /**
+     * Cast a location to our native location
+     *
+     * @param location
+     * @return
+     */
+    public Location castLocation(org.bukkit.Location location) {
+        return new Location(getWorld(location.getWorld().getName()), location.getX(), location.getY(), location.getZ());
+    }
+
+    /**
+     * Cast a list of blocks to our native block list
+     *
+     * @param world
+     * @param list
+     * @return
+     */
+    public List<Block> castBlockList(World world, List<org.bukkit.block.Block> list) {
+        List<Block> ret = new ArrayList<Block>();
+
+        for (org.bukkit.block.Block block : list) {
+            ret.add(world.getBlockAt(block.getX(), block.getY(), block.getZ()));
+        }
+
+        return ret;
+    }
+
+    /**
+     * Cast a list of state blocks to our native block list
+     *
+     * @param world
+     * @param list
+     * @return
+     */
+    public List<Block> castBlockStateList(World world, List<org.bukkit.block.BlockState> list) {
+        List<Block> ret = new ArrayList<Block>();
+
+        for (org.bukkit.block.BlockState block : list) {
+            ret.add(world.getBlockAt(block.getX(), block.getY(), block.getZ()));
+        }
+
+        return ret;
     }
 
 }

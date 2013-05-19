@@ -42,13 +42,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.getlwc.Block;
 import org.getlwc.ExplosionType;
-import org.getlwc.Location;
 import org.getlwc.World;
 import org.getlwc.bukkit.BukkitPlugin;
 import org.getlwc.bukkit.world.BukkitBlock;
 import org.getlwc.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class BukkitListener implements Listener {
@@ -68,9 +66,7 @@ public class BukkitListener implements Listener {
         World world = plugin.getWorld(event.getPlayer().getWorld().getName());
         Block block = new BukkitBlock(world, event.getClickedBlock());
 
-        boolean result = plugin.getEngine().getEventHelper().onBlockInteract(player, block);
-
-        if (result) {
+        if (plugin.getEngine().getEventHelper().onBlockInteract(player, block)) {
             event.setCancelled(true);
             event.setUseInteractedBlock(Event.Result.DENY);
         }
@@ -82,9 +78,7 @@ public class BukkitListener implements Listener {
         World world = plugin.getWorld(event.getPlayer().getWorld().getName());
         Block block = new BukkitBlock(world, event.getBlock());
 
-        boolean result = plugin.getEngine().getEventHelper().onBlockBreak(player, block);
-
-        if (result) {
+        if (plugin.getEngine().getEventHelper().onBlockBreak(player, block)) {
             event.setCancelled(true);
         }
     }
@@ -95,9 +89,7 @@ public class BukkitListener implements Listener {
         World world = plugin.getWorld(event.getPlayer().getWorld().getName());
         Block block = new BukkitBlock(world, event.getBlock());
 
-        boolean result = plugin.getEngine().getEventHelper().onBlockPlace(player, block);
-
-        if (result) {
+        if (plugin.getEngine().getEventHelper().onBlockPlace(player, block)) {
             event.setCancelled(true);
         }
     }
@@ -108,9 +100,7 @@ public class BukkitListener implements Listener {
         World world = plugin.getWorld(event.getPlayer().getWorld().getName());
         Block block = new BukkitBlock(world, event.getBlock());
 
-        boolean result = plugin.getEngine().getEventHelper().onSignChange(player, block);
-
-        if (result) {
+        if (plugin.getEngine().getEventHelper().onSignChange(player, block)) {
             event.setCancelled(true);
         }
     }
@@ -118,9 +108,9 @@ public class BukkitListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void structureGrow(StructureGrowEvent event) {
         World world = plugin.getWorld(event.getLocation().getWorld().getName());
-        List<Block> blocks = castBlockStateList(world, event.getBlocks());
+        List<Block> blocks = plugin.castBlockStateList(world, event.getBlocks());
 
-        if (plugin.getEngine().getEventHelper().onStructureGrow(castLocation(event.getLocation()), blocks)) {
+        if (plugin.getEngine().getEventHelper().onStructureGrow(plugin.castLocation(event.getLocation()), blocks)) {
             event.setCancelled(true);
         }
     }
@@ -130,9 +120,7 @@ public class BukkitListener implements Listener {
         World world = plugin.getWorld(event.getBlock().getWorld().getName());
         Block block = new BukkitBlock(world, event.getBlock());
 
-        boolean result = plugin.getEngine().getEventHelper().onRedstoneChange(block, event.getOldCurrent(), event.getNewCurrent());
-
-        if (result) {
+        if (plugin.getEngine().getEventHelper().onRedstoneChange(block, event.getOldCurrent(), event.getNewCurrent())) {
             event.setNewCurrent(event.getOldCurrent());
         }
     }
@@ -152,40 +140,14 @@ public class BukkitListener implements Listener {
         }
 
         World world = plugin.getWorld(event.getLocation().getWorld().getName());
-        List<Block> affected = castBlockList(world, event.blockList());
+        List<Block> affected = plugin.castBlockList(world, event.blockList());
 
         /**
          * TODO - does not support removing specific blocks
          */
-        boolean result = plugin.getEngine().getEventHelper().onExplosion(type, affected);
-
-        if (result) {
+        if (plugin.getEngine().getEventHelper().onExplosion(type, affected)) {
             event.setCancelled(true);
         }
-    }
-
-    private Location castLocation(org.bukkit.Location location) {
-        return new Location(plugin.getWorld(location.getWorld().getName()), location.getX(), location.getY(), location.getZ());
-    }
-
-    private List<Block> castBlockList(World world, List<org.bukkit.block.Block> list) {
-        List<Block> ret = new ArrayList<Block>();
-
-        for (org.bukkit.block.Block block : list) {
-            ret.add(world.getBlockAt(block.getX(), block.getY(), block.getZ()));
-        }
-
-        return ret;
-    }
-
-    private List<Block> castBlockStateList(World world, List<org.bukkit.block.BlockState> list) {
-        List<Block> ret = new ArrayList<Block>();
-
-        for (org.bukkit.block.BlockState block : list) {
-            ret.add(world.getBlockAt(block.getX(), block.getY(), block.getZ()));
-        }
-
-        return ret;
     }
 
 }
