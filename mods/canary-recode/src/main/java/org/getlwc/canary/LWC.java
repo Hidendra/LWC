@@ -6,6 +6,7 @@ import net.canarymod.api.inventory.Item;
 import net.canarymod.plugin.Plugin;
 import org.getlwc.Engine;
 import org.getlwc.ItemStack;
+import org.getlwc.Location;
 import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
 import org.getlwc.canary.listeners.CanaryListener;
@@ -65,6 +66,16 @@ public class LWC extends Plugin {
      */
     public org.getlwc.World getWorld(String worldName) {
         return layer.getWorld(worldName);
+    }
+
+    /**
+     * Cast a location to our native location
+     *
+     * @param location
+     * @return
+     */
+    public Location castLocation(net.canarymod.api.world.position.Location location) {
+        return new Location(getWorld(location.getWorld().getName()), location.getX(), location.getY(), location.getZ());
     }
 
     /**

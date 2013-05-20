@@ -9,6 +9,8 @@ import net.canarymod.hook.player.BlockPlaceHook;
 import net.canarymod.hook.player.BlockRightClickHook;
 import net.canarymod.hook.player.SignChangeHook;
 import net.canarymod.hook.world.ExplosionHook;
+import net.canarymod.hook.world.PistonExtendHook;
+import net.canarymod.hook.world.PistonRetractHook;
 import net.canarymod.hook.world.RedstoneChangeHook;
 import net.canarymod.plugin.PluginListener;
 import org.getlwc.Block;
@@ -131,6 +133,26 @@ public class CanaryListener implements PluginListener {
         boolean result = plugin.getEngine().getEventHelper().onExplosion(type, affected);
 
         if (result) {
+            hook.setCanceled();
+        }
+    }
+
+    @HookHandler(ignoreCanceled = true)
+    public void onPistonExtend(PistonExtendHook hook) {
+        World world = plugin.getWorld(hook.getPiston().getWorld().getName());
+        Block block = new CanaryBlock(world, hook.getPiston());
+
+        if (plugin.getEngine().getEventHelper().onPistonExtend(block, plugin.castLocation(hook.getMoving().getLocation()))) {
+            hook.setCanceled();
+        }
+    }
+
+    @HookHandler(ignoreCanceled = true)
+    public void onPistonRetract(PistonRetractHook hook) {
+        World world = plugin.getWorld(hook.getPiston().getWorld().getName());
+        Block block = new CanaryBlock(world, hook.getPiston());
+
+        if (plugin.getEngine().getEventHelper().onPistonExtend(block, plugin.castLocation(hook.getMoving().getLocation()))) {
             hook.setCanceled();
         }
     }
