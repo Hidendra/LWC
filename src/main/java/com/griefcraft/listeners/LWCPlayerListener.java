@@ -58,7 +58,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -68,11 +67,6 @@ public class LWCPlayerListener implements Listener {
      * The plugin instance
      */
     private LWCPlugin plugin;
-
-    /**
-     * Blocks that can contain an inventory
-     */
-    private static final EnumSet<Material> INVENTORY_BLOCKS = EnumSet.of(Material.CHEST, Material.FURNACE, Material.DISPENSER);
 
     public LWCPlayerListener(LWCPlugin plugin) {
         this.plugin = plugin;
@@ -191,8 +185,8 @@ public class LWCPlayerListener implements Listener {
         Block block = event.getClickedBlock();
         Material material = block.getType();
 
-        // Prevent players with lwc.deny from interacting
-        if (INVENTORY_BLOCKS.contains(material)) {
+        // Prevent players with lwc.deny from interacting with blocks that have an inventory
+        if (block.getState() instanceof InventoryHolder && lwc.isProtectable(block)) {
             if (!lwc.hasPermission(player, "lwc.protect") && lwc.hasPermission(player, "lwc.deny") && !lwc.isAdmin(player) && !lwc.isMod(player)) {
                 lwc.sendLocale(player, "protection.interact.error.blocked");
                 event.setCancelled(true);
