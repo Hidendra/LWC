@@ -103,6 +103,9 @@ public class PlayerEventHandler {
         checkNotifier(notifier);
         final Player player = (Player) this;
 
+        // Remove any previous AnyEventNotifiers so that they do not collide
+        removeNotifiersMatchingClass(AnyEventNotifier.class);
+
         if (notifier instanceof ProtectionEventNotifier) {
             addEventNotifier(Type.PLAYER_INTERACT_PROTECTION, new AnyEventNotifier(notifier));
             addEventNotifier(Type.PLAYER_INTERACT_BLOCK, new AnyEventNotifier(player, "&4Please interact with a protection, and not a block!"));
@@ -112,7 +115,6 @@ public class PlayerEventHandler {
         } else {
             throw new UnsupportedOperationException("The notifier must be a Protection- or Block- EventNotifier");
         }
-
     }
 
     /**
@@ -255,6 +257,35 @@ public class PlayerEventHandler {
 
         if (notifiers == null) {
             this.notifiers.put(type, new ArrayList<EventNotifier>());
+        }
+    }
+
+    /**
+     * Remove event notifiers matching the given class
+     *
+     * @param clazz
+     */
+    private void removeNotifiersMatchingClass(Class<? extends EventNotifier> clazz) {
+        synchronized (notifiers) {
+            for (List<EventNotifier> list : notifiers.values()) {
+                Iterator<EventNotifier> iter = list.iterator();
+
+                while (iter.hasNext()) {
+                    if (clazz.isInstance(iter.next())) {
+                        iter.remove();
+                    }
+                }
+            }
+        }
+
+        synchronized (temporaryNotifiers) {
+            Iterator<Map.Entry<Type, EventNotifier<?>>> iter = temporaryNotifiers.entrySet().iterator();
+
+            while (iter.hasNext()) {
+                if (clazz.isInstance(iter.next().getValue())) {
+                    iter.remove();
+                }
+            }
         }
     }
 

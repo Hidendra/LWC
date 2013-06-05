@@ -126,7 +126,7 @@
                     <targetBundle>Messages</targetBundle>
                     <poDirectory>po</poDirectory>
                     <sourceDirectory>${project.basedir}/../</sourceDirectory>
-                    <keywords>-k --keyword=_</keywords>
+                    <keywords>-k --keyword=_ --package-name=LWC --package-version=${project.version} --copyright-holder="Tyler Blair" --msgid-bugs-address="hidendra@getlwc.org"</keywords>
                     <outputFormat>properties</outputFormat>
                     <encoding>utf-8</encoding>
                 </configuration>
