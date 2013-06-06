@@ -37,13 +37,11 @@ import org.getlwc.entity.Player;
 import org.getlwc.spout.entity.SpoutPlayer;
 import org.getlwc.spout.world.SpoutWorld;
 import org.spout.api.Spout;
-import org.spout.api.chat.ChatSection;
 import org.spout.api.command.Command;
-import org.spout.api.command.CommandExecutor;
-import org.spout.api.command.CommandSource;
+import org.spout.api.command.CommandArguments;
+import org.spout.api.command.Executor;
 
 import java.io.File;
-import java.util.List;
 
 public class SpoutServerLayer extends ServerLayer {
 
@@ -52,8 +50,8 @@ public class SpoutServerLayer extends ServerLayer {
      */
     private SpoutPlugin plugin;
 
-    CommandExecutor executor = new CommandExecutor() {
-        public void processCommand(CommandSource commandSource, Command command, org.spout.api.command.CommandContext commandContext) throws org.spout.api.exception.CommandException {
+    Executor executor = new Executor() {
+        public void execute(org.spout.api.command.CommandSource commandSource, Command command, CommandArguments commandArguments) throws org.spout.api.exception.CommandException {
             CommandContext.Type contextType = (commandSource instanceof org.spout.api.entity.Player) ? CommandContext.Type.PLAYER : CommandContext.Type.SERVER;
             CommandSender sender;
 
@@ -63,11 +61,10 @@ public class SpoutServerLayer extends ServerLayer {
                 sender = plugin.wrapPlayer((org.spout.api.entity.Player) commandSource);
             }
 
-            List<ChatSection> sections = commandContext.getRawArgs();
-            String rawMessage = commandContext.getCommand();
+            String rawMessage = command.getName();
 
-            for (ChatSection section : sections) {
-                rawMessage += " " + section.getPlainString();
+            for (String arg : commandArguments.get()) {
+                rawMessage += " " + arg;
             }
 
             plugin._onCommand(contextType, sender, rawMessage);
@@ -91,7 +88,7 @@ public class SpoutServerLayer extends ServerLayer {
      */
     @Override
     public void onRegisterBaseCommand(String baseCommand, org.getlwc.command.Command command) {
-        plugin.getEngine().getRootCommand().addSubCommand(plugin, baseCommand).setExecutor(executor);
+        plugin.getEngine().getCommandManager().getCommand(baseCommand).setExecutor(executor);
     }
 
     /**

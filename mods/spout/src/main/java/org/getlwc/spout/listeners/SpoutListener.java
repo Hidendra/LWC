@@ -40,10 +40,9 @@ import org.getlwc.spout.world.SpoutBlock;
 import org.spout.api.event.EventHandler;
 import org.spout.api.event.Listener;
 import org.spout.api.event.block.BlockChangeEvent;
-import org.spout.api.event.cause.EntityCause;
 import org.spout.api.event.cause.PlayerCause;
 import org.spout.api.event.entity.EntityInteractBlockEvent;
-import org.spout.api.event.player.PlayerInteractEvent;
+import org.spout.api.event.player.PlayerInteractBlockEvent;
 import org.spout.api.event.server.protection.EntityCanBreakEvent;
 import org.spout.api.geo.discrete.Point;
 import org.spout.vanilla.event.block.RedstoneChangeEvent;
@@ -67,15 +66,14 @@ public class SpoutListener implements Listener {
     }
 
     @EventHandler
-    public void playerInteract(PlayerInteractEvent event) {
+    public void playerInteract(PlayerInteractBlockEvent event) {
         if (event.isCancelled()) {
             return;
         }
 
-        Player player = plugin.wrapPlayer(event.getPlayer());
-        World world = plugin.getWorld(event.getPlayer().getWorld().getName());
-        Point point = event.getInteractedPoint();
-        Block block = new SpoutBlock(world, event.getPlayer().getWorld().getBlock(point.getBlockX(), point.getBlockY(), point.getBlockZ()));
+        Player player = plugin.wrapPlayer((org.spout.api.entity.Player) event.getEntity());
+        World world = plugin.getWorld(event.getEntity().getWorld().getName());
+        Block block = new SpoutBlock(world, event.getInteracted());
 
         boolean result = plugin.getInternalEngine().getEventHelper().onBlockInteract(player, block);
 
@@ -92,7 +90,7 @@ public class SpoutListener implements Listener {
 
         Entity entity  = new SpoutEntity(plugin, event.getEntity());
         World world = plugin.getWorld(event.getEntity().getWorld().getName());
-        Block block = new SpoutBlock(world, event.getInteractedWith());
+        Block block = new SpoutBlock(world, event.getInteracted());
 
         if (plugin.getInternalEngine().getEventHelper().onBlockInteract(entity, block)) {
             event.setCancelled(true);
@@ -140,8 +138,7 @@ public class SpoutListener implements Listener {
 
 
         World world = plugin.getWorld(entity.getLocation().getWorld().getName());
-        Point point = event.getSign().getPosition();
-        Block block = new SpoutBlock(world, ((EntityCause) event.getSource()).getSource().getWorld().getBlock(point.getBlockX(), point.getBlockY(), point.getBlockZ()));
+        Block block = new SpoutBlock(world, event.getSign().getBlock());
 
         boolean result = plugin.getInternalEngine().getEventHelper().onSignChange(entity, block);
 
