@@ -303,7 +303,7 @@ public class SimpleCommandHandler implements CommandHandler {
      */
     private void sendHelp(Command command, CommandSender sender) {
         // Header
-        sender.sendMessage("&2=== &6/" + command.command() + " &2===");
+        sender.sendTranslatedMessage("&2=== &6/{0} &2===", command.command());
 
         // Usage
         sendUsage(command, sender);
@@ -322,7 +322,7 @@ public class SimpleCommandHandler implements CommandHandler {
      * @param sender
      */
     private void sendUsage(Command command, CommandSender sender) {
-        sender.sendMessage("&2Usage:       &6/" + command.command() + " " + command.usage());
+        sender.sendTranslatedMessage("&2Usage:       &6/{0} {1}", command.command(), command.usage());
     }
 
     /**
@@ -336,11 +336,11 @@ public class SimpleCommandHandler implements CommandHandler {
         String permission = command.permission();
 
         if (!description.isEmpty()) {
-            sender.sendMessage("&2Description: &6" + description);
+            sender.sendTranslatedMessage("&2Description: &6{0}",  description);
         }
 
         if (!permission.isEmpty()) {
-            sender.sendMessage("&2Permission:  &6" + permission);
+            sender.sendTranslatedMessage("&2Permission:  &6{0}",  permission);
         }
     }
 
@@ -363,7 +363,7 @@ public class SimpleCommandHandler implements CommandHandler {
             text = text.substring(0, text.length() - 2);
         }
 
-        sender.sendMessage("&2Aliases:     " + text);
+        sender.sendTranslatedMessage("&2Aliases:     {0}", text);
     }
 
     /**

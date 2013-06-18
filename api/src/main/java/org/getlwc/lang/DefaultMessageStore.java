@@ -40,9 +40,9 @@ public class DefaultMessageStore implements MessageStore {
         defaultLocale = new Locale(engine.getConfiguration().getString("core.locale", DEFAULT_LOCALE.getName()));
 
         if (getBundle(defaultLocale) == null) {
-            engine.getConsoleSender().sendMessage("WARNING: The default locale (" + defaultLocale.getName() + ") has no associated language file installed!");
+            engine.getConsoleSender().sendTranslatedMessage("WARNING: The default locale ({0}) has no associated language file installed!", defaultLocale.getName());
         } else {
-            engine.getConsoleSender().sendMessage("Using default locale: " + defaultLocale.getName());
+            engine.getConsoleSender().sendTranslatedMessage("Using default locale: {0}", defaultLocale.getName());
         }
     }
 

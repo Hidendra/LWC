@@ -36,7 +36,7 @@ public class AddRemoveCommands {
         final Player player = (Player) context.getCommandSender();
         final String[] parsed = StringUtils.split(context.getArguments());
 
-        player.sendMessage("&eClick on a protection to apply modifications.");
+        player.sendTranslatedMessage("&eClick on a protection to apply modifications.");
 
         player.onAnyInteract(new ProtectionEventNotifier() {
             @Override
@@ -46,7 +46,7 @@ public class AddRemoveCommands {
                 ProtectionAccess currAccess = protection.getAccess(player);
 
                 if (currAccess.ordinal() < ProtectionAccess.MANAGER.ordinal()) {
-                    player.sendMessage("&4Access denied.");
+                    player.sendTranslatedMessage("&4Access denied.");
                     return true;
                 }
 
@@ -77,20 +77,20 @@ public class AddRemoveCommands {
                             }
 
                             if (role.getRoleAccess() == ProtectionAccess.OWNER && currAccess != ProtectionAccess.OWNER) {
-                                player.sendMessage("&4Only owners can remove other owners.");
+                                player.sendTranslatedMessage("&4Only owners can remove other owners.");
                                 continue;
                             }
 
                             if (role.getRoleAccess() == ProtectionAccess.MANAGER && currAccess != ProtectionAccess.OWNER) {
-                                player.sendMessage("&4Only owners can remove managers.");
+                                player.sendTranslatedMessage("&4Only owners can remove managers.");
                                 continue;
                             }
 
                             if (delete != null) {
-                                player.sendMessage("&eRemoving role: &7" + curr);
+                                player.sendTranslatedMessage("&eRemoving role: &7{0}", curr);
                                 protection.removeRole(delete);
                             } else {
-                                player.sendMessage("&4Protection does not contain role matching: &e" + curr);
+                                player.sendTranslatedMessage("&4Protection does not contain role matching: &e{0}", curr);
                             }
 
                             continue;
@@ -100,34 +100,34 @@ public class AddRemoveCommands {
                         access = ProtectionAccess.match(curr);
 
                         if (access == null) {
-                            player.sendMessage("&4Unknown symbol: &7" + curr + "&4 (Should be one of: &7" + ProtectionAccess.USABLE_ACCESS_LEVELS + "&4)");
+                            player.sendTranslatedMessage("&4Unknown symbol: &7{0}&4 (Should be one of: &7{1}&4)", curr, ProtectionAccess.USABLE_ACCESS_LEVELS);
                         }
 
                         if (access != null && !ProtectionAccess.USABLE_ACCESS_LEVELS.contains(access)) {
-                            player.sendMessage("&4Protection access level &7" + access + "&4 is not allowed.");
+                            player.sendTranslatedMessage("&4Protection access level &7{0}&4 is not allowed.", access);
                             access = null;
                         }
 
                         if (access == ProtectionAccess.OWNER && currAccess != ProtectionAccess.OWNER) {
-                            player.sendMessage("&4Only owners can add other owners.");
+                            player.sendTranslatedMessage("&4Only owners can add other owners.");
                             access = null;
                         }
 
                         if (access == ProtectionAccess.MANAGER && currAccess != ProtectionAccess.OWNER) {
-                            player.sendMessage("&4Only owners can add managers.");
+                            player.sendTranslatedMessage("&4Only owners can add managers.");
                             access = null;
                         }
                     } else {
                         Role role = engine.getRoleManager().matchAndCreateRoleByName(protection, curr, access);
 
                         if (role == null) {
-                            player.sendMessage("&4\"" + curr + "\" does not match any usable roles");
+                            player.sendTranslatedMessage("&4\"{0}\" does not match any usable roles", curr);
                             return true;
                         }
 
                         protection.addRole(role);
                         protection.save();
-                        player.sendMessage("&2Added a " + role.getClass().getSimpleName() + " for \"" + curr + "\" to the protection with access level " + access + " successfully!");
+                        player.sendTranslatedMessage("&2Added a {0} for \"{1}\" to the protection with access level {2} successfully!", role.getClass().getSimpleName(), curr, access);
                     }
                 }
 

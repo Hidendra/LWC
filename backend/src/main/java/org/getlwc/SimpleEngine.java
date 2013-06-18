@@ -146,10 +146,10 @@ public class SimpleEngine implements Engine {
         Configuration layerConfig = new YamlConfiguration(getClass().getResourceAsStream("/layer.yml"));
         serverMod = new ServerMod(layerConfig.getString("name"), layerConfig.getString("author"), layerConfig.getString("version"));
 
-        consoleSender.sendMessage("Server: " + serverMod.getName() + " (" + serverInfo.getServerVersion() + ")");
-        consoleSender.sendMessage("Layer: " + serverMod.getVersion() + " (authored by: " + serverMod.getAuthor() + ")");
-        consoleSender.sendMessage("Backend: " + getBackendVersion());
-        consoleSender.sendMessage("This version was built on: " + internalConfig.get("git.buildTime"));
+        consoleSender.sendTranslatedMessage("Server: {0} ({1})", serverMod.getName(), serverInfo.getServerVersion());
+        consoleSender.sendTranslatedMessage("Layer: {0} (authored by: {1})", serverMod.getVersion(), serverMod.getAuthor());
+        consoleSender.sendTranslatedMessage("Backend: {0}", getBackendVersion());
+        consoleSender.sendTranslatedMessage("This version was built on: {0}", internalConfig.get("git.buildTime"));
     }
 
     /**
@@ -311,7 +311,7 @@ public class SimpleEngine implements Engine {
      * {@inheritDoc}
      */
     public void disable() {
-        consoleSender.sendMessage("Shutting down!");
+        consoleSender.sendTranslatedMessage("Shutting down!");
         saveQueue.flushAndClose();
         database.disconnect();
         database = null;
@@ -331,7 +331,7 @@ public class SimpleEngine implements Engine {
             JDBCDatabase.Driver driver = JDBCDatabase.Driver.resolveDriver(driverName);
 
             if (driver == null) {
-                consoleSender.sendMessage("UNKNOWN ERROR: \"" + driverName + "\"");
+                consoleSender.sendTranslatedMessage("Driver \"{0}\" is not supported.", driverName);
                 return;
             }
 
@@ -361,9 +361,9 @@ public class SimpleEngine implements Engine {
         }
 
         if (result) {
-            consoleSender.sendMessage("Connected to the database (" + databaseType + ")");
+            consoleSender.sendTranslatedMessage("Connected to the database with driver: {0}", databaseType);
         } else {
-            consoleSender.sendMessage("Failed to connect to the database");
+            consoleSender.sendTranslatedMessage("Failed to connect to the database!");
         }
     }
 

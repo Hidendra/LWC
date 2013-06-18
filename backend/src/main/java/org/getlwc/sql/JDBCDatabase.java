@@ -209,7 +209,7 @@ public class JDBCDatabase implements Database {
         }
 
         if (baseRequired) {
-            engine.getConsoleSender().sendMessage("Creating base database via base.sql");
+            engine.getConsoleSender().sendTranslatedMessage("Creating base database via base.sql");
 
             executeInternalSQLFile("/sql/base/base.sql");
             executeInternalSQLFile("/sql/base/base." + details.getDriver().toString().toLowerCase() + ".sql");

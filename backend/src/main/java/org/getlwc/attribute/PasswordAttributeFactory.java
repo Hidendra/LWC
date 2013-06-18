@@ -98,7 +98,7 @@ public class PasswordAttributeFactory implements ProtectionAttributeFactory<Stri
         Object request = player.getAttribute("password_request");
 
         if (request == null) {
-            player.sendMessage("&4You have no pending protection unlock.");
+            player.sendTranslatedMessage("&4You have no pending /cpassword.");
             return;
         }
 
@@ -106,7 +106,7 @@ public class PasswordAttributeFactory implements ProtectionAttributeFactory<Stri
 
         if (password.equals(attribute.getValue())) {
             int protectionId = (Integer) player.getAttribute("password_protection_id");
-            player.sendMessage("&2Granted access to the protection!");
+            player.sendTranslatedMessage("&2Granted access to the protection!");
             player.removeAttribute("password_request");
             player.removeAttribute("password_protection_id");
 
@@ -119,7 +119,7 @@ public class PasswordAttributeFactory implements ProtectionAttributeFactory<Stri
 
             playerList.add(player.getName());
         } else {
-            player.sendMessage("&4Invalid password.");
+            player.sendTranslatedMessage("&4Invalid password.");
         }
     }
 
@@ -136,7 +136,7 @@ public class PasswordAttributeFactory implements ProtectionAttributeFactory<Stri
                 return ProtectionAccess.MEMBER;
             }
 
-            player.sendMessage("&4This protection is locked by a password.\n&4To enter the password, use: &3/cpassword <password>");
+            player.sendTranslatedMessage("&4This protection is locked by a password.\n&4To enter the password, use: &3/cpassword <password>");
             player.setAttribute("password_request", this);
             player.setAttribute("password_protection_id", protection.getId());
             return ProtectionAccess.EXPLICIT_DENY;

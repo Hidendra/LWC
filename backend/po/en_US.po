@@ -7,53 +7,168 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-06-18 02:27-0300\n"
-"PO-Revision-Date: 2012-11-08 01:19-0400\n"
+"POT-Creation-Date: 2013-06-18 03:12-0300\n"
+"PO-Revision-Date: 2013-06-18 03:13-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language: English\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.5.5\n"
 
 #: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:229
 msgid "&4You do not have permission to use this command."
 msgstr "&4You do not have permission to use this command."
 
-#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:79
-#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:130
+#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:306
+#, java-format
+msgid "&2=== &6/{0} &2==="
+msgstr "&2=== &6/{0} &2==="
+
+#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:325
+#, java-format
+msgid "&2Usage:       &6/{0} {1}"
+msgstr "&2Usage:       &6/{0} {1}"
+
+#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:339
+#, java-format
+msgid "&2Description: &6{0}"
+msgstr "&2Description: &6{0}"
+
+#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:343
+#, java-format
+msgid "&2Permission:  &6{0}"
+msgstr "&2Permission:  &6{0}"
+
+#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:366
+#, java-format
+msgid "&2Aliases:     {0}"
+msgstr "&2Aliases:     {0}"
+
+#: api/src/main/java/org/getlwc/lang/DefaultMessageStore.java:43
+#, java-format
+msgid ""
+"WARNING: The default locale ({0}) has no associated language file installed!"
+msgstr ""
+"WARNING: The default locale ({0}) has no associated language file installed!"
+
+#: api/src/main/java/org/getlwc/lang/DefaultMessageStore.java:45
+#, java-format
+msgid "Using default locale: {0}"
+msgstr "Using default locale: {0}"
+
+#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:101
+msgid "&4You have no pending /cpassword."
+msgstr "&4You have no pending /cpassword."
+
+#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:109
+msgid "&2Granted access to the protection!"
+msgstr "&2Granted access to the protection!"
+
+#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:122
+msgid "&4Invalid password."
+msgstr "&4Invalid password."
+
+#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:139
+msgid ""
+"&4This protection is locked by a password.\n"
+"&4To enter the password, use: &3/cpassword <password>"
+msgstr ""
+"&4This protection is locked by a password.\n"
+"&4To enter the password, use: &3/cpassword <password>"
+
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:39
+msgid "&eClick on a protection to apply modifications."
+msgstr "&eClick on a protection to apply modifications."
+
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:49
+msgid "&4Access denied."
+msgstr "&4Access denied."
+
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:80
+msgid "&4Only owners can remove other owners."
+msgstr "&4Only owners can remove other owners."
+
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:85
+msgid "&4Only owners can remove managers."
+msgstr "&4Only owners can remove managers."
+
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:90
+#, java-format
+msgid "&eRemoving role: &7{0}"
+msgstr "&eRemoving role: &7{0}"
+
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:93
+#, java-format
+msgid "&4Protection does not contain role matching: &e{0}"
+msgstr "&4Protection does not contain role matching: &e{0}"
+
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:103
+#, java-format
+msgid "&4Unknown symbol: &7{0}&4 (Should be one of: &7{1}&4)"
+msgstr "&4Unknown symbol: &7{0}&4 (Should be one of: &7{1}&4)"
+
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:107
+#, java-format
+msgid "&4Protection access level &7{0}&4 is not allowed."
+msgstr "&4Protection access level &7{0}&4 is not allowed."
+
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:112
+msgid "&4Only owners can add other owners."
+msgstr "&4Only owners can add other owners."
+
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:117
+msgid "&4Only owners can add managers."
+msgstr "&4Only owners can add managers."
+
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:124
+#, java-format
+msgid "&4\"{0}\" does not match any usable roles"
+msgstr "&4\"{0}\" does not match any usable roles"
+
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:130
+#, java-format
+msgid ""
+"&2Added a {0} for \"{1}\" to the protection with access level {2} "
+"successfully!"
+msgstr ""
+"&2Added a {0} for \"{1}\" to the protection with access level {2} "
+"successfully!"
+
+#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:77
+#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:128
 msgid "&4Invalid attribute name."
 msgstr "&4Invalid attribute name."
 
-#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:88
+#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:86
 msgid "&4Invalid attribute value."
 msgstr "&4Invalid attribute value."
 
-#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:92
+#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:90
 msgid "&2Click on your protection to set the attribute"
 msgstr "&2Click on your protection to set the attribute"
 
-#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:100
-#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:142
+#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:98
+#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:140
 msgid "&4Only managers and above can modify the attributes of a protection."
 msgstr "&4Only managers and above can modify the attributes of a protection."
 
-#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:106
+#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:104
 #, java-format
 msgid "&2Added the attribute {0} to the protection successfully."
 msgstr "&2Added the attribute {0} to the protection successfully."
 
-#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:134
+#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:132
 msgid "&2Click on your protection to remove the attribute"
 msgstr "&2Click on your protection to remove the attribute"
 
-#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:149
+#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:147
 #, java-format
 msgid "&2Removed the attribute {0} from the protection successfully."
 msgstr "&2Removed the attribute {0} from the protection successfully."
 
-#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:151
+#: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:149
 #, java-format
 msgid "&4The protection does not have the attribute {0}"
 msgstr "&4The protection does not have the attribute {0}"
@@ -120,23 +235,61 @@ msgstr ""
 msgid "Purging player?: {0}"
 msgstr "Purging player?: {0}"
 
-#: backend/src/main/java/org/getlwc/LibraryDownloader.java:193
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:191
 msgid "Libraries required! These will now be downloaded."
 msgstr "Libraries required! These will now be downloaded."
 
-#: backend/src/main/java/org/getlwc/LibraryDownloader.java:204
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:202
 #, java-format
 msgid "[{0}/{1}] Downloading file {2} => {3}"
 msgstr "[{0}/{1}] Downloading file {2} => {3}"
 
-#: backend/src/main/java/org/getlwc/LibraryDownloader.java:250
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:248
 #, java-format
 msgid "  >> {0}: {1}%"
 msgstr "  >> {0}: {1}%"
 
-#: backend/src/main/java/org/getlwc/LibraryDownloader.java:269
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:267
 msgid "Library downloads complete!"
 msgstr "Library downloads complete!"
+
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:149
+#, java-format
+msgid "Server: {0} ({1})"
+msgstr "Server: {0} ({1})"
+
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:150
+#, java-format
+msgid "Layer: {0} (authored by: {1})"
+msgstr "Layer: {0} (authored by: {1})"
+
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:151
+#, java-format
+msgid "Backend: {0}"
+msgstr "Backend: {0}"
+
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:152
+#, java-format
+msgid "This version was built on: {0}"
+msgstr "This version was built on: {0}"
+
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:314
+msgid "Shutting down!"
+msgstr "Shutting down!"
+
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:334
+#, java-format
+msgid "Driver \"{0}\" is not supported."
+msgstr "Driver \"{0}\" is not supported."
+
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:364
+#, java-format
+msgid "Connected to the database with driver: {0}"
+msgstr "Connected to the database with driver: {0}"
+
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:366
+msgid "Failed to connect to the database!"
+msgstr "Failed to connect to the database!"
 
 #: backend/src/main/java/org/getlwc/SimpleEventHelper.java:118
 msgid "&4This protection is locked by a magical spell."
@@ -151,5 +304,57 @@ msgstr ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "
 "trace has been printed out to the log file"
 
-#~ msgid "&7{0}&f: Role is for \"&7{1}&f\" with the access &7{2}&f\n"
-#~ msgstr "&7{0}&f: Role is for \"&7{1}&f\" with the access &7{2}&f\n"
+#: backend/src/main/java/org/getlwc/sql/JDBCDatabase.java:212
+msgid "Creating base database via base.sql"
+msgstr "Creating base database via base.sql"
+
+#: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:174
+#: mods/canary/src/main/java/CanaryListener.java:162
+#: mods/canary-recode/src/main/java/org/getlwc/canary/CanaryServerLayer.java:171
+#: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:191
+#: mods/spout/src/main/java/org/getlwc/spout/SpoutPlugin.java:144
+#, java-format
+msgid "An error was encountered while processing a command: {0}"
+msgstr "An error was encountered while processing a command: {0}"
+
+#: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:178
+#: mods/canary/src/main/java/CanaryListener.java:166
+#: mods/canary-recode/src/main/java/org/getlwc/canary/CanaryServerLayer.java:175
+#: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:195
+#: mods/spout/src/main/java/org/getlwc/spout/SpoutPlugin.java:148
+msgid "&4[LWC] An internal error occurred while processing this command"
+msgstr "&4[LWC] An internal error occurred while processing this command"
+
+#: mods/forge/src/main/java/org/getlwc/forge/asm/AbstractTransformer.java:67
+#, java-format
+msgid "[ASM] Loaded native class mappings for Minecraft {0}"
+msgstr "[ASM] Loaded native class mappings for Minecraft {0}"
+
+#: mods/forge/src/main/java/org/getlwc/forge/asm/AbstractTransformer.java:70
+#, java-format
+msgid ""
+"[ASM] ================   NOTE !!!   ================\n"
+"[ASM] There are no included native mappings for Minecraft {0}\n"
+"[ASM] If this is a major Minecraft release then LWC IS MOST LIKELY BROKEN!\n"
+"[ASM] MAKE SURE YOU ARE USING THE LATEST VERSION!"
+msgstr ""
+"[ASM] ================   NOTE !!!   ================\n"
+"[ASM] There are no included native mappings for Minecraft {0}\n"
+"[ASM] If this is a major Minecraft release then LWC IS MOST LIKELY BROKEN!\n"
+"[ASM] MAKE SURE YOU ARE USING THE LATEST VERSION!"
+
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/ExplosionTransformer.java:141
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/ItemInWorldManagerTransformer.java:171
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/ItemStackTransformer.java:95
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/SignUpdateTransformer.java:128
+#, java-format
+msgid "[ASM] Patched {0} ({1}) successfully!"
+msgstr "[ASM] Patched {0} ({1}) successfully!"
+
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/ExplosionTransformer.java:144
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/ItemInWorldManagerTransformer.java:174
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/ItemStackTransformer.java:98
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/SignUpdateTransformer.java:131
+#, java-format
+msgid "[ASM] Failed to patch {0} ({1})"
+msgstr "[ASM] Failed to patch {0} ({1})"

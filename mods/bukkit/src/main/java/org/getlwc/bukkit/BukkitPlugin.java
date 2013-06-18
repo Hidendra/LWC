@@ -171,12 +171,11 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
             }
         } catch (CommandException e) {
             // Notify the console
-            logger.info("An error was encountered while processing a command: " + e.getMessage());
+            engine.getConsoleSender().sendTranslatedMessage("An error was encountered while processing a command: {0}", e.getMessage());
             e.printStackTrace();
 
             // Notify the player / console
-            // TODO red this bitch up
-            sender.sendMessage("[LWC] An internal error occurred while processing this command");
+            sender.sendTranslatedMessage("&4[LWC] An internal error occurred while processing this command");
 
             // We failed.. oh we failed
             return false;

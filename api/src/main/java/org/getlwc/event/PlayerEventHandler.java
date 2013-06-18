@@ -40,6 +40,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static org.getlwc.I18n._;
+
 public class PlayerEventHandler {
 
     public enum Type {
@@ -108,10 +110,10 @@ public class PlayerEventHandler {
 
         if (notifier instanceof ProtectionEventNotifier) {
             addEventNotifier(Type.PLAYER_INTERACT_PROTECTION, new AnyEventNotifier(notifier));
-            addEventNotifier(Type.PLAYER_INTERACT_BLOCK, new AnyEventNotifier(player, "&4Please interact with a protection, and not a block!"));
+            addEventNotifier(Type.PLAYER_INTERACT_BLOCK, new AnyEventNotifier(player, _(player, "&4Please interact with a protection, and not a block!")));
         } else if (notifier instanceof BlockEventNotifier) {
             addEventNotifier(Type.PLAYER_INTERACT_BLOCK, new AnyEventNotifier(notifier));
-            addEventNotifier(Type.PLAYER_INTERACT_PROTECTION, new AnyEventNotifier(player, "&4Please interact with a block, and not a protection!"));
+            addEventNotifier(Type.PLAYER_INTERACT_PROTECTION, new AnyEventNotifier(player, _(player, "&4Please interact with a block, and not a protection!")));
         } else {
             throw new UnsupportedOperationException("The notifier must be a Protection- or Block- EventNotifier");
         }

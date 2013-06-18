@@ -138,10 +138,10 @@ public class ExplosionTransformer extends AbstractSingleClassTransformer {
         try {
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
             classNode.accept(writer);
-            LWC.instance.getEngine().getConsoleSender().sendMessage("[ASM] Patched " + TARGET_CLASS + " (" + getClassName(TARGET_CLASS) + ") successfully!");
+            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Patched {0} ({1}) successfully!", TARGET_CLASS, getClassName(TARGET_CLASS));
             return writer.toByteArray();
         } catch (Exception e) {
-            LWC.instance.getEngine().getConsoleSender().sendMessage("[ASM] Failed to patch " + TARGET_CLASS + " (" + getClassName(TARGET_CLASS) + ")");
+            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Failed to patch {0} ({1})", TARGET_CLASS, getClassName(TARGET_CLASS));
             e.printStackTrace();
             return bytes;
         }
