@@ -38,8 +38,8 @@ import org.getlwc.Location;
 import org.getlwc.entity.Player;
 import org.getlwc.forge.LWC;
 import org.getlwc.forge.modsupport.ForgeEssentials;
-import org.getlwc.util.Color;
 import org.getlwc.forge.world.ForgeWorld;
+import org.getlwc.util.Color;
 
 public class ForgePlayer extends Player {
 

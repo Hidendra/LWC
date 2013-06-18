@@ -41,7 +41,6 @@ import org.getlwc.commands.BaseCommands;
 import org.getlwc.commands.BenchmarkCommands;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.configuration.YamlConfiguration;
-import org.getlwc.lang.DefaultMessageStore;
 import org.getlwc.roles.PlayerRoleDefinition;
 import org.getlwc.scripting.ModuleManager;
 import org.getlwc.scripting.SimpleModuleManager;

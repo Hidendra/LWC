@@ -41,8 +41,6 @@ import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
 import org.getlwc.util.StringUtils;
 
-import static org.getlwc.I18n._;
-
 public class AttributeCommands {
 
     /**

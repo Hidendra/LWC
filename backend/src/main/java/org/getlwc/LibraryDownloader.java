@@ -45,8 +45,6 @@ import java.net.URLConnection;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static org.getlwc.I18n._;
-
 public class LibraryDownloader {
 
     /**
