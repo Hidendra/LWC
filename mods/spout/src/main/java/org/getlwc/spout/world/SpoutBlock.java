@@ -76,7 +76,7 @@ public class SpoutBlock extends Block {
      * {@inheritDoc}
      */
     public byte getData() {
-        return (byte) handle.getData();
+        throw new UnsupportedOperationException("getData() is not supported for now");
     }
 
     /**

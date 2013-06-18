@@ -29,7 +29,7 @@ public class CanaryPlayer extends Player {
 
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
-            handle.sendMessage(Color.replaceColors(line));
+            handle.message(Color.replaceColors(line));
         }
     }
 

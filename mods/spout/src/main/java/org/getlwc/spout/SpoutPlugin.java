@@ -44,14 +44,14 @@ import org.getlwc.spout.listeners.SpoutListener;
 import org.spout.api.Spout;
 import org.spout.api.component.Component;
 import org.spout.api.event.Listener;
-import org.spout.api.plugin.CommonPlugin;
+import org.spout.api.plugin.Plugin;
 import org.spout.vanilla.material.enchantment.Enchantment;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public class SpoutPlugin extends CommonPlugin implements Listener {
+public class SpoutPlugin extends Plugin implements Listener {
     private Logger logger = null;
 
     /**
