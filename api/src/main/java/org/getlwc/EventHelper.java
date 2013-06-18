@@ -37,6 +37,20 @@ import java.util.List;
 public interface EventHelper {
 
     /**
+     * Called when a player joins the server
+     *
+     * @param player
+     */
+    public void onPlayerJoin(Player player);
+
+    /**
+     * Called when a player quits the server
+     *
+     * @param player
+     */
+    public void onPlayerQuit(Player player);
+
+    /**
      * Called when an entity interacts with a block in the world
      *
      * @param entity

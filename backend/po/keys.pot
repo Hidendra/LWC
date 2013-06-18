@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-06-18 03:57-0300\n"
+"POT-Creation-Date: 2013-06-18 14:57-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -289,11 +289,11 @@ msgstr ""
 msgid "Failed to connect to the database!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:118
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:132
 msgid "&4This protection is locked by a magical spell."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:124
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:138
 #, java-format
 msgid ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "

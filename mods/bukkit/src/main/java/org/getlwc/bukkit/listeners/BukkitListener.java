@@ -48,6 +48,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -71,6 +73,16 @@ public class BukkitListener implements Listener {
 
     public BukkitListener(BukkitPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void playerJoin(PlayerJoinEvent event) {
+        plugin.getEngine().getEventHelper().onPlayerQuit(plugin.wrapPlayer(event.getPlayer()));
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void playerQuit(PlayerQuitEvent event) {
+        plugin.getEngine().getEventHelper().onPlayerQuit(plugin.wrapPlayer(event.getPlayer()));
     }
 
     @EventHandler(ignoreCancelled = true)

@@ -127,4 +127,22 @@ public abstract class ServerLayer {
         return world;
     }
 
+    /**
+     * Remove a player from the cache
+     *
+     * @param playerName
+     */
+    public void removePlayer(String playerName) {
+        players.remove(playerName);
+    }
+
+    /**
+     * Remove a world from the cache
+     *
+     * @param worldName
+     */
+    public void removeWorld(String worldName) {
+        worlds.remove(worldName);
+    }
+
 }

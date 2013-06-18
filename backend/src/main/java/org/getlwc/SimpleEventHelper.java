@@ -84,6 +84,20 @@ public class SimpleEventHelper implements EventHelper {
     /**
      * {@inheritDoc}
      */
+    public void onPlayerJoin(Player player) {
+        //
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void onPlayerQuit(Player player) {
+        engine.getServerLayer().removePlayer(player.getName());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public boolean onBlockInteract(Entity entity, Block block) {
         boolean cancel = false;
 
