@@ -247,7 +247,7 @@ public class LibraryDownloader {
 
                                 // omit 100% ..
                                 if (percentTransferred != 100) {
-                                    engine.getConsoleSender().sendMessage(local.getName() + ": " + percentTransferred + "%");
+                                    engine.getConsoleSender().sendMessage(_("  >> {0}: {1}%", local.getName(), percentTransferred));
                                 }
                             }
                         }
