@@ -41,6 +41,7 @@ import org.getlwc.commands.BaseCommands;
 import org.getlwc.commands.BenchmarkCommands;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.configuration.YamlConfiguration;
+import org.getlwc.lang.DefaultMessageStore;
 import org.getlwc.roles.PlayerRoleDefinition;
 import org.getlwc.scripting.ModuleManager;
 import org.getlwc.scripting.SimpleModuleManager;
@@ -138,6 +139,8 @@ public class SimpleEngine implements Engine {
 
         configuration = new YamlConfiguration("config.yml");
         internalConfig = new YamlConfiguration(getClass().getResourceAsStream("/engine.yml"));
+        I18n.init(this);
+
         commandHandler = new SimpleCommandHandler(this);
 
         // load layer info (ServerMod)

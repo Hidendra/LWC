@@ -1,6 +1,11 @@
 # In development config file for LWC 5.0.0
 # This should not be used on production servers
 
+core:
+
+    # The default language to use for players and the console.
+    locale: en_US
+
 protections:
     protectables:
         chest:

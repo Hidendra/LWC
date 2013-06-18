@@ -29,10 +29,9 @@
 
 package org.getlwc;
 
-import java.io.IOException;
+import org.getlwc.lang.DefaultMessageStore;
+
 import java.text.MessageFormat;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
 
 public class I18n {
 
@@ -42,15 +41,24 @@ public class I18n {
     private static I18n instance = new I18n();
 
     /**
-     * The resource bundle that is to be used
+     * The storage medium for messages
      */
-    private ResourceBundle bundle;
+    private DefaultMessageStore store = new DefaultMessageStore();
 
     private I18n() {
     }
 
     /**
-     * Translate a message to the currently enabled message locale.
+     * Initialize the i18n context
+     *
+     * @param engine
+     */
+    public static void init(Engine engine) {
+        instance.store.init(engine);
+    }
+
+    /**
+     * Translate a message to the currently enabled message lang.
      *
      * @param message the message to translate
      * @return The translated message
@@ -60,7 +68,7 @@ public class I18n {
     }
 
     /**
-     * Translate a message to the currently enabled message locale.
+     * Translate a message to the currently enabled message lang.
      *
      * @param message   the message to translate
      * @param arguments the arguments to bind to any parameters in the message
@@ -77,12 +85,7 @@ public class I18n {
      * @return The translated message
      */
     private String translate(String message) {
-        // load the bundle if it hasn't been loaded yet
-        if (bundle == null) {
-            loadLanguageBundle();
-        }
-
-        return bundle.getString(message);
+        return store.getString(message);
     }
 
     /**
@@ -93,23 +96,7 @@ public class I18n {
      * @return The translated message
      */
     private String translate(String message, Object... arguments) {
-        // load the bundle if it hasn't been loaded yet
-        if (bundle == null) {
-            loadLanguageBundle();
-        }
-
         return MessageFormat.format(translate(message), arguments);
-    }
-
-    /**
-     * Load the language bundle
-     */
-    private void loadLanguageBundle() {
-        try {
-            bundle = new PropertyResourceBundle(getClass().getResourceAsStream("/Messages_en.properties"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 }

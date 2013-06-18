@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-06-05 17:03-0300\n"
+"POT-Creation-Date: 2013-06-18 00:03-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -122,6 +122,11 @@ msgstr ""
 #: backend/src/main/java/org/getlwc/LibraryDownloader.java:204
 #, java-format
 msgid "[{0}/{1}] Downloading file {2} => {3}"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:250
+#, java-format
+msgid "  >> {0}: {1}%"
 msgstr ""
 
 #: backend/src/main/java/org/getlwc/LibraryDownloader.java:269
