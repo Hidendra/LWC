@@ -23,12 +23,23 @@
             <id>gettext-commons-site</id>
             <url>http://gettext-commons.googlecode.com/svn/maven-repository/</url>
         </repository>
+        <repository>
+            <id>mcstats</id>
+            <url>http://gettext-commons.googlecode.com/svn/maven-repository/</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
             <id>gettext-commons-site</id>
             <url>http://gettext-commons.googlecode.com/svn/maven-repository/</url>
+            <releases>
+                <updatePolicy>daily</updatePolicy>
+            </releases>
+        </pluginRepository>
+        <pluginRepository>
+            <id>mcstats</id>
+            <url>http://repo.mcstats.org/content/groups/public/</url>
             <releases>
                 <updatePolicy>daily</updatePolicy>
             </releases>
@@ -112,7 +123,7 @@
             <plugin>
                 <groupId>org.xnap.commons</groupId>
                 <artifactId>maven-gettext-plugin</artifactId>
-                <version>1.2.3</version>
+                <version>1.2.4-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>
@@ -123,11 +134,11 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <targetBundle>lang.Messages</targetBundle>
+                    <targetBundle>lang.lwc_</targetBundle>
                     <poDirectory>po</poDirectory>
                     <sourceDirectory>${project.basedir}/../</sourceDirectory>
                     <keywords>-k --keyword=_ --keyword=sendTranslatedMessage --package-name=LWC --package-version=${project.version} --copyright-holder="Tyler Blair" --msgid-bugs-address="hidendra@getlwc.org"</keywords>
-                    <outputFormat>properties</outputFormat>
+                    <outputFormat>lang</outputFormat>
                     <encoding>utf-8</encoding>
                 </configuration>
             </plugin>

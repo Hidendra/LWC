@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-06-18 03:23-0300\n"
+"POT-Creation-Date: 2013-06-18 03:57-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,13 +54,13 @@ msgstr ""
 msgid "&4Please interact with a block, and not a protection!"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/lang/DefaultMessageStore.java:43
+#: api/src/main/java/org/getlwc/lang/DefaultMessageStore.java:44
 #, java-format
 msgid ""
 "WARNING: The default locale ({0}) has no associated language file installed!"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/lang/DefaultMessageStore.java:45
+#: api/src/main/java/org/getlwc/lang/DefaultMessageStore.java:46
 #, java-format
 msgid "Using default locale: {0}"
 msgstr ""

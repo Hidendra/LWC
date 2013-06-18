@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import java.util.zip.GZIPInputStream;
 
 public class DefaultMessageStore implements MessageStore {
 
@@ -94,10 +95,20 @@ public class DefaultMessageStore implements MessageStore {
         ResourceBundle bundle = null;
 
         try {
-            InputStream stream = getClass().getResourceAsStream("/lang/Messages_" + locale.getName() + ".properties");
+            String filePath = "/lang/lwc_" + locale.getName() + ".lang";
+            InputStream stream;
+
+            // try compressed version first
+            stream = getClass().getResourceAsStream(filePath + ".gz");
 
             if (stream != null) {
-                bundle = new PropertyResourceBundle(stream);
+                bundle = new PropertyResourceBundle(new GZIPInputStream(stream));
+            } else {
+                stream = getClass().getResourceAsStream(filePath);
+
+                if (stream != null) {
+                    bundle = new PropertyResourceBundle(stream);
+                }
             }
         } catch (IOException e) {
         }
