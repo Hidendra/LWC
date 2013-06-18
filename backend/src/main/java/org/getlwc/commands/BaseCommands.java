@@ -156,7 +156,7 @@ public class BaseCommands {
 
                 String roles = "";
                 for (Role role : protection.getRoles()) {
-                    roles += _(player, "&7{0}&f: Role is for \"&7{1}&f\" with the access &7{2}&f\n", role.getClass().getSimpleName(), role.getRoleName(), role.getRoleAccess());
+                    roles += _("&7{0}&f: Role is for \"&7{1}&f\" with the access &7{2}&f\n", player, role.getClass().getSimpleName(), role.getRoleName(), role.getRoleAccess());
                 }
 
                 player.sendTranslatedMessage("Location: &7[{0} {1} {2}]&f in the world \"&7{3}&f\"\n" +

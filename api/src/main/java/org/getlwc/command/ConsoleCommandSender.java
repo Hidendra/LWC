@@ -37,7 +37,7 @@ public abstract class ConsoleCommandSender implements CommandSender {
      * {@inheritDoc}
      */
     public void sendTranslatedMessage(String message, Object... arguments) {
-        sendMessage(_(this, message, arguments));
+        sendMessage(_(message, this, arguments));
     }
 
 }

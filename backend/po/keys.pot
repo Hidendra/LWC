@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-06-18 03:12-0300\n"
+"POT-Creation-Date: 2013-06-18 03:23-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -44,6 +44,14 @@ msgstr ""
 #: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:366
 #, java-format
 msgid "&2Aliases:     {0}"
+msgstr ""
+
+#: api/src/main/java/org/getlwc/event/PlayerEventHandler.java:113
+msgid "&4Please interact with a protection, and not a block!"
+msgstr ""
+
+#: api/src/main/java/org/getlwc/event/PlayerEventHandler.java:116
+msgid "&4Please interact with a block, and not a protection!"
 msgstr ""
 
 #: api/src/main/java/org/getlwc/lang/DefaultMessageStore.java:43
@@ -202,6 +210,11 @@ msgstr ""
 
 #: backend/src/main/java/org/getlwc/commands/BaseCommands.java:150
 msgid "&eClick on a protection to view info on it."
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:159
+#, java-format
+msgid "&7{0}&f: Role is for \"&7{1}&f\" with the access &7{2}&f\n"
 msgstr ""
 
 #: backend/src/main/java/org/getlwc/commands/BaseCommands.java:162

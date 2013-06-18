@@ -110,10 +110,10 @@ public class PlayerEventHandler {
 
         if (notifier instanceof ProtectionEventNotifier) {
             addEventNotifier(Type.PLAYER_INTERACT_PROTECTION, new AnyEventNotifier(notifier));
-            addEventNotifier(Type.PLAYER_INTERACT_BLOCK, new AnyEventNotifier(player, _(player, "&4Please interact with a protection, and not a block!")));
+            addEventNotifier(Type.PLAYER_INTERACT_BLOCK, new AnyEventNotifier(player, _("&4Please interact with a protection, and not a block!", player)));
         } else if (notifier instanceof BlockEventNotifier) {
             addEventNotifier(Type.PLAYER_INTERACT_BLOCK, new AnyEventNotifier(notifier));
-            addEventNotifier(Type.PLAYER_INTERACT_PROTECTION, new AnyEventNotifier(player, _(player, "&4Please interact with a block, and not a protection!")));
+            addEventNotifier(Type.PLAYER_INTERACT_PROTECTION, new AnyEventNotifier(player, _("&4Please interact with a block, and not a protection!", player)));
         } else {
             throw new UnsupportedOperationException("The notifier must be a Protection- or Block- EventNotifier");
         }

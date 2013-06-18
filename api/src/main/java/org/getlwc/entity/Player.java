@@ -62,7 +62,7 @@ public abstract class Player extends PlayerEventHandler implements Entity, Comma
      * {@inheritDoc}
      */
     public void sendTranslatedMessage(String message, Object... arguments) {
-        sendMessage(_(this, message, arguments));
+        sendMessage(_(message, this, arguments));
     }
 
     /**

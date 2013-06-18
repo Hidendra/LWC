@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-06-18 03:12-0300\n"
+"POT-Creation-Date: 2013-06-18 03:22-0300\n"
 "PO-Revision-Date: 2013-06-18 03:13-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -45,6 +45,14 @@ msgstr "&2Permission:  &6{0}"
 #, java-format
 msgid "&2Aliases:     {0}"
 msgstr "&2Aliases:     {0}"
+
+#: api/src/main/java/org/getlwc/event/PlayerEventHandler.java:113
+msgid "&4Please interact with a protection, and not a block!"
+msgstr "&4Please interact with a protection, and not a block!"
+
+#: api/src/main/java/org/getlwc/event/PlayerEventHandler.java:116
+msgid "&4Please interact with a block, and not a protection!"
+msgstr "&4Please interact with a block, and not a protection!"
 
 #: api/src/main/java/org/getlwc/lang/DefaultMessageStore.java:43
 #, java-format
@@ -212,6 +220,11 @@ msgstr "&4You do not have the required access level to do that!"
 #: backend/src/main/java/org/getlwc/commands/BaseCommands.java:150
 msgid "&eClick on a protection to view info on it."
 msgstr "&eClick on a protection to view info on it."
+
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:159
+#, java-format
+msgid "&7{0}&f: Role is for \"&7{1}&f\" with the access &7{2}&f\n"
+msgstr "&7{0}&f: Role is for \"&7{1}&f\" with the access &7{2}&f\n"
 
 #: backend/src/main/java/org/getlwc/commands/BaseCommands.java:162
 #, java-format

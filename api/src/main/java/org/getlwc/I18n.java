@@ -83,13 +83,13 @@ public class I18n {
     /**
      * Translate a message to the currently enabled message lang.
      *
-     * @param sender
      * @param message   the message to translate
+     * @param sender
      * @param arguments the arguments to bind to any parameters in the message
      * @return The translated message
      */
-    public static String _(CommandSender sender, String message, Object... arguments) {
-        return instance.translate(sender, message, arguments);
+    public static String _(String message, CommandSender sender, Object... arguments) {
+        return instance.translate(message, sender, arguments);
     }
 
     /**
@@ -122,12 +122,12 @@ public class I18n {
     /**
      * Translate a message with the given arguments
      *
-     * @param sender
      * @param message   the message to translate
+     * @param sender
      * @param arguments the arguments to bind to any parameters in the message
      * @return The translated message
      */
-    private String translate(CommandSender sender, String message, Object... arguments) {
+    private String translate(String message, CommandSender sender, Object... arguments) {
         Locale locale = sender.getLocale();
 
         if (locale == null) {
