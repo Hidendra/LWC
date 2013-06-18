@@ -144,6 +144,27 @@
             </plugin>
 
             <plugin>
+                <artifactId>exec-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <executions>
+                    <execution>
+                        <id>compress language files</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>gzip</executable>
+                            <arguments>
+                                <argument>-r</argument>
+                                <argument>target/classes/lang</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>2.7</version>
                 <configuration>
