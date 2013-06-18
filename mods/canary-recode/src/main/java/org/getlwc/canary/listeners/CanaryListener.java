@@ -7,6 +7,8 @@ import net.canarymod.hook.player.BlockDestroyHook;
 import net.canarymod.hook.player.BlockLeftClickHook;
 import net.canarymod.hook.player.BlockPlaceHook;
 import net.canarymod.hook.player.BlockRightClickHook;
+import net.canarymod.hook.player.ConnectionHook;
+import net.canarymod.hook.player.DisconnectionHook;
 import net.canarymod.hook.player.SignChangeHook;
 import net.canarymod.hook.world.ExplosionHook;
 import net.canarymod.hook.world.PistonExtendHook;
@@ -32,6 +34,16 @@ public class CanaryListener implements PluginListener {
 
     public CanaryListener(LWC plugin) {
         this.plugin = plugin;
+    }
+
+    @HookHandler(ignoreCanceled = true)
+    public void playerJoin(ConnectionHook event) {
+        plugin.getEngine().getEventHelper().onPlayerQuit(plugin.wrapPlayer(event.getPlayer()));
+    }
+
+    @HookHandler(ignoreCanceled = true)
+    public void playerQuit(DisconnectionHook event) {
+        plugin.getEngine().getEventHelper().onPlayerQuit(plugin.wrapPlayer(event.getPlayer()));
     }
 
     @HookHandler(ignoreCanceled = true)

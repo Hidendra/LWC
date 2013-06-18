@@ -67,6 +67,8 @@ public class LWC extends Plugin {
         etc.getLoader().addListener(PluginLoader.Hook.SERVERCOMMAND, listener, this, PluginListener.Priority.MEDIUM);
         etc.getLoader().addListener(PluginLoader.Hook.EXPLOSION, listener, this, PluginListener.Priority.MEDIUM);
         etc.getLoader().addListener(PluginLoader.Hook.REDSTONE_CHANGE, listener, this, PluginListener.Priority.MEDIUM);
+        etc.getLoader().addListener(PluginLoader.Hook.PLAYER_CONNECT, listener, this, PluginListener.Priority.MEDIUM);
+        etc.getLoader().addListener(PluginLoader.Hook.PLAYER_DISCONNECT, listener, this, PluginListener.Priority.MEDIUM);
     }
 
     @Override

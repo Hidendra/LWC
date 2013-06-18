@@ -43,6 +43,8 @@ import org.spout.api.event.block.BlockChangeEvent;
 import org.spout.api.event.cause.PlayerCause;
 import org.spout.api.event.entity.EntityInteractBlockEvent;
 import org.spout.api.event.player.PlayerInteractBlockEvent;
+import org.spout.api.event.player.PlayerJoinEvent;
+import org.spout.api.event.player.PlayerLeaveEvent;
 import org.spout.api.event.server.protection.EntityCanBreakEvent;
 import org.spout.api.geo.discrete.Point;
 import org.spout.vanilla.event.block.RedstoneChangeEvent;
@@ -63,6 +65,16 @@ public class SpoutListener implements Listener {
 
     public SpoutListener(SpoutPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void playerJoin(PlayerJoinEvent event) {
+        plugin.getInternalEngine().getEventHelper().onPlayerQuit(plugin.wrapPlayer(event.getPlayer()));
+    }
+
+    @EventHandler
+    public void playerQuit(PlayerLeaveEvent event) {
+        plugin.getInternalEngine().getEventHelper().onPlayerQuit(plugin.wrapPlayer(event.getPlayer()));
     }
 
     @EventHandler

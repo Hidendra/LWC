@@ -47,6 +47,16 @@ public class CanaryListener extends PluginListener {
     }
 
     @Override
+    public void onLogin(Player player) {
+        plugin.getEngine().getEventHelper().onPlayerJoin(plugin.wrapPlayer(player));
+    }
+
+    @Override
+    public void onDisconnect(Player player) {
+        plugin.getEngine().getEventHelper().onPlayerQuit(plugin.wrapPlayer(player));
+    }
+
+    @Override
     public boolean onCommand(Player player, String[] split) {
         return _onCommand(CommandContext.Type.PLAYER, plugin.wrapPlayer(player), StringUtils.join(split));
     }
