@@ -34,9 +34,15 @@ import org.getlwc.ItemStack;
 import org.getlwc.Location;
 import org.getlwc.bukkit.BukkitPlugin;
 import org.getlwc.entity.Player;
+import org.getlwc.lang.Locale;
 import org.getlwc.util.Color;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 public class BukkitPlayer extends Player {
+
+    private Engine engine;
 
     /**
      * The plugin object
@@ -53,8 +59,32 @@ public class BukkitPlayer extends Player {
             throw new IllegalArgumentException("Player handle cannot be null");
         }
 
+        this.engine = engine;
         this.plugin = plugin;
         this.handle = handle;
+        loadLocale();
+    }
+
+    /**
+     * Load the player's locale (unsafe)
+     */
+    private void loadLocale() {
+        try {
+            Method getHandle = handle.getClass().getDeclaredMethod("getHandle");
+            Object entityPlayer = getHandle.invoke(handle);
+            Method getLocale = entityPlayer.getClass().getDeclaredMethod("getLocale");
+            Object locale = getLocale.invoke(entityPlayer); // LocaleLanguage
+            Field name = locale.getClass().getDeclaredField("e");
+            name.setAccessible(true);
+            String localeName = (String) name.get(locale);
+
+            if (localeName != null) {
+                setLocale(new Locale(localeName));
+                engine.getConsoleSender().sendMessage("Player " + getName() + " loaded using locale: " + getLocale());
+            }
+        } catch (Exception e) {
+            engine.getConsoleSender().sendMessage("Unable to get locale from Player (class: " + handle.getClass().getCanonicalName() + ")");
+        }
     }
 
     /**
