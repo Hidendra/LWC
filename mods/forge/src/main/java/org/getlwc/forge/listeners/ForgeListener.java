@@ -66,7 +66,6 @@ public class ForgeListener {
         String message = "/" + commandName + " " + StringUtils.join(event.parameters);
         boolean result = false;
 
-        // UNSAFE
         ICommandSender sender = event.sender;
 
         // Console
@@ -74,8 +73,7 @@ public class ForgeListener {
             result = _onCommand(CommandContext.Type.SERVER, mod.getEngine().getConsoleSender(), message);
         }
 
-        // UNSAFE
-        // grep 'implements aa'
+        // Player
         else if (sender instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) sender;
             result = _onCommand(CommandContext.Type.PLAYER, mod.wrapPlayer(player), message);
