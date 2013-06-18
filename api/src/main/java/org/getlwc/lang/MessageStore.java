@@ -20,7 +20,7 @@ public interface MessageStore {
      * @param locale
      * @return
      */
-    public String getString(String message, String locale);
+    public String getString(String message, Locale locale);
 
     /**
      * Get a language bundle. The bundle will be loaded if it is not already loaded. Null can be returned meaning the bundle was not found.
@@ -28,6 +28,6 @@ public interface MessageStore {
      * @param locale
      * @return
      */
-    public ResourceBundle getBundle(String locale);
+    public ResourceBundle getBundle(Locale locale);
 
 }

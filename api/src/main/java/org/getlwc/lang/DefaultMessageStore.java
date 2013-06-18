@@ -16,17 +16,17 @@ public class DefaultMessageStore implements MessageStore {
      * For example, the downloader spits out localised output however it downloads
      * the required YAML libraries, so a default locale must be used first.
      */
-    private static final String DEFAULT_LOCALE = "en_US";
+    private static final Locale DEFAULT_LOCALE = new Locale("en_US");
 
     /**
      * A store of the loaded resource bundles. The bundle CAN be null (i.e. does not exist)
      */
-    private Map<String, ResourceBundle> bundles = new HashMap<String, ResourceBundle>();
+    private Map<Locale, ResourceBundle> bundles = new HashMap<Locale, ResourceBundle>();
 
     /**
      * The default lang
      */
-    private String defaultLocale;
+    private Locale defaultLocale;
 
     public DefaultMessageStore() {
     }
@@ -37,7 +37,7 @@ public class DefaultMessageStore implements MessageStore {
      * @param engine
      */
     public void init(Engine engine) {
-        defaultLocale = engine.getConfiguration().getString("core.locale");
+        defaultLocale = new Locale(engine.getConfiguration().getString("core.locale", DEFAULT_LOCALE.getName()));
 
         if (getBundle(defaultLocale) == null) {
             engine.getConsoleSender().sendMessage("WARNING: The default locale (" + defaultLocale + ") has no associated language file installed!");
@@ -56,7 +56,7 @@ public class DefaultMessageStore implements MessageStore {
     /**
      * {@inheritDoc}
      */
-    public String getString(String message, String locale) {
+    public String getString(String message, Locale locale) {
         if (message == null) {
             throw new UnsupportedOperationException("message cannot be null");
         }
@@ -86,7 +86,7 @@ public class DefaultMessageStore implements MessageStore {
     /**
      * {@inheritDoc}
      */
-    public ResourceBundle getBundle(String locale) {
+    public ResourceBundle getBundle(Locale locale) {
         if (bundles.containsKey(locale)) {
             return bundles.get(locale);
         }
