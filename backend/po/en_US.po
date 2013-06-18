@@ -1,13 +1,13 @@
-# English translations for LWC.
+# LWC Translation Project
 # Copyright (C) 2012-2013 Tyler Blair
 # This file is distributed under the same license as the LWC package.
-# Tyler Blair <hidendra@griefcraft.com>, 2012.
-# 
+# Tyler Blair <hidendra@griefcraft.com>, 2012-2013.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-06-17 23:47-0300\n"
+"POT-Creation-Date: 2013-06-18 02:27-0300\n"
 "PO-Revision-Date: 2012-11-08 01:19-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:231
+#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:229
 msgid "&4You do not have permission to use this command."
 msgstr "&4You do not have permission to use this command."
 
@@ -98,11 +98,6 @@ msgstr "&4You do not have the required access level to do that!"
 msgid "&eClick on a protection to view info on it."
 msgstr "&eClick on a protection to view info on it."
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:159
-#, java-format
-msgid "&7{0}&f: Role is for \"&7{1}&f\" with the access &7{2}&f\n"
-msgstr "&7{0}&f: Role is for \"&7{1}&f\" with the access &7{2}&f\n"
-
 #: backend/src/main/java/org/getlwc/commands/BaseCommands.java:162
 #, java-format
 msgid ""
@@ -143,11 +138,11 @@ msgstr "  >> {0}: {1}%"
 msgid "Library downloads complete!"
 msgstr "Library downloads complete!"
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:120
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:118
 msgid "&4This protection is locked by a magical spell."
 msgstr "&4This protection is locked by a magical spell."
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:126
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:124
 #, java-format
 msgid ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "
@@ -155,3 +150,6 @@ msgid ""
 msgstr ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "
 "trace has been printed out to the log file"
+
+#~ msgid "&7{0}&f: Role is for \"&7{1}&f\" with the access &7{2}&f\n"
+#~ msgstr "&7{0}&f: Role is for \"&7{1}&f\" with the access &7{2}&f\n"

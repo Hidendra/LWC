@@ -83,7 +83,7 @@ public class BaseCommands {
     )
     public void createProtection(CommandContext context) {
         final Player player = (Player) context.getCommandSender();
-        player.sendMessage(_("&eClick on a block to protect it!"));
+        player.sendTranslatedMessage("&eClick on a block to protect it!");
 
         player.onAnyInteract(new BlockEventNotifier() {
             @Override
@@ -92,17 +92,17 @@ public class BaseCommands {
                 Block block = event.getBlock();
 
                 if (!manager.isBlockProtectable(block)) {
-                    player.sendMessage(_("&4That block is not protectable"));
+                    player.sendTranslatedMessage("&4That block is not protectable");
                     return false;
                 }
 
                 Protection protection = manager.createProtection(player.getName(), block.getLocation());
                 if (protection != null) {
-                    player.sendMessage(_("&2Created a new protection successfully.\n" +
+                    player.sendTranslatedMessage("&2Created a new protection successfully.\n" +
                             "Want to give another player access to your protection?\n" +
-                            "Use: &e/lwc modify member NAME"));
+                            "Use: &e/lwc modify member NAME");
                 } else {
-                    player.sendMessage(_("&4Failed to create the protection. Your block is most likely not protected."));
+                    player.sendTranslatedMessage("&4Failed to create the protection. Your block is most likely not protected.");
                 }
 
                 return true;
@@ -119,7 +119,7 @@ public class BaseCommands {
     )
     public void removeProtection(CommandContext context) {
         final Player player = (Player) context.getCommandSender();
-        player.sendMessage(_("&eClick on a protection to remove the lock!"));
+        player.sendTranslatedMessage("&eClick on a protection to remove the lock!");
 
         player.onAnyInteract(new ProtectionEventNotifier() {
             @Override
@@ -128,9 +128,9 @@ public class BaseCommands {
 
                 if (protection.getAccess(player) == ProtectionAccess.OWNER) {
                     protection.remove();
-                    player.sendMessage(_("&2The protection has been removed successfully."));
+                    player.sendTranslatedMessage("&2The protection has been removed successfully.");
                 } else {
-                    player.sendMessage(_("&4You do not have the required access level to do that!"));
+                    player.sendTranslatedMessage("&4You do not have the required access level to do that!");
                 }
 
                 return true;
@@ -147,7 +147,7 @@ public class BaseCommands {
     )
     public void info(CommandContext context) {
         final Player player = (Player) context.getCommandSender();
-        player.sendMessage(_("&eClick on a protection to view info on it."));
+        player.sendTranslatedMessage("&eClick on a protection to view info on it.");
 
         player.onAnyInteract(new ProtectionEventNotifier() {
             @Override
@@ -156,17 +156,17 @@ public class BaseCommands {
 
                 String roles = "";
                 for (Role role : protection.getRoles()) {
-                    roles += _("&7{0}&f: Role is for \"&7{1}&f\" with the access &7{2}&f\n", role.getClass().getSimpleName(), role.getRoleName(), role.getRoleAccess());
+                    roles += _(player, "&7{0}&f: Role is for \"&7{1}&f\" with the access &7{2}&f\n", role.getClass().getSimpleName(), role.getRoleName(), role.getRoleAccess());
                 }
 
-                player.sendMessage(_("Location: &7[{0} {1} {2}]&f in the world \"&7{3}&f\"\n" +
+                player.sendTranslatedMessage("Location: &7[{0} {1} {2}]&f in the world \"&7{3}&f\"\n" +
                         "Created on: &7{4}\n" +
                         "Last updated on: &7{5}\n" +
                         "Last accessed on: &7{6}\n" +
                         "&eRoles(size={7}):\n" +
                         "{8}", protection.getX(), protection.getY(), protection.getZ(), protection.getWorld().getName(),
                         TimeUtil.timeToString(System.currentTimeMillis()/1000L - protection.getCreated()), TimeUtil.timeToString(System.currentTimeMillis()/1000L - protection.getUpdated()),
-                        TimeUtil.timeToString(System.currentTimeMillis()/1000L - protection.getAccessed()), protection.getRoles().size(), roles));
+                        TimeUtil.timeToString(System.currentTimeMillis()/1000L - protection.getAccessed()), protection.getRoles().size(), roles);
 
                 return true;
             }
@@ -183,7 +183,7 @@ public class BaseCommands {
             max = 1
     )
     public void lwcAdminPurge(CommandContext context) {
-        context.getCommandSender().sendMessage(_("Purging player?: {0}", context.getArgument(1)));
+        context.getCommandSender().sendTranslatedMessage("Purging player?: {0}", context.getArgument(1));
     }
 
 }

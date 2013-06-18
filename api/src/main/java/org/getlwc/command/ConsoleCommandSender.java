@@ -29,5 +29,15 @@
 
 package org.getlwc.command;
 
-public interface ConsoleCommandSender extends CommandSender {
+import static org.getlwc.I18n._;
+
+public abstract class ConsoleCommandSender implements CommandSender {
+
+    /**
+     * {@inheritDoc}
+     */
+    public void sendTranslatedMessage(String message, Object... arguments) {
+        sendMessage(_(this, message, arguments));
+    }
+
 }

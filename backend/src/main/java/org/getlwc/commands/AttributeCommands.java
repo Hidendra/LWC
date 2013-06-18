@@ -76,7 +76,7 @@ public class AttributeCommands {
         final AbstractAttribute<?> attribute = engine.getProtectionManager().createProtectionAttribute(attributeName);
 
         if (attribute == null) {
-            player.sendMessage(_("&4Invalid attribute name."));
+            player.sendTranslatedMessage("&4Invalid attribute name.");
             return;
         }
 
@@ -85,11 +85,11 @@ public class AttributeCommands {
             attribute.loadValue(value);
             // TODO better exception ?
         } catch (Exception e) {
-            player.sendMessage(_("&4Invalid attribute value."));
+            player.sendTranslatedMessage("&4Invalid attribute value.");
             return;
         }
 
-        player.sendMessage(_("&2Click on your protection to set the attribute"));
+        player.sendTranslatedMessage("&2Click on your protection to set the attribute");
         player.onAnyInteract(new ProtectionEventNotifier() {
             @Override
             public boolean call(ProtectionEvent event) {
@@ -97,13 +97,13 @@ public class AttributeCommands {
 
                 ProtectionAccess currAccess = protection.getAccess(player);
                 if (currAccess.ordinal() < ProtectionAccess.MANAGER.ordinal()) {
-                    player.sendMessage(_("&4Only managers and above can modify the attributes of a protection."));
+                    player.sendTranslatedMessage("&4Only managers and above can modify the attributes of a protection.");
                     return true;
                 }
 
                protection.addAttribute(attribute);
                 protection.save();
-                player.sendMessage(_("&2Added the attribute {0} to the protection successfully.", attribute.getName().toLowerCase()));
+                player.sendTranslatedMessage("&2Added the attribute {0} to the protection successfully.", attribute.getName().toLowerCase());
                 return true;
             }
         });
@@ -127,11 +127,11 @@ public class AttributeCommands {
         final AbstractAttribute<?> attribute = engine.getProtectionManager().createProtectionAttribute(attributeName);
 
         if (attribute == null) {
-            player.sendMessage(_("&4Invalid attribute name."));
+            player.sendTranslatedMessage("&4Invalid attribute name.");
             return;
         }
 
-        player.sendMessage(_("&2Click on your protection to remove the attribute"));
+        player.sendTranslatedMessage("&2Click on your protection to remove the attribute");
         player.onAnyInteract(new ProtectionEventNotifier() {
             @Override
             public boolean call(ProtectionEvent event) {
@@ -139,16 +139,16 @@ public class AttributeCommands {
 
                 ProtectionAccess currAccess = protection.getAccess(player);
                 if (currAccess.ordinal() < ProtectionAccess.MANAGER.ordinal()) {
-                    player.sendMessage(_("&4Only managers and above can modify the attributes of a protection."));
+                    player.sendTranslatedMessage("&4Only managers and above can modify the attributes of a protection.");
                     return true;
                 }
 
                 // verify the attribute
                 if (protection.getAttribute(attributeName) != null) {
                     protection.removeAttribute(attributeName);
-                    player.sendMessage(_("&2Removed the attribute {0} from the protection successfully.", attributeName));
+                    player.sendTranslatedMessage("&2Removed the attribute {0} from the protection successfully.", attributeName);
                 } else {
-                    player.sendMessage(_("&4The protection does not have the attribute {0}", attributeName));
+                    player.sendTranslatedMessage("&4The protection does not have the attribute {0}", attributeName);
                 }
 
                 return true;

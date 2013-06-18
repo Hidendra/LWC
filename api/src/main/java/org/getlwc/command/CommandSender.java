@@ -29,6 +29,8 @@
 
 package org.getlwc.command;
 
+import org.getlwc.lang.Locale;
+
 public interface CommandSender {
 
     /**
@@ -39,11 +41,34 @@ public interface CommandSender {
     public void sendMessage(String message);
 
     /**
+     * Send a translated message to the player. The given arguments will be used in place of any formatters
+     * in the message - {0} = 1st argument, {1} = 2nd, [..]
+     *
+     * @param message
+     * @param arguments
+     */
+    public void sendTranslatedMessage(String message, Object... arguments);
+
+    /**
      * Check if a player has the given permission node
      *
      * @param node
      * @return
      */
     public boolean hasPermission(String node);
+
+    /**
+     * Get the locale for the player
+     *
+     * @return the player's locale
+     */
+    public Locale getLocale();
+
+    /**
+     * Set the locale for the player
+     *
+     * @param locale
+     */
+    public void setLocale(Locale locale);
 
 }

@@ -17,11 +17,16 @@ public final class Locale {
 
     /**
      * Get the name of the locale
-     * 
+     *
      * @return
      */
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return "Locale: " + name;
     }
 
     @Override

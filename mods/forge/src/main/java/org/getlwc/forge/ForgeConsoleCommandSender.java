@@ -30,8 +30,9 @@
 package org.getlwc.forge;
 
 import org.getlwc.command.ConsoleCommandSender;
+import org.getlwc.lang.Locale;
 
-public class ForgeConsoleCommandSender implements ConsoleCommandSender {
+public class ForgeConsoleCommandSender extends ConsoleCommandSender {
 
     /**
      * {@inheritDoc}
@@ -45,6 +46,20 @@ public class ForgeConsoleCommandSender implements ConsoleCommandSender {
      */
     public boolean hasPermission(String node) {
         return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Locale getLocale() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setLocale(Locale locale) {
+        throw new UnsupportedOperationException("setLocale is unsupported for console senders");
     }
 
 }

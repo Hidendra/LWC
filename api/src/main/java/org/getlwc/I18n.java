@@ -29,7 +29,9 @@
 
 package org.getlwc;
 
+import org.getlwc.command.CommandSender;
 import org.getlwc.lang.DefaultMessageStore;
+import org.getlwc.lang.Locale;
 
 import java.text.MessageFormat;
 
@@ -79,6 +81,18 @@ public class I18n {
     }
 
     /**
+     * Translate a message to the currently enabled message lang.
+     *
+     * @param sender
+     * @param message   the message to translate
+     * @param arguments the arguments to bind to any parameters in the message
+     * @return The translated message
+     */
+    public static String _(CommandSender sender, String message, Object... arguments) {
+        return instance.translate(sender, message, arguments);
+    }
+
+    /**
      * Translate a message with the given arguments
      *
      * @param message the message to translate
@@ -96,7 +110,37 @@ public class I18n {
      * @return The translated message
      */
     private String translate(String message, Object... arguments) {
-        return MessageFormat.format(translate(message), arguments);
+        String translated = store.getString(message);
+
+        if (arguments.length == 0) {
+            return translated;
+        } else {
+            return MessageFormat.format(translated, arguments);
+        }
+    }
+
+    /**
+     * Translate a message with the given arguments
+     *
+     * @param sender
+     * @param message   the message to translate
+     * @param arguments the arguments to bind to any parameters in the message
+     * @return The translated message
+     */
+    private String translate(CommandSender sender, String message, Object... arguments) {
+        Locale locale = sender.getLocale();
+
+        if (locale == null) {
+            return translate(message, arguments);
+        } else {
+            String translated = store.getString(message, locale);
+
+            if (arguments.length == 0) {
+                return translated;
+            } else {
+                return MessageFormat.format(translated, arguments);
+            }
+        }
     }
 
 }

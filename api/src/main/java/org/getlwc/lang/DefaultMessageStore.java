@@ -40,9 +40,9 @@ public class DefaultMessageStore implements MessageStore {
         defaultLocale = new Locale(engine.getConfiguration().getString("core.locale", DEFAULT_LOCALE.getName()));
 
         if (getBundle(defaultLocale) == null) {
-            engine.getConsoleSender().sendMessage("WARNING: The default locale (" + defaultLocale + ") has no associated language file installed!");
+            engine.getConsoleSender().sendMessage("WARNING: The default locale (" + defaultLocale.getName() + ") has no associated language file installed!");
         } else {
-            engine.getConsoleSender().sendMessage("Using default locale: " + defaultLocale);
+            engine.getConsoleSender().sendMessage("Using default locale: " + defaultLocale.getName());
         }
     }
 
@@ -94,7 +94,7 @@ public class DefaultMessageStore implements MessageStore {
         ResourceBundle bundle = null;
 
         try {
-            InputStream stream = getClass().getResourceAsStream("/lang/Messages_" + locale + ".properties");
+            InputStream stream = getClass().getResourceAsStream("/lang/Messages_" + locale.getName() + ".properties");
 
             if (stream != null) {
                 bundle = new PropertyResourceBundle(stream);

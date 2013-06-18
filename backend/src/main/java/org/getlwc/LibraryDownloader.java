@@ -190,7 +190,7 @@ public class LibraryDownloader {
             int size = fileQueue.size();
 
             if (size > 0) {
-                engine.getConsoleSender().sendMessage(_("Libraries required! These will now be downloaded."));
+                engine.getConsoleSender().sendTranslatedMessage("Libraries required! These will now be downloaded.");
             } else {
                 return;
             }
@@ -201,7 +201,7 @@ public class LibraryDownloader {
                     File local = new File(libraryFile.getLocalLocation());
                     String remote = libraryFile.getRemoteLocation();
 
-                    engine.getConsoleSender().sendMessage(_("[{0}/{1}] Downloading file {2} => {3}", current, size, local.getName(), local.getParent()));
+                    engine.getConsoleSender().sendTranslatedMessage("[{0}/{1}] Downloading file {2} => {3}", current, size, local.getName(), local.getParent());
 
                     // check native folders
                     File folder = new File(getNativeLibraryFolder());
@@ -247,7 +247,7 @@ public class LibraryDownloader {
 
                                 // omit 100% ..
                                 if (percentTransferred != 100) {
-                                    engine.getConsoleSender().sendMessage(_("  >> {0}: {1}%", local.getName(), percentTransferred));
+                                    engine.getConsoleSender().sendTranslatedMessage("  >> {0}: {1}%", local.getName(), percentTransferred);
                                 }
                             }
                         }
@@ -266,7 +266,7 @@ public class LibraryDownloader {
 
                 current ++;
             }
-            engine.getConsoleSender().sendMessage(_("Library downloads complete!"));
+            engine.getConsoleSender().sendTranslatedMessage("Library downloads complete!");
         }
     }
 

@@ -32,11 +32,19 @@ package org.getlwc.entity;
 import org.getlwc.ItemStack;
 import org.getlwc.command.CommandSender;
 import org.getlwc.event.PlayerEventHandler;
+import org.getlwc.lang.Locale;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.getlwc.I18n._;
+
 public abstract class Player extends PlayerEventHandler implements Entity, CommandSender {
+
+    /**
+     * This player's locale
+     */
+    private Locale locale = null;
 
     /**
      * Simple unpersisted attribute store for the player
@@ -49,6 +57,31 @@ public abstract class Player extends PlayerEventHandler implements Entity, Comma
      * @return
      */
     public abstract ItemStack getItemInHand();
+
+    /**
+     * {@inheritDoc}
+     */
+    public void sendTranslatedMessage(String message, Object... arguments) {
+        sendMessage(_(this, message, arguments));
+    }
+
+    /**
+     * Get the locale for the player
+     *
+     * @return the player's locale
+     */
+    public Locale getLocale() {
+        return locale;
+    }
+
+    /**
+     * Set the locale for the player
+     *
+     * @param locale
+     */
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
 
     /**
      * Set an attribute in the store

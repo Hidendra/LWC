@@ -40,8 +40,6 @@ import org.getlwc.model.Protection;
 import java.util.List;
 import java.util.Map;
 
-import static org.getlwc.I18n._;
-
 public class SimpleEventHelper implements EventHelper {
 
     /**
@@ -117,14 +115,14 @@ public class SimpleEventHelper implements EventHelper {
                     // they cannot access the protection o\
                     // so send them a kind message
                     if (access != ProtectionAccess.EXPLICIT_DENY) {
-                        player.sendMessage(_("&4This protection is locked by a magical spell."));
+                        player.sendTranslatedMessage("&4This protection is locked by a magical spell.");
                     }
 
                     return true;
                 }
             } catch (EventException e) {
-                player.sendMessage(_("&cA severe error occurred while processing the event: {0}"
-                        + "&cThe full stack trace has been printed out to the log file", e.getMessage()));
+                player.sendTranslatedMessage("&cA severe error occurred while processing the event: {0}"
+                        + "&cThe full stack trace has been printed out to the log file", e.getMessage());
                 e.printStackTrace();
                 return true; // Better safe than sorry
             }

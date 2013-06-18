@@ -30,9 +30,10 @@
 package org.getlwc.bukkit.command;
 
 import org.getlwc.command.ConsoleCommandSender;
+import org.getlwc.lang.Locale;
 import org.getlwc.util.Color;
 
-public class BukkitConsoleCommandSender implements ConsoleCommandSender {
+public class BukkitConsoleCommandSender extends ConsoleCommandSender {
 
     /**
      * The command sender handle
@@ -61,6 +62,20 @@ public class BukkitConsoleCommandSender implements ConsoleCommandSender {
      */
     public boolean hasPermission(String node) {
         return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Locale getLocale() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setLocale(Locale locale) {
+        throw new UnsupportedOperationException("setLocale is unsupported for console senders");
     }
 
 }

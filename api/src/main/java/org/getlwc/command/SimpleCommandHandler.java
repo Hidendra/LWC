@@ -44,8 +44,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.getlwc.I18n._;
-
 public class SimpleCommandHandler implements CommandHandler {
 
     /**
@@ -228,7 +226,7 @@ public class SimpleCommandHandler implements CommandHandler {
 
             if (!sender.hasPermission(command.permission())) {
                 // First tell them they do not have permission
-                sender.sendMessage(_("&4You do not have permission to use this command."));
+                sender.sendTranslatedMessage("&4You do not have permission to use this command.");
 
                 // Now send the command's help
                 sendHelp(command, context.getCommandSender());
