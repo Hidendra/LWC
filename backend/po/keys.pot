@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-06-18 14:57-0300\n"
+"POT-Creation-Date: 2013-06-18 23:03-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -233,59 +233,79 @@ msgstr ""
 msgid "Purging player?: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/LibraryDownloader.java:191
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:197
 msgid "Libraries required! These will now be downloaded."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/LibraryDownloader.java:202
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:208
 #, java-format
 msgid "[{0}/{1}] Downloading file {2} => {3}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/LibraryDownloader.java:248
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:235
+#, java-format
+msgid "  .. md5 {0} WARN: no checksum available from remote host"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:241
+#, java-format
+msgid "  .. md5 {0} OK"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:244
+#, java-format
+msgid "  .. md5 {0} FAIL {1} (expected: {2})"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:245
+#, java-format
+msgid "Will redownload {0} ({1}/{2} tries)"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:259
+msgid "Library downloads complete!"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:299
 #, java-format
 msgid "  >> {0}: {1}%"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/LibraryDownloader.java:267
-msgid "Library downloads complete!"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:149
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:151
 #, java-format
 msgid "Server: {0} ({1})"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:150
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:152
 #, java-format
 msgid "Layer: {0} (authored by: {1})"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:151
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:153
 #, java-format
 msgid "Backend: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:152
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:154
 #, java-format
 msgid "This version was built on: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:314
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:316
 msgid "Shutting down!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:334
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:336
 #, java-format
 msgid "Driver \"{0}\" is not supported."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:364
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:366
 #, java-format
 msgid "Connected to the database with driver: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:366
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:368
 msgid "Failed to connect to the database!"
 msgstr ""
 
@@ -305,18 +325,18 @@ msgid "Creating base database via base.sql"
 msgstr ""
 
 #: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:174
-#: mods/canary/src/main/java/CanaryListener.java:162
+#: mods/canary/src/main/java/CanaryListener.java:172
 #: mods/canary-recode/src/main/java/org/getlwc/canary/CanaryServerLayer.java:171
-#: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:191
+#: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:189
 #: mods/spout/src/main/java/org/getlwc/spout/SpoutPlugin.java:144
 #, java-format
 msgid "An error was encountered while processing a command: {0}"
 msgstr ""
 
 #: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:178
-#: mods/canary/src/main/java/CanaryListener.java:166
+#: mods/canary/src/main/java/CanaryListener.java:176
 #: mods/canary-recode/src/main/java/org/getlwc/canary/CanaryServerLayer.java:175
-#: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:195
+#: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:193
 #: mods/spout/src/main/java/org/getlwc/spout/SpoutPlugin.java:148
 msgid "&4[LWC] An internal error occurred while processing this command"
 msgstr ""

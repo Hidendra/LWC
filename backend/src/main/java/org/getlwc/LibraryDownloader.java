@@ -30,6 +30,7 @@
 package org.getlwc;
 
 import org.getlwc.util.LibraryFile;
+import org.getlwc.util.MD5Checksum;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -56,6 +57,11 @@ public class LibraryDownloader {
      * The folder where libraries are stored
      */
     public static String DEST_LIBRARY_FOLDER = "";
+
+    /**
+     * The maximum number of times a download will be tried (e.g. connection was closed, checksum failed) before it is given up
+     */
+    public static final int MAX_DOWNLOAD_TRIES = 5;
 
     /**
      * The Engine instance
@@ -214,57 +220,117 @@ public class LibraryDownloader {
                     // create the local file
                     local.createNewFile();
 
-                    // open the file
-                    OutputStream outputStream = new FileOutputStream(local);
-
-                    // Connect to the server
                     URL url = new URL(remote);
-                    URLConnection connection = url.openConnection();
+                    URL md5Url = new URL(remote + ".md5");
 
-                    InputStream inputStream = connection.getInputStream();
+                    int tries = 1;
 
-                    // hopefully, the content length provided isn't -1
-                    int contentLength = connection.getContentLength();
+                    do {
+                        downloadLibrary(url, local);
 
-                    // Keep a running tally
-                    int bytesTransfered = 0;
-                    long lastUpdate = 0L;
+                        // Try md5 if it is available
+                        String md5 = readURLFully(md5Url);
 
-                    // begin transferring
-                    byte[] buffer = new byte[1024];
-                    int read;
+                        if (md5 == null) {
+                            engine.getConsoleSender().sendTranslatedMessage("  .. md5 {0} WARN: no checksum available from remote host", local.getName());
+                            break;
+                        } else {
+                            String realMd5 = MD5Checksum.calculateHumanChecksum(local);
 
-                    while ((read = inputStream.read(buffer)) > 0) {
-                        outputStream.write(buffer, 0, read);
-                        bytesTransfered += read;
-
-                        if (contentLength > 0) {
-                            if (System.currentTimeMillis() - lastUpdate > 500L) {
-                                int percentTransferred = (int) (((float) bytesTransfered / contentLength) * 100);
-                                lastUpdate = System.currentTimeMillis();
-
-                                // omit 100% ..
-                                if (percentTransferred != 100) {
-                                    engine.getConsoleSender().sendTranslatedMessage("  >> {0}: {1}%", local.getName(), percentTransferred);
-                                }
+                            if (md5.equals(realMd5)) {
+                                engine.getConsoleSender().sendTranslatedMessage("  .. md5 {0} OK", local.getName());
+                                break;
+                            } else {
+                                engine.getConsoleSender().sendTranslatedMessage("  .. md5 {0} FAIL {1} (expected: {2})", local.getName(), md5, realMd5);
+                                engine.getConsoleSender().sendTranslatedMessage("Will redownload {0} ({1}/{2} tries)", local.getName(), tries, MAX_DOWNLOAD_TRIES);
                             }
                         }
-                    }
-
-                    // ok!
-                    outputStream.close();
-                    inputStream.close();
+                    } while (tries++ <= MAX_DOWNLOAD_TRIES);
 
                     if (local.getName().endsWith(".jar")) {
                         ensureLoaded(local);
                     }
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
                 current ++;
             }
             engine.getConsoleSender().sendTranslatedMessage("Library downloads complete!");
+        }
+    }
+
+    /**
+     * Downloads a file into the given {@link OutputStream}. The {@link OutputStream} will not be closed automatically.
+     *
+     * @param url
+     * @param downloadTo
+     */
+    private void downloadLibrary(URL url, File downloadTo) throws IOException {
+        // open the output
+        OutputStream outputStream = new FileOutputStream(downloadTo);
+
+        URLConnection connection = url.openConnection();
+
+        InputStream inputStream = connection.getInputStream();
+
+        // hopefully, the content length provided isn't -1
+        int contentLength = connection.getContentLength();
+
+        // Keep a running tally
+        int bytesTransfered = 0;
+        long lastUpdate = 0L;
+
+        // begin transferring
+        byte[] buffer = new byte[1024];
+        int read;
+
+        while ((read = inputStream.read(buffer)) > 0) {
+            outputStream.write(buffer, 0, read);
+            bytesTransfered += read;
+
+            if (contentLength > 0) {
+                if (System.currentTimeMillis() - lastUpdate > 500L) {
+                    int percentTransferred = (int) (((float) bytesTransfered / contentLength) * 100);
+                    lastUpdate = System.currentTimeMillis();
+
+                    // omit 100% ..
+                    if (percentTransferred != 100) {
+                        engine.getConsoleSender().sendTranslatedMessage("  >> {0}: {1}%", downloadTo.getName(), percentTransferred);
+                    }
+                }
+            }
+        }
+
+        // ok!
+        outputStream.close();
+        inputStream.close();
+    }
+
+    /**
+     * Attempts to read the full contents of the page at the given url. If the url returns an error (does not exist, etc)
+     * null will be returned
+     *
+     * @param url
+     * @return
+     */
+    private String readURLFully(URL url) {
+        try {
+            URLConnection connection = url.openConnection();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String response = "";
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                response += line;
+            }
+
+            reader.close();
+
+            return response;
+        } catch (IOException e) {
+            return null;
         }
     }
 
