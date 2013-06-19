@@ -132,6 +132,8 @@ public class SimpleEngine implements Engine {
         this.serverInfo = serverInfo;
         this.consoleSender = consoleSender;
 
+        serverLayer.getEngineHomeFolder().mkdirs();
+
         downloader.init();
         System.setProperty("org.sqlite.lib.path", downloader.getNativeLibraryFolder());
         FileConfiguration.init(this);
