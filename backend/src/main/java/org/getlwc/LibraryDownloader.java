@@ -294,8 +294,8 @@ public class LibraryDownloader {
                     int percentTransferred = (int) (((float) bytesTransfered / contentLength) * 100);
                     lastUpdate = System.currentTimeMillis();
 
-                    // omit 100% ..
-                    if (percentTransferred != 100) {
+                    // omit 0/100% ..
+                    if (percentTransferred != 0 && percentTransferred != 100) {
                         engine.getConsoleSender().sendTranslatedMessage("  >> {0}: {1}%", downloadTo.getName(), percentTransferred);
                     }
                 }
