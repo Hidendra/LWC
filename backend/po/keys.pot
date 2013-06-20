@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-06-18 23:03-0300\n"
+"POT-Creation-Date: 2013-06-19 23:32-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -233,40 +233,40 @@ msgstr ""
 msgid "Purging player?: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/LibraryDownloader.java:197
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:208
 msgid "Libraries required! These will now be downloaded."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/LibraryDownloader.java:208
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:219
 #, java-format
 msgid "[{0}/{1}] Downloading file {2} => {3}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/LibraryDownloader.java:235
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:246
 #, java-format
 msgid "  .. md5 {0} WARN: no checksum available from remote host"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/LibraryDownloader.java:241
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:252
 #, java-format
 msgid "  .. md5 {0} OK"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/LibraryDownloader.java:244
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:255
 #, java-format
 msgid "  .. md5 {0} FAIL {1} (expected: {2})"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/LibraryDownloader.java:245
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:256
 #, java-format
 msgid "Will redownload {0} ({1}/{2} tries)"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/LibraryDownloader.java:259
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:270
 msgid "Library downloads complete!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/LibraryDownloader.java:299
+#: backend/src/main/java/org/getlwc/LibraryDownloader.java:310
 #, java-format
 msgid "  >> {0}: {1}%"
 msgstr ""

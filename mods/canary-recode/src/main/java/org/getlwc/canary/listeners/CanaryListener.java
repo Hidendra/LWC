@@ -38,7 +38,7 @@ public class CanaryListener implements PluginListener {
 
     @HookHandler(ignoreCanceled = true)
     public void playerJoin(ConnectionHook event) {
-        plugin.getEngine().getEventHelper().onPlayerQuit(plugin.wrapPlayer(event.getPlayer()));
+        plugin.getEngine().getEventHelper().onPlayerJoin(plugin.wrapPlayer(event.getPlayer()));
     }
 
     @HookHandler(ignoreCanceled = true)

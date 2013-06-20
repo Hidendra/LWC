@@ -41,7 +41,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -173,15 +172,27 @@ public class LibraryDownloader {
      * @param file
      */
     private void ensureLoaded(File file) {
-        try {
-            URLClassLoader classLoader = (URLClassLoader) getClass().getClassLoader();
+        ClassLoader classLoader = getClass().getClassLoader();
+        ensureLoaded(file, classLoader.getClass(),classLoader);
+    }
 
-            // Use reflection
-            Method method= classLoader.getClass().getDeclaredMethod("addURL", new Class[] { URL.class });
+    /**
+     * Ensure the given file is in the class path. It must be the jar file.
+     *
+     * @param file
+     * @param clazz
+     */
+    private void ensureLoaded(File file, Class<?> clazz, ClassLoader classLoader) {
+        try {
+            Method method = clazz.getDeclaredMethod("addURL", new Class[] { URL.class });
             method.setAccessible(true);
             method.invoke(classLoader, new Object[] { file.toURI().toURL() });
         } catch (Exception e) {
-            e.printStackTrace();
+            if (clazz.getSuperclass() != null) {
+                ensureLoaded(file, clazz.getSuperclass(), classLoader);
+            } else {
+                e.printStackTrace();
+            }
         }
     }
 
