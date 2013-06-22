@@ -38,26 +38,6 @@
         <isset property="label"/>
     </condition>
 
-    <!-- Substring script -->
-    <scriptdef name="substring" language="javascript">
-        <attribute name="text"/>
-        <attribute name="start"/>
-        <attribute name="end"/>
-        <attribute name="property"/>
-
-        <![CDATA[
-                var text = attributes.get("text");
-                var start = attributes.get("start") || 0;
-                var end = attributes.get("end") || text.length();
-
-                if (end > text.length()) {
-                    end = text.length()
-                }
-
-                project.setProperty(attributes.get("property"), text.substring(start, end));
-            ]]>
-    </scriptdef>
-
     <target name="all" depends="buildall" description="Build LWC and all modules"/>
 
     <target name="compile-core" description="Compile core LWC">
@@ -73,9 +53,6 @@
 
         <!-- Load the version -->
         <loadfile srcfile="VERSION" property="VERSION"/>
-
-        <!-- Trim the git commit -->
-        <substring text="${GIT_COMMIT_FULL}" start="0" end="8" property="GIT_COMMIT"/>
 
         <!-- Copy plugin.yml to ${bin}/core/resources -->
         <copy file="src/main/resources/plugin.yml" todir="${bin}/core/resources/" overwrite="true"/>
