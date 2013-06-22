@@ -44,6 +44,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
@@ -312,12 +313,9 @@ public class LWCBlockListener implements Listener {
         }
     }
 
-    /**
-     * Used for auto registering placed protections
-     */
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
-        if (!LWC.ENABLED || event.isCancelled()) {
+        if (!LWC.ENABLED) {
             return;
         }
 
@@ -340,6 +338,20 @@ public class LWCBlockListener implements Listener {
                 }
             }
         }
+    }
+
+    /**
+     * Used for auto registering placed protections
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onBlockPlaceMonitor(BlockPlaceEvent event) {
+        if (!LWC.ENABLED) {
+            return;
+        }
+
+        LWC lwc = plugin.getLWC();
+        Player player = event.getPlayer();
+        Block block = event.getBlockPlaced();
 
         // The placable block must be protectable
         if (!lwc.isProtectable(block)) {
@@ -348,9 +360,13 @@ public class LWCBlockListener implements Listener {
 
         // Update the cache if a protection is matched here
         Protection current = lwc.findProtection(block);
-        if (current != null && current.getProtectionFinder() != null) {
-            current.getProtectionFinder().fullMatchBlocks();
-            lwc.getProtectionCache().add(current);
+        if (current != null) {
+            if (current.getProtectionFinder() != null) {
+                current.getProtectionFinder().fullMatchBlocks();
+                lwc.getProtectionCache().add(current);
+            }
+
+            return;
         }
 
         String autoRegisterType = lwc.resolveProtectionConfiguration(block, "autoRegister");
