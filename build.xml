@@ -58,7 +58,7 @@
         <copy file="src/main/resources/plugin.yml" todir="${bin}/core/resources/" overwrite="true"/>
 
         <!-- Replace ${VERSION} with the version number in plugin.yml -->
-        <replace file="${bin}/core/resources/plugin.yml" value="${VERSION} (b${BUILD_NUMBER}-git-${GIT_COMMIT}) (${build.time})">
+        <replace file="${bin}/core/resources/plugin.yml" value="${VERSION} (b${BUILD_NUMBER}) (${build.time})">
             <replacefilter token="@VERSION@"/>
         </replace>
 
