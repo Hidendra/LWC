@@ -46,6 +46,9 @@ commands:
   cremove:
     description: Remove an existing protection.
     usage: /<command>
+  cremoveall:
+    description: Removes all protections owned by the player
+    usage: /<command>
   climits:
     description: View your current protection limits.
     usage: /<command>
