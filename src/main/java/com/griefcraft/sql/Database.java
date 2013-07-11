@@ -251,8 +251,7 @@ public abstract class Database {
             connected = true;
             return true;
         } catch (SQLException e) {
-            log("Failed to connect to " + currentType);
-            e.printStackTrace();
+            log("Failed to connect to " + currentType + ": " + e.getErrorCode() + " - " + e.getMessage());
             return false;
         }
     }
