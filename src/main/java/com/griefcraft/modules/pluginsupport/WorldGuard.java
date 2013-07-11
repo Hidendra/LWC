@@ -327,6 +327,16 @@ public class WorldGuard extends JavaModule {
         // Load the regions the block encompasses
         List<String> regions = regionManager.getApplicableRegionsIDs(vector);
 
+        // Remove all ignored regions
+        if (regions.size() > 0) {
+
+            for (int i = 0; i < regions.size(); i++) {
+                if (isRegionIgnored(regions.get(i))) {
+                    regions.remove(i);
+                }
+            }
+        }
+
         // Are they not in a region, and it's blocked there?
         if (regions.size() == 0) {
             if (!configuration.getBoolean("worldguard.allowProtectionsOutsideRegions", true)) {
@@ -345,6 +355,17 @@ public class WorldGuard extends JavaModule {
                 }
             }
         }
+    }
+
+    /**
+     * Check if a region is ignored
+     *
+     * @param region
+     * @return
+     */
+    private boolean isRegionIgnored(String region) {
+        List<String> ignoredRegions = configuration.getStringList("worldguard.ignoredRegions", new ArrayList<String>());
+        return ignoredRegions.contains("*") || ignoredRegions.contains(region);
     }
 
     /**

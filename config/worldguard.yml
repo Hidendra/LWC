@@ -17,3 +17,7 @@ worldguard:
     # Regions that LWC protections should NOT be allowed in
     blacklistedRegions:
         - 'Region1'
+
+    # Regions that LWC should ignore while checking permissions
+    ignoredRegions:
+        - 'Region2'
