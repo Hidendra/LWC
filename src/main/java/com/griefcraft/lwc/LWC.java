@@ -47,6 +47,7 @@ import com.griefcraft.listeners.LWCMCPCSupport;
 import com.griefcraft.migration.ConfigPost300;
 import com.griefcraft.migration.MySQLPost200;
 import com.griefcraft.model.Flag;
+import com.griefcraft.model.History;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Permission;
 import com.griefcraft.model.Protection;
@@ -1035,8 +1036,9 @@ public class LWC {
      * @param toRemove
      */
     private void fullRemoveProtections(CommandSender sender, List<Integer> toRemove) throws SQLException {
-        final StringBuilder builder = new StringBuilder();
-        final int total = toRemove.size();
+        StringBuilder deleteProtectionsQuery = new StringBuilder();
+        StringBuilder deleteHistoryQuery = new StringBuilder();
+        int total = toRemove.size();
         int count = 0;
 
         // iterate over the items to remove
@@ -1051,16 +1053,21 @@ public class LWC {
         while (iter.hasNext()) {
             int protectionId = iter.next();
 
-            if (count % 100000 == 0) {
-                builder.append("DELETE FROM ").append(prefix).append("protections WHERE id IN (").append(protectionId);
+            if (count % 10000 == 0) {
+                deleteProtectionsQuery.append("DELETE FROM ").append(prefix).append("protections WHERE id IN (").append(protectionId);
+                deleteHistoryQuery.append("UPDATE ").append(prefix).append("history SET status = " + History.Status.INACTIVE.ordinal() + " WHERE protectionId IN(").append(protectionId);
             } else {
-                builder.append(",").append(protectionId);
+                deleteProtectionsQuery.append(",").append(protectionId);
+                deleteHistoryQuery.append(",").append(protectionId);
             }
 
-            if (count % 100000 == 99999 || count == (total - 1)) {
-                builder.append(")");
-                statement.executeUpdate(builder.toString());
-                builder.setLength(0);
+            if (count % 10000 == 9999 || count == (total - 1)) {
+                deleteProtectionsQuery.append(")");
+                deleteHistoryQuery.append(")");
+                statement.executeUpdate(deleteProtectionsQuery.toString());
+                statement.executeUpdate(deleteHistoryQuery.toString());
+                deleteProtectionsQuery.setLength(0);
+                deleteHistoryQuery.setLength(0);
 
                 sender.sendMessage(Colors.Green + "REMOVED " + (count + 1) + " / " + total);
             }
