@@ -11,7 +11,7 @@
 
     <properties>
         <!-- Supported Minecraft version -->
-        <minecraft.version>1.5.2</minecraft.version>
+        <minecraft.version>1.6.2</minecraft.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -42,7 +42,6 @@
 
         <!-- Server Mods -->
         <module>mods/bukkit</module>
-        <module>mods/spout</module>
         <module>mods/canary</module>
         <module>mods/canary-recode</module>
         <module>mods/workbench</module>

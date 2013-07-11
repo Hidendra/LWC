@@ -1,0 +1,100 @@
+---
+classes:
+  ForgeEventHelper:
+    mcp: org.getlwc.forge.ForgeEventHelper
+    obf: org.getlwc.forge.ForgeEventHelper
+  ItemInWorldManager:
+    mcp: net.minecraft.item.ItemInWorldManager
+    obf: jv
+  World:
+    mcp: net.minecraft.world.World
+    obf: abv
+  Block:
+    mcp: net.minecraft.block.Block
+    obf: aqw
+  Entity:
+    mcp: net.minecraft.entity.Entity
+    obf: nm
+  EntityPlayer:
+    mcp: net.minecraft.entity.player.EntityPlayer
+    obf: ue
+  EntityPlayerMP:
+    mcp: net.minecraft.entity.player.EntityPlayerMP
+    obf: ju
+  Explosion:
+    mcp: net.minecraft.world.Explosion
+    obf: abq
+  ChunkPosition:
+    mcp: net.minecraft.world.ChunkPosition
+    obf: acn
+  NetServerHandler:
+    mcp: net.minecraft.network.NetServerHandler
+    obf: jz
+  Packet130UpdateSign:
+    mcp: net.minecraft.network.packet.Packet130UpdateSign
+    obf: fy
+  TileEntitySign:
+    mcp: net.minecraft.tileentity.TileEntitySign
+    obf: asj
+  ItemStack:
+    mcp: net.minecraft.item.ItemStack
+    obf: yd
+methods:
+  ForgeEventHelper:
+    onBlockHarvested:
+      obf: onBlockHarvested
+      signature: n/a
+    onExplosion:
+      obf: onExplosion
+      signature: n/a
+    onUpdateSign:
+      obf: onUpdateSign
+      signature: n/a
+    onBlockPlace:
+      obf: onBlockPlace
+      signature: n/a
+  ItemInWorldManager:
+    removeBlock:
+      obf: d
+      signature: (III)Z
+  World:
+    getBlockMetadata:
+      obf: h
+      signature: (III)I
+  Explosion:
+    doExplosionA:
+      obf: a
+      signature: ()V
+  NetServerHandler:
+    handleUpdateSign:
+      obf: a
+      signature: (L#Packet130UpdateSign;)V
+  TileEntitySign:
+    isEditable:
+      obf: a
+      signature: ()Z
+  ItemStack:
+    tryPlaceItemIntoWorld:
+      obf: a
+      signature: (L#EntityPlayer;L#World;IIIIFFF)Z
+fields:
+  ItemInWorldManager:
+    theWorld: a
+    thisPlayerMP: b
+  Block:
+    blocksList: s
+  Explosion:
+    worldObj: k
+    exploder: f
+    explosionX: c
+    explosionY: d
+    explosionZ: e
+    field_77289_h: i
+    affectedBlockPositions: h
+  Packet130UpdateSign:
+    xPosition: a
+    yPosition: b
+    zPosition: c
+    signLines: d
+  NetServerHandler:
+    playerEntity: c

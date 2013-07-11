@@ -47,6 +47,10 @@ public class NativeCommandHandler extends CommandBase {
         return command;
     }
 
+    public String getCommandUsage(ICommandSender iCommandSender) {
+        return "";
+    }
+
     public void processCommand(ICommandSender iCommandSender, String[] strings) {
     }
 }

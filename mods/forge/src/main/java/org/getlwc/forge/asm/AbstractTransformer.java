@@ -30,7 +30,7 @@
 package org.getlwc.forge.asm;
 
 import cpw.mods.fml.relauncher.FMLInjectionData;
-import cpw.mods.fml.relauncher.IClassTransformer;
+import net.minecraft.launchwrapper.IClassTransformer;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.configuration.YamlConfiguration;
 import org.getlwc.forge.LWC;

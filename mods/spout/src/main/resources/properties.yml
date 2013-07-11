@@ -1,6 +1,0 @@
-name: LWC
-description: Protection plugin (WIP)
-author: Hidendra
-main: org.getlwc.spout.SpoutPlugin
-version: ${project.version}
-platform: SERVER

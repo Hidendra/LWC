@@ -17,15 +17,16 @@ from commands import Commands, reallyrmtree
 
 def main():
     parser = OptionParser(version='MCP %s' % Commands.fullversion())
-    parser.add_option('-f', '--force', action='store_true', dest='force', help='force cleanup', default=False)
-    parser.add_option('-c', '--config', dest='config', help='additional configuration file')
+    parser.add_option('-f', '--force', action='store_true',  dest='force', help='force cleanup', default=False)
+    parser.add_option('-c', '--config',    dest='config',    help='additional configuration file')
+    parser.add_option('-d', '--distclean', action='store_true', dest='distclean', help='Remove worlds, libraries and jars', default=False)    
     options, _ = parser.parse_args()
-    cleanup(options.config, options.force)
+    cleanup(options.config, options.force, options.distclean)
 
 
-def cleanup(conffile, force):
+def cleanup(conffile, force, distclean):
     try:
-        commands = Commands(conffile)
+        commands = Commands(conffile, shortstart=True)
 
         if not force:
             print 'WARNING:'
@@ -52,15 +53,20 @@ def cleanup(conffile, force):
             commands.logger.info('> Cleaning reobf')
             reallyrmtree(commands.dirreobf)
 
-            commands.logger.info('> Cleaning lib')
-            reallyrmtree(commands.dirlib)
+            if distclean:
+                commands.logger.info('> Cleaning lib')
+                reallyrmtree(commands.dirlib)
 
             commands.logger.info('> Cleaning jars')
-            reallyrmtree(os.path.join(commands.dirjars, 'saves'))
             reallyrmtree(os.path.join(commands.dirjars, 'stats'))
             reallyrmtree(os.path.join(commands.dirjars, 'texturepacks'))
-            reallyrmtree(os.path.join(commands.dirjars, 'texturepacks-mp-cache'))
-            reallyrmtree(os.path.join(commands.dirjars, 'mcpworld'))
+            reallyrmtree(os.path.join(commands.dirjars, 'texturepacks-mp-cache'))            
+            if distclean:
+                reallyrmtree(os.path.join(commands.dirjars, 'saves'))
+                reallyrmtree(os.path.join(commands.dirjars, 'mcpworld'))
+                reallyrmtree(os.path.join(commands.dirjars, 'versions'))                
+                reallyrmtree(os.path.join(commands.dirjars, 'assets'))                                
+                reallyrmtree(os.path.join(commands.dirjars, 'libraries'))                
             if os.path.exists(os.path.join(commands.dirjars, 'server.log')):
                 os.remove(os.path.join(commands.dirjars, 'server.log'))
             for txt_file in glob.glob(os.path.join(commands.dirjars, '*.txt')):

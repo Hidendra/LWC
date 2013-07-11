@@ -12,7 +12,7 @@ from commands import CLIENT, SIDE_NAME
 
 
 def decompile_side(commands, side, use_ff=False, use_srg=False, no_comments=False, no_reformat=False, no_renamer=False,
-                   no_patch=False, strip_comments=True, exc_update=False):
+                   no_patch=False, strip_comments=True, exc_update=False, keep_lvt=False, keep_generics=False, force_rg=False):
     if not commands.checkjars(side):
         commands.logger.warning('!! Missing %s jar file. Aborting !!', SIDE_NAME[side])
         return False
@@ -26,18 +26,24 @@ def decompile_side(commands, side, use_ff=False, use_srg=False, no_comments=Fals
     commands.logger.info('== Decompiling %s using %s ==', SIDE_NAME[side], decompiler)
     commands.logger.info('> Creating SRGs')
     commands.createsrgs(side, use_srg=use_srg)
-    commands.logger.info('> Applying Retroguard')
-    commands.applyrg(side)
+    if force_rg:
+        commands.logger.info('> Applying Retroguard')
+        commands.applyrg(side)
+    else:
+        commands.logger.info('> Applying SpecialSource')
+        commands.applyss(side, keep_lvt=keep_lvt, keep_generics=keep_generics)
     commands.logger.info('> Applying MCInjector')
     commands.applyexceptor(side, exc_update=exc_update)
-    commands.logger.info('> Unpacking jar')
-    commands.extractjar(side)
-    commands.logger.info('> Copying classes')
-    commands.copycls(side)
     if use_ff:
+        commands.logger.info('> Filtering classes')
+        commands.filterffjar(side)
         commands.logger.info('> Decompiling')
         commands.applyff(side)
     else:
+        commands.logger.info('> Unpacking jar')
+        commands.extractjar(side)
+        commands.logger.info('> Copying classes')
+        commands.copycls(side)
         commands.logger.info('> Applying jadretro')
         commands.applyjadretro(side)
         commands.logger.info('> Decompiling')
@@ -139,7 +145,7 @@ def updatemd5_side(commands, side):
     return False
 
 
-def reobfuscate_side(commands, side, reobf_all=False, srg_names=False):
+def reobfuscate_side(commands, side, reobf_all=False, srg_names=False, force_rg=False, keep_lvt=True, keep_generics=False):
     if not commands.checkmd5s(side):
         commands.logger.warning('!! Can not find %s md5s !!', SIDE_NAME[side])
         return False
@@ -155,7 +161,10 @@ def reobfuscate_side(commands, side, reobf_all=False, srg_names=False):
     commands.logger.info('> Packing jar')
     commands.packbin(side)
     commands.logger.info('> Reobfuscating jar')
-    commands.applyrg(side, True)
+    if force_rg:
+        commands.applyrg(side, True)
+    else:
+        commands.applyss(side, True, srg_names=srg_names, keep_lvt=keep_lvt, keep_generics=keep_generics)
     commands.logger.info('> Extracting modified classes')
     commands.unpackreobfclasses(side, reobf_all, srg_names=srg_names)
     commands.logger.info('- Done in %.2f seconds', time.time() - starttime)

@@ -5,40 +5,40 @@ classes:
     obf: org.getlwc.forge.ForgeEventHelper
   ItemInWorldManager:
     mcp: net.minecraft.item.ItemInWorldManager
-    obf: jd
+    obf: jv
   World:
     mcp: net.minecraft.world.World
-    obf: aab
+    obf: abv
   Block:
     mcp: net.minecraft.block.Block
-    obf: apa
+    obf: aqw
   Entity:
     mcp: net.minecraft.entity.Entity
-    obf: mp
+    obf: nm
   EntityPlayer:
     mcp: net.minecraft.entity.player.EntityPlayer
-    obf: sq
+    obf: ue
   EntityPlayerMP:
     mcp: net.minecraft.entity.player.EntityPlayerMP
-    obf: jc
+    obf: ju
   Explosion:
     mcp: net.minecraft.world.Explosion
-    obf: zw
+    obf: abq
   ChunkPosition:
     mcp: net.minecraft.world.ChunkPosition
-    obf: aat
+    obf: acn
   NetServerHandler:
     mcp: net.minecraft.network.NetServerHandler
-    obf: jh
+    obf: jz
   Packet130UpdateSign:
     mcp: net.minecraft.network.packet.Packet130UpdateSign
-    obf: fj
+    obf: fy
   TileEntitySign:
     mcp: net.minecraft.tileentity.TileEntitySign
-    obf: aqm
+    obf: asj
   ItemStack:
     mcp: net.minecraft.item.ItemStack
-    obf: wm
+    obf: yd
 methods:
   ForgeEventHelper:
     onBlockHarvested:
@@ -82,7 +82,7 @@ fields:
     theWorld: a
     thisPlayerMP: b
   Block:
-    blocksList: r
+    blocksList: s
   Explosion:
     worldObj: k
     exploder: f

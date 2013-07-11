@@ -87,6 +87,13 @@
             <systemPath>${basedir}/mcp/lib/forge-full.jar</systemPath>
         </dependency>
         <dependency>
+            <groupId>net.minecraft</groupId>
+            <artifactId>launchwrapper</artifactId>
+            <version>1.3</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/mcp/jars/libraries/net/minecraft/launchwrapper/1.3/launchwrapper-1.3.jar</systemPath>
+        </dependency>
+        <dependency>
             <groupId>com.ForgeEssentials</groupId>
             <artifactId>core-unobfuscated</artifactId>
             <version>1.4.7</version>

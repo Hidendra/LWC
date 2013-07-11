@@ -12,6 +12,7 @@ from optparse import OptionParser
 
 from commands import Commands, CLIENT, SERVER, CalledProcessError
 from mcp import decompile_side, updatemd5_side
+import clientCopy
 
 
 def main():
@@ -20,6 +21,8 @@ def main():
     parser.add_option('--server', dest='only_server', action='store_true', help='only process server', default=False)
     parser.add_option('-j', '--jad', dest='force_jad', action='store_true',
                       help='force use of JAD even if Fernflower available', default=False)
+    parser.add_option('--rg', dest='force_rg', action='store_true',
+                      help='force use of RetroGuard even if SpecialSource available', default=False)
     parser.add_option('-s', '--csv', dest='force_csv', action='store_true',
                       help='force use of CSVs even if SRGs available', default=False)
     parser.add_option('-r', '--norecompile', dest='no_recompile', action='store_true',
@@ -38,24 +41,36 @@ def main():
                       default=False)
     parser.add_option('-p', dest='no_patch', action='store_true', help='Undocumented magic', default=False)
     parser.add_option('-c', '--config', dest='config', help='additional configuration file')
+    parser.add_option('-w', '--workDir', dest='workdir', help='Change client lookup place (by default, ~/.minecraft)')
+    parser.add_option('--json', dest='json', help='Location of the json file for none standard installs')   
+    parser.add_option('--nocopy', dest='nocopy', action='store_true', help='Do not try to copy assets from minecraft install', default=False)       
+
+
     options, _ = parser.parse_args()
     decompile(options.config, options.force_jad, options.force_csv, options.no_recompile, options.no_comments,
               options.no_reformat, options.no_renamer, options.no_patch, options.only_patch, options.keep_lvt,
-              options.keep_generics, options.only_client, options.only_server)
+              options.keep_generics, options.only_client, options.only_server, options.force_rg, options.workdir, options.json, options.nocopy)
 
 
 def decompile(conffile, force_jad, force_csv, no_recompile, no_comments, no_reformat, no_renamer, no_patch, only_patch,
-              keep_lvt, keep_generics, only_client, only_server):
+              keep_lvt, keep_generics, only_client, only_server, force_rg, workdir, json, nocopy):
     try:
-        commands = Commands(conffile, verify=True, no_patch=no_patch)
+        commands = Commands(conffile, verify=True, no_patch=no_patch, workdir=workdir, json=json)
 
         commands.checkupdates()
+        
+        if not commands.has_ss:
+            force_rg = True
 
         use_ff = commands.has_ff and not force_jad
         use_srg = commands.has_srg and not force_csv
 
         if force_jad and not commands.has_jad:
             commands.logger.error('!! forcing jad when not available !!')
+            sys.exit(1)
+
+        if force_rg and not commands.has_rg:
+            commands.logger.error('!! forcing retroguard when not available !!')
             sys.exit(1)
 
         if force_csv and not commands.has_map_csv:
@@ -106,20 +121,26 @@ def decompile(conffile, force_jad, force_csv, no_recompile, no_comments, no_refo
         if keep_generics:
             keep_lvt = True
 
-        commands.logger.info('> Creating Retroguard config files')
-        commands.creatergcfg(reobf=False, keep_lvt=keep_lvt, keep_generics=keep_generics, rg_update=rg_update)
+        if force_rg:
+            commands.logger.info('> Creating Retroguard config files')
+            commands.creatergcfg(reobf=False, keep_lvt=keep_lvt, keep_generics=keep_generics, rg_update=rg_update)
+
+        if not nocopy:
+            clientCopy.copyClientAssets(commands, workdir)
 
         try:
             if process_client:
                 cltdecomp = decompile_side(commands, CLIENT, use_ff=use_ff, use_srg=use_srg, no_comments=no_comments,
                                            no_reformat=no_reformat, no_renamer=no_renamer, no_patch=no_patch,
-                                           strip_comments=strip_comments, exc_update=exc_update)
+                                           strip_comments=strip_comments, exc_update=exc_update,
+                                           keep_lvt=keep_lvt, keep_generics=keep_generics, force_rg=force_rg)
             else:
                 cltdecomp = False
             if process_server:
                 srvdecomp = decompile_side(commands, SERVER, use_ff=use_ff, use_srg=use_srg, no_comments=no_comments,
                                            no_reformat=no_reformat, no_renamer=no_renamer, no_patch=no_patch,
-                                           strip_comments=strip_comments, exc_update=exc_update)
+                                           strip_comments=strip_comments, exc_update=exc_update,
+                                           keep_lvt=keep_lvt, keep_generics=keep_generics, force_rg=force_rg)
             else:
                 srvdecomp = False
         except CalledProcessError:

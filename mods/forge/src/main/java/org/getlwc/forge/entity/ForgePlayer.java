@@ -74,7 +74,7 @@ public class ForgePlayer extends Player {
 
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
-            handle.sendChatToPlayer(Color.replaceColors(line));
+            handle.addChatMessage(Color.replaceColors(line));
         }
     }
 
