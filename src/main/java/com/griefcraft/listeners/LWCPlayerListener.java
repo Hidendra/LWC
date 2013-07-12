@@ -48,7 +48,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -305,7 +307,7 @@ public class LWCPlayerListener implements Listener {
         LWCPlayer.removePlayer(event.getPlayer());
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         LWC lwc = LWC.getInstance();
 
@@ -354,14 +356,7 @@ public class LWCPlayerListener implements Listener {
             return;
         }
 
-        boolean doubleClick = false;
-
-        // backwards compatibility
-        try {
-            doubleClick = event.isDoubleClick();
-        } catch (Throwable e) { } // OK, just old build
-
-        if (!doubleClick) {
+        if (event.getAction() != InventoryAction.COLLECT_TO_CURSOR) {
             // If it's not a container, we don't want it
             if (event.getSlotType() != InventoryType.SlotType.CONTAINER) {
                 return;
