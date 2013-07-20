@@ -267,12 +267,12 @@ public class LWC {
         String name = StringUtils.replace(material.toString().toLowerCase(), "block", "");
 
         // some name normalizations
-        if (name.contains("sign")) {
+        if (name.contains("Sign")) {
             name = "Sign";
         }
 
-        if (name.contains("furnace")) {
-            name = "furnace";
+        if (name.contains("Furnace")) {
+            name = "Furnace";
         }
 
         if (name.endsWith("_")) {
