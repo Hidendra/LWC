@@ -51,7 +51,7 @@ public class WallMatcher implements ProtectionFinder.Matcher {
     /**
      * Those evil levers and buttons have all different bits for directions. Gah!
      */
-    public static final Set<Material> PROTECTABLES_LEVERS_ET_AL = EnumSet.of(Material.STONE_BUTTON, Material.LEVER);
+    public static final Set<Material> PROTECTABLES_LEVERS_ET_AL = EnumSet.of(Material.STONE_BUTTON, Material.WOOD_BUTTON, Material.LEVER);
 
     /**
      * Same as PROTECTABLE_WALL, except the facing direction is reversed,
@@ -117,10 +117,10 @@ public class WallMatcher implements ProtectionFinder.Matcher {
 
         // Levers, buttons
         else if (PROTECTABLES_LEVERS_ET_AL.contains(block.getType())) {
-            byte EAST = 0x4;
-            byte WEST = 0x3;
-            byte SOUTH = 0x1;
-            byte NORTH = 0x2;
+            byte EAST = 0x1;
+            byte WEST = 0x2;
+            byte SOUTH = 0x3;
+            byte NORTH = 0x4;
 
             if (matchingFace == BlockFace.EAST && (direction & EAST) == EAST) {
                 return block;
