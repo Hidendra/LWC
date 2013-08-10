@@ -43,7 +43,7 @@ public class CanaryPlayer extends Player {
 
     @Override
     public ItemStack getItemInHand() {
-        return plugin.castItemStack(handle.getItemInHand());
+        return plugin.castItemStack(handle.getItemHeld());
     }
 
 }
