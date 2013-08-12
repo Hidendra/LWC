@@ -29,7 +29,7 @@ public class LWC extends Plugin {
     @Override
     public boolean enable() {
         engine = SimpleEngine.getOrCreateEngine(layer, new CanaryServerInfo(), new CanaryConsoleCommandSender());
-        engine.onLoad();
+        engine.startup();
 
         // Hooks
         Canary.hooks().registerListener(new CanaryListener(this), this);

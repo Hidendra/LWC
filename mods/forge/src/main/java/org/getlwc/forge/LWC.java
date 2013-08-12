@@ -35,15 +35,18 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.MinecraftForge;
 import org.getlwc.Engine;
 import org.getlwc.ItemStack;
 import org.getlwc.World;
 import org.getlwc.forge.asm.AbstractTransformer;
 import org.getlwc.forge.asm.LWCCorePlugin;
+import org.getlwc.forge.listeners.ForgeListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -73,6 +76,11 @@ public class LWC {
      */
     private ForgeServerLayer layer;
 
+    /**
+     * The event listener
+     */
+    private ForgeListener listener;
+
     @Mod.PreInit
     public void preInit(FMLPreInitializationEvent event) {
 
@@ -97,9 +105,23 @@ public class LWC {
     @Mod.ServerStarting
     public void serverStarting(FMLServerStartingEvent event) {
         if (LWCCorePlugin.INITIALIZED) {
+            if (listener == null) {
+                listener = new ForgeListener(this);
+            }
+
             proxy.init();
             layer.init();
-            engine.onLoad();
+            engine.startup();
+            MinecraftForge.EVENT_BUS.register(listener);
+        }
+    }
+
+    @Mod.ServerStopping
+    public void serverStopping(FMLServerStoppingEvent event) {
+        if (LWCCorePlugin.INITIALIZED) {
+            MinecraftForge.EVENT_BUS.unregister(listener);
+            layer.clearCache();
+            engine.shutdown();
         }
     }
 
@@ -144,14 +166,6 @@ public class LWC {
         this.engine = engine;
         this.layer = layer;
         AbstractTransformer.init();
-    }
-
-    public ForgeServerLayer getServerLayer() {
-        return layer;
-    }
-
-    public void setServerLayer(ForgeServerLayer layer) {
-        this.layer = layer;
     }
 
     /**

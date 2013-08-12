@@ -181,6 +181,7 @@ public class JDBCDatabase implements Database {
             return true;
         } catch (Exception e) {
             e.printStackTrace();
+            pool = null;
             return false;
         } finally {
             safeClose(stmt);

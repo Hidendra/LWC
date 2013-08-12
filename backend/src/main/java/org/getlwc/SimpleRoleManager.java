@@ -42,6 +42,13 @@ public class SimpleRoleManager implements RoleManager {
     private Map<Integer, RoleDefinition> definitions = new HashMap<Integer, RoleDefinition>();
 
     /**
+     * Clear all registered roles
+     */
+    public void clearRoles() {
+        definitions.clear();
+    }
+
+    /**
      * {@inheritDoc}
      */
     public void registerDefinition(RoleDefinition definition) {

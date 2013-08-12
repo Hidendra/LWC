@@ -32,7 +32,6 @@ package org.getlwc.forge;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
-import net.minecraft.world.WorldServer;
 import org.getlwc.ServerLayer;
 import org.getlwc.World;
 import org.getlwc.command.Command;
@@ -69,6 +68,14 @@ public class ForgeServerLayer extends ServerLayer {
             System.err.println(" !!!! LWC is likely not compatible with this version of Minecraft. You need to update!");
             t.printStackTrace();
         }
+    }
+
+    /**
+     * Clear the internal server layer caches
+     */
+    protected void clearCache() {
+        players.clear();
+        worlds.clear();
     }
 
     /**
@@ -142,8 +149,7 @@ public class ForgeServerLayer extends ServerLayer {
         MinecraftServer server = ModLoader.getMinecraftServerInstance();
 
         try {
-            // NATIVE
-            for (WorldServer world_handle : server.worldServers) {
+            for (Object world_handle : server.worldServers) {
                 // just create a world object to avoid duplicate native calls
                 ForgeWorld world = new ForgeWorld(world_handle);
 

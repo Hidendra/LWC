@@ -65,6 +65,17 @@ public class SimpleModuleManager implements ModuleManager {
     }
 
     /**
+     * Unload and destroy all loaded modules
+     */
+    public void destroyAll() {
+        for (Module module : modules.values()) {
+            module.terminate();
+        }
+
+        modules.clear();
+    }
+
+    /**
      * {@inheritDoc}
      */
     public void loadAll() {

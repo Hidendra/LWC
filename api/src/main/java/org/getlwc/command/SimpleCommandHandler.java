@@ -82,6 +82,16 @@ public class SimpleCommandHandler implements CommandHandler {
     }
 
     /**
+     * Clear all commands
+     */
+    public void clearCommands() {
+        cache.clear();
+        baseCommands.clear();
+        instances.clear();
+        commands.clear();
+    }
+
+    /**
      * {@inheritDoc}
      */
     public boolean handleCommand(CommandContext context) throws CommandException {

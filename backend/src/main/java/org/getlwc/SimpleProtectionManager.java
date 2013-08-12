@@ -55,6 +55,13 @@ public class SimpleProtectionManager implements ProtectionManager {
     }
 
     /**
+     * Clear all attributes
+     */
+    public void clearAttributes() {
+        protectionFactories.clear();
+    }
+
+    /**
      * {@inheritDoc}
      */
     public boolean isBlockProtectable(Block block) {

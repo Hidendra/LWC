@@ -133,7 +133,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
 
         // Create a new LWC engine
         engine = SimpleEngine.getOrCreateEngine(layer, new BukkitServerInfo(), new BukkitConsoleCommandSender(getServer().getConsoleSender()));
-        engine.onLoad();
+        engine.startup();
 
         // Register events
         getServer().getPluginManager().registerEvents(this, this);

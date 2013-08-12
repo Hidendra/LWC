@@ -60,12 +60,12 @@ public class SimpleEngine implements Engine {
     /**
      * The protection manager
      */
-    private final ProtectionManager protectionManager = new SimpleProtectionManager(this);
+    private final SimpleProtectionManager protectionManager = new SimpleProtectionManager(this);
 
     /**
      * The role manager
      */
-    private final RoleManager roleManager = new SimpleRoleManager();
+    private final SimpleRoleManager roleManager = new SimpleRoleManager();
 
     /**
      * The savable background queue
@@ -85,7 +85,7 @@ public class SimpleEngine implements Engine {
     /**
      * The global module manager
      */
-    private final ModuleManager moduleManager = new SimpleModuleManager(this);
+    private final SimpleModuleManager moduleManager = new SimpleModuleManager(this);
 
     /**
      * The server layer
@@ -100,7 +100,7 @@ public class SimpleEngine implements Engine {
     /**
      * The command handler
      */
-    private CommandHandler commandHandler;
+    private SimpleCommandHandler commandHandler;
 
     /**
      * The console sender
@@ -194,7 +194,7 @@ public class SimpleEngine implements Engine {
     /**
      * {@inheritDoc}
      */
-    public void onLoad() {
+    public void startup() {
         // connect to the db
         openDatabase();
 
@@ -312,9 +312,13 @@ public class SimpleEngine implements Engine {
     /**
      * {@inheritDoc}
      */
-    public void disable() {
+    public void shutdown() {
         consoleSender.sendTranslatedMessage("Shutting down!");
+        moduleManager.destroyAll();
         saveQueue.flushAndClose();
+        commandHandler.clearCommands();
+        roleManager.clearRoles();
+        protectionManager.clearAttributes();
         database.disconnect();
         database = null;
     }

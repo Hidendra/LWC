@@ -138,11 +138,11 @@ public interface Engine {
     /**
      * Called when the plugin is ready to be fully loaded. Initialization is completed here.
      */
-    public void onLoad();
+    public void startup();
 
     /**
-     * Called when the engine needs to be disabled
+     * Called when the engine needs to be shutdown
      */
-    public void disable();
+    public void shutdown();
 
 }

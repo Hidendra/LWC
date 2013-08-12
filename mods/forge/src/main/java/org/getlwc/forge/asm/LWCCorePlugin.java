@@ -31,14 +31,12 @@ package org.getlwc.forge.asm;
 
 import cpw.mods.fml.relauncher.IFMLCallHook;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
-import net.minecraftforge.common.MinecraftForge;
 import org.getlwc.Engine;
 import org.getlwc.SimpleEngine;
 import org.getlwc.forge.ForgeConsoleCommandSender;
 import org.getlwc.forge.ForgeServerInfo;
 import org.getlwc.forge.ForgeServerLayer;
 import org.getlwc.forge.LWC;
-import org.getlwc.forge.listeners.ForgeListener;
 
 import java.util.Map;
 
@@ -84,7 +82,6 @@ public class LWCCorePlugin implements IFMLLoadingPlugin, IFMLCallHook {
             ForgeServerLayer layer = new ForgeServerLayer();
             Engine engine = SimpleEngine.getOrCreateEngine(layer, new ForgeServerInfo(), new ForgeConsoleCommandSender());
             LWC.instance.setupServer(engine, layer);
-            MinecraftForge.EVENT_BUS.register(new ForgeListener(LWC.instance));
         }
 
         return null;

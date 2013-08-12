@@ -43,6 +43,10 @@ public class ForgeWorld implements World {
         this.handle = handle;
     }
 
+    public ForgeWorld(Object handle) {
+        this((net.minecraft.world.World) handle);
+    }
+
     /**
      * Get the world handle
      *

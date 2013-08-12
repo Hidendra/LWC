@@ -58,7 +58,7 @@ public class LWC extends Plugin {
         setName("LWC");
 
         engine = SimpleEngine.getOrCreateEngine(layer, new CanaryServerInfo(), new CanaryConsoleCommandSender());
-        engine.onLoad();
+        engine.startup();
 
         // Register our listeners
         etc.getLoader().addListener(PluginLoader.Hook.OPEN_INVENTORY, listener, this, PluginListener.Priority.MEDIUM);

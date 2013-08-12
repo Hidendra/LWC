@@ -44,12 +44,12 @@ public abstract class ServerLayer {
     /**
      * A map of all of the currently loaded players
      */
-    private final Map<String, Player> players = new HashMap<String, Player>();
+    protected final Map<String, Player> players = new HashMap<String, Player>();
 
     /**
      * A map of all of the currently known worlds
      */
-    private final Map<String, World> worlds = new HashMap<String, World>();
+    protected final Map<String, World> worlds = new HashMap<String, World>();
 
     /**
      * Get the home folder for the engine. This is typically a folder inside of the mods or plugins folder
