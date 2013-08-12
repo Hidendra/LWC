@@ -17,7 +17,7 @@ protections:
 database:
 
     # the db driver
-    driver: sqlite
+    driver: h2
 
     # The path to the database if required (for SQLite, not MySQL)
     databasePath: '%home%/lwc.db'
