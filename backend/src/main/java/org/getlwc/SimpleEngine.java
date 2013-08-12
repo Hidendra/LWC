@@ -214,6 +214,13 @@ public class SimpleEngine implements Engine {
     /**
      * {@inheritDoc}
      */
+    public LibraryDownloader getLibraryDownloader() {
+        return downloader;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public ServerMod getServerMod() {
         return serverMod;
     }

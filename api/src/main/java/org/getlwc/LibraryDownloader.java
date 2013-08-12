@@ -29,6 +29,8 @@
 
 package org.getlwc;
 
+import org.getlwc.configuration.Configuration;
+import org.getlwc.configuration.YamlConfiguration;
 import org.getlwc.util.LibraryFile;
 import org.getlwc.util.MD5Checksum;
 
@@ -39,10 +41,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
+import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class LibraryDownloader {
@@ -50,7 +56,7 @@ public class LibraryDownloader {
     /**
      * URL to the base update site
      */
-    public final static String UPDATE_SITE = "http://update.getlwc.org";
+    public final static String DEFAULT_UPDATE_SITE = "http://update.getlwc.org/shared/lib/";
 
     /**
      * The folder where libraries are stored
@@ -72,12 +78,17 @@ public class LibraryDownloader {
      */
     private final Queue<LibraryFile> fileQueue = new ConcurrentLinkedQueue<LibraryFile>();
 
+    /**
+     * The configuration file for resources.yml
+     */
+    private Configuration resourceConfiguration = null;
+
     public LibraryDownloader(Engine engine) {
         this.engine = engine;
     }
 
     /**
-     * Initialize the downloader. This is to be called after a {@link SimpleEngine} has been initialized
+     * Initialize the downloader. This is to be called after a {@link Engine} has been initialized
      */
     protected void init() {
         DEST_LIBRARY_FOLDER = new File(engine.getServerLayer().getEngineHomeFolder(), "lib").getPath() + File.separator;
@@ -89,14 +100,106 @@ public class LibraryDownloader {
             String file;
 
             while ((file = reader.readLine()) != null) {
-                verifyFile(new LibraryFile(DEST_LIBRARY_FOLDER + file, UPDATE_SITE + "/shared/lib/" + file));
+                file = file.trim();
+
+                if (file.startsWith("#") || file.isEmpty()) {
+                    continue;
+                }
+
+                String[] split = file.split(":");
+                String fileName = split[0];
+
+                if (split.length > 1) {
+                    String testClass = split[1];
+
+                    if (isClassLoaded(testClass)) {
+                        continue;
+                    }
+                }
+
+                verifyFile(new LibraryFile(DEST_LIBRARY_FOLDER + fileName, DEFAULT_UPDATE_SITE + fileName));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        // Native library
-        verifyFile(new LibraryFile(getFullNativeLibraryPath(), UPDATE_SITE + "/shared/lib/" + getFullNativeLibraryPath().replaceAll(DEST_LIBRARY_FOLDER, "")));
+        downloadFiles();
+    }
+
+    /**
+     * Check if a class is loaded
+     *
+     * @param className
+     * @return
+     */
+    public boolean isClassLoaded(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (Exception e) {
+            // Remove the class from Mojang's LaunchClassLoader cache
+            try {
+                Field invalidClasses = getClass().getClassLoader().getClass().getDeclaredField("invalidClasses");
+
+                if (invalidClasses != null) {
+                    invalidClasses.setAccessible(true);
+
+                    Set<String> set = (Set<String>) invalidClasses.get(getClass().getClassLoader());
+
+                    if (set != null) {
+                        set.remove(className);
+                    }
+                }
+            } catch (Exception ex) {
+                // This is ok. It just means we are not being loaded by Mojang's LaunchClassLoader
+            }
+
+            return false;
+        }
+    }
+
+    /**
+     * Ensure the specified resource is installed and loaded. If it is not installed it will be downloaded.
+     *
+     * @param resource
+     */
+    public void ensureResourceInstalled(String resource) {
+        if (resourceConfiguration == null) {
+            resourceConfiguration = new YamlConfiguration(getClass().getResourceAsStream("/resources.yml"));
+        }
+
+        // base url for the update site
+        String baseurl = resourceConfiguration.getString("baseUrl", DEFAULT_UPDATE_SITE);
+
+        Map<Object, Object> res = (Map<Object, Object>) resourceConfiguration.get("resources." + resource);
+
+        if (res == null) {
+            return;
+        }
+
+        String testClass = (String) res.get("testClass");
+
+        if (testClass == null) {
+            return;
+        }
+
+        // Check to see if the class is already loaded (not needed if so)
+        if (isClassLoaded(testClass)) {
+            return;
+        }
+
+        List<Object> files = (List<Object>) res.get("files");
+
+        for (Object o : files) {
+            String file = (String) o;
+            verifyFile(new LibraryFile(DEST_LIBRARY_FOLDER + file, baseurl + file));
+        }
+
+        // SQLite native library
+        if (resource.equals("databases.sqlite")) {
+            verifyFile(new LibraryFile(getFullNativeLibraryPath(), baseurl + getFullNativeLibraryPath().replaceAll(DEST_LIBRARY_FOLDER, "")));
+        }
+
         downloadFiles();
     }
 
@@ -204,9 +307,7 @@ public class LibraryDownloader {
             LibraryFile libraryFile;
             int size = fileQueue.size();
 
-            if (size > 0) {
-                engine.getConsoleSender().sendTranslatedMessage("Libraries required! These will now be downloaded.");
-            } else {
+            if (size == 0) {
                 return;
             }
 
@@ -267,7 +368,6 @@ public class LibraryDownloader {
 
                 current ++;
             }
-            engine.getConsoleSender().sendTranslatedMessage("Library downloads complete!");
         }
     }
 

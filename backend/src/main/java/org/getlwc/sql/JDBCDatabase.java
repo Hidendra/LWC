@@ -131,6 +131,7 @@ public class JDBCDatabase implements Database {
 
         this.engine = engine;
         this.details = details;
+        engine.getLibraryDownloader().ensureResourceInstalled("c3p0");
     }
 
     /**
@@ -138,6 +139,9 @@ public class JDBCDatabase implements Database {
      */
     public boolean connect() throws DatabaseException {
         Driver driver = details.getDriver();
+
+        // Load any resources required for the driver
+        engine.getLibraryDownloader().ensureResourceInstalled("databases." + driver.toString().toLowerCase());
 
         // Get the path to the database
         String databasePath;

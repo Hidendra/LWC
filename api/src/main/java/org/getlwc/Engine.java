@@ -136,6 +136,13 @@ public interface Engine {
     public ModuleManager getModuleManager();
 
     /**
+     * Get the library downloader object
+     *
+     * @return
+     */
+    public LibraryDownloader getLibraryDownloader();
+
+    /**
      * Called when the plugin is ready to be fully loaded. Initialization is completed here.
      */
     public void startup();
