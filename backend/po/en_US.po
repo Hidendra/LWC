@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-08-12 05:37+0000\n"
+"POT-Creation-Date: 2013-08-13 02:43+0000\n"
 "PO-Revision-Date: 2013-06-18 23:02-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.5.5\n"
 
-#: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:174
+#: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:175
 #: mods/canary-recode/src/main/java/org/getlwc/canary/CanaryServerLayer.java:171
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:189
 #: mods/canary/src/main/java/CanaryListener.java:172
@@ -25,7 +25,7 @@ msgstr ""
 msgid "An error was encountered while processing a command: {0}"
 msgstr "An error was encountered while processing a command: {0}"
 
-#: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:178
+#: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:179
 #: mods/canary-recode/src/main/java/org/getlwc/canary/CanaryServerLayer.java:175
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:193
 #: mods/canary/src/main/java/CanaryListener.java:176
@@ -341,31 +341,31 @@ msgstr "Will redownload {0} ({1}/{2} tries)"
 msgid "  >> {0}: {1}%"
 msgstr "  >> {0}: {1}%"
 
-#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:239
+#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:240
 msgid "&4You do not have permission to use this command."
 msgstr "&4You do not have permission to use this command."
 
-#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:316
+#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:317
 #, java-format
 msgid "&2=== &6/{0} &2==="
 msgstr "&2=== &6/{0} &2==="
 
-#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:335
+#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:336
 #, java-format
 msgid "&2Usage:       &6/{0} {1}"
 msgstr "&2Usage:       &6/{0} {1}"
 
-#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:349
+#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:350
 #, java-format
 msgid "&2Description: &6{0}"
 msgstr "&2Description: &6{0}"
 
-#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:353
+#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:354
 #, java-format
 msgid "&2Permission:  &6{0}"
 msgstr "&2Permission:  &6{0}"
 
-#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:376
+#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:377
 #, java-format
 msgid "&2Aliases:     {0}"
 msgstr "&2Aliases:     {0}"
