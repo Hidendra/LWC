@@ -59,4 +59,9 @@ public class CanaryBlock extends Block {
     public void setData(byte data) {
         handle.setData((short) data);
     }
+
+    @Override
+    public boolean hasTileEntity() {
+        return handle.getTileEntity() != null;
+    }
 }

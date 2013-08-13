@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: LWC\n"
 " 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-08-13 02:44+0000\n"
+"POT-Creation-Date: 2013-08-13 03:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,6 @@ msgstr ""
 #: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:175
 #: mods/canary-recode/src/main/java/org/getlwc/canary/CanaryServerLayer.java:171
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:189
-#: mods/canary/src/main/java/CanaryListener.java:172
 #, java-format
 msgid "An error was encountered while processing a command: {0}"
 msgstr ""
@@ -30,7 +29,6 @@ msgstr ""
 #: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:179
 #: mods/canary-recode/src/main/java/org/getlwc/canary/CanaryServerLayer.java:175
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:193
-#: mods/canary/src/main/java/CanaryListener.java:176
 msgid "&4[LWC] An internal error occurred while processing this command"
 msgstr ""
 

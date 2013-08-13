@@ -109,6 +109,15 @@ public final class Location {
     }
 
     /**
+     * Get the block at the location
+     *
+     * @return
+     */
+    public Block getBlock() {
+        return world.getBlockAt(getBlockX(), getBlockY(), getBlockZ());
+    }
+
+    /**
      * Get the world the location is in
      *
      * @return

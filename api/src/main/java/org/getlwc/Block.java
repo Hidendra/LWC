@@ -92,6 +92,13 @@ public abstract class Block {
      */
     public abstract void setData(byte data);
 
+    /**
+     * Check if the block has a tile entity
+     *
+     * @return
+     */
+    public abstract boolean hasTileEntity();
+
     @Override
     public String toString() {
         return String.format("Block(type=%d data=%d loc=[%d %d %d \"%s\"])", getType(), getData(), getX(), getY(), getZ(), getWorld().getName());

@@ -260,9 +260,13 @@ public class SimpleEventHelper implements EventHelper {
      * {@inheritDoc}
      */
     public boolean onPistonExtend(Block piston, Location extending) {
-        Protection protection = engine.getProtectionManager().findProtection(extending);
+        Block block = extending.getBlock();
 
-        // TODO only block for blocks that can be pulled by pistons ...
+        if (block.hasTileEntity()) {
+            return false;
+        }
+
+        Protection protection = engine.getProtectionManager().findProtection(extending);
         return protection != null;
     }
 
@@ -275,9 +279,13 @@ public class SimpleEventHelper implements EventHelper {
             return false;
         }
 
-        Protection protection = engine.getProtectionManager().findProtection(retracting);
+        Block block = retracting.getBlock();
 
-        // TODO only block for blocks that can be pulled by pistons ...
+        if (block.hasTileEntity()) {
+            return false;
+        }
+
+        Protection protection = engine.getProtectionManager().findProtection(retracting);
         return protection != null;
     }
 

@@ -127,4 +127,12 @@ public class ForgeBlock extends Block {
         // world.getHandle().setBlockMetadata(x, y, z, data);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasTileEntity() {
+        return world.getHandle().getBlockTileEntity(x, y, z) != null;
+    }
+
 }

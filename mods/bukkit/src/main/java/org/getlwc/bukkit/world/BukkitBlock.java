@@ -110,4 +110,36 @@ public class BukkitBlock extends Block {
         handle.setData(data);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasTileEntity() {
+        // Bukkit does not expose tile entities in any way shape or form or even if they exist.
+        // I could check handle.getState to see if it's a CraftBlockState (i.e. the default)
+        // but that would mean introducing CraftBukkit as a dependency. It is unfortunate that
+        // Bukkit has no way (that I could find) to see if the block has a tile entity or not..
+        switch (handle.getType()) {
+            case SIGN:
+            case SIGN_POST:
+            case WALL_SIGN:
+            case CHEST:
+            case TRAPPED_CHEST:
+            case BURNING_FURNACE:
+            case FURNACE:
+            case DISPENSER:
+            case DROPPER:
+            case HOPPER:
+            case MOB_SPAWNER:
+            case NOTE_BLOCK:
+            case JUKEBOX:
+            case BREWING_STAND:
+            case SKULL:
+            case COMMAND:
+            case BEACON:
+                return true;
+            default:
+                return false;
+        }
+    }
+
 }
