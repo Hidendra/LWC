@@ -97,7 +97,7 @@ public class ItemInWorldManagerTransformer extends org.getlwc.forge.asm.Abstract
                             int offset = 1;
 
                             while (method.instructions.get(index + offset).getOpcode() != ASTORE) {
-                                offset ++;
+                                offset++;
                             }
 
                             VarInsnNode blockNode = (VarInsnNode) method.instructions.get(index + offset);
@@ -113,7 +113,7 @@ public class ItemInWorldManagerTransformer extends org.getlwc.forge.asm.Abstract
                             int offset = 1;
 
                             while (method.instructions.get(index + offset).getOpcode() != ISTORE) {
-                                offset ++;
+                                offset++;
                             }
 
                             VarInsnNode mdNode = (VarInsnNode) method.instructions.get(index + offset);
@@ -127,7 +127,7 @@ public class ItemInWorldManagerTransformer extends org.getlwc.forge.asm.Abstract
                         int offset = 1;
 
                         while (method.instructions.get(index + offset).getOpcode() != ALOAD) {
-                            offset ++;
+                            offset++;
                         }
 
                         LabelNode end = new LabelNode(new Label());
@@ -168,10 +168,10 @@ public class ItemInWorldManagerTransformer extends org.getlwc.forge.asm.Abstract
         try {
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
             classNode.accept(writer);
-            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Patched {0} ({1}) successfully!", TARGET_CLASS, getClassName(TARGET_CLASS));
+            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Patched {0} ({1}) successfully!", getClassName(TARGET_CLASS, false), getClassName(TARGET_CLASS));
             return writer.toByteArray();
         } catch (Exception e) {
-            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Failed to patch {0} ({1})", TARGET_CLASS, getClassName(TARGET_CLASS));
+            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Failed to patch {0} ({1})", getClassName(TARGET_CLASS, false), getClassName(TARGET_CLASS));
             e.printStackTrace();
             return bytes;
         }

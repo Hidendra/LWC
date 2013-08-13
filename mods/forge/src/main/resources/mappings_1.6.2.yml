@@ -3,6 +3,9 @@ classes:
   ForgeEventHelper:
     mcp: org.getlwc.forge.ForgeEventHelper
     obf: org.getlwc.forge.ForgeEventHelper
+  GuiHandler:
+    mcp: org.getlwc.forge.gui.GuiHandler
+    obf: org.getlwc.forge.gui.GuiHandler
   ItemInWorldManager:
     mcp: net.minecraft.item.ItemInWorldManager
     obf: jv
@@ -39,6 +42,15 @@ classes:
   ItemStack:
     mcp: net.minecraft.item.ItemStack
     obf: yd
+  GuiScreen:
+    mcp: net.minecraft.client.gui.GuiScreen
+    obf: awb
+  GuiContainer:
+    mcp: net.minecraft.client.gui.inventory.GuiContainer
+    obf: awv
+  GuiChest:
+    mcp: net.minecraft.client.gui.inventory.GuiChest
+    obf: axg
 methods:
   ForgeEventHelper:
     onBlockHarvested:
@@ -52,6 +64,10 @@ methods:
       signature: n/a
     onBlockPlace:
       obf: onBlockPlace
+      signature: n/a
+  GuiHandler:
+    drawGuiContainerForegroundLayer:
+      obf: drawGuiContainerForegroundLayer
       signature: n/a
   ItemInWorldManager:
     removeBlock:
@@ -77,24 +93,66 @@ methods:
     tryPlaceItemIntoWorld:
       obf: a
       signature: (L#EntityPlayer;L#World;IIIIFFF)Z
+  GuiChest:
+    drawGuiContainerForegroundLayer:
+      obf: b
+      signature: (II)V
 fields:
   ItemInWorldManager:
-    theWorld: a
-    thisPlayerMP: b
+    theWorld:
+      obf: a
+      srg: field_73092_a
+    thisPlayerMP:
+      obf: b
+      srg: field_73090_b
   Block:
-    blocksList: s
+    blocksList:
+      obf: s
+      srg: field_71973_m
   Explosion:
-    worldObj: k
-    exploder: f
-    explosionX: c
-    explosionY: d
-    explosionZ: e
-    field_77289_h: i
-    affectedBlockPositions: h
+    worldObj:
+      obf: k
+      srg: field_77287_j
+    exploder:
+      obf: f
+      srg: field_77283_e
+    explosionX:
+      obf: c
+      srg: field_77284_b
+    explosionY:
+      obf: d
+      srg: field_77285_c
+    explosionZ:
+      obf: e
+      srg: field_77282_d
+    field_77289_h:
+      obf: i
+      srg: field_77289_h
+    affectedBlockPositions:
+      obf: h
+      srg: field_77281_g
   Packet130UpdateSign:
-    xPosition: a
-    yPosition: b
-    zPosition: c
-    signLines: d
+    xPosition:
+      obf: a
+      srg: field_73311_a
+    yPosition:
+      obf: b
+      srg: field_73309_b
+    zPosition:
+      obf: c
+      srg: field_73310_c
+    signLines:
+      obf: d
+      srg: field_73308_d
   NetServerHandler:
-    playerEntity: c
+    playerEntity:
+      obf: c
+      srg: field_72574_e
+  GuiScreen:
+    fontRenderer:
+      obf: o
+      srg: field_73886_k
+  GuiContainer:
+    xSize:
+      obf: c
+      srg: field_74194_b

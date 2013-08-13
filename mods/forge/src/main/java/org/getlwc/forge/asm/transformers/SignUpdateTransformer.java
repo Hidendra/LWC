@@ -71,7 +71,7 @@ public class SignUpdateTransformer extends AbstractSingleClassTransformer {
                 }
 
                 // Look for INSTANCEOF in reverse (we don't want the first one)
-                for (int index = method.instructions.size() - 1; index >= 0; index --) {
+                for (int index = method.instructions.size() - 1; index >= 0; index--) {
 
                     if (method.instructions.get(index).getOpcode() == Opcodes.INSTANCEOF) {
 
@@ -87,7 +87,7 @@ public class SignUpdateTransformer extends AbstractSingleClassTransformer {
                                 }
                             }
 
-                            offset ++;
+                            offset++;
                         }
 
                         // System.out.println("Injecting to offset " + offset);
@@ -125,10 +125,10 @@ public class SignUpdateTransformer extends AbstractSingleClassTransformer {
         try {
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
             classNode.accept(writer);
-            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Patched {0} ({1}) successfully!", TARGET_CLASS, getClassName(TARGET_CLASS));
+            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Patched {0} ({1}) successfully!", getClassName(TARGET_CLASS, false), getClassName(TARGET_CLASS));
             return writer.toByteArray();
         } catch (Exception e) {
-            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Failed to patch {0} ({1})", TARGET_CLASS, getClassName(TARGET_CLASS));
+            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Failed to patch {0} ({1})", getClassName(TARGET_CLASS, false), getClassName(TARGET_CLASS));
             e.printStackTrace();
             return bytes;
         }

@@ -68,9 +68,9 @@ public abstract class AbstractTransformer implements IClassTransformer {
             } else {
                 mappings = new YamlConfiguration(AbstractTransformer.class.getResourceAsStream("/mappings.yml"));
                 LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] ================   NOTE !!!   ================\n"
-                                                                                + "[ASM] There are no included native mappings for Minecraft {0}\n"
-                                                                                + "[ASM] If this is a major Minecraft release then LWC IS MOST LIKELY BROKEN!\n"
-                                                                                + "[ASM] MAKE SURE YOU ARE USING THE LATEST VERSION!", minecraftVersion);
+                        + "[ASM] There are no included native mappings for Minecraft {0}\n"
+                        + "[ASM] If this is a major Minecraft release then LWC IS MOST LIKELY BROKEN!\n"
+                        + "[ASM] MAKE SURE YOU ARE USING THE LATEST VERSION!", minecraftVersion);
             }
         }
     }

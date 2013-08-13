@@ -44,6 +44,25 @@ public abstract class AbstractSingleClassTransformer extends AbstractTransformer
      */
     private boolean obfuscated = false;
 
+    public enum CompilationType {
+
+        /**
+         * Unobfuscated (MCP) name
+         */
+        UNOBFUSCATED,
+
+        /**
+         * Obfuscated name used in the Minecraft jar.
+         */
+        OBFUSCATED,
+
+        /**
+         * Forge encoded names. Likely to stay the same between minor updates.
+         */
+        SRG
+
+    }
+
     public AbstractSingleClassTransformer(String className) {
         this.className = className;
     }
@@ -119,7 +138,7 @@ public abstract class AbstractSingleClassTransformer extends AbstractTransformer
      * @param obfuscated
      * @return
      */
-    public String getClassName(String className, boolean obfuscated) {
+    public static String getClassName(String className, boolean obfuscated) {
         return mappings.getString("classes." + className + "." + getObfuscatedModifier(obfuscated));
     }
 
@@ -140,7 +159,7 @@ public abstract class AbstractSingleClassTransformer extends AbstractTransformer
      * @param obfuscated
      * @return
      */
-    public String getJavaClassName(String className, boolean obfuscated) {
+    public static String getJavaClassName(String className, boolean obfuscated) {
         return getClassName(className, obfuscated).replaceAll("\\.", "/");
     }
 
@@ -163,7 +182,7 @@ public abstract class AbstractSingleClassTransformer extends AbstractTransformer
      * @param obfuscated
      * @return
      */
-    public String getMethodName(String className, String methodName, boolean obfuscated) {
+    public static String getMethodName(String className, String methodName, boolean obfuscated) {
         if (obfuscated) {
             return mappings.getString("methods." + className + "." + methodName + ".obf");
         } else {
@@ -190,7 +209,7 @@ public abstract class AbstractSingleClassTransformer extends AbstractTransformer
      * @param obfuscated
      * @return
      */
-    public String getMethodSignature(String className, String methodName, boolean obfuscated) {
+    public static String getMethodSignature(String className, String methodName, boolean obfuscated) {
         String signature = mappings.getString("methods." + className + "." + methodName + ".signature");
 
         // replace all #ClassName resolvers
@@ -201,7 +220,7 @@ public abstract class AbstractSingleClassTransformer extends AbstractTransformer
 
             while ((chr = signature.charAt(index)) != ';') {
                 matchedClass += chr;
-                index ++;
+                index++;
 
                 if (index >= signature.length()) {
                     break;
@@ -227,7 +246,7 @@ public abstract class AbstractSingleClassTransformer extends AbstractTransformer
      * @return
      */
     public String getFieldName(String className, String fieldName) {
-        return getFieldName(className, fieldName, obfuscated);
+        return getFieldName(className, fieldName, CompilationType.OBFUSCATED);
     }
 
     /**
@@ -235,19 +254,25 @@ public abstract class AbstractSingleClassTransformer extends AbstractTransformer
      *
      * @param className
      * @param fieldName
-     * @param obfuscated
+     * @param type
      * @return
      */
-    public String getFieldName(String className, String fieldName, boolean obfuscated) {
-        if (obfuscated) {
-            return mappings.getString("fields." + className + "." + fieldName);
-        } else {
-            return fieldName;
+    public static String getFieldName(String className, String fieldName, CompilationType type) {
+        switch (type) {
+            case UNOBFUSCATED:
+                return fieldName;
+            case OBFUSCATED:
+                return mappings.getString("fields." + className + "." + fieldName + ".obf");
+            case SRG:
+                return mappings.getString("fields." + className + "." + fieldName + ".srg");
+            default:
+                throw new UnsupportedClassVersionError("Unknown CompilationType " + type);
         }
     }
 
     /**
      * Note that it is only known if the class is obfuscated or not only AFTER transform() has been successfully called
+     *
      * @return true if the class is known to be obfuscated
      */
     public boolean isObfuscated() {
@@ -260,7 +285,7 @@ public abstract class AbstractSingleClassTransformer extends AbstractTransformer
      * @param obfuscated
      * @return
      */
-    private String getObfuscatedModifier(boolean obfuscated) {
+    private static String getObfuscatedModifier(boolean obfuscated) {
         return obfuscated ? "obf" : "mcp";
     }
 

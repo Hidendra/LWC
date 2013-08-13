@@ -52,7 +52,7 @@ public class ItemStackTransformer extends AbstractSingleClassTransformer {
                 int offset = 0;
 
                 while (method.instructions.get(offset).getOpcode() != ALOAD) {
-                    offset ++;
+                    offset++;
                 }
 
                 // System.out.println("Injecting to offset " + offset);
@@ -92,10 +92,10 @@ public class ItemStackTransformer extends AbstractSingleClassTransformer {
         try {
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
             classNode.accept(writer);
-            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Patched {0} ({1}) successfully!", TARGET_CLASS, getClassName(TARGET_CLASS));
+            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Patched {0} ({1}) successfully!", getClassName(TARGET_CLASS, false), getClassName(TARGET_CLASS));
             return writer.toByteArray();
         } catch (Exception e) {
-            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Failed to patch {0} ({1})", TARGET_CLASS, getClassName(TARGET_CLASS));
+            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Failed to patch {0} ({1})", getClassName(TARGET_CLASS, false), getClassName(TARGET_CLASS));
             e.printStackTrace();
             return bytes;
         }

@@ -177,7 +177,7 @@ public class LWC {
     public Map<Integer, Integer> castEnchantments(NBTTagList enchantments) {
         Map<Integer, Integer> ret = new HashMap<Integer, Integer>();
 
-        for (int index = 0; index < enchantments.tagCount(); index ++) {
+        for (int index = 0; index < enchantments.tagCount(); index++) {
             NBTTagCompound compound = (NBTTagCompound) enchantments.tagAt(index);
 
             ret.put((int) compound.getShort("id"), (int) compound.getShort("lvl"));
@@ -188,6 +188,7 @@ public class LWC {
 
     /**
      * Cast an item stack to our native ItemStack
+     *
      * @param item
      * @return
      */
