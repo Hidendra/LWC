@@ -53,7 +53,7 @@ public class AddRemoveCommands {
                 // the access role to apply to the next matched role
                 ProtectionAccess access = null;
 
-                for (int i = 0; i < parsed.length; i ++) {
+                for (int i = 0; i < parsed.length; i++) {
                     if (i + 1 > parsed.length) {
                         break;
                     }

@@ -8,7 +8,8 @@ import static org.junit.Assert.assertEquals;
 public class TupleTest {
 
     private Tuple<Object, Object> tuple;
-    private Object first , second;
+
+    private Object first, second;
 
     @Before
     public void setUp() {

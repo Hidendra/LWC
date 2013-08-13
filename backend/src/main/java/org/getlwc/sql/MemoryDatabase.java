@@ -74,6 +74,7 @@ public class MemoryDatabase implements Database {
 
     /**
      * Add a protection to the indexes
+     *
      * @param protection
      */
     private void internalAddProtection(Protection protection) {

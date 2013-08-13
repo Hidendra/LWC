@@ -15,7 +15,7 @@ public class MD5Checksum {
      * @throws Exception
      */
     public static byte[] calculateChecksum(File file) throws Exception {
-        InputStream fis =  new FileInputStream(file);
+        InputStream fis = new FileInputStream(file);
 
         byte[] buffer = new byte[1024];
         MessageDigest complete = MessageDigest.getInstance("MD5");
@@ -43,8 +43,8 @@ public class MD5Checksum {
         byte[] checksum = calculateChecksum(file);
         String result = "";
 
-        for (int i=0; i < checksum.length; i++) {
-            result += Integer.toString( ( checksum[i] & 0xff ) + 0x100, 16).substring( 1 );
+        for (int i = 0; i < checksum.length; i++) {
+            result += Integer.toString((checksum[i] & 0xff) + 0x100, 16).substring(1);
         }
 
         return result;

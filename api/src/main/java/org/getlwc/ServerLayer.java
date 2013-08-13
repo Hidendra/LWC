@@ -85,7 +85,8 @@ public abstract class ServerLayer {
      *
      * @param baseCommand
      */
-    public void onRegisterBaseCommand(String baseCommand, Command command) { }
+    public void onRegisterBaseCommand(String baseCommand, Command command) {
+    }
 
     /**
      * Get a player from the server

@@ -37,11 +37,17 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 public class PlayerBreakBlockEvent extends PlayerEvent {
 
     public final net.minecraft.world.World world;
+
     public final int blockX;
+
     public final int blockY;
+
     public final int blockZ;
+
     public final net.minecraft.block.Block block;
+
     public final int blockMeta;
+
     public final EntityPlayer player;
 
     public PlayerBreakBlockEvent(net.minecraft.world.World world, int x, int y, int z, net.minecraft.block.Block block, int metadata, EntityPlayer entityPlayer) {

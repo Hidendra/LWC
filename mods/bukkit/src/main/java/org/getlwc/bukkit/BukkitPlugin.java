@@ -56,6 +56,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 public class BukkitPlugin extends JavaPlugin implements Listener {
+
     private Logger logger = null;
 
     /**
@@ -263,6 +264,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
 
     /**
      * Cast an item stack to our native ItemStack
+     *
      * @param item
      * @return
      */

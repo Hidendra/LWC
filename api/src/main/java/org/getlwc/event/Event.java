@@ -30,4 +30,5 @@
 package org.getlwc.event;
 
 public interface Event {
+
 }

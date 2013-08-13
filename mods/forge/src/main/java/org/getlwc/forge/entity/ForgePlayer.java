@@ -83,7 +83,8 @@ public class ForgePlayer extends Player {
             Class.forName("com.ForgeEssentials.api.permissions.PermissionsAPI");
 
             return ForgeEssentials.checkPermission(handle, node);
-        } catch (Exception e) { } // Not installed - OK
+        } catch (Exception e) {
+        } // Not installed - OK
 
         // no handled Perm plugin
         return noPermissionPlugin(node);

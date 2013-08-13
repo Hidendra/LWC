@@ -203,6 +203,7 @@ public class SimpleCommandHandler implements CommandHandler {
 
     /**
      * Called after a command has been registered
+     *
      * @param normalized
      */
     private void postRegisterCommand(String normalized, Command command) {
@@ -346,11 +347,11 @@ public class SimpleCommandHandler implements CommandHandler {
         String permission = command.permission();
 
         if (!description.isEmpty()) {
-            sender.sendTranslatedMessage("&2Description: &6{0}",  description);
+            sender.sendTranslatedMessage("&2Description: &6{0}", description);
         }
 
         if (!permission.isEmpty()) {
-            sender.sendTranslatedMessage("&2Permission:  &6{0}",  permission);
+            sender.sendTranslatedMessage("&2Permission:  &6{0}", permission);
         }
     }
 

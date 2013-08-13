@@ -276,7 +276,7 @@ public class LibraryDownloader {
      */
     private void ensureLoaded(File file) {
         ClassLoader classLoader = getClass().getClassLoader();
-        ensureLoaded(file, classLoader.getClass(),classLoader);
+        ensureLoaded(file, classLoader.getClass(), classLoader);
     }
 
     /**
@@ -287,9 +287,9 @@ public class LibraryDownloader {
      */
     private void ensureLoaded(File file, Class<?> clazz, ClassLoader classLoader) {
         try {
-            Method method = clazz.getDeclaredMethod("addURL", new Class[] { URL.class });
+            Method method = clazz.getDeclaredMethod("addURL", new Class[]{URL.class});
             method.setAccessible(true);
-            method.invoke(classLoader, new Object[] { file.toURI().toURL() });
+            method.invoke(classLoader, new Object[]{file.toURI().toURL()});
         } catch (Exception e) {
             if (clazz.getSuperclass() != null) {
                 ensureLoaded(file, clazz.getSuperclass(), classLoader);
@@ -366,7 +366,7 @@ public class LibraryDownloader {
                     e.printStackTrace();
                 }
 
-                current ++;
+                current++;
             }
         }
     }

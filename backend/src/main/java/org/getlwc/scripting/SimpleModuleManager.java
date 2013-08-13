@@ -119,7 +119,7 @@ public class SimpleModuleManager implements ModuleManager {
                     throw new ModuleException("Main class cannot be null in file: " + file.getPath());
                 }
 
-                ClassLoader loader = new URLClassLoader(new URL[] { file.toURI().toURL() }, getClass().getClassLoader());
+                ClassLoader loader = new URLClassLoader(new URL[]{file.toURI().toURL()}, getClass().getClassLoader());
                 JavaModule module = (JavaModule) loader.loadClass(main).newInstance();
                 module.setName(name);
                 module.setDescription(description);

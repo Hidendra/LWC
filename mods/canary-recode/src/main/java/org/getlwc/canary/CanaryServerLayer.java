@@ -52,11 +52,11 @@ public class CanaryServerLayer extends ServerLayer {
             Command commandAnnotation = new Command() {
 
                 public String[] aliases() {
-                    return new String[] { baseCommand }; // required
+                    return new String[]{baseCommand}; // required
                 }
 
                 public String[] permissions() {
-                    return new String[] { command.permission() }; // required
+                    return new String[]{command.permission()}; // required
                 }
 
                 public String description() {
@@ -76,7 +76,7 @@ public class CanaryServerLayer extends ServerLayer {
                 }
 
                 public String[] searchTerms() {
-                    return new String[] { "" };
+                    return new String[]{""};
                 }
 
                 public int min() {

@@ -17,7 +17,8 @@ public class ForgeEssentials {
 
             com.ForgeEssentials.permission.query.PermQuery query = new com.ForgeEssentials.permission.query.PermQueryPlayer(handle, node);
             return com.ForgeEssentials.api.permissions.PermissionsAPI.checkPermAllowed(query);
-        } catch (Exception e) { } // Not installed - OK
+        } catch (Exception e) {
+        } // Not installed - OK
 
         return false;
     }

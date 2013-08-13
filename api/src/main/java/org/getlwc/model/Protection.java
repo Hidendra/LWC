@@ -227,6 +227,7 @@ public class Protection extends AbstractSavable {
 
     /**
      * Returns an unmodifiable {@link Set} of the roles this protection contains
+     *
      * @return
      */
     public Set<Role> getRoles() {
@@ -235,6 +236,7 @@ public class Protection extends AbstractSavable {
 
     /**
      * Get the current location of the protection
+     *
      * @return
      */
     public Location getLocation() {

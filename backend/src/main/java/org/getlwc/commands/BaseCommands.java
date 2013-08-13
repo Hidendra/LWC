@@ -78,7 +78,7 @@ public class BaseCommands {
             command = "lwc create",
             description = "Register a protection",
             permission = "lwc.create",
-            aliases = {"cprivate","clock"},
+            aliases = {"cprivate", "clock"},
             accepts = SenderType.PLAYER
     )
     public void createProtection(CommandContext context) {
@@ -114,7 +114,7 @@ public class BaseCommands {
             command = "lwc delete",
             description = "Remove a protection",
             permission = "lwc.remove.protection",
-            aliases = {"cremove","cunlock"},
+            aliases = {"cremove", "cunlock"},
             accepts = SenderType.PLAYER
     )
     public void removeProtection(CommandContext context) {
@@ -165,8 +165,8 @@ public class BaseCommands {
                         "Last accessed on: &7{6}\n" +
                         "&eRoles(size={7}):\n" +
                         "{8}", protection.getX(), protection.getY(), protection.getZ(), protection.getWorld().getName(),
-                        TimeUtil.timeToString(System.currentTimeMillis()/1000L - protection.getCreated()), TimeUtil.timeToString(System.currentTimeMillis()/1000L - protection.getUpdated()),
-                        TimeUtil.timeToString(System.currentTimeMillis()/1000L - protection.getAccessed()), protection.getRoles().size(), roles);
+                        TimeUtil.timeToString(System.currentTimeMillis() / 1000L - protection.getCreated()), TimeUtil.timeToString(System.currentTimeMillis() / 1000L - protection.getUpdated()),
+                        TimeUtil.timeToString(System.currentTimeMillis() / 1000L - protection.getAccessed()), protection.getRoles().size(), roles);
 
                 return true;
             }

@@ -96,6 +96,7 @@ public class LWC extends Plugin {
 
     /**
      * Cast an item stack to our native ItemStack
+     *
      * @param item
      * @return
      */

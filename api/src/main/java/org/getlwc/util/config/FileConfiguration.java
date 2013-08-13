@@ -47,9 +47,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FileConfiguration extends ConfigurationNode {
+
     private static Engine engine;
+
     private Yaml yaml;
+
     private File file;
+
     private InputStream is;
 
     /**

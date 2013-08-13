@@ -51,12 +51,14 @@ public abstract class JavaModule implements Module {
     /**
      * {@inheritDoc}
      */
-    public void reload() { }
+    public void reload() {
+    }
 
     /**
      * {@inheritDoc}
      */
-    public void terminate() { }
+    public void terminate() {
+    }
 
     /**
      * {@inheritDoc}

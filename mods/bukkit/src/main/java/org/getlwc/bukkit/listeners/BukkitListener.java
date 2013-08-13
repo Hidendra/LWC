@@ -99,7 +99,7 @@ public class BukkitListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void entityInteract(EntityInteractEvent event) {
-        Entity entity  = new BukkitEntity(plugin, event.getEntity());
+        Entity entity = new BukkitEntity(plugin, event.getEntity());
         World world = plugin.getWorld(event.getEntity().getWorld().getName());
         Block block = new BukkitBlock(world, event.getBlock());
 
@@ -121,7 +121,7 @@ public class BukkitListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void entityBreakDoor(EntityBreakDoorEvent event) {
-        Entity entity  = new BukkitEntity(plugin, event.getEntity());
+        Entity entity = new BukkitEntity(plugin, event.getEntity());
         World world = plugin.getWorld(event.getEntity().getWorld().getName());
         Block block = new BukkitBlock(world, event.getBlock());
 
@@ -226,7 +226,8 @@ public class BukkitListener implements Listener {
         // backwards compatibility
         try {
             // doubleClick = event.isDoubleClick();
-        } catch (Throwable e) { } // OK, just old build
+        } catch (Throwable e) {
+        } // OK, just old build
 
         //
         if (plugin.getEngine().getEventHelper().onInventoryClickItem(player, plugin.castLocation(location), plugin.castItemStack(event.getCurrentItem()), plugin.castItemStack(event.getCursor()), event.getSlot(), event.getRawSlot(), event.isRightClick(), event.isShiftClick(), doubleClick)) {

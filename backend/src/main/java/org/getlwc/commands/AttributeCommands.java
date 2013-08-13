@@ -99,7 +99,7 @@ public class AttributeCommands {
                     return true;
                 }
 
-               protection.addAttribute(attribute);
+                protection.addAttribute(attribute);
                 protection.save();
                 player.sendTranslatedMessage("&2Added the attribute {0} to the protection successfully.", attribute.getName().toLowerCase());
                 return true;

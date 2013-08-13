@@ -8,6 +8,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 public class PlayerUpdateSignEvent extends PlayerEvent {
 
     public final Packet130UpdateSign packet;
+
     public final TileEntitySign sign;
 
     public PlayerUpdateSignEvent(EntityPlayerMP player, Packet130UpdateSign packet, TileEntitySign sign) {

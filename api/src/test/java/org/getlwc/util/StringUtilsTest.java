@@ -17,26 +17,26 @@ public class StringUtilsTest {
         String[] split = StringUtils.split("This is a \"parsed string\" with 'quotation marks'");
 
         assertEquals(6, split.length);
-        assertArrayEquals(new String[] { "This", "is", "a", "parsed string", "with", "quotation marks" }, split);
+        assertArrayEquals(new String[]{"This", "is", "a", "parsed string", "with", "quotation marks"}, split);
     }
 
     @Test
     public void testSplitInnerQuotes() {
         String[] split = StringUtils.split("string has \"quotes with 'inner quotes'\"");
 
-        assertArrayEquals(new String[] { "string", "has", "quotes with 'inner quotes'" }, split);
+        assertArrayEquals(new String[]{"string", "has", "quotes with 'inner quotes'"}, split);
     }
 
     @Test
     public void testSplitInnerQuotes2() {
         String[] split = StringUtils.split("string has 'quotes with \"inner quotes\"'");
 
-        assertArrayEquals(new String[] { "string", "has", "quotes with \"inner quotes\"" }, split);
+        assertArrayEquals(new String[]{"string", "has", "quotes with \"inner quotes\""}, split);
     }
 
     @Test
     public void testJoin() {
-        String[] arr = new String[] { "test", "string", "is", "awesome" };
+        String[] arr = new String[]{"test", "string", "is", "awesome"};
         assertEquals(StringUtils.join(arr, 0, ","), "test,string,is,awesome");
         assertEquals(StringUtils.join(arr, 1, ","), "string,is,awesome");
         assertEquals(StringUtils.join(arr, 2, ","), "is,awesome");

@@ -30,6 +30,7 @@
 package org.getlwc.scripting;
 
 public class ModuleException extends Exception {
+
     public ModuleException() {
     }
 
