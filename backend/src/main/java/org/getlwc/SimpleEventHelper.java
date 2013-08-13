@@ -189,15 +189,6 @@ public class SimpleEventHelper implements EventHelper {
     /**
      * {@inheritDoc}
      */
-    public boolean onStructureGrow(Location location, List<Block> blocks) {
-        System.out.println("[internal] onStructureGrow loc=" + location + " blocks.size()=" + blocks.size());
-
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public boolean onRedstoneChange(Block block, int oldLevel, int newLevel) {
         ProtectionManager manager = engine.getProtectionManager();
 

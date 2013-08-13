@@ -153,16 +153,6 @@ public class BukkitListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void structureGrow(StructureGrowEvent event) {
-        World world = plugin.getWorld(event.getLocation().getWorld().getName());
-        List<Block> blocks = plugin.castBlockStateList(world, event.getBlocks());
-
-        if (plugin.getEngine().getEventHelper().onStructureGrow(plugin.castLocation(event.getLocation()), blocks)) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler(ignoreCancelled = true)
     public void redstoneChange(BlockRedstoneEvent event) {
         World world = plugin.getWorld(event.getBlock().getWorld().getName());
         Block block = new BukkitBlock(world, event.getBlock());
