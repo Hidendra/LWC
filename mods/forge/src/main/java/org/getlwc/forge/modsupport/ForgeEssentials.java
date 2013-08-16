@@ -12,15 +12,8 @@ public class ForgeEssentials {
      * @return
      */
     public static boolean checkPermission(EntityPlayer handle, String node) {
-        try {
-            Class.forName("com.ForgeEssentials.api.permissions.PermissionsAPI");
-
-            com.ForgeEssentials.permission.query.PermQuery query = new com.ForgeEssentials.permission.query.PermQueryPlayer(handle, node);
-            return com.ForgeEssentials.api.permissions.PermissionsAPI.checkPermAllowed(query);
-        } catch (Exception e) {
-        } // Not installed - OK
-
-        return false;
+        com.ForgeEssentials.permission.query.PermQuery query = new com.ForgeEssentials.permission.query.PermQueryPlayer(handle, node);
+        return com.ForgeEssentials.api.permissions.PermissionsAPI.checkPermAllowed(query);
     }
 
 }

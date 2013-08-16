@@ -38,6 +38,7 @@ import org.getlwc.Location;
 import org.getlwc.entity.Player;
 import org.getlwc.forge.LWC;
 import org.getlwc.forge.modsupport.ForgeEssentials;
+import org.getlwc.forge.modsupport.ModSupport;
 import org.getlwc.forge.world.ForgeWorld;
 import org.getlwc.util.Color;
 
@@ -79,12 +80,9 @@ public class ForgePlayer extends Player {
     }
 
     public boolean hasPermission(String node) {
-        try {
-            Class.forName("com.ForgeEssentials.api.permissions.PermissionsAPI");
-
+        if (ModSupport.isModInstalled(ModSupport.Mod.FORGE_ESSENTIALS)) {
             return ForgeEssentials.checkPermission(handle, node);
-        } catch (Exception e) {
-        } // Not installed - OK
+        }
 
         // no handled Perm plugin
         return noPermissionPlugin(node);

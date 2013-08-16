@@ -37,6 +37,8 @@ import org.getlwc.World;
 import org.getlwc.command.Command;
 import org.getlwc.entity.Player;
 import org.getlwc.forge.entity.ForgePlayer;
+import org.getlwc.forge.modsupport.BuildCraft;
+import org.getlwc.forge.modsupport.ModSupport;
 import org.getlwc.forge.world.ForgeWorld;
 
 import java.io.File;
@@ -64,6 +66,10 @@ public class ForgeServerLayer extends ServerLayer {
     public void init() {
         try {
             initCommandManager();
+
+            if (ModSupport.isModInstalled(ModSupport.Mod.BUILDCRAFT)) {
+                BuildCraft.run(mod.getEngine());
+            }
         } catch (Throwable t) {
             System.err.println(" !!!! LWC is likely not compatible with this version of Minecraft. You need to update!");
             t.printStackTrace();

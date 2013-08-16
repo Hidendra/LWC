@@ -31,6 +31,7 @@ package org.getlwc;
 
 import org.getlwc.configuration.Configuration;
 import org.getlwc.configuration.YamlConfiguration;
+import org.getlwc.util.ClassUtils;
 import org.getlwc.util.LibraryFile;
 import org.getlwc.util.MD5Checksum;
 
@@ -41,14 +42,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class LibraryDownloader {
@@ -112,7 +111,7 @@ public class LibraryDownloader {
                 if (split.length > 1) {
                     String testClass = split[1];
 
-                    if (isClassLoaded(testClass)) {
+                    if (ClassUtils.isClassLoaded(testClass)) {
                         continue;
                     }
                 }
@@ -124,38 +123,6 @@ public class LibraryDownloader {
         }
 
         downloadFiles();
-    }
-
-    /**
-     * Check if a class is loaded
-     *
-     * @param className
-     * @return
-     */
-    public boolean isClassLoaded(String className) {
-        try {
-            Class.forName(className);
-            return true;
-        } catch (Exception e) {
-            // Remove the class from Mojang's LaunchClassLoader cache
-            try {
-                Field invalidClasses = getClass().getClassLoader().getClass().getDeclaredField("invalidClasses");
-
-                if (invalidClasses != null) {
-                    invalidClasses.setAccessible(true);
-
-                    Set<String> set = (Set<String>) invalidClasses.get(getClass().getClassLoader());
-
-                    if (set != null) {
-                        set.remove(className);
-                    }
-                }
-            } catch (Exception ex) {
-                // This is ok. It just means we are not being loaded by Mojang's LaunchClassLoader
-            }
-
-            return false;
-        }
     }
 
     /**
@@ -184,7 +151,7 @@ public class LibraryDownloader {
         }
 
         // Check to see if the class is already loaded (not needed if so)
-        if (isClassLoaded(testClass)) {
+        if (ClassUtils.isClassLoaded(testClass)) {
             return;
         }
 
