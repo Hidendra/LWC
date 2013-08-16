@@ -29,14 +29,7 @@
 
 package org.getlwc.forge.server;
 
-import cpw.mods.fml.common.IPlayerTracker;
-import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.entity.player.EntityPlayer;
-import org.getlwc.Engine;
-import org.getlwc.SimpleEngine;
 import org.getlwc.forge.CommonProxy;
-import org.getlwc.forge.ForgeServerLayer;
-import org.getlwc.forge.LWC;
 
 /**
  * Proxy used by just the server
@@ -45,29 +38,7 @@ public class LWCServerProxy extends CommonProxy {
 
     @Override
     public void init() {
-        final LWC lwc = LWC.instance;
-        if (lwc.getEngine() == null) {
-            final Engine engine = SimpleEngine.getInstance();
-            lwc.setupServer(engine, (ForgeServerLayer) engine.getServerLayer());
-
-            GameRegistry.registerPlayerTracker(new IPlayerTracker() {
-                public void onPlayerLogin(EntityPlayer entityPlayer) {
-                    engine.getEventHelper().onPlayerJoin(lwc.wrapPlayer(entityPlayer));
-                }
-
-                public void onPlayerLogout(EntityPlayer entityPlayer) {
-                    engine.getEventHelper().onPlayerQuit(lwc.wrapPlayer(entityPlayer));
-                }
-
-                public void onPlayerChangedDimension(EntityPlayer entityPlayer) {
-
-                }
-
-                public void onPlayerRespawn(EntityPlayer entityPlayer) {
-
-                }
-            });
-        }
+        super.init();
     }
 
 }
