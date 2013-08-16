@@ -35,12 +35,12 @@
     <name>LWC-Forge</name>
     <url>getlwc.org</url>
     <packaging>jar</packaging>
-    <version>5.0.0-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
 
     <parent>
         <groupId>org.getlwc</groupId>
         <artifactId>lwc-parent</artifactId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>0.0.1-SNAPSHOT</version>
         <relativePath>../../</relativePath>
     </parent>
 
@@ -59,7 +59,7 @@
         <dependency>
             <groupId>org.getlwc</groupId>
             <artifactId>backend</artifactId>
-            <version>5.0.0-SNAPSHOT</version>
+            <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
