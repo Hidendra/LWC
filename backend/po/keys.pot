@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: LWC\n"
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-08-16 21:32+0000\n"
+"POT-Creation-Date: 2013-08-16 22:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -62,11 +62,11 @@ msgstr ""
 msgid "[ASM] Failed to patch {0} ({1})"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:132
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:134
 msgid "&4This protection is locked by a magical spell."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:138
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:140
 #, java-format
 msgid ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "

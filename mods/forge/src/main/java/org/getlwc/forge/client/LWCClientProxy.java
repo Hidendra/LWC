@@ -29,6 +29,7 @@
 
 package org.getlwc.forge.client;
 
+import net.minecraft.client.Minecraft;
 import org.getlwc.Engine;
 import org.getlwc.SimpleEngine;
 import org.getlwc.forge.CommonProxy;
@@ -42,9 +43,10 @@ public class LWCClientProxy extends CommonProxy {
 
     @Override
     public void init() {
-        if (LWC.instance.getEngine() == null) {
+        LWC lwc = LWC.instance;
+        if (lwc.getEngine() == null) {
             Engine engine = SimpleEngine.getInstance();
-            LWC.instance.setupServer(engine, (ForgeServerLayer) engine.getServerLayer());
+            lwc.setupServer(engine, (ForgeServerLayer) engine.getServerLayer());
         }
     }
 
