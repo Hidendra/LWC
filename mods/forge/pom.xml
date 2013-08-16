@@ -134,19 +134,9 @@
                         </goals>
                         <configuration>
                             <artifactSet>
-                                <excludes>
-                                    <exclude>junit:junit</exclude>
-                                    <exclude>cpw.mods.fml:minecraftforge-universal</exclude>
-                                    <exclude>org.bukkit:bukkit</exclude>
-                                    <exclude>org.xnap.commons:gettext-commons</exclude>
-                                    <exclude>net.minecraft:*</exclude>
-                                    <exclude>forgenet.minecraft:*</exclude>
-                                    <exclude>org.ow2.asm:*</exclude>
-                                    <exclude>org.yaml:*</exclude>
-                                    <exclude>com.mchange:*</exclude>
-                                    <exclude>org.xnap.commons:*</exclude>
-                                    <exclude>com.ForgeEssentials:*</exclude>
-                                </excludes>
+                                <includes>
+                                    <include>org.getlwc:backend</include>
+                                </includes>
                             </artifactSet>
                         </configuration>
                     </execution>

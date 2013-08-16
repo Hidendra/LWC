@@ -85,13 +85,9 @@
                         </goals>
                         <configuration>
                             <artifactSet>
-                                <excludes>
-                                    <exclude>junit:junit</exclude>
-                                    <exclude>net.canarymod:*</exclude>
-                                    <exclude>org.yaml:*</exclude>
-                                    <exclude>com.mchange:*</exclude>
-                                    <exclude>org.xnap.commons:*</exclude>
-                                </excludes>
+                                <includes>
+                                    <include>org.getlwc:backend</include>
+                                </includes>
                             </artifactSet>
                         </configuration>
                     </execution>

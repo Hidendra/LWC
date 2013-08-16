@@ -94,13 +94,9 @@
                                 </filter>
                             </filters>
                             <artifactSet>
-                                <excludes>
-                                    <exclude>org.bukkit:*</exclude>
-                                    <exclude>org.spout:*</exclude>
-                                    <exclude>org.yaml:*</exclude>
-                                    <exclude>com.mchange:*</exclude>
-                                    <exclude>org.xnap.commons:*</exclude>
-                                </excludes>
+                                <includes>
+                                    <include>org.getlwc:backend</include>
+                                </includes>
                             </artifactSet>
                         </configuration>
                     </execution>

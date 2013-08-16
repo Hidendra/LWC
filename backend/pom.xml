@@ -106,13 +106,9 @@
                         </goals>
                         <configuration>
                             <artifactSet>
-                                <excludes>
-                                    <exclude>junit:junit</exclude>
-                                    <exclude>org.xnap.commons:gettext-commons</exclude>
-                                    <exclude>org.yaml:*</exclude>
-                                    <exclude>com.mchange:*</exclude>
-                                    <exclude>org.xnap.commons:*</exclude>
-                                </excludes>
+                                <includes>
+                                    <include>org.getlwc:api</include>
+                                </includes>
                             </artifactSet>
                         </configuration>
                     </execution>

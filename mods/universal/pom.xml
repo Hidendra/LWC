@@ -81,20 +81,9 @@
                         </goals>
                         <configuration>
                             <artifactSet>
-                                <excludes>
-                                    <exclude>junit:junit</exclude>
-                                    <exclude>cpw.mods.fml:*</exclude>
-                                    <exclude>org.bukkit:*</exclude>
-                                    <exclude>org.spout:*</exclude>
-                                    <exclude>net.canarymod:*</exclude>
-                                    <exclude>org.xnap.commons:gettext-commons</exclude>
-                                    <exclude>net.minecraft:*</exclude>
-                                    <exclude>org.ow2.asm:*</exclude>
-                                    <exclude>org.yaml:*</exclude>
-                                    <exclude>com.mchange:*</exclude>
-                                    <exclude>com.ForgeEssentials:*</exclude>
-                                    <exclude>org.xnap.commons:*</exclude>
-                                </excludes>
+                                <includes>
+                                    <include>org.getlwc.mods:*</include>
+                                </includes>
                             </artifactSet>
                         </configuration>
                     </execution>
