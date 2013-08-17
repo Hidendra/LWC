@@ -119,7 +119,7 @@ public class ForgeServerLayer extends ServerLayer {
         }
 
         File runningFromJar = new File(path);
-        return new File(runningFromJar.getParent(), "LWC");
+        return new File(new File(runningFromJar.getParentFile().getParent(), "config"), "LWC");
     }
 
     @Override
