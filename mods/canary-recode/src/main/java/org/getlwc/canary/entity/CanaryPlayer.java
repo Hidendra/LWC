@@ -4,6 +4,7 @@ import org.getlwc.ItemStack;
 import org.getlwc.Location;
 import org.getlwc.canary.LWC;
 import org.getlwc.entity.Player;
+import org.getlwc.lang.Locale;
 import org.getlwc.util.Color;
 
 public class CanaryPlayer extends Player {
@@ -21,6 +22,15 @@ public class CanaryPlayer extends Player {
     public CanaryPlayer(LWC plugin, net.canarymod.api.entity.living.humanoid.Player handle) {
         this.plugin = plugin;
         this.handle = handle;
+        loadLocale();
+    }
+
+    /**
+     * Load the player's locale
+     */
+    private void loadLocale() {
+        setLocale(new Locale(handle.getLocale()));
+        plugin.getEngine().getConsoleSender().sendMessage("Player " + getName() + " loaded using locale: " + getLocale());
     }
 
     public String getName() {
