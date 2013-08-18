@@ -54,10 +54,10 @@ public class LWCCorePlugin implements IFMLLoadingPlugin, IFMLCallHook {
     public String[] getASMTransformerClass() {
         INITIALIZED = true;
         return new String[] {
-                "org.getlwc.forge.asm.transformers.ItemInWorldManagerTransformer",
-                "org.getlwc.forge.asm.transformers.ExplosionTransformer",
-                "org.getlwc.forge.asm.transformers.SignUpdateTransformer",
-                "org.getlwc.forge.asm.transformers.ItemStackTransformer"
+                "org.getlwc.forge.asm.transformers.events.ItemInWorldManagerTransformer",
+                "org.getlwc.forge.asm.transformers.events.ExplosionTransformer",
+                "org.getlwc.forge.asm.transformers.events.SignUpdateTransformer",
+                "org.getlwc.forge.asm.transformers.events.ItemStackTransformer"
         };
     }
 

@@ -27,7 +27,7 @@
  * either expressed or implied, of anybody else.
  */
 
-package org.getlwc.forge.asm.transformers;
+package org.getlwc.forge.asm.transformers.events;
 
 import org.getlwc.forge.LWC;
 import org.getlwc.forge.asm.AbstractSingleClassTransformer;
