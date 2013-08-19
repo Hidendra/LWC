@@ -42,6 +42,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.DoubleChest;
+import org.bukkit.block.Hopper;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -76,7 +77,7 @@ public class LWCPlayerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onMoveItem(InventoryMoveItemEvent event) {
-        if (handleMoveItemEvent(event.getSource()) || handleMoveItemEvent(event.getDestination())) {
+        if (handleMoveItemEvent(event.getInitiator(), event.getSource()) || handleMoveItemEvent(event.getInitiator(), event.getDestination())) {
             event.setCancelled(true);
         }
     }
@@ -86,7 +87,7 @@ public class LWCPlayerListener implements Listener {
      *
      * @param inventory
      */
-    private boolean handleMoveItemEvent(Inventory inventory) {
+    private boolean handleMoveItemEvent(Inventory initiator, Inventory inventory) {
         LWC lwc = LWC.getInstance();
 
         if (inventory == null) {
@@ -97,8 +98,13 @@ public class LWCPlayerListener implements Listener {
         Location location;
         InventoryHolder holder;
 
+        // Hopper location
+        Location hopperLocation = null;
+        InventoryHolder hopperholder;
+
         try {
             holder = inventory.getHolder();
+            hopperholder = initiator.getHolder();
         } catch (AbstractMethodError e) {
             return false;
         }
@@ -111,6 +117,10 @@ public class LWCPlayerListener implements Listener {
             } else {
                 return false;
             }
+
+            if (hopperholder instanceof Hopper) {
+                hopperLocation = ((Hopper) hopperholder).getLocation();
+            }
         } catch (Exception e) {
             return false;
         }
@@ -121,6 +131,18 @@ public class LWCPlayerListener implements Listener {
         // If no protection was found we can safely ignore it
         if (protection == null) {
             return false;
+        }
+
+        if (hopperLocation != null) {
+            // Check if the hopper is protected
+            Protection hopperProtection = lwc.findProtection(hopperLocation.getBlock());
+
+            if (hopperProtection != null) {
+                // if they're owned by the same person then we can allow the move
+                if (hopperProtection.getOwner().equals(protection.getOwner())) {
+                    return false;
+                }
+            }
         }
 
         boolean denyHoppers = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock(), "denyHoppers"));
