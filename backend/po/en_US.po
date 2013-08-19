@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-08-19 02:13+0000\n"
+"POT-Creation-Date: 2013-08-19 16:54+0000\n"
 "PO-Revision-Date: 2013-06-18 23:02-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -48,7 +48,7 @@ msgstr ""
 "[ASM] If this is a major Minecraft release then LWC IS MOST LIKELY BROKEN!\n"
 "[ASM] MAKE SURE YOU ARE USING THE LATEST VERSION!"
 
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/misc/UpdateClientInfoTransformer.java:74
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/misc/UpdateClientInfoTransformer.java:63
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemStackTransformer.java:95
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ExplosionTransformer.java:141
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/SignUpdateTransformer.java:128
@@ -57,7 +57,7 @@ msgstr ""
 msgid "[ASM] Patched {0} ({1}) successfully!"
 msgstr "[ASM] Patched {0} ({1}) successfully!"
 
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/misc/UpdateClientInfoTransformer.java:77
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/misc/UpdateClientInfoTransformer.java:66
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemStackTransformer.java:98
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ExplosionTransformer.java:144
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/SignUpdateTransformer.java:131
@@ -79,41 +79,36 @@ msgstr ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "
 "trace has been printed out to the log file"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:151
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:142
 #, java-format
 msgid "Server: {0} ({1})"
 msgstr "Server: {0} ({1})"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:152
-#, java-format
-msgid "Layer: {0} (authored by: {1})"
-msgstr "Layer: {0} (authored by: {1})"
-
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:153
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:143
 #, java-format
 msgid "Backend: {0}"
 msgstr "Backend: {0}"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:154
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:144
 #, java-format
 msgid "This version was built on: {0}"
 msgstr "This version was built on: {0}"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:323
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:306
 msgid "Shutting down!"
 msgstr "Shutting down!"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:347
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:330
 #, java-format
 msgid "Driver \"{0}\" is not supported."
 msgstr "Driver \"{0}\" is not supported."
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:377
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:360
 #, java-format
 msgid "Connected to the database with driver: {0}"
 msgstr "Connected to the database with driver: {0}"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:379
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:362
 msgid "Failed to connect to the database!"
 msgstr "Failed to connect to the database!"
 
