@@ -137,7 +137,7 @@ public class Statistics {
         StringBuffer buffer = new StringBuffer();
         ProtectionCache cache = lwc.getProtectionCache();
 
-        double cachePercentFilled = ((double) cache.size() / cache.capacity()) * 100;
+        double cachePercentFilled = ((double) cache.size() / cache.totalCapacity()) * 100;
 
         String cacheColour = Colors.Green;
         if (cachePercentFilled > 75 && cachePercentFilled < 85) {
@@ -148,7 +148,7 @@ public class Statistics {
             cacheColour = Colors.Red;
         }
 
-        buffer.append("  Usage: " + cacheColour + String.format("%.2f", cachePercentFilled) + "% " + Colors.White + " ( " + cache.size() + "/" + cache.capacity() + " )");
+        buffer.append("  Usage: " + cacheColour + String.format("%.2f", cachePercentFilled) + "% " + Colors.White + " ( " + cache.size() + "/" + cache.totalCapacity() + " [" + cache.capacity() + "+" + cache.adaptiveCapacity() + "] )");
         buffer.append("  [ Reads: " + formatNumber(cache.getReads()) + " <=> " + String.format("%.2f", getAverage(cache.getReads())) + " r/s ]");
         buffer.append("  [ Writes: " + formatNumber(cache.getWrites()) + " <=> " + String.format("%.2f", getAverage(cache.getWrites())) + " w/s ]");
         sender.sendMessage(buffer.toString());

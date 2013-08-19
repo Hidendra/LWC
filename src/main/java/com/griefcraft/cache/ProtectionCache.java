@@ -37,6 +37,16 @@ import org.bukkit.block.Block;
 public class ProtectionCache {
 
     /**
+     * The amount the cache is increased by each time a high-intensity area requests it if needed
+     */
+    private final static int ADAPTIVE_CACHE_TICK = 10;
+
+    /**
+     * The max number of protections the adaptive cache will add
+     */
+    private final static int ADAPTIVE_CACHE_MAX = 100000;
+
+    /**
      * The LWC instance this set belongs to
      */
     private final LWC lwc;
@@ -72,6 +82,11 @@ public class ProtectionCache {
     private int capacity;
 
     /**
+     * The number of protections that were added via adaptive cache
+     */
+    private int adaptiveCapacity = 0;
+
+    /**
      * Used for byKnownNulls
      */
     private final static Object FAKE_VALUE = new Object();
@@ -79,7 +94,6 @@ public class ProtectionCache {
     public ProtectionCache(LWC lwc) {
         this.lwc = lwc;
         this.capacity = lwc.getConfiguration().getInt("core.cacheSize", 10000);
-        capacity = 10000;
 
         this.references = new LRUCache<Protection, Object>(capacity);
         this.byCacheKey = new WeakLRUCache<String, Protection>(capacity);
@@ -89,19 +103,14 @@ public class ProtectionCache {
     }
 
     /**
-     * Adjust the cache size for all caches by the given delta. If the delta makes the new capacity negative then it will default to 0
-     *
-     * @param delta the delta to increase/decrease the cache sizes by
+     * Called from specific potentially high-intensity access areas. These areas preferably need(!) free space in the
+     * cache and otherwise could cause "lag" or other oddities.
      */
-    public void adjustCacheSize(int delta) {
-        this.capacity = Math.max(0, this.capacity + delta);
-
-        // adjust the cache sizes
-        references.maxCapacity = capacity;
-        byCacheKey.maxCapacity = capacity;
-        byId.maxCapacity = capacity;
-        byKnownBlock.maxCapacity = capacity;
-        byKnownNulls.maxCapacity = capacity;
+    public void increaseIfNecessary() {
+        if (isFull() && adaptiveCapacity < ADAPTIVE_CACHE_MAX) {
+            adaptiveCapacity += ADAPTIVE_CACHE_TICK;
+            adjustCacheSizes();
+        }
     }
 
     /**
@@ -132,12 +141,30 @@ public class ProtectionCache {
     }
 
     /**
-     * Gets the max capacity of the cache
+     * Gets the default capacity of the cache
      *
      * @return
      */
     public int capacity() {
         return capacity;
+    }
+
+    /**
+     * Gets the adaptive capacity of the cache
+     *
+     * @return
+     */
+    public int adaptiveCapacity() {
+        return adaptiveCapacity;
+    }
+
+    /**
+     * Gets the total capacity (default + adaptive) of the cache
+     *
+     * @return
+     */
+    public int totalCapacity() {
+        return capacity + adaptiveCapacity;
     }
 
     /**
@@ -160,7 +187,7 @@ public class ProtectionCache {
      * @return
      */
     public boolean isFull() {
-        return references.size() >= capacity;
+        return references.size() >= totalCapacity();
     }
 
     /**
@@ -316,6 +343,17 @@ public class ProtectionCache {
      */
     private String cacheKey(String world, int x, int y, int z) {
         return world + ":" + x + ":" + y + ":" + z;
+    }
+
+    /**
+     * Fixes the internal caches and adjusts them to the new cache total capacity
+     */
+    private void adjustCacheSizes() {
+        references.maxCapacity = totalCapacity();
+        byCacheKey.maxCapacity = totalCapacity();
+        byId.maxCapacity = totalCapacity();
+        byKnownBlock.maxCapacity = totalCapacity();
+        byKnownNulls.maxCapacity = totalCapacity();
     }
 
 }

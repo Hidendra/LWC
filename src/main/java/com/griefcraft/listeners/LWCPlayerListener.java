@@ -125,6 +125,10 @@ public class LWCPlayerListener implements Listener {
             return false;
         }
 
+        // High-intensity zone: increase protection cache if it's full, otherwise
+        // the database will be getting rammed
+        lwc.getProtectionCache().increaseIfNecessary();
+
         // Attempt to load the protection at that location
         Protection protection = lwc.findProtection(location.getBlock());
 
