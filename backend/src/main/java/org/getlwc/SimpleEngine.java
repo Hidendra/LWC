@@ -80,7 +80,7 @@ public class SimpleEngine implements Engine {
     /**
      * The {@link LibraryDownloader} responsible for downloading library files
      */
-    private final LibraryDownloader downloader = new LibraryDownloader(this);
+    private final SimpleLibraryDownloader downloader = new SimpleLibraryDownloader(this);
 
     /**
      * The global module manager
