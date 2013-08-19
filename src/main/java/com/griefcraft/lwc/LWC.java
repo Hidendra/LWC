@@ -1152,7 +1152,15 @@ public class LWC {
      * @return
      */
     public Protection findProtection(Block block) {
+        if (protectionCache.isKnownNull(protectionCache.cacheKey(block.getLocation()))) {
+            return null;
+        }
+
         // If the block type is AIR, then we have a problem .. but attempt to load a protection anyway
+        // Note: this call stems from a very old bug in Bukkit that likely does not exist anymore at all
+        //       but is kept just incase. At one point getBlock() in Bukkit would sometimes say a block
+        //       is an eir block even though the client and server sees it differently (ie a chest).
+        //       This was of course very problematic!
         if (block.getType() == Material.AIR) {
             // We won't be able to match any other blocks anyway, so the least we can do is attempt to load a protection
             return physicalDatabase.loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
@@ -1164,12 +1172,18 @@ public class LWC {
         // Search for a protection
         boolean result = finder.matchBlocks(block);
 
+        Protection found = null;
+
         // We're done, load the possibly loaded protection
         if (result) {
-            return finder.loadProtection();
+            found = finder.loadProtection();
         }
 
-        return null;
+        if (found == null) {
+            protectionCache.addKnownNull(protectionCache.cacheKey(block.getLocation()));
+        }
+
+        return found;
     }
 
     /**

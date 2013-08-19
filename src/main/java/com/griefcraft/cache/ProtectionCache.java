@@ -31,6 +31,7 @@ package com.griefcraft.cache;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 
 public class ProtectionCache {
@@ -61,18 +62,46 @@ public class ProtectionCache {
     private final WeakLRUCache<String, Protection> byKnownBlock;
 
     /**
+     * A cache of blocks that are known to not have a protection
+     */
+    private final WeakLRUCache<String, Object> byKnownNulls;
+
+    /**
      * The capacity of the cache
      */
     private int capacity;
 
+    /**
+     * Used for byKnownNulls
+     */
+    private final static Object FAKE_VALUE = new Object();
+
     public ProtectionCache(LWC lwc) {
         this.lwc = lwc;
         this.capacity = lwc.getConfiguration().getInt("core.cacheSize", 10000);
+        capacity = 10000;
 
         this.references = new LRUCache<Protection, Object>(capacity);
         this.byCacheKey = new WeakLRUCache<String, Protection>(capacity);
         this.byId = new WeakLRUCache<Integer, Protection>(capacity);
         this.byKnownBlock = new WeakLRUCache<String, Protection>(capacity);
+        this.byKnownNulls = new WeakLRUCache<String, Object>(Math.max(10000, capacity)); // enforce a min size so we have a known buffer
+    }
+
+    /**
+     * Adjust the cache size for all caches by the given delta. If the delta makes the new capacity negative then it will default to 0
+     *
+     * @param delta the delta to increase/decrease the cache sizes by
+     */
+    public void adjustCacheSize(int delta) {
+        this.capacity = Math.max(0, this.capacity + delta);
+
+        // adjust the cache sizes
+        references.maxCapacity = capacity;
+        byCacheKey.maxCapacity = capacity;
+        byId.maxCapacity = capacity;
+        byKnownBlock.maxCapacity = capacity;
+        byKnownNulls.maxCapacity = capacity;
     }
 
     /**
@@ -122,6 +151,16 @@ public class ProtectionCache {
         byCacheKey.clear();
         byId.clear();
         byKnownBlock.clear();
+        byKnownNulls.clear();
+    }
+
+    /**
+     * Check if the cache is full
+     *
+     * @return
+     */
+    public boolean isFull() {
+        return references.size() >= capacity;
     }
 
     /**
@@ -181,6 +220,26 @@ public class ProtectionCache {
     public void remove(String cacheKey) {
         byCacheKey.remove(cacheKey);
         byKnownBlock.remove(cacheKey);
+        byKnownNulls.remove(cacheKey);
+    }
+
+    /**
+     * Make a cache key known as null in the cache
+     *
+     * @param cacheKey
+     */
+    public void addKnownNull(String cacheKey) {
+        byKnownNulls.put(cacheKey, FAKE_VALUE);
+    }
+
+    /**
+     * Check if a cache key is known to not exist in the database
+     *
+     * @param cacheKey
+     * @return
+     */
+    public boolean isKnownNull(String cacheKey) {
+        return byKnownNulls.containsKey(cacheKey);
     }
 
     /**
@@ -229,6 +288,16 @@ public class ProtectionCache {
      */
     public Protection getProtectionById(int id) {
         return byId.get(id);
+    }
+
+    /**
+     * Gets the cache key for the given location
+     *
+     * @param location
+     * @return
+     */
+    public String cacheKey(Location location) {
+        return cacheKey(location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     /**

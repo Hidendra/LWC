@@ -52,6 +52,11 @@ public class WeakLRUCache<K, V> implements Map<K, V> {
     private final ReferenceQueue<? super V> queue = new ReferenceQueue();
 
     /**
+     * The cache's max capacity
+     */
+    protected int maxCapacity;
+
+    /**
      * Amount of reads performed on the cache
      */
     private long reads = 0;
@@ -61,7 +66,9 @@ public class WeakLRUCache<K, V> implements Map<K, V> {
      */
     private long writes = 0;
 
-    public WeakLRUCache(final int maxCapacity) {
+    public WeakLRUCache(int capacity) {
+        this.maxCapacity = capacity;
+
         this.weakCache = new LinkedHashMap<K, WeakValue<V, K>>(maxCapacity) {
             @Override
             protected boolean removeEldestEntry(java.util.Map.Entry<K, WeakValue<V, K>> eldest) {

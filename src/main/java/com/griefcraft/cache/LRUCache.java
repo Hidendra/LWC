@@ -35,7 +35,7 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
     /**
      * The max number of entries allowed
      */
-    private int maxCapacity;
+    protected int maxCapacity;
 
     /**
      * Amount of reads performed on the cache
