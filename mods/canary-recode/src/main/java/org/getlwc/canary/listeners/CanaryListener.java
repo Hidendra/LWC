@@ -3,6 +3,7 @@ package org.getlwc.canary.listeners;
 import net.canarymod.api.entity.TNTPrimed;
 import net.canarymod.api.entity.living.monster.Creeper;
 import net.canarymod.hook.HookHandler;
+import net.canarymod.hook.entity.EndermanPickupBlockHook;
 import net.canarymod.hook.player.BlockDestroyHook;
 import net.canarymod.hook.player.BlockLeftClickHook;
 import net.canarymod.hook.player.BlockPlaceHook;
@@ -19,7 +20,9 @@ import org.getlwc.Block;
 import org.getlwc.ExplosionType;
 import org.getlwc.World;
 import org.getlwc.canary.LWC;
+import org.getlwc.canary.entity.CanaryEntity;
 import org.getlwc.canary.world.CanaryBlock;
+import org.getlwc.entity.Entity;
 import org.getlwc.entity.Player;
 
 import java.util.ArrayList;
@@ -66,6 +69,19 @@ public class CanaryListener implements PluginListener {
         Block block = new CanaryBlock(world, hook.getBlockClicked());
 
         boolean result = plugin.getEngine().getEventHelper().onBlockInteract(player, block);
+
+        if (result) {
+            hook.setCanceled();
+        }
+    }
+
+    @HookHandler(ignoreCanceled = true)
+    public void entityInteract(EndermanPickupBlockHook hook) {
+        Entity entity = new CanaryEntity(plugin, hook.getEnderman());
+        World world = entity.getLocation().getWorld();
+        Block block = new CanaryBlock(world, hook.getBlock());
+
+        boolean result = plugin.getEngine().getEventHelper().onBlockInteract(entity, block);
 
         if (result) {
             hook.setCanceled();

@@ -48,7 +48,7 @@ public class CanaryPlayer extends Player {
     }
 
     public Location getLocation() {
-        return new Location(null, handle.getX(), handle.getY(), handle.getZ());
+        return new Location(plugin.getWorld(handle.getWorld().getName()), handle.getX(), handle.getY(), handle.getZ());
     }
 
     @Override
