@@ -209,7 +209,12 @@ public class ProtectionCache {
     public void remove(Protection protection) {
         references.remove(protection);
         byId.remove(protection.getId());
-        remove(protection.getCacheKey());
+
+        if (protection.getProtectionFinder() != null) {
+            for (Block block : protection.getProtectionFinder().getBlocks()) {
+                remove(cacheKey(block.getLocation()));
+            }
+        }
     }
 
     /**

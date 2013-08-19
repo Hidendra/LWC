@@ -1162,6 +1162,7 @@ public class PhysDB extends Database {
             // We need to create the initial transaction for this protection
             // this transaction is viewable and modifiable during POST_REGISTRATION
             Protection protection = loadProtection(world, x, y, z, true);
+            protection.removeCache();
 
             // if history logging is enabled, create it
             if (LWC.getInstance().isHistoryEnabled() && protection != null) {

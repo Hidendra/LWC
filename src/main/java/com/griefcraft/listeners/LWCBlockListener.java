@@ -186,26 +186,23 @@ public class LWCBlockListener implements Listener {
         // when destroying a chest, it's possible they are also destroying a double chest
         // in the event they're trying to destroy a double chest, we should just move
         // the protection to the chest that is not destroyed, if it is not that one already.
-        if (canAdmin && DoubleChestMatcher.PROTECTABLES_CHESTS.contains(block.getType())) {
+        if (protection.isOwner(player) && DoubleChestMatcher.PROTECTABLES_CHESTS.contains(block.getType())) {
             Block doubleChest = lwc.findAdjacentDoubleChest(block);
 
             if (doubleChest != null) {
                 // if they destroyed the protected block we want to move it aye?
                 if (lwc.blockEquals(protection.getBlock(), block)) {
-                    // We need to manually fix the cache
-                    ProtectionCache cache = lwc.getProtectionCache();
-                    cache.remove(protection);
-
                     // correct the block
                     protection.setBlockId(doubleChest.getTypeId());
                     protection.setX(doubleChest.getX());
                     protection.setY(doubleChest.getY());
                     protection.setZ(doubleChest.getZ());
-                    protection.save();
-
-                    // put it into the cache again with the updated block location
-                    cache.add(protection);
+                    protection.saveNow();
                 }
+
+                // Repair the cache
+                protection.removeCache();
+                lwc.findProtection(doubleChest);
 
                 // they did not click the protected block, however we still want to prevent removal
                 return;
