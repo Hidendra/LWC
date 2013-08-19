@@ -30,16 +30,20 @@
 package org.getlwc.forge;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.packet.Packet130UpdateSign;
+import net.minecraft.network.packet.Packet204ClientInfo;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
 import org.getlwc.Block;
 import org.getlwc.World;
+import org.getlwc.entity.Player;
 import org.getlwc.forge.event.EntityExplodeEvent;
 import org.getlwc.forge.event.PlayerBreakBlockEvent;
 import org.getlwc.forge.event.PlayerPlaceBlockEvent;
 import org.getlwc.forge.event.PlayerUpdateSignEvent;
+import org.getlwc.lang.Locale;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -126,6 +130,19 @@ public class ForgeEventHelper {
         Event event = new PlayerUpdateSignEvent(player, packet, sign);
         MinecraftForge.EVENT_BUS.post(event);
         return event.isCanceled() || event.getResult() == Event.Result.DENY;
+    }
+
+    /**
+     * Called when updateClientInfo(Packet204ClientInfo) is called in EntityPlayerMP
+     *
+     * @param handle
+     * @param packet
+     */
+    public static void onUpdateClientInfo(EntityPlayerMP handle, Packet204ClientInfo packet) {
+        LWC mod = LWC.instance;
+        Player player = mod.wrapPlayer(handle);
+        player.setLocale(new Locale(packet.getLanguage()));
+        mod.getEngine().getConsoleSender().sendMessage("Player " + player.getName() + " loaded using locale: " + player.getLocale());
     }
 
 }

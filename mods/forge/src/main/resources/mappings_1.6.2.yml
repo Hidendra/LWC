@@ -51,6 +51,9 @@ classes:
   GuiChest:
     mcp: net.minecraft.client.gui.inventory.GuiChest
     obf: axg
+  Packet204ClientInfo:
+    mcp: net.minecraft.network.packet.Packet204ClientInfo
+    obf: do
 methods:
   ForgeEventHelper:
     onBlockHarvested:
@@ -64,6 +67,9 @@ methods:
       signature: n/a
     onBlockPlace:
       obf: onBlockPlace
+      signature: n/a
+    onUpdateClientInfo:
+      obf: onUpdateClientInfo
       signature: n/a
   GuiHandler:
     drawGuiContainerForegroundLayer:
@@ -85,6 +91,10 @@ methods:
     handleUpdateSign:
       obf: a
       signature: (L#Packet130UpdateSign;)V
+  EntityPlayerMP:
+    updateClientInfo:
+      obf: a
+      signature: (L#Packet204ClientInfo;)V
   TileEntitySign:
     isEditable:
       obf: a
@@ -144,6 +154,10 @@ fields:
     signLines:
       obf: d
       srg: field_73308_d
+  EntityPlayerMP:
+    translator:
+      obf: bN
+      srg: field_71148_cg
   NetServerHandler:
     playerEntity:
       obf: c

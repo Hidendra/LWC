@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: LWC\n"
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-08-17 02:07+0000\n"
+"POT-Creation-Date: 2013-08-19 02:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,18 +46,20 @@ msgid ""
 "[ASM] MAKE SURE YOU ARE USING THE LATEST VERSION!"
 msgstr ""
 
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/ExplosionTransformer.java:141
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/ItemStackTransformer.java:95
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/SignUpdateTransformer.java:128
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/ItemInWorldManagerTransformer.java:171
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/misc/UpdateClientInfoTransformer.java:74
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemStackTransformer.java:95
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ExplosionTransformer.java:141
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/SignUpdateTransformer.java:128
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemInWorldManagerTransformer.java:171
 #, java-format
 msgid "[ASM] Patched {0} ({1}) successfully!"
 msgstr ""
 
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/ExplosionTransformer.java:144
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/ItemStackTransformer.java:98
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/SignUpdateTransformer.java:131
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/ItemInWorldManagerTransformer.java:174
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/misc/UpdateClientInfoTransformer.java:77
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemStackTransformer.java:98
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ExplosionTransformer.java:144
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/SignUpdateTransformer.java:131
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemInWorldManagerTransformer.java:174
 #, java-format
 msgid "[ASM] Failed to patch {0} ({1})"
 msgstr ""
