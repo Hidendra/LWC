@@ -510,7 +510,7 @@ public class LWC {
      * @return
      */
     public Block findAdjacentBlock(Block block, Material material, Block... ignore) {
-        BlockFace[] faces = new BlockFace[]{BlockFace.NORTH, BlockFace.NORTH_NORTH_EAST, BlockFace.NORTH_NORTH_WEST, BlockFace.NORTH_EAST, BlockFace.NORTH_WEST,  BlockFace.SOUTH, BlockFace.SOUTH_SOUTH_EAST, BlockFace.SOUTH_SOUTH_WEST, BlockFace.SOUTH_WEST, BlockFace.SOUTH_EAST, BlockFace.EAST, BlockFace.EAST_NORTH_EAST,BlockFace.EAST_SOUTH_EAST, BlockFace.WEST,BlockFace.WEST_NORTH_EAST,BlockFace.WEST_SOUTH_EAST};
+        BlockFace[] faces = new BlockFace[]{BlockFace.NORTH, BlockFace.NORTH_NORTH_EAST, BlockFace.NORTH_NORTH_WEST, BlockFace.NORTH_EAST, BlockFace.NORTH_WEST,  BlockFace.SOUTH, BlockFace.SOUTH_SOUTH_EAST, BlockFace.SOUTH_SOUTH_WEST, BlockFace.SOUTH_WEST, BlockFace.SOUTH_EAST, BlockFace.EAST, BlockFace.EAST_NORTH_EAST,BlockFace.EAST_SOUTH_EAST, BlockFace.WEST,BlockFace.WEST_NORTH_WEST,BlockFace.WEST_SOUTH_WEST};
         List<Block> ignoreList = Arrays.asList(ignore);
 
         for (BlockFace face : faces) {
