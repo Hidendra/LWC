@@ -49,7 +49,7 @@ public class DoubleChestMatcher implements ProtectionFinder.Matcher {
     /**
      * Possible faces around the base block that protections could be at
      */
-    public static final BlockFace[] POSSIBLE_FACES = new BlockFace[]{ BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST };
+    public static final BlockFace[] POSSIBLE_FACES = new BlockFace[]{ BlockFace.NORTH, BlockFace.NORTH_NORTH_EAST, BlockFace.NORTH_NORTH_WEST, BlockFace.NORTH_EAST, BlockFace.NORTH_WEST,  BlockFace.SOUTH, BlockFace.SOUTH_SOUTH_EAST, BlockFace.SOUTH_SOUTH_WEST, BlockFace.SOUTH_WEST, BlockFace.SOUTH_EAST, BlockFace.EAST, BlockFace.EAST_NORTH_EAST,BlockFace.EAST_SOUTH_EAST, BlockFace.WEST,BlockFace.WEST_NORTH_WEST,BlockFace.WEST_SOUTH_WEST };
 
     public boolean matches(ProtectionFinder finder) {
         Block block = finder.getBaseBlock();
