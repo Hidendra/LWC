@@ -514,16 +514,21 @@ public class LWC {
         List<Block> ignoreList = Arrays.asList(ignore);
 
         for (BlockFace face : faces) {
-            Block adjacentBlock = block.getRelative(face);
+            Block adjacentBlock = block.getRelative(face, 1);
 
             if (adjacentBlock.getType() == material && !ignoreList.contains(adjacentBlock)) {
                 return adjacentBlock;
             }
-            if(adjacentBlock == Block.DoubleChest || adjacentBlock == Block.Chest)
+            for(BlockFace target: faces)
             {
-                return adjacentBlock;  
+                if(block.getFace(adjacentBlock) != null && block.getFace(adjacentBlock) == face)
+                {
+                    return adjacentBlock;
+                }
             }
+            
         }
+        
 
         return null;
     }
