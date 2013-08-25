@@ -519,6 +519,10 @@ public class LWC {
             if (adjacentBlock.getType() == material && !ignoreList.contains(adjacentBlock)) {
                 return adjacentBlock;
             }
+            if(adjacentBlock == Block.DoubleChest || adjacentBlock == Block.Chest)
+            {
+                return adjacentBlock;  
+            }
         }
 
         return null;
