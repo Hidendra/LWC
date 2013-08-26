@@ -760,7 +760,9 @@ public class Protection {
 
                     // get the protection for that entry
                     Protection protection = cache.getProtection(cacheKey);
-                    if (protection != null && id == protection.getId()) {
+
+                    // the ifnull compensates for the block being in the null cache. It will remove it from that.
+                    if ((protection != null && id == protection.getId()) || protection == null) {
                         cache.remove(cacheKey);
                     }
                 }
