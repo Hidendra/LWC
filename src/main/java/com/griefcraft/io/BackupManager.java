@@ -87,7 +87,10 @@ public class BackupManager {
     /**
      * The folder backups are stored in
      */
-    private final File backupFolder = new File(BACKUP_FOLDER);
+    private File backupFolder;
+	
+	private final LWC lwc = LWC.getInstance();
+	private final Plugin plugin = lwc.getPlugin();
 
     /**
      * Backup creation flags
@@ -112,6 +115,8 @@ public class BackupManager {
     }
 
     public BackupManager() {
+		BACKUP_FOLDER = plugin.getDataFolder().getAbsolutePath() + "backups/";
+		backupFolder = new File(BACKUP_FOLDER);
         if (!backupFolder.exists()) {
             backupFolder.mkdir();
         }
@@ -217,7 +222,6 @@ public class BackupManager {
      * @return
      */
     public Backup createBackup(String name, final EnumSet<Flag> flags) {
-        final LWC lwc = LWC.getInstance();
         final Plugin plugin = lwc.getPlugin();
         Server server = Bukkit.getServer();
         final BukkitScheduler scheduler = server.getScheduler();

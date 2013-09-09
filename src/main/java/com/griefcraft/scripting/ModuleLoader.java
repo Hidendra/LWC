@@ -163,7 +163,7 @@ public class ModuleLoader {
     /**
      * Path to the root of scripts
      */
-    public final static String ROOT_PATH = "plugins/LWC/";
+    public static String ROOT_PATH = "plugins/LWC/";
 
     /**
      * Map of loaded modules
@@ -184,6 +184,7 @@ public class ModuleLoader {
 
     public ModuleLoader(LWC lwc) {
         this.lwc = lwc;
+		ROOT_PATH = lwc.getPlugin().getDataFolder().getAbsolutePath();
         populateFastModuleCache();
     }
 

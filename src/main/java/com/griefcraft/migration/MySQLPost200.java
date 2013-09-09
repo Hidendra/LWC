@@ -58,7 +58,7 @@ public class MySQLPost200 implements MigrationUtility {
         String database = lwc.getConfiguration().getString("database.path");
 
         if (database == null || database.trim().equals("")) {
-            database = "plugins/LWC/lwc.db";
+            database = lwc.getPlugin().getDataFolder().getAbsolutePath() + "lwc.db";
         }
 
         File file = new File(database);

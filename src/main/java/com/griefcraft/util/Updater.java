@@ -60,7 +60,7 @@ public class Updater {
     /**
      * The folder where libraries are stored
      */
-    public final static String DEST_LIBRARY_FOLDER = "plugins/LWC/lib/";
+    public static String DEST_LIBRARY_FOLDER = "";
 
     /**
      * The queue of files that need to be downloaded
@@ -73,6 +73,9 @@ public class Updater {
         downloadFiles();
 
         final LWC lwc = LWC.getInstance();
+		
+		DEST_LIBRARY_FOLDER = lwc.getPlugin().getDataFolder().getAbsolutePath() + "lib/";
+		
         if (lwc.getConfiguration().getBoolean("core.updateNotifier", true)) {
             lwc.getPlugin().getServer().getScheduler().scheduleAsyncDelayedTask(lwc.getPlugin(), new Runnable() {
                 public void run() {
@@ -203,7 +206,7 @@ public class Updater {
                     lwc.log("Downloading file " + local.getName());
 
                     // check for LWC folder
-                    File folder = new File("plugins/LWC/");
+                    File folder = new File(DEST_LIBRARY_FOLDER);
                     if (!folder.exists()) {
                         folder.mkdir();
                     }
