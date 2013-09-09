@@ -51,14 +51,15 @@ public class ConfigPost300 implements MigrationUtility {
 
     public void run() {
         LWC lwc = LWC.getInstance();
-        File configFile = new File("plugins/LWC/lwc.properties");
+		File coreDir = LWC.getInstance().getPlugin().getDataFolder();
+        File configFile = new File(coreDir, "lwc.properties");
 
         if (!configFile.exists()) {
             return;
         }
 
         // delete internal.ini
-        new File("plugins/LWC/internal.ini").delete();
+        new File(coreDir, "internal.ini").delete();
         logger.info("Converting lwc.properties to new variants");
 
         // we need to convert..
