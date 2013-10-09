@@ -51,7 +51,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -130,7 +129,7 @@ public class LWCPlayerListener implements Listener {
         lwc.getProtectionCache().increaseIfNecessary();
 
         // Attempt to load the protection at that location
-        Protection protection = lwc.findProtection(location.getBlock());
+        Protection protection = lwc.findProtection(location);
 
         // If no protection was found we can safely ignore it
         if (protection == null) {
@@ -139,7 +138,7 @@ public class LWCPlayerListener implements Listener {
 
         if (hopperLocation != null) {
             // Check if the hopper is protected
-            Protection hopperProtection = lwc.findProtection(hopperLocation.getBlock());
+            Protection hopperProtection = lwc.findProtection(hopperLocation);
 
             if (hopperProtection != null) {
                 // if they're owned by the same person then we can allow the move
@@ -224,7 +223,7 @@ public class LWCPlayerListener implements Listener {
 
         try {
             Set<String> actions = lwcPlayer.getActionNames();
-            Protection protection = lwc.findProtection(block);
+            Protection protection = lwc.findProtection(block.getLocation());
             Module.Result result = Module.Result.DEFAULT;
             boolean canAccess = lwc.canAccessProtection(player, protection);
 
@@ -429,7 +428,7 @@ public class LWCPlayerListener implements Listener {
         }
 
         // Attempt to load the protection at that location
-        Protection protection = lwc.findProtection(location.getBlock());
+        Protection protection = lwc.findProtection(location);
 
         // If no protection was found we can safely ignore it
         if (protection == null) {

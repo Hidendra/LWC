@@ -1146,7 +1146,25 @@ public class LWC {
     }
 
     /**
-     * Find a protection linked to the block, using the player to debug if they have debug mode
+     * Find a protection linked to the location
+     *
+     * @param location
+     * @return
+     */
+    public Protection findProtection(Location location) {
+        String cacheKey = protectionCache.cacheKey(location);
+
+        if (protectionCache.isKnownNull(cacheKey)) {
+            return null;
+        }
+
+        Protection protection = protectionCache.getProtection(cacheKey);
+
+        return protection != null ? protection : findProtection(location.getBlock());
+    }
+
+    /**
+     * Find a protection linked to the block
      *
      * @param block
      * @return
