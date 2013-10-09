@@ -155,7 +155,8 @@ public class LWCPlayerListener implements Listener {
 
         boolean denyHoppers = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock(), "denyHoppers"));
 
-        if ((denyHoppers && !protection.hasFlag(Flag.Type.HOPPER)) || (!denyHoppers && protection.hasFlag(Flag.Type.HOPPER))) {
+        // xor = (a && !b) || (!a && b)
+        if (denyHoppers ^ protection.hasFlag(Flag.Type.HOPPER)) {
             return true;
         }
 
