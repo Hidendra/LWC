@@ -29,10 +29,10 @@
 
 package org.getlwc.forge.entity;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.integrated.IntegratedServer;
-import net.minecraft.src.ModLoader;
 import org.getlwc.ItemStack;
 import org.getlwc.Location;
 import org.getlwc.entity.Player;
@@ -110,7 +110,7 @@ public class ForgePlayer extends Player {
      * @return
      */
     private boolean isOP() {
-        MinecraftServer server = ModLoader.getMinecraftServerInstance();
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
 
         if (server.isSinglePlayer()) {
             return server instanceof IntegratedServer && server.getServerOwner().equalsIgnoreCase(getName());

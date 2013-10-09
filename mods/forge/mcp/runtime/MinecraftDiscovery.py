@@ -1,6 +1,8 @@
 import os, sys
 import json
 import zipfile
+import platform
+import re
 
 def getMinecraftPath():
     if   sys.platform.startswith('linux'):
@@ -132,7 +134,33 @@ def getLibraries(root, jsonfile, osKeyword):
         libPath      = libCononical.replace('.', '/')
         extract      = False
         exclude     = []
-    
+
+        #Rule patch from Adam Greenfield 
+        if 'rules' in library:
+            passRules = False
+            for rule in library['rules']:
+                ruleApplies = True
+                if 'os' in rule:
+                    if rule['os']['name'] != osKeyword:
+                        ruleApplies = False
+                    else:
+                        if osKeyword == "osx":
+                            os_ver = platform.mac_ver()[0]
+                        else:
+                            os_ver = platform.release()
+
+                        if not re.match(rule['os']['version'], os_ver):
+                            ruleApplies = False
+
+                if ruleApplies:
+                    if rule['action'] == "allow":
+                        passRules = True
+                    else:
+                        passRules = False
+
+            if not passRules:
+                continue
+
         if 'natives' in library:
             libFilename = "%s-%s-%s.jar"%(libSubdir, libVersion, library['natives'][osKeyword])
         else:
@@ -143,7 +171,7 @@ def getLibraries(root, jsonfile, osKeyword):
             if 'exclude' in library['extract']:
                 exclude.extend(library['extract']['exclude'])
     
-        libFullPath  = os.path.join(os.path.join(root, "libraries"), libPath, libSubdir, libVersion, libFilename)
+        #libFullPath  = os.path.join(os.path.join(root, "libraries"), libPath, libSubdir, libVersion, libFilename)
         libRelativePath = os.path.join("libraries", libPath, libSubdir, libVersion, libFilename)
     
         #if not os.path.exists(libFullPath):
@@ -166,3 +194,4 @@ if __name__ == '__main__':
             print 'Found %s %s'%(native, mcNatives[native])
         else:
             print 'Not found %s %s'%(native, mcNatives[native])
+            

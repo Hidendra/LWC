@@ -10,8 +10,8 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
-        <!-- Supported Minecraft version -->
-        <minecraft.version>1.6.2</minecraft.version>
+        <!-- Latest supported Minecraft version -->
+        <minecraft.version>1.6.4</minecraft.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>

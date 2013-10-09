@@ -14,7 +14,7 @@ def processClassNames(mappings, file_name, stored_index)
 
           if unobfuscated == javaName
             if obfuscated != classHash[stored_index]
-              printf "class %s: %s => %s\n", simpleClassName, v["obf"], obfuscated
+              printf "class %s: %s => %s\n", simpleClassName, classHash["obf"], obfuscated
               mappings["classes"][simpleClassName][stored_index] = obfuscated
             else
               printf "class %s: unchanged\n", simpleClassName

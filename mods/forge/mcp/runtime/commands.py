@@ -125,9 +125,11 @@ def cmdsplit(args):
     return shlex.split(args)
 
 
+#def truncate(text, length):
+#    if len(text) > length:
+#        return text[:length] + '...'
+#    return text
 def truncate(text, length):
-    if len(text) > length:
-        return text[:length] + '...'
     return text
 
 
@@ -145,7 +147,7 @@ def commands_sanity_check():
 class Commands(object):
     """Contains the commands and initialisation for a full mcp run"""
 
-    MCPVersion = '8.04'
+    MCPVersion = '8.09'
     _default_config = 'conf/mcp.cfg'
     _version_config = 'conf/version.cfg'
 
@@ -1298,17 +1300,25 @@ class Commands(object):
 
         # HINT: We create the list of source directories based on the list of packages
         # on windows we just pass wildcards, otherwise we pass the full file list
-        if self.osname == 'win':
+        if self.osname == 'win' and False == True: #FML: Disable for windows we write to file now
             all_files = False
             append_pattern = True
         else:
             all_files = True
             append_pattern = False
         pkglist = filterdirs(pathsrclk[side], '*.java', append_pattern=append_pattern, all_files=all_files)
+        from tempfile import NamedTemporaryFile
         if self.cmdrecompscala: # Compile scala before java as scala scans java files, but not vice-versa
             pkglistscala = pkglist[:]
             pkglistscala.extend(filterdirs(pathsrclk[side], '*.scala', append_pattern=append_pattern, all_files=all_files))
-            dirs = ' '.join(pkglistscala)
+            f = NamedTemporaryFile(mode='wb', suffix='.txt', prefix ='scala_src_path_', delete=False) #FML: We write to a temporary file just in case the command is to long
+            for line in pkglistscala:
+                if os.sep == '\\':
+                    f.write('"%s"\n' % os.path.abspath(line).replace(os.sep, os.sep + os.sep))
+                else:
+                    f.write('"%s"\n' % os.path.abspath(line))
+            f.close()
+            dirs = '@"%s"' % f.name
             classpath = os.pathsep.join(cplk[side])
             forkcmd = self.cmdrecompscala.format(classpath=classpath, sourcepath=pathsrclk[side], outpath=pathbinlk[side], pkgs=dirs)
             try:
@@ -1328,7 +1338,15 @@ class Commands(object):
                 self.logger.error('================================')
                 self.logger.error('')
                 raise
-        dirs = ' '.join(pkglist)
+            os.unlink(f.name)
+        f = NamedTemporaryFile(mode='wb', suffix='.txt', prefix ='java_src_path_', delete=False) #FML: We write to a temporary file just in case the command is to long
+        for line in pkglist:
+            if os.sep == '\\':
+                f.write('"%s"\n' % os.path.abspath(line).replace('\\', '\\\\'))
+            else:
+                f.write('"%s"\n' % os.path.abspath(line))
+        f.close()
+        dirs = '@"%s"' % f.name
         classpath = os.pathsep.join(cplk[side])
         forkcmd = self.cmdrecomp.format(classpath=classpath, sourcepath=pathsrclk[side], outpath=pathbinlk[side],
                                         pkgs=dirs)
@@ -1347,6 +1365,7 @@ class Commands(object):
             self.logger.error('==================')
             self.logger.error('')
             raise
+        os.unlink(f.name)
 
     def startserver(self, mainclass, extraargs):
         classpath = [self.binclient, self.srcclient] + self.cpathserver + self.cpathclient

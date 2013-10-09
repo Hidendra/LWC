@@ -29,9 +29,9 @@
 
 package org.getlwc.forge;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.ModLoader;
 import org.getlwc.ServerLayer;
 import org.getlwc.World;
 import org.getlwc.command.Command;
@@ -88,7 +88,7 @@ public class ForgeServerLayer extends ServerLayer {
      * Initialize the command manager and hook into it. This resolves to NATIVE code during obfuscation.
      */
     private void initCommandManager() {
-        MinecraftServer server = ModLoader.getMinecraftServerInstance();
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
         internal_commands = server.getCommandManager().getCommands();
     }
 
@@ -129,7 +129,7 @@ public class ForgeServerLayer extends ServerLayer {
 
     @Override
     protected Player internalGetPlayer(String playerName) {
-        MinecraftServer server = ModLoader.getMinecraftServerInstance();
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
 
         try {
             // loop over the player list
@@ -152,7 +152,7 @@ public class ForgeServerLayer extends ServerLayer {
 
     @Override
     protected World internalGetWorld(String worldName) {
-        MinecraftServer server = ModLoader.getMinecraftServerInstance();
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
 
         try {
             for (Object world_handle : server.worldServers) {

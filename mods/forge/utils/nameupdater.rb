@@ -41,7 +41,7 @@ file_exists = File.exists?(SRG_SRG_FILE)
 puts "==== client_ro_srg.srg detected: " + (file_exists ? File.expand_path(SRG_SRG_FILE) : "NOT FOUND")
 
 if !file_exists
-  puts "NO client_ro_srg.srgFOUND! Ensure this exists and MCP/Forge is setup+updated correctly: " + SRG_FILE
+  puts "NO client_ro_srg.srg FOUND! Ensure this exists and MCP/Forge is setup+updated correctly: " + SRG_FILE
   exit
 end
 
