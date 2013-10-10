@@ -193,7 +193,7 @@ public class WorldGuard extends JavaModule {
                         }
 
                         // Check if it's already protected
-                        if (lwc.findProtection(block) != null) {
+                        if (lwc.findProtection(block.getLocation()) != null) {
                             continue;
                         }
 

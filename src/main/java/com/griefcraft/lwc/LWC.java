@@ -346,7 +346,7 @@ public class LWC {
      * @return
      */
     public boolean canAccessProtection(Player player, Block block) {
-        Protection protection = findProtection(block);
+        Protection protection = findProtection(block.getLocation());
 
         return protection != null && canAccessProtection(player, protection);
     }
@@ -372,7 +372,7 @@ public class LWC {
      * @return
      */
     public boolean canAdminProtection(Player player, Block block) {
-        Protection protection = findProtection(block);
+        Protection protection = findProtection(block.getLocation());
 
         return protection != null && canAdminProtection(player, protection);
     }
@@ -563,7 +563,7 @@ public class LWC {
             Protection protection;
             Block adjacentBlock = block.getRelative(face);
 
-            if (!ignoreList.contains(adjacentBlock) && (protection = findProtection(adjacentBlock)) != null) {
+            if (!ignoreList.contains(adjacentBlock.getLocation()) && (protection = findProtection(adjacentBlock.getLocation())) != null) {
                 found.add(protection);
             }
         }
@@ -1160,7 +1160,15 @@ public class LWC {
 
         Protection protection = protectionCache.getProtection(cacheKey);
 
-        return protection != null ? protection : findProtection(location.getBlock());
+        if (protection == null) {
+            if (physicalDatabase.hasAllProtectionsCached()) {
+                return null; // if it's not in the cache it's not in the database
+            }
+
+            return findProtection(location.getBlock());
+        } else {
+            return protection;
+        }
     }
 
     /**
@@ -1218,7 +1226,7 @@ public class LWC {
             return null;
         }
 
-        return findProtection(world.getBlockAt(x, y, z));
+        return findProtection(new Location(world, x, y, z));
     }
 
     /**

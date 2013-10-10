@@ -28,7 +28,6 @@
 
 package com.griefcraft.listeners;
 
-import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
@@ -91,7 +90,7 @@ public class LWCBlockListener implements Listener {
             return;
         }
 
-        Protection protection = lwc.findProtection(block);
+        Protection protection = lwc.findProtection(block.getLocation());
 
         if (protection == null) {
             return;
@@ -144,7 +143,7 @@ public class LWCBlockListener implements Listener {
             return;
         }
 
-        Protection protection = lwc.findProtection(block);
+        Protection protection = lwc.findProtection(block.getLocation());
 
         if (protection == null) {
             return;
@@ -174,7 +173,7 @@ public class LWCBlockListener implements Listener {
             return;
         }
 
-        Protection protection = lwc.findProtection(block);
+        Protection protection = lwc.findProtection(block.getLocation());
 
         if (protection == null) {
             return;
@@ -202,7 +201,7 @@ public class LWCBlockListener implements Listener {
 
                 // Repair the cache
                 protection.removeCache();
-                lwc.findProtection(doubleChest);
+                lwc.findProtection(doubleChest.getLocation());
 
                 // they did not click the protected block, however we still want to prevent removal
                 return;
@@ -252,13 +251,13 @@ public class LWCBlockListener implements Listener {
         if (moved.getType() == Material.WOODEN_DOOR || moved.getType() == Material.IRON_DOOR_BLOCK) {
             Block below = moved.getRelative(BlockFace.DOWN).getRelative(direction.getOppositeFace());
 
-            if (lwc.findProtection(below) != null) {
+            if (lwc.findProtection(below.getLocation()) != null) {
                 event.setCancelled(true);
                 return;
             }
         }
 
-        if (lwc.findProtection(moved) != null) {
+        if (lwc.findProtection(moved.getLocation()) != null) {
             event.setCancelled(true);
         }
     }
@@ -280,7 +279,7 @@ public class LWCBlockListener implements Listener {
             direction = ((PistonBaseMaterial) data).getFacing();
             Block block = event.getBlock().getRelative(direction);
 
-            Protection protection = lwc.findProtection(block);
+            Protection protection = lwc.findProtection(block.getLocation());
 
             if (protection != null) {
                 event.setCancelled(true);
@@ -296,7 +295,7 @@ public class LWCBlockListener implements Listener {
         // Check the affected blocks
         for (int i = 0; i < event.getLength() + 2; i++) {
             Block block = piston.getRelative(direction, i);
-            Protection protection = lwc.findProtection(block);
+            Protection protection = lwc.findProtection(block.getLocation());
 
             // We don't want that!
             if (block.getType() == Material.AIR) {
@@ -356,7 +355,7 @@ public class LWCBlockListener implements Listener {
         }
 
         // Update the cache if a protection is matched here
-        Protection current = lwc.findProtection(block);
+        Protection current = lwc.findProtection(block.getLocation());
         if (current != null) {
             if (current.getProtectionFinder() != null) {
                 current.getProtectionFinder().fullMatchBlocks();
@@ -402,7 +401,7 @@ public class LWCBlockListener implements Listener {
 
                 //They're placing it beside a chest, check if it's already protected
                 if (face.getType() == block.getType()) {
-                    if (lwc.findProtection(face) != null) {
+                    if (lwc.findProtection(face.getLocation()) != null) {
                         return;
                     }
                 }

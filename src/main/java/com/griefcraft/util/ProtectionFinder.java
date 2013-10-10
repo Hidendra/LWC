@@ -149,6 +149,10 @@ public class ProtectionFinder {
     public Matcher[] getProtectionMatchers() {
         Material material = baseBlock.getType();
 
+        if (material == Material.HOPPER) {
+            return new Matcher[0];
+        }
+
         // Double chests
         if (DoubleChestMatcher.PROTECTABLES_CHESTS.contains(material)) {
             return new Matcher[] {

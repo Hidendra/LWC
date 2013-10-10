@@ -139,7 +139,7 @@ public class DoorsModule extends JavaModule {
             doubleDoorBlock = getDoubleDoor(block);
 
             if (doubleDoorBlock != null) {
-                Protection other = lwc.findProtection(doubleDoorBlock);
+                Protection other = lwc.findProtection(doubleDoorBlock.getLocation());
                 if (!lwc.canAccessProtection(player, other)) {
                     doubleDoorBlock = null; // don't open the other door :-)
                 }

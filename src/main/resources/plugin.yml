@@ -6,7 +6,7 @@ author: Hidendra
 description: >
              Inventory protection & management utilizing SQLite or MySQL as its backend
              Other blocks can also be protected individually, if configured.
-load: startup
+load: postworld
 softdepend: [ 'iConomy', 'Permissions', 'PermissionsBukkit', 'Vault' ]
 
 commands:

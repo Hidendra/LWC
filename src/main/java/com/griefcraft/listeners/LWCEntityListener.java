@@ -61,7 +61,7 @@ public class LWCEntityListener implements Listener {
     public void entityInteract(EntityInteractEvent event) {
         Block block = event.getBlock();
 
-        Protection protection = plugin.getLWC().findProtection(block);
+        Protection protection = plugin.getLWC().findProtection(block.getLocation());
 
         if (protection != null) {
             boolean allowEntityInteract = Boolean.parseBoolean(plugin.getLWC().resolveProtectionConfiguration(block, "allowEntityInteract"));
@@ -77,7 +77,7 @@ public class LWCEntityListener implements Listener {
         Block block = event.getBlock();
 
         // See if there is a protection there
-        Protection protection = plugin.getLWC().findProtection(block);
+        Protection protection = plugin.getLWC().findProtection(block.getLocation());
 
         if (protection != null) {
             // protections.allowEntityBreakDoor
@@ -98,7 +98,7 @@ public class LWCEntityListener implements Listener {
         LWC lwc = LWC.getInstance();
 
         for (Block block : event.blockList()) {
-            Protection protection = plugin.getLWC().findProtection(block);
+            Protection protection = plugin.getLWC().findProtection(block.getLocation());
 
             if (protection != null) {
                 boolean ignoreExplosions = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock(), "ignoreExplosions"));
