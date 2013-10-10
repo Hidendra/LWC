@@ -32,7 +32,6 @@ package org.getlwc;
 import org.getlwc.command.CommandHandler;
 import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.configuration.Configuration;
-import org.getlwc.scripting.ModuleManager;
 import org.getlwc.sql.Database;
 
 public interface Engine {
@@ -120,13 +119,6 @@ public interface Engine {
      * @return
      */
     public EventHelper getEventHelper();
-
-    /**
-     * Get the {@link ModuleManager} instance
-     *
-     * @return
-     */
-    public ModuleManager getModuleManager();
 
     /**
      * Get the library downloader object

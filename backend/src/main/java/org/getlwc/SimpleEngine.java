@@ -42,8 +42,6 @@ import org.getlwc.commands.BenchmarkCommands;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.configuration.YamlConfiguration;
 import org.getlwc.roles.PlayerRoleDefinition;
-import org.getlwc.scripting.ModuleManager;
-import org.getlwc.scripting.SimpleModuleManager;
 import org.getlwc.sql.Database;
 import org.getlwc.sql.DatabaseException;
 import org.getlwc.sql.JDBCDatabase;
@@ -81,11 +79,6 @@ public class SimpleEngine implements Engine {
      * The {@link LibraryDownloader} responsible for downloading library files
      */
     private final SimpleLibraryDownloader downloader = new SimpleLibraryDownloader(this);
-
-    /**
-     * The global module manager
-     */
-    private final SimpleModuleManager moduleManager = new SimpleModuleManager(this);
 
     /**
      * The server layer
@@ -196,9 +189,6 @@ public class SimpleEngine implements Engine {
 
         // default attributes
         registerDefaultAttributes();
-
-        // load modules
-        moduleManager.loadAll();
     }
 
     /**
@@ -295,16 +285,8 @@ public class SimpleEngine implements Engine {
     /**
      * {@inheritDoc}
      */
-    public ModuleManager getModuleManager() {
-        return moduleManager;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void shutdown() {
         consoleSender.sendTranslatedMessage("Shutting down!");
-        moduleManager.destroyAll();
         saveQueue.flushAndClose();
         commandHandler.clearCommands();
         roleManager.clearRoles();
