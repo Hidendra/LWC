@@ -1160,15 +1160,7 @@ public class LWC {
 
         Protection protection = protectionCache.getProtection(cacheKey);
 
-        if (protection == null) {
-            if (physicalDatabase.hasAllProtectionsCached()) {
-                return null; // if it's not in the cache it's not in the database
-            }
-
-            return findProtection(location.getBlock());
-        } else {
-            return protection;
-        }
+        return protection != null ? protection : findProtection(location.getBlock());
     }
 
     /**

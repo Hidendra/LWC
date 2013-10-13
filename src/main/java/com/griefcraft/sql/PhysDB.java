@@ -37,7 +37,6 @@ import com.griefcraft.model.Permission;
 import com.griefcraft.model.Protection;
 import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.scripting.Module;
-import com.griefcraft.util.ProtectionFinder;
 import com.griefcraft.util.config.Configuration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -864,13 +863,6 @@ public class PhysDB extends Database {
 
             // throw all of the protections in
             for (Protection protection : protections) {
-                if (protection.getBlock() != null) {
-                    ProtectionFinder finder = new ProtectionFinder(lwc);
-                    finder.matchBlocks(protection.getBlock());
-                    finder.fullMatchBlocks();
-                    protection.setProtectionFinder(finder);
-                }
-
                 cache.add(protection);
             }
         } catch (SQLException e) {
