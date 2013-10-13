@@ -43,6 +43,7 @@ import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
 import org.getlwc.World;
 import org.getlwc.bukkit.command.BukkitConsoleCommandSender;
+import org.getlwc.bukkit.economy.VaultEconomy;
 import org.getlwc.bukkit.listeners.BukkitListener;
 import org.getlwc.command.CommandContext;
 import org.getlwc.command.CommandException;
@@ -62,7 +63,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
     /**
      * The LWC engine
      */
-    private Engine engine;
+    private SimpleEngine engine;
 
     /**
      * The server layer
@@ -133,13 +134,17 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
         logger = this.getLogger();
 
         // Create a new LWC engine
-        engine = SimpleEngine.getOrCreateEngine(layer, new BukkitServerInfo(), new BukkitConsoleCommandSender(getServer().getConsoleSender()));
-        engine.startup();
+        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new BukkitServerInfo(), new BukkitConsoleCommandSender(getServer().getConsoleSender()));
 
         // Register events
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new BukkitListener(this), this);
 
+        if (getServer().getPluginManager().getPlugin("Vault") != null) {
+            engine.setEconomy(new VaultEconomy());
+        }
+
+        engine.startup();
     }
 
     @Override

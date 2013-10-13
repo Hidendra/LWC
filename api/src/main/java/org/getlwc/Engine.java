@@ -32,6 +32,7 @@ package org.getlwc;
 import org.getlwc.command.CommandHandler;
 import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.configuration.Configuration;
+import org.getlwc.economy.Economy;
 import org.getlwc.sql.Database;
 
 public interface Engine {
@@ -126,6 +127,13 @@ public interface Engine {
      * @return
      */
     public LibraryDownloader getLibraryDownloader();
+
+    /**
+     * Get the economy object for the server
+     *
+     * @return
+     */
+    public Economy getEconomy();
 
     /**
      * Called when the plugin is ready to be fully loaded. Initialization is completed here.

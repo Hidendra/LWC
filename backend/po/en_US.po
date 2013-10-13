@@ -2,12 +2,12 @@
 # Copyright (C) 2012-2013 Tyler Blair
 # This file is distributed under the same license as the LWC package.
 # Tyler Blair <hidendra@griefcraft.com>, 2012-2013.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-10-10 19:07+0000\n"
+"POT-Creation-Date: 2013-10-11 19:21+0000\n"
 "PO-Revision-Date: 2013-06-18 23:02-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -17,14 +17,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.5.5\n"
 
-#: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:175
+#: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:180
 #: mods/canary-recode/src/main/java/org/getlwc/canary/CanaryServerLayer.java:171
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:189
 #, java-format
 msgid "An error was encountered while processing a command: {0}"
 msgstr "An error was encountered while processing a command: {0}"
 
-#: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:179
+#: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:184
 #: mods/canary-recode/src/main/java/org/getlwc/canary/CanaryServerLayer.java:175
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:193
 msgid "&4[LWC] An internal error occurred while processing this command"
@@ -66,36 +66,41 @@ msgstr "[ASM] Patched {0} ({1}) successfully!"
 msgid "[ASM] Failed to patch {0} ({1})"
 msgstr "[ASM] Failed to patch {0} ({1})"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:135
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:142
 #, java-format
 msgid "Server: {0} ({1})"
 msgstr "Server: {0} ({1})"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:136
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:143
 #, java-format
 msgid "Backend: {0}"
 msgstr "Backend: {0}"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:137
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:144
 #, java-format
 msgid "This version was built on: {0}"
 msgstr "This version was built on: {0}"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:289
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:200
+#, java-format
+msgid "Economy: {0}"
+msgstr "Economy: {0}"
+
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:314
 msgid "Shutting down!"
 msgstr "Shutting down!"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:312
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:337
 #, java-format
 msgid "Driver \"{0}\" is not supported."
 msgstr "Driver \"{0}\" is not supported."
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:342
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:367
 #, java-format
 msgid "Connected to the database with driver: {0}"
 msgstr "Connected to the database with driver: {0}"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:344
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:369
 msgid "Failed to connect to the database!"
 msgstr "Failed to connect to the database!"
 

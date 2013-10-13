@@ -41,6 +41,8 @@ import org.getlwc.commands.BaseCommands;
 import org.getlwc.commands.BenchmarkCommands;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.configuration.YamlConfiguration;
+import org.getlwc.economy.DefaultEconomy;
+import org.getlwc.economy.Economy;
 import org.getlwc.roles.PlayerRoleDefinition;
 import org.getlwc.sql.Database;
 import org.getlwc.sql.DatabaseException;
@@ -114,6 +116,11 @@ public class SimpleEngine implements Engine {
      * The internal config (engine.yml inside of the jar file)
      */
     private Configuration internalConfig;
+
+    /**
+     * The economy object for the server
+     */
+    private Economy economy = new DefaultEconomy();
 
     private SimpleEngine(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender) {
         this.serverLayer = serverLayer;
@@ -189,6 +196,8 @@ public class SimpleEngine implements Engine {
 
         // default attributes
         registerDefaultAttributes();
+
+        consoleSender.sendTranslatedMessage("Economy: {0}", economy.getName());
     }
 
     /**
@@ -196,6 +205,22 @@ public class SimpleEngine implements Engine {
      */
     public LibraryDownloader getLibraryDownloader() {
         return downloader;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Economy getEconomy() {
+        return economy;
+    }
+
+    /**
+     * Set the economy object that will be used
+     *
+     * @param economy
+     */
+    public void setEconomy(Economy economy) {
+        this.economy = economy;
     }
 
     /**

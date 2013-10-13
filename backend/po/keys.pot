@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: LWC\n"
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-10-10 19:08+0000\n"
+"POT-Creation-Date: 2013-10-11 19:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,14 +19,14 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:175
+#: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:180
 #: mods/canary-recode/src/main/java/org/getlwc/canary/CanaryServerLayer.java:171
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:189
 #, java-format
 msgid "An error was encountered while processing a command: {0}"
 msgstr ""
 
-#: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:179
+#: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:184
 #: mods/canary-recode/src/main/java/org/getlwc/canary/CanaryServerLayer.java:175
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:193
 msgid "&4[LWC] An internal error occurred while processing this command"
@@ -64,36 +64,41 @@ msgstr ""
 msgid "[ASM] Failed to patch {0} ({1})"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:135
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:142
 #, java-format
 msgid "Server: {0} ({1})"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:136
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:143
 #, java-format
 msgid "Backend: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:137
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:144
 #, java-format
 msgid "This version was built on: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:289
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:200
+#, java-format
+msgid "Economy: {0}"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:314
 msgid "Shutting down!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:312
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:337
 #, java-format
 msgid "Driver \"{0}\" is not supported."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:342
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:367
 #, java-format
 msgid "Connected to the database with driver: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:344
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:369
 msgid "Failed to connect to the database!"
 msgstr ""
 
