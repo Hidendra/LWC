@@ -69,7 +69,7 @@ public class MethodCounter {
 
     /**
      * Sort a hashmap by the values
-     *
+     * <p/>
      * credits: http://stackoverflow.com/questions/8119366/sorting-hashmap-by-values/13913206#13913206
      *
      * @param unsortMap
@@ -94,8 +94,7 @@ public class MethodCounter {
 
         // Maintaining insertion order with the help of LinkedList
         Map<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
-        for (Map.Entry<String, Integer> entry : list)
-        {
+        for (Map.Entry<String, Integer> entry : list) {
             sortedMap.put(entry.getKey(), entry.getValue());
         }
 
