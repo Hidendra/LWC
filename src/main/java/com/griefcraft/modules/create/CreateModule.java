@@ -147,7 +147,7 @@ public class CreateModule extends JavaModule {
         if (protection != null) {
             // Fix the blocks that match it
             protection.removeCache();
-            LWC.getInstance().getProtectionCache().add(protection);
+            LWC.getInstance().getProtectionCache().addProtection(protection);
 
             lwc.getModuleLoader().dispatchEvent(new LWCProtectionRegistrationPostEvent(protection));
         }

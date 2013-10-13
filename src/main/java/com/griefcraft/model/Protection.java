@@ -743,7 +743,7 @@ public class Protection {
      */
     public void removeCache() {
         LWC lwc = LWC.getInstance();
-        lwc.getProtectionCache().remove(this);
+        lwc.getProtectionCache().removeProtection(this);
         radiusRemoveCache();
     }
 

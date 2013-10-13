@@ -28,6 +28,7 @@
 
 package com.griefcraft.util;
 
+import com.griefcraft.cache.MethodCounter;
 import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCInfo;
@@ -134,7 +135,6 @@ public class Statistics {
 
         sender.sendMessage(Colors.Red + " ==== Cache ==== ");
 
-        StringBuffer buffer = new StringBuffer();
         ProtectionCache cache = lwc.getProtectionCache();
 
         double cachePercentFilled = ((double) cache.size() / cache.totalCapacity()) * 100;
@@ -148,13 +148,25 @@ public class Statistics {
             cacheColour = Colors.Red;
         }
 
-        buffer.append("  Usage: " + cacheColour + String.format("%.2f", cachePercentFilled) + "% " + Colors.White + " ( " + cache.size() + "/" + cache.totalCapacity() + " [" + cache.capacity() + "+" + cache.adaptiveCapacity() + "] )");
-        buffer.append("  [ Reads: " + formatNumber(cache.getReads()) + " <=> " + String.format("%.2f", getAverage(cache.getReads())) + " r/s ]");
-        buffer.append("  [ Writes: " + formatNumber(cache.getWrites()) + " <=> " + String.format("%.2f", getAverage(cache.getWrites())) + " w/s ]");
-        sender.sendMessage(buffer.toString());
+        sender.sendMessage("  Usage: " + cacheColour + String.format("%.2f", cachePercentFilled) + "% " + Colors.White + " ( " + cache.size() + "/" + cache.totalCapacity() + " [" + cache.capacity() + "+" + cache.adaptiveCapacity() + "] )");
+        sender.sendMessage("  Profile: ");
+        sendMethodCounter(sender, cache.getMethodCounter());
         // sender.sendMessage("  Reads: " + formatNumber(cache.getReads()) + " | " + String.format("%.2f", getAverage(cache.getReads())) + " / second");
         // sender.sendMessage("  Writes: " + formatNumber(cache.getWrites()) + " | " + String.format("%.2f", getAverage(cache.getWrites())) + " / second");
     }
+
+    private static void sendMethodCounter(CommandSender sender, MethodCounter counter) {
+        Map<String, Integer> sorted = counter.sortByValue();
+
+        for (Map.Entry<String, Integer> entry : sorted.entrySet()) {
+            String method = entry.getKey();
+            int count = entry.getValue();
+
+            sender.sendMessage("    " + method + ": " + formatNumber(count) + " (" + String.format("%.2f", getAverage(count)) + " / second)");
+        }
+
+    }
+
 
     /**
      * Format a number

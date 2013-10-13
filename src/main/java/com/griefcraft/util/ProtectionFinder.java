@@ -253,7 +253,7 @@ public class ProtectionFinder {
             if (matchedProtection.getProtectionFinder() == null) {
                 fullMatchBlocks();
                 matchedProtection.setProtectionFinder(this);
-                lwc.getProtectionCache().add(matchedProtection);
+                lwc.getProtectionCache().addProtection(matchedProtection);
             }
             return Result.E_FOUND;
         }
@@ -281,7 +281,7 @@ public class ProtectionFinder {
             if (protection.getProtectionFinder() == null) {
                 protection.setProtectionFinder(this);
                 fullMatchBlocks();
-                lwc.getProtectionCache().add(matchedProtection);
+                lwc.getProtectionCache().addProtection(matchedProtection);
             }
 
             // ensure it's the right block

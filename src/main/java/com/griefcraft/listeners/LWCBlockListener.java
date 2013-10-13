@@ -359,7 +359,7 @@ public class LWCBlockListener implements Listener {
         if (current != null) {
             if (current.getProtectionFinder() != null) {
                 current.getProtectionFinder().fullMatchBlocks();
-                lwc.getProtectionCache().add(current);
+                lwc.getProtectionCache().addProtection(current);
             }
 
             return;

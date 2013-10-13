@@ -629,7 +629,7 @@ public class PhysDB extends Database {
             Protection protection = resolveProtection(statement);
 
             if (protection != null) {
-                cache.add(protection);
+                cache.addProtection(protection);
                 return protection;
             }
         } catch (SQLException e) {
@@ -863,7 +863,7 @@ public class PhysDB extends Database {
 
             // throw all of the protections in
             for (Protection protection : protections) {
-                cache.add(protection);
+                cache.addProtection(protection);
             }
         } catch (SQLException e) {
             printException(e);
@@ -923,7 +923,7 @@ public class PhysDB extends Database {
 
             if (protection != null) {
                 // cache the protection
-                cache.add(protection);
+                cache.addProtection(protection);
             }
 
             return protection;
@@ -1179,7 +1179,7 @@ public class PhysDB extends Database {
 
             // Cache it
             if (protection != null) {
-                cache.add(protection);
+                cache.addProtection(protection);
                 protectionCount ++;
             }
 

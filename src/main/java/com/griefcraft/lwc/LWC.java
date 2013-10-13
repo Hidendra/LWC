@@ -1170,10 +1170,6 @@ public class LWC {
      * @return
      */
     public Protection findProtection(Block block) {
-        if (protectionCache.isKnownNull(protectionCache.cacheKey(block.getLocation()))) {
-            return null;
-        }
-
         // If the block type is AIR, then we have a problem .. but attempt to load a protection anyway
         // Note: this call stems from a very old bug in Bukkit that likely does not exist anymore at all
         //       but is kept just incase. At one point getBlock() in Bukkit would sometimes say a block

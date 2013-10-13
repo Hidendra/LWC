@@ -87,6 +87,11 @@ public class ProtectionCache {
     private int adaptiveCapacity = 0;
 
     /**
+     * The method counter
+     */
+    private final MethodCounter counter = new MethodCounter();
+
+    /**
      * Used for byKnownNulls
      */
     private final static Object FAKE_VALUE = new Object();
@@ -123,21 +128,12 @@ public class ProtectionCache {
     }
 
     /**
-     * Gets the total amount of reads performed on the cache
+     * Get the method counter for this class
      *
      * @return
      */
-    public long getReads() {
-        return byCacheKey.getReads() + byId.getReads() + byKnownBlock.getReads();
-    }
-
-    /**
-     * Gets the total amount of writes performed on the cache
-     *
-     * @return
-     */
-    public long getWrites() {
-        return byCacheKey.getWrites() + byId.getWrites() + byKnownBlock.getWrites();
+    public MethodCounter getMethodCounter() {
+        return counter;
     }
 
     /**
@@ -204,10 +200,12 @@ public class ProtectionCache {
      *
      * @param protection
      */
-    public void add(Protection protection) {
+    public void addProtection(Protection protection) {
         if (protection == null) {
             return;
         }
+
+        counter.increment("addProtection");
 
         // Add the hard reference
         references.put(protection, null);
@@ -233,7 +231,9 @@ public class ProtectionCache {
      *
      * @param protection
      */
-    public void remove(Protection protection) {
+    public void removeProtection(Protection protection) {
+        counter.increment("removeProtection");
+
         references.remove(protection);
         byId.remove(protection.getId());
 
@@ -261,6 +261,7 @@ public class ProtectionCache {
      * @param cacheKey
      */
     public void addKnownNull(String cacheKey) {
+        counter.increment("addKnownNull");
         byKnownNulls.put(cacheKey, FAKE_VALUE);
     }
 
@@ -271,6 +272,7 @@ public class ProtectionCache {
      * @return
      */
     public boolean isKnownNull(String cacheKey) {
+        counter.increment("isKnownNull");
         return byKnownNulls.containsKey(cacheKey);
     }
 
@@ -281,6 +283,8 @@ public class ProtectionCache {
      * @return
      */
     public Protection getProtection(String cacheKey) {
+        counter.increment("getProtection");
+
         Protection protection;
 
         // Check the direct cache first
@@ -309,6 +313,7 @@ public class ProtectionCache {
      * @return
      */
     public boolean isKnownBlock(Block block) {
+        counter.increment("isKnownBlock");
         return byKnownBlock.containsKey(cacheKey(block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
     }
 
@@ -319,6 +324,7 @@ public class ProtectionCache {
      * @return
      */
     public Protection getProtectionById(int id) {
+        counter.increment("getProtectionById");
         return byId.get(id);
     }
 
