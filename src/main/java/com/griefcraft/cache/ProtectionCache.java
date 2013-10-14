@@ -74,7 +74,7 @@ public class ProtectionCache {
     /**
      * A cache of blocks that are known to not have a protection
      */
-    private final WeakLRUCache<String, Object> byKnownNulls;
+    private final LRUCache<String, Object> byKnownNulls;
 
     /**
      * The capacity of the cache
@@ -104,7 +104,7 @@ public class ProtectionCache {
         this.byCacheKey = new WeakLRUCache<String, Protection>(capacity);
         this.byId = new WeakLRUCache<Integer, Protection>(capacity);
         this.byKnownBlock = new WeakLRUCache<String, Protection>(capacity);
-        this.byKnownNulls = new WeakLRUCache<String, Object>(Math.max(10000, capacity)); // enforce a min size so we have a known buffer
+        this.byKnownNulls = new LRUCache<String, Object>(Math.min(10000, capacity)); // enforce a min size so we have a known buffer
     }
 
     /**
