@@ -52,7 +52,6 @@ public class PlayerRoleDefinition implements RoleDefinition {
         return 1; // adapted from LWCv4
     }
 
-
     /**
      * {@inheritDoc}
      */
