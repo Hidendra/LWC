@@ -172,6 +172,23 @@ public class Protection extends AbstractSavable {
     }
 
     /**
+     * Check if a role exists with the same name in this protection
+     *
+     * @param type
+     * @param name
+     * @return
+     */
+    public Role getRole(int type, String name) {
+        for (Role role : roles) {
+            if (role.getType() == type && role.getRoleName().equals(name)) {
+                return role;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Remove a role from the protection, which will prevent it from governing access on the protection
      *
      * @param role

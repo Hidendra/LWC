@@ -58,7 +58,7 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
     /**
      * The access to grant to players that match this role
      */
-    private final ProtectionAccess roleAccess;
+    private ProtectionAccess roleAccess;
 
     public Role(Engine engine, Protection protection, String roleName, ProtectionAccess roleAccess) {
         super(engine);
@@ -98,6 +98,15 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
      */
     public ProtectionAccess getRoleAccess() {
         return roleAccess;
+    }
+
+    /**
+     * Set the access for the protection
+     *
+     * @param access
+     */
+    public void setProtectionAccess(ProtectionAccess access) {
+        this.roleAccess = access;
     }
 
     /**
@@ -151,7 +160,6 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
         int hash = 1;
         hash *= 17 + getType();
         hash *= 17 + roleName.hashCode();
-        hash *= 17 + roleAccess.hashCode();
         return hash;
     }
 

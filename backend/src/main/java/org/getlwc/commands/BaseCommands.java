@@ -106,7 +106,7 @@ public class BaseCommands {
                 if (protection != null) {
                     player.sendTranslatedMessage("&2Created a new protection successfully.\n" +
                             "Want to give another player access to your protection?\n" +
-                            "Use: &e/lwc modify member NAME");
+                            "Use: &e/lwc modify NAME (or: /cadd NAME)");
                 } else {
                     player.sendTranslatedMessage("&4Failed to create the protection. Your block is most likely not protected.");
                 }

@@ -101,6 +101,7 @@ public class AddRemoveCommands {
 
                         if (access == null) {
                             access = ProtectionAccess.MEMBER;
+
                             Role role = engine.getRoleManager().matchAndCreateRoleByName(protection, token, access);
 
                             if (role == null) {
@@ -108,9 +109,17 @@ public class AddRemoveCommands {
                                 return true;
                             }
 
-                            protection.addRole(role);
-                            protection.save();
-                            player.sendTranslatedMessage("&2Added a {0} for \"{1}\" to the protection with access level {2} successfully!", role.getClass().getSimpleName(), token, access);
+                            Role existing = protection.getRole(role.getType(), role.getRoleName());
+
+                            if (existing != null) {
+                                existing.setProtectionAccess(role.getRoleAccess());
+                                existing.save();
+                                player.sendTranslatedMessage("&2Changed {0} to {1} successfully!", existing.getRoleName(), existing.getRoleAccess());
+                            } else {
+                                protection.addRole(role);
+                                protection.save();
+                                player.sendTranslatedMessage("&2Added a {0} for \"{1}\" to the protection with access level {2} successfully!", role.getClass().getSimpleName(), token, access);
+                            }
                         }
 
                         if (access != null && !ProtectionAccess.USABLE_ACCESS_LEVELS.contains(access)) {
@@ -135,9 +144,17 @@ public class AddRemoveCommands {
                             return true;
                         }
 
-                        protection.addRole(role);
-                        protection.save();
-                        player.sendTranslatedMessage("&2Added a {0} for \"{1}\" to the protection with access level {2} successfully!", role.getClass().getSimpleName(), token, access);
+                        Role existing = protection.getRole(role.getType(), role.getRoleName());
+
+                        if (existing != null) {
+                            existing.setProtectionAccess(role.getRoleAccess());
+                            existing.save();
+                            player.sendTranslatedMessage("&2Changed {0} to {1} successfully!", existing.getRoleName(), existing.getRoleAccess());
+                        } else {
+                            protection.addRole(role);
+                            protection.save();
+                            player.sendTranslatedMessage("&2Added a {0} for \"{1}\" to the protection with access level {2} successfully!", role.getClass().getSimpleName(), token, access);
+                        }
                     }
                 }
 
