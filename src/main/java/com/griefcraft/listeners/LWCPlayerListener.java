@@ -76,32 +76,13 @@ public class LWCPlayerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onMoveItem(InventoryMoveItemEvent event) {
-        LWC lwc = LWC.getInstance();
-        InventoryHolder hopperholder;
-        Location hopperLocation = null;
-        Protection hopperProtection = null;
-
-        try {
-            hopperholder = event.getInitiator().getHolder();
-
-            if (hopperholder instanceof Hopper) {
-                hopperLocation = ((Hopper) hopperholder).getLocation();
-            }
-
-            if (hopperLocation != null) {
-                // Check if the hopper is protected
-                hopperProtection = lwc.findProtection(hopperLocation);
-            }
-
-        } catch (Exception e) { }
-
         boolean result;
 
         // if the initiator is the same as the source it is a dropper i.e. depositing items
         if (event.getInitiator() == event.getSource()) {
-            result = handleMoveItemEvent(hopperProtection, event.getDestination());
+            result = handleMoveItemEvent(event.getInitiator(), event.getDestination());
         } else {
-            result = handleMoveItemEvent(hopperProtection, event.getSource());
+            result = handleMoveItemEvent(event.getInitiator(), event.getSource());
         }
 
         if (result) {
@@ -114,19 +95,21 @@ public class LWCPlayerListener implements Listener {
      *
      * @param inventory
      */
-    private boolean handleMoveItemEvent(Protection hopperProtection, Inventory inventory) {
+    private boolean handleMoveItemEvent(Inventory initiator, Inventory inventory) {
         LWC lwc = LWC.getInstance();
 
         if (inventory == null) {
             return false;
         }
 
-        // Location of the container
         Location location;
         InventoryHolder holder;
+        Location hopperLocation = null;
+        InventoryHolder hopperHolder;
 
         try {
             holder = inventory.getHolder();
+            hopperHolder = initiator.getHolder();
         } catch (AbstractMethodError e) {
             return false;
         }
@@ -138,6 +121,10 @@ public class LWCPlayerListener implements Listener {
                 location = ((DoubleChest) holder).getLocation();
             } else {
                 return false;
+            }
+
+            if (hopperHolder instanceof Hopper) {
+                hopperLocation = ((Hopper) hopperHolder).getLocation();
             }
         } catch (Exception e) {
             return false;
@@ -155,10 +142,14 @@ public class LWCPlayerListener implements Listener {
             return false;
         }
 
-        if (hopperProtection != null) {
-            // if they're owned by the same person then we can allow the move
-            if (hopperProtection.getOwner().equals(protection.getOwner())) {
-                return false;
+        if (hopperLocation != null) {
+            Protection hopperProtection = lwc.findProtection(hopperLocation);
+
+            if (hopperProtection != null) {
+                // if they're owned by the same person then we can allow the move
+                if (hopperProtection.getOwner().equals(protection.getOwner())) {
+                    return false;
+                }
             }
         }
 
