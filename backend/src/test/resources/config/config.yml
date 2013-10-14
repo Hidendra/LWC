@@ -1,0 +1,26 @@
+# unit test config file
+# only used for very select tests
+core:
+    locale: en_US
+
+protections:
+    protectables:
+        chest:
+            enabled: true
+        furnace:
+            enabled: true
+        trapped_chest:
+            enabled: true
+        iron_door_block:
+            enabled: true
+        wooden_door:
+            enabled: true
+
+database:
+    driver: h2
+    databasePath: '%home%/lwc.db'
+    hostname: '127.0.0.1'
+    database: lwc
+    username: root
+    password: ''
+    prefix: ''

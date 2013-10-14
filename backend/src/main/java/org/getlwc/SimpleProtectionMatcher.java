@@ -52,8 +52,8 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
         blocks.add(base);
 
         // Double chest
-        if (baseType == 54) {
-            Block adjacentChest = base.findBlockRelativeToXZ(54);
+        if (baseType == 54 || baseType == 146) {
+            Block adjacentChest = base.findBlockRelativeToXZ(baseType);
 
             if (adjacentChest != null) {
                 blocks.add(adjacentChest);
