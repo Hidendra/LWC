@@ -32,8 +32,7 @@ package org.getlwc.sql;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.getlwc.Engine;
 import org.getlwc.Location;
-import org.getlwc.ProtectionAccess;
-import org.getlwc.Role;
+import org.getlwc.ProtectionRole;
 import org.getlwc.RoleDefinition;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
@@ -459,7 +458,7 @@ public class JDBCDatabase implements Database {
     /**
      * {@inheritDoc}
      */
-    public void saveOrCreateRole(Role role) {
+    public void saveOrCreateRole(ProtectionRole role) {
         try {
             Connection connection = pool.getConnection();
             PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_roles (protection_id, type, name, role) VALUES (?, ?, ?, ?)");
@@ -467,8 +466,8 @@ public class JDBCDatabase implements Database {
             try {
                 statement.setInt(1, role.getProtection().getId());
                 statement.setInt(2, role.getType());
-                statement.setString(3, role.getRoleName());
-                statement.setInt(4, role.getRoleAccess().ordinal());
+                statement.setString(3, role.getName());
+                statement.setInt(4, role.getAccess().ordinal());
                 statement.executeUpdate();
             } finally {
                 safeClose(statement);
@@ -480,11 +479,11 @@ public class JDBCDatabase implements Database {
                 PreparedStatement statement = connection.prepareStatement("UPDATE " + details.getPrefix() + "protection_roles SET name = ?, role = ? WHERE protection_id = ? AND type = ? AND name = ?");
 
                 try {
-                    statement.setString(1, role.getRoleName());
-                    statement.setInt(2, role.getRoleAccess().ordinal());
+                    statement.setString(1, role.getName());
+                    statement.setInt(2, role.getAccess().ordinal());
                     statement.setInt(3, role.getProtection().getId());
                     statement.setInt(4, role.getType());
-                    statement.setString(5, role.getRoleName());
+                    statement.setString(5, role.getName());
                     statement.executeUpdate();
                 } finally {
                     safeClose(statement);
@@ -499,7 +498,7 @@ public class JDBCDatabase implements Database {
     /**
      * {@inheritDoc}
      */
-    public void removeRole(Role role) {
+    public void removeRole(ProtectionRole role) {
         try {
             Connection connection = pool.getConnection();
             PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_roles WHERE protection_id = ? AND type = ? AND name = ?");
@@ -507,7 +506,7 @@ public class JDBCDatabase implements Database {
             try {
                 statement.setInt(1, role.getProtection().getId());
                 statement.setInt(2, role.getType());
-                statement.setString(3, role.getRoleName());
+                statement.setString(3, role.getName());
                 statement.executeUpdate();
             } finally {
                 safeClose(statement);
@@ -660,8 +659,8 @@ public class JDBCDatabase implements Database {
     /**
      * {@inheritDoc}
      */
-    public Set<Role> loadProtectionRoles(Protection protection) {
-        Set<Role> roles = new HashSet<Role>();
+    public Set<ProtectionRole> loadProtectionRoles(Protection protection) {
+        Set<ProtectionRole> roles = new HashSet<ProtectionRole>();
 
         try {
             Connection connection = pool.getConnection();
@@ -674,7 +673,7 @@ public class JDBCDatabase implements Database {
 
                 while (set.next()) {
                     RoleDefinition definition = engine.getRoleManager().getDefinition(set.getInt("type"));
-                    Role role = definition.createRole(protection, set.getString("name"), ProtectionAccess.values()[set.getInt("role")]);
+                    ProtectionRole role = definition.createRole(protection, set.getString("name"), ProtectionRole.Access.values()[set.getInt("role")]);
 
                     if (role != null) {
                         roles.add(role);

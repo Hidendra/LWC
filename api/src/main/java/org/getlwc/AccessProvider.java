@@ -44,6 +44,6 @@ public interface AccessProvider {
      * @param player
      * @return
      */
-    public ProtectionAccess getAccess(Protection protection, Player player);
+    public ProtectionRole.Access getAccess(Protection protection, Player player);
 
 }

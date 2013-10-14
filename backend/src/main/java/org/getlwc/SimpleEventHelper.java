@@ -68,10 +68,10 @@ public class SimpleEventHelper implements EventHelper {
         if (entity instanceof Player) {
             Player player = (Player) entity;
 
-            ProtectionAccess access = protection.getAccess(player);
+            ProtectionRole.Access access = protection.getAccess(player);
 
             // if they're the owner, return immediately
-            if (access.ordinal() > ProtectionAccess.NONE.ordinal()) {
+            if (access.ordinal() > ProtectionRole.Access.NONE.ordinal()) {
                 return true;
             }
 
@@ -117,18 +117,18 @@ public class SimpleEventHelper implements EventHelper {
 
                 // default event action
                 if (!cancel && protection != null) {
-                    ProtectionAccess access = protection.getAccess(player);
+                    ProtectionRole.Access access = protection.getAccess(player);
 
                     /// TODO distinguish between left / right click.
 
                     // check if they can access the protection
-                    if (access.ordinal() > ProtectionAccess.NONE.ordinal()) {
+                    if (access.ordinal() > ProtectionRole.Access.NONE.ordinal()) {
                         return false;
                     }
 
                     // they cannot access the protection o\
                     // so send them a kind message
-                    if (access != ProtectionAccess.EXPLICIT_DENY) {
+                    if (access != ProtectionRole.Access.EXPLICIT_DENY) {
                         player.sendTranslatedMessage("&4This protection is locked by a magical spell.");
                     }
 

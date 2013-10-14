@@ -31,7 +31,7 @@ package org.getlwc;
 
 import org.getlwc.model.Protection;
 
-public interface RoleManager {
+public interface ProtectionRoleManager {
 
     /**
      * Register a {@link RoleDefinition} into the system to be usable by protections
@@ -41,10 +41,10 @@ public interface RoleManager {
     public void registerDefinition(RoleDefinition definition);
 
     /**
-     * Get the {@link Role} for the given role id. If no role is found, return NULL
+     * Get the {@link ProtectionRole} for the given role id. If no role is found, return NULL
      *
      * @param id
-     * @return the {@link Role} object mapped to the id given. If none is found, NULL is returned
+     * @return the {@link ProtectionRole} object mapped to the id given. If none is found, NULL is returned
      */
     public RoleDefinition getDefinition(int id);
 
@@ -55,6 +55,6 @@ public interface RoleManager {
      * @param name
      * @return
      */
-    public Role matchAndCreateRoleByName(Protection protection, String name, ProtectionAccess access);
+    public ProtectionRole matchAndCreateRoleByName(Protection protection, String name, ProtectionRole.Access access);
 
 }

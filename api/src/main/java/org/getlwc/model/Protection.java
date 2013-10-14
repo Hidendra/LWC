@@ -32,8 +32,7 @@ package org.getlwc.model;
 import org.getlwc.AccessProvider;
 import org.getlwc.Engine;
 import org.getlwc.Location;
-import org.getlwc.ProtectionAccess;
-import org.getlwc.Role;
+import org.getlwc.ProtectionRole;
 import org.getlwc.World;
 import org.getlwc.entity.Player;
 
@@ -98,7 +97,7 @@ public class Protection extends AbstractSavable {
     /**
      * A set of roles this protection contains
      */
-    private final Set<Role> roles = new HashSet<Role>();
+    private final Set<ProtectionRole> roles = new HashSet<ProtectionRole>();
 
     /**
      * The map of attributes this protection contains
@@ -125,7 +124,7 @@ public class Protection extends AbstractSavable {
             addAttribute(attribute);
         }
 
-        for (Role role : engine.getDatabase().loadProtectionRoles(this)) {
+        for (ProtectionRole role : engine.getDatabase().loadProtectionRoles(this)) {
             addRole(role);
         }
     }
@@ -136,18 +135,18 @@ public class Protection extends AbstractSavable {
      * @param player
      * @return
      */
-    public ProtectionAccess getAccess(Player player) {
-        ProtectionAccess access = ProtectionAccess.NONE;
+    public ProtectionRole.Access getAccess(Player player) {
+        ProtectionRole.Access access = ProtectionRole.Access.NONE;
 
         for (AccessProvider provider : accessProviders) {
-            ProtectionAccess roleAccess = provider.getAccess(this, player);
+            ProtectionRole.Access roleAccess = provider.getAccess(this, player);
 
             if (roleAccess == null) {
                 continue;
             }
 
             // check for immediate deny
-            if (roleAccess == ProtectionAccess.EXPLICIT_DENY) {
+            if (roleAccess == ProtectionRole.Access.EXPLICIT_DENY) {
                 return roleAccess;
             }
 
@@ -166,7 +165,7 @@ public class Protection extends AbstractSavable {
      *
      * @param role
      */
-    public void addRole(Role role) {
+    public void addRole(ProtectionRole role) {
         roles.add(role);
         accessProviders.add(role);
     }
@@ -178,9 +177,9 @@ public class Protection extends AbstractSavable {
      * @param name
      * @return
      */
-    public Role getRole(int type, String name) {
-        for (Role role : roles) {
-            if (role.getType() == type && role.getRoleName().equals(name)) {
+    public ProtectionRole getRole(int type, String name) {
+        for (ProtectionRole role : roles) {
+            if (role.getType() == type && role.getName().equals(name)) {
                 return role;
             }
         }
@@ -193,7 +192,7 @@ public class Protection extends AbstractSavable {
      *
      * @param role
      */
-    public void removeRole(Role role) {
+    public void removeRole(ProtectionRole role) {
         roles.remove(role);
         accessProviders.remove(role);
         engine.getDatabase().removeRole(role);
@@ -247,7 +246,7 @@ public class Protection extends AbstractSavable {
      *
      * @return
      */
-    public Set<Role> getRoles() {
+    public Set<ProtectionRole> getRoles() {
         return Collections.unmodifiableSet(roles);
     }
 
@@ -364,7 +363,7 @@ public class Protection extends AbstractSavable {
         }
 
         // save each role
-        for (Role role : roles) {
+        for (ProtectionRole role : roles) {
             if (role.isSaveNeeded()) {
                 role.saveImmediately();
             }
@@ -379,7 +378,7 @@ public class Protection extends AbstractSavable {
     @Override
     public void remove() {
         // remove all roles for the protection
-        for (Role role : roles) {
+        for (ProtectionRole role : roles) {
             role.remove();
         }
 

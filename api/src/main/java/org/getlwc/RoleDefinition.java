@@ -51,13 +51,13 @@ public interface RoleDefinition {
     public String matchRoleName(String name);
 
     /**
-     * Create a {@link Role}
+     * Create a {@link ProtectionRole}
      *
      * @param protection
      * @param roleName
      * @param roleAccess
      * @return
      */
-    public Role createRole(Protection protection, String roleName, ProtectionAccess roleAccess);
+    public ProtectionRole createRole(Protection protection, String roleName, ProtectionRole.Access roleAccess);
 
 }

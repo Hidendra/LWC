@@ -65,7 +65,7 @@ public class SimpleEngine implements Engine {
     /**
      * The role manager
      */
-    private final SimpleRoleManager roleManager = new SimpleRoleManager();
+    private final SimpleProtectionRoleManager roleManager = new SimpleProtectionRoleManager();
 
     /**
      * The savable background queue
@@ -233,7 +233,7 @@ public class SimpleEngine implements Engine {
     /**
      * {@inheritDoc}
      */
-    public RoleManager getRoleManager() {
+    public ProtectionRoleManager getRoleManager() {
         return roleManager;
     }
 

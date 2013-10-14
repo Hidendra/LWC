@@ -31,7 +31,7 @@ package org.getlwc.attribute;
 
 import org.getlwc.AccessProvider;
 import org.getlwc.Engine;
-import org.getlwc.ProtectionAccess;
+import org.getlwc.ProtectionRole;
 import org.getlwc.command.Command;
 import org.getlwc.command.CommandContext;
 import org.getlwc.command.CommandException;
@@ -129,17 +129,17 @@ public class PasswordAttributeFactory implements ProtectionAttributeFactory<Stri
             super(engine, NAME, "");
         }
 
-        public ProtectionAccess getAccess(Protection protection, Player player) {
+        public ProtectionRole.Access getAccess(Protection protection, Player player) {
             String playerName = player.getName();
 
             if (players.containsKey(protection.getId()) && players.get(protection.getId()).contains(playerName)) {
-                return ProtectionAccess.MEMBER;
+                return ProtectionRole.Access.MEMBER;
             }
 
             player.sendTranslatedMessage("&4This protection is locked by a password.\n&4To enter the password, use: &3/cpassword <password>");
             player.setAttribute("password_request", this);
             player.setAttribute("password_protection_id", protection.getId());
-            return ProtectionAccess.EXPLICIT_DENY;
+            return ProtectionRole.Access.EXPLICIT_DENY;
         }
 
     }

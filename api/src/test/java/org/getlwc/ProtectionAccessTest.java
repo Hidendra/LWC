@@ -8,15 +8,15 @@ public class ProtectionAccessTest {
 
     @Test
     public void testMatch() {
-        for (ProtectionAccess access : ProtectionAccess.values()) {
-            assertEquals(access, ProtectionAccess.match(access.toString()));
+        for (ProtectionRole.Access access : ProtectionRole.Access.values()) {
+            assertEquals(access, ProtectionRole.Access.match(access.toString()));
         }
     }
 
     @Test
     public void testMatchLower() {
-        for (ProtectionAccess access : ProtectionAccess.values()) {
-            assertEquals(access, ProtectionAccess.match(access.toString().toLowerCase()));
+        for (ProtectionRole.Access access : ProtectionRole.Access.values()) {
+            assertEquals(access, ProtectionRole.Access.match(access.toString().toLowerCase()));
         }
     }
 

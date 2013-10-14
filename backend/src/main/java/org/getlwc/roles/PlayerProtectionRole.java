@@ -27,59 +27,32 @@
  * either expressed or implied, of anybody else.
  */
 
-package org.getlwc;
+package org.getlwc.roles;
 
+import org.getlwc.Engine;
+import org.getlwc.ProtectionRole;
+import org.getlwc.entity.Player;
 import org.getlwc.model.Protection;
 
-import java.util.HashMap;
-import java.util.Map;
+public class PlayerProtectionRole extends ProtectionRole {
 
-public class SimpleRoleManager implements RoleManager {
-
-    /**
-     * The definitions that have been registered
-     */
-    private Map<Integer, RoleDefinition> definitions = new HashMap<Integer, RoleDefinition>();
-
-    /**
-     * Clear all registered roles
-     */
-    public void clearRoles() {
-        definitions.clear();
+    public PlayerProtectionRole(Engine engine, Protection protection, String roleName, Access roleAccess) {
+        super(engine, protection, roleName, roleAccess);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void registerDefinition(RoleDefinition definition) {
-        if (definitions.containsKey(definition.getId())) {
-            // TODO our own exception
-            throw new UnsupportedOperationException("Role definition already exists for the id " + definition.getId());
-        }
-
-        definitions.put(definition.getId(), definition);
+    @Override
+    public int getType() {
+        return 1; // adapted from LWCv4
     }
 
     /**
      * {@inheritDoc}
      */
-    public RoleDefinition getDefinition(int id) {
-        return definitions.get(id);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Role matchAndCreateRoleByName(Protection protection, String name, ProtectionAccess access) {
-        for (RoleDefinition definition : definitions.values()) {
-            String realName = definition.matchRoleName(name);
-
-            if (realName != null) {
-                return definition.createRole(protection, realName, access);
-            }
-        }
-
-        return null;
+    public Access getAccess(Protection protection, Player player) {
+        return player.getName().equalsIgnoreCase(getName()) ? getAccess() : Access.NONE;
     }
 
 }

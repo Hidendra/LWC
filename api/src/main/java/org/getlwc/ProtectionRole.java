@@ -33,7 +33,81 @@ import org.getlwc.model.AbstractSavable;
 import org.getlwc.model.Protection;
 import org.getlwc.model.State;
 
-public abstract class Role extends AbstractSavable implements AccessProvider {
+import java.util.EnumSet;
+
+public abstract class ProtectionRole extends AbstractSavable implements AccessProvider {
+
+    /**
+     * Access levels for protections. ordinal values are used here meaning they must remain in a constant order. As well,
+     * the enum values are ranked in power of ascending order meaning Access(4) has more power than
+     * Access(1) will. This also implies that the initial implementation is complete and that adding
+     * any more access levels would be a pain.
+     * <p/>
+     * As well, the only exception to these rules is EXPLICIT_DENY which will immediately deny access to the
+     * protection. This will not always be used but may be useful in some cases.
+     */
+    public static enum Access {
+
+        /**
+         * Immediately reject access to the protection.
+         */
+        EXPLICIT_DENY,
+
+        /**
+         * User has NO access to the protection
+         */
+        NONE,
+
+        /**
+         * The user can view the protection but not modify it in any way. The implementation of this depends
+         * on the mod and if the mod does not support preventing the inventory from being modified somehow
+         * then access will just be blocked.
+         */
+        GUEST,
+
+        /**
+         * The user can only deposit into the protection
+         */
+        DEPOSITONLY,
+
+        /**
+         * User can open and access the protection but not add or remove access from the protection
+         */
+        MEMBER,
+
+        /**
+         * User can modify the protection (add and remove members) but not add or remove other managers.
+         */
+        MANAGER,
+
+        /**
+         * User has the same access as the user who created the protection. They can remove the protection,
+         * add or remove ANY level to the protection (i.e other owners) but they cannot remove themself.
+         */
+        OWNER;
+
+        /**
+         * Access levels that normal players can set
+         */
+        public final static EnumSet<Access> USABLE_ACCESS_LEVELS = EnumSet.range(NONE, OWNER);
+
+        /**
+         * Match a {@link org.getlwc.ProtectionRole.Access} given a name.
+         *
+         * @param name
+         * @return NULL if no {@link org.getlwc.ProtectionRole.Access} is matched
+         */
+        public static Access match(String name) {
+            for (Access access : Access.values()) {
+                if (access.toString().equalsIgnoreCase(name)) {
+                    return access;
+                }
+            }
+
+            return null;
+        }
+
+    }
 
     /**
      * The Engine instance
@@ -53,24 +127,24 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
     /**
      * The role name for the player to grant access to
      */
-    private final String roleName;
+    private final String name;
 
     /**
      * The access to grant to players that match this role
      */
-    private ProtectionAccess roleAccess;
+    private Access access;
 
-    public Role(Engine engine, Protection protection, String roleName, ProtectionAccess roleAccess) {
+    public ProtectionRole(Engine engine, Protection protection, String roleName, Access roleAccess) {
         super(engine);
         this.engine = engine;
         this.protection = protection;
-        this.roleName = roleName;
-        this.roleAccess = roleAccess;
+        this.name = roleName;
+        this.access = roleAccess;
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + ": roleName=\"" + roleName + "\" access=" + roleAccess.toString() + " protection=\"" + protection + "\"";
+        return getClass().getSimpleName() + ": name=\"" + name + "\" access=" + access.toString() + " protection=\"" + protection + "\"";
     }
 
     /**
@@ -87,17 +161,17 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
      *
      * @return
      */
-    public String getRoleName() {
-        return roleName;
+    public String getName() {
+        return name;
     }
 
     /**
-     * Get the {@link ProtectionAccess} this role can provide
+     * Get the {@link org.getlwc.ProtectionRole.Access} this role can provide
      *
      * @return
      */
-    public ProtectionAccess getRoleAccess() {
-        return roleAccess;
+    public Access getAccess() {
+        return access;
     }
 
     /**
@@ -105,8 +179,8 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
      *
      * @param access
      */
-    public void setProtectionAccess(ProtectionAccess access) {
-        this.roleAccess = access;
+    public void setProtectionAccess(Access access) {
+        this.access = access;
     }
 
     /**
@@ -151,15 +225,15 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
             return false;
         }
 
-        Role o = (Role) object;
-        return getType() == o.getType() && roleName.equals(o.roleName) && roleAccess == o.roleAccess && state == o.state;
+        ProtectionRole o = (ProtectionRole) object;
+        return getType() == o.getType() && name.equals(o.name) && access == o.access && state == o.state;
     }
 
     @Override
     public int hashCode() {
         int hash = 1;
         hash *= 17 + getType();
-        hash *= 17 + roleName.hashCode();
+        hash *= 17 + name.hashCode();
         return hash;
     }
 

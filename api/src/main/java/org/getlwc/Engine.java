@@ -45,11 +45,11 @@ public interface Engine {
     public String getCompiledMinecraftVersion();
 
     /**
-     * Get the {@link RoleManager} which manages role associations
+     * Get the {@link ProtectionRoleManager} which manages role associations
      *
      * @return
      */
-    public RoleManager getRoleManager();
+    public ProtectionRoleManager getRoleManager();
 
     /**
      * Get the protection manager

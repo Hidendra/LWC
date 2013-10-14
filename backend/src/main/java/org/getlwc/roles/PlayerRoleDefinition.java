@@ -30,8 +30,7 @@
 package org.getlwc.roles;
 
 import org.getlwc.Engine;
-import org.getlwc.ProtectionAccess;
-import org.getlwc.Role;
+import org.getlwc.ProtectionRole;
 import org.getlwc.RoleDefinition;
 import org.getlwc.model.Protection;
 
@@ -64,8 +63,8 @@ public class PlayerRoleDefinition implements RoleDefinition {
     /**
      * {@inheritDoc}
      */
-    public Role createRole(Protection protection, String roleName, ProtectionAccess roleAccess) {
-        return new PlayerRole(engine, protection, roleName, roleAccess);
+    public ProtectionRole createRole(Protection protection, String roleName, ProtectionRole.Access roleAccess) {
+        return new PlayerProtectionRole(engine, protection, roleName, roleAccess);
     }
 
 }

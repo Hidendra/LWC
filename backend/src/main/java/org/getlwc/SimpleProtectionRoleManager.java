@@ -27,33 +27,59 @@
  * either expressed or implied, of anybody else.
  */
 
-package org.getlwc.roles;
+package org.getlwc;
 
-import org.getlwc.Engine;
-import org.getlwc.ProtectionAccess;
-import org.getlwc.Role;
-import org.getlwc.entity.Player;
 import org.getlwc.model.Protection;
 
-public class PlayerRole extends Role {
+import java.util.HashMap;
+import java.util.Map;
 
-    public PlayerRole(Engine engine, Protection protection, String roleName, ProtectionAccess roleAccess) {
-        super(engine, protection, roleName, roleAccess);
+public class SimpleProtectionRoleManager implements ProtectionRoleManager {
+
+    /**
+     * The definitions that have been registered
+     */
+    private Map<Integer, RoleDefinition> definitions = new HashMap<Integer, RoleDefinition>();
+
+    /**
+     * Clear all registered roles
+     */
+    public void clearRoles() {
+        definitions.clear();
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public int getType() {
-        return 1; // adapted from LWCv4
+    public void registerDefinition(RoleDefinition definition) {
+        if (definitions.containsKey(definition.getId())) {
+            // TODO our own exception
+            throw new UnsupportedOperationException("Role definition already exists for the id " + definition.getId());
+        }
+
+        definitions.put(definition.getId(), definition);
     }
 
     /**
      * {@inheritDoc}
      */
-    public ProtectionAccess getAccess(Protection protection, Player player) {
-        return player.getName().equalsIgnoreCase(getRoleName()) ? getRoleAccess() : ProtectionAccess.NONE;
+    public RoleDefinition getDefinition(int id) {
+        return definitions.get(id);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ProtectionRole matchAndCreateRoleByName(Protection protection, String name, ProtectionRole.Access access) {
+        for (RoleDefinition definition : definitions.values()) {
+            String realName = definition.matchRoleName(name);
+
+            if (realName != null) {
+                return definition.createRole(protection, realName, access);
+            }
+        }
+
+        return null;
     }
 
 }
