@@ -142,7 +142,7 @@ public class LWCPlayerListener implements Listener {
             return false;
         }
 
-        if (hopperLocation != null) {
+        if (hopperLocation != null && Boolean.parseBoolean(lwc.resolveProtectionConfiguration(Material.HOPPER, "enabled"))) {
             Protection hopperProtection = lwc.findProtection(hopperLocation);
 
             if (hopperProtection != null) {

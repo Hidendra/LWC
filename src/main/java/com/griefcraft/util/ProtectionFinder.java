@@ -253,7 +253,7 @@ public class ProtectionFinder {
             if (matchedProtection.getProtectionFinder() == null) {
                 fullMatchBlocks();
                 matchedProtection.setProtectionFinder(this);
-                lwc.getProtectionCache().addProtection(matchedProtection);
+                cache.addProtection(matchedProtection);
             }
             return Result.E_FOUND;
         }
@@ -281,7 +281,7 @@ public class ProtectionFinder {
             if (protection.getProtectionFinder() == null) {
                 protection.setProtectionFinder(this);
                 fullMatchBlocks();
-                lwc.getProtectionCache().addProtection(matchedProtection);
+                cache.addProtection(matchedProtection);
             }
 
             // ensure it's the right block
@@ -295,7 +295,7 @@ public class ProtectionFinder {
                     searched = true;
                 } else {
                     // Corrupted protection
-                    System.out.println("Removing corrupted protection: " + protection);
+                    lwc.log("Removing corrupted protection: " + protection);
                     protection.remove();
                 }
             }
