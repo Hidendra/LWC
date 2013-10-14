@@ -43,7 +43,13 @@ import org.getlwc.event.events.ProtectionEvent;
 import org.getlwc.event.notifiers.BlockEventNotifier;
 import org.getlwc.event.notifiers.ProtectionEventNotifier;
 import org.getlwc.model.Protection;
+import org.getlwc.util.StringUtils;
 import org.getlwc.util.TimeUtil;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.getlwc.I18n._;
 
@@ -154,9 +160,40 @@ public class BaseCommands {
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
 
-                String roles = "";
-                for (Role role : protection.getRoles()) {
-                    roles += _("&7{0}&f: Role is for \"&7{1}&f\" with the access &7{2}&f\n", player, role.getClass().getSimpleName(), role.getRoleName(), role.getRoleAccess());
+                Map<ProtectionAccess, List<Role>> accessMap = new LinkedHashMap<ProtectionAccess, List<Role>>();
+
+                for (ProtectionAccess access : ProtectionAccess.USABLE_ACCESS_LEVELS) {
+                    List<Role> roles = new ArrayList<Role>();
+
+                    for (Role role : protection.getRoles()) {
+                        if (role.getRoleAccess() == access) {
+                            roles.add(role);
+                        }
+                    }
+
+                    accessMap.put(access, roles);
+                }
+
+                String rolesText = "";
+                for (Map.Entry<ProtectionAccess, List<Role>> entry : accessMap.entrySet()) {
+                    String stringifiedList = "";
+
+                    ProtectionAccess access = entry.getKey();
+                    List<Role> roleList = entry.getValue();
+
+                    if (roleList.size() == 0) {
+                        continue;
+                    }
+
+                    for (Role role : roleList) {
+                        stringifiedList += role.getRoleName() + ", ";
+                    }
+
+                    if (stringifiedList.length() > 0) {
+                        stringifiedList = stringifiedList.substring(0, stringifiedList.length() - 2);
+                    }
+
+                    rolesText += _("&7{0}&f: {1}\n", StringUtils.capitalizeFirstLetter(access.toString()), stringifiedList);
                 }
 
                 player.sendTranslatedMessage("Location: &7[{0} {1} {2}]&f in the world \"&7{3}&f\"\n" +
@@ -166,7 +203,7 @@ public class BaseCommands {
                         "&eRoles(size={7}):\n" +
                         "{8}", protection.getX(), protection.getY(), protection.getZ(), protection.getWorld().getName(),
                         TimeUtil.timeToString(System.currentTimeMillis() / 1000L - protection.getCreated()), TimeUtil.timeToString(System.currentTimeMillis() / 1000L - protection.getUpdated()),
-                        TimeUtil.timeToString(System.currentTimeMillis() / 1000L - protection.getAccessed()), protection.getRoles().size(), roles);
+                        TimeUtil.timeToString(System.currentTimeMillis() / 1000L - protection.getAccessed()), protection.getRoles().size(), rolesText);
 
                 return true;
             }

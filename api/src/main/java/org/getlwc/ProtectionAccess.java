@@ -65,8 +65,7 @@ public enum ProtectionAccess {
     DEPOSITONLY,
 
     /**
-     * User has MEMBER access to the protection meaning they can open it and access it, but not admin
-     * it in any way (add others, etc)
+     * User can open and access the protection but not add or remove access from the protection
      */
     MEMBER,
 

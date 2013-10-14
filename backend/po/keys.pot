@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: LWC\n"
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-10-11 19:21+0000\n"
+"POT-Creation-Date: 2013-10-14 04:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,74 +47,21 @@ msgid ""
 msgstr ""
 
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/misc/UpdateClientInfoTransformer.java:63
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemStackTransformer.java:95
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/SignUpdateTransformer.java:128
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ExplosionTransformer.java:141
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemStackTransformer.java:95
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemInWorldManagerTransformer.java:171
 #, java-format
 msgid "[ASM] Patched {0} ({1}) successfully!"
 msgstr ""
 
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/misc/UpdateClientInfoTransformer.java:66
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemStackTransformer.java:98
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/SignUpdateTransformer.java:131
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ExplosionTransformer.java:144
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemStackTransformer.java:98
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemInWorldManagerTransformer.java:174
 #, java-format
 msgid "[ASM] Failed to patch {0} ({1})"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:142
-#, java-format
-msgid "Server: {0} ({1})"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:143
-#, java-format
-msgid "Backend: {0}"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:144
-#, java-format
-msgid "This version was built on: {0}"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:200
-#, java-format
-msgid "Economy: {0}"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:314
-msgid "Shutting down!"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:337
-#, java-format
-msgid "Driver \"{0}\" is not supported."
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:367
-#, java-format
-msgid "Connected to the database with driver: {0}"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:369
-msgid "Failed to connect to the database!"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/sql/JDBCDatabase.java:217
-msgid "Creating base database via base.sql"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:132
-msgid "&4This protection is locked by a magical spell."
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:138
-#, java-format
-msgid ""
-"&cA severe error occurred while processing the event: {0}&cThe full stack "
-"trace has been printed out to the log file"
 msgstr ""
 
 #: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:101
@@ -133,6 +80,47 @@ msgstr ""
 msgid ""
 "&4This protection is locked by a password.\n"
 "&4To enter the password, use: &3/cpassword <password>"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:132
+msgid "&4This protection is locked by a magical spell."
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:138
+#, java-format
+msgid ""
+"&cA severe error occurred while processing the event: {0}&cThe full stack "
+"trace has been printed out to the log file"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:285
+#, java-format
+msgid "[{0}/{1}] Downloading file {2} => {3}"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:312
+#, java-format
+msgid "  .. md5 {0} WARN: no checksum available from remote host"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:318
+#, java-format
+msgid "  .. md5 {0} OK"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:321
+#, java-format
+msgid "  .. md5 {0} FAIL {1} (expected: {2})"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:322
+#, java-format
+msgid "Will redownload {0} ({1}/{2} tries)"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:375
+#, java-format
+msgid "  >> {0}: {1}%"
 msgstr ""
 
 #: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:39
@@ -191,6 +179,63 @@ msgid ""
 "successfully!"
 msgstr ""
 
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:92
+msgid "&eClick on a block to protect it!"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:101
+msgid "&4That block is not protectable"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:107
+msgid ""
+"&2Created a new protection successfully.\n"
+"Want to give another player access to your protection?\n"
+"Use: &e/lwc modify member NAME"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:111
+msgid ""
+"&4Failed to create the protection. Your block is most likely not protected."
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:128
+msgid "&eClick on a protection to remove the lock!"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:137
+msgid "&2The protection has been removed successfully."
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:139
+msgid "&4You do not have the required access level to do that!"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:156
+msgid "&eClick on a protection to view info on it."
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:196
+#, java-format
+msgid "&7{0}&f: {1}\n"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:199
+#, java-format
+msgid ""
+"Location: &7[{0} {1} {2}]&f in the world \"&7{3}&f\"\n"
+"Created on: &7{4}\n"
+"Last updated on: &7{5}\n"
+"Last accessed on: &7{6}\n"
+"&eRoles(size={7}):\n"
+"{8}"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:223
+#, java-format
+msgid "Purging player?: {0}"
+msgstr ""
+
 #: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:77
 #: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:128
 msgid "&4Invalid attribute name."
@@ -228,91 +273,46 @@ msgstr ""
 msgid "&4The protection does not have the attribute {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:86
-msgid "&eClick on a block to protect it!"
+#: backend/src/main/java/org/getlwc/sql/JDBCDatabase.java:217
+msgid "Creating base database via base.sql"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:95
-msgid "&4That block is not protectable"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:101
-msgid ""
-"&2Created a new protection successfully.\n"
-"Want to give another player access to your protection?\n"
-"Use: &e/lwc modify member NAME"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:105
-msgid ""
-"&4Failed to create the protection. Your block is most likely not protected."
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:122
-msgid "&eClick on a protection to remove the lock!"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:131
-msgid "&2The protection has been removed successfully."
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:133
-msgid "&4You do not have the required access level to do that!"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:150
-msgid "&eClick on a protection to view info on it."
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:159
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:142
 #, java-format
-msgid "&7{0}&f: Role is for \"&7{1}&f\" with the access &7{2}&f\n"
+msgid "Server: {0} ({1})"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:162
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:143
 #, java-format
-msgid ""
-"Location: &7[{0} {1} {2}]&f in the world \"&7{3}&f\"\n"
-"Created on: &7{4}\n"
-"Last updated on: &7{5}\n"
-"Last accessed on: &7{6}\n"
-"&eRoles(size={7}):\n"
-"{8}"
+msgid "Backend: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:186
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:144
 #, java-format
-msgid "Purging player?: {0}"
+msgid "This version was built on: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:285
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:200
 #, java-format
-msgid "[{0}/{1}] Downloading file {2} => {3}"
+msgid "Economy: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:312
-#, java-format
-msgid "  .. md5 {0} WARN: no checksum available from remote host"
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:314
+msgid "Shutting down!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:318
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:337
 #, java-format
-msgid "  .. md5 {0} OK"
+msgid "Driver \"{0}\" is not supported."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:321
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:367
 #, java-format
-msgid "  .. md5 {0} FAIL {1} (expected: {2})"
+msgid "Connected to the database with driver: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:322
-#, java-format
-msgid "Will redownload {0} ({1}/{2} tries)"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:375
-#, java-format
-msgid "  >> {0}: {1}%"
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:369
+msgid "Failed to connect to the database!"
 msgstr ""
 
 #: api/src/main/java/org/getlwc/event/PlayerEventHandler.java:113
