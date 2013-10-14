@@ -45,9 +45,11 @@ import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class Protection {
@@ -125,7 +127,7 @@ public class Protection {
     /**
      * List of flags enabled on the protection
      */
-    private final Set<Flag> flags = new HashSet<Flag>();
+    private final Map<Flag.Type, Flag> flags = new HashMap<Flag.Type, Flag>();
 
     /**
      * The block id
@@ -270,7 +272,7 @@ public class Protection {
     public void encodeFlags() {
         JSONArray root = new JSONArray();
 
-        for (Flag flag : flags) {
+        for (Flag flag : flags.values()) {
             if (flag != null) {
                 root.add(flag.getData());
             }
@@ -362,13 +364,7 @@ public class Protection {
      * @return
      */
     public boolean hasFlag(Flag.Type type) {
-        for (Flag flag : flags) {
-            if (flag.getType() == type) {
-                return true;
-            }
-        }
-
-        return false;
+        return flags.containsKey(type);
     }
 
     /**
@@ -378,13 +374,7 @@ public class Protection {
      * @return
      */
     public Flag getFlag(Flag.Type type) {
-        for (Flag flag : flags) {
-            if (flag.getType() == type) {
-                return flag;
-            }
-        }
-
-        return null;
+        return flags.get(type);
     }
 
     /**
@@ -398,8 +388,8 @@ public class Protection {
             return false;
         }
 
-        if (!flags.contains(flag)) {
-            flags.add(flag);
+        if (!flags.containsKey(flag.getType())) {
+            flags.put(flag.getType(), flag);
             modified = true;
             return true;
         }
@@ -869,7 +859,7 @@ public class Protection {
         // format the flags prettily
         String flagStr = "";
 
-        for (Flag flag : flags) {
+        for (Flag flag : flags.values()) {
             flagStr += flag.toString() + ",";
         }
 

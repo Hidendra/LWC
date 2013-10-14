@@ -95,7 +95,16 @@ public class LWCPlayerListener implements Listener {
 
         } catch (Exception e) { }
 
-        if (handleMoveItemEvent(hopperProtection, event.getSource()) || handleMoveItemEvent(hopperProtection, event.getDestination())) {
+        boolean result;
+
+        // if the initiator is the same as the source it is a dropper i.e. depositing items
+        if (event.getInitiator() == event.getSource()) {
+            result = handleMoveItemEvent(hopperProtection, event.getDestination());
+        } else {
+            result = handleMoveItemEvent(hopperProtection, event.getSource());
+        }
+
+        if (result) {
             event.setCancelled(true);
         }
     }
@@ -153,7 +162,7 @@ public class LWCPlayerListener implements Listener {
             }
         }
 
-        boolean denyHoppers = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock(), "denyHoppers"));
+        boolean denyHoppers = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(Material.getMaterial(protection.getBlockId()), "denyHoppers"));
 
         // xor = (a && !b) || (!a && b)
         if (denyHoppers ^ protection.hasFlag(Flag.Type.HOPPER)) {

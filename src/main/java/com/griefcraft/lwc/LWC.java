@@ -1389,6 +1389,49 @@ public class LWC {
     }
 
     /**
+     * Get the appropriate config value for the block (protections.block.node)
+     *
+     * @param material
+     * @param node
+     * @return
+     */
+    public String resolveProtectionConfiguration(Material material, String node) {
+        String cacheKey = "00-" + material.toString() + "-" + node;
+        if (protectionConfigurationCache.containsKey(cacheKey)) {
+            return protectionConfigurationCache.get(cacheKey);
+        }
+
+        List<String> names = new ArrayList<String>();
+
+        String materialName = normalizeMaterialName(material);
+
+        // add the name & the block id
+        names.add(materialName);
+        names.add(material.getId() + "");
+
+        if (!materialName.equals(material.toString().toLowerCase())) {
+            names.add(material.toString().toLowerCase());
+        }
+
+        // Add the wildcards last so it can be overriden
+        names.add("*");
+        names.add(material.getId() + ":*");
+
+        String value = configuration.getString("protections." + node);
+
+        for (String name : names) {
+            String temp = configuration.getString("protections.blocks." + name + "." + node);
+
+            if (temp != null && !temp.isEmpty()) {
+                value = temp;
+            }
+        }
+
+        protectionConfigurationCache.put(cacheKey, value);
+        return value;
+    }
+
+    /**
      * Load sqlite (done only when LWC is loaded so memory isn't used unnecessarily)
      */
     public void load() {
