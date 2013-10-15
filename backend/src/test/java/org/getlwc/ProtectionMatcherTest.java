@@ -100,6 +100,10 @@ public class ProtectionMatcherTest {
         createProtection("Hidendra", 5, 2, 0);
         createProtection("Hidendra", 3, 2, 0);
         createProtection("Hidendra", 0, 1, 0);
+        // createProtection("Hidendra", 14, 2, 6); // sign
+        // createProtection("Hidendra", 14, 2, 8); // sign
+        // createProtection("Hidendra", 13, 1, 10); // sign
+        // createProtection("Hidendra", 13, 1, 12); // sign
     }
 
     @Test
