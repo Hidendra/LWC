@@ -6,9 +6,9 @@ import org.getlwc.World;
 public class MemoryBlock extends Block {
 
     private World world;
-    private int type;
+    private int type = 0;
     private final int x, y, z;
-    private byte data;
+    private byte data = 0;
 
     public MemoryBlock(World world, int x, int y, int z) {
         this.world = world;

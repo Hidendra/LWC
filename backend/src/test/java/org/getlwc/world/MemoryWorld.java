@@ -3,18 +3,15 @@ package org.getlwc.world;
 import org.getlwc.Block;
 import org.getlwc.World;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MemoryWorld implements World {
 
     /**
-     * The size of the world
+     * The blocks in the world
      */
-    private static final int SIZE = 16;
-
-    private Block[][][] blocks = new Block[SIZE][SIZE][SIZE];
-
-    public MemoryWorld() {
-        fillWorld(0);
-    }
+    private Map<WorldPoint, Block> blocks = new HashMap<WorldPoint, Block>();
 
     /**
      * {@inheritDoc}
@@ -27,22 +24,47 @@ public class MemoryWorld implements World {
      * {@inheritDoc}
      */
     public Block getBlockAt(int x, int y, int z) {
-        return blocks[x][y][z];
+        WorldPoint point = new WorldPoint(x, y, z);
+        Block block = blocks.get(point);
+
+        if (block == null) {
+            System.out.printf("Creating block at [%d, %d, %d]\n", x, y, z);
+            block = new MemoryBlock(this, x, y, z);
+            blocks.put(point, block);
+        }
+
+        return block;
     }
 
-    /**
-     * Fill the world with a specific id
-     *
-     * @param id
-     */
-    private void fillWorld(int id) {
-        for (int x = 0; x < SIZE; x ++) {
-            for (int y = 0; y < SIZE; y ++) {
-                for (int z = 0; z < SIZE; z ++) {
-                    blocks[x][y][z] = new MemoryBlock(this, x, y, z);
-                }
-            }
+    private class WorldPoint {
+
+        int x, y, z;
+
+        public WorldPoint(int x, int y, int z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
         }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash += hash * 17 + x;
+            hash += hash * 17 + y;
+            hash += hash * 17 + z;
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof WorldPoint)) {
+                return false;
+            }
+
+            WorldPoint op = (WorldPoint) o;
+            return x == op.x && y == op.y && z == op.z;
+        }
+
     }
 
 }
