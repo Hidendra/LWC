@@ -28,7 +28,6 @@ public class MemoryWorld implements World {
         Block block = blocks.get(point);
 
         if (block == null) {
-            System.out.printf("Creating block at [%d, %d, %d]\n", x, y, z);
             block = new MemoryBlock(this, x, y, z);
             blocks.put(point, block);
         }

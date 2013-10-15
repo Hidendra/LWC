@@ -100,10 +100,15 @@ public class ProtectionMatcherTest {
         createProtection("Hidendra", 5, 2, 0);
         createProtection("Hidendra", 3, 2, 0);
         createProtection("Hidendra", 0, 1, 0);
-        // createProtection("Hidendra", 14, 2, 6); // sign
-        // createProtection("Hidendra", 14, 2, 8); // sign
-        // createProtection("Hidendra", 13, 1, 10); // sign
-        // createProtection("Hidendra", 13, 1, 12); // sign
+        createProtection("Hidendra", 14, 2, 6); // sign
+        createProtection("Hidendra", 14, 2, 8); // sign
+        createProtection("Hidendra", 13, 1, 10); // sign
+        createProtection("Hidendra", 13, 1, 12); // sign
+        createProtection("Hidendra", 11, 1, 12); // trap door
+        createProtection("Hidendra", 12, 2, 8); // wooden button
+        createProtection("Hidendra", 12, 2, 6); // stone button
+        createProtection("Hidendra", 13, 2, 3); // lever on wall
+        createProtection("Hidendra", 14, 2, 1); // lever on ground
     }
 
     @Test
@@ -135,6 +140,15 @@ public class ProtectionMatcherTest {
         assertProtectionExists(3, 1, 11);
         assertProtectionExists(6, 1, 13);
         assertProtectionExists(4, 1, 14);
+        assertProtectionExists(14, 1, 6); // bottom of sign
+        assertProtectionExists(14, 1, 8); // bottom of sign
+        assertProtectionExists(14, 1, 10); // behind sign
+        assertProtectionExists(14, 1, 12); // behind sign
+        assertProtectionExists(11, 1, 13); // trap door
+        assertProtectionExists(14, 1, 1); // block wall lever is attached to
+        assertProtectionExists(14, 2, 3); // block ground lever is attached to
+        assertProtectionExists(13, 2, 6); // block stone button is attached to
+        assertProtectionExists(13, 2, 8); // block wooden button is attached to
     }
 
     /**
@@ -158,6 +172,29 @@ public class ProtectionMatcherTest {
         assertNoProtectionExists(9, 1, 0);
         assertNoProtectionExists(9, 0, 0);
         assertNoProtectionExists(7, 1, 5);
+        assertNoProtectionExists(15, 2, 6);
+        assertNoProtectionExists(14, 2, 5);
+        assertNoProtectionExists(14, 2, 7);
+        assertNoProtectionExists(15, 2, 8);
+        assertNoProtectionExists(14, 2, 9);
+        assertNoProtectionExists(14, 1, 9);
+        assertNoProtectionExists(14, 2, 10);
+        assertNoProtectionExists(15, 2, 10);
+        assertNoProtectionExists(14, 1, 11);
+        assertNoProtectionExists(14, 2, 12);
+        assertNoProtectionExists(14, 1, 13);
+        assertNoProtectionExists(12, 1, 12);
+        assertNoProtectionExists(11, 1, 11);
+        assertNoProtectionExists(10, 1, 12);
+        assertNoProtectionExists(12, 1, 6);
+        assertNoProtectionExists(12, 1, 8);
+        assertNoProtectionExists(11, 2, 12);
+        assertNoProtectionExists(15, 1, 1);
+        assertNoProtectionExists(15, 2, 1);
+        assertNoProtectionExists(13, 2, 1);
+        assertNoProtectionExists(14, 2, 2);
+        assertNoProtectionExists(14, 2, 0);
+        assertNoProtectionExists(14, 3, 1);
     }
 
     /**

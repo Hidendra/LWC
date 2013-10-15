@@ -13,6 +13,20 @@ protections:
             enabled: true
         iron_door_block:
             enabled: true
+        wall_sign:
+            enabled: true
+        sign_post:
+            enabled: true
+        trap_door:
+            enabled: true
+        lever:
+            enabled: true
+        stone_button:
+            enabled: true
+        wooden_button:
+            enabled: true
+        lever:
+            enabled: true
         wooden_door:
             enabled: true
 

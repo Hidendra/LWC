@@ -129,7 +129,7 @@ public abstract class Block {
      * @param ids
      * @return
      */
-    public boolean typeMatchesOneOf(int... ids) {
+    public boolean typeIsOneOf(int... ids) {
         for (int id : ids) {
             if (id == getType()) {
                 return true;
@@ -137,6 +137,16 @@ public abstract class Block {
         }
 
         return false;
+    }
+
+    /**
+     * Get a block relative to this block
+     *
+     * @param face
+     * @return
+     */
+    public Block getRelative(BlockFace face) {
+        return getRelative(face.getDeltaX(), face.getDeltaY(), face.getDeltaZ());
     }
 
     /**
@@ -161,7 +171,6 @@ public abstract class Block {
     public Block findBlockRelativeToXZ(int... types) {
         Block block;
 
-        // a set of integers to match
         Set<Integer> typeSet = new HashSet<Integer>();
         for (int type : types) {
             typeSet.add(type);
@@ -207,7 +216,6 @@ public abstract class Block {
     public Block findBlockRelativeToY(int... types) {
         Block block;
 
-        // a set of integers to match
         Set<Integer> typeSet = new HashSet<Integer>();
         for (int type : types) {
             typeSet.add(type);
