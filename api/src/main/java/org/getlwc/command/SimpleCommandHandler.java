@@ -202,6 +202,53 @@ public class SimpleCommandHandler implements CommandHandler {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public List<Command> findSimilar(String command) {
+        List<Command> similar = new ArrayList<Command>();
+
+        Set<String> commandNames = commands.keySet();
+        for (String name : commandNames) {
+            if (name.startsWith(command)) {
+                similar.add(commands.get(name).first());
+            }
+        }
+
+        if (similar.size() == 0) {
+            String[] arr = command.split(" ");
+
+            if (arr.length == 1) {
+                return similar; // nothing to chomp
+            }
+
+            String[] newArr = new String[arr.length - 1];
+            System.arraycopy(arr, 0, newArr, 0, arr.length - 1);
+            return findSimilar(StringUtils.join(newArr));
+        }
+
+        return similar;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean canUseCommand(CommandSender sender, Command command) {
+        if (!command.permission().isEmpty()) {
+            if (!sender.hasPermission(command.permission())) {
+                return false;
+            }
+        }
+
+        try {
+            verifySenderType(command, sender);
+        } catch (CommandException e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Called after a command has been registered
      *
      * @param normalized
@@ -279,7 +326,7 @@ public class SimpleCommandHandler implements CommandHandler {
 
         // verify accepts()
         try {
-            verifySenderType(command, context);
+            verifySenderType(command, context.getCommandSender());
         } catch (CommandException e) {
             context.getCommandSender().sendMessage("&4" + e.getMessage());
             return;
@@ -381,11 +428,10 @@ public class SimpleCommandHandler implements CommandHandler {
      * Verify the command's sender type (accepts())
      *
      * @param command
-     * @param context
+     * @param sender
      * @throws CommandException
      */
-    private void verifySenderType(Command command, CommandContext context) throws CommandException {
-        CommandSender sender = context.getCommandSender();
+    private void verifySenderType(Command command, CommandSender sender) throws CommandException {
         SenderType accepts = command.accepts();
 
         if (accepts == SenderType.CONSOLE && sender instanceof Player) {

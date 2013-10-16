@@ -34,6 +34,7 @@ import org.getlwc.Engine;
 import org.getlwc.ProtectionManager;
 import org.getlwc.ProtectionRole;
 import org.getlwc.command.Command;
+import org.getlwc.command.CommandComparator;
 import org.getlwc.command.CommandContext;
 import org.getlwc.command.SenderType;
 import org.getlwc.entity.Player;
@@ -46,6 +47,8 @@ import org.getlwc.util.StringUtils;
 import org.getlwc.util.TimeUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +79,28 @@ public class BaseCommands {
             description = "LWC!"
     )
     public void lwc(CommandContext context) {
-        context.getCommandSender().sendMessage("/lwc");
+        String fullCommand = (context.getCommand() + " " + context.getArguments()).trim();
+        List<Command> similar = engine.getCommandHandler().findSimilar(fullCommand);
+
+        // sort it alphabetically
+        Collections.sort(similar, new CommandComparator());
+
+        context.getCommandSender().sendTranslatedMessage("Similar commands:");
+
+        if (similar.size() == 0) {
+            context.getCommandSender().sendTranslatedMessage("&4No commands found.");
+        }
+
+        for (Command command : similar) {
+            // block self
+            if (command.command().equals("lwc")) {
+                continue;
+            }
+
+            if (engine.getCommandHandler().canUseCommand(context.getCommandSender(), command)) {
+                context.getCommandSender().sendTranslatedMessage("- &6/{0}&r: {1}", command.command(), command.description());
+            }
+        }
     }
 
     @Command(

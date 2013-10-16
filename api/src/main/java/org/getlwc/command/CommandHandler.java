@@ -49,4 +49,22 @@ public interface CommandHandler {
      */
     public List<Command> registerCommands(Object object) throws CommandException;
 
+    /**
+     * Finds similar commands by looking for commands that start with the command you feed it. If no commands
+     * immediately match it will remove arguments until it finds one.
+     *
+     * @param command
+     * @return a list of similar commands
+     */
+    public List<Command> findSimilar(String command);
+
+    /**
+     * Check if a player can use the given command
+     *
+     * @param sender
+     * @param command
+     * @return
+     */
+    public boolean canUseCommand(CommandSender sender, Command command);
+
 }
