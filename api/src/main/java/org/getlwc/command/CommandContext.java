@@ -104,7 +104,8 @@ public class CommandContext {
 
     /**
      * Get an argument at the specified index. If the command defines min/max values, this is guaranteed
-     * to return non-null if the index is within those ranges.
+     * to return non-null if the index is within those ranges. If the index is not in the given argument
+     * ranges then an exception will be thrown.
      *
      * @param index the index number. For example, the first argument is 1, second argument 2, etc
      * @return
@@ -115,6 +116,26 @@ public class CommandContext {
 
         if (index < 0 || index > argumentsArray.length) {
             throw new IndexOutOfBoundsException("Index cannot be out of range!");
+        }
+
+        return argumentsArray[index];
+    }
+
+    /**
+     * Get an argument at the specified index. If the command defines min/max values, this is guaranteed
+     * to return non-null if the index is within those ranges. If the index is not in the given argument
+     * ranges then the default value will be returned
+     *
+     * @param index the index number. For example, the first argument is 1, second argument 2, etc
+     * @param defaultValue
+     * @return
+     */
+    public String getArgument(int index, String defaultValue) {
+        // Convert it to 0-n format, not 1-n
+        index = index - 1;
+
+        if (index < 0 || index > argumentsArray.length) {
+            return defaultValue;
         }
 
         return argumentsArray[index];
