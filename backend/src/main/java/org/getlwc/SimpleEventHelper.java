@@ -70,7 +70,6 @@ public class SimpleEventHelper implements EventHelper {
 
             ProtectionRole.Access access = protection.getAccess(player);
 
-            // if they're the owner, return immediately
             if (access.ordinal() > ProtectionRole.Access.NONE.ordinal()) {
                 return true;
             }
