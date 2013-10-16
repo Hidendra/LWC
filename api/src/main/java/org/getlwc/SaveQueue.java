@@ -91,7 +91,7 @@ public class SaveQueue {
                 try {
                     AbstractSavable savable = queue.take();
                     savable.saveImmediately();
-                    System.out.println("Saving: " + savable.toString());
+                    // System.out.println("Saving: " + savable.toString());
                 } catch (InterruptedException e) {
                     continue;
                 }

@@ -60,6 +60,8 @@ public class BenchmarkCommands {
 
         engine.getConsoleSender().sendMessage("Inserting 10,000 * " + rounds + " random protections");
 
+        int total = 0;
+
         for (int round = 0; round < rounds; round++) {
             Random random = new Random();
             long start = System.currentTimeMillis();
@@ -68,8 +70,12 @@ public class BenchmarkCommands {
                         new Location(engine.getServerLayer().getDefaultWorld(), random.nextDouble() * 100000, random.nextDouble() * 100000, random.nextDouble() * 100000));
             }
             long time = System.currentTimeMillis() - start;
-            engine.getConsoleSender().sendMessage(String.format("[%d/%d] Done. %d ms total, %.2f ms per protection", round + 1, rounds, time, time / 10000D));
+            total += time;
+            engine.getConsoleSender().sendMessage(String.format("[%d/%d] %d ms total, %.2f ms average per protection", round + 1, rounds, time, time / 10000D));
         }
+
+        long time = total / rounds;
+        engine.getConsoleSender().sendMessage(String.format("Done %d rounds. %d ms total, %.2f ms average per protection", rounds, time, time / 10000D));
     }
 
     @Command(
@@ -83,6 +89,8 @@ public class BenchmarkCommands {
 
         engine.getConsoleSender().sendMessage("Selecting 10,000 * " + rounds + " random protections");
 
+        int total = 0;
+
         for (int round = 0; round < rounds; round ++) {
             Random random = new Random();
             long start = System.currentTimeMillis();
@@ -90,8 +98,12 @@ public class BenchmarkCommands {
                 engine.getDatabase().loadProtection(new Location(engine.getServerLayer().getDefaultWorld(), random.nextDouble() * 100000, random.nextDouble() * 100000, random.nextDouble() * 100000));
             }
             long time = System.currentTimeMillis() - start;
-            engine.getConsoleSender().sendMessage(String.format("[%d/%d] Done. %d ms total, %.2f ms per protection", round + 1, rounds, time, time / 10000D));
+            total += time;
+            engine.getConsoleSender().sendMessage(String.format("[%d/%d] %d ms total, %.2f ms average per protection", round + 1, rounds, time, time / 10000D));
         }
+
+        long time = total / rounds;
+        engine.getConsoleSender().sendMessage(String.format("Done %d rounds. %d ms total, %.2f ms average per protection", rounds, time, time / 10000D));
     }
 
 }
