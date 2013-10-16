@@ -34,6 +34,7 @@ import org.getlwc.Location;
 import org.getlwc.command.Command;
 import org.getlwc.command.CommandContext;
 import org.getlwc.command.SenderType;
+import org.getlwc.model.Protection;
 
 import java.util.Random;
 
@@ -50,35 +51,47 @@ public class BenchmarkCommands {
 
     @Command(
             command = "lwc test insert",
+            usage = "[rounds]",
             description = "Benchmark tests",
             accepts = SenderType.CONSOLE
     )
     public void insertTest(CommandContext context) {
-        engine.getConsoleSender().sendMessage("Inserting 10,000 random protections");
-        Random random = new Random();
-        long start = System.currentTimeMillis();
-        for (int i = 0; i < 10000; i++) {
-            //lwc.getProtectionManager().createProtection(Protection.Type.PRIVATE, "virulent",
-            //        new Location(lwc.getServerLayer().getDefaultWorld(), random.nextDouble() * 100000, random.nextDouble() * 100000, random.nextDouble() * 100000));
+        int rounds = Integer.parseInt(context.getArgument(1, "1"));
+
+        engine.getConsoleSender().sendMessage("Inserting 10,000 * " + rounds + " random protections");
+
+        for (int round = 0; round < rounds; round++) {
+            Random random = new Random();
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < 10000; i++) {
+                engine.getProtectionManager().createProtection("virulent",
+                        new Location(engine.getServerLayer().getDefaultWorld(), random.nextDouble() * 100000, random.nextDouble() * 100000, random.nextDouble() * 100000));
+            }
+            long time = System.currentTimeMillis() - start;
+            engine.getConsoleSender().sendMessage(String.format("[%d/%d] Done. %d ms total, %.2f ms per protection", round + 1, rounds, time, time / 10000D));
         }
-        long time = System.currentTimeMillis() - start;
-        engine.getConsoleSender().sendMessage(String.format("Done. %d ms total, %.2f ms per protection", time, time / 10000D));
     }
 
     @Command(
             command = "lwc test select",
+            usage = "[rounds]",
             description = "Benchmark tests",
             accepts = SenderType.CONSOLE
     )
     public void selectTest(CommandContext context) {
-        engine.getConsoleSender().sendMessage("Selecting 10,000 random protections");
-        Random random = new Random();
-        long start = System.currentTimeMillis();
-        for (int i = 0; i < 10000; i++) {
-            engine.getDatabase().loadProtection(new Location(engine.getServerLayer().getDefaultWorld(), random.nextDouble() * 100000, random.nextDouble() * 100000, random.nextDouble() * 100000));
+        int rounds = Integer.parseInt(context.getArgument(1, "1"));
+
+        engine.getConsoleSender().sendMessage("Selecting 10,000 * " + rounds + " random protections");
+
+        for (int round = 0; round < rounds; round ++) {
+            Random random = new Random();
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < 10000; i++) {
+                engine.getDatabase().loadProtection(new Location(engine.getServerLayer().getDefaultWorld(), random.nextDouble() * 100000, random.nextDouble() * 100000, random.nextDouble() * 100000));
+            }
+            long time = System.currentTimeMillis() - start;
+            engine.getConsoleSender().sendMessage(String.format("[%d/%d] Done. %d ms total, %.2f ms per protection", round + 1, rounds, time, time / 10000D));
         }
-        long time = System.currentTimeMillis() - start;
-        engine.getConsoleSender().sendMessage(String.format("Done. %d ms total, %.2f ms per protection", time, time / 10000D));
     }
 
 }
