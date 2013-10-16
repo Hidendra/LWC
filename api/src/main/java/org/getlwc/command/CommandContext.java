@@ -114,7 +114,7 @@ public class CommandContext {
         // Convert it to 0-n format, not 1-n
         index = index - 1;
 
-        if (index < 0 || index > argumentsArray.length) {
+        if (index < 0 || index >= argumentsArray.length) {
             throw new IndexOutOfBoundsException("Index cannot be out of range!");
         }
 
@@ -134,7 +134,7 @@ public class CommandContext {
         // Convert it to 0-n format, not 1-n
         index = index - 1;
 
-        if (index < 0 || index > argumentsArray.length) {
+        if (index < 0 || index >= argumentsArray.length) {
             return defaultValue;
         }
 
