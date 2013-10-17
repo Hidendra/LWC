@@ -72,11 +72,9 @@ public class BukkitPlayer extends Player {
         try {
             Method getHandle = handle.getClass().getDeclaredMethod("getHandle");
             Object entityPlayer = getHandle.invoke(handle);
-            Method getLocale = entityPlayer.getClass().getDeclaredMethod("getLocale");
-            Object locale = getLocale.invoke(entityPlayer); // LocaleLanguage
-            Field name = locale.getClass().getDeclaredField("e");
+            Field name = entityPlayer.getClass().getDeclaredField("locale");
             name.setAccessible(true);
-            String localeName = (String) name.get(locale);
+            String localeName = (String) name.get(entityPlayer);
 
             if (localeName != null) {
                 setLocale(new Locale(localeName));

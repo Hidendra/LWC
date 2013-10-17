@@ -63,6 +63,7 @@ import org.getlwc.entity.Entity;
 import org.getlwc.entity.Player;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 public class BukkitListener implements Listener {
 
@@ -76,8 +77,14 @@ public class BukkitListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void playerJoin(PlayerJoinEvent event) {
-        plugin.getEngine().getEventHelper().onPlayerQuit(plugin.wrapPlayer(event.getPlayer()));
+    public void playerJoin(final PlayerJoinEvent event) {
+        // when the player first logs in locale is not populated yet from the client in the login process (Packet204LocaleAndViewDistance)
+        // So instead we run the LWC join method 20 ticks later
+        plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+            public void run() {
+                plugin.getEngine().getEventHelper().onPlayerJoin(plugin.wrapPlayer(event.getPlayer()));
+            }
+        }, 20);
     }
 
     @EventHandler(ignoreCancelled = true)
