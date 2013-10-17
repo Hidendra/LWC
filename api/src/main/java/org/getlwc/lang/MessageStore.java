@@ -30,4 +30,20 @@ public interface MessageStore {
      */
     public ResourceBundle getBundle(Locale locale);
 
+    /**
+     * Get the default locale that will be used for translating messages if a specific locale is not available
+     *
+     * @return
+     */
+    public Locale getDefaultLocale();
+
+    /**
+     * Check if the message store supports the given locale. If it is not supported then the default store will
+     * be used instead when translating messages.
+     *
+     * @param locale
+     * @return
+     */
+    public boolean supports(Locale locale);
+
 }

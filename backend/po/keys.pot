@@ -10,7 +10,8 @@ msgstr ""
 "Project-Id-Version: LWC\n"
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-10-16 16:57+0000\n"
+"\n"
+"POT-Creation-Date: 2013-10-17 15:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -82,11 +83,21 @@ msgid ""
 "&4To enter the password, use: &3/cpassword <password>"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:131
+#. / TL: The double apostrophe is to work around a bug in a library.
+#. /     If you need to use it please leave it as a double apostrophe.
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:97
+#, java-format
+msgid ""
+"Your client''s locale {0} is not supported by LWC. {1} will be used "
+"instead.\n"
+"Want to help translate LWC? Go to: &3&nhttp://translate.getlwc.org&r"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:143
 msgid "&4This protection is locked by a magical spell."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:137
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:149
 #, java-format
 msgid ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "

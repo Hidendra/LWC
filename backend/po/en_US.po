@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-10-16 16:53+0000\n"
+"POT-Creation-Date: 2013-10-17 15:30+0000\n"
 "PO-Revision-Date: 2013-06-18 23:02-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -86,11 +86,24 @@ msgstr ""
 "&4This protection is locked by a password.\n"
 "&4To enter the password, use: &3/cpassword <password>"
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:131
+#. / TL: The double apostrophe is to work around a bug in a library.
+#. /     If you need to use it please leave it as a double apostrophe.
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:97
+#, java-format
+msgid ""
+"Your client''s locale {0} is not supported by LWC. {1} will be used "
+"instead.\n"
+"Want to help translate LWC? Go to: &3&nhttp://translate.getlwc.org&r"
+msgstr ""
+"Your client''s locale {0} is not supported by LWC. {1} will be used "
+"instead.\n"
+"Want to help translate LWC? Go to: &3&nhttp://translate.getlwc.org&r"
+
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:143
 msgid "&4This protection is locked by a magical spell."
 msgstr "&4This protection is locked by a magical spell."
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:137
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:149
 #, java-format
 msgid ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "
@@ -397,6 +410,10 @@ msgstr ""
 #, java-format
 msgid "Using default locale: {0}"
 msgstr "Using default locale: {0}"
+
+#, fuzzy
+#~ msgid "test {0} {1}"
+#~ msgstr "Server: {0} ({1})"
 
 #~ msgid "&4Unknown symbol: &7{0}&4 (Should be one of: &7{1}&4)"
 #~ msgstr "&4Unknown symbol: &7{0}&4 (Should be one of: &7{1}&4)"

@@ -152,6 +152,7 @@
                     <keywords>-k --keyword=_ --keyword=sendTranslatedMessage --package-name=LWC
                         --package-version=${project.version} --copyright-holder="Tyler Blair"
                         --msgid-bugs-address="hidendra@getlwc.org"
+                        --add-comments=/
                     </keywords>
                     <outputFormat>lang</outputFormat>
                     <encoding>utf-8</encoding>

@@ -32,6 +32,7 @@ package org.getlwc;
 import org.getlwc.command.CommandSender;
 import org.getlwc.lang.DefaultMessageStore;
 import org.getlwc.lang.Locale;
+import org.getlwc.lang.MessageStore;
 
 import java.text.MessageFormat;
 
@@ -57,6 +58,15 @@ public class I18n {
      */
     public static void init(Engine engine) {
         instance.store.init(engine);
+    }
+
+    /**
+     * Get the {@link MessageStore} that is being used to translate
+     *
+     * @return
+     */
+    public static MessageStore getMessageStore() {
+        return instance.store;
     }
 
     /**

@@ -35,6 +35,8 @@ import org.getlwc.event.EventException;
 import org.getlwc.event.PlayerEventHandler;
 import org.getlwc.event.events.BlockEvent;
 import org.getlwc.event.events.ProtectionEvent;
+import org.getlwc.lang.Locale;
+import org.getlwc.lang.MessageStore;
 import org.getlwc.model.Protection;
 
 import java.util.List;
@@ -84,7 +86,17 @@ public class SimpleEventHelper implements EventHelper {
      * {@inheritDoc}
      */
     public void onPlayerJoin(Player player) {
-        //
+        if (player.hasPermission("lwc.admin")) { // TODO not a hardcoded permission?
+            MessageStore store = I18n.getMessageStore();
+            Locale defaultLocale = store.getDefaultLocale();
+            Locale playerLocale = player.getLocale();
+
+            if (!store.supports(playerLocale)) {
+                /// TL: The double apostrophe is to work around a bug in a library.
+                ///     If you need to use it please leave it as a double apostrophe.
+                player.sendTranslatedMessage("Your client''s locale {0} is not supported by LWC. {1} will be used instead.\nWant to help translate LWC? Go to: &3&nhttp://translate.getlwc.org&r", playerLocale.getName(), defaultLocale.getName());
+            }
+        }
     }
 
     /**
@@ -98,10 +110,10 @@ public class SimpleEventHelper implements EventHelper {
      * {@inheritDoc}
      */
     public boolean onBlockInteract(Entity entity, Block block) {
-        boolean cancel = false;
+        boolean cancel;
 
         // Match the block to a protection
-        Protection protection = engine.getProtectionManager().findProtection(block.getLocation()); // TODO :-)
+        Protection protection = engine.getProtectionManager().findProtection(block.getLocation());
         engine.getConsoleSender().sendMessage("Protection found: " + protection);
 
         if (entity instanceof Player) {

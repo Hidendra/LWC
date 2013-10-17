@@ -117,4 +117,18 @@ public class DefaultMessageStore implements MessageStore {
         return bundle;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public Locale getDefaultLocale() {
+        return defaultLocale;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean supports(Locale locale) {
+        return getBundle(locale) != null;
+    }
+
 }
