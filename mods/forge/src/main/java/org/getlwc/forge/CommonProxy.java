@@ -45,28 +45,24 @@ public abstract class CommonProxy {
      */
     public void init() {
         final LWC lwc = LWC.instance;
-        if (lwc.getEngine() == null) {
-            final Engine engine = SimpleEngine.getInstance();
-            lwc.setupServer(engine, (ForgeServerLayer) engine.getServerLayer());
+        lwc.ensurePostLoaded();
+        GameRegistry.registerPlayerTracker(new IPlayerTracker() {
+            public void onPlayerLogin(EntityPlayer entityPlayer) {
+                lwc.getEngine().getEventHelper().onPlayerJoin(lwc.wrapPlayer(entityPlayer));
+            }
 
-            GameRegistry.registerPlayerTracker(new IPlayerTracker() {
-                public void onPlayerLogin(EntityPlayer entityPlayer) {
-                    engine.getEventHelper().onPlayerJoin(lwc.wrapPlayer(entityPlayer));
-                }
+            public void onPlayerLogout(EntityPlayer entityPlayer) {
+                lwc.getEngine().getEventHelper().onPlayerQuit(lwc.wrapPlayer(entityPlayer));
+            }
 
-                public void onPlayerLogout(EntityPlayer entityPlayer) {
-                    engine.getEventHelper().onPlayerQuit(lwc.wrapPlayer(entityPlayer));
-                }
+            public void onPlayerChangedDimension(EntityPlayer entityPlayer) {
 
-                public void onPlayerChangedDimension(EntityPlayer entityPlayer) {
+            }
 
-                }
+            public void onPlayerRespawn(EntityPlayer entityPlayer) {
 
-                public void onPlayerRespawn(EntityPlayer entityPlayer) {
-
-                }
-            });
-        }
+            }
+        });
     }
 
 }

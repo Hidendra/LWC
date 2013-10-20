@@ -29,6 +29,7 @@
 
 package org.getlwc.forge.asm;
 
+import org.getlwc.forge.LWC;
 import org.objectweb.asm.tree.LocalVariableNode;
 import org.objectweb.asm.tree.MethodNode;
 
@@ -80,9 +81,11 @@ public abstract class AbstractSingleClassTransformer extends AbstractTransformer
 
         if (name.equals(getClassName(className, false))) {
             obfuscated = false;
+            LWC.instance.ensurePostLoaded();
             return transform(bytes);
         } else if (name.equals(getClassName(className, true))) {
             obfuscated = true;
+            LWC.instance.ensurePostLoaded();
             return transform(bytes);
         }
 
