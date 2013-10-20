@@ -19,7 +19,6 @@ public class ClassUtils {
             // Remove the class from Mojang's LaunchClassLoader cache if present
             try {
                 Field invalidClasses = ClassUtils.class.getClassLoader().getClass().getDeclaredField("invalidClasses");
-                Field negativeResourceCache = ClassUtils.class.getClassLoader().getClass().getDeclaredField("negativeResourceCache");
 
                 if (invalidClasses != null) {
                     invalidClasses.setAccessible(true);
@@ -31,18 +30,23 @@ public class ClassUtils {
                     }
                 }
 
-                if (negativeResourceCache != null) {
-                    negativeResourceCache.setAccessible(true);
+                try {
+                    Field negativeResourceCache = ClassUtils.class.getClassLoader().getClass().getDeclaredField("negativeResourceCache");
 
-                    Set<String> set = (Set<String>) negativeResourceCache.get(ClassUtils.class.getClassLoader());
+                    if (negativeResourceCache != null) {
+                        negativeResourceCache.setAccessible(true);
 
-                    if (set != null) {
-                        set.remove(className);
+                        Set<String> set = (Set<String>) negativeResourceCache.get(ClassUtils.class.getClassLoader());
+
+                        if (set != null) {
+                            set.remove(className);
+                        }
+
                     }
-
+                } catch (Exception ex) {
+                    // negativeResourceCache is only in MC 1.6.4+ so we trap it
                 }
             } catch (Exception ex) {
-                // This is ok. It just means we are not being loaded by Mojang's LaunchClassLoader
             }
 
             return false;
