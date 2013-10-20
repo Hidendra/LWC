@@ -57,12 +57,10 @@ public class ForgeEventHelper {
      * @param x
      * @param y
      * @param z
-     * @param block
-     * @param metadata
      * @param entityPlayer
      */
-    public static boolean onBlockHarvested(net.minecraft.world.World world, int x, int y, int z, net.minecraft.block.Block block, int metadata, EntityPlayer entityPlayer) {
-        Event event = new PlayerBreakBlockEvent(world, x, y, z, block, metadata, entityPlayer);
+    public static boolean onBlockHarvested(net.minecraft.world.World world, int x, int y, int z, EntityPlayer entityPlayer) {
+        Event event = new PlayerBreakBlockEvent(world, x, y, z, entityPlayer);
         MinecraftForge.EVENT_BUS.post(event);
         return event.isCanceled() || event.getResult() == Event.Result.DENY;
     }

@@ -82,85 +82,30 @@ public class ItemInWorldManagerTransformer extends org.getlwc.forge.asm.Abstract
             MethodNode method = (MethodNode) iter.next();
 
             if (methodEquals(method, "ItemInWorldManager", "removeBlock")) {
+                LabelNode end = new LabelNode(new Label());
 
-                int blockIndex = 4;
-                int mdIndex = 5;
+                // instructions to inject
+                InsnList instructions = new InsnList();
 
-                // find injection point in method (use IFNULL)
-                for (int index = 0; index < method.instructions.size(); index++) {
+                // construct instruction nodes for list
+                instructions.add(new VarInsnNode(ALOAD, 0));
+                instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("ItemInWorldManager"), getFieldName("ItemInWorldManager", "theWorld"), "L" + getJavaClassName("World") + ";"));
+                instructions.add(new VarInsnNode(ILOAD, 1));
+                instructions.add(new VarInsnNode(ILOAD, 2));
+                instructions.add(new VarInsnNode(ILOAD, 3));
+                instructions.add(new VarInsnNode(ALOAD, 0));
+                instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("ItemInWorldManager"), getFieldName("ItemInWorldManager", "thisPlayerMP"), "L" + getJavaClassName("EntityPlayerMP") + ";"));
+                instructions.add(new MethodInsnNode(INVOKESTATIC, getJavaClassName("ForgeEventHelper"), getMethodName("ForgeEventHelper", "onBlockHarvested"), "(L" + getJavaClassName("World") + ";IIIL" + getJavaClassName("EntityPlayer") + ";)Z"));
 
-                    // find local Block object node and from that, local object index
-                    if (method.instructions.get(index).getType() == AbstractInsnNode.FIELD_INSN) {
-                        FieldInsnNode blocksListNode = (FieldInsnNode) method.instructions.get(index);
+                instructions.add(new JumpInsnNode(IFEQ, end));
+                instructions.add(new InsnNode(ICONST_1));
+                instructions.add(new InsnNode(IRETURN));
+                instructions.add(end);
+                // finished instruction list
 
-                        if (blocksListNode.owner.equals(getJavaClassName("Block")) && blocksListNode.name.equals(getFieldName("Block", "blocksList"))) {
-                            int offset = 1;
-
-                            while (method.instructions.get(index + offset).getOpcode() != ASTORE) {
-                                offset++;
-                            }
-
-                            VarInsnNode blockNode = (VarInsnNode) method.instructions.get(index + offset);
-                            blockIndex = blockNode.var;
-                        }
-                    }
-
-                    // find local metadata variable node and from that, local variable index
-                    if (method.instructions.get(index).getType() == AbstractInsnNode.METHOD_INSN) {
-                        MethodInsnNode methodNode = (MethodInsnNode) method.instructions.get(index);
-
-                        if (methodNode.owner.equals(getJavaClassName("World")) && methodNode.name.equals(getMethodName("World", "getBlockMetadata"))) {
-                            int offset = 1;
-
-                            while (method.instructions.get(index + offset).getOpcode() != ISTORE) {
-                                offset++;
-                            }
-
-                            VarInsnNode mdNode = (VarInsnNode) method.instructions.get(index + offset);
-                            mdIndex = mdNode.var;
-                        }
-                    }
-
-                    // inject our event
-                    if (method.instructions.get(index).getOpcode() == IFNULL) {
-
-                        int offset = 1;
-
-                        while (method.instructions.get(index + offset).getOpcode() != ALOAD) {
-                            offset++;
-                        }
-
-                        LabelNode end = new LabelNode(new Label());
-
-                        // instructions to inject
-                        InsnList instructions = new InsnList();
-
-                        // construct instruction nodes for list
-                        instructions.add(new VarInsnNode(ALOAD, 0));
-                        instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("ItemInWorldManager"), getFieldName("ItemInWorldManager", "theWorld"), "L" + getJavaClassName("World") + ";"));
-                        instructions.add(new VarInsnNode(ILOAD, 1));
-                        instructions.add(new VarInsnNode(ILOAD, 2));
-                        instructions.add(new VarInsnNode(ILOAD, 3));
-                        instructions.add(new VarInsnNode(ALOAD, blockIndex));
-                        instructions.add(new VarInsnNode(ILOAD, mdIndex));
-                        instructions.add(new VarInsnNode(ALOAD, 0));
-                        instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("ItemInWorldManager"), getFieldName("ItemInWorldManager", "thisPlayerMP"), "L" + getJavaClassName("EntityPlayerMP") + ";"));
-                        instructions.add(new MethodInsnNode(INVOKESTATIC, getJavaClassName("ForgeEventHelper"), getMethodName("ForgeEventHelper", "onBlockHarvested"), "(L" + getJavaClassName("World") + ";IIIL" + getJavaClassName("Block") + ";IL" + getJavaClassName("EntityPlayer") + ";)Z"));
-
-                        instructions.add(new JumpInsnNode(IFEQ, end));
-                        instructions.add(new InsnNode(ICONST_1));
-                        instructions.add(new InsnNode(IRETURN));
-                        instructions.add(end);
-                        // finished instruction list
-
-                        // inject the instructions
-                        method.instructions.insertBefore(method.instructions.get(index + offset), instructions);
-
-                        break;
-                    }
-
-                }
-
+                // inject the instructions
+                method.instructions.insert(instructions);
+                break;
             }
 
         }

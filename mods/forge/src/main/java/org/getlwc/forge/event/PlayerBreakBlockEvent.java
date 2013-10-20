@@ -44,20 +44,14 @@ public class PlayerBreakBlockEvent extends PlayerEvent {
 
     public final int blockZ;
 
-    public final net.minecraft.block.Block block;
-
-    public final int blockMeta;
-
     public final EntityPlayer player;
 
-    public PlayerBreakBlockEvent(net.minecraft.world.World world, int x, int y, int z, net.minecraft.block.Block block, int metadata, EntityPlayer entityPlayer) {
+    public PlayerBreakBlockEvent(net.minecraft.world.World world, int x, int y, int z, EntityPlayer entityPlayer) {
         super(entityPlayer);
         this.world = world;
         this.blockX = x;
         this.blockY = y;
         this.blockZ = z;
-        this.block = block;
-        this.blockMeta = metadata;
         this.player = entityPlayer;
     }
 
