@@ -78,7 +78,7 @@ public class Updater {
                 public void run() {
                     Version latest = getLatestVersion();
 
-                    if (latest.newerThan(LWCInfo.FULL_VERSION)) {
+                    if (latest != null && latest.newerThan(LWCInfo.FULL_VERSION)) {
                         lwc.log("An update is available. You are on version \"" + LWCInfo.FULL_VERSION.toString() + "\". The latest version is: \"" + latest.toString() + "\"");
                         lwc.log("LWC updates can be found on the Bukkit Dev page at: http://dev.bukkit.org/server-mods/lwc/");
                     }
