@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-10-17 15:30+0000\n"
+"POT-Creation-Date: 2013-10-20 15:24+0000\n"
 "PO-Revision-Date: 2013-06-18 23:02-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -65,6 +65,11 @@ msgstr "[ASM] Patched {0} ({1}) successfully!"
 #, java-format
 msgid "[ASM] Failed to patch {0} ({1})"
 msgstr "[ASM] Failed to patch {0} ({1})"
+
+#: mods/forge/src/main/java/org/getlwc/forge/modsupport/BuildCraft.java:18
+#, java-format
+msgid "Using BuildCraft version: {0}"
+msgstr "Using BuildCraft version: {0}"
 
 #: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:101
 msgid "&4You have no pending /cpassword."

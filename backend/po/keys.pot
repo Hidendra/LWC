@@ -11,7 +11,7 @@ msgstr ""
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
 "\n"
-"POT-Creation-Date: 2013-10-17 15:30+0000\n"
+"POT-Creation-Date: 2013-10-20 15:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -63,6 +63,11 @@ msgstr ""
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemInWorldManagerTransformer.java:174
 #, java-format
 msgid "[ASM] Failed to patch {0} ({1})"
+msgstr ""
+
+#: mods/forge/src/main/java/org/getlwc/forge/modsupport/BuildCraft.java:18
+#, java-format
+msgid "Using BuildCraft version: {0}"
 msgstr ""
 
 #: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:101

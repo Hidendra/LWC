@@ -15,7 +15,7 @@ public class BuildCraft {
     public static void run(final Engine engine) {
 
         //
-        engine.getConsoleSender().sendMessage("Using BuildCraft version: " + buildcraft.core.Version.VERSION);
+        engine.getConsoleSender().sendTranslatedMessage("Using BuildCraft version: {0}", buildcraft.core.Version.VERSION);
 
         // Add extraction handler
         buildcraft.api.transport.PipeManager.registerExtractionHandler(new buildcraft.api.transport.IExtractionHandler() {
