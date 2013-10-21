@@ -103,6 +103,27 @@ public class LWCEntityListener implements Listener {
             if (protection != null) {
                 boolean ignoreExplosions = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock(), "ignoreExplosions"));
 
+                if (!(ignoreExplosions || protection.hasFlag(Flag.Type.ALLOWEXPLOSIONS))) {
+                    event.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onEntityExplodeMonitor(EntityExplodeEvent event) {
+        if (!LWC.ENABLED || event.isCancelled()) {
+            return;
+        }
+
+        LWC lwc = LWC.getInstance();
+
+        for (Block block : event.blockList()) {
+            Protection protection = plugin.getLWC().findProtection(block.getLocation());
+
+            if (protection != null) {
+                boolean ignoreExplosions = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock(), "ignoreExplosions"));
+
                 if (ignoreExplosions || protection.hasFlag(Flag.Type.ALLOWEXPLOSIONS)) {
                     // If creeper heal is active for the block, halt all thrusters!
                     if (isCreeperHealActive(event.getEntity())) {
@@ -110,8 +131,6 @@ public class LWCEntityListener implements Listener {
                     }
 
                     protection.remove();
-                } else {
-                    event.setCancelled(true);
                 }
             }
         }
