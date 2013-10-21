@@ -36,13 +36,14 @@ import org.getlwc.ServerLayer;
 import org.getlwc.World;
 import org.getlwc.command.Command;
 import org.getlwc.entity.Player;
+import org.getlwc.forge.asm.AbstractSingleClassTransformer;
 import org.getlwc.forge.entity.ForgePlayer;
 import org.getlwc.forge.modsupport.BuildCraft;
 import org.getlwc.forge.modsupport.ModSupport;
 import org.getlwc.forge.world.ForgeWorld;
 
 import java.io.File;
-import java.util.Map;
+import java.lang.reflect.Method;
 
 public class ForgeServerLayer extends ServerLayer {
 
@@ -52,9 +53,9 @@ public class ForgeServerLayer extends ServerLayer {
     private LWC mod;
 
     /**
-     * The internal Minecraft map of commands
+     * Cached method for CommandHandler.registerCommand
      */
-    private Map internal_commands = null;
+    private Method cachedRegisterCommandMethod = null;
 
     public ForgeServerLayer() {
         mod = LWC.instance;
@@ -65,8 +66,6 @@ public class ForgeServerLayer extends ServerLayer {
      */
     public void init() {
         try {
-            initCommandManager();
-
             if (ModSupport.isModInstalled(ModSupport.Mod.BUILDCRAFT)) {
                 BuildCraft.run(mod.getEngine());
             }
@@ -84,17 +83,32 @@ public class ForgeServerLayer extends ServerLayer {
         worlds.clear();
     }
 
-    /**
-     * Initialize the command manager and hook into it. This resolves to NATIVE code during obfuscation.
-     */
-    private void initCommandManager() {
-        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-        internal_commands = server.getCommandManager().getCommands();
-    }
-
     @Override
     public void onRegisterBaseCommand(String baseCommand, Command command) {
-        internal_commands.put(baseCommand, new NativeCommandHandler(baseCommand));
+        try {
+            if (cachedRegisterCommandMethod == null) {
+                // find registerCommand(ICommand) without invoking it directly
+                for (Method method : net.minecraft.command.CommandHandler.class.getDeclaredMethods()) {
+                    Class<?>[] paramTypes = method.getParameterTypes();
+
+                    if (paramTypes.length != 1) {
+                        continue;
+                    }
+
+                    if (paramTypes[0].getCanonicalName().equals(AbstractSingleClassTransformer.getClassName("ICommand", true)) || paramTypes[0].getCanonicalName().equals(AbstractSingleClassTransformer.getClassName("ICommand", false))) {
+                        cachedRegisterCommandMethod = method;
+                        break;
+                    }
+                }
+            }
+
+            if (cachedRegisterCommandMethod != null) {
+                cachedRegisterCommandMethod.invoke(FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager(), new NativeCommandHandler(baseCommand));
+            }
+        } catch (Exception e) {
+            System.err.println(" !!!! LWC is likely not compatible with this version of Minecraft. You need to update!");
+            e.printStackTrace();
+        }
     }
 
     @Override

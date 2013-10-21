@@ -54,6 +54,9 @@ classes:
   Packet204ClientInfo:
     mcp: net.minecraft.network.packet.Packet204ClientInfo
     obf: do
+  ICommand:
+    mcp: net.minecraft.command.ICommand
+    obf: ab
 methods:
   ForgeEventHelper:
     onBlockHarvested:
