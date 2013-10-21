@@ -39,6 +39,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -320,6 +321,21 @@ public class ProtectionFinder {
      */
     public List<Block> getBlocks() {
         return Collections.unmodifiableList(blocks);
+    }
+
+    /**
+     * Remove a block from the finder
+     *
+     * @param block
+     */
+    public void removeBlock(Block block) {
+        Iterator<Block> iter = blocks.iterator();
+
+        while (iter.hasNext()) {
+            if (lwc.blockEquals(block, iter.next())) {
+                iter.remove();
+            }
+        }
     }
 
     /**

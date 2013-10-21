@@ -165,7 +165,6 @@ public class LWCBlockListener implements Listener {
         LWC lwc = plugin.getLWC();
         Player player = event.getPlayer();
         Block block = event.getBlock();
-        Material material = block.getType();
 
         boolean ignoreBlockDestruction = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(block, "ignoreBlockDestruction"));
 
@@ -200,13 +199,12 @@ public class LWCBlockListener implements Listener {
                 }
 
                 // Repair the cache
-                protection.removeCache();
-                lwc.findProtection(doubleChest.getLocation());
+                protection.radiusRemoveCache();
+                protection.getProtectionFinder().removeBlock(block);
+                lwc.getProtectionCache().addProtection(protection);
 
-                // they did not click the protected block, however we still want to prevent removal
                 return;
             }
-
         }
 
         try {
