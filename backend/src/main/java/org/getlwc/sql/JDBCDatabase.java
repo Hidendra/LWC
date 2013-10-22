@@ -70,7 +70,12 @@ public class JDBCDatabase implements Database {
         /**
          * H2. http://www.h2database.com
          */
-        H2("org.h2.Driver");
+        H2("org.h2.Driver"),
+
+        /**
+         * PostgreSQL
+         */
+        POSTGRESQL("org.postgresql.Driver");
 
         /**
          * The driver class

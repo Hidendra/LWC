@@ -17,3 +17,7 @@ resources:
       testClass: org.sqlite.SQLite
       files:
       - sqlite-jdbc-3.7.15-SNAPSHOT-stripped.jar
+    postgresql:
+      testClass: org.postgresql.Driver
+      files:
+      - postgresql-9.2-1003.jdbc4.jar

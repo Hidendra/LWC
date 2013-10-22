@@ -11,7 +11,7 @@ msgstr ""
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
 "\n"
-"POT-Creation-Date: 2013-10-21 21:40+0000\n"
+"POT-Creation-Date: 2013-10-22 00:32+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -325,7 +325,7 @@ msgid ""
 "trace has been printed out to the log file"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/sql/JDBCDatabase.java:216
+#: backend/src/main/java/org/getlwc/sql/JDBCDatabase.java:221
 msgid "Creating base database via base.sql"
 msgstr ""
 
