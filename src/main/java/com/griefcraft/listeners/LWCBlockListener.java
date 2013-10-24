@@ -200,7 +200,11 @@ public class LWCBlockListener implements Listener {
 
                 // Repair the cache
                 protection.radiusRemoveCache();
-                protection.getProtectionFinder().removeBlock(block);
+
+                if (protection.getProtectionFinder() != null) {
+                    protection.getProtectionFinder().removeBlock(block);
+                }
+
                 lwc.getProtectionCache().addProtection(protection);
 
                 return;
