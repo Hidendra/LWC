@@ -65,7 +65,7 @@ public class ExplosionTransformer extends AbstractSingleClassTransformer {
     }
 
     @Override
-    public byte[] transform(byte[] bytes) {
+    public byte[] transform(String className, byte[] bytes) {
 
         ClassNode classNode = new ClassNode();
         ClassReader reader = new ClassReader(bytes);
