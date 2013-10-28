@@ -15,14 +15,14 @@ import java.util.Iterator;
 import static org.objectweb.asm.Opcodes.ALOAD;
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 
-public class GuiChestTransformer extends AbstractSingleClassTransformer {
+public class GuiTransformer extends AbstractSingleClassTransformer {
 
     /**
      * The class we are targeting
      */
     private static final String TARGET_CLASS = "GuiChest";
 
-    public GuiChestTransformer() {
+    public GuiTransformer() {
         super(TARGET_CLASS);
     }
 
