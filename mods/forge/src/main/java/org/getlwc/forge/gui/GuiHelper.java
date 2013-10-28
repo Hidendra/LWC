@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.lang.reflect.Field;
 
-public class GuiHandler {
+public class GuiHelper {
 
     /**
      * The field fontRenderer exists at (GuiScreen)

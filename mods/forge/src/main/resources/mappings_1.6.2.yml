@@ -3,9 +3,9 @@ classes:
   ForgeEventHelper:
     mcp: org.getlwc.forge.ForgeEventHelper
     obf: org.getlwc.forge.ForgeEventHelper
-  GuiHandler:
-    mcp: org.getlwc.forge.gui.GuiHandler
-    obf: org.getlwc.forge.gui.GuiHandler
+  GuiHelper:
+    mcp: org.getlwc.forge.gui.GuiHelper
+    obf: org.getlwc.forge.gui.GuiHelper
   ItemInWorldManager:
     mcp: net.minecraft.item.ItemInWorldManager
     obf: jv

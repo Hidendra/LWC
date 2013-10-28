@@ -41,7 +41,7 @@ public class GuiChestTransformer extends AbstractSingleClassTransformer {
                 InsnList instructions = new InsnList();
 
                 instructions.add(new VarInsnNode(ALOAD, 0));
-                instructions.add(new MethodInsnNode(INVOKESTATIC, getJavaClassName("GuiHandler"), getMethodName("GuiHandler", "drawGuiContainerForegroundLayer"), "(L" + getJavaClassName("GuiContainer") + ";)V"));
+                instructions.add(new MethodInsnNode(INVOKESTATIC, getJavaClassName("GuiHelper"), getMethodName("GuiHelper", "drawGuiContainerForegroundLayer"), "(L" + getJavaClassName("GuiContainer") + ";)V"));
 
                 method.instructions.insert(instructions);
                 break;
