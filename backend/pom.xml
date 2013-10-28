@@ -149,7 +149,7 @@
                     <targetBundle>lang.lwc_</targetBundle>
                     <poDirectory>po</poDirectory>
                     <sourceDirectory>${project.basedir}/../</sourceDirectory>
-                    <keywords>-k --keyword=_ --keyword=sendTranslatedMessage --package-name=LWC
+                    <keywords>-k --keyword=_ --keyword=sendTranslatedMessage --keyword=markAsTranslatable --package-name=LWC
                         --package-version=${project.version} --copyright-holder="Tyler Blair"
                         --msgid-bugs-address="hidendra@getlwc.org"
                         --add-comments=/

@@ -70,6 +70,18 @@ public class I18n {
     }
 
     /**
+     * Dummy method to mark a string as translatable internally. Used to tag it in gettext and is then
+     * later called via _ / translate. This is done in the event of e.g. enums so that enum names
+     * can be translated without a bunch more code to manually add them in.
+     *
+     * @param message
+     * @return the message you passed it
+     */
+    public static String markAsTranslatable(String message) {
+        return message;
+    }
+
+    /**
      * Translate a message to the currently enabled message lang.
      *
      * @param message the message to translate

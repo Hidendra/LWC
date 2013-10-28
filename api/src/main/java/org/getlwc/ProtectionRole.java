@@ -35,6 +35,8 @@ import org.getlwc.model.State;
 
 import java.util.EnumSet;
 
+import static org.getlwc.I18n._;
+
 public abstract class ProtectionRole extends AbstractSavable implements AccessProvider {
 
     /**
@@ -51,45 +53,67 @@ public abstract class ProtectionRole extends AbstractSavable implements AccessPr
         /**
          * Immediately reject access to the protection.
          */
-        EXPLICIT_DENY,
+        EXPLICIT_DENY(I18n.markAsTranslatable("explicit_deny")),
 
         /**
          * User has NO access to the protection
          */
-        NONE,
+        NONE(I18n.markAsTranslatable("none")),
 
         /**
          * The user can view the protection but not modify it in any way. The implementation of this depends
          * on the mod and if the mod does not support preventing the inventory from being modified somehow
          * then access will just be blocked.
          */
-        GUEST,
+        GUEST(I18n.markAsTranslatable("guest")),
 
         /**
-         * The user can only deposit into the protection
+         * User can only deposit into the protection
          */
-        DEPOSITONLY,
+        DEPOSITONLY(I18n.markAsTranslatable("depositonly")),
 
         /**
-         * User can open and access the protection but not add or remove access from the protection
+         * User can deposit and withdraw from the protection at will but not add or remove other users to it.
          */
-        MEMBER,
+        MEMBER(I18n.markAsTranslatable("member")),
 
         /**
          * User can modify the protection (add and remove members) but not add or remove other managers.
          */
-        MANAGER,
+        MANAGER(I18n.markAsTranslatable("manager")),
 
         /**
          * User has the same access as the user who created the protection. They can remove the protection,
-         * add or remove ANY level to the protection (i.e other owners) but they cannot remove themself.
+         * add or remove ANY level to the protection (i.e. other owners) but they cannot remove themselves
+         * from the protection
          */
-        OWNER;
+        OWNER(I18n.markAsTranslatable("owner"));
 
         /**
          * Access levels that normal players can set
          */
         public final static EnumSet<Access> USABLE_ACCESS_LEVELS = EnumSet.range(NONE, OWNER);
+
+        /**
+         * The translated name for the enum
+         */
+        private String translatedName = null;
+
+        Access(String translatedName) {
+        }
+
+        /**
+         * Get the translated name of the access level
+         *
+         * @return translated name
+         */
+        public String getTranslatedName() {
+            if (translatedName == null) {
+                translatedName = _(toString().toLowerCase());
+            }
+
+            return translatedName;
+        }
 
         /**
          * Match a {@link org.getlwc.ProtectionRole.Access} given a name.

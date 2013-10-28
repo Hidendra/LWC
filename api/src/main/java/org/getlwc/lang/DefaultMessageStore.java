@@ -70,6 +70,10 @@ public class DefaultMessageStore implements MessageStore {
         ResourceBundle bundle = getBundle(locale);
 
         if (bundle == null && !locale.equals(defaultLocale)) {
+            if (defaultLocale == null) {
+                return message;
+            }
+
             bundle = getBundle(defaultLocale);
         }
 
