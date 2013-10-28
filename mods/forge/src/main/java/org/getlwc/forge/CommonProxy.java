@@ -48,7 +48,6 @@ public abstract class CommonProxy {
         lwc.ensurePostLoaded();
         GameRegistry.registerPlayerTracker(new IPlayerTracker() {
             public void onPlayerLogin(EntityPlayer entityPlayer) {
-                lwc.getEngine().getEventHelper().onPlayerJoin(lwc.wrapPlayer(entityPlayer));
             }
 
             public void onPlayerLogout(EntityPlayer entityPlayer) {
