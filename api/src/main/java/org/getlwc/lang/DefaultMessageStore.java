@@ -92,6 +92,10 @@ public class DefaultMessageStore implements MessageStore {
      * {@inheritDoc}
      */
     public ResourceBundle getBundle(Locale locale) {
+        if (locale == null) {
+            return null;
+        }
+
         if (bundles.containsKey(locale)) {
             return bundles.get(locale);
         }

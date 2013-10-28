@@ -141,6 +141,7 @@ public class ForgeEventHelper {
         Player player = mod.wrapPlayer(handle);
         player.setLocale(new Locale(packet.getLanguage()));
         mod.getEngine().getConsoleSender().sendMessage("Player " + player.getName() + " loaded using locale: " + player.getLocale());
+        mod.getEngine().getEventHelper().onPlayerJoin(mod.wrapPlayer(handle));
     }
 
 }
