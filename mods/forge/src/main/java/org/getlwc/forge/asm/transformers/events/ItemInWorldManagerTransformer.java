@@ -33,7 +33,6 @@ import org.getlwc.forge.LWC;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
-import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
@@ -47,15 +46,12 @@ import org.objectweb.asm.tree.VarInsnNode;
 import java.util.Iterator;
 
 import static org.objectweb.asm.Opcodes.ALOAD;
-import static org.objectweb.asm.Opcodes.ASTORE;
 import static org.objectweb.asm.Opcodes.GETFIELD;
 import static org.objectweb.asm.Opcodes.ICONST_1;
 import static org.objectweb.asm.Opcodes.IFEQ;
-import static org.objectweb.asm.Opcodes.IFNULL;
 import static org.objectweb.asm.Opcodes.ILOAD;
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 import static org.objectweb.asm.Opcodes.IRETURN;
-import static org.objectweb.asm.Opcodes.ISTORE;
 
 public class ItemInWorldManagerTransformer extends org.getlwc.forge.asm.AbstractSingleClassTransformer {
 
@@ -69,7 +65,7 @@ public class ItemInWorldManagerTransformer extends org.getlwc.forge.asm.Abstract
     }
 
     @Override
-    public byte[] transform(byte[] bytes) {
+    public byte[] transform(String className, byte[] bytes) {
 
         ClassNode classNode = new ClassNode();
         ClassReader reader = new ClassReader(bytes);

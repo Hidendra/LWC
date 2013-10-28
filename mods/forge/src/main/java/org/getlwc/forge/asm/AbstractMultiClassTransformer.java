@@ -1,7 +1,6 @@
 package org.getlwc.forge.asm;
 
 import org.getlwc.forge.LWC;
-import org.getlwc.forge.asm.AbstractTransformer;
 import org.objectweb.asm.tree.LocalVariableNode;
 import org.objectweb.asm.tree.MethodNode;
 
@@ -55,11 +54,11 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
             if (name.equals(getClassName(className, false))) {
                 obfuscated = false;
                 LWC.instance.ensurePostLoaded();
-                return transform(bytes);
+                return transform(className, bytes);
             } else if (name.equals(getClassName(className, true))) {
                 obfuscated = true;
                 LWC.instance.ensurePostLoaded();
-                return transform(bytes);
+                return transform(className, bytes);
             }
         }
 
@@ -69,10 +68,12 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
     /**
      * Transform the given matched class
      *
+     *
+     * @param className
      * @param bytes
      * @return
      */
-    public abstract byte[] transform(byte[] bytes);
+    public abstract byte[] transform(String className, byte[] bytes);
 
     /**
      * Check if a given {@link org.objectweb.asm.tree.MethodNode} equals the method in the given method
