@@ -11,7 +11,7 @@ msgstr ""
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
 "\n"
-"POT-Creation-Date: 2013-10-28 15:07+0000\n"
+"POT-Creation-Date: 2013-10-28 15:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,6 +43,7 @@ msgstr ""
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemStackTransformer.java:95
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ExplosionTransformer.java:141
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/misc/UpdateClientInfoTransformer.java:63
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/gui/GuiChestTransformer.java:55
 #, java-format
 msgid "[ASM] Patched {0} ({1}) successfully!"
 msgstr ""
@@ -52,6 +53,7 @@ msgstr ""
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemStackTransformer.java:98
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ExplosionTransformer.java:144
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/misc/UpdateClientInfoTransformer.java:66
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/gui/GuiChestTransformer.java:58
 #, java-format
 msgid "[ASM] Failed to patch {0} ({1})"
 msgstr ""
@@ -85,26 +87,26 @@ msgstr ""
 msgid "This version was built on: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:204
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:200
 #, java-format
 msgid "Economy: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:318
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:314
 msgid "Shutting down!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:341
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:337
 #, java-format
 msgid "Driver \"{0}\" is not supported."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:371
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:367
 #, java-format
 msgid "Connected to the database with driver: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:373
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:369
 msgid "Failed to connect to the database!"
 msgstr ""
 
