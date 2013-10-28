@@ -51,6 +51,12 @@ classes:
   GuiChest:
     mcp: net.minecraft.client.gui.inventory.GuiChest
     obf: axj
+  GuiFurnace:
+    mcp: net.minecraft.client.gui.inventory.GuiFurnace
+    obf: axs
+  GuiDispenser:
+    mcp: net.minecraft.client.gui.inventory.GuiDispenser
+    obf: axz
   Packet204ClientInfo:
     mcp: net.minecraft.network.packet.Packet204ClientInfo
     obf: dp

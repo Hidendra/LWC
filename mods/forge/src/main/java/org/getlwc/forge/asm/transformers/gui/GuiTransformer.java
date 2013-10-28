@@ -21,7 +21,7 @@ public class GuiTransformer extends AbstractMultiClassTransformer {
      * The class we are targeting
      */
     private static final String[] TARGET_CLASSES = new String[] {
-            "GuiChest"
+            "GuiChest", "GuiFurnace", "GuiDispenser"
     };
 
     public GuiTransformer() {
