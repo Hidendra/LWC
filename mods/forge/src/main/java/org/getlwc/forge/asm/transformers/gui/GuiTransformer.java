@@ -39,13 +39,13 @@ public class GuiTransformer extends AbstractMultiClassTransformer {
         while (iter.hasNext()) {
             MethodNode method = (MethodNode) iter.next();
 
-            if (methodEquals(method, className, "drawGuiContainerForegroundLayer")) {
+            if (methodEquals(method, "GuiContainer", "drawGuiContainerForegroundLayer")) {
                 InsnList instructions = new InsnList();
 
                 instructions.add(new VarInsnNode(ALOAD, 0));
                 instructions.add(new MethodInsnNode(INVOKESTATIC, getJavaClassName("GuiHelper"), getMethodName("GuiHelper", "drawGuiContainerForegroundLayer"), "(L" + getJavaClassName("GuiContainer") + ";)V"));
 
-                method.instructions.insert(instructions);
+                method.instructions.insert(method.instructions.getFirst(), instructions);
                 break;
             }
 

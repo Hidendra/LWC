@@ -80,7 +80,7 @@ methods:
     onUpdateClientInfo:
       obf: onUpdateClientInfo
       signature: n/a
-  GuiHandler:
+  GuiHelper:
     drawGuiContainerForegroundLayer:
       obf: drawGuiContainerForegroundLayer
       signature: n/a
@@ -112,7 +112,7 @@ methods:
     tryPlaceItemIntoWorld:
       obf: a
       signature: (L#EntityPlayer;L#World;IIIIFFF)Z
-  GuiChest:
+  GuiContainer:
     drawGuiContainerForegroundLayer:
       obf: b
       signature: (II)V

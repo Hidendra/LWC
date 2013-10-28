@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-10-28 15:48+0000\n"
+"POT-Creation-Date: 2013-10-28 16:43+0000\n"
 "PO-Revision-Date: 2013-06-18 23:02-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -36,21 +36,21 @@ msgid "Using BuildCraft version: {0}"
 msgstr "Using BuildCraft version: {0}"
 
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/SignUpdateTransformer.java:128
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemInWorldManagerTransformer.java:116
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemInWorldManagerTransformer.java:112
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemStackTransformer.java:95
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ExplosionTransformer.java:141
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/misc/UpdateClientInfoTransformer.java:63
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/gui/GuiChestTransformer.java:55
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/gui/GuiTransformer.java:57
 #, java-format
 msgid "[ASM] Patched {0} ({1}) successfully!"
 msgstr "[ASM] Patched {0} ({1}) successfully!"
 
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/SignUpdateTransformer.java:131
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemInWorldManagerTransformer.java:119
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemInWorldManagerTransformer.java:115
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemStackTransformer.java:98
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ExplosionTransformer.java:144
 #: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/misc/UpdateClientInfoTransformer.java:66
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/gui/GuiChestTransformer.java:58
+#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/gui/GuiTransformer.java:60
 #, java-format
 msgid "[ASM] Failed to patch {0} ({1})"
 msgstr "[ASM] Failed to patch {0} ({1})"

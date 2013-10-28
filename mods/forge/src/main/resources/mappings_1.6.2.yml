@@ -74,7 +74,7 @@ methods:
     onUpdateClientInfo:
       obf: onUpdateClientInfo
       signature: n/a
-  GuiHandler:
+  GuiHelper:
     drawGuiContainerForegroundLayer:
       obf: drawGuiContainerForegroundLayer
       signature: n/a
