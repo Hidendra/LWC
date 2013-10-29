@@ -67,11 +67,15 @@ puts "\n  == pass 2 - method names (obfuscated)"
 
 processMethodNames(mappings, SRG_FILE, "obf")
 
-puts "\n  == pass 3 - field names (obfuscated)"
+puts "\n  == pass 3 - method names (srg)"
+
+processMethodNames(mappings, SRG_SRG_FILE, "srg")
+
+puts "\n  == pass 4 - field names (obfuscated)"
 
 processFieldNames(mappings, SRG_FILE, "obf")
 
-puts "\n  == pass 4 - field names (SRG)"
+puts "\n  == pass 5 - field names (SRG)"
 
 processFieldNames(mappings, SRG_SRG_FILE, "srg")
 

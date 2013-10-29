@@ -38,7 +38,7 @@ def processMethodNames(mappings, file_name, stored_index)
     while (line = file.gets)
 
       # Try to match method name
-      if (match = line.match(/MD: ([a-zA-Z]+)\/([a-zA-Z]+) ([()A-Za-z0-9;\/]+) ([a-zA-Z0-9\/]+)\/([a-zA-Z0-9_]+) ([()A-Za-z0-9;\/]+)/))
+      if (match = line.match(/([a-zA-Z0-9\/]+)\/([a-zA-Z0-9_]+) ([()A-Za-z0-9;\/]+) ([a-zA-Z0-9\/]+)\/([a-zA-Z0-9_]+) ([()A-Za-z0-9;\/]+)/))
         obfuscatedClass, obfuscated, signature, unobfuscatedClass, methodName, signature2 = match.captures
 
         simpleClassName = unobfuscatedClass.split("/").last
@@ -50,7 +50,7 @@ def processMethodNames(mappings, file_name, stored_index)
           # replace simple symbols in the signature with the obfuscated or unobfuscated variant
           if (parsedSignature.include? '#')
             mappings["classes"].each_pair do |c_class_name, c_v|
-              parsedSignature = parsedSignature.gsub('#' + c_class_name + ';', c_v[stored_index] + ';')
+              parsedSignature = parsedSignature.gsub('#' + c_class_name + ';', c_v["obf"] + ';')
             end
           end
 
@@ -59,8 +59,6 @@ def processMethodNames(mappings, file_name, stored_index)
           if methodHash[methodName] == nil or methodHash[methodName][stored_index] != obfuscated
             storedObfuscatedName = !methodHash[methodName].key?(stored_index) ? '(new)' : methodHash[methodName][stored_index]
 
-            print methodHash
-            print "\n"
             printf "method %s/%s %s: %s=%s => %s\n", simpleClassName, methodName, signature, parsedSignature, storedObfuscatedName, obfuscated
             mappings["methods"][simpleClassName][methodName][stored_index] = obfuscated
           else
