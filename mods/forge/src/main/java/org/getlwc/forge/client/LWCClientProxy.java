@@ -29,16 +29,21 @@
 
 package org.getlwc.forge.client;
 
+import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import org.getlwc.forge.CommonProxy;
 
 /**
  * Proxy used by just the client
  */
+@SideOnly(Side.CLIENT)
 public class LWCClientProxy extends CommonProxy {
 
     @Override
     public void init() {
         super.init();
+        TickRegistry.registerTickHandler(new ClientTickHandler(), Side.CLIENT);
     }
 
 }

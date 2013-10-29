@@ -4,8 +4,8 @@ classes:
     mcp: org.getlwc.forge.ForgeEventHelper
     obf: org.getlwc.forge.ForgeEventHelper
   GuiHelper:
-    mcp: org.getlwc.forge.gui.GuiHelper
-    obf: org.getlwc.forge.gui.GuiHelper
+    mcp: org.getlwc.forge.client.gui.GuiHelper
+    obf: org.getlwc.forge.client.gui.GuiHelper
   ItemInWorldManager:
     mcp: net.minecraft.item.ItemInWorldManager
     obf: jw
@@ -45,77 +45,108 @@ classes:
   GuiScreen:
     mcp: net.minecraft.client.gui.GuiScreen
     obf: awe
+  GuiButton:
+    mcp: net.minecraft.client.gui.GuiButton
+    obf: aut
   GuiContainer:
     mcp: net.minecraft.client.gui.inventory.GuiContainer
     obf: awy
-  GuiChest:
-    mcp: net.minecraft.client.gui.inventory.GuiChest
-    obf: axj
-  GuiFurnace:
-    mcp: net.minecraft.client.gui.inventory.GuiFurnace
-    obf: axs
-  GuiDispenser:
-    mcp: net.minecraft.client.gui.inventory.GuiDispenser
-    obf: axz
   Packet204ClientInfo:
     mcp: net.minecraft.network.packet.Packet204ClientInfo
     obf: dp
   ICommand:
     mcp: net.minecraft.command.ICommand
     obf: ab
+  BuildCraftGui:
+    mcp: buildcraft.core.gui.GuiBuildCraft
+    obf: buildcraft.core.gui.GuiBuildCraft
 methods:
   ForgeEventHelper:
     onBlockHarvested:
       obf: onBlockHarvested
+      srg: na
       signature: n/a
     onExplosion:
       obf: onExplosion
+      srg: na
       signature: n/a
     onUpdateSign:
       obf: onUpdateSign
+      srg: na
       signature: n/a
     onBlockPlace:
       obf: onBlockPlace
+      srg: na
       signature: n/a
     onUpdateClientInfo:
       obf: onUpdateClientInfo
+      srg: na
       signature: n/a
   GuiHelper:
     drawGuiContainerForegroundLayer:
       obf: drawGuiContainerForegroundLayer
+      srg: na
+      signature: n/a
+    mouseClicked:
+      obf: mouseClicked
+      srg: na
       signature: n/a
   ItemInWorldManager:
     removeBlock:
       obf: d
+      srg: func_73079_d
       signature: (III)Z
   World:
     getBlockMetadata:
       obf: h
+      srg: func_72805_g
       signature: (III)I
   Explosion:
     doExplosionA:
       obf: a
+      srg: func_77278_a
       signature: ()V
   NetServerHandler:
     handleUpdateSign:
       obf: a
+      srg: func_72487_a
       signature: (L#Packet130UpdateSign;)V
   EntityPlayerMP:
     updateClientInfo:
       obf: a
+      srg: func_71125_a
       signature: (L#Packet204ClientInfo;)V
   TileEntitySign:
     isEditable:
       obf: a
+      srg: func_70409_a
       signature: ()Z
   ItemStack:
     tryPlaceItemIntoWorld:
       obf: a
+      srg: func_77943_a
       signature: (L#EntityPlayer;L#World;IIIIFFF)Z
-  GuiContainer:
-    drawGuiContainerForegroundLayer:
+  GuiScreen:
+    keyTyped:
+      obf: a
+      srg: func_73869_a
+      signature: (CI)V
+    mouseClicked:
+      obf: a
+      srg: func_73864_a
+      signature: (III)V
+    mouseMovedOrUp:
       obf: b
-      signature: (II)V
+      srg: func_73879_b
+      signature: (III)V
+    mouseClickMove:
+      obf: a
+      srg: func_85041_a
+      signature: (IIIJ)V
+    actionPerformed:
+      obf: a
+      srg: func_73875_a
+      signature: (#GuiButton)V
 fields:
   ItemInWorldManager:
     theWorld:

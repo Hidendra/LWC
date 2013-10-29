@@ -29,11 +29,14 @@
 
 package org.getlwc.forge.server;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import org.getlwc.forge.CommonProxy;
 
 /**
  * Proxy used by just the server
  */
+@SideOnly(Side.SERVER)
 public class LWCServerProxy extends CommonProxy {
 
     @Override

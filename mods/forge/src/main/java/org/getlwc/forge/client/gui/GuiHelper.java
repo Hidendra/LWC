@@ -1,10 +1,11 @@
-package org.getlwc.forge.gui;
+package org.getlwc.forge.client.gui;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.Tessellator;
 import org.getlwc.forge.asm.AbstractSingleClassTransformer;
+import org.getlwc.forge.asm.CompilationType;
 import org.lwjgl.opengl.GL11;
 
 import java.lang.reflect.Field;
@@ -28,12 +29,12 @@ public class GuiHelper {
 
         try {
             if (fontRendererField == null) {
-                fontRendererField = GuiScreen.class.getDeclaredField(AbstractSingleClassTransformer.getFieldName("GuiScreen", "fontRenderer", AbstractSingleClassTransformer.CompilationType.SRG));
+                fontRendererField = GuiScreen.class.getDeclaredField(AbstractSingleClassTransformer.getFieldName("GuiScreen", "fontRenderer", CompilationType.SRG));
                 fontRendererField.setAccessible(true);
             }
 
             if (xSizeField == null) {
-                xSizeField = GuiContainer.class.getDeclaredField(AbstractSingleClassTransformer.getFieldName("GuiContainer", "xSize", AbstractSingleClassTransformer.CompilationType.SRG));
+                xSizeField = GuiContainer.class.getDeclaredField(AbstractSingleClassTransformer.getFieldName("GuiContainer", "xSize", CompilationType.SRG));
                 xSizeField.setAccessible(true);
             }
 
@@ -54,6 +55,18 @@ public class GuiHelper {
         int baseY = 8;
         drawGradientRect(xSize, 8, xSize + 96, 8 + 150, 0xc0000000, 0xc0000000);
         //
+    }
+
+    /**
+     * Called when the mouse is clicked on a container
+     *
+     * @param x
+     * @param y
+     * @param flag
+     */
+    public static void mouseClicked(int x, int y, int flag) {
+        //
+        System.out.println(String.format("mouseClicked(%d, %d, %d)", x, y, flag));
     }
 
     /**
