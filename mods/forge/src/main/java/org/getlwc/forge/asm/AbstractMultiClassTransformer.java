@@ -16,25 +16,6 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
      */
     private boolean obfuscated = false;
 
-    public enum CompilationType {
-
-        /**
-         * Unobfuscated (MCP) name
-         */
-        UNOBFUSCATED,
-
-        /**
-         * Obfuscated name used in the Minecraft jar.
-         */
-        OBFUSCATED,
-
-        /**
-         * Forge encoded names. Likely to stay the same between minor updates.
-         */
-        SRG
-
-    }
-
     public AbstractMultiClassTransformer(String[] classNames) {
         this.classNames = classNames;
     }
@@ -165,6 +146,27 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
             return mappings.getString("methods." + className + "." + methodName + ".obf");
         } else {
             return methodName;
+        }
+    }
+
+    /**
+     * Get the method name to use in the given class
+     *
+     * @param className
+     * @param methodName
+     * @param type
+     * @return
+     */
+    public static String getMethodName(String className, String methodName, CompilationType type) {
+        switch (type) {
+            case UNOBFUSCATED:
+                return methodName;
+            case OBFUSCATED:
+                return mappings.getString("methods." + className + "." + methodName + ".obf");
+            case SRG:
+                return mappings.getString("methods." + className + "." + methodName + ".srg");
+            default:
+                throw new UnsupportedClassVersionError("Unknown CompilationType " + type);
         }
     }
 
