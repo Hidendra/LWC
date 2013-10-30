@@ -3,9 +3,6 @@ classes:
   ForgeEventHelper:
     mcp: org.getlwc.forge.ForgeEventHelper
     obf: org.getlwc.forge.ForgeEventHelper
-  GuiHelper:
-    mcp: org.getlwc.forge.client.gui.GuiHelper
-    obf: org.getlwc.forge.client.gui.GuiHelper
   ItemInWorldManager:
     mcp: net.minecraft.item.ItemInWorldManager
     obf: jv
@@ -74,14 +71,6 @@ methods:
     onUpdateClientInfo:
       obf: onUpdateClientInfo
       signature: n/a
-  GuiHelper:
-    drawGuiContainerForegroundLayer:
-      obf: drawGuiContainerForegroundLayer
-      signature: n/a
-  ItemInWorldManager:
-    removeBlock:
-      obf: d
-      signature: (III)Z
   World:
     getBlockMetadata:
       obf: h

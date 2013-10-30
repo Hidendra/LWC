@@ -3,11 +3,15 @@ package org.getlwc.forge.client.gui;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import org.getlwc.forge.LWC;
 import org.getlwc.forge.asm.AbstractMultiClassTransformer;
 import org.getlwc.forge.asm.CompilationType;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 @SideOnly(Side.CLIENT)
@@ -18,11 +22,19 @@ public class GuiScreenWrapper extends GuiScreen {
      */
     private GuiScreen screen;
 
-    private Method methodKeyTyped;
-    private Method methodMouseClicked;
-    private Method methodMouseMovedOrUp;
-    private Method methodMouseClickMove;
-    private Method methodActionPerformed;
+    private Field fontRendererField;
+    private Field xSizeField;
+    private Field ySizeField;
+
+    /**
+     * The xSize of the container if it is a container
+     */
+    private int xSize;
+
+    /**
+     * The ySize of the container if it is a container
+     */
+    private int ySize;
 
     public GuiScreenWrapper(GuiScreen screen) {
         this.screen = screen;
@@ -34,103 +46,68 @@ public class GuiScreenWrapper extends GuiScreen {
      */
     private void initMethods() {
         try {
-            Class<?> clazz = GuiScreen.class;
+            fontRendererField = GuiScreen.class.getDeclaredField(AbstractMultiClassTransformer.getFieldName("GuiScreen", "fontRenderer", CompilationType.SRG));
+            fontRendererField.setAccessible(true);
+            xSizeField = GuiContainer.class.getDeclaredField(AbstractMultiClassTransformer.getFieldName("GuiContainer", "xSize", CompilationType.SRG));
+            xSizeField.setAccessible(true);
+            ySizeField = GuiContainer.class.getDeclaredField(AbstractMultiClassTransformer.getFieldName("GuiContainer", "ySize", CompilationType.SRG));
+            ySizeField.setAccessible(true);
 
-            methodKeyTyped = findMethod(clazz, "GuiScreen", "keyTyped", char.class, int.class);
-            methodMouseClicked = findMethod(clazz, "GuiScreen", "mouseClicked", int.class, int.class, int.class);
-            methodMouseMovedOrUp = findMethod(clazz, "GuiScreen", "mouseMovedOrUp", int.class, int.class, int.class);
-            methodMouseClickMove = findMethod(clazz, "GuiScreen", "mouseClickMove", int.class, int.class, int.class, long.class);
-            methodActionPerformed = findMethod(clazz, "GuiScreen", "actionPerformed", GuiButton.class);
+            fontRenderer = (FontRenderer) fontRendererField.get(screen);
+
+            if (screen instanceof GuiContainer) {
+                GuiContainer container = (GuiContainer) screen;
+                xSize = xSizeField.getInt(container);
+                ySize = ySizeField.getInt(container);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Find a method inside of a class
-     *
-     * @param clazz
-     * @param className
-     * @param methodName
-     * @param parameterTypes
-     * @return
-     */
-    private Method findMethod(Class<?> clazz, String className, String methodName, Class<?>... parameterTypes) {
-        Method method = null;
-
-        // try srg name first
-        try {
-            method = clazz.getDeclaredMethod(AbstractMultiClassTransformer.getMethodName(className, methodName, CompilationType.SRG), parameterTypes);
-        } catch (Exception e) {
-            // not found; try obf
-            try {
-                method = clazz.getDeclaredMethod(AbstractMultiClassTransformer.getMethodName(className, methodName, CompilationType.OBFUSCATED), parameterTypes);
-            } catch (Exception ex) {
-                // not found; try unobfuscated last
-                try {
-                    method = clazz.getDeclaredMethod(AbstractMultiClassTransformer.getMethodName(className, methodName, CompilationType.UNOBFUSCATED), parameterTypes);
-                } catch (Exception exc) {
-                    throw new UnsupportedOperationException("Could not resolve method: " + className + "/" + methodName);
-                }
-            }
-        }
-
-        return method;
     }
 
     @Override
     public void drawScreen(int x, int y, float par3) {
+        super.drawScreen(x, y, par3);
         screen.drawScreen(x, y, par3);
+
+        int left = (width - xSize) / 2;
+        int top = (height - ySize) / 2;
+
+        drawString(fontRenderer, "xSize=" + xSize, left + 30, top + 30, 0);
+        drawGradientRect(left - 100, top, 40, 8 + 150, 0xc0000000, 0xc0000000);
     }
 
     @Override
     public void keyTyped(char chr, int par2) {
-        try {
-            methodKeyTyped.invoke(screen, chr, par2);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        super.keyTyped(chr, par2);
+        LWC.instance.getEngine().getConsoleSender().sendMessage(String.format("keyTyped(%c, %d)", chr, par2));
     }
 
     @Override
     public void mouseClicked(int x, int y, int type) {
-        try {
-            methodMouseClicked.invoke(screen, x, y, type);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        super.mouseClicked(x, y, type);
+        LWC.instance.getEngine().getConsoleSender().sendMessage(String.format("mouseClicked(%d, %d, %d)", x, y, type));
     }
 
     @Override
     public void mouseMovedOrUp(int x, int y, int type) {
-        try {
-            methodMouseMovedOrUp.invoke(screen, x, y, type);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        super.mouseMovedOrUp(x, y, type);
     }
 
     @Override
     public void mouseClickMove(int x, int y, int type, long par4) {
-        try {
-            methodMouseClickMove.invoke(screen, x, y, type, par4);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        super.mouseClickMove(x, y, type, par4);
     }
 
     @Override
     public void actionPerformed(GuiButton button) {
-        try {
-            methodActionPerformed.invoke(screen, button);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        super.actionPerformed(button);
     }
 
     @Override
-    public void setWorldAndResolution(Minecraft minecraft, int par2, int par3) {
-        screen.setWorldAndResolution(minecraft, par2, par3);
+    public void setWorldAndResolution(Minecraft minecraft, int width, int height) {
+        super.setWorldAndResolution(minecraft, width, height);
+        screen.setWorldAndResolution(minecraft, width, height);
     }
 
     @Override
@@ -140,31 +117,36 @@ public class GuiScreenWrapper extends GuiScreen {
 
     @Override
     public void handleInput() {
-        screen.handleInput();
-    }
-
-    @Override
-    public void handleMouseInput() {
-        screen.handleMouseInput();
+        super.handleInput();
     }
 
     @Override
     public void handleKeyboardInput() {
+        super.handleKeyboardInput();
         screen.handleKeyboardInput();
     }
 
     @Override
+    public void handleMouseInput() {
+        super.handleMouseInput();
+        screen.handleMouseInput();
+    }
+
+    @Override
     public void updateScreen() {
+        super.updateScreen();
         screen.updateScreen();
     }
 
     @Override
     public void onGuiClosed() {
+        super.onGuiClosed();
         screen.onGuiClosed();
     }
 
     @Override
     public void drawDefaultBackground() {
+        super.drawDefaultBackground();
         screen.drawDefaultBackground();
     }
 

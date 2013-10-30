@@ -3,9 +3,6 @@ classes:
   ForgeEventHelper:
     mcp: org.getlwc.forge.ForgeEventHelper
     obf: org.getlwc.forge.ForgeEventHelper
-  GuiHelper:
-    mcp: org.getlwc.forge.client.gui.GuiHelper
-    obf: org.getlwc.forge.client.gui.GuiHelper
   ItemInWorldManager:
     mcp: net.minecraft.item.ItemInWorldManager
     obf: jw
@@ -80,15 +77,6 @@ methods:
       signature: n/a
     onUpdateClientInfo:
       obf: onUpdateClientInfo
-      srg: na
-      signature: n/a
-  GuiHelper:
-    drawGuiContainerForegroundLayer:
-      obf: drawGuiContainerForegroundLayer
-      srg: na
-      signature: n/a
-    mouseClicked:
-      obf: mouseClicked
       srg: na
       signature: n/a
   ItemInWorldManager:
@@ -210,3 +198,6 @@ fields:
     xSize:
       obf: c
       srg: field_74194_b
+    ySize:
+      obf: d
+      srg: field_74195_c
