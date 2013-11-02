@@ -1,0 +1,11 @@
+# Static languages file that just stores some metadata for languages.
+
+# addedOn: primarily to target players using a recently added
+#          translation. It gives them the url so that they can
+#          support the translation if they feel it is not good.
+
+languages:
+  en_US:
+    addedOn: 1380585600
+  en_PT:
+    addedOn: 1383264000

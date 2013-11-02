@@ -118,6 +118,11 @@ public class SimpleEngine implements Engine {
     private Configuration internalConfig;
 
     /**
+     * The languages configuration
+     */
+    private Configuration languagesConfig;
+
+    /**
      * The economy object for the server
      */
     private Economy economy = new DefaultEconomy();
@@ -135,6 +140,7 @@ public class SimpleEngine implements Engine {
 
         configuration = new YamlConfiguration("config.yml");
         internalConfig = new YamlConfiguration(getClass().getResourceAsStream("/engine.yml"));
+        languagesConfig = new YamlConfiguration(getClass().getResourceAsStream("/languages.yml"));
         I18n.init(this);
 
         commandHandler = new SimpleCommandHandler(this);
@@ -298,6 +304,15 @@ public class SimpleEngine implements Engine {
      */
     public Configuration getConfiguration() {
         return configuration;
+    }
+
+    /**
+     * Get the config for languages
+     *
+     * @return
+     */
+    public Configuration getLanguagesConfiguration() {
+        return languagesConfig;
     }
 
     /**

@@ -47,9 +47,9 @@ public class SimpleEventHelper implements EventHelper {
     /**
      * The {@link Engine} instance
      */
-    private final Engine engine;
+    private final SimpleEngine engine;
 
-    public SimpleEventHelper(Engine engine) {
+    public SimpleEventHelper(SimpleEngine engine) {
         this.engine = engine;
     }
 
@@ -86,7 +86,6 @@ public class SimpleEventHelper implements EventHelper {
      * {@inheritDoc}
      */
     public void onPlayerJoin(Player player) {
-        System.out.println("Has lwc.admin : " + player.hasPermission("lwc.admin"));
         if (player.hasPermission("lwc.admin")) { // TODO not a hardcoded permission?
             MessageStore store = I18n.getMessageStore();
             Locale defaultLocale = store.getDefaultLocale();
@@ -96,6 +95,16 @@ public class SimpleEventHelper implements EventHelper {
                 /// TL: The double apostrophe is to work around a bug in a library.
                 ///     If you need to use it please leave it as a single apostrophe.
                 player.sendTranslatedMessage("Your client''s locale {0} is not supported by LWC. {1} will be used instead.\nWant to help translate LWC? Go to: &3&nhttp://translate.getlwc.org&r", playerLocale.getName(), defaultLocale.getName());
+            } else {
+                int addedOn = engine.getLanguagesConfiguration().getInt("languages." + playerLocale.getName() + ".addedOn", -1);
+
+                int days30 = 86400 * 30;
+
+                if (addedOn > ((System.currentTimeMillis() / 1000) - days30)) {
+                    /// TL: The double apostrophe is to work around a bug in a library.
+                    ///     If you need to use it please leave it as a single apostrophe.
+                    player.sendTranslatedMessage("Your client''s locale {0} was recently translated for LWC. It may not be 100% accurate. \nWant to help translate/proof-read LWC? Go to: &3&nhttp://translate.getlwc.org&r", playerLocale.getName());
+                }
             }
         }
     }
