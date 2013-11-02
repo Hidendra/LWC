@@ -103,7 +103,7 @@ public class SimpleEventHelper implements EventHelper {
                 if (addedOn > ((System.currentTimeMillis() / 1000) - days30)) {
                     /// TL: The double apostrophe is to work around a bug in a library.
                     ///     If you need to use it please leave it as a single apostrophe.
-                    player.sendTranslatedMessage("Your client''s locale {0} was recently translated for LWC. It may not be 100% accurate. \nWant to help translate/proof-read LWC? Go to: &3&nhttp://translate.getlwc.org&r", playerLocale.getName());
+                    player.sendTranslatedMessage("Your client''s locale {0} was recently translated for LWC. It may not be 100% accurate. \nWant to help translate/proofread LWC? Go to: &3&nhttp://translate.getlwc.org&r", playerLocale.getName());
                 }
             }
         }
