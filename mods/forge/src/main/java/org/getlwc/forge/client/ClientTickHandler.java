@@ -8,6 +8,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import org.getlwc.forge.LWC;
+import org.getlwc.forge.client.gui.GuiContainerWrapper;
 import org.getlwc.forge.client.gui.GuiScreenWrapper;
 
 import java.util.EnumSet;
@@ -21,8 +22,7 @@ public class ClientTickHandler implements ITickHandler {
         if (minecraft.currentScreen instanceof GuiContainer) {
             LWC.instance.getEngine().getConsoleSender().sendMessage(String.format("Wrapping screen: %s", minecraft.currentScreen.getClass().getCanonicalName()));
 
-            GuiScreenWrapper wrapper = new GuiScreenWrapper(minecraft.currentScreen);
-
+            GuiScreenWrapper wrapper = new GuiContainerWrapper((GuiContainer) minecraft.currentScreen);
             minecraft.displayGuiScreen(wrapper);
         }
     }
