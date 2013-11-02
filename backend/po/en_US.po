@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-11-02 04:26+0000\n"
+"POT-Creation-Date: 2013-11-02 04:57+0000\n"
 "PO-Revision-Date: 2013-06-18 23:02-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -312,7 +312,7 @@ msgid "Purging player?: {0}"
 msgstr "Purging player?: {0}"
 
 #. / TL: The double apostrophe is to work around a bug in a library.
-#. /     If you need to use it please leave it as a double apostrophe.
+#. /     If you need to use it please leave it as a single apostrophe.
 #: backend/src/main/java/org/getlwc/SimpleEventHelper.java:98
 #, java-format
 msgid ""
@@ -320,8 +320,7 @@ msgid ""
 "instead.\n"
 "Want to help translate LWC? Go to: &3&nhttp://translate.getlwc.org&r"
 msgstr ""
-"Your client''s locale {0} is not supported by LWC. {1} will be used "
-"instead.\n"
+"Your client's locale {0} is not supported by LWC. {1} will be used instead.\n"
 "Want to help translate LWC? Go to: &3&nhttp://translate.getlwc.org&r"
 
 #: backend/src/main/java/org/getlwc/SimpleEventHelper.java:144

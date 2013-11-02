@@ -94,7 +94,7 @@ public class SimpleEventHelper implements EventHelper {
 
             if (!store.supports(playerLocale)) {
                 /// TL: The double apostrophe is to work around a bug in a library.
-                ///     If you need to use it please leave it as a double apostrophe.
+                ///     If you need to use it please leave it as a single apostrophe.
                 player.sendTranslatedMessage("Your client''s locale {0} is not supported by LWC. {1} will be used instead.\nWant to help translate LWC? Go to: &3&nhttp://translate.getlwc.org&r", playerLocale.getName(), defaultLocale.getName());
             }
         }

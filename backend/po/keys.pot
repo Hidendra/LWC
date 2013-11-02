@@ -11,7 +11,7 @@ msgstr ""
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
 "\n"
-"POT-Creation-Date: 2013-11-02 04:54+0000\n"
+"POT-Creation-Date: 2013-11-02 04:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -297,7 +297,7 @@ msgid "Purging player?: {0}"
 msgstr ""
 
 #. / TL: The double apostrophe is to work around a bug in a library.
-#. /     If you need to use it please leave it as a double apostrophe.
+#. /     If you need to use it please leave it as a single apostrophe.
 #: backend/src/main/java/org/getlwc/SimpleEventHelper.java:98
 #, java-format
 msgid ""
