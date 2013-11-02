@@ -33,6 +33,7 @@ import org.getlwc.command.CommandSender;
 import org.getlwc.lang.DefaultMessageStore;
 import org.getlwc.lang.Locale;
 import org.getlwc.lang.MessageStore;
+import org.getlwc.util.StringUtils;
 
 import java.text.MessageFormat;
 
@@ -137,7 +138,7 @@ public class I18n {
         if (arguments.length == 0) {
             return translated;
         } else {
-            return MessageFormat.format(translated, arguments);
+            return MessageFormat.format(StringUtils.escapeMessageFormat(translated), arguments);
         }
     }
 
@@ -160,7 +161,7 @@ public class I18n {
             if (arguments.length == 0) {
                 return translated;
             } else {
-                return MessageFormat.format(translated, arguments);
+                return MessageFormat.format(StringUtils.escapeMessageFormat(translated), arguments);
             }
         }
     }

@@ -86,6 +86,7 @@ public class SimpleEventHelper implements EventHelper {
      * {@inheritDoc}
      */
     public void onPlayerJoin(Player player) {
+        System.out.println("Has lwc.admin : " + player.hasPermission("lwc.admin"));
         if (player.hasPermission("lwc.admin")) { // TODO not a hardcoded permission?
             MessageStore store = I18n.getMessageStore();
             Locale defaultLocale = store.getDefaultLocale();

@@ -8,6 +8,13 @@ import static org.junit.Assert.assertEquals;
 public class StringUtilsTest {
 
     @Test
+    public void testEscapeMessageFormat() {
+        assertEquals("Test''ing", StringUtils.escapeMessageFormat("Test'ing"));
+        assertEquals("Testing", StringUtils.escapeMessageFormat("Testing"));
+        assertEquals("''", StringUtils.escapeMessageFormat("'"));
+    }
+
+    @Test
     public void testCapitalizeFirstLetter() {
         assertEquals("The Best Test In The World", StringUtils.capitalizeFirstLetter("the best teSt in the world"));
     }

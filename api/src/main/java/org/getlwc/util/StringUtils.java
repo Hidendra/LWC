@@ -43,6 +43,27 @@ public class StringUtils {
      */
     private final static Pattern QUOTED_STRING_REGEX = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
 
+
+    /**
+     * Escape a string. Primarily, replace single quotes with double quotes.
+     * @param msg
+     * @return
+     */
+    public static String escapeMessageFormat(String msg) {
+        StringBuffer buffer = new StringBuffer();
+        char[] chrmsg = msg.toCharArray();
+
+        for (int i = 0; i < chrmsg.length; i ++) {
+            if (chrmsg[i] == '\'') {
+                buffer.append("''");
+            } else {
+                buffer.append(chrmsg[i]);
+            }
+        }
+
+        return buffer.toString();
+    }
+
     /**
      * Capitalize the first letter in a word
      *
