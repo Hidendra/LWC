@@ -82,34 +82,42 @@ methods:
     removeBlock:
       obf: d
       signature: (III)Z
+      srg: func_73079_d
   World:
     getBlockMetadata:
       obf: h
       signature: (III)I
+      srg: func_72805_g
   Explosion:
     doExplosionA:
       obf: a
       signature: ()V
+      srg: func_77278_a
   NetServerHandler:
     handleUpdateSign:
       obf: a
       signature: (L#Packet130UpdateSign;)V
+      srg: func_72487_a
   EntityPlayerMP:
     updateClientInfo:
       obf: a
       signature: (L#Packet204ClientInfo;)V
+      srg: func_71125_a
   TileEntitySign:
     isEditable:
       obf: a
       signature: ()Z
+      srg: func_70409_a
   ItemStack:
     tryPlaceItemIntoWorld:
       obf: a
       signature: (L#EntityPlayer;L#World;IIIIFFF)Z
+      srg: func_77943_a
   GuiChest:
     drawGuiContainerForegroundLayer:
       obf: b
       signature: (II)V
+      srg: func_74189_g
 fields:
   ItemInWorldManager:
     theWorld:
