@@ -110,10 +110,10 @@ public class PlayerEventHandler {
 
         if (notifier instanceof ProtectionEventNotifier) {
             addEventNotifier(Type.PLAYER_INTERACT_PROTECTION, new AnyEventNotifier(notifier));
-            addEventNotifier(Type.PLAYER_INTERACT_BLOCK, new AnyEventNotifier(player, _("&4Please interact with a protection, and not a block!", player)));
+            addEventNotifier(Type.PLAYER_INTERACT_BLOCK, new AnyEventNotifier(player, _("&4That block is not protected!", player)));
         } else if (notifier instanceof BlockEventNotifier) {
             addEventNotifier(Type.PLAYER_INTERACT_BLOCK, new AnyEventNotifier(notifier));
-            addEventNotifier(Type.PLAYER_INTERACT_PROTECTION, new AnyEventNotifier(player, _("&4Please interact with a block, and not a protection!", player)));
+            addEventNotifier(Type.PLAYER_INTERACT_PROTECTION, new AnyEventNotifier(player, _("&4That block is protected! Please interact with a block that is not protected.", player)));
         } else {
             throw new UnsupportedOperationException("The notifier must be a Protection- or Block- EventNotifier");
         }
@@ -133,24 +133,11 @@ public class PlayerEventHandler {
             EventNotifier<?> notifier = temporaryNotifiers.get(type);
 
             if (notifier != null) {
-                // remove the temporary notifier association before calling it
                 temporaryNotifiers.remove(type);
 
-                // handle any event notifiers :-)
                 if (notifier instanceof AnyEventNotifier) {
-                    for (Map.Entry<Type, List<EventNotifier>> entry : notifiers.entrySet()) {
-                        List<EventNotifier> notifiers = entry.getValue();
-
-                        if (notifiers != null) {
-                            Iterator<EventNotifier> iter = notifiers.iterator();
-
-                            while (iter.hasNext()) {
-                                if (iter.next() instanceof AnyEventNotifier) {
-                                    iter.remove();
-                                }
-                            }
-                        }
-                    }
+                    temporaryNotifiers.remove(Type.PLAYER_INTERACT_BLOCK);
+                    temporaryNotifiers.remove(Type.PLAYER_INTERACT_PROTECTION);
                 }
 
                 if (internalCallEvent(event, notifier)) {

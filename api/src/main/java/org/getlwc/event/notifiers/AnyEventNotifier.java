@@ -66,7 +66,7 @@ public class AnyEventNotifier extends EventNotifier {
      * @param message
      */
     public AnyEventNotifier(Player player, String message) {
-        super(false); // Not temporary
+        super(true);
         this.player = player;
         this.message = message;
     }
