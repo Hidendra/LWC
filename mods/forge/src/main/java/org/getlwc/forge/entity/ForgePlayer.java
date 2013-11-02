@@ -115,7 +115,7 @@ public class ForgePlayer extends Player {
         if (server.isSinglePlayer()) {
             return server instanceof IntegratedServer && server.getServerOwner().equalsIgnoreCase(getName());
         } else {
-            return server.getConfigurationManager().getOps().contains(getName());
+            return server.getConfigurationManager().getOps().contains(getName().toLowerCase());
         }
     }
 
