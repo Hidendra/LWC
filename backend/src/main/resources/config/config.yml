@@ -8,9 +8,9 @@ core:
 
 protections:
     protectables:
-        chest:
+        minecraft:chest:
             enabled: true
-        furnace:
+        minecraft:furnace:
             enabled: true
 
 # database connection details

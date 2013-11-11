@@ -5,29 +5,27 @@ core:
 
 protections:
     protectables:
-        chest:
+        minecraft:chest:
             enabled: true
-        furnace:
+        minecraft:furnace:
             enabled: true
-        trapped_chest:
+        minecraft:trapped_chest:
             enabled: true
-        iron_door_block:
+        minecraft:iron_door:
             enabled: true
-        wall_sign:
+        minecraft:wall_sign:
             enabled: true
-        sign_post:
+        minecraft:standing_sign:
             enabled: true
-        trap_door:
+        minecraft:trapdoor:
             enabled: true
-        lever:
+        minecraft:stone_button:
             enabled: true
-        stone_button:
+        minecraft:wooden_button:
             enabled: true
-        wooden_button:
+        minecraft:lever:
             enabled: true
-        lever:
-            enabled: true
-        wooden_door:
+        minecraft:wooden_door:
             enabled: true
 
 database:
