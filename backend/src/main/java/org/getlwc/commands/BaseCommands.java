@@ -169,7 +169,7 @@ public class BaseCommands {
 
     @Command(
             command = "lwc info",
-            description = "Get information on a protection",
+            description = "Get information about a protection",
             permission = "lwc.info",
             aliases = {"cinfo"},
             accepts = SenderType.PLAYER
