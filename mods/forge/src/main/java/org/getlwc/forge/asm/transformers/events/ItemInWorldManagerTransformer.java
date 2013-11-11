@@ -65,56 +65,25 @@ public class ItemInWorldManagerTransformer extends org.getlwc.forge.asm.Abstract
     }
 
     @Override
-    public byte[] transform(String className, byte[] bytes) {
+    public void transform() {
+        if (visitMethod("removeBlock")) {
+            LabelNode end = new LabelNode(new Label());
 
-        ClassNode classNode = new ClassNode();
-        ClassReader reader = new ClassReader(bytes);
-        reader.accept(classNode, 0);
+            addInstruction(new VarInsnNode(ALOAD, 0));
+            addInstruction(new FieldInsnNode(GETFIELD, getJavaClassName("ItemInWorldManager"), getFieldName("ItemInWorldManager", "theWorld"), "L" + getJavaClassName("World") + ";"));
+            addInstruction(new VarInsnNode(ILOAD, 1));
+            addInstruction(new VarInsnNode(ILOAD, 2));
+            addInstruction(new VarInsnNode(ILOAD, 3));
+            addInstruction(new VarInsnNode(ALOAD, 0));
+            addInstruction(new FieldInsnNode(GETFIELD, getJavaClassName("ItemInWorldManager"), getFieldName("ItemInWorldManager", "thisPlayerMP"), "L" + getJavaClassName("EntityPlayerMP") + ";"));
+            addInstruction(new MethodInsnNode(INVOKESTATIC, getJavaClassName("ForgeEventHelper"), getMethodName("ForgeEventHelper", "onBlockHarvested"), "(L" + getJavaClassName("World") + ";IIIL" + getJavaClassName("EntityPlayer") + ";)Z"));
 
-        // find method to inject into
-        Iterator iter = classNode.methods.iterator();
+            addInstruction(new JumpInsnNode(IFEQ, end));
+            addInstruction(new InsnNode(ICONST_1));
+            addInstruction(new InsnNode(IRETURN));
+            addInstruction(end);
 
-        while (iter.hasNext()) {
-            MethodNode method = (MethodNode) iter.next();
-
-            if (methodEquals(method, "ItemInWorldManager", "removeBlock")) {
-                LabelNode end = new LabelNode(new Label());
-
-                // instructions to inject
-                InsnList instructions = new InsnList();
-
-                // construct instruction nodes for list
-                instructions.add(new VarInsnNode(ALOAD, 0));
-                instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("ItemInWorldManager"), getFieldName("ItemInWorldManager", "theWorld"), "L" + getJavaClassName("World") + ";"));
-                instructions.add(new VarInsnNode(ILOAD, 1));
-                instructions.add(new VarInsnNode(ILOAD, 2));
-                instructions.add(new VarInsnNode(ILOAD, 3));
-                instructions.add(new VarInsnNode(ALOAD, 0));
-                instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("ItemInWorldManager"), getFieldName("ItemInWorldManager", "thisPlayerMP"), "L" + getJavaClassName("EntityPlayerMP") + ";"));
-                instructions.add(new MethodInsnNode(INVOKESTATIC, getJavaClassName("ForgeEventHelper"), getMethodName("ForgeEventHelper", "onBlockHarvested"), "(L" + getJavaClassName("World") + ";IIIL" + getJavaClassName("EntityPlayer") + ";)Z"));
-
-                instructions.add(new JumpInsnNode(IFEQ, end));
-                instructions.add(new InsnNode(ICONST_1));
-                instructions.add(new InsnNode(IRETURN));
-                instructions.add(end);
-                // finished instruction list
-
-                // inject the instructions
-                method.instructions.insert(instructions);
-                break;
-            }
-
-        }
-
-        try {
-            ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-            classNode.accept(writer);
-            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Patched {0} ({1}) successfully!", getClassName(TARGET_CLASS, false), getClassName(TARGET_CLASS));
-            return writer.toByteArray();
-        } catch (Exception e) {
-            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Failed to patch {0} ({1})", getClassName(TARGET_CLASS, false), getClassName(TARGET_CLASS));
-            e.printStackTrace();
-            return bytes;
+            injectMethod();
         }
     }
 

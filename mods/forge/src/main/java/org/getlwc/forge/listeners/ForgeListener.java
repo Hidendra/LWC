@@ -131,7 +131,7 @@ public class ForgeListener {
     public void playerUpdateSign(PlayerUpdateSignEvent event) {
         org.getlwc.entity.Player player = mod.wrapPlayer(event.entityPlayer);
         World world = player.getLocation().getWorld();
-        Block block = world.getBlockAt(event.sign.xCoord, event.sign.yCoord, event.sign.zCoord);
+        Block block = world.getBlockAt(event.packet.xPosition, event.packet.yPosition, event.packet.zPosition);
 
         if (mod.getEngine().getEventHelper().onSignChange(player, block)) {
             event.setCanceled(true);

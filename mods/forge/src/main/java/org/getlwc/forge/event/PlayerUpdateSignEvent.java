@@ -9,12 +9,9 @@ public class PlayerUpdateSignEvent extends PlayerEvent {
 
     public final Packet130UpdateSign packet;
 
-    public final TileEntitySign sign;
-
-    public PlayerUpdateSignEvent(EntityPlayerMP player, Packet130UpdateSign packet, TileEntitySign sign) {
+    public PlayerUpdateSignEvent(EntityPlayerMP player, Packet130UpdateSign packet) {
         super(player);
         this.packet = packet;
-        this.sign = sign;
     }
 
 }

@@ -57,7 +57,7 @@ import java.util.Map;
 /**
  * FORGE DONE WRONG
  */
-@Mod(modid = "LWC", name = "LWC", version = "5.0.0-UNSTABLE")
+@Mod(modid = "LWC", name = "LWC", version = "0.0.1-SNAPSHOT")
 @NetworkMod(clientSideRequired = false, serverSideRequired = true)
 public class LWC {
 

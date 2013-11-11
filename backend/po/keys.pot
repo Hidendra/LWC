@@ -11,7 +11,7 @@ msgstr ""
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
 "\n"
-"POT-Creation-Date: 2013-11-11 04:58+0000\n"
+"POT-Creation-Date: 2013-11-11 16:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,20 +38,17 @@ msgstr ""
 msgid "Using BuildCraft version: {0}"
 msgstr ""
 
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemStackTransformer.java:95
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ExplosionTransformer.java:141
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemInWorldManagerTransformer.java:112
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/SignUpdateTransformer.java:128
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/misc/UpdateClientInfoTransformer.java:63
+#: mods/forge/src/main/java/org/getlwc/forge/asm/AbstractMultiClassTransformer.java:101
 #, java-format
 msgid "[ASM] Patched {0} ({1}) successfully!"
 msgstr ""
 
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemStackTransformer.java:98
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ExplosionTransformer.java:144
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/ItemInWorldManagerTransformer.java:115
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/events/SignUpdateTransformer.java:131
-#: mods/forge/src/main/java/org/getlwc/forge/asm/transformers/misc/UpdateClientInfoTransformer.java:66
+#: mods/forge/src/main/java/org/getlwc/forge/asm/AbstractMultiClassTransformer.java:104
+#, java-format
+msgid "[ASM] {0} ({1}) was not changed during transformations"
+msgstr ""
+
+#: mods/forge/src/main/java/org/getlwc/forge/asm/AbstractMultiClassTransformer.java:109
 #, java-format
 msgid "[ASM] Failed to patch {0} ({1})"
 msgstr ""
@@ -191,11 +188,6 @@ msgid ""
 "{8}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:246
-#, java-format
-msgid "Purging player?: {0}"
-msgstr ""
-
 #: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:77
 #: backend/src/main/java/org/getlwc/commands/AttributeCommands.java:128
 msgid "&4Invalid attribute name."
@@ -295,7 +287,7 @@ msgstr ""
 
 #. / TL: The double apostrophe is to work around a bug in a library.
 #. /     If you need to use it please leave it as a single apostrophe.
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:97
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:98
 #, java-format
 msgid ""
 "Your client''s locale {0} is not supported by LWC. {1} will be used "
@@ -305,7 +297,7 @@ msgstr ""
 
 #. / TL: The double apostrophe is to work around a bug in a library.
 #. /     If you need to use it please leave it as a single apostrophe.
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:106
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:109
 #, java-format
 msgid ""
 "Your client''s locale {0} was recently translated for LWC. It may not be "
@@ -314,11 +306,11 @@ msgid ""
 "org&r"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:153
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:157
 msgid "&4This protection is locked by a magical spell."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:159
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:163
 #, java-format
 msgid ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "

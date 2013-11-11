@@ -65,85 +65,39 @@ public class ExplosionTransformer extends AbstractSingleClassTransformer {
     }
 
     @Override
-    public byte[] transform(String className, byte[] bytes) {
+    public void transform() {
+        if (visitMethod("doExplosionA")) {
+            // find offset for h.addAll ( affectedBlockPositions )
+            int offset = findMethodCall("java/util/List", "addAll");
 
-        ClassNode classNode = new ClassNode();
-        ClassReader reader = new ClassReader(bytes);
-        reader.accept(classNode, 0);
-
-        // find method to inject into
-        Iterator iter = classNode.methods.iterator();
-
-        while (iter.hasNext()) {
-            MethodNode method = (MethodNode) iter.next();
-
-            if (methodEquals(method, "Explosion", "doExplosionA")) {
-                // find offset for h.addAll ( affectedBlockPositions )
-                int offset = -1;
-
-                for (int index = 0; index < method.instructions.size(); index++) {
-
-                    if (method.instructions.get(index).getType() == AbstractInsnNode.METHOD_INSN) {
-                        MethodInsnNode node = (MethodInsnNode) method.instructions.get(index);
-
-                        if (node.owner.equals("java/util/List") && node.name.equals("addAll")) {
-                            offset = index;
-                            break;
-                        }
-
-                    }
-
-                }
-
-                if (offset == -1) {
-                    System.out.println("Could not find addAll instruction point in Explosion");
-                    break;
-                }
-
-                LabelNode end = new LabelNode(new Label());
-
-                // instructions to inject
-                InsnList instructions = new InsnList();
-
-                // construct instruction nodes for list
-                instructions.add(new VarInsnNode(ALOAD, 0));
-                instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("Explosion"), getFieldName("Explosion", "worldObj"), "L" + getJavaClassName("World") + ";"));
-                instructions.add(new VarInsnNode(ALOAD, 0));
-                instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("Explosion"), getFieldName("Explosion", "explosionX"), "D"));
-                instructions.add(new VarInsnNode(ALOAD, 0));
-                instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("Explosion"), getFieldName("Explosion", "explosionY"), "D"));
-                instructions.add(new VarInsnNode(ALOAD, 0));
-                instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("Explosion"), getFieldName("Explosion", "explosionZ"), "D"));
-                instructions.add(new VarInsnNode(ALOAD, 0));
-                instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("Explosion"), getFieldName("Explosion", "field_77289_h"), "I"));
-                instructions.add(new VarInsnNode(ALOAD, 0));
-                instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("Explosion"), getFieldName("Explosion", "affectedBlockPositions"), "Ljava/util/List;"));
-                instructions.add(new VarInsnNode(ALOAD, 0));
-                instructions.add(new FieldInsnNode(GETFIELD, getJavaClassName("Explosion"), getFieldName("Explosion", "exploder"), "L" + getJavaClassName("Entity") + ";"));
-                instructions.add(new MethodInsnNode(INVOKESTATIC, getJavaClassName("ForgeEventHelper"), getMethodName("ForgeEventHelper", "onExplosion"), "(L" + getJavaClassName("World") + ";DDDILjava/util/List;L" + getJavaClassName("Entity") + ";)Z"));
-
-                instructions.add(new JumpInsnNode(IFEQ, end));
-                instructions.add(new InsnNode(RETURN));
-                instructions.add(end);
-                // finished instruction list
-
-                // inject the instructions
-                method.instructions.insert(method.instructions.get(offset), instructions);
-
-                break;
+            if (offset == -1) {
+                System.out.println("Could not find addAll instruction point in Explosion");
+                return;
             }
 
-        }
+            LabelNode end = new LabelNode(new Label());
 
-        try {
-            ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-            classNode.accept(writer);
-            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Patched {0} ({1}) successfully!", getClassName(TARGET_CLASS, false), getClassName(TARGET_CLASS));
-            return writer.toByteArray();
-        } catch (Exception e) {
-            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Failed to patch {0} ({1})", getClassName(TARGET_CLASS, false), getClassName(TARGET_CLASS));
-            e.printStackTrace();
-            return bytes;
+            addInstruction(new VarInsnNode(ALOAD, 0));
+            addInstruction(new FieldInsnNode(GETFIELD, getJavaClassName("Explosion"), getFieldName("Explosion", "worldObj"), "L" + getJavaClassName("World") + ";"));
+            addInstruction(new VarInsnNode(ALOAD, 0));
+            addInstruction(new FieldInsnNode(GETFIELD, getJavaClassName("Explosion"), getFieldName("Explosion", "explosionX"), "D"));
+            addInstruction(new VarInsnNode(ALOAD, 0));
+            addInstruction(new FieldInsnNode(GETFIELD, getJavaClassName("Explosion"), getFieldName("Explosion", "explosionY"), "D"));
+            addInstruction(new VarInsnNode(ALOAD, 0));
+            addInstruction(new FieldInsnNode(GETFIELD, getJavaClassName("Explosion"), getFieldName("Explosion", "explosionZ"), "D"));
+            addInstruction(new VarInsnNode(ALOAD, 0));
+            addInstruction(new FieldInsnNode(GETFIELD, getJavaClassName("Explosion"), getFieldName("Explosion", "field_77289_h"), "I"));
+            addInstruction(new VarInsnNode(ALOAD, 0));
+            addInstruction(new FieldInsnNode(GETFIELD, getJavaClassName("Explosion"), getFieldName("Explosion", "affectedBlockPositions"), "Ljava/util/List;"));
+            addInstruction(new VarInsnNode(ALOAD, 0));
+            addInstruction(new FieldInsnNode(GETFIELD, getJavaClassName("Explosion"), getFieldName("Explosion", "exploder"), "L" + getJavaClassName("Entity") + ";"));
+            addInstruction(new MethodInsnNode(INVOKESTATIC, getJavaClassName("ForgeEventHelper"), getMethodName("ForgeEventHelper", "onExplosion"), "(L" + getJavaClassName("World") + ";DDDILjava/util/List;L" + getJavaClassName("Entity") + ";)Z"));
+
+            addInstruction(new JumpInsnNode(IFEQ, end));
+            addInstruction(new InsnNode(RETURN));
+            addInstruction(end);
+
+            injectMethod(offset);
         }
     }
 

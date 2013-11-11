@@ -36,68 +36,35 @@ public class ItemStackTransformer extends AbstractSingleClassTransformer {
     }
 
     @Override
-    public byte[] transform(String className, byte[] bytes) {
+    public void transform() {
+        if (visitMethod("tryPlaceItemIntoWorld")) {
+            int offset = findMethodOpcode(ALOAD);
 
-        ClassNode classNode = new ClassNode();
-        ClassReader reader = new ClassReader(bytes);
-        reader.accept(classNode, 0);
-
-        // find method to inject into
-        Iterator iter = classNode.methods.iterator();
-
-        while (iter.hasNext()) {
-            MethodNode method = (MethodNode) iter.next();
-
-            if (methodEquals(method, "ItemStack", "tryPlaceItemIntoWorld")) {
-                int offset = 0;
-
-                while (method.instructions.get(offset).getOpcode() != ALOAD) {
-                    offset++;
-                }
-
-                // System.out.println("Injecting to offset " + offset);
-
-                LabelNode end = new LabelNode(new Label());
-
-                // instructions to inject
-                InsnList instructions = new InsnList();
-
-                // construct instruction nodes for list
-                instructions.add(new VarInsnNode(ALOAD, 0));
-                instructions.add(new VarInsnNode(ALOAD, 1));
-                instructions.add(new VarInsnNode(ALOAD, 2));
-                instructions.add(new VarInsnNode(ILOAD, 3));
-                instructions.add(new VarInsnNode(ILOAD, 4));
-                instructions.add(new VarInsnNode(ILOAD, 5));
-                instructions.add(new VarInsnNode(ILOAD, 6));
-                instructions.add(new VarInsnNode(FLOAD, 7));
-                instructions.add(new VarInsnNode(FLOAD, 8));
-                instructions.add(new VarInsnNode(FLOAD, 9));
-                instructions.add(new MethodInsnNode(INVOKESTATIC, getJavaClassName("ForgeEventHelper"), getMethodName("ForgeEventHelper", "onBlockPlace"), "(L" + getJavaClassName("ItemStack") + ";L" + getJavaClassName("EntityPlayer") + ";L" + getJavaClassName("World") + ";IIIIFFF)Z"));
-
-                instructions.add(new JumpInsnNode(IFEQ, end));
-                instructions.add(new InsnNode(ICONST_0));
-                instructions.add(new InsnNode(IRETURN));
-                instructions.add(end);
-                // finished instruction list
-
-                // inject the instructions
-                method.instructions.insertBefore(method.instructions.get(offset), instructions);
-
-                break;
+            if (offset == -1) {
+                LWC.instance.getEngine().getConsoleSender().sendMessage(getClass().getSimpleName() + ": No ALOAD instr found");
+                return;
             }
 
-        }
+            LabelNode end = new LabelNode(new Label());
 
-        try {
-            ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-            classNode.accept(writer);
-            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Patched {0} ({1}) successfully!", getClassName(TARGET_CLASS, false), getClassName(TARGET_CLASS));
-            return writer.toByteArray();
-        } catch (Exception e) {
-            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Failed to patch {0} ({1})", getClassName(TARGET_CLASS, false), getClassName(TARGET_CLASS));
-            e.printStackTrace();
-            return bytes;
+            addInstruction(new VarInsnNode(ALOAD, 0));
+            addInstruction(new VarInsnNode(ALOAD, 1));
+            addInstruction(new VarInsnNode(ALOAD, 2));
+            addInstruction(new VarInsnNode(ILOAD, 3));
+            addInstruction(new VarInsnNode(ILOAD, 4));
+            addInstruction(new VarInsnNode(ILOAD, 5));
+            addInstruction(new VarInsnNode(ILOAD, 6));
+            addInstruction(new VarInsnNode(FLOAD, 7));
+            addInstruction(new VarInsnNode(FLOAD, 8));
+            addInstruction(new VarInsnNode(FLOAD, 9));
+            addInstruction(new MethodInsnNode(INVOKESTATIC, getJavaClassName("ForgeEventHelper"), getMethodName("ForgeEventHelper", "onBlockPlace"), "(L" + getJavaClassName("ItemStack") + ";L" + getJavaClassName("EntityPlayer") + ";L" + getJavaClassName("World") + ";IIIIFFF)Z"));
+
+            addInstruction(new JumpInsnNode(IFEQ, end));
+            addInstruction(new InsnNode(ICONST_0));
+            addInstruction(new InsnNode(IRETURN));
+            addInstruction(end);
+
+            injectMethodBefore(offset);
         }
     }
 

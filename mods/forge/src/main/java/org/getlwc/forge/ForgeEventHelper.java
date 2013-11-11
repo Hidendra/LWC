@@ -120,12 +120,12 @@ public class ForgeEventHelper {
     /**
      * Called when a sign is updated in the world
      *
+     * @param player
      * @param packet
-     * @param sign
      * @return
      */
-    public static boolean onUpdateSign(net.minecraft.entity.player.EntityPlayerMP player, Packet130UpdateSign packet, TileEntitySign sign) {
-        Event event = new PlayerUpdateSignEvent(player, packet, sign);
+    public static boolean onUpdateSign(net.minecraft.entity.player.EntityPlayerMP player, Packet130UpdateSign packet) {
+        Event event = new PlayerUpdateSignEvent(player, packet);
         MinecraftForge.EVENT_BUS.post(event);
         return event.isCanceled() || event.getResult() == Event.Result.DENY;
     }
