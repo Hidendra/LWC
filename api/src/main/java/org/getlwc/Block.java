@@ -160,17 +160,17 @@ public abstract class Block {
     }
 
     /**
-     * Finds a block relative to the block with the given block type. This does not look UP or DOWN and only looks
+     * Finds a block relative to the block with one of the given names. This does not look UP or DOWN and only looks
      * on the current plane for the block (that is, the current y-level)
      *
-     * @param types
+     * @param names
      * @return the Block found. If it was not found, NULL will be returned
      */
-    public Block findBlockRelativeToXZ(String... types) {
+    public Block findBlockRelativeToXZ(String... names) {
         Block block;
 
         Set<String> typeSet = new HashSet<String>();
-        for (String type : types) {
+        for (String type : names) {
             typeSet.add(type);
         }
 
@@ -205,17 +205,17 @@ public abstract class Block {
     }
 
     /**
-     * Finds a block relative to the block with the given block type. This does not on the current plane
+     * Finds a block relative to the block with one of the given name. This does not on the current plane
      * but looks on the planes directly above and below the block (i.e the block above and below this block)
      *
-     * @param types
+     * @param names
      * @return the Block found. If it was not found, NULL will be returned
      */
-    public Block findBlockRelativeToY(String... types) {
+    public Block findBlockRelativeToY(String... names) {
         Block block;
 
         Set<String> typeSet = new HashSet<String>();
-        for (String type : types) {
+        for (String type : names) {
             typeSet.add(type);
         }
 
