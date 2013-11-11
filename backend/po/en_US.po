@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-11-11 01:42+0000\n"
+"POT-Creation-Date: 2013-11-11 04:58+0000\n"
 "PO-Revision-Date: 2013-06-18 23:02-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -18,14 +18,14 @@ msgstr ""
 "X-Generator: Poedit 1.5.5\n"
 
 #: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:180
-#: mods/canary-recode/src/main/java/org/getlwc/canary/CanaryServerLayer.java:171
+#: mods/canarymod/src/main/java/org/getlwc/canary/CanaryServerLayer.java:171
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:189
 #, java-format
 msgid "An error was encountered while processing a command: {0}"
 msgstr "An error was encountered while processing a command: {0}"
 
 #: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:184
-#: mods/canary-recode/src/main/java/org/getlwc/canary/CanaryServerLayer.java:175
+#: mods/canarymod/src/main/java/org/getlwc/canary/CanaryServerLayer.java:175
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:193
 msgid "&4[LWC] An internal error occurred while processing this command"
 msgstr "&4[LWC] An internal error occurred while processing this command"
@@ -256,7 +256,7 @@ msgstr "&4Access denied."
 
 #: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:70
 #: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:111
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:146
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:149
 #, java-format
 msgid "&4\"{0}\" does not match any usable roles"
 msgstr "&4\"{0}\" does not match any usable roles"
@@ -280,13 +280,13 @@ msgid "&4Protection does not contain role matching: &e{0}"
 msgstr "&4Protection does not contain role matching: &e{0}"
 
 #: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:120
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:155
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:158
 #, java-format
 msgid "&2Changed {0} to {1} successfully!"
 msgstr "&2Changed {0} to {1} successfully!"
 
 #: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:124
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:159
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:162
 #, java-format
 msgid ""
 "&2Added a {0} for \"{1}\" to the protection with access level {2} "
@@ -300,11 +300,11 @@ msgstr ""
 msgid "&4Protection access level &7{0}&4 is not allowed."
 msgstr "&4Protection access level &7{0}&4 is not allowed."
 
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:134
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:135
 msgid "&4Only owners can add other owners."
 msgstr "&4Only owners can add other owners."
 
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:139
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:141
 msgid "&4Only owners can add managers."
 msgstr "&4Only owners can add managers."
 

@@ -128,16 +128,19 @@ public class AddRemoveCommands {
                         if (access != null && !ProtectionRole.Access.USABLE_ACCESS_LEVELS.contains(access)) {
                             player.sendTranslatedMessage("&4Protection access level &7{0}&4 is not allowed.", access);
                             access = null;
+                            i ++;
                         }
 
                         if (access == ProtectionRole.Access.OWNER && playerAccess != ProtectionRole.Access.OWNER) {
                             player.sendTranslatedMessage("&4Only owners can add other owners.");
                             access = null;
+                            i ++;
                         }
 
                         if (access == ProtectionRole.Access.MANAGER && playerAccess != ProtectionRole.Access.OWNER) {
                             player.sendTranslatedMessage("&4Only owners can add managers.");
                             access = null;
+                            i ++;
                         }
                     } else {
                         ProtectionRole role = engine.getRoleManager().matchAndCreateRoleByName(protection, token, access);
