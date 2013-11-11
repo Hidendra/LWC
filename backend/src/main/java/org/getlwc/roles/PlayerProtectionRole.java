@@ -52,7 +52,15 @@ public class PlayerProtectionRole extends ProtectionRole {
      * {@inheritDoc}
      */
     public Access getAccess(Protection protection, Player player) {
-        return player.getUUID().equalsIgnoreCase(getName()) ? getAccess() : Access.NONE;
+        if (player.getUUID().equalsIgnoreCase(getName())) {
+            return getAccess();
+        } else if (player.getName().equalsIgnoreCase(getName())) {
+            setName(player.getUUID());
+            save();
+            return getAccess();
+        } else {
+            return Access.NONE;
+        }
     }
 
 }
