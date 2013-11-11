@@ -24,6 +24,14 @@ public class WorkbenchPlayer extends Player {
     /**
      * {@inheritDoc}
      */
+    public String getUUID() {
+        // TODO: convert to unique id upon public availability of 1.7
+        return handle.getUsername();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public String getName() {
         return handle.getUsername();
     }
