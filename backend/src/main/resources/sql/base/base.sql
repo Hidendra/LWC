@@ -8,7 +8,7 @@ CREATE TABLE __PREFIX__protection_attributes (
 CREATE TABLE __PREFIX__protection_roles (
   protection_id INTEGER NOT NULL,
   type INTEGER NOT NULL,
-  name varchar(30) NOT NULL,
+  name varchar(32) NOT NULL,
   role INTEGER NOT NULL,
   PRIMARY KEY (protection_id,type,name)
 ) ;

@@ -21,10 +21,23 @@ public class CanaryEntity implements Entity {
         this.handle = handle;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public String getUUID() {
+        return handle.getUUID().toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public String getName() {
         return plugin.getName();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Location getLocation() {
         return new Location(plugin.getWorld(handle.getWorld().getName()), handle.getX(), handle.getY(), handle.getZ());
     }

@@ -32,6 +32,7 @@ package org.getlwc.roles;
 import org.getlwc.Engine;
 import org.getlwc.ProtectionRole;
 import org.getlwc.RoleDefinition;
+import org.getlwc.entity.Player;
 import org.getlwc.model.Protection;
 
 public class PlayerRoleDefinition implements RoleDefinition {
@@ -63,7 +64,9 @@ public class PlayerRoleDefinition implements RoleDefinition {
      * {@inheritDoc}
      */
     public ProtectionRole createRole(Protection protection, String roleName, ProtectionRole.Access roleAccess) {
-        return new PlayerProtectionRole(engine, protection, roleName, roleAccess);
+        Player player = engine.getServerLayer().getPlayer(roleName);
+
+        return new PlayerProtectionRole(engine, protection, player != null ? player.getUUID() : roleName, roleAccess);
     }
 
 }

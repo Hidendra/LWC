@@ -34,6 +34,13 @@ import org.getlwc.Location;
 public interface Entity {
 
     /**
+     * Get the UUID of the entity
+     *
+     * @return
+     */
+    public String getUUID();
+
+    /**
      * Get the entity's name
      *
      * @return

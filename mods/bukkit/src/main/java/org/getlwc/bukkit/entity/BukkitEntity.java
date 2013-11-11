@@ -28,6 +28,13 @@ public class BukkitEntity implements Entity {
     /**
      * {@inheritDoc}
      */
+    public String getUUID() {
+        return handle.getUniqueId().toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public String getName() {
         return handle.getType().getName();
     }

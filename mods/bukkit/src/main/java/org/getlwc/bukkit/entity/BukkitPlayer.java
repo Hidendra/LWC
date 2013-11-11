@@ -88,6 +88,14 @@ public class BukkitPlayer extends Player {
     /**
      * {@inheritDoc}
      */
+    public String getUUID() {
+        // TODO: convert to unique id upon public availability of 1.7
+        return handle.getName();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public String getName() {
         return handle.getName();
     }

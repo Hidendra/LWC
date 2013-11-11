@@ -17,6 +17,9 @@ public class PlayerProtectionRoleTest {
     @Mock
     private Engine engine;
 
+    @Mock
+    private ServerLayer layer;
+
     private ProtectionRoleManager manager = new SimpleProtectionRoleManager();
     private PlayerRoleDefinition definition;
 
@@ -25,6 +28,7 @@ public class PlayerProtectionRoleTest {
         MockitoAnnotations.initMocks(this);
         definition = new PlayerRoleDefinition(engine);
         manager.registerDefinition(definition);
+        when(engine.getServerLayer()).thenReturn(layer);
     }
 
     @Test
@@ -45,18 +49,23 @@ public class PlayerProtectionRoleTest {
         Protection protection = mock(Protection.class);
 
         Player player = mock(Player.class);
+        when(player.getUUID()).thenReturn("VuXQ8cu0u4VB5Z3vg5wid9dQTLJr8XW0");
         when(player.getName()).thenReturn("Hidendra");
+
+        when(layer.getPlayer("VuXQ8cu0u4VB5Z3vg5wid9dQTLJr8XW0")).thenReturn(player);
+        when(layer.getPlayer("Hidendra")).thenReturn(player);
+        when(layer.getPlayer("Notch")).thenReturn(null);
 
         ProtectionRole roleHidendraOwner = manager.matchAndCreateRoleByName(null, "Hidendra", ProtectionRole.Access.OWNER);
         ProtectionRole roleHidendraMember = manager.matchAndCreateRoleByName(null, "Hidendra", ProtectionRole.Access.MEMBER);
         ProtectionRole roleNotch = manager.matchAndCreateRoleByName(null, "Notch", ProtectionRole.Access.OWNER);
 
         assertEquals(ProtectionRole.Access.OWNER, roleHidendraOwner.getAccess(protection, player));
-        verify(player, times(1)).getName();
+        verify(player, times(3)).getUUID();
         assertEquals(ProtectionRole.Access.MEMBER, roleHidendraMember.getAccess(protection, player));
-        verify(player, times(2)).getName();
+        verify(player, times(4)).getUUID();
         assertEquals(ProtectionRole.Access.NONE, roleNotch.getAccess(protection, player));
-        verify(player, times(3)).getName();
+        verify(player, times(5)).getUUID();
     }
 
     @Test

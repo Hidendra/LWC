@@ -59,10 +59,24 @@ public class ForgePlayer extends Player {
         this.mod = LWC.instance;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public String getUUID() {
+        // TODO: convert to unique id upon public availability of 1.7
+        return handle.getEntityName();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public String getName() {
         return handle.getEntityName();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Location getLocation() {
         try {
             return new Location(new ForgeWorld(handle.worldObj), (int) handle.posX, (int) handle.posY, (int) handle.posZ);
@@ -73,12 +87,18 @@ public class ForgePlayer extends Player {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
             handle.addChatMessage(Color.replaceColors(line));
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean hasPermission(String node) {
         if (ModSupport.isModInstalled(ModSupport.Mod.FORGE_ESSENTIALS)) {
             return ForgeEssentials.checkPermission(handle, node);

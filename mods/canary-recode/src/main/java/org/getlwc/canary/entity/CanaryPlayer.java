@@ -33,20 +33,43 @@ public class CanaryPlayer extends Player {
         plugin.getEngine().getConsoleSender().sendMessage("Player " + getName() + " loaded using locale: " + getLocale());
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public String getUUID() {
+        // TODO: convert to unique id upon public availability of 1.7
+        return handle.getName();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public String getName() {
         return handle.getName();
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
             handle.message(Color.replaceColors(line));
         }
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     public boolean hasPermission(String node) {
         return handle.hasPermission(node);
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     public Location getLocation() {
         return new Location(plugin.getWorld(handle.getWorld().getName()), handle.getX(), handle.getY(), handle.getZ());
     }

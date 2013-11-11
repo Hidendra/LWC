@@ -64,8 +64,12 @@ public class AddRemoveCommands {
                         if (token.startsWith("-")) {
                             token = token.substring(1);
 
-                            //
                             ProtectionRole role = engine.getRoleManager().matchAndCreateRoleByName(protection, token, ProtectionRole.Access.NONE);
+
+                            if (role == null) {
+                                player.sendTranslatedMessage("&4\"{0}\" does not match any usable roles", token);
+                                return true;
+                            }
 
                             ProtectionRole delete = null;
                             for (ProtectionRole protectionRole : protection.getRoles()) {

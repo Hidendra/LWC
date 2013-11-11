@@ -52,7 +52,7 @@ public class PlayerProtectionRole extends ProtectionRole {
      * {@inheritDoc}
      */
     public Access getAccess(Protection protection, Player player) {
-        return player.getName().equalsIgnoreCase(getName()) ? getAccess() : Access.NONE;
+        return player.getUUID().equalsIgnoreCase(getName()) ? getAccess() : Access.NONE;
     }
 
 }
