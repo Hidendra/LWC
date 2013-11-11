@@ -85,7 +85,7 @@ public class ForgeEventHelper {
             Block block = world.getBlockAt(loc.x, loc.y, loc.z);
 
             // Check that it isn't air (we don't need to know about air internally)
-            if (block.getType() == 0) {
+            if (block.typeIsOneOf("minecraft:air")) {
                 continue;
             }
 

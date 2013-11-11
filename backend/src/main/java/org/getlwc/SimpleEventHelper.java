@@ -295,7 +295,7 @@ public class SimpleEventHelper implements EventHelper {
      * {@inheritDoc}
      */
     public boolean onPistonRetract(Block piston, Location retracting) {
-        if (piston.getType() != 29 /* sticky piston */) {
+        if (piston.typeIsOneOf("minecraft:sticky_piston")) {
             // A piston that cannot pull anything when retracting *should* be harmless so they can simply be globally allowed
             return false;
         }

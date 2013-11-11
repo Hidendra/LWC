@@ -46,14 +46,12 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
     public ProtectionSet matchProtection(Block base) {
         ProtectionSet blocks = new ProtectionSet(engine);
 
-        int baseType = base.getType();
-
         // first add the base block, as it must exist on the protection if it matches
         blocks.add(base);
 
         // Double chest
-        if (baseType == 54 || baseType == 146) {
-            Block adjacentChest = base.findBlockRelativeToXZ(baseType);
+        if (base.typeIsOneOf("minecraft:chest", "minecraft:trapped_chest")) {
+            Block adjacentChest = base.findBlockRelativeToXZ(base.getName());
 
             if (adjacentChest != null) {
                 blocks.add(adjacentChest);
@@ -61,8 +59,8 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
         }
 
         // Doors (not the block below the door)
-        else if (base.typeIsOneOf(64, 71)) {
-            Block otherDoor = base.findBlockRelativeToY(64, 71);
+        else if (base.typeIsOneOf("minecraft:wooden_door", "minecraft:iron_door")) {
+            Block otherDoor = base.findBlockRelativeToY("minecraft:wooden_door", "minecraft:iron_door");
 
             // add the other half of the door
             if (otherDoor != null) {
@@ -76,18 +74,18 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
             Block above = base.getRelative(0, 1, 0);
 
             // door above the current block
-            if (above.typeIsOneOf(64, 71)) {
+            if (above.typeIsOneOf("minecraft:wooden_door", "minecraft:iron_door")) {
                 blocks.add(above);
                 blocks.add(above.getRelative(0, 1, 0)); // top of the door
             }
 
             // lever that is attached to a block above
-            else if (above.getType() == 69 && ((above.getData() & 0x5) == 0x5 || (above.getData() & 0x6) == 0x6)) {
+            else if (above.typeIsOneOf("minecraft:lever") && ((above.getData() & 0x5) == 0x5 || (above.getData() & 0x6) == 0x6)) {
                 blocks.add(above);
             }
 
             // gravity block (e.g. the block above would be destroyed if this one was removed)
-            else if (above.typeIsOneOf(63 /* sign post */)) {
+            else if (above.typeIsOneOf("minecraft:standing_sign")) {
                 blocks.add(above);
             }
 
@@ -101,7 +99,7 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
                     byte direction = block.getData();
 
                     // wall sign
-                    if (block.typeIsOneOf(68)) {
+                    if (block.typeIsOneOf("minecraft:wall_sign")) {
                         byte EAST = 0x05;
                         byte WEST = 0x04;
                         byte SOUTH = 0x03;
@@ -123,14 +121,14 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
                     }
 
                     // lever, stone button, wood button
-                    else if (block.typeIsOneOf(69 /* lever */, 77 /* stone button */, 143 /* wood button */)) {
+                    else if (block.typeIsOneOf("minecraft:lever", "minecraft:stone_button", "minecraft:wooden_button")) {
                         byte EAST = 0x1;
                         byte WEST = 0x2;
                         byte SOUTH = 0x3;
                         byte NORTH = 0x4;
 
                         // x & 0x2 returns 0x2 when direction = 0x6 which happens to be for levers if it's a ground lever -.-
-                        if (block.getType() == 69 && ((direction & 0x5) == 0x5 || (direction & 0x6) == 0x6)) {
+                        if (block.typeIsOneOf("minecraft:lever") && ((direction & 0x5) == 0x5 || (direction & 0x6) == 0x6)) {
                             break;
                         }
 
@@ -150,7 +148,7 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
                     }
 
                     // trap door
-                    else if (block.typeIsOneOf(96 /* trap door */)) {
+                    else if (block.typeIsOneOf("minecraft:trapdoor")) {
                         byte EAST = 0x2;
                         byte WEST = 0x3;
                         byte SOUTH = 0x0;

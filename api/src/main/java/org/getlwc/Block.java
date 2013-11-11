@@ -122,14 +122,14 @@ public abstract class Block {
     }
 
     /**
-     * Check if the block matches one of the provided type ids
+     * Check if the block matches one of the provided names
      *
-     * @param ids
+     * @param names
      * @return
      */
-    public boolean typeIsOneOf(int... ids) {
-        for (int id : ids) {
-            if (id == getType()) {
+    public boolean typeIsOneOf(String... names) {
+        for (String name : names) {
+            if (getName().equals(name)) {
                 return true;
             }
         }
@@ -166,36 +166,36 @@ public abstract class Block {
      * @param types
      * @return the Block found. If it was not found, NULL will be returned
      */
-    public Block findBlockRelativeToXZ(int... types) {
+    public Block findBlockRelativeToXZ(String... types) {
         Block block;
 
-        Set<Integer> typeSet = new HashSet<Integer>();
-        for (int type : types) {
+        Set<String> typeSet = new HashSet<String>();
+        for (String type : types) {
             typeSet.add(type);
         }
 
         // First, the x plane
         if ((block = getRelative(-1, 0, 0)) != null) {
-            if (typeSet.contains(block.getType())) {
+            if (typeSet.contains(block.getName())) {
                 return block;
             }
         }
 
         if ((block = getRelative(1, 0, 0)) != null) {
-            if (typeSet.contains(block.getType())) {
+            if (typeSet.contains(block.getName())) {
                 return block;
             }
         }
 
         // now the z plane
         if ((block = getRelative(0, 0, -1)) != null) {
-            if (typeSet.contains(block.getType())) {
+            if (typeSet.contains(block.getName())) {
                 return block;
             }
         }
 
         if ((block = getRelative(0, 0, 1)) != null) {
-            if (typeSet.contains(block.getType())) {
+            if (typeSet.contains(block.getName())) {
                 return block;
             }
         }
@@ -211,24 +211,24 @@ public abstract class Block {
      * @param types
      * @return the Block found. If it was not found, NULL will be returned
      */
-    public Block findBlockRelativeToY(int... types) {
+    public Block findBlockRelativeToY(String... types) {
         Block block;
 
-        Set<Integer> typeSet = new HashSet<Integer>();
-        for (int type : types) {
+        Set<String> typeSet = new HashSet<String>();
+        for (String type : types) {
             typeSet.add(type);
         }
 
         // block above
         if ((block = getRelative(0, 1, 0)) != null) {
-            if (typeSet.contains(block.getType())) {
+            if (typeSet.contains(block.getName())) {
                 return block;
             }
         }
 
         // block below
         if ((block = getRelative(0, -1, 0)) != null) {
-            if (typeSet.contains(block.getType())) {
+            if (typeSet.contains(block.getName())) {
                 return block;
             }
         }
