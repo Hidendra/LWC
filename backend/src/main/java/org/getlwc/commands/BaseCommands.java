@@ -105,7 +105,7 @@ public class BaseCommands {
 
     @Command(
             command = "lwc create",
-            description = "Register a protection",
+            description = "Create a protection",
             permission = "lwc.create",
             aliases = {"cprivate", "clock"},
             accepts = SenderType.PLAYER
@@ -169,7 +169,7 @@ public class BaseCommands {
 
     @Command(
             command = "lwc info",
-            description = "Retrieve info about a protection",
+            description = "Get information on a protection",
             permission = "lwc.info",
             aliases = {"cinfo"},
             accepts = SenderType.PLAYER
@@ -231,19 +231,6 @@ public class BaseCommands {
                 return true;
             }
         });
-    }
-
-    @Command(
-            command = "lwc admin purge",
-            description = "Removes all of the player's protections from the world",
-            permission = "lwc.admin.purge",
-            usage = "<player>",
-            aliases = {"purge"},
-            min = 1,
-            max = 1
-    )
-    public void lwcAdminPurge(CommandContext context) {
-        context.getCommandSender().sendTranslatedMessage("Purging player?: {0}", context.getArgument(1));
     }
 
 }
