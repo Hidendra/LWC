@@ -4,6 +4,8 @@
 core:
 
     # The default language to use for players and the console.
+    # If a player has a language selected in their client that LWC supports then
+    # LWC will send text to them translated in that language.
     locale: en_US
 
 protections:
@@ -12,6 +14,21 @@ protections:
             enabled: true
         minecraft:furnace:
             enabled: true
+
+notifications:
+
+    # Players will be notified when they log in if they are using a language
+    # in their client that LWC does not currently support. A link will be
+    # provided to LWC's CrowdIn page if they would like to help translate
+    # it officially.
+    missingTranslation: true
+
+    # Players will be notified when they log in if they are using a recently
+    # translated translation for LWC in their client.
+    # This is to promote good translations from people who would like to help
+    # because LWC sends text translated in the client's language if possible.
+    # A link will be provided to LWC's CrowdIn page if they would like to help.
+    recentlyTranslated: true
 
 # database connection details
 database:

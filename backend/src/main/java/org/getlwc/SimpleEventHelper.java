@@ -92,18 +92,22 @@ public class SimpleEventHelper implements EventHelper {
             Locale playerLocale = player.getLocale();
 
             if (!store.supports(playerLocale)) {
-                /// TL: The double apostrophe is to work around a bug in a library.
-                ///     If you need to use it please leave it as a single apostrophe.
-                player.sendTranslatedMessage("Your client''s locale {0} is not supported by LWC. {1} will be used instead.\nWant to help translate LWC? Go to: &3&nhttp://translate.getlwc.org&r", playerLocale.getName(), defaultLocale.getName());
-            } else {
-                int addedOn = engine.getLanguagesConfiguration().getInt("languages." + playerLocale.getName() + ".addedOn", -1);
-
-                int days30 = 86400 * 30;
-
-                if (addedOn > ((System.currentTimeMillis() / 1000) - days30)) {
+                if (engine.getConfiguration().getBoolean("notifications.missingTranslation", true)) {
                     /// TL: The double apostrophe is to work around a bug in a library.
                     ///     If you need to use it please leave it as a single apostrophe.
-                    player.sendTranslatedMessage("Your client''s locale {0} was recently translated for LWC. It may not be 100% accurate. \nWant to help translate/proofread LWC? Go to: &3&nhttp://translate.getlwc.org&r", playerLocale.getName());
+                    player.sendTranslatedMessage("Your client''s locale {0} is not supported by LWC. {1} will be used instead.\nWant to help translate LWC? Go to: &3&nhttp://translate.getlwc.org&r", playerLocale.getName(), defaultLocale.getName());
+                }
+            } else {
+                if (engine.getConfiguration().getBoolean("notifications.recentlyTranslated", true)) {
+                    int addedOn = engine.getLanguagesConfiguration().getInt("languages." + playerLocale.getName() + ".addedOn", -1);
+
+                    int days30 = 86400 * 30;
+
+                    if (addedOn > ((System.currentTimeMillis() / 1000) - days30)) {
+                        /// TL: The double apostrophe is to work around a bug in a library.
+                        ///     If you need to use it please leave it as a single apostrophe.
+                        player.sendTranslatedMessage("Your client''s locale {0} was recently translated for LWC. It may not be 100% accurate. \nWant to help translate/proofread LWC? Go to: &3&nhttp://translate.getlwc.org&r", playerLocale.getName());
+                    }
                 }
             }
         }
