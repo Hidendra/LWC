@@ -127,7 +127,7 @@ public abstract class Block {
      * @param names
      * @return
      */
-    public boolean typeIsOneOf(String... names) {
+    public boolean isOneOf(String... names) {
         for (String name : names) {
             if (getName().equals(name)) {
                 return true;
