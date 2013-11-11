@@ -146,7 +146,7 @@ public abstract class ProtectionRole extends AbstractSavable implements AccessPr
     /**
      * The protection this role is for
      */
-    private Protection protection;
+    private final Protection protection;
 
     /**
      * The role name for the player to grant access to
@@ -196,6 +196,7 @@ public abstract class ProtectionRole extends AbstractSavable implements AccessPr
      */
     public void setName(String name) {
         this.name = name;
+        state = State.MODIFIED;
     }
 
     /**
@@ -214,6 +215,7 @@ public abstract class ProtectionRole extends AbstractSavable implements AccessPr
      */
     public void setProtectionAccess(Access access) {
         this.access = access;
+        state = State.MODIFIED;
     }
 
     /**
