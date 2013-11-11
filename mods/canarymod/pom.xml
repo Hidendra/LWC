@@ -2,8 +2,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.getlwc.mods</groupId>
-    <artifactId>canary-recode</artifactId>
-    <name>LWC-Canary-Recode</name>
+    <artifactId>canarymod</artifactId>
+    <name>LWC-CanaryMod</name>
     <url>getlwc.org</url>
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
@@ -21,7 +21,7 @@
 
     <repositories>
         <repository>
-            <id>canary recode</id>
+            <id>canarymod</id>
             <url>http://repo.visualillusionsent.net</url>
         </repository>
         <repository>
@@ -40,7 +40,7 @@
         <dependency>
             <groupId>net.canarymod</groupId>
             <artifactId>CanaryLib</artifactId>
-            <version>1.0-RC-2</version>
+            <version>1.0-RC-3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

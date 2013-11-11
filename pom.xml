@@ -42,7 +42,7 @@
 
         <!-- Server Mods -->
         <module>mods/bukkit</module>
-        <module>mods/canary-recode</module>
+        <module>mods/canarymod</module>
         <module>mods/workbench</module>
         <module>mods/forge</module>
         <module>mods/universal</module>
