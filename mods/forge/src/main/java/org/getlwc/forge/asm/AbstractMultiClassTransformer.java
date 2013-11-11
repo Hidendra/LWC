@@ -12,8 +12,6 @@ import org.objectweb.asm.tree.MethodNode;
 
 import java.util.Iterator;
 
-import static org.objectweb.asm.Opcodes.ALOAD;
-
 public abstract class AbstractMultiClassTransformer extends AbstractTransformer {
 
     /**

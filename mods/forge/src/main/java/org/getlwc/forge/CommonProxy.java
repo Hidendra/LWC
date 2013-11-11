@@ -32,8 +32,6 @@ package org.getlwc.forge;
 import cpw.mods.fml.common.IPlayerTracker;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.entity.player.EntityPlayer;
-import org.getlwc.Engine;
-import org.getlwc.SimpleEngine;
 
 /**
  * Proxy used by both client and server

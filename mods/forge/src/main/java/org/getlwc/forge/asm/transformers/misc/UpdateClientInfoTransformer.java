@@ -1,7 +1,6 @@
 package org.getlwc.forge.asm.transformers.misc;
 
 import org.getlwc.forge.asm.AbstractSingleClassTransformer;
-import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 

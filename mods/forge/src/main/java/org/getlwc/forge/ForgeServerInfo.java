@@ -29,7 +29,6 @@
 
 package org.getlwc.forge;
 
-import net.minecraft.server.MinecraftServer;
 import org.getlwc.ServerInfo;
 import org.getlwc.configuration.YamlConfiguration;
 
