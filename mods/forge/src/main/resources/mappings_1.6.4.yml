@@ -130,12 +130,12 @@ methods:
   BlockDoor:
     onPoweredBlockChange:
       obf: a
-      signature: (#World;IIII)V
+      signature: (L#World;IIII)V
       srg: func_72231_a
   BlockTrapDoor:
     onPoweredBlockChange:
       obf: a
-      signature: (#World;IIII)V
+      signature: (L#World;IIII)V
       srg: func_72138_a
 fields:
   ItemInWorldManager:
