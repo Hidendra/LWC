@@ -143,4 +143,21 @@ public class ForgeEventHelper {
         mod.getEngine().getEventHelper().onPlayerJoin(mod.wrapPlayer(handle));
     }
 
+    /**
+     * Called when a redstone event is triggered. Typically this is not for EVERY redstone events only a small subset
+     * that LWC cares about
+     *
+     * @param handle
+     * @param x
+     * @param y
+     * @param z
+     * @param flag
+     * @return
+     */
+    public static boolean onRedstoneChange(net.minecraft.world.World handle, int x, int y, int z, boolean flag) {
+        LWC.instance.getEngine().getConsoleSender().sendMessage(String.format("onRedstoneChange(%s, %d, %d, %d, %s)", handle.getWorldInfo().getWorldName(), x, y, z, Boolean.toString(flag)));
+
+        return true;
+    }
+
 }

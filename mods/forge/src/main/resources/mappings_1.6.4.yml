@@ -80,6 +80,9 @@ methods:
     onUpdateClientInfo:
       obf: onUpdateClientInfo
       signature: n/a
+    onRedstoneChange:
+      obf: onRedstoneChange
+      signature: n/a
   GuiHandler:
     drawGuiContainerForegroundLayer:
       obf: drawGuiContainerForegroundLayer
