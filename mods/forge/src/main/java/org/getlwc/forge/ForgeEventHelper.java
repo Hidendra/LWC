@@ -29,6 +29,7 @@
 
 package org.getlwc.forge;
 
+import net.minecraft.block.BlockPistonBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.packet.Packet130UpdateSign;
@@ -36,6 +37,8 @@ import net.minecraft.network.packet.Packet204ClientInfo;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
 import org.getlwc.Block;
+import org.getlwc.BlockFace;
+import org.getlwc.Location;
 import org.getlwc.World;
 import org.getlwc.entity.Player;
 import org.getlwc.forge.event.EntityExplodeEvent;
@@ -157,7 +160,75 @@ public class ForgeEventHelper {
     public static boolean onRedstoneChange(net.minecraft.world.World handle, int x, int y, int z, boolean flag) {
         LWC.instance.getEngine().getConsoleSender().sendMessage(String.format("onRedstoneChange(%s, %d, %d, %d, %s)", handle.getWorldInfo().getWorldName(), x, y, z, Boolean.toString(flag)));
 
+
         return true;
+    }
+
+    /**
+     * Called when a piston is extended
+     *
+     * @param handle
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    public static boolean onUpdatePistonState(net.minecraft.world.World handle, int x, int y, int z) {
+        int data = handle.getBlockMetadata(x, y, z);
+        int notchFace = BlockPistonBase.getOrientation(data);
+
+        if (data != 7) {
+            boolean powered = isPistonIndirectlyPowered(handle, x, y, z, notchFace);
+
+            BlockFace face = BlockFace.fromNotch(notchFace);
+            World world = LWC.instance.getWorld(handle.getWorldInfo().getWorldName());
+            Block piston = world.getBlockAt(x, y, z);
+            Location reaching = piston.getRelative(face).getLocation();
+
+            if (powered && !BlockPistonBase.isExtended(data)) {
+                return onPistonExtend(piston, reaching);
+            } else if (!powered && BlockPistonBase.isExtended(data)) {
+                return onPistonRetract(piston, reaching);
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Called when a piston is extended
+     *
+     * @param piston
+     * @param extending
+     * @return
+     */
+    private static boolean onPistonExtend(Block piston, Location extending) {
+        return LWC.instance.getEngine().getEventHelper().onPistonExtend(piston, extending);
+    }
+
+    /**
+     * Called when a piston is retracted
+     *
+     * @param piston
+     * @param retracting
+     * @return
+     */
+    private static boolean onPistonRetract(Block piston, Location retracting) {
+        return LWC.instance.getEngine().getEventHelper().onPistonRetract(piston, retracting);
+    }
+
+    /**
+     * Checks the block to that side to see if it is indirectly powered.
+     *
+     * @param handle
+     * @param x
+     * @param y
+     * @param z
+     * @param face
+     * @return
+     */
+    private static boolean isPistonIndirectlyPowered(net.minecraft.world.World handle, int x, int y, int z, int face) {
+        return face != 0 && handle.getIndirectPowerOutput(x, y - 1, z, 0) || (face != 1 && handle.getIndirectPowerOutput(x, y + 1, z, 1) || (face != 2 && handle.getIndirectPowerOutput(x, y, z - 1, 2) || (face != 3 && handle.getIndirectPowerOutput(x, y, z + 1, 3) || (face != 5 && handle.getIndirectPowerOutput(x + 1, y, z, 5) || (face != 4 && handle.getIndirectPowerOutput(x - 1, y, z, 4) || (handle.getIndirectPowerOutput(x, y, z, 0) || (handle.getIndirectPowerOutput(x, y + 2, z, 1) || (handle.getIndirectPowerOutput(x, y + 1, z - 1, 2) || (handle.getIndirectPowerOutput(x, y + 1, z + 1, 3) || (handle.getIndirectPowerOutput(x - 1, y + 1, z, 4) || handle.getIndirectPowerOutput(x + 1, y + 1, z, 5)))))))))));
     }
 
 }

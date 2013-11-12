@@ -86,6 +86,9 @@ methods:
     onRedstoneChange:
       obf: onRedstoneChange
       signature: n/a
+    onUpdatePistonState:
+      obf: onUpdatePistonState
+      signature: n/a
   GuiHandler:
     drawGuiContainerForegroundLayer:
       obf: drawGuiContainerForegroundLayer
@@ -100,6 +103,10 @@ methods:
       obf: h
       signature: (III)I
       srg: func_72805_g
+    setBlockMetadataWithNotify:
+      obf: b
+      signature: (IIIII)I
+      srg: func_72921_c
   Explosion:
     doExplosionA:
       obf: a
