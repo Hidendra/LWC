@@ -17,14 +17,14 @@ import static org.objectweb.asm.Opcodes.ILOAD;
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 import static org.objectweb.asm.Opcodes.IRETURN;
 
-public class ItemStackTransformer extends AbstractSingleClassTransformer {
+public class BlockPlaceTransformer extends AbstractSingleClassTransformer {
 
     /**
      * The class we are targeting
      */
     private static final String TARGET_CLASS = "ItemStack";
 
-    public ItemStackTransformer() {
+    public BlockPlaceTransformer() {
         super(TARGET_CLASS);
     }
 

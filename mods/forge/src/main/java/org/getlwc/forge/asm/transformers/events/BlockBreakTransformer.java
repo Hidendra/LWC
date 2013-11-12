@@ -45,14 +45,14 @@ import static org.objectweb.asm.Opcodes.ILOAD;
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 import static org.objectweb.asm.Opcodes.IRETURN;
 
-public class ItemInWorldManagerTransformer extends org.getlwc.forge.asm.AbstractSingleClassTransformer {
+public class BlockBreakTransformer extends org.getlwc.forge.asm.AbstractSingleClassTransformer {
 
     /**
      * The class we are targeting
      */
     private static final String TARGET_CLASS = "ItemInWorldManager";
 
-    public ItemInWorldManagerTransformer() {
+    public BlockBreakTransformer() {
         super(TARGET_CLASS);
     }
 
