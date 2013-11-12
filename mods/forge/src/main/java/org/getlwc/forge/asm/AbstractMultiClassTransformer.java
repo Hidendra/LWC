@@ -66,7 +66,6 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
 
         boolean transformed = false;
         targetClass = null;
-        instructions = new InsnList();
 
         try {
 
@@ -81,6 +80,9 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
 
                 if (targetClass != null) {
                     LWC.instance.ensurePostLoaded();
+
+                    instructions = new InsnList();
+                    classNode = new ClassNode();
 
                     ClassReader reader = new ClassReader(bytes);
                     reader.accept(classNode, 0);
