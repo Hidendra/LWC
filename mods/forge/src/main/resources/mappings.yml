@@ -57,6 +57,12 @@ classes:
   ICommand:
     mcp: net.minecraft.command.ICommand
     obf: ab
+  BlockDoor:
+    mcp: net.minecraft.block.BlockDoor
+    obf: anz
+  BlockTrapDoor:
+    mcp: net.minecraft.block.BlockTrapDoor
+    obf: ari
 methods:
   ForgeEventHelper:
     onBlockHarvested:
@@ -118,6 +124,16 @@ methods:
       obf: b
       signature: (II)V
       srg: func_74189_g
+  BlockDoor:
+    onPoweredBlockChange:
+      obf: a
+      signature: (#World;IIII)V
+      srg: func_72231_a
+  BlockTrapDoor:
+    onPoweredBlockChange:
+      obf: a
+      signature: (#World;IIII)V
+      srg: func_72138_a
 fields:
   ItemInWorldManager:
     theWorld:
