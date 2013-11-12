@@ -63,6 +63,9 @@ classes:
   BlockTrapDoor:
     mcp: net.minecraft.block.BlockTrapDoor
     obf: ari
+  BlockPistonBase:
+    mcp: net.minecraft.block.BlockPistonBase
+    obf: ast
 methods:
   ForgeEventHelper:
     onBlockHarvested:
@@ -137,6 +140,11 @@ methods:
       obf: a
       signature: (L#World;IIII)V
       srg: func_72138_a
+  BlockPistonBase:
+    updatePistonState:
+      obf: k
+      signature: (L#World;III)V
+      srg: func_72110_l
 fields:
   ItemInWorldManager:
     theWorld:
