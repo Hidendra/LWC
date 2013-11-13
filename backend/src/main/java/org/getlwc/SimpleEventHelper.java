@@ -238,7 +238,7 @@ public class SimpleEventHelper implements EventHelper {
      */
     public boolean onInventoryMoveItem(Location location) {
         System.out.println("[internal] onInventoryMoveItem @ " + location);
-        return false;
+        return true;
     }
 
     /**
