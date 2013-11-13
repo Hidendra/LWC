@@ -97,15 +97,15 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
                 if (changed) {
                     ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
                     classNode.accept(writer);
-                    LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Patched {0} ({1}) successfully!", getClassName(targetClass, false), getClassName(targetClass));
+                    LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Patched {0} ({1}) successfully!", getClass().getSimpleName() + "::" + targetClass, getClassName(targetClass));
                     return writer.toByteArray();
                 } else {
-                    LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] {0} ({1}) was not changed during transformations", getClassName(targetClass, false), getClassName(targetClass));
+                    LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] {0} ({1}) was not changed during transformations", getClass().getSimpleName() + "::" + targetClass, getClassName(targetClass));
                     return bytes;
                 }
             }
         } catch (Exception e) {
-            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Failed to patch {0} ({1})", getClassName(targetClass, false), getClassName(targetClass));
+            LWC.instance.getEngine().getConsoleSender().sendTranslatedMessage("[ASM] Failed to patch {0} ({1})", getClass().getSimpleName() + "::" + targetClass, getClassName(targetClass));
             e.printStackTrace();
             return bytes;
         }
