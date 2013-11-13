@@ -31,13 +31,13 @@ package org.getlwc.forge;
 
 import net.minecraft.block.BlockHopper;
 import net.minecraft.block.BlockPistonBase;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.network.packet.Packet130UpdateSign;
 import net.minecraft.network.packet.Packet204ClientInfo;
 import net.minecraft.tileentity.TileEntityHopper;
-import net.minecraft.util.Facing;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
 import org.getlwc.Block;
@@ -45,6 +45,7 @@ import org.getlwc.BlockFace;
 import org.getlwc.Location;
 import org.getlwc.World;
 import org.getlwc.entity.Player;
+import org.getlwc.forge.entity.ForgeEntity;
 import org.getlwc.forge.event.EntityExplodeEvent;
 import org.getlwc.forge.event.PlayerBreakBlockEvent;
 import org.getlwc.forge.event.PlayerPlaceBlockEvent;
@@ -242,6 +243,20 @@ public class ForgeEventHelper {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Called when an entity tries to break a door
+     *
+     * @param entity
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    public static boolean onEntityBreakDoor(EntityLiving entity, int x, int y, int z) {
+        World world = LWC.instance.getWorld(entity.worldObj.getWorldInfo().getWorldName());
+        return LWC.instance.getEngine().getEventHelper().onBlockBreak(new ForgeEntity(entity), world.getBlockAt(x, y, z));
     }
 
     /**

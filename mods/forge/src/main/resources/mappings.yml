@@ -18,6 +18,9 @@ classes:
   Entity:
     mcp: net.minecraft.entity.Entity
     obf: nn
+  EntityLiving:
+    mcp: net.minecraft.entity.EntityLiving
+    obf: og
   EntityPlayer:
     mcp: net.minecraft.entity.player.EntityPlayer
     obf: uf
@@ -72,6 +75,12 @@ classes:
   TileEntityHopper:
     mcp: net.minecraft.tileentity.TileEntityHopper
     obf: asi
+  EntityAIBreakDoor:
+    mcp: net.minecraft.entity.ai.EntityAIBreakDoor
+    obf: pj
+  EntityAIDoorInteract:
+    mcp: net.minecraft.entity.ai.EntityAIDoorInteract
+    obf: pm
 methods:
   ForgeEventHelper:
     onBlockHarvested:
@@ -97,6 +106,9 @@ methods:
       signature: n/a
     onInventoryMoveItem:
       obf: onInventoryMoveItem
+      signature: n/a
+    onEntityBreakDoor:
+      obf: onEntityBreakDoor
       signature: n/a
   GuiHandler:
     drawGuiContainerForegroundLayer:
@@ -170,6 +182,11 @@ methods:
       obf: a
       signature: (L#Hopper;)Z
       srg: func_96116_a
+  EntityAIBreakDoor:
+    updateTask:
+      obf: e
+      signature: ()V
+      srg: func_75246_d
 fields:
   ItemInWorldManager:
     theWorld:
@@ -233,3 +250,16 @@ fields:
     xSize:
       obf: c
       srg: field_74194_b
+  EntityAIDoorInteract:
+    theEntity:
+      obf: a
+      srg: field_75356_a
+    entityPosX:
+      obf: b
+      srg: field_75354_b
+    entityPosY:
+      obf: c
+      srg: field_75355_c
+    entityPosZ:
+      obf: d
+      srg: field_75352_d
