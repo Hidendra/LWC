@@ -78,7 +78,8 @@ public class SimpleEventHelper implements EventHelper {
 
             return false;
         } else {
-            throw new UnsupportedOperationException("Unsupported Entity: " + entity.getClass().getSimpleName());
+            // throw new UnsupportedOperationException("Unsupported Entity: " + entity.getClass().getSimpleName());
+            return false;
         }
     }
 
@@ -166,7 +167,8 @@ public class SimpleEventHelper implements EventHelper {
                 return true; // Better safe than sorry
             }
         } else {
-            throw new UnsupportedOperationException("Unsupported Entity: " + (entity != null ? entity.getClass().getSimpleName() : "null"));
+            // throw new UnsupportedOperationException("Unsupported Entity: " + (entity != null ? entity.getClass().getSimpleName() : "null"));
+            cancel = !silentAccessCheck(entity, block);
         }
 
         return cancel;
