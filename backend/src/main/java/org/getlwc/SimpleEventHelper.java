@@ -166,7 +166,7 @@ public class SimpleEventHelper implements EventHelper {
                 return true; // Better safe than sorry
             }
         } else {
-            throw new UnsupportedOperationException("Unsupported Entity: " + entity.getClass().getSimpleName());
+            throw new UnsupportedOperationException("Unsupported Entity: " + (entity != null ? entity.getClass().getSimpleName() : "null"));
         }
 
         return cancel;
