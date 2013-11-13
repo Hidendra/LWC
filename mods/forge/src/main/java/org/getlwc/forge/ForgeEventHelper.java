@@ -238,8 +238,7 @@ public class ForgeEventHelper {
         }
 
         if (canProceed) {
-            // TODO pass internally
-            return true;
+            return LWC.instance.getEngine().getEventHelper().onInventoryMoveItem(usingInventory);
         } else {
             return false;
         }
