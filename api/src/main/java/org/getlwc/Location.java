@@ -59,6 +59,11 @@ public final class Location {
     }
 
     @Override
+    public String toString() {
+        return String.format("Location(world = %s, x = %f, y = %f, z = %f)", world.getName(), x, y, z);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == this) {
             return true;
