@@ -66,6 +66,12 @@ classes:
   BlockPistonBase:
     mcp: net.minecraft.block.BlockPistonBase
     obf: ast
+  Hopper:
+    mcp: net.minecraft.tileentity.Hopper
+    obf: ash
+  TileEntityHopper:
+    mcp: net.minecraft.tileentity.TileEntityHopper
+    obf: asi
 methods:
   ForgeEventHelper:
     onBlockHarvested:
@@ -88,6 +94,9 @@ methods:
       signature: n/a
     onUpdatePistonState:
       obf: onUpdatePistonState
+      signature: n/a
+    onInventoryMoveItem:
+      obf: onInventoryMoveItem
       signature: n/a
   GuiHandler:
     drawGuiContainerForegroundLayer:
@@ -152,6 +161,15 @@ methods:
       obf: k
       signature: (L#World;III)V
       srg: func_72110_l
+  TileEntityHopper:
+    insertItemToInventory:
+      obf: u
+      signature: ()Z
+      srg: func_94116_j
+    suckItemsIntoHopper:
+      obf: a
+      signature: (L#Hopper;)Z
+      srg: func_96116_a
 fields:
   ItemInWorldManager:
     theWorld:

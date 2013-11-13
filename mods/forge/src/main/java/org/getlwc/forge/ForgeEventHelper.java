@@ -29,11 +29,15 @@
 
 package org.getlwc.forge;
 
+import net.minecraft.block.BlockHopper;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.network.packet.Packet130UpdateSign;
 import net.minecraft.network.packet.Packet204ClientInfo;
+import net.minecraft.tileentity.TileEntityHopper;
+import net.minecraft.util.Facing;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
 import org.getlwc.Block;
@@ -193,6 +197,72 @@ public class ForgeEventHelper {
         }
 
         return false;
+    }
+
+    /**
+     * Called when an item is moved between inventories - i.e. hopper and dropper.
+     * This is only called for the hopper that initiated the move
+     *
+     * @param handle
+     * @param isPullingItems if the hopper is pulling items
+     * @return
+     */
+    public static boolean onInventoryMoveItem(net.minecraft.tileentity.Hopper handle, boolean isPullingItems) {
+        // todo get the block hopper is connected to using the face
+        // isPullingItems = true
+        //     hopper is pulling items from inventory above it
+        // else
+        //     hopper is attached to a block
+        // i.e. TileEntityHopper.getOutputInventory() (private)
+        World world = LWC.instance.getWorld(handle.getWorldObj().getWorldInfo().getWorldName());
+        Block hopper = world.getBlockAt((int) handle.getXPos(), (int) handle.getYPos(), (int) handle.getZPos());
+        Location usingInventory;
+
+        if (isPullingItems) {
+            usingInventory = hopper.getRelative(BlockFace.UP).getLocation();
+        } else {
+            // int direction = BlockHopper.getDirectionFromMetadata(hopper.getData());
+            // usingInventory = hopper.getRelative(Facing.offsetsXForSide[direction], Facing.offsetsYForSide[direction], Facing.offsetsZForSide[direction]).getLocation();
+            usingInventory = hopper.getRelative(BlockFace.fromNotch(BlockHopper.getDirectionFromMetadata(hopper.getData()))).getLocation();
+        }
+
+        IInventory inventory = TileEntityHopper.getInventoryAtLocation(handle.getWorldObj(), usingInventory.getBlockX(), usingInventory.getBlockY(), usingInventory.getBlockZ());
+
+        boolean canProceed;
+
+        if (isPullingItems) {
+            // if they are pushing items then we shouldn't do anything if the source inven is empty
+            canProceed = inventory != null && !isInventoryEmpty(inventory);
+        } else {
+            canProceed = inventory != null && !isInventoryEmpty(handle);
+        }
+
+        if (canProceed) {
+            // TODO pass internally
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Checks if an inventory is empty
+     *
+     * @param inventory
+     * @return
+     */
+    private static boolean isInventoryEmpty(IInventory inventory) {
+        if (inventory == null) {
+            return true;
+        }
+
+        for (int index = 0; index < inventory.getSizeInventory(); index ++) {
+            if (inventory.getStackInSlot(index) != null) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
