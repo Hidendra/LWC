@@ -6,9 +6,7 @@ public class ModSupport {
 
     public enum Mod {
 
-        BUILDCRAFT("buildcraft.api.core.BuildCraftAPI"),
-
-        FORGE_ESSENTIALS("com.ForgeEssentials.api.permissions.PermissionsAPI");
+        BUILDCRAFT("buildcraft.api.core.BuildCraftAPI");
 
         String className;
 
