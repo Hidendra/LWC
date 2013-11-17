@@ -31,6 +31,15 @@ package org.getlwc.forge.world;
 
 import org.getlwc.Block;
 import org.getlwc.World;
+import org.getlwc.forge.asm.AbstractMultiClassTransformer;
+import org.getlwc.forge.asm.CompilationType;
+import org.getlwc.util.Tuple;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ForgeBlock extends Block {
 
@@ -54,11 +63,70 @@ public class ForgeBlock extends Block {
      */
     private final int z;
 
+    /**
+     * Map of the cached block names
+     */
+    private static Map<Tuple<Integer, Byte>, String> cachedModBlockNames = new HashMap<Tuple<Integer, Byte>, String>();
+
     public ForgeBlock(ForgeWorld world, int x, int y, int z) {
         this.world = world;
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    @Override
+    public String getName() {
+        Tuple<Integer, Byte> cacheKey = new Tuple<Integer, Byte>(getType(), getData());
+
+        if (cachedModBlockNames.containsKey(cacheKey)) {
+            return cachedModBlockNames.get(cacheKey);
+        }
+
+        String name = null;
+
+        try {
+            for (net.minecraft.block.Block block : net.minecraft.block.Block.blocksList) {
+                if (block != null && block.blockID > 0) {
+                    List<net.minecraft.item.ItemStack> blocks = new ArrayList<net.minecraft.item.ItemStack>();
+
+                    for (Method method : block.getClass().getDeclaredMethods()) {
+                        if (method.getName().equals(AbstractMultiClassTransformer.getMethodName("Block", "getSubBlocks", CompilationType.SRG))) {
+                            method.invoke(block, block.blockID, null, blocks);
+                            break;
+                        }
+                    }
+
+                    if (blocks.size() == 0) { // no sub blocks; can ignore the data value
+                        if (getType() == block.blockID) {
+                            name = block.getUnlocalizedName();
+                            break;
+                        }
+                    } else { // has sub blocks so the data value uniquely identifies the block
+                        for (net.minecraft.item.ItemStack stack : blocks) {
+                            if (stack != null) {
+                                if (getType() == block.blockID && stack.getItemDamage() == getData()) {
+                                    name = stack.getUnlocalizedName();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (name == null) {
+            name = super.getName();
+        }
+
+        if (name != null) {
+            cachedModBlockNames.put(cacheKey, name);
+        }
+
+        return name;
     }
 
     /**

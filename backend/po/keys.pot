@@ -11,7 +11,7 @@ msgstr ""
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
 "\n"
-"POT-Creation-Date: 2013-11-12 20:45+0000\n"
+"POT-Creation-Date: 2013-11-17 19:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -287,7 +287,7 @@ msgstr ""
 
 #. / TL: The double apostrophe is to work around a bug in a library.
 #. /     If you need to use it please leave it as a single apostrophe.
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:98
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:99
 #, java-format
 msgid ""
 "Your client''s locale {0} is not supported by LWC. {1} will be used "
@@ -297,7 +297,7 @@ msgstr ""
 
 #. / TL: The double apostrophe is to work around a bug in a library.
 #. /     If you need to use it please leave it as a single apostrophe.
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:109
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:110
 #, java-format
 msgid ""
 "Your client''s locale {0} was recently translated for LWC. It may not be "
@@ -306,11 +306,11 @@ msgid ""
 "org&r"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:157
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:158
 msgid "&4This protection is locked by a magical spell."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:163
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:164
 #, java-format
 msgid ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "

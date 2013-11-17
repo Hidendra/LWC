@@ -81,6 +81,9 @@ classes:
   EntityAIDoorInteract:
     mcp: net.minecraft.entity.ai.EntityAIDoorInteract
     obf: pm
+  CreativeTabs:
+    mcp: net.minecraft.creativetab.CreativeTabs
+    obf: ww
 methods:
   ForgeEventHelper:
     onBlockHarvested:
@@ -187,6 +190,11 @@ methods:
       obf: e
       signature: ()V
       srg: func_75246_d
+  Block:
+    getSubBlocks:
+      obf: a
+      signature: (IL#CreativeTabs;Ljava/util/List;)V
+      srg: func_71879_a
 fields:
   ItemInWorldManager:
     theWorld:

@@ -34,6 +34,7 @@ import org.getlwc.configuration.Configuration;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
 import org.getlwc.roles.PlayerProtectionRole;
+import org.yaml.snakeyaml.scanner.ScannerImpl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -139,7 +140,20 @@ public class SimpleProtectionManager implements ProtectionManager {
 
         // try highest nodes first
         for (String m : match) {
-            value = configuration.getString("protections.protectables." + m + "." + node, null);
+            // period (.) in the match name is a special case
+            if (m.contains(".")) {
+                Map<String, Object> map = (Map<String, Object>) configuration.get("protections.protectables");
+
+                if (map.containsKey(m)) {
+                    Map<String, Object> sub = (Map<String, Object>) map.get(m);
+
+                    if (sub.containsKey(node)) {
+                        value = sub.get(node).toString();
+                    }
+                }
+            } else {
+                value = configuration.getString("protections.protectables." + m + "." + node, null);
+            }
 
             if (value != null) {
                 break;
