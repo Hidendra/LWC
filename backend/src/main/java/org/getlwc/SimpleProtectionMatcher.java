@@ -70,13 +70,12 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
 
         // other
         else {
-            // get the block above the current block (useful)
-            Block above = base.getRelative(0, 1, 0);
+            Block above = base.getRelative(BlockFace.UP);
 
             // door above the current block
             if (above.isOneOf("minecraft:wooden_door", "minecraft:iron_door")) {
                 blocks.add(above);
-                blocks.add(above.getRelative(0, 1, 0)); // top of the door
+                blocks.add(above.getRelative(BlockFace.UP)); // top of the door
             }
 
             // lever that is attached to a block above
