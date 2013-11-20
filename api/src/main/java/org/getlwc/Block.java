@@ -29,6 +29,8 @@
 
 package org.getlwc;
 
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -167,39 +169,7 @@ public abstract class Block {
      * @return the Block found. If it was not found, NULL will be returned
      */
     public Block findBlockRelativeToXZ(String... names) {
-        Block block;
-
-        Set<String> typeSet = new HashSet<String>();
-        for (String type : names) {
-            typeSet.add(type);
-        }
-
-        if ((block = getRelative(BlockFace.EAST)) != null) {
-            if (typeSet.contains(block.getName())) {
-                return block;
-            }
-        }
-
-        if ((block = getRelative(BlockFace.WEST)) != null) {
-            if (typeSet.contains(block.getName())) {
-                return block;
-            }
-        }
-
-        if ((block = getRelative(BlockFace.NORTH)) != null) {
-            if (typeSet.contains(block.getName())) {
-                return block;
-            }
-        }
-
-        if ((block = getRelative(BlockFace.SOUTH)) != null) {
-            if (typeSet.contains(block.getName())) {
-                return block;
-            }
-        }
-
-        // nothing at all found QQ
-        return null;
+        return findBlockRelative(EnumSet.of(BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH), names);
     }
 
     /**
@@ -210,28 +180,30 @@ public abstract class Block {
      * @return the Block found. If it was not found, NULL will be returned
      */
     public Block findBlockRelativeToY(String... names) {
+        return findBlockRelative(EnumSet.of(BlockFace.UP, BlockFace.DOWN), names);
+    }
+
+    /**
+     * Finds a block relative to this block in the given direction
+     *
+     * @param faces
+     * @param names
+     * @return
+     */
+    private Block findBlockRelative(EnumSet<BlockFace> faces, String... names) {
         Block block;
 
         Set<String> typeSet = new HashSet<String>();
-        for (String type : names) {
-            typeSet.add(type);
-        }
+        Collections.addAll(typeSet, names);
 
-        // block above
-        if ((block = getRelative(BlockFace.UP)) != null) {
-            if (typeSet.contains(block.getName())) {
-                return block;
+        for (BlockFace face : faces) {
+            if ((block = getRelative(face)) != null) {
+                if (typeSet.contains(block.getName())) {
+                    return block;
+                }
             }
         }
 
-        // block below
-        if ((block = getRelative(BlockFace.DOWN)) != null) {
-            if (typeSet.contains(block.getName())) {
-                return block;
-            }
-        }
-
-        // nothing at all found QQ
         return null;
     }
 
