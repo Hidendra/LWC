@@ -174,27 +174,25 @@ public abstract class Block {
             typeSet.add(type);
         }
 
-        // First, the x plane
-        if ((block = getRelative(-1, 0, 0)) != null) {
+        if ((block = getRelative(BlockFace.EAST)) != null) {
             if (typeSet.contains(block.getName())) {
                 return block;
             }
         }
 
-        if ((block = getRelative(1, 0, 0)) != null) {
+        if ((block = getRelative(BlockFace.WEST)) != null) {
             if (typeSet.contains(block.getName())) {
                 return block;
             }
         }
 
-        // now the z plane
-        if ((block = getRelative(0, 0, -1)) != null) {
+        if ((block = getRelative(BlockFace.NORTH)) != null) {
             if (typeSet.contains(block.getName())) {
                 return block;
             }
         }
 
-        if ((block = getRelative(0, 0, 1)) != null) {
+        if ((block = getRelative(BlockFace.SOUTH)) != null) {
             if (typeSet.contains(block.getName())) {
                 return block;
             }
@@ -220,14 +218,14 @@ public abstract class Block {
         }
 
         // block above
-        if ((block = getRelative(0, 1, 0)) != null) {
+        if ((block = getRelative(BlockFace.UP)) != null) {
             if (typeSet.contains(block.getName())) {
                 return block;
             }
         }
 
         // block below
-        if ((block = getRelative(0, -1, 0)) != null) {
+        if ((block = getRelative(BlockFace.DOWN)) != null) {
             if (typeSet.contains(block.getName())) {
                 return block;
             }
