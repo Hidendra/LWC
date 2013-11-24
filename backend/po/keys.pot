@@ -11,7 +11,7 @@ msgstr ""
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
 "\n"
-"POT-Creation-Date: 2013-11-24 00:03+0000\n"
+"POT-Creation-Date: 2013-11-24 13:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -123,61 +123,71 @@ msgstr ""
 msgid "Failed to connect to the database!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:88
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:90
 msgid "Similar commands:"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:91
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:93
 msgid "&4No commands found."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:101
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:103
 #, java-format
 msgid "- &6/{0}&r: {1}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:115
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:117
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:155
 msgid "&eClick on a block to protect it!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:124
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:126
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:165
 msgid "&4That block is not protectable"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:130
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:132
 msgid ""
 "&2Created a new protection successfully.\n"
 "Want to give another player access to your protection?\n"
 "Use: &e/lwc modify NAME (or: /cadd NAME)"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:134
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:136
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:182
 msgid ""
 "&4Failed to create the protection. Your block is most likely not protected."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:151
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:178
+msgid ""
+"&2Created a new protection &4with a password&2 successfully.\n"
+"Want to give another player access to your protection?\n"
+"Use: &e/lwc modify NAME (or: /cadd NAME)"
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:199
 msgid "&eClick on a protection to remove the lock!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:160
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:208
 msgid "&2The protection has been removed successfully."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:162
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:210
 msgid "&4You do not have the required access level to do that!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:179
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:227
 msgid "&eClick on a protection to view info on it."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:219
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:267
 #, java-format
 msgid "&7{0}&f: {1}\n"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:222
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:270
 #, java-format
 msgid ""
 "Location: &7[{0} {1} {2}]&f in the world \"&7{3}&f\"\n"
