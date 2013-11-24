@@ -143,7 +143,7 @@ public class BaseCommands {
             command = "lwc delete",
             description = "Remove a protection",
             permission = "lwc.remove.protection",
-            aliases = {"cremove", "cunlock"},
+            aliases = {"cremove"},
             accepts = SenderType.PLAYER
     )
     public void removeProtection(CommandContext context) {

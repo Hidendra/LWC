@@ -11,7 +11,7 @@ msgstr ""
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
 "\n"
-"POT-Creation-Date: 2013-11-17 19:48+0000\n"
+"POT-Creation-Date: 2013-11-24 00:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -67,22 +67,22 @@ msgid ""
 "[ASM] MAKE SURE YOU ARE USING THE LATEST VERSION!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:101
-msgid "&4You have no pending /cpassword."
+#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:95
+msgid "&4You have no pending /cunlock."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:109
+#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:103
 msgid "&2Granted access to the protection!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:122
+#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:114
 msgid "&4Invalid password."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:139
+#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:133
 msgid ""
 "&4This protection is locked by a password.\n"
-"&4To enter the password, use: &3/cpassword <password>"
+"&4To enter the password, use: &3/cunlock <password>"
 msgstr ""
 
 #: backend/src/main/java/org/getlwc/SimpleEngine.java:148

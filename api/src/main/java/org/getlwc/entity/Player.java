@@ -104,6 +104,16 @@ public abstract class Player extends PlayerEventHandler implements Entity, Comma
     }
 
     /**
+     * Check if the player has the given attribute
+     *
+     * @param name
+     * @return
+     */
+    public boolean hasAttribute(String name) {
+        return attributes.containsKey(name);
+    }
+
+    /**
      * Remove an attribute from the store
      *
      * @param name

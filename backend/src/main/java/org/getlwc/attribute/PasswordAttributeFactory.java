@@ -50,12 +50,6 @@ import java.util.Set;
 public class PasswordAttributeFactory implements ProtectionAttributeFactory<String> {
 
     /**
-     * Players that are permitted to access certain protections
-     * <ProtectionId, Set<Player>>
-     */
-    private static final Map<Integer, Set<String>> players = new HashMap<Integer, Set<String>>();
-
-    /**
      * Attribute name
      */
     public static final String NAME = "password";
@@ -87,7 +81,7 @@ public class PasswordAttributeFactory implements ProtectionAttributeFactory<Stri
             command = "lwc password",
             description = "Unlocks a protection via password if you have attempted to open one",
             permission = "lwc.password",
-            aliases = {"cpassword"},
+            aliases = {"cunlock"},
             accepts = SenderType.PLAYER,
             min = 1
     )
@@ -98,7 +92,7 @@ public class PasswordAttributeFactory implements ProtectionAttributeFactory<Stri
         Object request = player.getAttribute("password_request");
 
         if (request == null) {
-            player.sendTranslatedMessage("&4You have no pending /cpassword.");
+            player.sendTranslatedMessage("&4You have no pending /cunlock.");
             return;
         }
 
@@ -110,14 +104,12 @@ public class PasswordAttributeFactory implements ProtectionAttributeFactory<Stri
             player.removeAttribute("password_request");
             player.removeAttribute("password_protection_id");
 
-            Set<String> playerList = players.get(protectionId);
-
-            if (playerList == null) {
-                playerList = new HashSet<String>();
-                players.put(protectionId, playerList);
+            if (!player.hasAttribute("password_authorized")) {
+                player.setAttribute("password_authorized", new HashSet<Integer>());
             }
 
-            playerList.add(player.getName());
+            Set<Integer> authorized = (Set<Integer>) player.getAttribute("password_authorized");
+            authorized.add(protectionId);
         } else {
             player.sendTranslatedMessage("&4Invalid password.");
         }
@@ -130,13 +122,15 @@ public class PasswordAttributeFactory implements ProtectionAttributeFactory<Stri
         }
 
         public ProtectionRole.Access getAccess(Protection protection, Player player) {
-            String playerName = player.getName();
+            if (player.hasAttribute("password_authorized")) {
+                Set<Integer> authorized = (Set<Integer>) player.getAttribute("password_authorized");
 
-            if (players.containsKey(protection.getId()) && players.get(protection.getId()).contains(playerName)) {
-                return ProtectionRole.Access.MEMBER;
+                if (authorized.contains(protection.getId())) {
+                    return ProtectionRole.Access.MEMBER;
+                }
             }
 
-            player.sendTranslatedMessage("&4This protection is locked by a password.\n&4To enter the password, use: &3/cpassword <password>");
+            player.sendTranslatedMessage("&4This protection is locked by a password.\n&4To enter the password, use: &3/cunlock <password>");
             player.setAttribute("password_request", this);
             player.setAttribute("password_protection_id", protection.getId());
             return ProtectionRole.Access.EXPLICIT_DENY;

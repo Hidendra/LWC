@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2013-11-13 16:51+0000\n"
+"POT-Creation-Date: 2013-11-24 00:03+0000\n"
 "PO-Revision-Date: 2013-06-18 23:02-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -68,25 +68,25 @@ msgstr ""
 "[ASM] If this is a major Minecraft release then LWC IS MOST LIKELY BROKEN!\n"
 "[ASM] MAKE SURE YOU ARE USING THE LATEST VERSION!"
 
-#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:101
-msgid "&4You have no pending /cpassword."
-msgstr "&4You have no pending /cpassword."
+#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:95
+msgid "&4You have no pending /cunlock."
+msgstr "&4You have no pending /cunlock."
 
-#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:109
+#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:103
 msgid "&2Granted access to the protection!"
 msgstr "&2Granted access to the protection!"
 
-#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:122
+#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:114
 msgid "&4Invalid password."
 msgstr "&4Invalid password."
 
-#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:139
+#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:133
 msgid ""
 "&4This protection is locked by a password.\n"
-"&4To enter the password, use: &3/cpassword <password>"
+"&4To enter the password, use: &3/cunlock <password>"
 msgstr ""
 "&4This protection is locked by a password.\n"
-"&4To enter the password, use: &3/cpassword <password>"
+"&4To enter the password, use: &3/cunlock <password>"
 
 #: backend/src/main/java/org/getlwc/SimpleEngine.java:148
 #, java-format
@@ -454,6 +454,3 @@ msgstr ""
 #, java-format
 msgid "Using default locale: {0}"
 msgstr "Using default locale: {0}"
-
-#~ msgid "Purging player?: {0}"
-#~ msgstr "Purging player?: {0}"
