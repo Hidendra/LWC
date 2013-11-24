@@ -47,7 +47,7 @@ import java.util.Map;
 import java.util.Set;
 
 //// TODO : hash pws
-public class PasswordAttributeFactory implements ProtectionAttributeFactory<String> {
+public class PasswordAttributeFactory implements ProtectionAttributeFactory<HashedString> {
 
     /**
      * Attribute name
@@ -73,7 +73,7 @@ public class PasswordAttributeFactory implements ProtectionAttributeFactory<Stri
         return NAME;
     }
 
-    public AbstractAttribute<String> createAttribute() {
+    public AbstractAttribute<HashedString> createAttribute() {
         return new PasswordAttribute();
     }
 
@@ -98,7 +98,7 @@ public class PasswordAttributeFactory implements ProtectionAttributeFactory<Stri
 
         PasswordAttribute attribute = (PasswordAttribute) request;
 
-        if (password.equals(attribute.getValue())) {
+        if (attribute.getValue().matches(password)) {
             int protectionId = (Integer) player.getAttribute("password_protection_id");
             player.sendTranslatedMessage("&2Granted access to the protection!");
             player.removeAttribute("password_request");
@@ -115,7 +115,7 @@ public class PasswordAttributeFactory implements ProtectionAttributeFactory<Stri
         }
     }
 
-    private class PasswordAttribute extends StringAttribute implements AccessProvider {
+    private class PasswordAttribute extends HashedStringAttribute implements AccessProvider {
 
         public PasswordAttribute() {
             super(engine, NAME, "");
