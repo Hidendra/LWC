@@ -710,7 +710,7 @@ public class JDBCDatabase implements Database {
                 ResultSet set = statement.executeQuery();
 
                 while (set.next()) {
-                    AbstractAttribute attribute = engine.getProtectionManager().createProtectionAttribute(lookup.get(JDBCLookupService.LookupType.ROLE_NAME, set.getInt("attribute_name")));
+                    AbstractAttribute attribute = engine.getProtectionManager().createProtectionAttribute(lookup.get(JDBCLookupService.LookupType.ATTRIBUTE_NAME, set.getInt("attribute_name")));
 
                     if (attribute == null) {
                         // the attribute is no longer registered
