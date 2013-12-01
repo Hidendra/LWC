@@ -37,6 +37,7 @@ import org.getlwc.model.Protection;
 import org.getlwc.model.State;
 import org.getlwc.role.Role;
 import org.getlwc.role.RoleFactory;
+import org.getlwc.util.Tuple;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -48,7 +49,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -128,6 +131,11 @@ public class JDBCDatabase implements Database {
      */
     private final JDBCConnectionDetails details;
 
+    /**
+     *
+     */
+    private JDBCLookupService lookup = new JDBCLookupService(this);
+
     public JDBCDatabase(Engine engine, JDBCConnectionDetails details) {
         if (details == null) {
             throw new IllegalArgumentException("Connection details cannot be null");
@@ -186,6 +194,7 @@ public class JDBCDatabase implements Database {
             }
 
             verifyBase();
+            lookup.populate();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -319,6 +328,71 @@ public class JDBCDatabase implements Database {
     }
 
     /**
+     * Get all of the lookup associations for the given type in the database
+     *
+     * @param type
+     * @return
+     */
+    public List<Tuple<String, Integer>> getLookupAssociations(JDBCLookupService.LookupType type) {
+        List<Tuple<String, Integer>> result = new ArrayList<Tuple<String, Integer>>();
+
+        try {
+            Connection connection = pool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT id, name FROM " + details.getPrefix() + "lookup_" + type.getSuffix());
+
+            try {
+                ResultSet set = statement.executeQuery();
+
+                while (set.next()) {
+                    result.add(new Tuple<String, Integer>(set.getString("name"), set.getInt("id")));
+                }
+            } finally {
+                safeClose(statement);
+                safeClose(connection);
+            }
+        } catch (SQLException e) {
+            handleException(e);
+        }
+
+        return result;
+    }
+
+    /**
+     * Create a lookup in the database
+     *
+     * @param name
+     * @return
+     */
+    public int createLookup(JDBCLookupService.LookupType type, String name) {
+        try {
+            Connection connection = pool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "lookup_" + type.getSuffix() + " (name) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
+
+            try {
+                statement.setString(1, name);
+                statement.executeUpdate();
+
+                ResultSet set = statement.getGeneratedKeys();
+
+                try {
+                    if (set.next()) {
+                        return set.getInt(1);
+                    }
+                } finally {
+                    set.close();
+                }
+            } finally {
+                safeClose(statement);
+                safeClose(connection);
+            }
+        } catch (SQLException e) {
+            handleException(e);
+        }
+
+        return -1;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public Protection createProtection(Location location) {
@@ -327,7 +401,7 @@ public class JDBCDatabase implements Database {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protections (world, x, y, z, updated, created, accessed) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
             try {
-                statement.setString(1, location.getWorld().getName());
+                statement.setInt(1, lookup.get(JDBCLookupService.LookupType.WORLD_NAME, location.getWorld().getName()));
                 statement.setInt(2, location.getBlockX());
                 statement.setInt(3, location.getBlockY());
                 statement.setInt(4, location.getBlockZ());
@@ -359,7 +433,7 @@ public class JDBCDatabase implements Database {
                 statement.setInt(1, location.getBlockX());
                 statement.setInt(2, location.getBlockY());
                 statement.setInt(3, location.getBlockZ());
-                statement.setString(4, location.getWorld().getName());
+                statement.setInt(4, lookup.get(JDBCLookupService.LookupType.WORLD_NAME, location.getWorld().getName()));
 
                 ResultSet set = statement.executeQuery();
 
@@ -422,7 +496,7 @@ public class JDBCDatabase implements Database {
                 statement.setInt(1, protection.getX());
                 statement.setInt(2, protection.getY());
                 statement.setInt(3, protection.getZ());
-                statement.setString(4, protection.getWorld().getName());
+                statement.setInt(4, lookup.get(JDBCLookupService.LookupType.WORLD_NAME, protection.getWorld().getName()));
                 statement.setInt(5, protection.getCreated());
                 statement.setInt(6, protection.getUpdated());
                 statement.setInt(7, protection.getAccessed());
@@ -470,8 +544,8 @@ public class JDBCDatabase implements Database {
 
             try {
                 statement.setInt(1, role.getProtection().getId());
-                statement.setString(2, role.getType());
-                statement.setString(3, role.getName());
+                statement.setInt(2, lookup.get(JDBCLookupService.LookupType.ROLE_TYPE, role.getType()));
+                statement.setInt(3, lookup.get(JDBCLookupService.LookupType.ROLE_NAME, role.getName()));
                 statement.setInt(4, role.getAccess().ordinal());
                 statement.executeUpdate();
             } finally {
@@ -510,8 +584,8 @@ public class JDBCDatabase implements Database {
 
             try {
                 statement.setInt(1, role.getProtection().getId());
-                statement.setString(2, role.getType());
-                statement.setString(3, role.getName());
+                statement.setInt(2, lookup.get(JDBCLookupService.LookupType.ROLE_TYPE, role.getType()));
+                statement.setInt(3, lookup.get(JDBCLookupService.LookupType.ROLE_NAME, role.getName()));
                 statement.executeUpdate();
             } finally {
                 safeClose(statement);
@@ -552,7 +626,7 @@ public class JDBCDatabase implements Database {
 
             try {
                 statement.setInt(1, protection.getId());
-                statement.setString(2, attribute.getName());
+                statement.setInt(2, lookup.get(JDBCLookupService.LookupType.ATTRIBUTE_NAME, attribute.getName()));
                 statement.setString(3, attribute.getStorableValue());
                 statement.executeUpdate();
             } finally {
@@ -589,7 +663,7 @@ public class JDBCDatabase implements Database {
 
             try {
                 statement.setInt(1, protection.getId());
-                statement.setString(2, attribute.getName());
+                statement.setInt(2, lookup.get(JDBCLookupService.LookupType.ATTRIBUTE_NAME, attribute.getName()));
                 statement.executeUpdate();
             } finally {
                 safeClose(statement);
@@ -636,7 +710,7 @@ public class JDBCDatabase implements Database {
                 ResultSet set = statement.executeQuery();
 
                 while (set.next()) {
-                    AbstractAttribute attribute = engine.getProtectionManager().createProtectionAttribute(set.getString("attribute_name"));
+                    AbstractAttribute attribute = engine.getProtectionManager().createProtectionAttribute(lookup.get(JDBCLookupService.LookupType.ROLE_NAME, set.getInt("attribute_name")));
 
                     if (attribute == null) {
                         // the attribute is no longer registered
@@ -677,8 +751,11 @@ public class JDBCDatabase implements Database {
                 ResultSet set = statement.executeQuery();
 
                 while (set.next()) {
-                    RoleFactory factory = engine.getRoleRegistry().get(set.getString("type"));
-                    Role role = factory.create(protection, set.getString("name"), Role.Access.values()[set.getInt("role")]);
+                    String type = lookup.get(JDBCLookupService.LookupType.ROLE_TYPE, set.getInt("type"));
+                    String name = lookup.get(JDBCLookupService.LookupType.ROLE_NAME, set.getInt("name"));
+
+                    RoleFactory factory = engine.getRoleRegistry().get(type);
+                    Role role = factory.create(protection, name, Role.Access.values()[set.getInt("role")]);
 
                     if (role != null) {
                         roles.add(role);
@@ -705,7 +782,7 @@ public class JDBCDatabase implements Database {
      */
     private Protection resolveProtection(ResultSet set) throws SQLException {
         Protection protection = new Protection(engine, set.getInt("id"));
-        protection.setWorld(engine.getServerLayer().getWorld(set.getString("world")));
+        protection.setWorld(engine.getServerLayer().getWorld(lookup.get(JDBCLookupService.LookupType.WORLD_NAME, set.getInt("world"))));
         protection.setX(set.getInt("x"));
         protection.setY(set.getInt("y"));
         protection.setZ(set.getInt("z"));
