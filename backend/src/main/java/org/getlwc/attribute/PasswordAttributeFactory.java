@@ -44,7 +44,6 @@ import org.getlwc.util.StringUtils;
 import java.util.HashSet;
 import java.util.Set;
 
-//// TODO : hash pws
 public class PasswordAttributeFactory implements ProtectionAttributeFactory<HashedString> {
 
     /**
