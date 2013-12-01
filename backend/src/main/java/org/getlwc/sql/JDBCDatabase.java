@@ -32,11 +32,11 @@ package org.getlwc.sql;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.getlwc.Engine;
 import org.getlwc.Location;
-import org.getlwc.ProtectionRole;
-import org.getlwc.RoleDefinition;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
 import org.getlwc.model.State;
+import org.getlwc.role.Role;
+import org.getlwc.role.RoleFactory;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -463,14 +463,14 @@ public class JDBCDatabase implements Database {
     /**
      * {@inheritDoc}
      */
-    public void saveOrCreateRole(ProtectionRole role) {
+    public void saveOrCreateRole(Role role) {
         try {
             Connection connection = pool.getConnection();
             PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_roles (protection_id, type, name, role) VALUES (?, ?, ?, ?)");
 
             try {
                 statement.setInt(1, role.getProtection().getId());
-                statement.setInt(2, role.getType());
+                statement.setString(2, role.getType());
                 statement.setString(3, role.getName());
                 statement.setInt(4, role.getAccess().ordinal());
                 statement.executeUpdate();
@@ -487,7 +487,7 @@ public class JDBCDatabase implements Database {
                     statement.setString(1, role.getName());
                     statement.setInt(2, role.getAccess().ordinal());
                     statement.setInt(3, role.getProtection().getId());
-                    statement.setInt(4, role.getType());
+                    statement.setString(4, role.getType());
                     statement.setString(5, role.getName());
                     statement.executeUpdate();
                 } finally {
@@ -503,14 +503,14 @@ public class JDBCDatabase implements Database {
     /**
      * {@inheritDoc}
      */
-    public void removeRole(ProtectionRole role) {
+    public void removeRole(Role role) {
         try {
             Connection connection = pool.getConnection();
             PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_roles WHERE protection_id = ? AND type = ? AND name = ?");
 
             try {
                 statement.setInt(1, role.getProtection().getId());
-                statement.setInt(2, role.getType());
+                statement.setString(2, role.getType());
                 statement.setString(3, role.getName());
                 statement.executeUpdate();
             } finally {
@@ -664,8 +664,8 @@ public class JDBCDatabase implements Database {
     /**
      * {@inheritDoc}
      */
-    public Set<ProtectionRole> loadProtectionRoles(Protection protection) {
-        Set<ProtectionRole> roles = new HashSet<ProtectionRole>();
+    public Set<Role> loadProtectionRoles(Protection protection) {
+        Set<Role> roles = new HashSet<Role>();
 
         try {
             Connection connection = pool.getConnection();
@@ -677,8 +677,8 @@ public class JDBCDatabase implements Database {
                 ResultSet set = statement.executeQuery();
 
                 while (set.next()) {
-                    RoleDefinition definition = engine.getRoleManager().getDefinition(set.getInt("type"));
-                    ProtectionRole role = definition.createRole(protection, set.getString("name"), ProtectionRole.Access.values()[set.getInt("role")]);
+                    RoleFactory factory = engine.getRoleRegistry().get(set.getString("type"));
+                    Role role = factory.create(protection, set.getString("name"), Role.Access.values()[set.getInt("role")]);
 
                     if (role != null) {
                         roles.add(role);

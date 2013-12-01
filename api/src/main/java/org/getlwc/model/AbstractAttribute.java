@@ -35,6 +35,7 @@ public abstract class AbstractAttribute<T> {
 
     /**
      * The Engine instance
+     * TODO remove - not necessary
      */
     private final Engine engine;
 

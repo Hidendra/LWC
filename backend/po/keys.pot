@@ -11,7 +11,7 @@ msgstr ""
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
 "\n"
-"POT-Creation-Date: 2013-11-24 13:40+0000\n"
+"POT-Creation-Date: 2013-12-01 18:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -67,127 +67,127 @@ msgid ""
 "[ASM] MAKE SURE YOU ARE USING THE LATEST VERSION!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:95
+#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:93
 msgid "&4You have no pending /cunlock."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:103
+#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:101
 msgid "&2Granted access to the protection!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:114
+#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:112
 msgid "&4Invalid password."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:133
+#: backend/src/main/java/org/getlwc/attribute/PasswordAttributeFactory.java:131
 msgid ""
 "&4This protection is locked by a password.\n"
 "&4To enter the password, use: &3/cunlock <password>"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:148
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:151
 #, java-format
 msgid "Server: {0} ({1})"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:149
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:152
 #, java-format
 msgid "Backend: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:150
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:153
 #, java-format
 msgid "This version was built on: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:206
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:209
 #, java-format
 msgid "Economy: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:329
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:332
 msgid "Shutting down!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:352
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:354
 #, java-format
 msgid "Driver \"{0}\" is not supported."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:382
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:384
 #, java-format
 msgid "Connected to the database with driver: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:384
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:386
 msgid "Failed to connect to the database!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:90
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:89
 msgid "Similar commands:"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:93
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:92
 msgid "&4No commands found."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:103
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:102
 #, java-format
 msgid "- &6/{0}&r: {1}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:117
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:155
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:116
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:154
 msgid "&eClick on a block to protect it!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:126
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:165
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:125
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:164
 msgid "&4That block is not protectable"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:132
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:131
 msgid ""
 "&2Created a new protection successfully.\n"
 "Want to give another player access to your protection?\n"
 "Use: &e/lwc modify NAME (or: /cadd NAME)"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:136
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:182
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:135
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:179
 msgid ""
 "&4Failed to create the protection. Your block is most likely not protected."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:178
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:175
 msgid ""
 "&2Created a new protection &4with a password&2 successfully.\n"
 "Want to give another player access to your protection?\n"
 "Use: &e/lwc modify NAME (or: /cadd NAME)"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:199
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:196
 msgid "&eClick on a protection to remove the lock!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:208
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:205
 msgid "&2The protection has been removed successfully."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:210
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:207
 msgid "&4You do not have the required access level to do that!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:227
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:224
 msgid "&eClick on a protection to view info on it."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:267
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:264
 #, java-format
 msgid "&7{0}&f: {1}\n"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:270
+#: backend/src/main/java/org/getlwc/commands/BaseCommands.java:267
 #, java-format
 msgid ""
 "Location: &7[{0} {1} {2}]&f in the world \"&7{3}&f\"\n"
@@ -235,69 +235,69 @@ msgstr ""
 msgid "&4The protection does not have the attribute {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:38
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:39
 msgid "&eClick on a protection to apply modifications."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:48
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:49
 msgid "&4Access denied."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:70
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:111
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:149
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:72
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:114
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:153
 #, java-format
 msgid "&4\"{0}\" does not match any usable roles"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:83
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:85
 msgid "&4Only owners can remove other owners."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:88
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:90
 msgid "&4Only owners can remove managers."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:93
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:95
 #, java-format
 msgid "&eRemoving role: &7{0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:96
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:98
 #, java-format
 msgid "&4Protection does not contain role matching: &e{0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:120
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:158
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:123
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:162
 #, java-format
 msgid "&2Changed {0} to {1} successfully!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:124
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:162
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:127
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:166
 #, java-format
 msgid ""
 "&2Added a {0} for \"{1}\" to the protection with access level {2} "
 "successfully!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:129
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:132
 #, java-format
 msgid "&4Protection access level &7{0}&4 is not allowed."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:135
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:138
 msgid "&4Only owners can add other owners."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:141
+#: backend/src/main/java/org/getlwc/commands/AddRemoveCommands.java:144
 msgid "&4Only owners can add managers."
 msgstr ""
 
 #. / TL: The double apostrophe is to work around a bug in a library.
 #. /     If you need to use it please leave it as a single apostrophe.
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:99
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:100
 #, java-format
 msgid ""
 "Your client''s locale {0} is not supported by LWC. {1} will be used "
@@ -307,7 +307,7 @@ msgstr ""
 
 #. / TL: The double apostrophe is to work around a bug in a library.
 #. /     If you need to use it please leave it as a single apostrophe.
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:110
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:111
 #, java-format
 msgid ""
 "Your client''s locale {0} was recently translated for LWC. It may not be "
@@ -316,18 +316,18 @@ msgid ""
 "org&r"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:158
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:159
 msgid "&4This protection is locked by a magical spell."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:164
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:165
 #, java-format
 msgid ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "
 "trace has been printed out to the log file"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/sql/JDBCDatabase.java:221
+#: backend/src/main/java/org/getlwc/sql/JDBCDatabase.java:222
 msgid "Creating base database via base.sql"
 msgstr ""
 
@@ -371,31 +371,31 @@ msgid ""
 "protected."
 msgstr ""
 
-#: api/src/main/java/org/getlwc/ProtectionRole.java:56
+#: api/src/main/java/org/getlwc/role/Role.java:59
 msgid "explicit_deny"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/ProtectionRole.java:61
+#: api/src/main/java/org/getlwc/role/Role.java:64
 msgid "none"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/ProtectionRole.java:68
+#: api/src/main/java/org/getlwc/role/Role.java:71
 msgid "guest"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/ProtectionRole.java:73
+#: api/src/main/java/org/getlwc/role/Role.java:76
 msgid "depositonly"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/ProtectionRole.java:78
+#: api/src/main/java/org/getlwc/role/Role.java:81
 msgid "member"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/ProtectionRole.java:83
+#: api/src/main/java/org/getlwc/role/Role.java:86
 msgid "manager"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/ProtectionRole.java:90
+#: api/src/main/java/org/getlwc/role/Role.java:93
 msgid "owner"
 msgstr ""
 

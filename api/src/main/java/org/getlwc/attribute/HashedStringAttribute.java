@@ -33,8 +33,6 @@ import org.getlwc.Engine;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.State;
 
-import java.security.MessageDigest;
-
 public class HashedStringAttribute extends AbstractAttribute<HashedString> {
 
     public HashedStringAttribute(Engine engine, String name, String value) {

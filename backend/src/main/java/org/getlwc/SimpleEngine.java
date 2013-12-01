@@ -43,7 +43,10 @@ import org.getlwc.configuration.Configuration;
 import org.getlwc.configuration.YamlConfiguration;
 import org.getlwc.economy.DefaultEconomy;
 import org.getlwc.economy.Economy;
-import org.getlwc.roles.PlayerRoleDefinition;
+import org.getlwc.factory.AbstractFactoryRegistry;
+import org.getlwc.role.PlayerRoleFactory;
+import org.getlwc.role.RoleFactory;
+import org.getlwc.role.RoleFactoryRegistry;
 import org.getlwc.sql.Database;
 import org.getlwc.sql.DatabaseException;
 import org.getlwc.sql.JDBCDatabase;
@@ -63,9 +66,9 @@ public class SimpleEngine implements Engine {
     private final SimpleProtectionManager protectionManager = new SimpleProtectionManager(this);
 
     /**
-     * The role manager
+     * The registry for protection roles
      */
-    private final SimpleProtectionRoleManager roleManager = new SimpleProtectionRoleManager();
+    private final AbstractFactoryRegistry<RoleFactory> roleRegistry = new RoleFactoryRegistry();
 
     /**
      * The savable background queue
@@ -239,8 +242,8 @@ public class SimpleEngine implements Engine {
     /**
      * {@inheritDoc}
      */
-    public ProtectionRoleManager getRoleManager() {
-        return roleManager;
+    public AbstractFactoryRegistry<RoleFactory> getRoleRegistry() {
+        return roleRegistry;
     }
 
     /**
@@ -329,8 +332,7 @@ public class SimpleEngine implements Engine {
         consoleSender.sendTranslatedMessage("Shutting down!");
         saveQueue.flushAndClose();
         commandHandler.clearCommands();
-        roleManager.clearRoles();
-        protectionManager.clearAttributes();
+        roleRegistry.clear();
         database.disconnect();
         database = null;
     }
@@ -403,7 +405,7 @@ public class SimpleEngine implements Engine {
      * Register the default roles
      */
     private void registerDefaultRoles() {
-        roleManager.registerDefinition(new PlayerRoleDefinition(this));
+        roleRegistry.register(new PlayerRoleFactory(this));
     }
 
     private void registerDefaultAttributes() {

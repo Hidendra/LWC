@@ -30,9 +30,9 @@
 package org.getlwc.sql;
 
 import org.getlwc.Location;
-import org.getlwc.ProtectionRole;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
+import org.getlwc.role.Role;
 
 import java.util.Set;
 
@@ -94,14 +94,14 @@ public interface Database {
      *
      * @param role
      */
-    public void saveOrCreateRole(ProtectionRole role);
+    public void saveOrCreateRole(Role role);
 
     /**
      * Remove a role from the database
      *
      * @param role
      */
-    public void removeRole(ProtectionRole role);
+    public void removeRole(Role role);
 
     /**
      * Remove all roles for a protection from the database
@@ -147,6 +147,6 @@ public interface Database {
      * @param protection
      * @return
      */
-    public Set<ProtectionRole> loadProtectionRoles(Protection protection);
+    public Set<Role> loadProtectionRoles(Protection protection);
 
 }

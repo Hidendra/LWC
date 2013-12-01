@@ -33,6 +33,8 @@ import org.getlwc.command.CommandHandler;
 import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.economy.Economy;
+import org.getlwc.factory.AbstractFactoryRegistry;
+import org.getlwc.role.RoleFactory;
 import org.getlwc.sql.Database;
 
 public interface Engine {
@@ -49,7 +51,7 @@ public interface Engine {
      *
      * @return
      */
-    public ProtectionRoleManager getRoleManager();
+    public AbstractFactoryRegistry<RoleFactory> getRoleRegistry();
 
     /**
      * Get the protection manager

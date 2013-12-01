@@ -1,7 +1,6 @@
 package org.getlwc.commands;
 
 import org.getlwc.Engine;
-import org.getlwc.ProtectionRole;
 import org.getlwc.command.Command;
 import org.getlwc.command.CommandContext;
 import org.getlwc.command.SenderType;
@@ -9,6 +8,8 @@ import org.getlwc.entity.Player;
 import org.getlwc.event.events.ProtectionEvent;
 import org.getlwc.event.notifiers.ProtectionEventNotifier;
 import org.getlwc.model.Protection;
+import org.getlwc.role.Role;
+import org.getlwc.role.RoleFactory;
 import org.getlwc.util.StringUtils;
 
 public class AddRemoveCommands {
@@ -42,15 +43,15 @@ public class AddRemoveCommands {
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
 
-                ProtectionRole.Access playerAccess = protection.getAccess(player);
+                Role.Access playerAccess = protection.getAccess(player);
 
-                if (playerAccess.ordinal() < ProtectionRole.Access.MANAGER.ordinal()) {
+                if (playerAccess.ordinal() < Role.Access.MANAGER.ordinal()) {
                     player.sendTranslatedMessage("&4Access denied.");
                     return true;
                 }
 
                 // the access role to apply to the next matched role
-                ProtectionRole.Access access = null;
+                Role.Access access = null;
 
                 for (int i = 0; i < parsed.length; i++) {
                     if (i + 1 > parsed.length) {
@@ -64,27 +65,28 @@ public class AddRemoveCommands {
                         if (token.startsWith("-")) {
                             token = token.substring(1);
 
-                            ProtectionRole role = engine.getRoleManager().matchAndCreateRoleByName(protection, token, ProtectionRole.Access.NONE);
+                            RoleFactory factory = engine.getRoleRegistry().find(token);
+                            Role role = factory != null ? factory.create(protection, token, Role.Access.NONE) : null;
 
                             if (role == null) {
                                 player.sendTranslatedMessage("&4\"{0}\" does not match any usable roles", token);
                                 return true;
                             }
 
-                            ProtectionRole delete = null;
-                            for (ProtectionRole protectionRole : protection.getRoles()) {
+                            Role delete = null;
+                            for (Role protectionRole : protection.getRoles()) {
                                 if (role.getType() == protectionRole.getType() && role.getName().equalsIgnoreCase(protectionRole.getName())) {
                                     delete = protectionRole;
                                     break;
                                 }
                             }
 
-                            if (role.getAccess() == ProtectionRole.Access.OWNER && playerAccess != ProtectionRole.Access.OWNER) {
+                            if (role.getAccess() == Role.Access.OWNER && playerAccess != Role.Access.OWNER) {
                                 player.sendTranslatedMessage("&4Only owners can remove other owners.");
                                 continue;
                             }
 
-                            if (role.getAccess() == ProtectionRole.Access.MANAGER && playerAccess != ProtectionRole.Access.OWNER) {
+                            if (role.getAccess() == Role.Access.MANAGER && playerAccess != Role.Access.OWNER) {
                                 player.sendTranslatedMessage("&4Only owners can remove managers.");
                                 continue;
                             }
@@ -100,19 +102,20 @@ public class AddRemoveCommands {
                         }
 
                         // attempt to match an access level
-                        access = ProtectionRole.Access.match(token);
+                        access = Role.Access.match(token);
 
                         if (access == null) {
-                            access = ProtectionRole.Access.MEMBER;
+                            access = Role.Access.MEMBER;
 
-                            ProtectionRole role = engine.getRoleManager().matchAndCreateRoleByName(protection, token, access);
+                            RoleFactory factory = engine.getRoleRegistry().find(token);
+                            Role role = factory != null ? factory.create(protection, token, access) : null;
 
                             if (role == null) {
                                 player.sendTranslatedMessage("&4\"{0}\" does not match any usable roles", token);
                                 return true;
                             }
 
-                            ProtectionRole existing = protection.getRole(role.getType(), role.getName());
+                            Role existing = protection.getRole(role.getType(), role.getName());
 
                             if (existing != null) {
                                 existing.setProtectionAccess(role.getAccess());
@@ -125,32 +128,33 @@ public class AddRemoveCommands {
                             }
                         }
 
-                        if (access != null && !ProtectionRole.Access.USABLE_ACCESS_LEVELS.contains(access)) {
+                        if (access != null && !Role.Access.USABLE_ACCESS_LEVELS.contains(access)) {
                             player.sendTranslatedMessage("&4Protection access level &7{0}&4 is not allowed.", access);
                             access = null;
                             i ++;
                         }
 
-                        if (access == ProtectionRole.Access.OWNER && playerAccess != ProtectionRole.Access.OWNER) {
+                        if (access == Role.Access.OWNER && playerAccess != Role.Access.OWNER) {
                             player.sendTranslatedMessage("&4Only owners can add other owners.");
                             access = null;
                             i ++;
                         }
 
-                        if (access == ProtectionRole.Access.MANAGER && playerAccess != ProtectionRole.Access.OWNER) {
+                        if (access == Role.Access.MANAGER && playerAccess != Role.Access.OWNER) {
                             player.sendTranslatedMessage("&4Only owners can add managers.");
                             access = null;
                             i ++;
                         }
                     } else {
-                        ProtectionRole role = engine.getRoleManager().matchAndCreateRoleByName(protection, token, access);
+                        RoleFactory factory = engine.getRoleRegistry().find(token);
+                        Role role = factory != null ? factory.create(protection, token, access) : null;
 
                         if (role == null) {
                             player.sendTranslatedMessage("&4\"{0}\" does not match any usable roles", token);
                             return true;
                         }
 
-                        ProtectionRole existing = protection.getRole(role.getType(), role.getName());
+                        Role existing = protection.getRole(role.getType(), role.getName());
 
                         if (existing != null) {
                             existing.setProtectionAccess(role.getAccess());

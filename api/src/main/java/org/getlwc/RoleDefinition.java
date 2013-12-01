@@ -30,6 +30,7 @@
 package org.getlwc;
 
 import org.getlwc.model.Protection;
+import org.getlwc.role.Role;
 
 public interface RoleDefinition {
 
@@ -51,13 +52,13 @@ public interface RoleDefinition {
     public String matchRoleName(String name);
 
     /**
-     * Create a {@link ProtectionRole}
+     * Create a {@link org.getlwc.role.Role}
      *
      * @param protection
      * @param roleName
      * @param roleAccess
      * @return
      */
-    public ProtectionRole createRole(Protection protection, String roleName, ProtectionRole.Access roleAccess);
+    public Role createRole(Protection protection, String roleName, Role.Access roleAccess);
 
 }

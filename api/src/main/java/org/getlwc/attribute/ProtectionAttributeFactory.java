@@ -29,16 +29,10 @@
 
 package org.getlwc.attribute;
 
+import org.getlwc.factory.AbstractFactory;
 import org.getlwc.model.AbstractAttribute;
 
-public interface ProtectionAttributeFactory<T> {
-
-    /**
-     * Get the unique name for the attribute. This can also be matched by commands utilising attributes.
-     *
-     * @return
-     */
-    public String getName();
+public interface ProtectionAttributeFactory<T> extends AbstractFactory {
 
     /**
      * Create an attribute

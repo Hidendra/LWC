@@ -31,9 +31,9 @@ package org.getlwc.sql;
 
 import org.getlwc.Engine;
 import org.getlwc.Location;
-import org.getlwc.ProtectionRole;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
+import org.getlwc.role.Role;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -153,14 +153,14 @@ public class MemoryDatabase implements Database {
     /**
      * {@inheritDoc}
      */
-    public void saveOrCreateRole(ProtectionRole role) {
+    public void saveOrCreateRole(Role role) {
         // no need to create
     }
 
     /**
      * {@inheritDoc}
      */
-    public void removeRole(ProtectionRole role) {
+    public void removeRole(Role role) {
         // it will remove itself from the Protection object
     }
 
@@ -202,8 +202,8 @@ public class MemoryDatabase implements Database {
     /**
      * {@inheritDoc}
      */
-    public Set<ProtectionRole> loadProtectionRoles(Protection protection) {
-        return new HashSet<ProtectionRole>(); // nothing to load from
+    public Set<Role> loadProtectionRoles(Protection protection) {
+        return new HashSet<Role>(); // nothing to load from
     }
 
 }

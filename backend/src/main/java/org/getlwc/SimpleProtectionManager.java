@@ -29,14 +29,15 @@
 
 package org.getlwc;
 
+import org.getlwc.attribute.AttributeFactoryRegistry;
 import org.getlwc.attribute.ProtectionAttributeFactory;
 import org.getlwc.configuration.Configuration;
+import org.getlwc.factory.AbstractFactoryRegistry;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
-import org.getlwc.roles.PlayerProtectionRole;
-import org.yaml.snakeyaml.scanner.ScannerImpl;
+import org.getlwc.role.PlayerRoleFactory;
+import org.getlwc.role.Role;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class SimpleProtectionManager implements ProtectionManager {
@@ -47,19 +48,12 @@ public class SimpleProtectionManager implements ProtectionManager {
     private Engine engine;
 
     /**
-     * ProtectAttributeFactory storage
+     * Registry for attribute factories
      */
-    private final Map<String, ProtectionAttributeFactory> protectionFactories = new HashMap<String, ProtectionAttributeFactory>();
+    private final AbstractFactoryRegistry<ProtectionAttributeFactory> attributeRegistry = new AttributeFactoryRegistry();
 
     public SimpleProtectionManager(Engine engine) {
         this.engine = engine;
-    }
-
-    /**
-     * Clear all attributes
-     */
-    public void clearAttributes() {
-        protectionFactories.clear();
     }
 
     /**
@@ -101,7 +95,7 @@ public class SimpleProtectionManager implements ProtectionManager {
         }
 
         // add the Owner role to the database for the player
-        protection.addRole(new PlayerProtectionRole(engine, protection, owner, ProtectionRole.Access.OWNER));
+        protection.addRole(new PlayerRoleFactory.PlayerRole(engine, protection, owner, Role.Access.OWNER));
         protection.save();
 
         return protection;
@@ -115,15 +109,22 @@ public class SimpleProtectionManager implements ProtectionManager {
             throw new IllegalArgumentException("factory cannot be null");
         }
 
-        protectionFactories.put(factory.getName().toLowerCase(), factory);
+        attributeRegistry.register(factory);
     }
 
     /**
      * {@inheritDoc}
      */
     public AbstractAttribute createProtectionAttribute(String name) {
-        ProtectionAttributeFactory factory = protectionFactories.get(name.toLowerCase());
+        ProtectionAttributeFactory factory = attributeRegistry.get(name.toLowerCase());
         return factory == null ? null : factory.createAttribute();
+    }
+
+    /**
+     * Clear all attributes
+     */
+    public void clearAttributes() {
+        attributeRegistry.clear();
     }
 
     /**

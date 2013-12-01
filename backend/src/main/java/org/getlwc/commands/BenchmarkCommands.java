@@ -34,7 +34,6 @@ import org.getlwc.Location;
 import org.getlwc.command.Command;
 import org.getlwc.command.CommandContext;
 import org.getlwc.command.SenderType;
-import org.getlwc.model.Protection;
 
 import java.util.Random;
 

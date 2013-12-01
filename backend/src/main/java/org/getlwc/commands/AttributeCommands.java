@@ -30,7 +30,6 @@
 package org.getlwc.commands;
 
 import org.getlwc.Engine;
-import org.getlwc.ProtectionRole;
 import org.getlwc.command.Command;
 import org.getlwc.command.CommandContext;
 import org.getlwc.command.SenderType;
@@ -39,6 +38,7 @@ import org.getlwc.event.events.ProtectionEvent;
 import org.getlwc.event.notifiers.ProtectionEventNotifier;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
+import org.getlwc.role.Role;
 import org.getlwc.util.StringUtils;
 
 public class AttributeCommands {
@@ -93,8 +93,8 @@ public class AttributeCommands {
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
 
-                ProtectionRole.Access currAccess = protection.getAccess(player);
-                if (currAccess.ordinal() < ProtectionRole.Access.MANAGER.ordinal()) {
+                Role.Access currAccess = protection.getAccess(player);
+                if (currAccess.ordinal() < Role.Access.MANAGER.ordinal()) {
                     player.sendTranslatedMessage("&4Only managers and above can modify the attributes of a protection.");
                     return true;
                 }
@@ -135,8 +135,8 @@ public class AttributeCommands {
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
 
-                ProtectionRole.Access currAccess = protection.getAccess(player);
-                if (currAccess.ordinal() < ProtectionRole.Access.MANAGER.ordinal()) {
+                Role.Access currAccess = protection.getAccess(player);
+                if (currAccess.ordinal() < Role.Access.MANAGER.ordinal()) {
                     player.sendTranslatedMessage("&4Only managers and above can modify the attributes of a protection.");
                     return true;
                 }

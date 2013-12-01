@@ -27,8 +27,11 @@
  * either expressed or implied, of anybody else.
  */
 
-package org.getlwc;
+package org.getlwc.role;
 
+import org.getlwc.AccessProvider;
+import org.getlwc.Engine;
+import org.getlwc.I18n;
 import org.getlwc.model.AbstractSavable;
 import org.getlwc.model.Protection;
 import org.getlwc.model.State;
@@ -37,7 +40,7 @@ import java.util.EnumSet;
 
 import static org.getlwc.I18n._;
 
-public abstract class ProtectionRole extends AbstractSavable implements AccessProvider {
+public abstract class Role extends AbstractSavable implements AccessProvider {
 
     /**
      * Access levels for protections. ordinal values are used here meaning they must remain in a constant order. As well,
@@ -116,10 +119,10 @@ public abstract class ProtectionRole extends AbstractSavable implements AccessPr
         }
 
         /**
-         * Match a {@link org.getlwc.ProtectionRole.Access} given a name.
+         * Match a {@link Role.Access} given a name.
          *
          * @param name
-         * @return NULL if no {@link org.getlwc.ProtectionRole.Access} is matched
+         * @return NULL if no {@link Role.Access} is matched
          */
         public static Access match(String name) {
             for (Access access : Access.values()) {
@@ -158,7 +161,7 @@ public abstract class ProtectionRole extends AbstractSavable implements AccessPr
      */
     private Access access;
 
-    public ProtectionRole(Engine engine, Protection protection, String roleName, Access roleAccess) {
+    public Role(Engine engine, Protection protection, String roleName, Access roleAccess) {
         super(engine);
         this.engine = engine;
         this.protection = protection;
@@ -200,7 +203,7 @@ public abstract class ProtectionRole extends AbstractSavable implements AccessPr
     }
 
     /**
-     * Get the {@link org.getlwc.ProtectionRole.Access} this role can provide
+     * Get the {@link Role.Access} this role can provide
      *
      * @return
      */
@@ -260,23 +263,23 @@ public abstract class ProtectionRole extends AbstractSavable implements AccessPr
             return false;
         }
 
-        ProtectionRole o = (ProtectionRole) object;
+        Role o = (Role) object;
         return getType() == o.getType() && name.equals(o.name) && access == o.access && state == o.state;
     }
 
     @Override
     public int hashCode() {
         int hash = 1;
-        hash *= 17 + getType();
+        hash *= 17 + getType().hashCode();
         hash *= 17 + name.hashCode();
         return hash;
     }
 
     /**
-     * Get a unique integer that will be used to represent this role
+     * Get a unique string that will be used to represent this role
      *
      * @return
      */
-    public abstract int getType();
+    public abstract String getType();
 
 }
