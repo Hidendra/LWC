@@ -641,7 +641,7 @@ public class JDBCDatabase implements Database {
                 try {
                     statement.setString(1, attribute.getStorableValue());
                     statement.setInt(2, protection.getId());
-                    statement.setString(3, attribute.getName());
+                    statement.setInt(3, lookup.get(JDBCLookupService.LookupType.ATTRIBUTE_NAME, attribute.getName()));
                     statement.executeUpdate();
                 } finally {
                     safeClose(statement);
