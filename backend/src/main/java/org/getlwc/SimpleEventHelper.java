@@ -145,6 +145,7 @@ public class SimpleEventHelper implements EventHelper {
                 // default event action
                 if (!cancel && protection != null) {
                     Role.Access access = protection.getAccess(player);
+                    protection.interactedBy(entity, access);
 
                     /// TODO distinguish between left / right click.
 

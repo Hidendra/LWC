@@ -11,7 +11,7 @@ msgstr ""
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
 "\n"
-"POT-Creation-Date: 2013-12-01 19:38+0000\n"
+"POT-Creation-Date: 2013-12-01 20:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -316,11 +316,11 @@ msgid ""
 "org&r"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:159
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:160
 msgid "&4This protection is locked by a magical spell."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:165
+#: backend/src/main/java/org/getlwc/SimpleEventHelper.java:166
 #, java-format
 msgid ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "

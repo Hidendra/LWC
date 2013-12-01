@@ -31,8 +31,10 @@ package org.getlwc.model;
 
 import org.getlwc.AccessProvider;
 import org.getlwc.Engine;
+import org.getlwc.InteractProvider;
 import org.getlwc.Location;
 import org.getlwc.World;
+import org.getlwc.entity.Entity;
 import org.getlwc.entity.Player;
 import org.getlwc.role.Role;
 
@@ -109,6 +111,11 @@ public class Protection extends AbstractSavable {
      */
     private final Set<AccessProvider> accessProviders = new HashSet<AccessProvider>();
 
+    /**
+     * The interact providers that want to know when this protection is interacted with
+     */
+    private final Set<InteractProvider> interactProviders = new HashSet<InteractProvider>();
+
     @Override
     public String toString() {
         // TODO add in updated, created
@@ -126,6 +133,18 @@ public class Protection extends AbstractSavable {
 
         for (Role role : engine.getDatabase().loadProtectionRoles(this)) {
             addRole(role);
+        }
+    }
+
+    /**
+     * Called when the protection is interacted with by a player
+     *
+     * @param access
+     * @param entity
+     */
+    public void interactedBy(Entity entity, Role.Access access) {
+        for (InteractProvider provider : interactProviders) {
+            provider.onInteract(this, entity, access);
         }
     }
 
@@ -168,6 +187,10 @@ public class Protection extends AbstractSavable {
     public void addRole(Role role) {
         roles.add(role);
         accessProviders.add(role);
+
+        if (role instanceof InteractProvider) {
+            interactProviders.add((InteractProvider) role);
+        }
     }
 
     /**
@@ -196,6 +219,10 @@ public class Protection extends AbstractSavable {
         roles.remove(role);
         accessProviders.remove(role);
         engine.getDatabase().removeRole(role);
+
+        if (role instanceof InteractProvider) {
+            interactProviders.remove(role);
+        }
     }
 
     /**
@@ -210,6 +237,10 @@ public class Protection extends AbstractSavable {
 
         if (attribute instanceof AccessProvider) {
             accessProviders.add((AccessProvider) attribute);
+        }
+
+        if (attribute instanceof InteractProvider) {
+            interactProviders.add((InteractProvider) attribute);
         }
     }
 
@@ -238,6 +269,10 @@ public class Protection extends AbstractSavable {
 
         if (attribute instanceof AccessProvider) {
             accessProviders.remove(attribute);
+        }
+
+        if (attribute instanceof InteractProvider) {
+            interactProviders.remove(attribute);
         }
     }
 

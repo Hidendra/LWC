@@ -98,6 +98,11 @@ public abstract class Role extends AbstractSavable implements AccessProvider {
         public final static EnumSet<Access> USABLE_ACCESS_LEVELS = EnumSet.range(NONE, OWNER);
 
         /**
+         * Access levels that can view or interact with the protection
+         */
+        public final static EnumSet<Access> CAN_ACCESS = EnumSet.range(GUEST, OWNER);
+
+        /**
          * The translated name for the enum
          */
         private String translatedName = null;

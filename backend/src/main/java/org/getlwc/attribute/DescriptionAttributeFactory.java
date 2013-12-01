@@ -30,7 +30,12 @@
 package org.getlwc.attribute;
 
 import org.getlwc.Engine;
+import org.getlwc.InteractProvider;
+import org.getlwc.entity.Entity;
+import org.getlwc.entity.Player;
 import org.getlwc.model.AbstractAttribute;
+import org.getlwc.model.Protection;
+import org.getlwc.role.Role;
 
 public class DescriptionAttributeFactory implements ProtectionAttributeFactory<String> {
 
@@ -59,7 +64,21 @@ public class DescriptionAttributeFactory implements ProtectionAttributeFactory<S
      * {@inheritDoc}
      */
     public AbstractAttribute<String> createAttribute() {
-        return new StringAttribute(engine, NAME, "");
+        return new DescriptionAttribute(engine, NAME, "");
+    }
+
+    private static class DescriptionAttribute extends StringAttribute implements InteractProvider {
+
+        public DescriptionAttribute(Engine engine, String name, String value) {
+            super(engine, name, value);
+        }
+
+        public void onInteract(Protection protection, Entity entity, Role.Access access) {
+            if (entity instanceof Player && Role.Access.CAN_ACCESS.contains(access)) {
+                Player player = (Player) entity;
+                player.sendMessage(value);
+            }
+        }
     }
 
 }
