@@ -35,10 +35,10 @@ import org.getlwc.command.CommandException;
 import org.getlwc.command.CommandHandler;
 import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.command.SimpleCommandHandler;
-import org.getlwc.commands.AddRemoveCommands;
-import org.getlwc.commands.AttributeCommands;
-import org.getlwc.commands.BaseCommands;
-import org.getlwc.commands.BenchmarkCommands;
+import org.getlwc.command.AddRemoveCommands;
+import org.getlwc.command.AttributeCommands;
+import org.getlwc.command.BaseCommands;
+import org.getlwc.command.BenchmarkCommands;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.configuration.YamlConfiguration;
 import org.getlwc.economy.DefaultEconomy;
@@ -51,7 +51,7 @@ import org.getlwc.sql.Database;
 import org.getlwc.sql.DatabaseException;
 import org.getlwc.sql.JDBCDatabase;
 import org.getlwc.sql.MemoryDatabase;
-import org.getlwc.util.config.FileConfiguration;
+import org.getlwc.configuration.FileConfiguration;
 
 public class SimpleEngine implements Engine {
 

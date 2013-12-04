@@ -27,16 +27,12 @@
  * either expressed or implied, of anybody else.
  */
 
-package org.getlwc.commands;
+package org.getlwc.command;
 
 import org.getlwc.Block;
 import org.getlwc.Engine;
 import org.getlwc.ProtectionManager;
 import org.getlwc.attribute.HashedString;
-import org.getlwc.command.Command;
-import org.getlwc.command.CommandComparator;
-import org.getlwc.command.CommandContext;
-import org.getlwc.command.SenderType;
 import org.getlwc.entity.Player;
 import org.getlwc.event.events.BlockEvent;
 import org.getlwc.event.events.ProtectionEvent;

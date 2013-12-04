@@ -27,7 +27,7 @@
  * either expressed or implied, of anybody else.
  */
 
-package org.getlwc.util.config;
+package org.getlwc.configuration;
 
 public class ConfigurationException extends Exception {
 

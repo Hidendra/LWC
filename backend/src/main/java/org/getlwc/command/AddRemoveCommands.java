@@ -1,9 +1,6 @@
-package org.getlwc.commands;
+package org.getlwc.command;
 
 import org.getlwc.Engine;
-import org.getlwc.command.Command;
-import org.getlwc.command.CommandContext;
-import org.getlwc.command.SenderType;
 import org.getlwc.entity.Player;
 import org.getlwc.event.events.ProtectionEvent;
 import org.getlwc.event.notifiers.ProtectionEventNotifier;

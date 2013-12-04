@@ -27,7 +27,7 @@
  * either expressed or implied, of anybody else.
  */
 
-package org.getlwc.util.config;
+package org.getlwc.configuration;
 
 import org.getlwc.Engine;
 import org.yaml.snakeyaml.DumperOptions;

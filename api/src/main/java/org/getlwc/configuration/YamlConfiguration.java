@@ -29,8 +29,6 @@
 
 package org.getlwc.configuration;
 
-import org.getlwc.util.config.FileConfiguration;
-
 import java.io.IOException;
 import java.io.InputStream;
 

@@ -27,13 +27,10 @@
  * either expressed or implied, of anybody else.
  */
 
-package org.getlwc.commands;
+package org.getlwc.command;
 
 import org.getlwc.Engine;
 import org.getlwc.Location;
-import org.getlwc.command.Command;
-import org.getlwc.command.CommandContext;
-import org.getlwc.command.SenderType;
 
 import java.util.Random;
 

@@ -27,7 +27,7 @@
  * either expressed or implied, of anybody else.
  */
 
-package org.getlwc.util.config;
+package org.getlwc.configuration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
