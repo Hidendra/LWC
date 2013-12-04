@@ -4,10 +4,11 @@ import org.getlwc.ItemStack;
 import org.getlwc.Location;
 import org.getlwc.canary.LWC;
 import org.getlwc.entity.Player;
+import org.getlwc.entity.SimplePlayer;
 import org.getlwc.lang.Locale;
 import org.getlwc.util.Color;
 
-public class CanaryPlayer extends Player {
+public class CanaryPlayer extends SimplePlayer {
 
     /**
      * The plugin object
@@ -48,7 +49,6 @@ public class CanaryPlayer extends Player {
         return handle.getName();
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -57,15 +57,6 @@ public class CanaryPlayer extends Player {
             handle.message(Color.replaceColors(line));
         }
     }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean hasPermission(String node) {
-        return handle.hasPermission(node);
-    }
-
 
     /**
      * {@inheritDoc}

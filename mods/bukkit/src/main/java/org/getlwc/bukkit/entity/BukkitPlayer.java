@@ -34,13 +34,14 @@ import org.getlwc.ItemStack;
 import org.getlwc.Location;
 import org.getlwc.bukkit.BukkitPlugin;
 import org.getlwc.entity.Player;
+import org.getlwc.entity.SimplePlayer;
 import org.getlwc.lang.Locale;
 import org.getlwc.util.Color;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-public class BukkitPlayer extends Player {
+public class BukkitPlayer extends SimplePlayer {
 
     private Engine engine;
 
@@ -115,13 +116,6 @@ public class BukkitPlayer extends Player {
         for (String line : message.split("\n")) {
             handle.sendMessage(Color.replaceColors(line));
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean hasPermission(String node) {
-        return handle.hasPermission(node);
     }
 
     /**

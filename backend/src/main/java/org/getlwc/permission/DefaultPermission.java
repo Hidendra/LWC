@@ -10,7 +10,7 @@ public class DefaultPermission implements Permission {
         return false;
     }
 
-    public boolean hasPermission(Player player, String permission) {
+    public boolean hasPermission(Player player, String node) {
         throw new UnsupportedOperationException("No Permission is installed");
     }
 

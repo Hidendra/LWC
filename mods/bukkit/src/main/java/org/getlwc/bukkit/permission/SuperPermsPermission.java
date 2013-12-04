@@ -19,9 +19,9 @@ public class SuperPermsPermission implements Permission {
         return true;
     }
 
-    public boolean hasPermission(Player player, String permission) {
+    public boolean hasPermission(Player player, String node) {
         org.bukkit.entity.Player handle = Bukkit.getPlayer(player.getName());
-        return handle != null && handle.hasPermission(permission);
+        return handle != null && handle.hasPermission(node);
     }
 
     public Set<String> getGroups(Player player) {

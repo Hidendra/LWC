@@ -48,6 +48,7 @@ import org.getlwc.World;
 import org.getlwc.forge.asm.AbstractTransformer;
 import org.getlwc.forge.asm.LWCCorePlugin;
 import org.getlwc.forge.listeners.ForgeListener;
+import org.getlwc.forge.permission.ForgePermission;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -70,7 +71,7 @@ public class LWC {
     /**
      * The LWC engine
      */
-    private Engine engine;
+    private SimpleEngine engine;
 
     /**
      * The server layer
@@ -112,6 +113,7 @@ public class LWC {
 
             proxy.init();
             layer.init();
+            engine.setPermission(new ForgePermission());
             engine.startup();
             MinecraftForge.EVENT_BUS.register(listener);
         }
@@ -175,7 +177,7 @@ public class LWC {
         if (this.engine != null) {
             throw new UnsupportedOperationException("LWC was already setup, and cannot be reset");
         }
-        this.engine = engine;
+        this.engine = (SimpleEngine) engine;
         this.layer = layer;
         AbstractTransformer.init();
     }

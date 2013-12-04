@@ -36,11 +36,12 @@ import net.minecraft.server.integrated.IntegratedServer;
 import org.getlwc.ItemStack;
 import org.getlwc.Location;
 import org.getlwc.entity.Player;
+import org.getlwc.entity.SimplePlayer;
 import org.getlwc.forge.LWC;
 import org.getlwc.forge.world.ForgeWorld;
 import org.getlwc.util.Color;
 
-public class ForgePlayer extends Player {
+public class ForgePlayer extends SimplePlayer {
 
     /**
      * The mod handle
@@ -91,45 +92,6 @@ public class ForgePlayer extends Player {
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
             handle.addChatMessage(Color.replaceColors(line));
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean hasPermission(String node) {
-        // no handled Perm plugin
-        return noPermissionPlugin(node);
-    }
-
-    /**
-     * No permission plugin is available so try to resolve permissions by if they are using a special command (OP required)
-     *
-     * @param node
-     * @return
-     */
-    private boolean noPermissionPlugin(String node) {
-        if (!node.startsWith("lwc.mod") && !node.startsWith("lwc.admin")) {
-            return true;
-        } else if (node.startsWith("lwc.admin")) {
-            return isOP();
-        } else {
-            return isOP();
-        }
-    }
-
-    /**
-     * Checks if a player is an OP. This is either an OP on a MP server or the owner of a LAN/SSP server
-     *
-     * @return
-     */
-    private boolean isOP() {
-        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-
-        if (server.isSinglePlayer()) {
-            return server instanceof IntegratedServer && server.getServerOwner().equalsIgnoreCase(getName());
-        } else {
-            return server.getConfigurationManager().getOps().contains(getName().toLowerCase());
         }
     }
 

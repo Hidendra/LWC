@@ -23,10 +23,10 @@ public class VaultPermission extends SuperPermsPermission {
         return checkVault();
     }
 
-    public boolean hasPermission(Player player, String permissionNode) {
+    public boolean hasPermission(Player player, String node) {
         if (isEnabled()) {
             org.bukkit.entity.Player handle = Bukkit.getPlayer(player.getName());
-            return permission.has(handle, permissionNode);
+            return permission.has(handle, node);
         }
 
         return false;

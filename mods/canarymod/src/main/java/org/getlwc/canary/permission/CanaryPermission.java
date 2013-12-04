@@ -14,9 +14,9 @@ public class CanaryPermission implements Permission {
         return true;
     }
 
-    public boolean hasPermission(Player player, String permission) {
+    public boolean hasPermission(Player player, String node) {
         net.canarymod.api.entity.living.humanoid.Player handle = Canary.getServer().getPlayer(player.getName());
-        return handle != null && handle.hasPermission(permission);
+        return handle != null && handle.hasPermission(node);
     }
 
     public Set<String> getGroups(Player player) {
