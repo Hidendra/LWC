@@ -35,7 +35,7 @@ public class VaultEconomy implements Economy {
      * {@inheritDoc}
      */
     public String format(double amount) {
-        if (checkVault()) {
+        if (isEnabled()) {
             return economy.format(amount);
         }
 
@@ -46,7 +46,7 @@ public class VaultEconomy implements Economy {
      * {@inheritDoc}
      */
     public boolean deposit(Player player, double amount) {
-        if (checkVault()) {
+        if (isEnabled()) {
             EconomyResponse response = economy.depositPlayer(player.getName(), amount);
             return response.transactionSuccess();
         }
@@ -58,7 +58,7 @@ public class VaultEconomy implements Economy {
      * {@inheritDoc}
      */
     public boolean withdraw(Player player, double amount) {
-        if (checkVault()) {
+        if (isEnabled()) {
             EconomyResponse response = economy.withdrawPlayer(player.getName(), amount);
             return response.transactionSuccess();
         }

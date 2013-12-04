@@ -10,6 +10,7 @@ import org.getlwc.Location;
 import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
 import org.getlwc.canary.listeners.CanaryListener;
+import org.getlwc.canary.permission.CanaryPermission;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +20,7 @@ public class LWC extends Plugin {
     /**
      * Internal engine handle
      */
-    private Engine engine;
+    private SimpleEngine engine;
 
     /**
      * The Canary server layer
@@ -28,7 +29,8 @@ public class LWC extends Plugin {
 
     @Override
     public boolean enable() {
-        engine = SimpleEngine.getOrCreateEngine(layer, new CanaryServerInfo(), new CanaryConsoleCommandSender());
+        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new CanaryServerInfo(), new CanaryConsoleCommandSender());
+        engine.setPermission(new CanaryPermission());
         engine.startup();
 
         // Hooks

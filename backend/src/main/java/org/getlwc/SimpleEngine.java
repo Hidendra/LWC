@@ -44,6 +44,8 @@ import org.getlwc.configuration.YamlConfiguration;
 import org.getlwc.economy.DefaultEconomy;
 import org.getlwc.economy.Economy;
 import org.getlwc.factory.AbstractFactoryRegistry;
+import org.getlwc.permission.DefaultPermission;
+import org.getlwc.permission.Permission;
 import org.getlwc.role.PlayerRoleFactory;
 import org.getlwc.role.RoleFactory;
 import org.getlwc.role.RoleFactoryRegistry;
@@ -126,9 +128,14 @@ public class SimpleEngine implements Engine {
     private Configuration languagesConfig;
 
     /**
-     * The economy object for the server
+     * The economy handler for the server
      */
     private Economy economy = new DefaultEconomy();
+
+    /**
+     * The permission handler for the server
+     */
+    private Permission permission = new DefaultPermission();
 
     private SimpleEngine(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender) {
         this.serverLayer = serverLayer;
@@ -224,12 +231,28 @@ public class SimpleEngine implements Engine {
     }
 
     /**
-     * Set the economy object that will be used
+     * Set the economy handler that will be used for the server
      *
      * @param economy
      */
     public void setEconomy(Economy economy) {
         this.economy = economy;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Permission getPermission() {
+        return permission;
+    }
+
+    /**
+     * Set the permission handler that will be used for the server
+     *
+     * @param permission
+     */
+    public void setPermission(Permission permission) {
+        this.permission = permission;
     }
 
     /**

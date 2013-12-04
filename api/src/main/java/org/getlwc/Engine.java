@@ -34,6 +34,7 @@ import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.economy.Economy;
 import org.getlwc.factory.AbstractFactoryRegistry;
+import org.getlwc.permission.Permission;
 import org.getlwc.role.RoleFactory;
 import org.getlwc.sql.Database;
 
@@ -47,7 +48,7 @@ public interface Engine {
     public String getCompiledMinecraftVersion();
 
     /**
-     * Get the {@link ProtectionRoleManager} which manages role associations
+     * Get the {@link AbstractFactoryRegistry} which manages role associations
      *
      * @return
      */
@@ -131,11 +132,18 @@ public interface Engine {
     public LibraryDownloader getLibraryDownloader();
 
     /**
-     * Get the economy object for the server
+     * Get the economy handler for the server
      *
      * @return
      */
     public Economy getEconomy();
+
+    /**
+     * Get the permission handler for the server
+     *
+     * @return
+     */
+    public Permission getPermission();
 
     /**
      * Called when the plugin is ready to be fully loaded. Initialization is completed here.

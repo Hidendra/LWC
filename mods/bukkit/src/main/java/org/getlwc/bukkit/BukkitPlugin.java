@@ -45,6 +45,8 @@ import org.getlwc.World;
 import org.getlwc.bukkit.command.BukkitConsoleCommandSender;
 import org.getlwc.bukkit.economy.VaultEconomy;
 import org.getlwc.bukkit.listeners.BukkitListener;
+import org.getlwc.bukkit.permission.SuperPermsPermission;
+import org.getlwc.bukkit.permission.VaultPermission;
 import org.getlwc.command.CommandContext;
 import org.getlwc.command.CommandException;
 import org.getlwc.command.CommandSender;
@@ -142,6 +144,9 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
 
         if (getServer().getPluginManager().getPlugin("Vault") != null) {
             engine.setEconomy(new VaultEconomy());
+            engine.setPermission(new VaultPermission());
+        } else {
+            engine.setPermission(new SuperPermsPermission());
         }
 
         engine.startup();
