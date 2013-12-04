@@ -260,7 +260,7 @@ public class SimpleEngine implements Engine {
      * {@inheritDoc}
      */
     public String getCompiledMinecraftVersion() {
-        return configuration.getString("minecraft.version");
+        return internalConfig.getString("minecraft.version");
     }
 
     /**

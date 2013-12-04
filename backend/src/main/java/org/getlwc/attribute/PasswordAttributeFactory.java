@@ -31,6 +31,9 @@ package org.getlwc.attribute;
 
 import org.getlwc.AccessProvider;
 import org.getlwc.Engine;
+import org.getlwc.attribute.HashedString;
+import org.getlwc.attribute.HashedStringAttribute;
+import org.getlwc.attribute.ProtectionAttributeFactory;
 import org.getlwc.command.Command;
 import org.getlwc.command.CommandContext;
 import org.getlwc.command.CommandException;
