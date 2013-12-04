@@ -31,9 +31,6 @@ package org.getlwc.attribute;
 
 import org.getlwc.AccessProvider;
 import org.getlwc.Engine;
-import org.getlwc.attribute.HashedString;
-import org.getlwc.attribute.HashedStringAttribute;
-import org.getlwc.attribute.ProtectionAttributeFactory;
 import org.getlwc.command.Command;
 import org.getlwc.command.CommandContext;
 import org.getlwc.command.CommandException;
@@ -41,7 +38,7 @@ import org.getlwc.command.SenderType;
 import org.getlwc.entity.Player;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
-import org.getlwc.role.Role;
+import org.getlwc.role.ProtectionRole;
 import org.getlwc.util.StringUtils;
 
 import java.util.HashSet;
@@ -121,19 +118,19 @@ public class PasswordAttributeFactory implements ProtectionAttributeFactory<Hash
             super(engine, NAME, "");
         }
 
-        public Role.Access getAccess(Protection protection, Player player) {
+        public ProtectionRole.Access getAccess(Protection protection, Player player) {
             if (player.hasAttribute("password_authorized")) {
                 Set<Integer> authorized = (Set<Integer>) player.getAttribute("password_authorized");
 
                 if (authorized.contains(protection.getId())) {
-                    return Role.Access.MEMBER;
+                    return ProtectionRole.Access.MEMBER;
                 }
             }
 
             player.sendTranslatedMessage("&4This protection is locked by a password.\n&4To enter the password, use: &3/cunlock <password>");
             player.setAttribute("password_request", this);
             player.setAttribute("password_protection_id", protection.getId());
-            return Role.Access.EXPLICIT_DENY;
+            return ProtectionRole.Access.EXPLICIT_DENY;
         }
 
     }

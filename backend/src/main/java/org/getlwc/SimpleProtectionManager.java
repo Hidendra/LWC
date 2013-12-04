@@ -36,7 +36,7 @@ import org.getlwc.factory.AbstractFactoryRegistry;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
 import org.getlwc.role.PlayerRoleFactory;
-import org.getlwc.role.Role;
+import org.getlwc.role.ProtectionRole;
 
 import java.util.Map;
 
@@ -95,7 +95,7 @@ public class SimpleProtectionManager implements ProtectionManager {
         }
 
         // add the Owner role to the database for the player
-        protection.addRole(new PlayerRoleFactory.PlayerRole(engine, protection, owner, Role.Access.OWNER));
+        protection.addRole(new PlayerRoleFactory.PlayerRole(engine, protection, owner, ProtectionRole.Access.OWNER));
         protection.save();
 
         return protection;

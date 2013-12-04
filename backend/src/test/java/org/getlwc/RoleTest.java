@@ -2,6 +2,7 @@ package org.getlwc;
 
 import org.getlwc.factory.AbstractFactoryRegistry;
 import org.getlwc.model.Protection;
+import org.getlwc.role.ProtectionRole;
 import org.getlwc.role.Role;
 import org.getlwc.role.RoleFactory;
 import org.getlwc.role.RoleFactoryRegistry;
@@ -30,12 +31,12 @@ public class RoleTest {
     @Test
     public void testMatch() {
         String name = "TestingIsGreat";
-        Role.Access access = Role.Access.MANAGER;
+        ProtectionRole.Access access = ProtectionRole.Access.MANAGER;
 
         registry.register(testFactory);
 
         RoleFactory factory = registry.find(name);
-        Role role = factory.create(null, name, access);
+        ProtectionRole role = factory.create(null, name, access);
         assertNotNull(role);
         assertEquals(name, role.getName());
         assertEquals(access, role.getAccess());
@@ -46,8 +47,14 @@ public class RoleTest {
             return name.startsWith("Test") ? name : null;
         }
 
-        public Role create(Protection protection, String name, Role.Access access) {
+        public Role create(String name) {
             Role role = mock(Role.class);
+            when(role.getName()).thenReturn(name);
+            return role;
+        }
+
+        public ProtectionRole create(Protection protection, String name, ProtectionRole.Access access) {
+            ProtectionRole role = mock(ProtectionRole.class);
             when(role.getName()).thenReturn(name);
             when(role.getAccess()).thenReturn(access);
             return role;

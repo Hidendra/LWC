@@ -20,30 +20,40 @@ public class PlayerRoleFactory implements RoleFactory {
         return !name.contains(":") ? name : null;
     }
 
-    public Role create(Protection protection, String name, Role.Access access) {
+    public Role create(String name) {
+        return new PlayerRole(engine, name);
+    }
+
+    public ProtectionRole create(Protection protection, String name, ProtectionRole.Access access) {
         Player player = engine.getServerLayer().getPlayer(name);
 
         return new PlayerRole(engine, protection, player != null ? player.getUUID() : name, access);
     }
 
-    public static class PlayerRole extends Role {
+    public static class PlayerRole extends ProtectionRole {
 
-        public PlayerRole(Engine engine, Protection protection, String roleName, Access roleAccess) {
+        public PlayerRole(Engine engine, String roleName) {
+            super(engine, null, roleName, null);
+        }
+
+        public PlayerRole(Engine engine, Protection protection, String roleName, ProtectionRole.Access roleAccess) {
             super(engine, protection, roleName, roleAccess);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String getType() {
             return "lwc:rolePlayer";
         }
 
+        @Override
+        public boolean included(Player player) {
+            return getName().equalsIgnoreCase(player.getName());
+        }
+
         /**
          * {@inheritDoc}
          */
-        public Access getAccess(Protection protection, Player player) {
+        public ProtectionRole.Access getAccess(Protection protection, Player player) {
             if (player.getUUID().equalsIgnoreCase(getName())) {
                 return getAccess();
             } else if (player.getName().equalsIgnoreCase(getName())) {
@@ -51,7 +61,7 @@ public class PlayerRoleFactory implements RoleFactory {
                 save();
                 return getAccess();
             } else {
-                return Access.NONE;
+                return ProtectionRole.Access.NONE;
             }
         }
 

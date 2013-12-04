@@ -35,7 +35,7 @@ import org.getlwc.entity.Entity;
 import org.getlwc.entity.Player;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
-import org.getlwc.role.Role;
+import org.getlwc.role.ProtectionRole;
 
 public class DescriptionAttributeFactory implements ProtectionAttributeFactory<String> {
 
@@ -73,8 +73,8 @@ public class DescriptionAttributeFactory implements ProtectionAttributeFactory<S
             super(engine, name, value);
         }
 
-        public void onInteract(Protection protection, Entity entity, Role.Access access) {
-            if (entity instanceof Player && Role.Access.CAN_ACCESS.contains(access)) {
+        public void onInteract(Protection protection, Entity entity, ProtectionRole.Access access) {
+            if (entity instanceof Player && ProtectionRole.Access.CAN_ACCESS.contains(access)) {
                 Player player = (Player) entity;
                 player.sendMessage(value);
             }

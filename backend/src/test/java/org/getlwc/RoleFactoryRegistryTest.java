@@ -4,6 +4,7 @@ import org.getlwc.entity.Player;
 import org.getlwc.factory.AbstractFactoryRegistry;
 import org.getlwc.model.Protection;
 import org.getlwc.role.PlayerRoleFactory;
+import org.getlwc.role.ProtectionRole;
 import org.getlwc.role.Role;
 import org.getlwc.role.RoleFactory;
 import org.getlwc.role.RoleFactoryRegistry;
@@ -64,25 +65,25 @@ public class RoleFactoryRegistryTest {
         RoleFactory factoryHidendra = registry.find("Hidendra");
         RoleFactory factoryNotch = registry.find("Notch");
 
-        Role roleHidendraOwner = factoryHidendra.create(null, "Hidendra", Role.Access.OWNER);
-        Role roleHidendraMember = factoryHidendra.create(null, "Hidendra", Role.Access.MEMBER);
-        Role roleNotch = factoryNotch.create(null, "Notch", Role.Access.OWNER);
+        ProtectionRole roleHidendraOwner = factoryHidendra.create(null, "Hidendra", ProtectionRole.Access.OWNER);
+        ProtectionRole roleHidendraMember = factoryHidendra.create(null, "Hidendra", ProtectionRole.Access.MEMBER);
+        ProtectionRole roleNotch = factoryNotch.create(null, "Notch", ProtectionRole.Access.OWNER);
 
-        assertEquals(Role.Access.OWNER, roleHidendraOwner.getAccess(protection, player));
+        assertEquals(ProtectionRole.Access.OWNER, roleHidendraOwner.getAccess(protection, player));
         verify(player, times(3)).getUUID();
-        assertEquals(Role.Access.MEMBER, roleHidendraMember.getAccess(protection, player));
+        assertEquals(ProtectionRole.Access.MEMBER, roleHidendraMember.getAccess(protection, player));
         verify(player, times(4)).getUUID();
-        assertEquals(Role.Access.NONE, roleNotch.getAccess(protection, player));
+        assertEquals(ProtectionRole.Access.NONE, roleNotch.getAccess(protection, player));
         verify(player, times(5)).getUUID();
     }
 
     @Test
     public void testMatch() {
         String name = "TestingIsGreat";
-        Role.Access access = Role.Access.MANAGER;
+        ProtectionRole.Access access = ProtectionRole.Access.MANAGER;
 
         RoleFactory factory = registry.find(name);
-        Role role = factory.create(null, name, access);
+        ProtectionRole role = factory.create(null, name, access);
         assertNotNull(role);
         assertEquals(name, role.getName());
         assertEquals(access, role.getAccess());

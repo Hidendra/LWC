@@ -35,7 +35,7 @@ import org.getlwc.Location;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
 import org.getlwc.model.State;
-import org.getlwc.role.Role;
+import org.getlwc.role.ProtectionRole;
 import org.getlwc.role.RoleFactory;
 import org.getlwc.util.Tuple;
 
@@ -537,7 +537,7 @@ public class JDBCDatabase implements Database {
     /**
      * {@inheritDoc}
      */
-    public void saveOrCreateRole(Role role) {
+    public void saveOrCreateRole(ProtectionRole role) {
         try {
             Connection connection = pool.getConnection();
             PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_roles (protection_id, type, name, role) VALUES (?, ?, ?, ?)");
@@ -577,7 +577,7 @@ public class JDBCDatabase implements Database {
     /**
      * {@inheritDoc}
      */
-    public void removeRole(Role role) {
+    public void removeRole(ProtectionRole role) {
         try {
             Connection connection = pool.getConnection();
             PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_roles WHERE protection_id = ? AND type = ? AND name = ?");
@@ -738,8 +738,8 @@ public class JDBCDatabase implements Database {
     /**
      * {@inheritDoc}
      */
-    public Set<Role> loadProtectionRoles(Protection protection) {
-        Set<Role> roles = new HashSet<Role>();
+    public Set<ProtectionRole> loadProtectionRoles(Protection protection) {
+        Set<ProtectionRole> roles = new HashSet<ProtectionRole>();
 
         try {
             Connection connection = pool.getConnection();
@@ -755,7 +755,7 @@ public class JDBCDatabase implements Database {
                     String name = lookup.get(JDBCLookupService.LookupType.ROLE_NAME, set.getInt("name"));
 
                     RoleFactory factory = engine.getRoleRegistry().get(type);
-                    Role role = factory.create(protection, name, Role.Access.values()[set.getInt("role")]);
+                    ProtectionRole role = factory.create(protection, name, ProtectionRole.Access.values()[set.getInt("role")]);
 
                     if (role != null) {
                         roles.add(role);

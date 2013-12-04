@@ -40,6 +40,7 @@ import org.getlwc.event.notifiers.BlockEventNotifier;
 import org.getlwc.event.notifiers.ProtectionEventNotifier;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
+import org.getlwc.role.ProtectionRole;
 import org.getlwc.role.Role;
 import org.getlwc.util.StringUtils;
 import org.getlwc.util.TimeUtil;
@@ -196,7 +197,7 @@ public class BaseCommands {
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
 
-                if (protection.getAccess(player) == Role.Access.OWNER) {
+                if (protection.getAccess(player) == ProtectionRole.Access.OWNER) {
                     protection.remove();
                     player.sendTranslatedMessage("&2The protection has been removed successfully.");
                 } else {
@@ -224,12 +225,12 @@ public class BaseCommands {
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
 
-                Map<Role.Access, List<Role>> accessMap = new LinkedHashMap<Role.Access, List<Role>>();
+                Map<ProtectionRole.Access, List<Role>> accessMap = new LinkedHashMap<ProtectionRole.Access, List<Role>>();
 
-                for (Role.Access access : Role.Access.USABLE_ACCESS_LEVELS) {
+                for (ProtectionRole.Access access : ProtectionRole.Access.USABLE_ACCESS_LEVELS) {
                     List<Role> roles = new ArrayList<Role>();
 
-                    for (Role role : protection.getRoles()) {
+                    for (ProtectionRole role : protection.getRoles()) {
                         if (role.getAccess() == access) {
                             roles.add(role);
                         }
@@ -239,10 +240,10 @@ public class BaseCommands {
                 }
 
                 String rolesText = "";
-                for (Map.Entry<Role.Access, List<Role>> entry : accessMap.entrySet()) {
+                for (Map.Entry<ProtectionRole.Access, List<Role>> entry : accessMap.entrySet()) {
                     String stringifiedList = "";
 
-                    Role.Access access = entry.getKey();
+                    ProtectionRole.Access access = entry.getKey();
                     List<Role> roleList = entry.getValue();
 
                     if (roleList.size() == 0) {

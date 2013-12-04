@@ -16,13 +16,20 @@ public interface RoleFactory extends AbstractFactory {
     public String match(String name);
 
     /**
-     * Create a {@link Role}
+     * Create a basic {@link Role} with the given name
+     * @param name
+     * @return
+     */
+    public Role create(String name);
+
+    /**
+     * Create a {@link ProtectionRole}
      *
      * @param protection
      * @param name
      * @param access
      * @return
      */
-    public Role create(Protection protection, String name, Role.Access access);
+    public ProtectionRole create(Protection protection, String name, ProtectionRole.Access access);
 
 }
