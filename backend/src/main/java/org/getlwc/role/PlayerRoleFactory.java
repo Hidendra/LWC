@@ -61,7 +61,7 @@ public class PlayerRoleFactory implements RoleFactory {
                 save();
                 return getAccess();
             } else {
-                return ProtectionRole.Access.NONE;
+                return Access.NONE;
             }
         }
 

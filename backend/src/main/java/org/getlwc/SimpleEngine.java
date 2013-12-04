@@ -47,6 +47,7 @@ import org.getlwc.economy.EconomyHandler;
 import org.getlwc.factory.AbstractFactoryRegistry;
 import org.getlwc.permission.DefaultPermissionHandler;
 import org.getlwc.permission.PermissionHandler;
+import org.getlwc.role.GroupRoleRegistry;
 import org.getlwc.role.PlayerRoleFactory;
 import org.getlwc.role.RoleFactory;
 import org.getlwc.role.RoleFactoryRegistry;
@@ -430,6 +431,7 @@ public class SimpleEngine implements Engine {
      */
     private void registerDefaultRoles() {
         roleRegistry.register(new PlayerRoleFactory(this));
+        roleRegistry.register(new GroupRoleRegistry(this));
     }
 
     private void registerDefaultAttributes() {
