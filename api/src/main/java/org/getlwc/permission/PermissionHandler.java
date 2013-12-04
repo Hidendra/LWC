@@ -4,7 +4,14 @@ import org.getlwc.entity.Player;
 
 import java.util.Set;
 
-public interface Permission {
+public interface PermissionHandler {
+
+    /**
+     * Get the name of the permission handler
+     *
+     * @return
+     */
+    public String getName();
 
     /**
      * Check if the permission endpoint is enabled and usable

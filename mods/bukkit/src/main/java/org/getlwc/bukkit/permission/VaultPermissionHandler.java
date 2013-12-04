@@ -8,15 +8,19 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class VaultPermission extends SuperPermsPermission {
+public class VaultPermissionHandler extends SuperPermsPermissionHandler {
 
     /**
      * The permission handle for Vault
      */
     private net.milkbowl.vault.permission.Permission permission;
 
-    public VaultPermission() {
+    public VaultPermissionHandler() {
         checkVault();
+    }
+
+    public String getName() {
+        return "Vault";
     }
 
     public boolean isEnabled() {
@@ -56,7 +60,7 @@ public class VaultPermission extends SuperPermsPermission {
 
     /**
      * Check that Vault is running properly. This is done because Vault may load after LWC initially loads
-     * so we check for Vault every time we need to use it if we do not already have the Economy object.
+     * so we check for Vault every time we need to use it if we do not already have the EconomyHandler object.
      *
      * @return
      */

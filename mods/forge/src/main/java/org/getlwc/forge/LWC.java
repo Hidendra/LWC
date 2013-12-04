@@ -48,7 +48,7 @@ import org.getlwc.World;
 import org.getlwc.forge.asm.AbstractTransformer;
 import org.getlwc.forge.asm.LWCCorePlugin;
 import org.getlwc.forge.listeners.ForgeListener;
-import org.getlwc.forge.permission.ForgePermission;
+import org.getlwc.forge.permission.ForgePermissionHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -113,7 +113,7 @@ public class LWC {
 
             proxy.init();
             layer.init();
-            engine.setPermission(new ForgePermission());
+            engine.setPermissionHandler(new ForgePermissionHandler());
             engine.startup();
             MinecraftForge.EVENT_BUS.register(listener);
         }

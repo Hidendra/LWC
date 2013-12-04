@@ -41,11 +41,11 @@ import org.getlwc.command.BaseCommands;
 import org.getlwc.command.BenchmarkCommands;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.configuration.YamlConfiguration;
-import org.getlwc.economy.DefaultEconomy;
-import org.getlwc.economy.Economy;
+import org.getlwc.economy.DefaultEconomyHandler;
+import org.getlwc.economy.EconomyHandler;
 import org.getlwc.factory.AbstractFactoryRegistry;
-import org.getlwc.permission.DefaultPermission;
-import org.getlwc.permission.Permission;
+import org.getlwc.permission.DefaultPermissionHandler;
+import org.getlwc.permission.PermissionHandler;
 import org.getlwc.role.PlayerRoleFactory;
 import org.getlwc.role.RoleFactory;
 import org.getlwc.role.RoleFactoryRegistry;
@@ -130,12 +130,12 @@ public class SimpleEngine implements Engine {
     /**
      * The economy handler for the server
      */
-    private Economy economy = new DefaultEconomy();
+    private EconomyHandler economyHandler = new DefaultEconomyHandler();
 
     /**
      * The permission handler for the server
      */
-    private Permission permission = new DefaultPermission();
+    private PermissionHandler permissionHandler = new DefaultPermissionHandler();
 
     private SimpleEngine(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender) {
         this.serverLayer = serverLayer;
@@ -213,7 +213,8 @@ public class SimpleEngine implements Engine {
         // default attributes
         registerDefaultAttributes();
 
-        consoleSender.sendTranslatedMessage("Economy: {0}", economy.getName());
+        consoleSender.sendTranslatedMessage("Economy handler: {0}", economyHandler.getName());
+        consoleSender.sendTranslatedMessage("Permission handler: {0}", permissionHandler.getName());
     }
 
     /**
@@ -226,33 +227,33 @@ public class SimpleEngine implements Engine {
     /**
      * {@inheritDoc}
      */
-    public Economy getEconomy() {
-        return economy;
+    public EconomyHandler getEconomyHandler() {
+        return economyHandler;
     }
 
     /**
      * Set the economy handler that will be used for the server
      *
-     * @param economy
+     * @param economyHandler
      */
-    public void setEconomy(Economy economy) {
-        this.economy = economy;
+    public void setEconomyHandler(EconomyHandler economyHandler) {
+        this.economyHandler = economyHandler;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Permission getPermission() {
-        return permission;
+    public PermissionHandler getPermissionHandler() {
+        return permissionHandler;
     }
 
     /**
      * Set the permission handler that will be used for the server
      *
-     * @param permission
+     * @param permissionHandler
      */
-    public void setPermission(Permission permission) {
-        this.permission = permission;
+    public void setPermissionHandler(PermissionHandler permissionHandler) {
+        this.permissionHandler = permissionHandler;
     }
 
     /**

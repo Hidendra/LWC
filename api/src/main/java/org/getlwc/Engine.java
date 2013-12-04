@@ -32,9 +32,9 @@ package org.getlwc;
 import org.getlwc.command.CommandHandler;
 import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.configuration.Configuration;
-import org.getlwc.economy.Economy;
+import org.getlwc.economy.EconomyHandler;
 import org.getlwc.factory.AbstractFactoryRegistry;
-import org.getlwc.permission.Permission;
+import org.getlwc.permission.PermissionHandler;
 import org.getlwc.role.RoleFactory;
 import org.getlwc.sql.Database;
 
@@ -136,14 +136,14 @@ public interface Engine {
      *
      * @return
      */
-    public Economy getEconomy();
+    public EconomyHandler getEconomyHandler();
 
     /**
      * Get the permission handler for the server
      *
      * @return
      */
-    public Permission getPermission();
+    public PermissionHandler getPermissionHandler();
 
     /**
      * Called when the plugin is ready to be fully loaded. Initialization is completed here.

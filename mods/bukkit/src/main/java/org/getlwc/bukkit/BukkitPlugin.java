@@ -43,10 +43,10 @@ import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
 import org.getlwc.World;
 import org.getlwc.bukkit.command.BukkitConsoleCommandSender;
-import org.getlwc.bukkit.economy.VaultEconomy;
+import org.getlwc.bukkit.economy.VaultEconomyHandler;
 import org.getlwc.bukkit.listeners.BukkitListener;
-import org.getlwc.bukkit.permission.SuperPermsPermission;
-import org.getlwc.bukkit.permission.VaultPermission;
+import org.getlwc.bukkit.permission.SuperPermsPermissionHandler;
+import org.getlwc.bukkit.permission.VaultPermissionHandler;
 import org.getlwc.command.CommandContext;
 import org.getlwc.command.CommandException;
 import org.getlwc.command.CommandSender;
@@ -143,10 +143,10 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new BukkitListener(this), this);
 
         if (getServer().getPluginManager().getPlugin("Vault") != null) {
-            engine.setEconomy(new VaultEconomy());
-            engine.setPermission(new VaultPermission());
+            engine.setEconomyHandler(new VaultEconomyHandler());
+            engine.setPermissionHandler(new VaultPermissionHandler());
         } else {
-            engine.setPermission(new SuperPermsPermission());
+            engine.setPermissionHandler(new SuperPermsPermissionHandler());
         }
 
         engine.startup();

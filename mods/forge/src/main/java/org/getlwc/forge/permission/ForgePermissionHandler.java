@@ -4,13 +4,17 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.integrated.IntegratedServer;
 import org.getlwc.entity.Player;
-import org.getlwc.permission.Permission;
+import org.getlwc.permission.PermissionHandler;
 
 import java.util.HashSet;
 import java.util.Set;
 
 // might as well be no permission plugin
-public class ForgePermission implements Permission {
+public class ForgePermissionHandler implements PermissionHandler {
+
+    public String getName() {
+        return "Default";
+    }
 
     public boolean isEnabled() {
         return true;

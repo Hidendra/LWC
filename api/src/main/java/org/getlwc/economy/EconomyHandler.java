@@ -31,7 +31,7 @@ package org.getlwc.economy;
 
 import org.getlwc.entity.Player;
 
-public interface Economy {
+public interface EconomyHandler {
 
     /**
      * Get the name of the economy being represented

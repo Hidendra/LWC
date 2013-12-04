@@ -3,12 +3,16 @@ package org.getlwc.canary.permission;
 import net.canarymod.Canary;
 import net.canarymod.user.Group;
 import org.getlwc.entity.Player;
-import org.getlwc.permission.Permission;
+import org.getlwc.permission.PermissionHandler;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class CanaryPermission implements Permission {
+public class CanaryPermissionHandler implements PermissionHandler {
+
+    public String getName() {
+        return "Default";
+    }
 
     public boolean isEnabled() {
         return true;

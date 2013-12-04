@@ -2,7 +2,7 @@ package org.getlwc.economy;
 
 import org.getlwc.entity.Player;
 
-public class DefaultEconomy implements Economy {
+public class DefaultEconomyHandler implements EconomyHandler {
 
     /**
      * {@inheritDoc}
@@ -16,14 +16,14 @@ public class DefaultEconomy implements Economy {
     }
 
     public String format(double amount) {
-        throw new UnsupportedOperationException("No Economy is installed");
+        throw new UnsupportedOperationException("No EconomyHandler is installed");
     }
 
     public boolean deposit(Player player, double amount) {
-        throw new UnsupportedOperationException("No Economy is installed");
+        throw new UnsupportedOperationException("No EconomyHandler is installed");
     }
 
     public boolean withdraw(Player player, double amount) {
-        throw new UnsupportedOperationException("No Economy is installed");
+        throw new UnsupportedOperationException("No EconomyHandler is installed");
     }
 }

@@ -3,17 +3,21 @@ package org.getlwc.bukkit.permission;
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.getlwc.entity.Player;
-import org.getlwc.permission.Permission;
+import org.getlwc.permission.PermissionHandler;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class SuperPermsPermission implements Permission {
+public class SuperPermsPermissionHandler implements PermissionHandler {
 
     /**
      * The prefix for groups when using permissions
      */
     private static final String GROUP_PREFIX = "group.";
+
+    public String getName() {
+        return "Default";
+    }
 
     public boolean isEnabled() {
         return true;
