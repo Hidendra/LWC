@@ -148,7 +148,7 @@ public class DoorsModule extends JavaModule {
 
         // Either way we are going to be toggling the door open
         // So toggle both doors to be open. We can safely pass null values to changeDoorStates
-        changeDoorStates(true, ((block.getType() == Material.WOODEN_DOOR || block.getType() == Material.FENCE_GATE) ? null : block) /* They clicked it so it auto opens already */,
+        changeDoorStates(true, ((block.getType() == Material.WOODEN_DOOR || block.getType() == Material.FENCE_GATE || block.getType() == Material.TRAP_DOOR) ? null : block) /* They clicked it so it auto opens already */,
                 doubleDoorBlock);
 
         if (action == Action.OPEN_AND_CLOSE || protection.hasFlag(Flag.Type.AUTOCLOSE)) {
@@ -258,7 +258,7 @@ public class DoorsModule extends JavaModule {
      * @return
      */
     private boolean isValid(Material material) {
-        return material == Material.IRON_DOOR_BLOCK || material == Material.WOODEN_DOOR || material == Material.FENCE_GATE;
+        return material == Material.IRON_DOOR_BLOCK || material == Material.WOODEN_DOOR || material == Material.FENCE_GATE || material == Material.TRAP_DOOR;
     }
 
     /**
