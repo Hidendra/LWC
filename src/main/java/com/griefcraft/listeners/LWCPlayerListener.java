@@ -474,6 +474,13 @@ public class LWCPlayerListener implements Listener {
             return false;
         }
 
+        // Enchanted Books use ItemMeta
+        if (stack1.getItemMeta() != null && stack2.getItemMeta() != null) {
+            if (!stack1.getItemMeta().equals(stack2.getItemMeta())) {
+                return false;
+            }
+        }
+
         for (Enchantment enchantment : enchantments1.keySet()) {
             if (!enchantments2.containsKey(enchantment)) {
                 return false;
