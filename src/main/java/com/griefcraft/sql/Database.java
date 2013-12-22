@@ -252,6 +252,10 @@ public abstract class Database {
             return true;
         } catch (SQLException e) {
             log("Failed to connect to " + currentType + ": " + e.getErrorCode() + " - " + e.getMessage());
+
+            if (e.getCause() != null) {
+                log("Connection failure cause: " + e.getCause().getMessage());
+            }
             return false;
         }
     }
