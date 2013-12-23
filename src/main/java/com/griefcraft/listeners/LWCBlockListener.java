@@ -351,19 +351,25 @@ public class LWCBlockListener implements Listener {
         Player player = event.getPlayer();
         Block block = event.getBlockPlaced();
 
-        // The placable block must be protectable
-        if (!lwc.isProtectable(block)) {
-            return;
-        }
-
         // Update the cache if a protection is matched here
         Protection current = lwc.findProtection(block.getLocation());
         if (current != null) {
-            if (current.getProtectionFinder() != null) {
-                current.getProtectionFinder().fullMatchBlocks();
-                lwc.getProtectionCache().addProtection(current);
-            }
+            if (!current.isBlockInWorld()) {
+                // Corrupted protection
+                lwc.log("Removing corrupted protection: " + current);
+                current.remove();
+            } else {
+                if (current.getProtectionFinder() != null) {
+                    current.getProtectionFinder().fullMatchBlocks();
+                    lwc.getProtectionCache().addProtection(current);
+                }
 
+                return;
+            }
+        }
+
+        // The placable block must be protectable
+        if (!lwc.isProtectable(block)) {
             return;
         }
 
