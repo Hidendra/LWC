@@ -1,6 +1,7 @@
 .idea
 .settings
 .externalToolBuilders
+*.iml
 world
 bin
 
