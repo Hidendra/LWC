@@ -1,7 +1,14 @@
-# Building LWC
+LWC
+======
 
-    git clone git://github.com/Hidendra/LWC.git
-    cd LWC
-    ant
+*The* chest (and other blocks) protection plugin.
 
-Distribution files (e.g LWC.jar and LWC-Economy.jar) will be located in the `build/` folder
+Compilation
+-----------
+
+We use maven to handle our dependencies.
+
+* Install [Maven 3](http://maven.apache.org/download.html)
+* Check out this repo and: `mvn clean package`
+
+The core LWC plugin will be found inside `core/target/LWC.jar`
