@@ -1,0 +1,9 @@
+name: LWC-Economy
+main: com.griefcraft.bukkit.LWCEconomyPlugin
+version: ${project.version}
+website: http://griefcraft.com
+author: Hidendra
+description: Economy module for LWC to allow protections to be purchased using currency.
+load: POSTWORLD
+depend: [ LWC ]
+class-loader-of: LWC
