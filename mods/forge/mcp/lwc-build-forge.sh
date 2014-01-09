@@ -24,3 +24,6 @@ echo " >>> Updating jar file"
 
 jar uf "$LWC_RELATIVE_JAR" ./
 cd ../../
+
+# Final cleanup
+rm -rf mcp/tmp mcp/src/* mcp/build/sources/* mcp/classes/* build/libs/*
