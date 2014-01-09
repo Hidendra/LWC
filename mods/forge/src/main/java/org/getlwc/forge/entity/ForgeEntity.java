@@ -20,7 +20,7 @@ public class ForgeEntity implements Entity {
     }
 
     public String getName() {
-        return handle.getEntityName();
+        return handle.getCommandSenderName();
     }
 
     public Location getLocation() {

@@ -29,12 +29,12 @@
 
 package org.getlwc.forge.listeners;
 
+import cpw.mods.fml.common.eventhandler.Event;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.CommandEvent;
-import net.minecraftforge.event.Event;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.getlwc.Block;
 import org.getlwc.ExplosionType;
@@ -60,7 +60,7 @@ public class ForgeListener {
         this.mod = mod;
     }
 
-    @ForgeSubscribe(receiveCanceled = true)
+    @SubscribeEvent
     public void commandEvent(CommandEvent event) {
         String commandName = event.command.getCommandName();
         String message = "/" + commandName + " " + StringUtils.join(event.parameters);
@@ -85,7 +85,7 @@ public class ForgeListener {
         }
     }
 
-    @ForgeSubscribe
+    @SubscribeEvent
     public void playerInteract(PlayerInteractEvent event) {
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
             return;
@@ -102,7 +102,7 @@ public class ForgeListener {
         }
     }
 
-    @ForgeSubscribe
+    @SubscribeEvent
     public void playerBlockBreak(PlayerBreakBlockEvent event) {
         org.getlwc.entity.Player player = mod.wrapPlayer(event.entityPlayer);
         World world = player.getLocation().getWorld();
@@ -115,7 +115,7 @@ public class ForgeListener {
         }
     }
 
-    @ForgeSubscribe
+    @SubscribeEvent
     public void playerBlockPlace(PlayerPlaceBlockEvent event) {
         org.getlwc.entity.Player player = mod.wrapPlayer(event.entityPlayer);
         World world = player.getLocation().getWorld();
@@ -127,11 +127,11 @@ public class ForgeListener {
         }
     }
 
-    @ForgeSubscribe
+    @SubscribeEvent
     public void playerUpdateSign(PlayerUpdateSignEvent event) {
         org.getlwc.entity.Player player = mod.wrapPlayer(event.entityPlayer);
         World world = player.getLocation().getWorld();
-        Block block = world.getBlockAt(event.packet.xPosition, event.packet.yPosition, event.packet.zPosition);
+        Block block = world.getBlockAt(event.packet.func_149346_c(), event.packet.func_149345_d(), event.packet.func_149344_e()); // Natives: x/y/z
 
         if (mod.getEngine().getEventHelper().onSignChange(player, block)) {
             event.setCanceled(true);
@@ -139,15 +139,15 @@ public class ForgeListener {
         }
     }
 
-    @ForgeSubscribe
+    @SubscribeEvent
     public void onExplosion(EntityExplodeEvent event) {
         org.getlwc.World world = mod.getWorld(event.entity.worldObj.getWorldInfo().getWorldName());
 
         ExplosionType type = null;
 
-        if (event.entity.getEntityName().contains("TNT")) {
+        if (event.entity.getCommandSenderName().contains("TNT")) {
             type = ExplosionType.TNT;
-        } else if (event.entity.getEntityName().equalsIgnoreCase("Creeper")) {
+        } else if (event.entity.getCommandSenderName().equalsIgnoreCase("Creeper")) {
             type = ExplosionType.CREEPER;
         }
 

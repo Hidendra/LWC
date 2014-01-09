@@ -29,6 +29,7 @@
 
 package org.getlwc.forge.world;
 
+import cpw.mods.fml.common.registry.GameData;
 import org.getlwc.Block;
 import org.getlwc.World;
 import org.getlwc.forge.asm.AbstractMultiClassTransformer;
@@ -38,6 +39,7 @@ import org.getlwc.util.Tuple;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -86,26 +88,32 @@ public class ForgeBlock extends Block {
         String name = null;
 
         try {
-            for (net.minecraft.block.Block block : net.minecraft.block.Block.blocksList) {
-                if (block != null && block.blockID > 0) {
+            Iterator iter = GameData.blockRegistry.iterator();
+
+            while (iter.hasNext()) {
+                net.minecraft.block.Block block = (net.minecraft.block.Block) iter.next();
+
+                int blockID = GameData.blockRegistry.getId(block);
+
+                if (block != null && blockID > 0) {
                     List<net.minecraft.item.ItemStack> blocks = new ArrayList<net.minecraft.item.ItemStack>();
 
                     for (Method method : block.getClass().getDeclaredMethods()) {
                         if (method.getName().equals(AbstractMultiClassTransformer.getMethodName("Block", "getSubBlocks", CompilationType.SRG))) {
-                            method.invoke(block, block.blockID, null, blocks);
+                            method.invoke(block, blockID, null, blocks);
                             break;
                         }
                     }
 
                     if (blocks.size() == 0) { // no sub blocks; can ignore the data value
-                        if (getType() == block.blockID) {
-                            name = block.getUnlocalizedName();
+                        if (getType() == blockID) {
+                            name = block.func_149739_a(); // func_149739_a: getUnlocalizedName
                             break;
                         }
                     } else { // has sub blocks so the data value uniquely identifies the block
                         for (net.minecraft.item.ItemStack stack : blocks) {
                             if (stack != null) {
-                                if (getType() == block.blockID && stack.getItemDamage() == getData()) {
+                                if (getType() == blockID && stack.getItemDamage() == getData()) {
                                     name = stack.getUnlocalizedName();
                                     break;
                                 }
@@ -134,7 +142,7 @@ public class ForgeBlock extends Block {
      */
     @Override
     public int getType() {
-        return world.getHandle().getBlockId(x, y, z);
+        return GameData.blockRegistry.getId(world.getHandle().func_147439_a(x, y, z)); // func_147439_a: getBlockAt
     }
 
     /**
@@ -200,7 +208,7 @@ public class ForgeBlock extends Block {
      */
     @Override
     public boolean hasTileEntity() {
-        return world.getHandle().getBlockTileEntity(x, y, z) != null;
+        return world.getHandle().func_147438_o(x, y, z) != null; // func_147438_o: getBlockTileEntity
     }
 
 }

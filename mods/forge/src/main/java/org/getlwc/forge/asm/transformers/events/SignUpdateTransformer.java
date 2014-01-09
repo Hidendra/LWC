@@ -20,7 +20,7 @@ public class SignUpdateTransformer extends AbstractSingleClassTransformer {
     /**
      * The class we are targeting
      */
-    private static final String TARGET_CLASS = "NetServerHandler";
+    private static final String TARGET_CLASS = "NetHandlerPlayClient";
 
     public SignUpdateTransformer() {
         super(TARGET_CLASS);
@@ -32,9 +32,9 @@ public class SignUpdateTransformer extends AbstractSingleClassTransformer {
             LabelNode end = new LabelNode(new Label());
 
             addInstruction(new VarInsnNode(ALOAD, 0));
-            addInstruction(new FieldInsnNode(GETFIELD, getJavaClassName("NetServerHandler"), getFieldName("NetServerHandler", "playerEntity"), "L" + getJavaClassName("EntityPlayerMP") + ";"));
+            addInstruction(new FieldInsnNode(GETFIELD, getJavaClassName("NetHandlerPlayServer"), getFieldName("NetHandlerPlayServer", "playerEntity"), "L" + getJavaClassName("EntityPlayerMP") + ";"));
             addInstruction(new VarInsnNode(ALOAD, 1));
-            addInstruction(new MethodInsnNode(INVOKESTATIC, getJavaClassName("ForgeEventHelper"), getMethodName("ForgeEventHelper", "onUpdateSign"), "(L" + getJavaClassName("EntityPlayerMP") + ";L" + getJavaClassName("Packet130UpdateSign") + ";)Z"));
+            addInstruction(new MethodInsnNode(INVOKESTATIC, getJavaClassName("ForgeEventHelper"), getMethodName("ForgeEventHelper", "onUpdateSign"), "(L" + getJavaClassName("EntityPlayerMP") + ";L" + getJavaClassName("S33PacketUpdateSign") + ";)Z"));
 
             addInstruction(new JumpInsnNode(IFEQ, end));
             addInstruction(new InsnNode(RETURN));

@@ -53,4 +53,13 @@ public class NativeCommandHandler extends CommandBase {
 
     public void processCommand(ICommandSender iCommandSender, String[] strings) {
     }
+
+    public int compareTo(Object o) {
+        if (!(o instanceof CommandBase)) {
+            return 0;
+        }
+
+        return command.compareTo(((CommandBase) o).getCommandName());
+    }
+
 }

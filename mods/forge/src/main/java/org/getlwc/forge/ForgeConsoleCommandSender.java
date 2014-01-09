@@ -33,21 +33,15 @@ import cpw.mods.fml.common.FMLLog;
 import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.lang.Locale;
 
-import java.util.logging.Logger;
-
 public class ForgeConsoleCommandSender extends ConsoleCommandSender {
-
-    private Logger logger = Logger.getLogger("LWC");
-
-    public ForgeConsoleCommandSender() {
-        logger.setParent(FMLLog.getLogger());
-    }
 
     /**
      * {@inheritDoc}
      */
     public void sendMessage(String message) {
-        logger.info(message);
+        for (String line : message.split("\n")) {
+            FMLLog.info("[LWC]: %s", line);
+        }
     }
 
     /**

@@ -1,0 +1,48 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            name = "mcstats"
+            url = "http://repo.mcstats.org/content/groups/public/"
+        }
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.1-SNAPSHOT'
+    }
+}
+
+apply plugin: 'java'
+
+repositories {
+    mavenLocal()
+
+    maven {
+        name = "mcstats"
+        url = "http://repo.mcstats.org/content/groups/public/"
+    }
+}
+
+dependencies {
+    compile 'org.getlwc:backend:0.0.1-SNAPSHOT'
+    compile 'org.apache.logging.log4j:log4j-api:2.0-beta9'
+    compile 'buildcraft:buildcraft:1.6.2-4.0.1.19.338'
+    compile 'forge:minecraft-server:1.7.2'
+}
+
+apply plugin: 'forge'
+
+group= "org.getlwc"
+archivesBaseName = "lwc"
+
+minecraft {
+    version = "1.7.2-10.12.0.997"
+}

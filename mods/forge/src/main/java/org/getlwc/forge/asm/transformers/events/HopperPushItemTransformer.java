@@ -27,7 +27,7 @@ public class HopperPushItemTransformer extends AbstractSingleClassTransformer {
 
             addInstruction(new VarInsnNode(ALOAD, 0));
             addInstruction(new InsnNode(ICONST_0)); // isPullingItems = false
-            addInstruction(new MethodInsnNode(INVOKESTATIC, getJavaClassName("ForgeEventHelper"), getMethodName("ForgeEventHelper", "onInventoryMoveItem"), "(L" + getJavaClassName("Hopper") + ";Z)Z"));
+            addInstruction(new MethodInsnNode(INVOKESTATIC, getJavaClassName("ForgeEventHelper"), getMethodName("ForgeEventHelper", "onInventoryMoveItem"), "(L" + getJavaClassName("IHopper") + ";Z)Z"));
 
             addInstruction(new JumpInsnNode(IFEQ, end));
             addInstruction(new InsnNode(ICONST_0));

@@ -11,7 +11,7 @@
 
     <properties>
         <!-- Latest supported Minecraft version -->
-        <minecraft.version>1.6.4</minecraft.version>
+        <minecraft.version>1.7.2</minecraft.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -72,7 +72,7 @@
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>2.7</version>
                 <configuration>
-                    <skip>true</skip>
+                    <skip>false</skip>
                 </configuration>
             </plugin>
             <plugin>

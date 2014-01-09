@@ -33,6 +33,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.integrated.IntegratedServer;
+import net.minecraft.util.ChatComponentText;
 import org.getlwc.ItemStack;
 import org.getlwc.Location;
 import org.getlwc.entity.Player;
@@ -63,14 +64,14 @@ public class ForgePlayer extends SimplePlayer {
      */
     public String getUUID() {
         // TODO: convert to unique id upon public availability of 1.7
-        return handle.getEntityName();
+        return handle.getCommandSenderName();
     }
 
     /**
      * {@inheritDoc}
      */
     public String getName() {
-        return handle.getEntityName();
+        return handle.getCommandSenderName();
     }
 
     /**
@@ -91,7 +92,7 @@ public class ForgePlayer extends SimplePlayer {
      */
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
-            handle.addChatMessage(Color.replaceColors(line));
+            handle.func_145747_a(new ChatComponentText(Color.replaceColors(line))); // func_145747_a: sendMessage
         }
     }
 

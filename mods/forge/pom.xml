@@ -63,6 +63,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.0-beta9</version>
+        </dependency>
+        <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm-all</artifactId>
             <version>4.0</version>
@@ -81,10 +86,9 @@
         </dependency>
         <dependency>
             <groupId>forge</groupId>
-            <artifactId>forge</artifactId>
-            <version>4.0</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/mcp/lib/forge-full.jar</systemPath>
+            <artifactId>minecraft-server</artifactId>
+            <version>1.7.2</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>buildcraft</groupId>
@@ -148,35 +152,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <executions>
                     <execution>
-                        <id>clean bin</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>rm</executable>
-                            <arguments>
-                                <argument>-rf</argument>
-                                <argument>mcp/bin/</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy backend</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>cp</executable>
-                            <arguments>
-                                <argument>../../backend/target/LWC-Backend.jar</argument>
-                                <argument>mcp/lib/</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>reobfuscate</id>
+                        <id>recompile-forge</id>
                         <phase>package</phase>
                         <goals>
                             <goal>exec</goal>
@@ -185,7 +161,7 @@
                             <workingDirectory>${basedir}/mcp/</workingDirectory>
                             <executable>sh</executable>
                             <arguments>
-                                <argument>./lwc-reobfuscate.sh</argument>
+                                <argument>./lwc-build-forge.sh</argument>
                             </arguments>
                         </configuration>
                     </execution>

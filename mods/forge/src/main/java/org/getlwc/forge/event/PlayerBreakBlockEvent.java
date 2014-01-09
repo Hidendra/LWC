@@ -30,10 +30,8 @@
 package org.getlwc.forge.event;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.event.Cancelable;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 
-@Cancelable
 public class PlayerBreakBlockEvent extends PlayerEvent {
 
     public final net.minecraft.world.World world;

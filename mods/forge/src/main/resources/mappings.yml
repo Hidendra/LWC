@@ -7,83 +7,86 @@ classes:
     mcp: org.getlwc.forge.gui.GuiHandler
     obf: org.getlwc.forge.gui.GuiHandler
   ItemInWorldManager:
-    mcp: net.minecraft.item.ItemInWorldManager
-    obf: jw
+    mcp: net.minecraft.server.management.ItemInWorldManager
+    obf: mn
   World:
     mcp: net.minecraft.world.World
-    obf: abw
+    obf: afn
   Block:
     mcp: net.minecraft.block.Block
-    obf: aqz
+    obf: ahu
   Entity:
     mcp: net.minecraft.entity.Entity
-    obf: nn
+    obf: qn
   EntityLiving:
     mcp: net.minecraft.entity.EntityLiving
-    obf: og
+    obf: ri
   EntityPlayer:
     mcp: net.minecraft.entity.player.EntityPlayer
-    obf: uf
+    obf: xl
   EntityPlayerMP:
     mcp: net.minecraft.entity.player.EntityPlayerMP
-    obf: jv
+    obf: mm
   Explosion:
     mcp: net.minecraft.world.Explosion
-    obf: abr
+    obf: afi
   ChunkPosition:
     mcp: net.minecraft.world.ChunkPosition
-    obf: aco
-  NetServerHandler:
-    mcp: net.minecraft.network.NetServerHandler
-    obf: ka
-  Packet130UpdateSign:
-    mcp: net.minecraft.network.packet.Packet130UpdateSign
-    obf: fz
+    obf: aff
+  NetHandlerPlayServer:
+    mcp: net.minecraft.network.NetHandlerPlayServer
+    obf: mx
+  NetHandlerPlayClient:
+    mcp: net.minecraft.client.network.NetHandlerPlayClient
+    obf: biv
+  S33PacketUpdateSign:
+    mcp: net.minecraft.network.play.server.S33PacketUpdateSign
+    obf: hv
   TileEntitySign:
     mcp: net.minecraft.tileentity.TileEntitySign
-    obf: asm
+    obf: any
   ItemStack:
     mcp: net.minecraft.item.ItemStack
-    obf: ye
+    obf: abp
   GuiScreen:
     mcp: net.minecraft.client.gui.GuiScreen
-    obf: awe
+    obf: bcd
   GuiContainer:
     mcp: net.minecraft.client.gui.inventory.GuiContainer
-    obf: awy
+    obf: bdd
   GuiChest:
     mcp: net.minecraft.client.gui.inventory.GuiChest
-    obf: axj
-  Packet204ClientInfo:
-    mcp: net.minecraft.network.packet.Packet204ClientInfo
-    obf: dp
+    obf: bdo
+  C15PacketClientSettings:
+    mcp: net.minecraft.network.play.client.C15PacketClientSettings
+    obf: ii
   ICommand:
     mcp: net.minecraft.command.ICommand
-    obf: ab
+    obf: aa
   BlockDoor:
     mcp: net.minecraft.block.BlockDoor
-    obf: anz
+    obf: aiz
   BlockTrapDoor:
     mcp: net.minecraft.block.BlockTrapDoor
-    obf: ari
+    obf: amq
   BlockPistonBase:
     mcp: net.minecraft.block.BlockPistonBase
-    obf: ast
-  Hopper:
-    mcp: net.minecraft.tileentity.Hopper
-    obf: ash
+    obf: aob
+  IHopper:
+    mcp: net.minecraft.tileentity.IHopper
+    obf: ant
   TileEntityHopper:
     mcp: net.minecraft.tileentity.TileEntityHopper
-    obf: asi
+    obf: anu
   EntityAIBreakDoor:
     mcp: net.minecraft.entity.ai.EntityAIBreakDoor
-    obf: pj
+    obf: sl
   EntityAIDoorInteract:
     mcp: net.minecraft.entity.ai.EntityAIDoorInteract
-    obf: pm
+    obf: so
   CreativeTabs:
     mcp: net.minecraft.creativetab.CreativeTabs
-    obf: ww
+    obf: aaf
 methods:
   ForgeEventHelper:
     onBlockHarvested:
@@ -124,11 +127,11 @@ methods:
       srg: func_73079_d
   World:
     getBlockMetadata:
-      obf: h
+      obf: e
       signature: (III)I
       srg: func_72805_g
     setBlockMetadataWithNotify:
-      obf: b
+      obf: a
       signature: (IIIII)I
       srg: func_72921_c
   Explosion:
@@ -136,16 +139,16 @@ methods:
       obf: a
       signature: ()V
       srg: func_77278_a
-  NetServerHandler:
+  NetHandlerPlayClient:
     handleUpdateSign:
       obf: a
-      signature: (L#Packet130UpdateSign;)V
-      srg: func_72487_a
+      signature: (L#S33PacketUpdateSign;)V
+      srg: func_147248_a
   EntityPlayerMP:
     updateClientInfo:
       obf: a
-      signature: (L#Packet204ClientInfo;)V
-      srg: func_71125_a
+      signature: (L#C15PacketClientSettings;)V
+      srg: func_147100_a
   TileEntitySign:
     isEditable:
       obf: a
@@ -164,13 +167,13 @@ methods:
   BlockDoor:
     onPoweredBlockChange:
       obf: a
-      signature: (L#World;IIII)V
-      srg: func_72231_a
+      signature: (L#World;IIIZ)V
+      srg: func_150014_a
   BlockTrapDoor:
     onPoweredBlockChange:
       obf: a
-      signature: (L#World;IIII)V
-      srg: func_72138_a
+      signature: (L#World;IIIZ)V
+      srg: func_150014_a
   BlockPistonBase:
     updatePistonState:
       obf: k
@@ -232,21 +235,21 @@ fields:
   Packet130UpdateSign:
     xPosition:
       obf: a
-      srg: field_73311_a
+      srg: field_149352_a
     yPosition:
       obf: b
-      srg: field_73309_b
+      srg: field_149350_b
     zPosition:
       obf: c
-      srg: field_73310_c
+      srg: field_149351_c
     signLines:
       obf: d
-      srg: field_73308_d
+      srg: field_149349_d
   EntityPlayerMP:
     translator:
       obf: bN
       srg: field_71148_cg
-  NetServerHandler:
+  NetHandlerPlayServer:
     playerEntity:
       obf: c
       srg: field_72574_e

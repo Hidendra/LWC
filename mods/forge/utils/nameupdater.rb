@@ -4,8 +4,8 @@ require 'yaml'
 require_relative 'nameupdater_lib'
 
 # Location of the srg mappings file
-SRG_FILE="../mcp/temp/client_ro.srg"
-SRG_SRG_FILE="../mcp/temp/client_ro_srg.srg"
+SRG_FILE="../mcp/build/unpacked/conf/mcp-notch.srg"
+SRG_SRG_FILE="../mcp/build/unpacked/conf/mcp-srg.srg"
 
 # Location of the mappings file we need to lookup
 RESOURCES_FOLDER="../src/main/resources/"
@@ -15,7 +15,7 @@ puts "==== This is the LWC ASM mapping updater."
 puts "  == This pulls from client_ro.srg to get updated names so ensure MCP/Forge have been updated!"
 puts
 
-server_version=`grep ServerVersion ../mcp/conf/version.cfg | sed 's/ServerVersion = //g'`
+server_version=`grep fmlbuild.mcversion ../mcp/build/unpacked/src/main/resources/fmlversion.properties | sed 's/fmlbuild.mcversion=//g'`
 version_found = false
 
 if server_version =~ /[a-zA-Z0-9.]+/

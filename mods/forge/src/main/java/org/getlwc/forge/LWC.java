@@ -36,7 +36,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
-import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -57,7 +57,6 @@ import java.util.Map;
  * FORGE DONE WRONG
  */
 @Mod(modid = "LWC", name = "LWC", version = "0.0.1-SNAPSHOT")
-@NetworkMod(clientSideRequired = false, serverSideRequired = true)
 public class LWC {
 
     // The instance of your mod that Forge uses.
@@ -83,12 +82,12 @@ public class LWC {
      */
     private ForgeListener listener;
 
-    @Mod.PreInit
+    @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
 
     }
 
-    @Mod.Init
+    @Mod.EventHandler
     public void load(FMLInitializationEvent event) {
         if (!LWCCorePlugin.INITIALIZED) {
             System.out.println("!!! ====================== !!!");
@@ -99,12 +98,12 @@ public class LWC {
         }
     }
 
-    @Mod.PostInit
+    @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
 
     }
 
-    @Mod.ServerStarting
+    @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
         if (LWCCorePlugin.INITIALIZED) {
             if (listener == null) {
@@ -119,7 +118,7 @@ public class LWC {
         }
     }
 
-    @Mod.ServerStopping
+    @Mod.EventHandler
     public void serverStopping(FMLServerStoppingEvent event) {
         if (LWCCorePlugin.INITIALIZED) {
             MinecraftForge.EVENT_BUS.unregister(listener);
@@ -146,7 +145,7 @@ public class LWC {
      * @return
      */
     public org.getlwc.entity.Player wrapPlayer(EntityPlayer player) {
-        return layer.getPlayer(player.getEntityName());
+        return layer.getPlayer(player.getCommandSenderName());
     }
 
     /**
@@ -192,7 +191,7 @@ public class LWC {
         Map<Integer, Integer> ret = new HashMap<Integer, Integer>();
 
         for (int index = 0; index < enchantments.tagCount(); index++) {
-            NBTTagCompound compound = (NBTTagCompound) enchantments.tagAt(index);
+            NBTTagCompound compound = enchantments.func_150305_b(index); // tagAt
 
             ret.put((int) compound.getShort("id"), (int) compound.getShort("lvl"));
         }
@@ -211,7 +210,9 @@ public class LWC {
             return null;
         }
 
-        return new ItemStack(item.itemID, item.stackSize, (short) item.getItemDamage(), item.getMaxStackSize(), castEnchantments(item.getEnchantmentTagList()));
+        int itemId = GameData.itemRegistry.getId(item.getItem());
+
+        return new ItemStack(itemId, item.stackSize, (short) item.getItemDamage(), item.getMaxStackSize(), castEnchantments(item.getEnchantmentTagList()));
     }
 
 }

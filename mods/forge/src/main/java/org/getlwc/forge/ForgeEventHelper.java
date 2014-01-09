@@ -29,17 +29,17 @@
 
 package org.getlwc.forge;
 
+import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.BlockHopper;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.network.packet.Packet130UpdateSign;
-import net.minecraft.network.packet.Packet204ClientInfo;
+import net.minecraft.network.play.client.C15PacketClientSettings;
+import net.minecraft.network.play.server.S33PacketUpdateSign;
 import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.Event;
 import org.getlwc.Block;
 import org.getlwc.BlockFace;
 import org.getlwc.Location;
@@ -89,7 +89,7 @@ public class ForgeEventHelper {
         World world = LWC.instance.getWorld(nativeWorld.getWorldInfo().getWorldName());
 
         for (net.minecraft.world.ChunkPosition loc : affectedLocations) {
-            Block block = world.getBlockAt(loc.x, loc.y, loc.z);
+            Block block = world.getBlockAt(loc.field_151329_a, loc.field_151327_b, loc.field_151328_c);
 
             // Check that it isn't air (we don't need to know about air internally)
             if (block.isOneOf("minecraft:air")) {
@@ -131,7 +131,7 @@ public class ForgeEventHelper {
      * @param packet
      * @return
      */
-    public static boolean onUpdateSign(net.minecraft.entity.player.EntityPlayerMP player, Packet130UpdateSign packet) {
+    public static boolean onUpdateSign(net.minecraft.entity.player.EntityPlayerMP player, S33PacketUpdateSign packet) {
         Event event = new PlayerUpdateSignEvent(player, packet);
         MinecraftForge.EVENT_BUS.post(event);
         return event.isCanceled() || event.getResult() == Event.Result.DENY;
@@ -143,10 +143,10 @@ public class ForgeEventHelper {
      * @param handle
      * @param packet
      */
-    public static void onUpdateClientInfo(EntityPlayerMP handle, Packet204ClientInfo packet) {
+    public static void onUpdateClientInfo(EntityPlayerMP handle, C15PacketClientSettings packet) {
         LWC mod = LWC.instance;
         Player player = mod.wrapPlayer(handle);
-        player.setLocale(new Locale(packet.getLanguage()));
+        player.setLocale(new Locale(packet.func_149524_c())); // func_149524_c: getLanguage
         mod.getEngine().getConsoleSender().sendMessage("Player " + player.getName() + " loaded using locale: " + player.getLocale());
         mod.getEngine().getEventHelper().onPlayerJoin(mod.wrapPlayer(handle));
     }
@@ -180,7 +180,7 @@ public class ForgeEventHelper {
      */
     public static boolean onUpdatePistonState(net.minecraft.world.World handle, int x, int y, int z) {
         int data = handle.getBlockMetadata(x, y, z);
-        int notchFace = BlockPistonBase.getOrientation(data);
+        int notchFace = BlockPistonBase.func_150076_b(data); // func_150076_b: getOrientation
 
         if (data != 7) {
             boolean powered = isPistonIndirectlyPowered(handle, x, y, z, notchFace);
@@ -190,9 +190,9 @@ public class ForgeEventHelper {
             Block piston = world.getBlockAt(x, y, z);
             Location reaching = piston.getRelative(face).getLocation();
 
-            if (powered && !BlockPistonBase.isExtended(data)) {
+            if (powered && !BlockPistonBase.func_150075_c(data)) { // func_150075_c: isExtended
                 return onPistonExtend(piston, reaching);
-            } else if (!powered && BlockPistonBase.isExtended(data)) {
+            } else if (!powered && BlockPistonBase.func_150075_c(data)) { // func_150075_c: isExtended
                 return onPistonRetract(piston, reaching);
             }
         }
@@ -208,14 +208,14 @@ public class ForgeEventHelper {
      * @param isPullingItems if the hopper is pulling items
      * @return
      */
-    public static boolean onInventoryMoveItem(net.minecraft.tileentity.Hopper handle, boolean isPullingItems) {
+    public static boolean onInventoryMoveItem(net.minecraft.tileentity.IHopper handle, boolean isPullingItems) {
         // todo get the block hopper is connected to using the face
         // isPullingItems = true
         //     hopper is pulling items from inventory above it
         // else
         //     hopper is attached to a block
         // i.e. TileEntityHopper.getOutputInventory() (private)
-        World world = LWC.instance.getWorld(handle.getWorldObj().getWorldInfo().getWorldName());
+        World world = LWC.instance.getWorld(handle.func_145831_w().getWorldInfo().getWorldName()); // func_145831_w: getWorldObj
         Block hopper = world.getBlockAt((int) handle.getXPos(), (int) handle.getYPos(), (int) handle.getZPos());
         Location usingInventory;
 
@@ -224,10 +224,10 @@ public class ForgeEventHelper {
         } else {
             // int direction = BlockHopper.getDirectionFromMetadata(hopper.getData());
             // usingInventory = hopper.getRelative(Facing.offsetsXForSide[direction], Facing.offsetsYForSide[direction], Facing.offsetsZForSide[direction]).getLocation();
-            usingInventory = hopper.getRelative(BlockFace.fromNotch(BlockHopper.getDirectionFromMetadata(hopper.getData()))).getLocation();
+            usingInventory = hopper.getRelative(BlockFace.fromNotch(BlockHopper.func_149918_b(hopper.getData()))).getLocation(); // func_149918_b: getDirectionFromMetadata
         }
 
-        IInventory inventory = TileEntityHopper.getInventoryAtLocation(handle.getWorldObj(), usingInventory.getBlockX(), usingInventory.getBlockY(), usingInventory.getBlockZ());
+        IInventory inventory = TileEntityHopper.func_145893_b(handle.func_145831_w(), usingInventory.getBlockX(), usingInventory.getBlockY(), usingInventory.getBlockZ()); // func_145893_b: getInventoryAtLocation, func_145831_w: getWorldObj
 
         boolean canProceed;
 

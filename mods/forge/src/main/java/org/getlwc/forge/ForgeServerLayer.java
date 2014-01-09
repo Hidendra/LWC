@@ -152,7 +152,7 @@ public class ForgeServerLayer extends ServerLayer {
                 if (object instanceof EntityPlayer) {
                     EntityPlayer handle = (EntityPlayer) object;
 
-                    if (handle.getEntityName().equals(playerName)) {
+                    if (handle.getCommandSenderName().equals(playerName)) {
                         return new ForgePlayer(handle);
                     }
                 }

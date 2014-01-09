@@ -41,6 +41,7 @@ public abstract class Block {
      *
      * @return
      */
+    @Deprecated
     public abstract int getType();
 
     /**

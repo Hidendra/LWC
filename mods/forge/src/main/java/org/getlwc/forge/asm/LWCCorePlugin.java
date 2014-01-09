@@ -79,6 +79,10 @@ public class LWCCorePlugin implements IFMLLoadingPlugin, IFMLCallHook {
 
     }
 
+    public String getAccessTransformerClass() {
+        return null;
+    }
+
     public Void call() throws Exception {
         if (LWC.instance == null) {
             System.out.println("LWC => init()");
