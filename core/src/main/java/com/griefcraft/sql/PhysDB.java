@@ -467,7 +467,7 @@ public class PhysDB extends Database {
             boolean foundTrappedChest = false;
 
             for (String key : lwc.getConfiguration().getNode("protections.blocks").getKeys(null)) {
-                if (key.equalsIgnoreCase("trapped_chest") || key.equals(Integer.toString(Material.TRAPPED_CHEST.getId()))) {
+                if (key.toString().equalsIgnoreCase("trapped_chest") || key.toString().equals(Integer.toString(Material.TRAPPED_CHEST.getId()))) {
                     foundTrappedChest = true;
                     break;
                 }
