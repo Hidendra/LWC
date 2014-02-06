@@ -216,10 +216,19 @@ public class LWCPlayerListener implements Listener {
         }
 
         Block block = event.getClickedBlock();
-        Material material = block.getType();
+        BlockState state;
+
+        try {
+            state = block.getState();
+        } catch (NullPointerException e) {
+            //
+            lwc.log("Invalid Tile Entity detected at " + block.getLocation());
+            lwc.log("This is either an issue with your world or a bug in Bukkit");
+            return;
+        }
 
         // Prevent players with lwc.deny from interacting with blocks that have an inventory
-        if (block.getState() instanceof InventoryHolder && lwc.isProtectable(block)) {
+        if (state instanceof InventoryHolder && lwc.isProtectable(block)) {
             if (!lwc.hasPermission(player, "lwc.protect") && lwc.hasPermission(player, "lwc.deny") && !lwc.isAdmin(player) && !lwc.isMod(player)) {
                 lwc.sendLocale(player, "protection.interact.error.blocked");
                 event.setCancelled(true);
