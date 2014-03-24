@@ -107,7 +107,8 @@ public class Table {
                 buffer.append("PRIMARY KEY ");
             }
 
-            if (column.shouldAutoIncrement() && database.getType() == Type.MySQL) {
+            if (column.shouldAutoIncrement() &&
+                    (database.getType() == Type.MySQL || database.getType() == Type.H2)) {
                 buffer.append("AUTO_INCREMENT ");
             }
 

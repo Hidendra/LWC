@@ -99,6 +99,10 @@ public class Updater {
             // Native library
             this.verifyFile(new UpdaterFile(getFullNativeLibraryPath(), UPDATE_SITE + "/shared/lib/" + getFullNativeLibraryPath().replaceAll(DEST_LIBRARY_FOLDER, "")));
         }
+        if (Database.DefaultType == Database.Type.H2) {
+            // H2.jar
+            this.verifyFile(new UpdaterFile(DEST_LIBRARY_FOLDER + "H2.jar", "http://repo2.maven.org/maven2/com/h2database/h2/1.3.175/h2-1.3.175.jar"));
+        }
     }
 
     /**

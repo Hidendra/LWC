@@ -53,6 +53,7 @@ public abstract class Database {
     public enum Type {
         MySQL("mysql.jar"), //
         SQLite("sqlite.jar"), //
+        H2("H2.jar"), //
         NONE("nil"); //
 
         private String driver;
@@ -217,7 +218,7 @@ public abstract class Database {
         // load the database jar
         ClassLoader classLoader;
 
-        if (currentType == Type.SQLite) {
+        if (currentType == Type.SQLite|| currentType == Type.H2) {
             classLoader = new URLClassLoader(new URL[]{new URL("jar:file:" + new File(Updater.DEST_LIBRARY_FOLDER + currentType.getDriver()).getPath() + "!/")});
         } else {
             classLoader = Bukkit.getServer().getClass().getClassLoader();
@@ -227,6 +228,8 @@ public abstract class Database {
         String className = "";
         if (currentType == Type.MySQL) {
             className = "com.mysql.jdbc.Driver";
+        } else if (currentType == Type.H2) {
+            className = "org.h2.Driver";
         } else {
             className = "org.sqlite.JDBC";
         }
@@ -289,6 +292,8 @@ public abstract class Database {
 
         if (currentType == Type.MySQL) {
             return "//" + lwcConfiguration.getString("database.host") + "/" + lwcConfiguration.getString("database.database");
+        } else if (currentType == Type.H2) {
+            return lwcConfiguration.getString("database.path") + ".h2/lwc";
         }
 
         return lwcConfiguration.getString("database.path");
