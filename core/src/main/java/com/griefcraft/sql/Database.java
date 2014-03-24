@@ -264,6 +264,13 @@ public abstract class Database {
     }
 
     public void dispose() {
+        for (PreparedStatement preparedStatement : statementCache.values()) {
+            try {
+                preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
         statementCache.clear();
 
         try {
