@@ -71,6 +71,12 @@ optional:
     # If protections limits will be enabled (defaults to unlimited protections)
     useProtectionLimits: true
 
+    # Perform no protection checks on items moved by hoppers.
+    ignoreHopperItemMoves: false
+
+    # Perform no protection checks on items moved by droppers.
+    ignoreDropperItemMoves: false
+
 # Database information for LWC
 database:
 

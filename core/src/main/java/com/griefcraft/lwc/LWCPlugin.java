@@ -30,6 +30,7 @@ package com.griefcraft.lwc;
 
 import com.griefcraft.listeners.LWCBlockListener;
 import com.griefcraft.listeners.LWCEntityListener;
+import com.griefcraft.listeners.LWCHopperListener;
 import com.griefcraft.listeners.LWCPlayerListener;
 import com.griefcraft.listeners.LWCServerListener;
 import com.griefcraft.scripting.event.LWCCommandEvent;
@@ -306,6 +307,7 @@ public class LWCPlugin extends JavaPlugin {
         pluginManager.registerEvents(new LWCEntityListener(this), this);
         pluginManager.registerEvents(new LWCBlockListener(this), this);
         pluginManager.registerEvents(new LWCServerListener(this), this);
+        pluginManager.registerEvents(new LWCHopperListener(this), this);
     }
 
     /**
