@@ -765,9 +765,9 @@ public class PhysDB extends Database {
             }
 
             if (protection.needsUUIDConversion()) {
-                protection.convertPlayerNamesToUUIDs();
-                protection.save();
-                log("Converted protection to use UUIDs: " + protection);
+                if (protection.convertPlayerNamesToUUIDs()) {
+                    protection.save();
+                }
             }
 
             return protection;

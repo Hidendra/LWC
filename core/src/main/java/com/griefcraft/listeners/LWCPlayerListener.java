@@ -251,7 +251,9 @@ public class LWCPlayerListener implements Listener {
             boolean canAccess = lwc.canAccessProtection(player, protection);
 
             if (protection != null && protection.needsUUIDConversion()) {
-                protection.convertPlayerNamesToUUIDs();
+                if (protection.convertPlayerNamesToUUIDs()) {
+                    protection.save();
+                }
             }
 
             // Calculate if the player has a pending action (i.e any action besides 'interacted')
