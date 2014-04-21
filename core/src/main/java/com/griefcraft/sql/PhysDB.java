@@ -37,6 +37,7 @@ import com.griefcraft.model.Permission;
 import com.griefcraft.model.Protection;
 import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.scripting.Module;
+import com.griefcraft.util.UUIDRegistry;
 import com.griefcraft.util.config.Configuration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -52,6 +53,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class PhysDB extends Database {
 
@@ -762,6 +764,12 @@ public class PhysDB extends Database {
                 }
             }
 
+            if (protection.needsUUIDConversion()) {
+                protection.convertPlayerNamesToUUIDs();
+                protection.save();
+                log("Converted protection to use UUIDs: " + protection);
+            }
+
             return protection;
         } catch (SQLException e) {
             printException(e);
@@ -1093,9 +1101,11 @@ public class PhysDB extends Database {
     public List<Protection> loadProtectionsByPlayer(String player, int start, int count) {
         List<Protection> protections = new ArrayList<Protection>();
 
+        UUID uuid = UUIDRegistry.getUUID(player);
+
         try {
             PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE owner = ? ORDER BY id DESC limit ?,?");
-            statement.setString(1, player);
+            statement.setString(1, uuid != null ? uuid.toString() : player);
             statement.setInt(2, start);
             statement.setInt(3, count);
 

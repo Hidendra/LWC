@@ -30,6 +30,7 @@ package com.griefcraft.model;
 
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.StringUtil;
+import com.griefcraft.util.UUIDRegistry;
 import org.json.simple.JSONObject;
 
 public class Permission {
@@ -180,7 +181,11 @@ public class Permission {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(Colors.Yellow);
-        builder.append(getName());
+        if (type == Type.PLAYER) {
+            builder.append(UUIDRegistry.formatPlayerName(getName()));
+        } else {
+            builder.append(getName());
+        }
         builder.append(Colors.White);
         builder.append(" (");
         builder.append(Colors.Green);

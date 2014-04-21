@@ -37,6 +37,7 @@ import com.griefcraft.scripting.Module;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCDropItemEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
+import com.griefcraft.util.UUIDRegistry;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -55,6 +56,7 @@ import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -72,6 +74,12 @@ public class LWCPlayerListener implements Listener {
 
     public LWCPlayerListener(LWCPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        UUIDRegistry.updateCache(player.getUniqueId(), player.getName());
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -147,7 +155,7 @@ public class LWCPlayerListener implements Listener {
 
             if (hopperProtection != null) {
                 // if they're owned by the same person then we can allow the move
-                if (hopperProtection.getOwner().equals(protection.getOwner())) {
+                if (protection.getOwner().equals(hopperProtection.getOwner())) {
                     return false;
                 }
             }
@@ -239,8 +247,12 @@ public class LWCPlayerListener implements Listener {
         try {
             Set<String> actions = lwcPlayer.getActionNames();
             Protection protection = lwc.findProtection(block.getLocation());
-            Module.Result result = Module.Result.DEFAULT;
+            Module.Result result;
             boolean canAccess = lwc.canAccessProtection(player, protection);
+
+            if (protection != null && protection.needsUUIDConversion()) {
+                protection.convertPlayerNamesToUUIDs();
+            }
 
             // Calculate if the player has a pending action (i.e any action besides 'interacted')
             int actionCount = actions.size();

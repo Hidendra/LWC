@@ -36,8 +36,11 @@ import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
+import com.griefcraft.util.UUIDRegistry;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 public class AdminForceOwner extends JavaModule {
 
@@ -61,7 +64,7 @@ public class AdminForceOwner extends JavaModule {
         protection.setOwner(newOwner);
         protection.save();
 
-        lwc.sendLocale(player, "protection.interact.forceowner.finalize", "player", newOwner);
+        lwc.sendLocale(player, "protection.interact.forceowner.finalize", "player", protection.getFormattedOwnerPlayerName());
         lwc.removeModes(player);
         event.setResult(Result.CANCEL);
 
@@ -126,10 +129,17 @@ public class AdminForceOwner extends JavaModule {
                     return;
                 }
 
-                protection.setOwner(newOwner);
+                UUID uuid = UUIDRegistry.getUUID(newOwner);
+
+                if (uuid != null) {
+                    protection.setOwner(uuid.toString());
+                } else {
+                    protection.setOwner(newOwner);
+                }
+
                 protection.save();
 
-                lwc.sendLocale(sender, "protection.interact.forceowner.finalize", "player", newOwner);
+                lwc.sendLocale(sender, "protection.interact.forceowner.finalize", "player", UUIDRegistry.formatPlayerName(newOwner));
                 return;
             } catch (NumberFormatException e) {
                 lwc.sendLocale(sender, "lwc.invalidprotectionid");
@@ -147,7 +157,15 @@ public class AdminForceOwner extends JavaModule {
         Action action = new Action();
         action.setName("forceowner");
         action.setPlayer(player);
-        action.setData(newOwner);
+
+        UUID uuid = UUIDRegistry.getUUID(newOwner);
+
+        if (uuid != null) {
+            action.setData(uuid.toString());
+        } else {
+            action.setData(newOwner);
+        }
+
         player.addAction(action);
 
         lwc.sendLocale(sender, "protection.admin.forceowner.finalize", "player", newOwner);

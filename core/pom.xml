@@ -6,7 +6,7 @@
     <name>LWC</name>
     <url>getlwc.org</url>
     <packaging>jar</packaging>
-    <version>4.4.0-SNAPSHOT</version>
+    <version>4.5.0-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,10 +24,6 @@
         </repository>
 
         <repository>
-            <id>vault-repo</id>
-            <url>http://ci.herocraftonline.com/plugin/repository/everything</url>
-        </repository>
-        <repository>
             <id>kitteh-repo</id>
             <url>http://repo.kitteh.org/content/groups/public/</url>
         </repository>
@@ -37,7 +33,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.6.4-R1.0</version>
+            <version>1.7.9-R0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

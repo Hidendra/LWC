@@ -60,7 +60,7 @@ public class CreateModule extends JavaModule {
         Protection protection = event.getProtection();
         Player player = event.getPlayer();
 
-        if (protection.getOwner().equals(player.getName())) {
+        if (protection.isOwner(player)) {
             lwc.sendLocale(player, "protection.interact.error.alreadyregistered", "block", LWC.materialToString(protection.getBlockId()));
         } else {
             lwc.sendLocale(player, "protection.interact.error.notowner", "block", LWC.materialToString(protection.getBlockId()));
@@ -124,12 +124,12 @@ public class CreateModule extends JavaModule {
         Protection protection = null;
 
         if (protectionType.equals("public")) {
-            protection = physDb.registerProtection(block.getTypeId(), Protection.Type.PUBLIC, worldName, playerName, "", blockX, blockY, blockZ);
+            protection = physDb.registerProtection(block.getTypeId(), Protection.Type.PUBLIC, worldName, player.getUniqueId().toString(), "", blockX, blockY, blockZ);
             lwc.sendLocale(player, "protection.interact.create.finalize");
         } else if (protectionType.equals("password")) {
             String password = lwc.encrypt(protectionData);
 
-            protection = physDb.registerProtection(block.getTypeId(), Protection.Type.PASSWORD, worldName, playerName, password, blockX, blockY, blockZ);
+            protection = physDb.registerProtection(block.getTypeId(), Protection.Type.PASSWORD, worldName, player.getUniqueId().toString(), password, blockX, blockY, blockZ);
             player.addAccessibleProtection(protection);
 
             lwc.sendLocale(player, "protection.interact.create.finalize");
@@ -137,7 +137,7 @@ public class CreateModule extends JavaModule {
         } else if (protectionType.equals("private") || protectionType.equals("donation")) {
             String[] rights = protectionData.split(" ");
 
-            protection = physDb.registerProtection(block.getTypeId(), Protection.Type.matchType(protectionType), worldName, playerName, "", blockX, blockY, blockZ);
+            protection = physDb.registerProtection(block.getTypeId(), Protection.Type.matchType(protectionType), worldName, player.getUniqueId().toString(), "", blockX, blockY, blockZ);
 
             lwc.sendLocale(player, "protection.interact.create.finalize");
             lwc.processRightsModifications(player, protection, rights);

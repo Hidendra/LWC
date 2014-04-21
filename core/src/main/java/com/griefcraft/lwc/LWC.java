@@ -110,6 +110,7 @@ import com.griefcraft.util.DatabaseThread;
 import com.griefcraft.util.ProtectionFinder;
 import com.griefcraft.util.Statistics;
 import com.griefcraft.util.StringUtil;
+import com.griefcraft.util.UUIDRegistry;
 import com.griefcraft.util.config.Configuration;
 import com.griefcraft.util.locale.LocaleUtil;
 import com.griefcraft.util.matchers.DoubleChestMatcher;
@@ -140,6 +141,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class LWC {
 
@@ -401,14 +403,14 @@ public class LWC {
 
         switch (protection.getType()) {
             case PUBLIC:
-                if (player.getName().equalsIgnoreCase(protection.getOwner())) {
+                if (protection.isOwner(player)) {
                     return true;
                 }
 
                 break;
 
             case PASSWORD:
-                if (player.getName().equalsIgnoreCase(protection.getOwner()) && wrapPlayer(player).getAccessibleProtections().contains(protection)) {
+                if (protection.isOwner(player) && wrapPlayer(player).getAccessibleProtections().contains(protection)) {
                     return true;
                 }
 
@@ -416,7 +418,7 @@ public class LWC {
 
             case PRIVATE:
             case DONATION:
-                if (playerName.equalsIgnoreCase(protection.getOwner())) {
+                if (protection.isOwner(player)) {
                     return true;
                 }
 
@@ -644,7 +646,7 @@ public class LWC {
             long timestamp = System.currentTimeMillis() / 1000L;
 
             // check that they aren't an admin and if they are, they need to be the owner of the protection or have access through /cmodify
-            if (protection.getOwner().equals(player.getName()) || protection.getAccess(player.getName(), Permission.Type.PLAYER) != Permission.Access.NONE) {
+            if (protection.isOwner(player) || protection.getAccess(player.getName(), Permission.Type.PLAYER) != Permission.Access.NONE) {
                 protection.setLastAccessed(timestamp);
                 protection.save();
             }
@@ -657,11 +659,13 @@ public class LWC {
             boolean showMyNotices = configuration.getBoolean("core.showMyNotices", true);
 
             if (!isOwner || (isOwner && (showMyNotices || permShowNotices))) {
-                String owner = protection.getOwner();
+                String owner;
 
                 // replace your username with "you" if you own the protection
-                if (owner.equalsIgnoreCase(player.getName())) {
+                if (protection.isRealOwner(player)) {
                     owner = parser.parseMessage("you");
+                } else {
+                    owner = protection.getFormattedOwnerPlayerName();
                 }
 
                 String blockName = materialToString(block);
@@ -709,7 +713,7 @@ public class LWC {
         }
 
         if (isMod(player)) {
-            Player protectionOwner = plugin.getServer().getPlayer(protection.getOwner());
+            Player protectionOwner = protection.getBukkitOwner();
 
             if (protectionOwner == null) {
                 return true;
@@ -722,8 +726,6 @@ public class LWC {
 
         // Their access level
         Permission.Access access = Permission.Access.NONE;
-
-        String playerName = player.getName();
 
         switch (protection.getType()) {
             case PUBLIC:
@@ -738,11 +740,11 @@ public class LWC {
                 break;
 
             case PRIVATE:
-                if (playerName.equalsIgnoreCase(protection.getOwner())) {
+                if (protection.isOwner(player)) {
                     return true;
                 }
 
-                if (protection.getAccess(playerName, Permission.Type.PLAYER).ordinal() >= Permission.Access.PLAYER.ordinal()) {
+                if (protection.getAccess(player.getUniqueId().toString(), Permission.Type.PLAYER).ordinal() >= Permission.Access.PLAYER.ordinal()) {
                     return true;
                 }
 
@@ -1791,6 +1793,15 @@ public class LWC {
 
             String localeChild = type.toString().toLowerCase();
 
+            // If it's a player, convert it to UUID
+            if (type == Permission.Type.PLAYER) {
+                UUID uuid = UUIDRegistry.getUUID(value);
+
+                if (uuid != null) {
+                    value = uuid.toString();
+                }
+            }
+
             if (!remove) {
                 Permission permission = new Permission(value, type);
                 permission.setAccess(isAdmin ? Permission.Access.ADMIN : Permission.Access.PLAYER);
@@ -1799,12 +1810,20 @@ public class LWC {
                 protection.addPermission(permission);
                 protection.save();
 
-                sendLocale(sender, "protection.interact.rights.register." + localeChild, "name", value, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
+                if (type == Permission.Type.PLAYER) {
+                    sendLocale(sender, "protection.interact.rights.register." + localeChild, "name", UUIDRegistry.formatPlayerName(value), "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
+                } else {
+                    sendLocale(sender, "protection.interact.rights.register." + localeChild, "name", value, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
+                }
             } else {
                 protection.removePermissions(value, type);
                 protection.save();
 
-                sendLocale(sender, "protection.interact.rights.remove." + localeChild, "name", value, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
+                if (type == Permission.Type.PLAYER) {
+                    sendLocale(sender, "protection.interact.rights.remove." + localeChild, "name", UUIDRegistry.formatPlayerName(value), "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
+                } else {
+                    sendLocale(sender, "protection.interact.rights.remove." + localeChild, "name", value, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
+                }
             }
         }
     }

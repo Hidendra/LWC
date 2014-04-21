@@ -44,6 +44,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public class LWCPlayer implements CommandSender {
 
@@ -113,6 +114,15 @@ public class LWCPlayer implements CommandSender {
      */
     public Player getBukkitPlayer() {
         return player;
+    }
+
+    /**
+     * Get the player's UUID
+     *
+     * @return player's UUID
+     */
+    public UUID getUniqueId() {
+        return player.getUniqueId();
     }
 
     /**

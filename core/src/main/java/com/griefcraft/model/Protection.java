@@ -35,6 +35,7 @@ import com.griefcraft.util.Colors;
 import com.griefcraft.util.ProtectionFinder;
 import com.griefcraft.util.StringUtil;
 import com.griefcraft.util.TimeUtil;
+import com.griefcraft.util.UUIDRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -51,6 +52,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public class Protection {
 
@@ -248,6 +250,71 @@ public class Protection {
     }
 
     /**
+     * Convert the protection to use UUIDs
+     *
+     * @return true if the protection required conversion and conversions were done
+     */
+    public boolean convertPlayerNamesToUUIDs() {
+        if (!needsUUIDConversion()) {
+            return false;
+        }
+
+        boolean res = false;
+
+        if (!UUIDRegistry.isValidUUID(owner)) {
+            UUID uuid = UUIDRegistry.getUUID(owner);
+
+            if (uuid != null) {
+                setOwner(uuid.toString());
+                res = true;
+            }
+        }
+
+        for (Permission permission : permissions) {
+            if (permission.getType() == Permission.Type.PLAYER && !UUIDRegistry.isValidUUID(permission.getName())) {
+                UUID uuid = UUIDRegistry.getUUID(permission.getName());
+
+                if (uuid != null) {
+                    permission.setName(uuid.toString());
+                    modified = true;
+                    res = true;
+                }
+            }
+        }
+
+        return res;
+    }
+
+    /**
+     * Check if this protection requires conversion from plain player names to UUIDs
+     *
+     * @return true if the protection requires conversion
+     */
+    public boolean needsUUIDConversion() {
+        if (!UUIDRegistry.isValidUUID(owner)) {
+            return true;
+        }
+
+        for (Permission permission : permissions) {
+            if (permission.getType() == Permission.Type.PLAYER && !UUIDRegistry.isValidUUID(permission.getName())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get a formatted version of the owner's name. If the owner is a UUID and the UUID is unknown, then
+     * "Unknown (uuid)" will be returned.
+     *
+     * @return
+     */
+    public String getFormattedOwnerPlayerName() {
+        return UUIDRegistry.formatPlayerName(owner);
+    }
+
+    /**
      * Encode the AccessRights to JSON
      *
      * @return
@@ -293,7 +360,7 @@ public class Protection {
     }
 
     /**
-     * Check if a player is the owner of the protection
+     * Check if a player has owner access to the protection
      *
      * @param player
      * @return
@@ -301,7 +368,29 @@ public class Protection {
     public boolean isOwner(Player player) {
         LWC lwc = LWC.getInstance();
 
-        return player != null && (owner.equals(player.getName()) || lwc.isAdmin(player));
+        if (isRealOwner(player)) {
+            return true;
+        } else {
+            return lwc.isAdmin(player);
+        }
+    }
+
+    /**
+     * Check if a player is the real owner to the protection
+     *
+     * @param player
+     * @return
+     */
+    public boolean isRealOwner(Player player) {
+        if (player == null) {
+            return false;
+        }
+
+        if (UUIDRegistry.isValidUUID(owner)) {
+            return UUID.fromString(owner).equals(player.getUniqueId());
+        } else {
+            return owner.equalsIgnoreCase(player.getName());
+        }
     }
 
     /**

@@ -59,7 +59,8 @@ public class InfoModule extends JavaModule {
         event.setResult(Result.CANCEL);
 
         String type = lwc.getPlugin().getMessageParser().parseMessage(protection.typeToString().toLowerCase());
-        lwc.sendLocale(player, "lwc.info", "owner", protection.getOwner(), "type", type);
+
+        lwc.sendLocale(player, "lwc.info", "owner", protection.getFormattedOwnerPlayerName(), "type", type);
 
         if (event.canAdmin()) {
             if (protection.getType() == Protection.Type.PRIVATE || protection.getType() == Protection.Type.DONATION) {
