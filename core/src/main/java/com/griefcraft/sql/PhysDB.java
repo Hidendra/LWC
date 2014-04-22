@@ -764,12 +764,6 @@ public class PhysDB extends Database {
                 }
             }
 
-            if (protection.needsUUIDConversion()) {
-                if (protection.convertPlayerNamesToUUIDs()) {
-                    protection.save();
-                }
-            }
-
             return protection;
         } catch (SQLException e) {
             printException(e);
