@@ -31,6 +31,12 @@ package com.griefcraft.sql;
 import com.griefcraft.cache.LRUCache;
 import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.migration.RowHandler;
+import com.griefcraft.migration.SimpleTableWalker;
+import com.griefcraft.migration.TableWalker;
+import com.griefcraft.migration.uuid.PlayerRowHandler;
+import com.griefcraft.migration.PlayerTableWalker;
+import com.griefcraft.migration.uuid.ProtectionRowHandler;
 import com.griefcraft.model.Flag;
 import com.griefcraft.model.History;
 import com.griefcraft.model.Permission;
@@ -53,6 +59,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.UUID;
 
 public class PhysDB extends Database {
@@ -327,6 +335,22 @@ public class PhysDB extends Database {
             protections.add(column);
         }
 
+        Table players = new Table(this, "players");
+        {
+            column = new Column("id");
+            column.setType("INTEGER");
+            column.setPrimary(true);
+            players.add(column);
+
+            column = new Column("uuid");
+            column.setType("VARCHAR(40)");
+            players.add(column);
+
+            column = new Column("name");
+            column.setType("VARCHAR(40)");
+            players.add(column);
+        }
+
         Table history = new Table(this, "history");
         {
             column = new Column("id");
@@ -385,6 +409,7 @@ public class PhysDB extends Database {
         }
 
         protections.execute();
+        players.execute();
         history.execute();
         internal.execute();
 
@@ -489,6 +514,62 @@ public class PhysDB extends Database {
             incrementDatabaseVersion();
         }
 
+        String uuidConversionStage = getInternal("uuidConversionStage");
+        log("uuidConversionStage = " + uuidConversionStage);
+
+        if (uuidConversionStage == null) {
+            uuidConversionStage = "protections";
+            setInternal("uuidConversionStage", uuidConversionStage);
+            setInternal("uuidConversionOffset", Integer.toString(0));
+        }
+
+        int offset = Integer.parseInt(getInternal("uuidConversionOffset"));
+
+        TableWalker walker = null;
+        Observer walkerObserver = new Observer() {
+            public void update(Observable o, Object arg) {
+                TableWalker walker = (TableWalker) o;
+                RowHandler handler = walker.getHandler();
+
+                boolean isComplete = "complete".equals(arg);
+                int offset = -1;
+
+                if (!isComplete) {
+                    offset = (Integer) arg;
+                }
+
+                if (handler instanceof PlayerRowHandler) {
+                    if (isComplete) {
+                        log("Completed conversion for player names");
+                        // setInternal("uuidConversionStage", "history");
+                        // setInternal("uuidConversionOffset", Integer.toString(0));
+                    } else {
+                        log("Offset: " + offset);
+                        // setInternal("uuidConversionOffset", Integer.toString(offset));
+                    }
+                } else if (handler instanceof ProtectionRowHandler) {
+                    if (isComplete) {
+                        log("Completed conversion of " + getPrefix() + "protections");
+                        // setInternal("uuidConversionStage", "history");
+                        // setInternal("uuidConversionOffset", Integer.toString(0));
+                    } else {
+                        log("Offset: " + offset);
+                        // setInternal("uuidConversionOffset", Integer.toString(offset));
+                    }
+                }
+
+            }
+        };
+
+        if (uuidConversionStage.equals("players")) {
+            walker = new PlayerTableWalker(this, new PlayerRowHandler());
+        } else if (uuidConversionStage.equals("protections")) {
+            walker = new SimpleTableWalker(this, new ProtectionRowHandler(), "protections", offset);
+        }
+
+        if (walker != null) {
+            walker.addObserver(walkerObserver);
+        }
     }
 
     /**
