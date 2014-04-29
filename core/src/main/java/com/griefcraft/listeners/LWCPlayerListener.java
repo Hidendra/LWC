@@ -250,12 +250,6 @@ public class LWCPlayerListener implements Listener {
             Module.Result result;
             boolean canAccess = lwc.canAccessProtection(player, protection);
 
-            if (protection != null && protection.needsUUIDConversion()) {
-                if (protection.convertPlayerNamesToUUIDs()) {
-                    protection.save();
-                }
-            }
-
             // Calculate if the player has a pending action (i.e any action besides 'interacted')
             int actionCount = actions.size();
             boolean hasInteracted = actions.contains("interacted");
