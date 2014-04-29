@@ -1,8 +1,10 @@
 package com.griefcraft.model;
 
+import com.griefcraft.lwc.LWC;
+
 import java.util.UUID;
 
-public class PlayerInfo {
+public class PlayerInfo extends AbstractSavable {
 
     /**
      * Internal id for the player
@@ -30,6 +32,11 @@ public class PlayerInfo {
         this.name = name;
     }
 
+    @Override
+    public String toString() {
+        return String.format("PlayerInfo(id = %d, uuid = %s, name = %s)", id, uuid != null ? uuid.toString() : "unknown", name != null ? name : "unknown");
+    }
+
     public int getId() {
         return id;
     }
@@ -44,9 +51,17 @@ public class PlayerInfo {
 
     public void setUUID(UUID uuid) {
         this.uuid = uuid;
+        modified = true;
     }
 
     public void setName(String name) {
         this.name = name;
+        modified = true;
     }
+
+    @Override
+    public void saveNow() {
+        LWC.getInstance().getPhysicalDatabase().savePlayerInfo(this);
+    }
+
 }

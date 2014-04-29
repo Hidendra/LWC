@@ -54,7 +54,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public class Protection {
+public class Protection extends AbstractSavable {
 
     /**
      * The protection type
@@ -192,20 +192,9 @@ public class Protection {
     private String creation;
 
     /**
-     * Immutable flag for the protection. When removed, this bool is switched to true and any setters
-     * will no longer work. However, everything is still intact and in memory at this point (for now.)
-     */
-    private boolean removed = false;
-
-    /**
      * If the protection is pending removal. Only used internally.
      */
     private boolean removing = false;
-
-    /**
-     * True when the protection has been modified and should be saved
-     */
-    private boolean modified = false;
 
     /**
      * The protection finder used to find this protection
