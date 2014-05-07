@@ -82,6 +82,8 @@ public class PlayerTableWalker extends TableWalker {
                 task.cancel();
                 setChanged();
                 notifyObservers("complete");
+                names.clear();
+                iter = null;
             } else {
                 offset += handled;
                 setChanged();
