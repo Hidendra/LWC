@@ -17,7 +17,7 @@ public abstract class TableWalker extends Observable implements Runnable {
     /**
      * The number of rows walked per round
      */
-    public static final int WALKS_PER_ROUND = 100;
+    public static final int WALKS_PER_ROUND = 50;
 
     /**
      * The database to use to walk over
