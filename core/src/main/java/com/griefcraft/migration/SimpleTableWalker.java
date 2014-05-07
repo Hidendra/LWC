@@ -84,6 +84,7 @@ public class SimpleTableWalker extends TableWalker {
                 handled ++;
             }
 
+            set.close();
             statement.close();
 
             long time = System.currentTimeMillis() - start;

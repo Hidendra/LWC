@@ -79,15 +79,10 @@ public class PlayerRegistry {
      * @return
      */
     public static PlayerInfo getPlayerInfo(String ident) {
-        try {
-            int id = Integer.parseInt(ident);
-            return getPlayerInfo(id);
-        } catch (NumberFormatException e) {
-            if (isValidUUID(ident)) {
-                return getPlayerInfo(UUID.fromString(ident));
-            } else {
-                return getPlayerInfoByName(ident);
-            }
+        if (isValidUUID(ident)) {
+            return getPlayerInfo(UUID.fromString(ident));
+        } else {
+            return getPlayerInfoByName(ident);
         }
     }
 
