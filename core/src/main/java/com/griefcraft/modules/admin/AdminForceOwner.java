@@ -31,6 +31,7 @@ package com.griefcraft.modules.admin;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Action;
 import com.griefcraft.model.LWCPlayer;
+import com.griefcraft.model.PlayerInfo;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
@@ -152,10 +153,10 @@ public class AdminForceOwner extends JavaModule {
         action.setName("forceowner");
         action.setPlayer(player);
 
-        UUID uuid = PlayerRegistry.getUUID(newOwner);
+        PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(newOwner);
 
-        if (uuid != null) {
-            action.setData(uuid.toString());
+        if (playerInfo != null) {
+            action.setData(Integer.toString(playerInfo.getId()));
         } else {
             action.setData(newOwner);
         }

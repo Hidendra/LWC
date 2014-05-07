@@ -181,9 +181,11 @@ public class PhysDB extends Database {
     public int getProtectionCount(String player) {
         int count = 0;
 
+        PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(player);
+
         try {
             PreparedStatement statement = prepare("SELECT COUNT(*) as count FROM " + prefix + "protections WHERE owner = ?");
-            statement.setString(1, player);
+            statement.setInt(1, playerInfo.getId());
 
             ResultSet set = statement.executeQuery();
 
@@ -208,9 +210,11 @@ public class PhysDB extends Database {
     public int getHistoryCount(String player) {
         int count = 0;
 
+        PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(player);
+
         try {
-            PreparedStatement statement = prepare("SELECT COUNT(*) AS count FROM " + prefix + "history WHERE LOWER(player) = LOWER(?)");
-            statement.setString(1, player);
+            PreparedStatement statement = prepare("SELECT COUNT(*) AS count FROM " + prefix + "history WHERE player = ?");
+            statement.setInt(1, playerInfo.getId());
 
             ResultSet set = statement.executeQuery();
 
@@ -235,9 +239,11 @@ public class PhysDB extends Database {
     public int getProtectionCount(String player, int blockId) {
         int count = 0;
 
+        PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(player);
+
         try {
             PreparedStatement statement = prepare("SELECT COUNT(*) AS count FROM " + prefix + "protections WHERE owner = ? AND blockId = ?");
-            statement.setString(1, player);
+            statement.setInt(1, playerInfo.getId());
             statement.setInt(2, blockId);
 
             ResultSet set = statement.executeQuery();
@@ -1271,9 +1277,11 @@ public class PhysDB extends Database {
     public List<Protection> loadProtectionsByPlayer(String player) {
         List<Protection> protections = new ArrayList<Protection>();
 
+        PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(player);
+
         try {
             PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE owner = ?");
-            statement.setString(1, player);
+            statement.setInt(1, playerInfo.getId());
 
             return resolveProtections(statement);
         } catch (Exception e) {
@@ -1294,11 +1302,11 @@ public class PhysDB extends Database {
     public List<Protection> loadProtectionsByPlayer(String player, int start, int count) {
         List<Protection> protections = new ArrayList<Protection>();
 
-        UUID uuid = PlayerRegistry.getUUID(player);
+        PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(player);
 
         try {
             PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE owner = ? ORDER BY id DESC limit ?,?");
-            statement.setString(1, uuid != null ? uuid.toString() : player);
+            statement.setInt(1, playerInfo.getId());
             statement.setInt(2, start);
             statement.setInt(3, count);
 
@@ -1452,10 +1460,12 @@ public class PhysDB extends Database {
      * @param player
      */
     public void invalidateHistory(String player) {
+        PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(player);
+
         try {
-            PreparedStatement statement = prepare("UPDATE " + prefix + "history SET status = ? WHERE Lower(player) = Lower(?)");
+            PreparedStatement statement = prepare("UPDATE " + prefix + "history SET status = ? WHERE player = ?");
             statement.setInt(1, History.Status.INACTIVE.ordinal());
-            statement.setString(2, player);
+            statement.setInt(2, playerInfo.getId());
 
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -1568,9 +1578,11 @@ public class PhysDB extends Database {
             return temp;
         }
 
+        PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(player);
+
         try {
-            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE LOWER(player) = LOWER(?) ORDER BY id DESC");
-            statement.setString(1, player);
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE player = ? ORDER BY id DESC");
+            statement.setInt(1, playerInfo.getId());
 
             ResultSet set = statement.executeQuery();
 
@@ -1686,9 +1698,11 @@ public class PhysDB extends Database {
             return temp;
         }
 
+        PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(player);
+
         try {
-            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE LOWER(player) = LOWER(?) ORDER BY id DESC LIMIT ?,?");
-            statement.setString(1, player);
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE player = ? ORDER BY id DESC LIMIT ?,?");
+            statement.setInt(1, playerInfo.getId());
             statement.setInt(2, start);
             statement.setInt(3, count);
 
@@ -1834,9 +1848,11 @@ public class PhysDB extends Database {
             return temp;
         }
 
+        PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(player);
+
         try {
-            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE LOWER(player) = LOWER(?) AND x = ? AND y = ? AND z = ?");
-            statement.setString(1, player);
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE player = ? AND x = ? AND y = ? AND z = ?");
+            statement.setInt(1, playerInfo.getId());
             statement.setInt(2, x);
             statement.setInt(3, y);
             statement.setInt(4, z);

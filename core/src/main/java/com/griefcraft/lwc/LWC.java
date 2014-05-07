@@ -50,6 +50,7 @@ import com.griefcraft.model.Flag;
 import com.griefcraft.model.History;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Permission;
+import com.griefcraft.model.PlayerInfo;
 import com.griefcraft.model.Protection;
 import com.griefcraft.modules.admin.AdminBackup;
 import com.griefcraft.modules.admin.AdminCache;
@@ -1795,10 +1796,10 @@ public class LWC {
 
             // If it's a player, convert it to UUID
             if (type == Permission.Type.PLAYER) {
-                UUID uuid = PlayerRegistry.getUUID(value);
+                PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(value);
 
-                if (uuid != null) {
-                    value = uuid.toString();
+                if (playerInfo != null) {
+                    value = Integer.toString(playerInfo.getId());
                 }
             }
 
