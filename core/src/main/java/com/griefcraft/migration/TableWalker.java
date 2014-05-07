@@ -47,7 +47,12 @@ public abstract class TableWalker extends Observable implements Runnable {
         this.database = database;
         this.handler = handler;
         this.offset = startOffset;
+    }
 
+    /**
+     * Start the table walker
+     */
+    public void start() {
         task = Bukkit.getScheduler().runTaskTimer(LWC.getInstance().getPlugin(), this, TICK_INTERVAL, TICK_INTERVAL);
     }
 

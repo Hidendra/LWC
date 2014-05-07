@@ -8,6 +8,16 @@ import java.util.Map;
 public interface RowHandler {
 
     /**
+     * Called when the row handler is first started
+     */
+    public void onStart();
+
+    /**
+     * Called when the row handler completes walking over all rows
+     */
+    public void onComplete();
+
+    /**
      * Handle the given row
      *
      * @param walker

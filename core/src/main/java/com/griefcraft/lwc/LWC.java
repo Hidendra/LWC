@@ -107,10 +107,10 @@ import com.griefcraft.sql.Database;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.DatabaseThread;
+import com.griefcraft.util.PlayerRegistry;
 import com.griefcraft.util.ProtectionFinder;
 import com.griefcraft.util.Statistics;
 import com.griefcraft.util.StringUtil;
-import com.griefcraft.util.UUIDRegistry;
 import com.griefcraft.util.config.Configuration;
 import com.griefcraft.util.locale.LocaleUtil;
 import com.griefcraft.util.matchers.DoubleChestMatcher;
@@ -1795,7 +1795,7 @@ public class LWC {
 
             // If it's a player, convert it to UUID
             if (type == Permission.Type.PLAYER) {
-                UUID uuid = UUIDRegistry.getUUID(value);
+                UUID uuid = PlayerRegistry.getUUID(value);
 
                 if (uuid != null) {
                     value = uuid.toString();
@@ -1811,7 +1811,7 @@ public class LWC {
                 protection.save();
 
                 if (type == Permission.Type.PLAYER) {
-                    sendLocale(sender, "protection.interact.rights.register." + localeChild, "name", UUIDRegistry.formatPlayerName(value), "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
+                    sendLocale(sender, "protection.interact.rights.register." + localeChild, "name", PlayerRegistry.formatPlayerName(value), "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
                 } else {
                     sendLocale(sender, "protection.interact.rights.register." + localeChild, "name", value, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
                 }
@@ -1820,7 +1820,7 @@ public class LWC {
                 protection.save();
 
                 if (type == Permission.Type.PLAYER) {
-                    sendLocale(sender, "protection.interact.rights.remove." + localeChild, "name", UUIDRegistry.formatPlayerName(value), "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
+                    sendLocale(sender, "protection.interact.rights.remove." + localeChild, "name", PlayerRegistry.formatPlayerName(value), "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
                 } else {
                     sendLocale(sender, "protection.interact.rights.remove." + localeChild, "name", value, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
                 }

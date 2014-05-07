@@ -118,7 +118,7 @@ public class RestorableProtection implements Restorable {
             rprotection.id = protection.getId();
             rprotection.protectionType = protection.getType().ordinal();
             rprotection.blockId = protection.getBlockId();
-            rprotection.owner = protection.getOwner();
+            rprotection.owner = protection.getOwner().getName();
             rprotection.world = protection.getWorld();
             rprotection.x = protection.getX();
             rprotection.y = protection.getY();

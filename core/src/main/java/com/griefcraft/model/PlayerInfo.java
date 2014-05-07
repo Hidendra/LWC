@@ -37,6 +37,15 @@ public class PlayerInfo extends AbstractSavable {
         return String.format("PlayerInfo(id = %d, uuid = %s, name = %s)", id, uuid != null ? uuid.toString() : "unknown", name != null ? name : "unknown");
     }
 
+    /**
+     * Pretty format the player's name. If the name is unknown, the UUID is returned.
+     *
+     * @return
+     */
+    public String prettyFormat() {
+        return name != null ? name : uuid.toString();
+    }
+
     public int getId() {
         return id;
     }

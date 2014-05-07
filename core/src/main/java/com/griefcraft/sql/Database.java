@@ -243,6 +243,10 @@ public abstract class Database {
             properties.put("autoReconnect", "true");
             properties.put("user", lwc.getConfiguration().getString("database.username"));
             properties.put("password", lwc.getConfiguration().getString("database.password"));
+            properties.put("tinyInt1isBit", "false");
+            properties.put("useDynamicCharsetInfo", "false");
+            properties.put("cacheResultSetMetadata", "true");
+            properties.put("metadataCacheSize", "1000");
         }
 
         // Connect to the database
@@ -360,6 +364,58 @@ public abstract class Database {
         }
 
         return null;
+    }
+
+    /**
+     * Attempt to create an index on the table
+     *
+     * @param table
+     * @param indexName
+     * @param columns
+     */
+    public void createIndex(String table, String indexName, String columns) {
+        Statement statement = null;
+
+        try {
+            statement = connection.createStatement();
+            statement.executeUpdate("CREATE INDEX" + (currentType == Type.SQLite ? " IF NOT EXISTS" : "") + " " + indexName + " ON " + prefix + table + " (" + columns + ")");
+        } catch (Exception e) {
+            printException(e);
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
+    }
+
+    /**
+     * Attempt to create an index on the table
+     *
+     * @param indexName
+     */
+    public void dropIndex(String table, String indexName) {
+        Statement statement = null;
+
+        try {
+            statement = connection.createStatement();
+
+            if (currentType == Type.SQLite) {
+                statement.executeUpdate("DROP INDEX IF EXISTS " + indexName);
+            } else {
+                statement.executeUpdate("DROP INDEX " + indexName + " ON " + prefix + table);
+            }
+        } catch (Exception e) {
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
     }
 
     /**

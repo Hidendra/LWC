@@ -4,6 +4,7 @@ import com.griefcraft.migration.RowHandler;
 import com.griefcraft.migration.TableWalker;
 import com.griefcraft.sql.Database;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -34,27 +35,38 @@ public class PlayerTableWalker extends TableWalker {
     public void run() {
         try {
             if (names.size() == 0) {
-                Statement statement = database.getConnection().createStatement();
-                ResultSet set = statement.executeQuery(String.format("SELECT DISTINCT owner FROM " + database.getPrefix() + "protections"));
+                database.log("Pre-loading distinct player names. This might take a minute or two.");
+                database.log("Once complete, everything else will run in the background");
+
+                PreparedStatement statement = database.prepare("SELECT DISTINCT owner FROM " + database.getPrefix() + "protections");
+                ResultSet set = statement.executeQuery();
 
                 while (set.next()) {
                     names.add(set.getString("owner"));
                 }
 
+                set.close();
+
                 iter = names.iterator();
 
-                statement.close();
+                database.log("Converting " + names.size() + " names to normalized format (background task)");
             }
 
             int handled = 0;
 
             Map<String, Object> data = new HashMap<String, Object>();
 
+            long start = System.currentTimeMillis();
+
             for (int i = 0; i < WALKS_PER_ROUND && iter.hasNext(); i++) {
                 data.put("name", iter.next());
                 handler.handle(this, data);
                 handled ++;
             }
+
+            long time = System.currentTimeMillis() - start;
+
+            database.log("Finished handling rows " + offset + " -> " + (offset + handled) + " in " + time + "ms");
 
             // finished walking
             if (handled == 0) {

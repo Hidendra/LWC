@@ -40,10 +40,11 @@ import com.griefcraft.migration.uuid.ProtectionRowHandler;
 import com.griefcraft.model.Flag;
 import com.griefcraft.model.History;
 import com.griefcraft.model.Permission;
+import com.griefcraft.model.PlayerInfo;
 import com.griefcraft.model.Protection;
 import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.scripting.Module;
-import com.griefcraft.util.UUIDRegistry;
+import com.griefcraft.util.PlayerRegistry;
 import com.griefcraft.util.config.Configuration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -80,6 +81,11 @@ public class PhysDB extends Database {
      */
     private int protectionCount = 0;
 
+    /**
+     * The current stage of UUID conversions (if any). MC 1.7+
+     */
+    private String uuidConversionStage = "";
+
     public PhysDB() {
         super();
     }
@@ -92,7 +98,7 @@ public class PhysDB extends Database {
      * Decrement the known protection counter
      */
     public void decrementProtectionCount() {
-        protectionCount --;
+        protectionCount--;
     }
 
     /**
@@ -141,6 +147,7 @@ public class PhysDB extends Database {
 
     /**
      * Get the total amount of protections
+     *
      * @return the number of protections
      */
     public int getProtectionCount() {
@@ -149,6 +156,7 @@ public class PhysDB extends Database {
 
     /**
      * Get the amount of protections for the given protection type
+     *
      * @param type
      * @return the number of protected chests
      */
@@ -287,7 +295,7 @@ public class PhysDB extends Database {
             protections.add(column);
 
             column = new Column("owner");
-            column.setType("VARCHAR(255)");
+            column.setType("int");
             protections.add(column);
 
             column = new Column("type");
@@ -514,61 +522,91 @@ public class PhysDB extends Database {
             incrementDatabaseVersion();
         }
 
-        String uuidConversionStage = getInternal("uuidConversionStage");
-        log("uuidConversionStage = " + uuidConversionStage);
+        if (databaseVersion == 6) {
+            log("Adding indexes to players table");
+            createIndex("players", "player_uuid", "uuid");
+            createIndex("players", "player_name", "name");
+
+            incrementDatabaseVersion();
+        }
+
+        uuidConversionStage = getInternal("uuidConversionStage");
 
         if (uuidConversionStage == null) {
-            uuidConversionStage = "protections";
+            uuidConversionStage = Integer.toString(0);
             setInternal("uuidConversionStage", uuidConversionStage);
             setInternal("uuidConversionOffset", Integer.toString(0));
         }
 
-        int offset = Integer.parseInt(getInternal("uuidConversionOffset"));
+        if (!uuidConversionStage.equals("complete")) {
+            final int stage = Integer.parseInt(uuidConversionStage);
+            int offset = Integer.parseInt(getInternal("uuidConversionOffset"));
 
-        TableWalker walker = null;
-        Observer walkerObserver = new Observer() {
-            public void update(Observable o, Object arg) {
-                TableWalker walker = (TableWalker) o;
-                RowHandler handler = walker.getHandler();
+            // conversion steps to undergo
+            final TableWalker[] conversionSteps = {
+                    // converts player names => unique ids
+                    new PlayerTableWalker(this, new PlayerRowHandler()),
 
-                boolean isComplete = "complete".equals(arg);
-                int offset = -1;
+                    // converts protections table
+                    new SimpleTableWalker(this, new ProtectionRowHandler(), "protections_old_converting", offset)
+            };
 
-                if (!isComplete) {
-                    offset = (Integer) arg;
-                }
+            Observer walkerObserver = new Observer() {
+                private int currentStep = stage;
 
-                if (handler instanceof PlayerRowHandler) {
-                    if (isComplete) {
-                        log("Completed conversion for player names");
-                        // setInternal("uuidConversionStage", "history");
-                        // setInternal("uuidConversionOffset", Integer.toString(0));
-                    } else {
-                        log("Offset: " + offset);
-                        // setInternal("uuidConversionOffset", Integer.toString(offset));
+                public void update(Observable o, Object arg) {
+                    TableWalker walker = (TableWalker) o;
+                    RowHandler handler = walker.getHandler();
+
+                    boolean isComplete = "complete".equals(arg);
+                    int offset = -1;
+
+                    if (!isComplete) {
+                        offset = (Integer) arg;
                     }
-                } else if (handler instanceof ProtectionRowHandler) {
+
+                    if (handler instanceof PlayerRowHandler) {
+                        if (isComplete) {
+                            log("Completed conversion for player names");
+                        } else {
+                            log("Offset: " + offset);
+                        }
+                    } else if (handler instanceof ProtectionRowHandler) {
+                        if (isComplete) {
+                            log("Completed conversion of " + getPrefix() + "protections");
+                        } else {
+                            log("Offset: " + offset);
+                        }
+                    }
+
                     if (isComplete) {
-                        log("Completed conversion of " + getPrefix() + "protections");
-                        // setInternal("uuidConversionStage", "history");
-                        // setInternal("uuidConversionOffset", Integer.toString(0));
+                        if (currentStep < conversionSteps.length - 1) {
+                            log("Moving to next stage");
+                            conversionSteps[currentStep].getHandler().onComplete();
+                            TableWalker next = conversionSteps[++currentStep];
+                            conversionSteps[currentStep].getHandler().onStart();
+                            next.addObserver(this);
+                            next.start();
+                            setInternal("uuidConversionStage", Integer.toString(currentStep));
+                            setInternal("uuidConversionOffset", Integer.toString(0));
+                        } else {
+                            log("Completed database conversion for UUIDs");
+                            conversionSteps[currentStep].getHandler().onComplete();
+                            setInternal("uuidConversionStage", "complete");
+                            setInternal("uuidConversionOffset", Integer.toString(0));
+                        }
                     } else {
-                        log("Offset: " + offset);
-                        // setInternal("uuidConversionOffset", Integer.toString(offset));
+                        setInternal("uuidConversionOffset", Integer.toString(offset));
                     }
                 }
+            };
 
+            if (stage < conversionSteps.length) {
+                TableWalker walker = conversionSteps[stage];
+                walker.addObserver(walkerObserver);
+                conversionSteps[stage].getHandler().onStart();
+                walker.start();
             }
-        };
-
-        if (uuidConversionStage.equals("players")) {
-            walker = new PlayerTableWalker(this, new PlayerRowHandler());
-        } else if (uuidConversionStage.equals("protections")) {
-            walker = new SimpleTableWalker(this, new ProtectionRowHandler(), "protections", offset);
-        }
-
-        if (walker != null) {
-            walker.addObserver(walkerObserver);
         }
     }
 
@@ -596,7 +634,8 @@ public class PhysDB extends Database {
 
             // ok
             statement.executeUpdate();
-        } catch (SQLException e) { }
+        } catch (SQLException e) {
+        }
     }
 
     /**
@@ -632,7 +671,7 @@ public class PhysDB extends Database {
      */
     public void setInternal(String key, String value) {
         try {
-            PreparedStatement statement = prepare("INSERT INTO " + prefix +"internal (name, value) VALUES (?, ?)");
+            PreparedStatement statement = prepare("INSERT INTO " + prefix + "internal (name, value) VALUES (?, ?)");
             statement.setString(1, key);
             statement.setString(2, value);
 
@@ -641,7 +680,7 @@ public class PhysDB extends Database {
             // Already exists
             try {
                 PreparedStatement statement = prepare("UPDATE " + prefix + "internal SET value = ? WHERE name = ?");
-                statement.setString(1, value) ;
+                statement.setString(1, value);
                 statement.setString(2, key);
 
                 statement.executeUpdate();
@@ -683,7 +722,8 @@ public class PhysDB extends Database {
 
                 // ok
                 statement.executeUpdate();
-            } catch (SQLException ex) { }
+            } catch (SQLException ex) {
+            }
         }
 
         return databaseVersion;
@@ -693,7 +733,7 @@ public class PhysDB extends Database {
      * Load a protection with the given id
      *
      * @param id
-     * @return the Chest object
+     * @return the protection found, or null if it does not exist
      */
     public Protection loadProtection(int id) {
         // the protection cache
@@ -711,8 +751,35 @@ public class PhysDB extends Database {
 
             Protection protection = resolveProtection(statement);
 
+            if (protection == null && !"complete".equals(uuidConversionStage)) {
+                protection = legacyLoadProtection(id);
+            }
+
             if (protection != null) {
                 cache.addProtection(protection);
+                return protection;
+            }
+        } catch (SQLException e) {
+            printException(e);
+        }
+
+        return null;
+    }
+
+    /**
+     * Load a protection with the given id in the old database format
+     *
+     * @param id
+     * @return the protection found, or null if it does not exist
+     */
+    public Protection legacyLoadProtection(int id) {
+        try {
+            PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections_old_converting WHERE id = ?");
+            statement.setInt(1, id);
+
+            Protection protection = resolveProtection(statement);
+
+            if (protection != null) {
                 return protection;
             }
         } catch (SQLException e) {
@@ -758,10 +825,18 @@ public class PhysDB extends Database {
             int blockId = set.getInt("blockId");
             int type = set.getInt("type");
             String world = set.getString("world");
-            String owner = set.getString("owner");
             String password = set.getString("password");
             String date = set.getString("date");
             long lastAccessed = set.getLong("last_accessed");
+
+            Object owner = set.getObject("owner");
+            PlayerInfo ownerInfo;
+
+            if (owner instanceof String) {
+                ownerInfo = PlayerRegistry.getPlayerInfo(owner.toString());
+            } else {
+                ownerInfo = PlayerRegistry.getPlayerInfo((Integer) owner);
+            }
 
             protection.setId(protectionId);
             protection.setX(x);
@@ -770,7 +845,7 @@ public class PhysDB extends Database {
             protection.setBlockId(blockId);
             protection.setType(Protection.Type.values()[type]);
             protection.setWorld(world);
-            protection.setOwner(owner);
+            protection.setOwner(ownerInfo);
             protection.setPassword(password);
             protection.setCreation(date);
             protection.setLastAccessed(lastAccessed);
@@ -956,6 +1031,7 @@ public class PhysDB extends Database {
     /**
      * Load a protection at the given coordinates
      *
+     * @param worldName
      * @param x
      * @param y
      * @param z
@@ -968,6 +1044,7 @@ public class PhysDB extends Database {
     /**
      * Load a protection at the given coordinates
      *
+     * @param worldName
      * @param x
      * @param y
      * @param z
@@ -1004,9 +1081,44 @@ public class PhysDB extends Database {
 
             Protection protection = resolveProtection(statement);
 
+            if (protection == null && !"complete".equals(uuidConversionStage)) {
+                protection = legacyLoadProtection(worldName, x, y, z);
+            }
+
             if (protection != null) {
                 // cache the protection
                 cache.addProtection(protection);
+            }
+
+            return protection;
+        } catch (SQLException e) {
+            printException(e);
+        }
+
+        return null;
+    }
+
+    /**
+     * Load a protection from the old database format. This is only usable while the old database is still being converted.
+     *
+     * @param worldName
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    private Protection legacyLoadProtection(String worldName, int x, int y, int z) {
+        try {
+            PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections_old_converting WHERE x = ? AND y = ? AND z = ? AND world = ?");
+            statement.setInt(1, x);
+            statement.setInt(2, y);
+            statement.setInt(3, z);
+            statement.setString(4, worldName);
+
+            Protection protection = resolveProtection(statement);
+
+            if (protection != null) {
+                protection.convertPlayerNamesToUUIDs();
             }
 
             return protection;
@@ -1106,7 +1218,7 @@ public class PhysDB extends Database {
 
         for (Protection protection : loadProtectionsByPlayer(player)) {
             protection.remove();
-            removed ++;
+            removed++;
         }
 
         return removed;
@@ -1176,7 +1288,7 @@ public class PhysDB extends Database {
     public List<Protection> loadProtectionsByPlayer(String player, int start, int count) {
         List<Protection> protections = new ArrayList<Protection>();
 
-        UUID uuid = UUIDRegistry.getUUID(player);
+        UUID uuid = PlayerRegistry.getUUID(player);
 
         try {
             PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE owner = ? ORDER BY id DESC limit ?,?");
@@ -1225,6 +1337,7 @@ public class PhysDB extends Database {
      */
     public Protection registerProtection(int blockId, Protection.Type type, String world, String player, String data, int x, int y, int z) {
         ProtectionCache cache = LWC.getInstance().getProtectionCache();
+        PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(player);
 
         try {
             PreparedStatement statement = prepare("INSERT INTO " + prefix + "protections (blockId, type, world, owner, password, x, y, z, date, last_accessed) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -1232,7 +1345,7 @@ public class PhysDB extends Database {
             statement.setInt(1, blockId);
             statement.setInt(2, type.ordinal());
             statement.setString(3, world);
-            statement.setString(4, player);
+            statement.setInt(4, playerInfo.getId());
             statement.setString(5, data);
             statement.setInt(6, x);
             statement.setInt(7, y);
@@ -1265,7 +1378,7 @@ public class PhysDB extends Database {
             // Cache it
             if (protection != null) {
                 cache.addProtection(protection);
-                protectionCount ++;
+                protectionCount++;
             }
 
             // return the newly created protection
@@ -1333,15 +1446,15 @@ public class PhysDB extends Database {
      * @param player
      */
     public void invalidateHistory(String player) {
-       try {
-           PreparedStatement statement = prepare("UPDATE " + prefix + "history SET status = ? WHERE Lower(player) = Lower(?)");
-           statement.setInt(1, History.Status.INACTIVE.ordinal());
-           statement.setString(2, player);
+        try {
+            PreparedStatement statement = prepare("UPDATE " + prefix + "history SET status = ? WHERE Lower(player) = Lower(?)");
+            statement.setInt(1, History.Status.INACTIVE.ordinal());
+            statement.setString(2, player);
 
-           statement.executeUpdate();
-       } catch (SQLException e) {
-           printException(e);
-       }
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            printException(e);
+        }
     }
 
     /**
@@ -1734,6 +1847,132 @@ public class PhysDB extends Database {
     }
 
     /**
+     * Get a player's info from the database
+     *
+     * @param id
+     * @return
+     */
+    public PlayerInfo getPlayerInfo(int id) {
+        try {
+            PreparedStatement statement = prepare("SELECT id, uuid, name FROM " + prefix + "players WHERE id = ?");
+            statement.setInt(1, id);
+            ResultSet set = statement.executeQuery();
+
+            if (set.next()) {
+                PlayerInfo playerInfo = new PlayerInfo(set.getInt("id"), UUID.fromString(set.getString("uuid")), set.getString("name"));
+                set.close();
+                return playerInfo;
+            }
+
+            set.close();
+        } catch (SQLException e) {
+            printException(e);
+        }
+
+        return null;
+    }
+
+    /**
+     * Create a player info and return it
+     *
+     * @param uuid
+     * @param playerName
+     * @return
+     */
+    public PlayerInfo getOrCreatePlayerInfo(UUID uuid, String playerName) {
+        PlayerInfo playerInfo = getPlayerInfo(uuid);
+
+        if (playerInfo != null) {
+            return playerInfo;
+        }
+
+        try {
+            PreparedStatement statement = prepare("INSERT INTO " + prefix + "players (uuid, name) VALUES (?, ?)");
+
+            statement.setString(1, uuid == null ? null : uuid.toString());
+            statement.setString(2, playerName);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            printException(e);
+        }
+
+        return getPlayerInfo(uuid);
+    }
+
+    /**
+     * Search for a player given their name. More than one player might be known to have that name.
+     *
+     * @param playerName
+     * @return
+     */
+    public List<PlayerInfo> getPlayerInfo(String playerName) {
+        List<PlayerInfo> res = new ArrayList<PlayerInfo>();
+
+        try {
+            PreparedStatement statement = prepare("SELECT id, uuid, name FROM " + prefix + "players WHERE LOWER(name) = LOWER(?)");
+            statement.setString(1, playerName);
+            ResultSet set = statement.executeQuery();
+
+            while (set.next()) {
+                PlayerInfo playerInfo = new PlayerInfo(set.getInt("id"), UUID.fromString(set.getString("uuid")), set.getString("name"));
+                res.add(playerInfo);
+            }
+
+            set.close();
+        } catch (SQLException e) {
+            printException(e);
+        }
+
+        return res;
+    }
+
+    /**
+     * Search for a player given their UUID
+     *
+     * @param uuid
+     * @return
+     */
+    public PlayerInfo getPlayerInfo(UUID uuid) {
+        try {
+            PreparedStatement statement = prepare("SELECT id, uuid, name FROM " + prefix + "players WHERE LOWER(uuid) = LOWER(?)");
+            statement.setString(1, uuid.toString());
+            ResultSet set = statement.executeQuery();
+
+            while (set.next()) {
+                PlayerInfo playerInfo = new PlayerInfo(set.getInt("id"), UUID.fromString(set.getString("uuid")), set.getString("name"));
+                set.close();
+                return playerInfo;
+            }
+
+            set.close();
+        } catch (SQLException e) {
+            printException(e);
+        }
+
+        return null;
+    }
+
+    /**
+     * Save a player's info to the database
+     *
+     * @param playerInfo
+     */
+    public void savePlayerInfo(PlayerInfo playerInfo) {
+        try {
+            PreparedStatement statement = prepare("REPLACE INTO " + prefix + "players (id, uuid, name) VALUES (?, ?, ?)");
+
+            statement.setInt(1, playerInfo.getId());
+            statement.setString(2, playerInfo.getUUID().toString());
+            statement.setString(3, playerInfo.getName());
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            printException(e);
+        }
+    }
+
+    /**
      * Save a protection to the database
      *
      * @param protection
@@ -1747,7 +1986,7 @@ public class PhysDB extends Database {
             statement.setInt(3, protection.getBlockId());
             statement.setString(4, protection.getWorld());
             statement.setString(5, protection.getData().toJSONString());
-            statement.setString(6, protection.getOwner());
+            statement.setInt(6, protection.getOwner().getId());
             statement.setString(7, protection.getPassword());
             statement.setInt(8, protection.getX());
             statement.setInt(9, protection.getY());
@@ -1773,8 +2012,19 @@ public class PhysDB extends Database {
 
             int affected = statement.executeUpdate();
 
-            if (affected >= 1) {
+            if (affected > 0) {
                 protectionCount -= affected;
+            }
+
+            if (!"1".equals(uuidConversionStage)) {
+                statement = prepare("DELETE FROM " + prefix + "protections_old_converting WHERE id = ?");
+                statement.setInt(1, protectionId);
+
+                affected = statement.executeUpdate();
+
+                if (affected > 0) {
+                    protectionCount -= affected;
+                }
             }
         } catch (SQLException e) {
             printException(e);
@@ -1816,57 +2066,6 @@ public class PhysDB extends Database {
             statement.close();
         } catch (SQLException e) {
             printException(e);
-        }
-    }
-
-    /**
-     * Attempt to create an index on the table
-     *
-     * @param table
-     * @param indexName
-     * @param columns
-     */
-    private void createIndex(String table, String indexName, String columns) {
-        Statement statement = null;
-
-        try {
-            statement = connection.createStatement();
-            statement.executeUpdate("CREATE INDEX" + (currentType == Type.SQLite ? " IF NOT EXISTS" : "") + " " + indexName + " ON " + prefix + table + " (" + columns + ")");
-        } catch (Exception e) {
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
-    }
-
-    /**
-     * Attempt to create an index on the table
-     *
-     * @param indexName
-     */
-    private void dropIndex(String table, String indexName) {
-        Statement statement = null;
-
-        try {
-            statement = connection.createStatement();
-
-            if (currentType == Type.SQLite) {
-                statement.executeUpdate("DROP INDEX IF EXISTS " + indexName);
-            } else {
-                statement.executeUpdate("DROP INDEX " + indexName + " ON " + prefix + table);
-            }
-        } catch (Exception e) {
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                }
-            }
         }
     }
 

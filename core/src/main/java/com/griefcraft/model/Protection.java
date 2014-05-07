@@ -32,10 +32,10 @@ import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.util.Colors;
+import com.griefcraft.util.PlayerRegistry;
 import com.griefcraft.util.ProtectionFinder;
 import com.griefcraft.util.StringUtil;
 import com.griefcraft.util.TimeUtil;
-import com.griefcraft.util.UUIDRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -154,7 +154,7 @@ public class Protection extends AbstractSavable {
     /**
      * The owner of the chest
      */
-    private String owner;
+    private PlayerInfo owner;
 
     /**
      * The protection type
@@ -244,53 +244,37 @@ public class Protection extends AbstractSavable {
      * @return true if the protection required conversion and conversions were done
      */
     public boolean convertPlayerNamesToUUIDs() {
-        if (!needsUUIDConversion()) {
-            return false;
-        }
-
         boolean res = false;
 
-        if (!UUIDRegistry.isValidUUID(owner)) {
-            UUID uuid = UUIDRegistry.getUUID(owner);
-
-            if (uuid != null) {
-                setOwner(uuid.toString());
-                res = true;
-            }
-        }
-
         for (Permission permission : permissions) {
-            if (permission.getType() == Permission.Type.PLAYER && !UUIDRegistry.isValidUUID(permission.getName())) {
-                UUID uuid = UUIDRegistry.getUUID(permission.getName());
+            if (permission.getType() == Permission.Type.PLAYER) {
+                int id;
+                boolean needsConversion = true;
 
-                if (uuid != null) {
-                    permission.setName(uuid.toString());
-                    modified = true;
-                    res = true;
+                try {
+                    id = Integer.parseInt(permission.getName());
+
+                    if (PlayerRegistry.getPlayerInfo(id) != null) {
+                        needsConversion = false;
+                    }
+                } catch (NumberFormatException e) {
+
+                }
+
+                if (needsConversion) {
+                    PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(permission.getName());
+
+                    if (playerInfo != null) {
+                        permission.setName(Integer.toString(playerInfo.getId()));
+                        modified = true;
+                        res = true;
+                    }
                 }
             }
         }
 
+        save();
         return res;
-    }
-
-    /**
-     * Check if this protection requires conversion from plain player names to UUIDs
-     *
-     * @return true if the protection requires conversion
-     */
-    public boolean needsUUIDConversion() {
-        if (!UUIDRegistry.isValidUUID(owner)) {
-            return true;
-        }
-
-        for (Permission permission : permissions) {
-            if (permission.getType() == Permission.Type.PLAYER && !UUIDRegistry.isValidUUID(permission.getName())) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -300,7 +284,7 @@ public class Protection extends AbstractSavable {
      * @return
      */
     public String getFormattedOwnerPlayerName() {
-        return UUIDRegistry.formatPlayerName(owner);
+        return owner.prettyFormat();
     }
 
     /**
@@ -375,11 +359,7 @@ public class Protection extends AbstractSavable {
             return false;
         }
 
-        if (UUIDRegistry.isValidUUID(owner)) {
-            return UUID.fromString(owner).equals(player.getUniqueId());
-        } else {
-            return owner.equalsIgnoreCase(player.getName());
-        }
+        return player.getUniqueId().equals(owner.getUUID());
     }
 
     /**
@@ -621,7 +601,7 @@ public class Protection extends AbstractSavable {
         return id;
     }
 
-    public String getOwner() {
+    public PlayerInfo getOwner() {
         return owner;
     }
 
@@ -685,7 +665,7 @@ public class Protection extends AbstractSavable {
         this.modified = true;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(PlayerInfo owner) {
         if (removed) {
             return;
         }
@@ -908,7 +888,7 @@ public class Protection extends AbstractSavable {
      * @return the Bukkit Player object of the owner
      */
     public Player getBukkitOwner() {
-        return Bukkit.getServer().getPlayer(owner);
+        return Bukkit.getServer().getPlayer(owner.getUUID());
     }
 
     /**
