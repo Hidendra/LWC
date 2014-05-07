@@ -1925,7 +1925,8 @@ public class PhysDB extends Database {
             ResultSet set = statement.executeQuery();
 
             if (set.next()) {
-                PlayerInfo playerInfo = new PlayerInfo(set.getInt("id"), UUID.fromString(set.getString("uuid")), set.getString("name"));
+                String uuid = set.getString("uuid");
+                PlayerInfo playerInfo = new PlayerInfo(set.getInt("id"), uuid != null ? UUID.fromString(uuid) : null, set.getString("name"));
                 set.close();
                 return playerInfo;
             }
@@ -1963,7 +1964,11 @@ public class PhysDB extends Database {
             printException(e);
         }
 
-        return getPlayerInfo(uuid);
+        if (uuid != null) {
+            return getPlayerInfo(uuid);
+        } else {
+            return getPlayerInfo(playerName).get(0);
+        }
     }
 
     /**
@@ -1981,7 +1986,8 @@ public class PhysDB extends Database {
             ResultSet set = statement.executeQuery();
 
             while (set.next()) {
-                PlayerInfo playerInfo = new PlayerInfo(set.getInt("id"), UUID.fromString(set.getString("uuid")), set.getString("name"));
+                String uuid = set.getString("uuid");
+                PlayerInfo playerInfo = new PlayerInfo(set.getInt("id"), uuid != null ? UUID.fromString(uuid) : null, set.getString("name"));
                 res.add(playerInfo);
             }
 
@@ -2000,6 +2006,10 @@ public class PhysDB extends Database {
      * @return
      */
     public PlayerInfo getPlayerInfo(UUID uuid) {
+        if (uuid == null) {
+            return null;
+        }
+
         try {
             PreparedStatement statement = prepare("SELECT id, uuid, name FROM " + prefix + "players WHERE LOWER(uuid) = LOWER(?)");
             statement.setString(1, uuid.toString());
