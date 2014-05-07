@@ -66,7 +66,16 @@ public class PlayerTableWalker extends TableWalker {
 
             long time = System.currentTimeMillis() - start;
 
-            database.log("Finished handling rows " + offset + " -> " + (offset + handled) + " in " + time + "ms");
+            int end = offset + handled;
+            int total = names.size();
+
+            if (end > total) {
+                end = total;
+            }
+
+            if (end % 500 == 0 || handled == 0) {
+                database.log(String.format("[%.2f%% %d/%d] Converted %d players in %dms", ((float) end) / total * 100, end, total, handled, time));
+            }
 
             // finished walking
             if (handled == 0) {

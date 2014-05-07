@@ -16,6 +16,11 @@ public class SimpleTableWalker extends TableWalker {
      */
     private String tableName;
 
+    /**
+     * The number of rows in the table
+     */
+    private int rowCount = -1;
+
     public SimpleTableWalker(Database database, RowHandler handler, String tableName) {
         super(database, handler);
         this.tableName = database.getPrefix() + tableName;
@@ -37,6 +42,18 @@ public class SimpleTableWalker extends TableWalker {
 
     @Override
     public void run() {
+        if (rowCount == -1) {
+            try {
+                Statement statement = database.getConnection().createStatement();
+                ResultSet set = statement.executeQuery(String.format("SELECT COUNT(*) AS cnt FROM %s", tableName));
+                rowCount = set.getInt("cnt");
+                set.close();
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
         try {
             Statement statement = database.getConnection().createStatement();
             ResultSet set = statement.executeQuery(String.format("SELECT * FROM %s LIMIT %d, %d", tableName, offset, WALKS_PER_ROUND));
@@ -44,6 +61,8 @@ public class SimpleTableWalker extends TableWalker {
 
             int columnCount = metaData.getColumnCount();
             int handled = 0;
+
+            long start = System.currentTimeMillis();
 
             while (set.next()) {
                 Map<String, Object> data = new HashMap<String, Object>();
@@ -64,6 +83,18 @@ public class SimpleTableWalker extends TableWalker {
             }
 
             statement.close();
+
+            long time = System.currentTimeMillis() - start;
+
+            int end = offset + handled;
+
+            if (end > rowCount) {
+                end = rowCount;
+            }
+
+            if (end % 1000 == 0 || handled == 0) {
+                database.log(String.format("[%.2f%% %d/%d] Converted %d rows in the table %s in %dms", ((float) end) / rowCount * 100, end, rowCount, handled, tableName, time));
+            }
 
             // finished walking
             if (handled == 0) {

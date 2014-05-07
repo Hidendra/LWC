@@ -578,14 +578,10 @@ public class PhysDB extends Database {
                     if (handler instanceof PlayerRowHandler) {
                         if (isComplete) {
                             log("Completed conversion for player names");
-                        } else {
-                            log("Offset: " + offset);
                         }
                     } else if (handler instanceof ProtectionRowHandler) {
                         if (isComplete) {
                             log("Completed conversion of " + getPrefix() + "protections");
-                        } else {
-                            log("Offset: " + offset);
                         }
                     }
 
@@ -1947,10 +1943,20 @@ public class PhysDB extends Database {
      * @return
      */
     public PlayerInfo getOrCreatePlayerInfo(UUID uuid, String playerName) {
-        PlayerInfo playerInfo = getPlayerInfo(uuid);
+        if (uuid != null) {
+            PlayerInfo playerInfo = getPlayerInfo(uuid);
 
-        if (playerInfo != null) {
-            return playerInfo;
+            if (playerInfo != null) {
+                return playerInfo;
+            }
+        } else {
+            List<PlayerInfo> found = getPlayerInfo(playerName);
+
+            for (PlayerInfo playerInfo : found) {
+                if (playerInfo.getUUID() == null) {
+                    return playerInfo;
+                }
+            }
         }
 
         try {

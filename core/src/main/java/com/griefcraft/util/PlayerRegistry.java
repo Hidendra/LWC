@@ -79,8 +79,6 @@ public class PlayerRegistry {
      * @return
      */
     public static PlayerInfo getPlayerInfo(String ident) {
-        System.out.printf("getPlayerInfo(" + ident + ")");
-
         try {
             int id = Integer.parseInt(ident);
             return getPlayerInfo(id);
@@ -182,9 +180,7 @@ public class PlayerRegistry {
             PhysDB database = LWC.getInstance().getPhysicalDatabase();
 
             if (database != null) {
-                System.out.println("\tlooking up in db");
                 List<PlayerInfo> matches = database.getPlayerInfo(name);
-                System.out.println("\tdb matches = " + matches);
 
                 // TODO check if online mode / online-mode? Online mode seems to use v4 UUID, while
                 // offline mode seems to use v3 UUID
@@ -196,10 +192,7 @@ public class PlayerRegistry {
             }
 
             if (Bukkit.getOnlineMode()) {
-                System.out.println("\tlooking up via web service ...");
                 MojangProfile profile = MojangAccountTools.fetchProfile(nameLower);
-
-                System.out.println("\tweb service results = " + profile);
 
                 // The returned name is the exact casing; so we need to look for it
                 // in the case-insensitive version
