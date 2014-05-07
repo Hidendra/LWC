@@ -120,8 +120,7 @@ public class ProtectionRowHandler implements RowHandler {
         Protection protection = database.loadProtection(id);
 
         protection.convertPlayerNamesToUUIDs();
-        protection.setModified(true);
-        protection.save();
+        protection.saveNow();
     }
 
 }
