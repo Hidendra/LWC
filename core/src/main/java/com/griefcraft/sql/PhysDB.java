@@ -34,6 +34,7 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.migration.RowHandler;
 import com.griefcraft.migration.SimpleTableWalker;
 import com.griefcraft.migration.TableWalker;
+import com.griefcraft.migration.uuid.HistoryRowHandler;
 import com.griefcraft.migration.uuid.PlayerRowHandler;
 import com.griefcraft.migration.PlayerTableWalker;
 import com.griefcraft.migration.uuid.ProtectionRowHandler;
@@ -371,7 +372,7 @@ public class PhysDB extends Database {
             history.add(column);
 
             column = new Column("player");
-            column.setType("VARCHAR(255)");
+            column.setType("INTEGER");
             history.add(column);
 
             column = new Column("x");
@@ -547,8 +548,11 @@ public class PhysDB extends Database {
                     // converts player names => unique ids
                     new PlayerTableWalker(this, new PlayerRowHandler()),
 
-                    // converts protections table
-                    new SimpleTableWalker(this, new ProtectionRowHandler(), "protections_old_converting", offset)
+                    // protections table converter
+                    new SimpleTableWalker(this, new ProtectionRowHandler(), "protections_old_converting", offset),
+
+                    // history table converter
+                    new SimpleTableWalker(this, new HistoryRowHandler(), "history_old_converting", offset)
             };
 
             Observer walkerObserver = new Observer() {
@@ -587,12 +591,14 @@ public class PhysDB extends Database {
                             conversionSteps[currentStep].getHandler().onStart();
                             next.addObserver(this);
                             next.start();
-                            setInternal("uuidConversionStage", Integer.toString(currentStep));
+                            uuidConversionStage = Integer.toString(currentStep);
+                            setInternal("uuidConversionStage", uuidConversionStage);
                             setInternal("uuidConversionOffset", Integer.toString(0));
                         } else {
                             log("Completed database conversion for UUIDs");
                             conversionSteps[currentStep].getHandler().onComplete();
-                            setInternal("uuidConversionStage", "complete");
+                            uuidConversionStage = "complete";
+                            setInternal("uuidConversionStage", uuidConversionStage);
                             setInternal("uuidConversionOffset", Integer.toString(0));
                         }
                     } else {
@@ -751,7 +757,7 @@ public class PhysDB extends Database {
 
             Protection protection = resolveProtection(statement);
 
-            if (protection == null && !"complete".equals(uuidConversionStage)) {
+            if (protection == null && "1".equals(uuidConversionStage)) {
                 protection = legacyLoadProtection(id);
             }
 
@@ -1081,7 +1087,7 @@ public class PhysDB extends Database {
 
             Protection protection = resolveProtection(statement);
 
-            if (protection == null && !"complete".equals(uuidConversionStage)) {
+            if (protection == null && "1".equals(uuidConversionStage)) {
                 protection = legacyLoadProtection(worldName, x, y, z);
             }
 
@@ -1364,7 +1370,7 @@ public class PhysDB extends Database {
             if (LWC.getInstance().isHistoryEnabled() && protection != null) {
                 History transaction = protection.createHistoryObject();
 
-                transaction.setPlayer(player);
+                transaction.setPlayer(playerInfo);
                 transaction.setType(History.Type.TRANSACTION);
                 transaction.setStatus(History.Status.ACTIVE);
 
@@ -1407,7 +1413,7 @@ public class PhysDB extends Database {
             }
 
             statement.setInt(1, history.getProtectionId());
-            statement.setString(2, history.getPlayer());
+            statement.setInt(2, history.getPlayer().getId());
             statement.setInt(3, history.getX());
             statement.setInt(4, history.getY());
             statement.setInt(5, history.getZ());
@@ -1472,11 +1478,19 @@ public class PhysDB extends Database {
         int x = set.getInt("x");
         int y = set.getInt("y");
         int z = set.getInt("z");
-        String player = set.getString("player");
         int type_ord = set.getInt("type");
         int status_ord = set.getInt("status");
         String[] metadata = set.getString("metadata").split(",");
         long timestamp = set.getLong("timestamp");
+
+        Object player = set.getObject("player");
+        PlayerInfo playerInfo;
+
+        if (player instanceof String) {
+            playerInfo = PlayerRegistry.getPlayerInfo(player.toString());
+        } else {
+            playerInfo = PlayerRegistry.getPlayerInfo((Integer) player);
+        }
 
         History.Type type = History.Type.values()[type_ord];
         History.Status status = History.Status.values()[status_ord];
@@ -1484,7 +1498,7 @@ public class PhysDB extends Database {
         history.setId(historyId);
         history.setProtectionId(protectionId);
         history.setType(type);
-        history.setPlayer(player);
+        history.setPlayer(playerInfo);
         history.setX(x);
         history.setY(y);
         history.setZ(z);
@@ -1590,6 +1604,42 @@ public class PhysDB extends Database {
 
         try {
             PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE id = ?");
+            statement.setInt(1, historyId);
+
+            ResultSet set = statement.executeQuery();
+
+            if (set.next()) {
+                History history = resolveHistory(new History(), set);
+
+                set.close();
+                return history;
+            }
+
+            set.close();
+
+            if ("2".equals(uuidConversionStage)) {
+                return legacyLoadHistory(historyId);
+            }
+        } catch (SQLException e) {
+            printException(e);
+        }
+
+        return null;
+    }
+
+    /**
+     * Load all protection history that has the given history id from the legacy database
+     *
+     * @param historyId
+     * @return
+     */
+    public History legacyLoadHistory(int historyId) {
+        if (!LWC.getInstance().isHistoryEnabled()) {
+            return null;
+        }
+
+        try {
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history_old_converting WHERE id = ?");
             statement.setInt(1, historyId);
 
             ResultSet set = statement.executeQuery();
@@ -2016,7 +2066,7 @@ public class PhysDB extends Database {
                 protectionCount -= affected;
             }
 
-            if (!"1".equals(uuidConversionStage)) {
+            if ("1".equals(uuidConversionStage)) {
                 statement = prepare("DELETE FROM " + prefix + "protections_old_converting WHERE id = ?");
                 statement.setInt(1, protectionId);
 

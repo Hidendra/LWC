@@ -1,6 +1,8 @@
 package com.griefcraft.model;
 
 import com.griefcraft.lwc.LWC;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
@@ -35,6 +37,33 @@ public class PlayerInfo extends AbstractSavable {
     @Override
     public String toString() {
         return String.format("PlayerInfo(id = %d, uuid = %s, name = %s)", id, uuid != null ? uuid.toString() : "unknown", name != null ? name : "unknown");
+    }
+
+    /**
+     * Get the Bukkit player represented by this player info. This only returns non-null if they are online.
+     *
+     * @return
+     */
+    public Player getBukkitPlayer() {
+        if (uuid != null) {
+            return Bukkit.getPlayer(uuid);
+        } else {
+            return Bukkit.getPlayer(name);
+        }
+    }
+
+    /**
+     * Checks if a player is equal to the player represented to this player info
+     *
+     * @param player
+     * @return
+     */
+    public boolean equalTo(Player player) {
+        if (uuid != null) {
+            return uuid.equals(player.getUniqueId());
+        } else {
+            return name.equals(player.getName());
+        }
     }
 
     /**

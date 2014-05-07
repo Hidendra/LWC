@@ -24,7 +24,7 @@ public class ProtectionRowHandler implements RowHandler {
         PhysDB database = LWC.getInstance().getPhysicalDatabase();
 
         if (database.getInternal("uuidConversionProtectionsTableCreated") == null) {
-            database.log("Renaming old LWC db");
+            database.log("Renaming old protections table");
 
             database.executeUpdateNoException("ALTER TABLE " + database.getPrefix() + "protections RENAME TO " + database.getPrefix() + "protections_old_converting");
 
@@ -117,9 +117,7 @@ public class ProtectionRowHandler implements RowHandler {
         Protection protection = database.loadProtection(id);
 
         protection.convertPlayerNamesToUUIDs();
-        protection.save();
-
-        database.log("Converted protection: " + protection);
+        protection.saveNow();
     }
 
 }

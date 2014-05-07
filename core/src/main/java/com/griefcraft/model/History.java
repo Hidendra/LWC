@@ -88,7 +88,7 @@ public class History {
     /**
      * The player that caused the history action to be created
      */
-    private String player;
+    private PlayerInfo player;
 
     /**
      * The x coordinate of the history item
@@ -393,7 +393,7 @@ public class History {
         return protectionId;
     }
 
-    public String getPlayer() {
+    public PlayerInfo getPlayer() {
         return player;
     }
 
@@ -436,7 +436,7 @@ public class History {
         this.modified = true;
     }
 
-    public void setPlayer(String player) {
+    public void setPlayer(PlayerInfo player) {
         this.player = player;
         this.modified = true;
     }

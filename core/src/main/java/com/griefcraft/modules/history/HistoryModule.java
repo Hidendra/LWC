@@ -300,7 +300,7 @@ public class HistoryModule extends JavaModule {
         if (!lwc.isAdmin(sender)) {
             if (sender instanceof Player) {
                 // verify they actually OWN the history object
-                if (!history.getPlayer().equalsIgnoreCase(((Player) sender).getName())) {
+                if (!history.getPlayer().equalTo((Player) sender)) {
                     // Make them think no results were found
                     lwc.sendLocale(sender, "lwc.noresults");
                     return;

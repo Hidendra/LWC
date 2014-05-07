@@ -319,7 +319,7 @@ public class EconomyModule extends JavaModule {
             }
 
             // refund them :)
-            Player owner = Bukkit.getServer().getPlayer(history.getPlayer());
+            Player owner = history.getPlayer().getBukkitPlayer();
 
             // we can't pay them ..
             if (owner == null) {
