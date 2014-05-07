@@ -581,6 +581,10 @@ public class Protection extends AbstractSavable {
         }
     }
 
+    public void setModified(boolean modified) {
+        this.modified = modified;
+    }
+
     public JSONObject getData() {
         return data;
     }

@@ -26,7 +26,10 @@ public class ProtectionRowHandler implements RowHandler {
         if (database.getInternal("uuidConversionProtectionsTableCreated") == null) {
             database.log("Renaming old protections table");
 
-            database.executeUpdateNoException("ALTER TABLE " + database.getPrefix() + "protections RENAME TO " + database.getPrefix() + "protections_old_converting");
+            if (database.executeUpdateNoException("ALTER TABLE " + database.getPrefix() + "protections RENAME TO " + database.getPrefix() + "protections_old_converting")) {
+                database.log("FAILED TO RENAME PROTECTIONS TABLE");
+                return;
+            }
 
             database.log("Creating new protections table");
 
@@ -117,7 +120,8 @@ public class ProtectionRowHandler implements RowHandler {
         Protection protection = database.loadProtection(id);
 
         protection.convertPlayerNamesToUUIDs();
-        protection.saveNow();
+        protection.setModified(true);
+        protection.save();
     }
 
 }

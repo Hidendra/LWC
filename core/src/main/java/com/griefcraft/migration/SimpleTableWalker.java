@@ -46,7 +46,9 @@ public class SimpleTableWalker extends TableWalker {
             try {
                 Statement statement = database.getConnection().createStatement();
                 ResultSet set = statement.executeQuery(String.format("SELECT COUNT(*) AS cnt FROM %s", tableName));
-                rowCount = set.getInt("cnt");
+                if (set.next()) {
+                    rowCount = set.getInt("cnt");
+                }
                 set.close();
                 statement.close();
             } catch (SQLException e) {
