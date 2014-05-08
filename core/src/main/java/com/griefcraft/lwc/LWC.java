@@ -1795,8 +1795,10 @@ public class LWC {
             String localeChild = type.toString().toLowerCase();
 
             // If it's a player, convert it to UUID
+            PlayerInfo playerInfo = null;
+
             if (type == Permission.Type.PLAYER) {
-                PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(value);
+                playerInfo = PlayerRegistry.getPlayerInfo(value);
 
                 if (playerInfo != null) {
                     value = Integer.toString(playerInfo.getId());
@@ -1812,7 +1814,7 @@ public class LWC {
                 protection.save();
 
                 if (type == Permission.Type.PLAYER) {
-                    sendLocale(sender, "protection.interact.rights.register." + localeChild, "name", PlayerRegistry.formatPlayerName(value), "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
+                    sendLocale(sender, "protection.interact.rights.register." + localeChild, "name", playerInfo.prettyFormat(), "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
                 } else {
                     sendLocale(sender, "protection.interact.rights.register." + localeChild, "name", value, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
                 }
@@ -1821,7 +1823,7 @@ public class LWC {
                 protection.save();
 
                 if (type == Permission.Type.PLAYER) {
-                    sendLocale(sender, "protection.interact.rights.remove." + localeChild, "name", PlayerRegistry.formatPlayerName(value), "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
+                    sendLocale(sender, "protection.interact.rights.remove." + localeChild, "name", playerInfo.prettyFormat(), "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
                 } else {
                     sendLocale(sender, "protection.interact.rights.remove." + localeChild, "name", value, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
                 }

@@ -300,7 +300,7 @@ public class LWCPlayer implements CommandSender {
     public History createHistoryObject() {
         History history = new History();
 
-        history.setPlayer(PlayerRegistry.getPlayerInfo(player.getUniqueId()));
+        history.setPlayer(PlayerRegistry.getPlayerInfo(player));
         history.setStatus(History.Status.INACTIVE);
 
         return history;

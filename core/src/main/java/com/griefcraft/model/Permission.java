@@ -182,7 +182,7 @@ public class Permission {
         StringBuilder builder = new StringBuilder();
         builder.append(Colors.Yellow);
         if (type == Type.PLAYER) {
-            PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(getName());
+            PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(Integer.parseInt(getName()));
             builder.append(playerInfo.prettyFormat());
         } else {
             builder.append(getName());

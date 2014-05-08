@@ -67,7 +67,6 @@ public class PlayerRegistry {
      * @return
      */
     public static PlayerInfo getPlayerInfo(Player player) {
-        // TODO check if they're an unknown player + save
         return getPlayerInfo(player.getUniqueId());
     }
 
@@ -204,18 +203,6 @@ public class PlayerRegistry {
                 // in the case-insensitive version
                 if (profile != null && database != null) {
                     PlayerInfo found = database.getOrCreatePlayerInfo(profile.getUUID(), profile.getName());
-                    updateCache(found);
-                    return found;
-                }
-            } else {
-                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(name);
-
-                if (offlinePlayer != null && offlinePlayer.getUniqueId() != null) {
-                    if (offlinePlayer.getName() != null) {
-                        name = offlinePlayer.getName();
-                    }
-
-                    PlayerInfo found = database.getOrCreatePlayerInfo(offlinePlayer.getUniqueId(), name);
                     updateCache(found);
                     return found;
                 }
