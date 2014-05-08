@@ -63,6 +63,17 @@ public class PlayerRegistry {
     /**
      * Get a player's info by their internal id
      *
+     * @param player
+     * @return
+     */
+    public static PlayerInfo getPlayerInfo(Player player) {
+        // TODO check if they're an unknown player + save
+        return getPlayerInfo(player.getUniqueId());
+    }
+
+    /**
+     * Get a player's info by their internal id
+     *
      * @param id
      * @return
      */

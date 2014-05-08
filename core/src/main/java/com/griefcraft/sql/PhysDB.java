@@ -28,7 +28,6 @@
 
 package com.griefcraft.sql;
 
-import com.griefcraft.cache.LRUCache;
 import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.migration.RowHandler;
@@ -43,8 +42,6 @@ import com.griefcraft.model.History;
 import com.griefcraft.model.Permission;
 import com.griefcraft.model.PlayerInfo;
 import com.griefcraft.model.Protection;
-import com.griefcraft.modules.limits.LimitsModule;
-import com.griefcraft.scripting.Module;
 import com.griefcraft.util.PlayerRegistry;
 import com.griefcraft.util.config.Configuration;
 import org.bukkit.Material;
@@ -1379,7 +1376,7 @@ public class PhysDB extends Database {
                     transaction.setStatus(History.Status.ACTIVE);
 
                     // store the player that created the protection
-                    transaction.addMetaData("creator=" + player);
+                    transaction.setMetaData("creator", Integer.toString(PlayerRegistry.getPlayerInfo(player).getId()));
 
                     // now sync the history object to the database
                     transaction.saveNow();
@@ -1489,7 +1486,7 @@ public class PhysDB extends Database {
         int z = set.getInt("z");
         int type_ord = set.getInt("type");
         int status_ord = set.getInt("status");
-        String[] metadata = set.getString("metadata").split(",");
+        String metadata = set.getString("metadata");
         long timestamp = set.getLong("timestamp");
 
         Object player = set.getObject("player");
@@ -1512,8 +1509,9 @@ public class PhysDB extends Database {
         history.setY(y);
         history.setZ(z);
         history.setStatus(status);
-        history.setMetaData(metadata);
         history.setTimestamp(timestamp);
+
+        history.decodeMetaData(metadata);
 
         return history;
     }

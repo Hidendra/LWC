@@ -38,6 +38,7 @@ import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.util.Colors;
+import com.griefcraft.util.PlayerRegistry;
 import com.griefcraft.util.TimeUtil;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -204,10 +205,10 @@ public class HistoryModule extends JavaModule {
                 "location", String.format("[%d %d %d]", history.getX(), history.getY(), history.getZ()),
                 "status", history.getStatus(), "type", history.getType(),
                 "protection", (protection == null ? "n/a" : protection),
-                "creator", history.getString("creator"),
+                "creator", PlayerRegistry.getPlayerInfo(history.getInteger("creator")),
                 "currencyname", lwc.getCurrency().getMoneyName());
         if (history.hasKey("destroyer")) {
-            lwc.sendLocale(sender, "lwc.history.details.destroyer", "player", history.getString("destroyer"));
+            lwc.sendLocale(sender, "lwc.history.details.destroyer", "player", PlayerRegistry.getPlayerInfo(history.getInteger("destroyer")));
         }
 
         // New line!

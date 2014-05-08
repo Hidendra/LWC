@@ -8,6 +8,7 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.sql.Column;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.sql.Table;
+import com.griefcraft.util.PlayerRegistry;
 
 import java.util.Map;
 
@@ -32,7 +33,14 @@ public class HistoryRowHandler implements RowHandler {
 
         History history = database.loadHistory(id);
 
-        // TODO convert history metadata
+        if (history.hasKey("creator")) {
+            history.setMetaData("creator", Integer.toString(PlayerRegistry.getPlayerInfo(history.getString("creator")).getId()));
+        }
+
+        if (history.hasKey("destroyer")) {
+            history.setMetaData("destroyer", Integer.toString(PlayerRegistry.getPlayerInfo(history.getString("destroyer")).getId()));
+        }
+
         history.setExists(false);
         history.saveNow();
     }

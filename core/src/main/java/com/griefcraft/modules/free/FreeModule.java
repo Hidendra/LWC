@@ -39,6 +39,7 @@ import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
+import com.griefcraft.util.PlayerRegistry;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -77,8 +78,8 @@ public class FreeModule extends JavaModule {
                         continue;
                     }
 
-                    history.addMetaData("destroyer=" + player.getName());
-                    history.addMetaData("destroyerTime=" + System.currentTimeMillis() / 1000L);
+                    history.setMetaData("destroyer", Integer.toString(PlayerRegistry.getPlayerInfo(player).getId()));
+                    history.setMetaData("destroyerTime", Long.toString(System.currentTimeMillis() / 1000L));
                 }
 
                 protection.remove();

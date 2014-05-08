@@ -41,7 +41,6 @@ import com.griefcraft.scripting.event.LWCProtectionRegistrationPostEvent;
 import com.griefcraft.scripting.event.LWCProtectionRemovePostEvent;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.config.Configuration;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -258,17 +257,17 @@ public class EconomyModule extends JavaModule {
         History history = transactions.get(transactions.size() - 1);
 
         // add the price
-        history.addMetaData("charge=" + charge);
+        history.setMetaData("charge", Double.toString(charge));
 
         // was it a discount?
         if (usedDiscount) {
-            history.addMetaData("discount=true");
+            history.setMetaData("discount", Boolean.toString(true));
 
             // Was the discount's id non-null?
             String discountId = resolveValue(protection.getBukkitOwner(), "discount.id");
 
             if (!discountId.isEmpty()) {
-                history.addMetaData("discountId=" + discountId);
+                history.setMetaData("discountId", discountId);
             }
         }
 
