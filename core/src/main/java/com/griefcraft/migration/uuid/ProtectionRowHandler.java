@@ -121,6 +121,7 @@ public class ProtectionRowHandler implements RowHandler {
 
         protection.convertPlayerNamesToUUIDs();
         protection.saveNow();
+        protection.removeCache();
     }
 
 }

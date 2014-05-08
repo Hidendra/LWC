@@ -2,6 +2,7 @@ package com.griefcraft.migration;
 
 import com.griefcraft.sql.Database;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -57,8 +58,10 @@ public class SimpleTableWalker extends TableWalker {
         }
 
         try {
-            Statement statement = database.getConnection().createStatement();
-            ResultSet set = statement.executeQuery(String.format("SELECT * FROM %s LIMIT %d, %d", tableName, offset, WALKS_PER_ROUND));
+            PreparedStatement statement = database.prepare("SELECT * FROM " + tableName + " LIMIT ?, ?");
+            statement.setInt(1, offset);
+            statement.setInt(2, WALKS_PER_ROUND);
+            ResultSet set = statement.executeQuery();
             ResultSetMetaData metaData = set.getMetaData();
 
             int columnCount = metaData.getColumnCount();
@@ -66,8 +69,10 @@ public class SimpleTableWalker extends TableWalker {
 
             long start = System.currentTimeMillis();
 
+            Map<String, Object> data = new HashMap<String, Object>();
+
             while (set.next()) {
-                Map<String, Object> data = new HashMap<String, Object>();
+                data.clear();
 
                 for (int i = 1; i < columnCount; i++) {
                     String name = metaData.getColumnName(i);
@@ -85,7 +90,6 @@ public class SimpleTableWalker extends TableWalker {
             }
 
             set.close();
-            statement.close();
 
             long time = System.currentTimeMillis() - start;
 
