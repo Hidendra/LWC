@@ -3,6 +3,7 @@ package com.griefcraft.migration.uuid;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.migration.RowHandler;
 import com.griefcraft.migration.TableWalker;
+import com.griefcraft.model.History;
 import com.griefcraft.model.PlayerInfo;
 import com.griefcraft.model.Protection;
 import com.griefcraft.sql.Column;
@@ -95,9 +96,66 @@ public class ProtectionRowHandler implements RowHandler {
 
             database.log("Restoring indexes");
 
-            database.createIndex("protections", "protections_main", "x, y, z, world");
-            database.createIndex("protections", "protections_utility", "owner");
-            database.createIndex("protections", "protections_type", "type");
+            database.createIndex("protections", "protections_v2_main", "x, y, z, world");
+            database.createIndex("protections", "protections_v2_utility", "owner");
+            database.createIndex("protections", "protections_v2_type", "type");
+
+            database.executeUpdateNoException("ALTER TABLE " + database.getPrefix() + "history RENAME TO " + database.getPrefix() + "history_old_converting");
+
+            database.log("Creating new history table");
+
+            // ensure the new table exists
+            Table history = new Table(database, "history");
+            {
+                column = new Column("id");
+                column.setType("INTEGER");
+                column.setPrimary(true);
+                history.add(column);
+
+                column = new Column("protectionId");
+                column.setType("INTEGER");
+                history.add(column);
+
+                column = new Column("player");
+                column.setType("INTEGER");
+                history.add(column);
+
+                column = new Column("x");
+                column.setType("INTEGER");
+                history.add(column);
+
+                column = new Column("y");
+                column.setType("INTEGER");
+                history.add(column);
+
+                column = new Column("z");
+                column.setType("INTEGER");
+                history.add(column);
+
+                column = new Column("type");
+                column.setType("INTEGER");
+                history.add(column);
+
+                column = new Column("status");
+                column.setType("INTEGER");
+                history.add(column);
+
+                column = new Column("metadata");
+                column.setType("VARCHAR(255)");
+                history.add(column);
+
+                column = new Column("timestamp");
+                column.setType("long");
+                history.add(column);
+            }
+
+            history.execute();
+
+            database.log("Restoring indexes");
+
+            database.createIndex("history", "history_v2_main", "protectionId");
+            database.createIndex("history", "history_v2_utility", "player");
+            database.createIndex("history", "history_v2_utility2", "x, y, z");
 
             database.setInternal("uuidConversionProtectionsTableCreated", "true");
         }
