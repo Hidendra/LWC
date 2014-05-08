@@ -740,22 +740,24 @@ public class PhysDB extends Database {
             return cached;
         }
 
-        try {
-            PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE id = ?");
-            statement.setInt(1, id);
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE id = ?");
+                statement.setInt(1, id);
 
-            Protection protection = resolveProtection(statement);
+                Protection protection = resolveProtection(statement);
 
-            if (protection == null && "1".equals(uuidConversionStage)) {
-                protection = legacyLoadProtection(id);
+                if (protection == null && "1".equals(uuidConversionStage)) {
+                    protection = legacyLoadProtection(id);
+                }
+
+                if (protection != null) {
+                    cache.addProtection(protection);
+                    return protection;
+                }
+            } catch (SQLException e) {
+                printException(e);
             }
-
-            if (protection != null) {
-                cache.addProtection(protection);
-                return protection;
-            }
-        } catch (SQLException e) {
-            printException(e);
         }
 
         return null;
@@ -1067,27 +1069,29 @@ public class PhysDB extends Database {
         }
         // System.out.println("loadProtection() => QUERYING");
 
-        try {
-            PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE x = ? AND y = ? AND z = ? AND world = ?");
-            statement.setInt(1, x);
-            statement.setInt(2, y);
-            statement.setInt(3, z);
-            statement.setString(4, worldName);
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE x = ? AND y = ? AND z = ? AND world = ?");
+                statement.setInt(1, x);
+                statement.setInt(2, y);
+                statement.setInt(3, z);
+                statement.setString(4, worldName);
 
-            Protection protection = resolveProtection(statement);
+                Protection protection = resolveProtection(statement);
 
-            if (protection == null && "1".equals(uuidConversionStage)) {
-                protection = legacyLoadProtection(worldName, x, y, z);
+                if (protection == null && "1".equals(uuidConversionStage)) {
+                    protection = legacyLoadProtection(worldName, x, y, z);
+                }
+
+                if (protection != null) {
+                    // cache the protection
+                    cache.addProtection(protection);
+                }
+
+                return protection;
+            } catch (SQLException e) {
+                printException(e);
             }
-
-            if (protection != null) {
-                // cache the protection
-                cache.addProtection(protection);
-            }
-
-            return protection;
-        } catch (SQLException e) {
-            printException(e);
         }
 
         return null;
@@ -1183,20 +1187,22 @@ public class PhysDB extends Database {
             return protections;
         }
 
-        try {
-            PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE world = ? AND x >= ? AND x <= ? AND y >= ? AND y <= ? AND z >= ? AND z <= ?");
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE world = ? AND x >= ? AND x <= ? AND y >= ? AND y <= ? AND z >= ? AND z <= ?");
 
-            statement.setString(1, world);
-            statement.setInt(2, baseX - radius);
-            statement.setInt(3, baseX + radius);
-            statement.setInt(4, baseY - radius);
-            statement.setInt(5, baseY + radius);
-            statement.setInt(6, baseZ - radius);
-            statement.setInt(7, baseZ + radius);
+                statement.setString(1, world);
+                statement.setInt(2, baseX - radius);
+                statement.setInt(3, baseX + radius);
+                statement.setInt(4, baseY - radius);
+                statement.setInt(5, baseY + radius);
+                statement.setInt(6, baseZ - radius);
+                statement.setInt(7, baseZ + radius);
 
-            return resolveProtections(statement);
-        } catch (Exception e) {
-            printException(e);
+                return resolveProtections(statement);
+            } catch (Exception e) {
+                printException(e);
+            }
         }
 
         return new ArrayList<Protection>();
@@ -1232,20 +1238,22 @@ public class PhysDB extends Database {
      * @return list of Protection objects found
      */
     public List<Protection> loadProtections(String world, int x1, int x2, int y1, int y2, int z1, int z2) {
-        try {
-            PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE world = ? AND x >= ? AND x <= ? AND y >= ? AND y <= ? AND z >= ? AND z <= ?");
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE world = ? AND x >= ? AND x <= ? AND y >= ? AND y <= ? AND z >= ? AND z <= ?");
 
-            statement.setString(1, world);
-            statement.setInt(2, x1);
-            statement.setInt(3, x2);
-            statement.setInt(4, y1);
-            statement.setInt(5, y2);
-            statement.setInt(6, z1);
-            statement.setInt(7, z2);
+                statement.setString(1, world);
+                statement.setInt(2, x1);
+                statement.setInt(3, x2);
+                statement.setInt(4, y1);
+                statement.setInt(5, y2);
+                statement.setInt(6, z1);
+                statement.setInt(7, z2);
 
-            return resolveProtections(statement);
-        } catch (Exception e) {
-            printException(e);
+                return resolveProtections(statement);
+            } catch (Exception e) {
+                printException(e);
+            }
         }
 
         return new ArrayList<Protection>();
@@ -1262,13 +1270,15 @@ public class PhysDB extends Database {
 
         PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(player);
 
-        try {
-            PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE owner = ?");
-            statement.setInt(1, playerInfo.getId());
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE owner = ?");
+                statement.setInt(1, playerInfo.getId());
 
-            return resolveProtections(statement);
-        } catch (Exception e) {
-            printException(e);
+                return resolveProtections(statement);
+            } catch (Exception e) {
+                printException(e);
+            }
         }
 
         return protections;
@@ -1287,15 +1297,17 @@ public class PhysDB extends Database {
 
         PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(player);
 
-        try {
-            PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE owner = ? ORDER BY id DESC limit ?,?");
-            statement.setInt(1, playerInfo.getId());
-            statement.setInt(2, start);
-            statement.setInt(3, count);
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE owner = ? ORDER BY id DESC limit ?,?");
+                statement.setInt(1, playerInfo.getId());
+                statement.setInt(2, start);
+                statement.setInt(3, count);
 
-            return resolveProtections(statement);
-        } catch (Exception e) {
-            printException(e);
+                return resolveProtections(statement);
+            } catch (Exception e) {
+                printException(e);
+            }
         }
 
         return protections;
@@ -1336,52 +1348,54 @@ public class PhysDB extends Database {
         ProtectionCache cache = LWC.getInstance().getProtectionCache();
         PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(player);
 
-        try {
-            PreparedStatement statement = prepare("INSERT INTO " + prefix + "protections (blockId, type, world, owner, password, x, y, z, date, last_accessed) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("INSERT INTO " + prefix + "protections (blockId, type, world, owner, password, x, y, z, date, last_accessed) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-            statement.setInt(1, blockId);
-            statement.setInt(2, type.ordinal());
-            statement.setString(3, world);
-            statement.setInt(4, playerInfo.getId());
-            statement.setString(5, data);
-            statement.setInt(6, x);
-            statement.setInt(7, y);
-            statement.setInt(8, z);
-            statement.setString(9, new Timestamp(new Date().getTime()).toString());
-            statement.setLong(10, System.currentTimeMillis() / 1000L);
+                statement.setInt(1, blockId);
+                statement.setInt(2, type.ordinal());
+                statement.setString(3, world);
+                statement.setInt(4, playerInfo.getId());
+                statement.setString(5, data);
+                statement.setInt(6, x);
+                statement.setInt(7, y);
+                statement.setInt(8, z);
+                statement.setString(9, new Timestamp(new Date().getTime()).toString());
+                statement.setLong(10, System.currentTimeMillis() / 1000L);
 
-            statement.executeUpdate();
+                statement.executeUpdate();
 
-            // We need to create the initial transaction for this protection
-            // this transaction is viewable and modifiable during POST_REGISTRATION
-            Protection protection = loadProtection(world, x, y, z, true);
-            protection.removeCache();
+                // We need to create the initial transaction for this protection
+                // this transaction is viewable and modifiable during POST_REGISTRATION
+                Protection protection = loadProtection(world, x, y, z, true);
+                protection.removeCache();
 
-            // if history logging is enabled, create it
-            if (LWC.getInstance().isHistoryEnabled() && protection != null) {
-                History transaction = protection.createHistoryObject();
+                // if history logging is enabled, create it
+                if (LWC.getInstance().isHistoryEnabled() && protection != null) {
+                    History transaction = protection.createHistoryObject();
 
-                transaction.setPlayer(playerInfo);
-                transaction.setType(History.Type.TRANSACTION);
-                transaction.setStatus(History.Status.ACTIVE);
+                    transaction.setPlayer(playerInfo);
+                    transaction.setType(History.Type.TRANSACTION);
+                    transaction.setStatus(History.Status.ACTIVE);
 
-                // store the player that created the protection
-                transaction.addMetaData("creator=" + player);
+                    // store the player that created the protection
+                    transaction.addMetaData("creator=" + player);
 
-                // now sync the history object to the database
-                transaction.saveNow();
+                    // now sync the history object to the database
+                    transaction.saveNow();
+                }
+
+                // Cache it
+                if (protection != null) {
+                    cache.addProtection(protection);
+                    protectionCount++;
+                }
+
+                // return the newly created protection
+                return protection;
+            } catch (SQLException e) {
+                printException(e);
             }
-
-            // Cache it
-            if (protection != null) {
-                cache.addProtection(protection);
-                protectionCount++;
-            }
-
-            // return the newly created protection
-            return protection;
-        } catch (SQLException e) {
-            printException(e);
         }
 
         return null;
@@ -1445,14 +1459,16 @@ public class PhysDB extends Database {
     public void invalidateHistory(String player) {
         PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(player);
 
-        try {
-            PreparedStatement statement = prepare("UPDATE " + prefix + "history SET status = ? WHERE player = ?");
-            statement.setInt(1, History.Status.INACTIVE.ordinal());
-            statement.setInt(2, playerInfo.getId());
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("UPDATE " + prefix + "history SET status = ? WHERE player = ?");
+                statement.setInt(1, History.Status.INACTIVE.ordinal());
+                statement.setInt(2, playerInfo.getId());
 
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            printException(e);
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                printException(e);
+            }
         }
     }
 
@@ -1515,24 +1531,26 @@ public class PhysDB extends Database {
             return temp;
         }
 
-        try {
-            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE protectionId = ? ORDER BY id DESC");
-            statement.setInt(1, protection.getId());
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE protectionId = ? ORDER BY id DESC");
+                statement.setInt(1, protection.getId());
 
-            ResultSet set = statement.executeQuery();
+                ResultSet set = statement.executeQuery();
 
-            while (set.next()) {
-                History history = resolveHistory(protection.createHistoryObject(), set);
+                while (set.next()) {
+                    History history = resolveHistory(protection.createHistoryObject(), set);
 
-                if (history != null) {
-                    // seems ok
-                    temp.add(history);
+                    if (history != null) {
+                        // seems ok
+                        temp.add(history);
+                    }
                 }
-            }
 
-            set.close();
-        } catch (SQLException e) {
-            printException(e);
+                set.close();
+            } catch (SQLException e) {
+                printException(e);
+            }
         }
 
         return temp;
@@ -1563,24 +1581,26 @@ public class PhysDB extends Database {
 
         PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(player);
 
-        try {
-            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE player = ? ORDER BY id DESC");
-            statement.setInt(1, playerInfo.getId());
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE player = ? ORDER BY id DESC");
+                statement.setInt(1, playerInfo.getId());
 
-            ResultSet set = statement.executeQuery();
+                ResultSet set = statement.executeQuery();
 
-            while (set.next()) {
-                History history = resolveHistory(new History(), set);
+                while (set.next()) {
+                    History history = resolveHistory(new History(), set);
 
-                if (history != null) {
-                    // seems ok
-                    temp.add(history);
+                    if (history != null) {
+                        // seems ok
+                        temp.add(history);
+                    }
                 }
-            }
 
-            set.close();
-        } catch (SQLException e) {
-            printException(e);
+                set.close();
+            } catch (SQLException e) {
+                printException(e);
+            }
         }
 
         return temp;
@@ -1597,26 +1617,28 @@ public class PhysDB extends Database {
             return null;
         }
 
-        try {
-            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE id = ?");
-            statement.setInt(1, historyId);
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE id = ?");
+                statement.setInt(1, historyId);
 
-            ResultSet set = statement.executeQuery();
+                ResultSet set = statement.executeQuery();
 
-            if (set.next()) {
-                History history = resolveHistory(new History(), set);
+                if (set.next()) {
+                    History history = resolveHistory(new History(), set);
+
+                    set.close();
+                    return history;
+                }
 
                 set.close();
-                return history;
-            }
 
-            set.close();
-
-            if ("2".equals(uuidConversionStage)) {
-                return legacyLoadHistory(historyId);
+                if ("2".equals(uuidConversionStage)) {
+                    return legacyLoadHistory(historyId);
+                }
+            } catch (SQLException e) {
+                printException(e);
             }
-        } catch (SQLException e) {
-            printException(e);
         }
 
         return null;
@@ -1683,26 +1705,28 @@ public class PhysDB extends Database {
 
         PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(player);
 
-        try {
-            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE player = ? ORDER BY id DESC LIMIT ?,?");
-            statement.setInt(1, playerInfo.getId());
-            statement.setInt(2, start);
-            statement.setInt(3, count);
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE player = ? ORDER BY id DESC LIMIT ?,?");
+                statement.setInt(1, playerInfo.getId());
+                statement.setInt(2, start);
+                statement.setInt(3, count);
 
-            ResultSet set = statement.executeQuery();
+                ResultSet set = statement.executeQuery();
 
-            while (set.next()) {
-                History history = resolveHistory(new History(), set);
+                while (set.next()) {
+                    History history = resolveHistory(new History(), set);
 
-                if (history != null) {
-                    // seems ok
-                    temp.add(history);
+                    if (history != null) {
+                        // seems ok
+                        temp.add(history);
+                    }
                 }
-            }
 
-            set.close();
-        } catch (SQLException e) {
-            printException(e);
+                set.close();
+            } catch (SQLException e) {
+                printException(e);
+            }
         }
 
         return temp;
@@ -1720,22 +1744,24 @@ public class PhysDB extends Database {
             return temp;
         }
 
-        try {
-            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history ORDER BY id DESC");
-            ResultSet set = statement.executeQuery();
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history ORDER BY id DESC");
+                ResultSet set = statement.executeQuery();
 
-            while (set.next()) {
-                History history = resolveHistory(new History(), set);
+                while (set.next()) {
+                    History history = resolveHistory(new History(), set);
 
-                if (history != null) {
-                    // seems ok
-                    temp.add(history);
+                    if (history != null) {
+                        // seems ok
+                        temp.add(history);
+                    }
                 }
-            }
 
-            set.close();
-        } catch (SQLException e) {
-            printException(e);
+                set.close();
+            } catch (SQLException e) {
+                printException(e);
+            }
         }
 
         return temp;
@@ -1753,23 +1779,25 @@ public class PhysDB extends Database {
             return temp;
         }
 
-        try {
-            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE status = ? ORDER BY id DESC");
-            statement.setInt(1, status.ordinal());
-            ResultSet set = statement.executeQuery();
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE status = ? ORDER BY id DESC");
+                statement.setInt(1, status.ordinal());
+                ResultSet set = statement.executeQuery();
 
-            while (set.next()) {
-                History history = resolveHistory(new History(), set);
+                while (set.next()) {
+                    History history = resolveHistory(new History(), set);
 
-                if (history != null) {
-                    // seems ok
-                    temp.add(history);
+                    if (history != null) {
+                        // seems ok
+                        temp.add(history);
+                    }
                 }
-            }
 
-            set.close();
-        } catch (SQLException e) {
-            printException(e);
+                set.close();
+            } catch (SQLException e) {
+                printException(e);
+            }
         }
 
         return temp;
@@ -1790,26 +1818,28 @@ public class PhysDB extends Database {
             return temp;
         }
 
-        try {
-            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE x = ? AND y = ? AND z = ?");
-            statement.setInt(1, x);
-            statement.setInt(2, y);
-            statement.setInt(3, z);
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE x = ? AND y = ? AND z = ?");
+                statement.setInt(1, x);
+                statement.setInt(2, y);
+                statement.setInt(3, z);
 
-            ResultSet set = statement.executeQuery();
+                ResultSet set = statement.executeQuery();
 
-            while (set.next()) {
-                History history = resolveHistory(new History(), set);
+                while (set.next()) {
+                    History history = resolveHistory(new History(), set);
 
-                if (history != null) {
-                    // seems ok
-                    temp.add(history);
+                    if (history != null) {
+                        // seems ok
+                        temp.add(history);
+                    }
                 }
-            }
 
-            set.close();
-        } catch (SQLException e) {
-            printException(e);
+                set.close();
+            } catch (SQLException e) {
+                printException(e);
+            }
         }
 
         return temp;
@@ -1833,27 +1863,29 @@ public class PhysDB extends Database {
 
         PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(player);
 
-        try {
-            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE player = ? AND x = ? AND y = ? AND z = ?");
-            statement.setInt(1, playerInfo.getId());
-            statement.setInt(2, x);
-            statement.setInt(3, y);
-            statement.setInt(4, z);
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE player = ? AND x = ? AND y = ? AND z = ?");
+                statement.setInt(1, playerInfo.getId());
+                statement.setInt(2, x);
+                statement.setInt(3, y);
+                statement.setInt(4, z);
 
-            ResultSet set = statement.executeQuery();
+                ResultSet set = statement.executeQuery();
 
-            while (set.next()) {
-                History history = resolveHistory(new History(), set);
+                while (set.next()) {
+                    History history = resolveHistory(new History(), set);
 
-                if (history != null) {
-                    // seems ok
-                    temp.add(history);
+                    if (history != null) {
+                        // seems ok
+                        temp.add(history);
+                    }
                 }
-            }
 
-            set.close();
-        } catch (SQLException e) {
-            printException(e);
+                set.close();
+            } catch (SQLException e) {
+                printException(e);
+            }
         }
 
         return temp;
@@ -1871,25 +1903,27 @@ public class PhysDB extends Database {
             return temp;
         }
 
-        try {
-            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history ORDER BY id DESC LIMIT ?,?");
-            statement.setInt(1, start);
-            statement.setInt(2, count);
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history ORDER BY id DESC LIMIT ?,?");
+                statement.setInt(1, start);
+                statement.setInt(2, count);
 
-            ResultSet set = statement.executeQuery();
+                ResultSet set = statement.executeQuery();
 
-            while (set.next()) {
-                History history = resolveHistory(new History(), set);
+                while (set.next()) {
+                    History history = resolveHistory(new History(), set);
 
-                if (history != null) {
-                    // seems ok
-                    temp.add(history);
+                    if (history != null) {
+                        // seems ok
+                        temp.add(history);
+                    }
                 }
-            }
 
-            set.close();
-        } catch (SQLException e) {
-            printException(e);
+                set.close();
+            } catch (SQLException e) {
+                printException(e);
+            }
         }
 
         return temp;
@@ -1902,21 +1936,23 @@ public class PhysDB extends Database {
      * @return
      */
     public PlayerInfo getPlayerInfo(int id) {
-        try {
-            PreparedStatement statement = prepare("SELECT id, uuid, name FROM " + prefix + "players WHERE id = ?");
-            statement.setInt(1, id);
-            ResultSet set = statement.executeQuery();
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("SELECT id, uuid, name FROM " + prefix + "players WHERE id = ?");
+                statement.setInt(1, id);
+                ResultSet set = statement.executeQuery();
 
-            if (set.next()) {
-                String uuid = set.getString("uuid");
-                PlayerInfo playerInfo = new PlayerInfo(set.getInt("id"), uuid != null ? UUID.fromString(uuid) : null, set.getString("name"));
+                if (set.next()) {
+                    String uuid = set.getString("uuid");
+                    PlayerInfo playerInfo = new PlayerInfo(set.getInt("id"), uuid != null ? UUID.fromString(uuid) : null, set.getString("name"));
+                    set.close();
+                    return playerInfo;
+                }
+
                 set.close();
-                return playerInfo;
+            } catch (SQLException e) {
+                printException(e);
             }
-
-            set.close();
-        } catch (SQLException e) {
-            printException(e);
         }
 
         return null;
@@ -1946,15 +1982,17 @@ public class PhysDB extends Database {
             }
         }
 
-        try {
-            PreparedStatement statement = prepare("INSERT INTO " + prefix + "players (uuid, name) VALUES (?, ?)");
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("INSERT INTO " + prefix + "players (uuid, name) VALUES (?, ?)");
 
-            statement.setString(1, uuid == null ? null : uuid.toString());
-            statement.setString(2, playerName);
+                statement.setString(1, uuid == null ? null : uuid.toString());
+                statement.setString(2, playerName);
 
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            printException(e);
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                printException(e);
+            }
         }
 
         if (uuid != null) {
@@ -1973,20 +2011,22 @@ public class PhysDB extends Database {
     public List<PlayerInfo> getPlayerInfo(String playerName) {
         List<PlayerInfo> res = new ArrayList<PlayerInfo>();
 
-        try {
-            PreparedStatement statement = prepare("SELECT id, uuid, name FROM " + prefix + "players WHERE LOWER(name) = LOWER(?)");
-            statement.setString(1, playerName);
-            ResultSet set = statement.executeQuery();
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("SELECT id, uuid, name FROM " + prefix + "players WHERE LOWER(name) = LOWER(?)");
+                statement.setString(1, playerName);
+                ResultSet set = statement.executeQuery();
 
-            while (set.next()) {
-                String uuid = set.getString("uuid");
-                PlayerInfo playerInfo = new PlayerInfo(set.getInt("id"), uuid != null ? UUID.fromString(uuid) : null, set.getString("name"));
-                res.add(playerInfo);
+                while (set.next()) {
+                    String uuid = set.getString("uuid");
+                    PlayerInfo playerInfo = new PlayerInfo(set.getInt("id"), uuid != null ? UUID.fromString(uuid) : null, set.getString("name"));
+                    res.add(playerInfo);
+                }
+
+                set.close();
+            } catch (SQLException e) {
+                printException(e);
             }
-
-            set.close();
-        } catch (SQLException e) {
-            printException(e);
         }
 
         return res;
@@ -2003,20 +2043,22 @@ public class PhysDB extends Database {
             return null;
         }
 
-        try {
-            PreparedStatement statement = prepare("SELECT id, uuid, name FROM " + prefix + "players WHERE LOWER(uuid) = LOWER(?)");
-            statement.setString(1, uuid.toString());
-            ResultSet set = statement.executeQuery();
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("SELECT id, uuid, name FROM " + prefix + "players WHERE LOWER(uuid) = LOWER(?)");
+                statement.setString(1, uuid.toString());
+                ResultSet set = statement.executeQuery();
 
-            while (set.next()) {
-                PlayerInfo playerInfo = new PlayerInfo(set.getInt("id"), UUID.fromString(set.getString("uuid")), set.getString("name"));
+                while (set.next()) {
+                    PlayerInfo playerInfo = new PlayerInfo(set.getInt("id"), UUID.fromString(set.getString("uuid")), set.getString("name"));
+                    set.close();
+                    return playerInfo;
+                }
+
                 set.close();
-                return playerInfo;
+            } catch (SQLException e) {
+                printException(e);
             }
-
-            set.close();
-        } catch (SQLException e) {
-            printException(e);
         }
 
         return null;
@@ -2028,16 +2070,18 @@ public class PhysDB extends Database {
      * @param playerInfo
      */
     public void savePlayerInfo(PlayerInfo playerInfo) {
-        try {
-            PreparedStatement statement = prepare("REPLACE INTO " + prefix + "players (id, uuid, name) VALUES (?, ?, ?)");
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("REPLACE INTO " + prefix + "players (id, uuid, name) VALUES (?, ?, ?)");
 
-            statement.setInt(1, playerInfo.getId());
-            statement.setString(2, playerInfo.getUUID().toString());
-            statement.setString(3, playerInfo.getName());
+                statement.setInt(1, playerInfo.getId());
+                statement.setString(2, playerInfo.getUUID().toString());
+                statement.setString(3, playerInfo.getName());
 
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            printException(e);
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                printException(e);
+            }
         }
     }
 
@@ -2047,25 +2091,27 @@ public class PhysDB extends Database {
      * @param protection
      */
     public void saveProtection(Protection protection) {
-        try {
-            PreparedStatement statement = prepare("REPLACE INTO " + prefix + "protections (id, type, blockId, world, data, owner, password, x, y, z, date, last_accessed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("REPLACE INTO " + prefix + "protections (id, type, blockId, world, data, owner, password, x, y, z, date, last_accessed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-            statement.setInt(1, protection.getId());
-            statement.setInt(2, protection.getType().ordinal());
-            statement.setInt(3, protection.getBlockId());
-            statement.setString(4, protection.getWorld());
-            statement.setString(5, protection.getData().toJSONString());
-            statement.setInt(6, protection.getOwner().getId());
-            statement.setString(7, protection.getPassword());
-            statement.setInt(8, protection.getX());
-            statement.setInt(9, protection.getY());
-            statement.setInt(10, protection.getZ());
-            statement.setString(11, protection.getCreation());
-            statement.setLong(12, protection.getLastAccessed());
+                statement.setInt(1, protection.getId());
+                statement.setInt(2, protection.getType().ordinal());
+                statement.setInt(3, protection.getBlockId());
+                statement.setString(4, protection.getWorld());
+                statement.setString(5, protection.getData().toJSONString());
+                statement.setInt(6, protection.getOwner().getId());
+                statement.setString(7, protection.getPassword());
+                statement.setInt(8, protection.getX());
+                statement.setInt(9, protection.getY());
+                statement.setInt(10, protection.getZ());
+                statement.setString(11, protection.getCreation());
+                statement.setLong(12, protection.getLastAccessed());
 
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            printException(e);
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                printException(e);
+            }
         }
     }
 
@@ -2075,52 +2121,58 @@ public class PhysDB extends Database {
      * @param protectionId the protection Id
      */
     public void removeProtection(int protectionId) {
-        try {
-            PreparedStatement statement = prepare("DELETE FROM " + prefix + "protections WHERE id = ?");
-            statement.setInt(1, protectionId);
-
-            int affected = statement.executeUpdate();
-
-            if (affected > 0) {
-                protectionCount -= affected;
-            }
-
-            if ("1".equals(uuidConversionStage)) {
-                statement = prepare("DELETE FROM " + prefix + "protections_old_converting WHERE id = ?");
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("DELETE FROM " + prefix + "protections WHERE id = ?");
                 statement.setInt(1, protectionId);
 
-                affected = statement.executeUpdate();
+                int affected = statement.executeUpdate();
 
                 if (affected > 0) {
                     protectionCount -= affected;
                 }
+
+                if ("1".equals(uuidConversionStage)) {
+                    statement = prepare("DELETE FROM " + prefix + "protections_old_converting WHERE id = ?");
+                    statement.setInt(1, protectionId);
+
+                    affected = statement.executeUpdate();
+
+                    if (affected > 0) {
+                        protectionCount -= affected;
+                    }
+                }
+            } catch (SQLException e) {
+                printException(e);
             }
-        } catch (SQLException e) {
-            printException(e);
         }
 
         // removeProtectionHistory(protectionId);
     }
 
     public void removeProtectionHistory(int protectionId) {
-        try {
-            PreparedStatement statement = prepare("DELETE FROM " + prefix + "history WHERE protectionId = ?");
-            statement.setInt(1, protectionId);
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("DELETE FROM " + prefix + "history WHERE protectionId = ?");
+                statement.setInt(1, protectionId);
 
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            printException(e);
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                printException(e);
+            }
         }
     }
 
     public void removeHistory(int historyId) {
-        try {
-            PreparedStatement statement = prepare("DELETE FROM " + prefix + "history WHERE id = ?");
-            statement.setInt(1, historyId);
+        synchronized (connection) {
+            try {
+                PreparedStatement statement = prepare("DELETE FROM " + prefix + "history WHERE id = ?");
+                statement.setInt(1, historyId);
 
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            printException(e);
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                printException(e);
+            }
         }
     }
 
@@ -2128,13 +2180,15 @@ public class PhysDB extends Database {
      * Remove **<b>ALL</b>** all of the protections registered by LWC
      */
     public void removeAllProtections() {
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate("DELETE FROM " + prefix + "protections");
-            protectionCount = 0;
-            statement.close();
-        } catch (SQLException e) {
-            printException(e);
+        synchronized (connection) {
+            try {
+                Statement statement = connection.createStatement();
+                statement.executeUpdate("DELETE FROM " + prefix + "protections");
+                protectionCount = 0;
+                statement.close();
+            } catch (SQLException e) {
+                printException(e);
+            }
         }
     }
 

@@ -243,10 +243,6 @@ public abstract class Database {
             properties.put("autoReconnect", "true");
             properties.put("user", lwc.getConfiguration().getString("database.username"));
             properties.put("password", lwc.getConfiguration().getString("database.password"));
-            properties.put("tinyInt1isBit", "false");
-            properties.put("useDynamicCharsetInfo", "false");
-            properties.put("cacheResultSetMetadata", "true");
-            properties.put("metadataCacheSize", "1000");
         }
 
         // Connect to the database
@@ -341,9 +337,20 @@ public abstract class Database {
             return null;
         }
 
-        if (useStatementCache && statementCache.containsKey(sql)) {
+        if (statementCache.containsKey(sql)) {
             Statistics.addQuery();
-            return statementCache.get(sql);
+
+            PreparedStatement statement = statementCache.get(sql);
+
+            try {
+                if (statement.isClosed()) {
+                    statementCache.remove(sql);
+                } else {
+                    return statement;
+                }
+            } catch (SQLException e) {
+                statementCache.remove(sql);
+            }
         }
 
         try {
@@ -355,7 +362,10 @@ public abstract class Database {
                 preparedStatement = connection.prepareStatement(sql);
             }
 
-            statementCache.put(sql, preparedStatement);
+            if (useStatementCache) {
+                statementCache.put(sql, preparedStatement);
+            }
+
             Statistics.addQuery();
 
             return preparedStatement;
