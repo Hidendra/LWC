@@ -343,7 +343,7 @@ public abstract class Database {
             PreparedStatement statement = statementCache.get(sql);
 
             try {
-                if (statement.isClosed()) {
+                if (getType() == Type.MySQL && statement.isClosed()) {
                     statementCache.remove(sql);
                 } else {
                     return statement;
