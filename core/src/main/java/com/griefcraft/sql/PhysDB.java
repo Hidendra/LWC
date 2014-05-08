@@ -80,6 +80,11 @@ public class PhysDB extends Database {
     private int protectionCount = 0;
 
     /**
+     * Flag for if the database is new or not
+     */
+    private boolean databaseIsNew = false;
+
+    /**
      * The current stage of UUID conversions (if any). MC 1.7+
      */
     private String uuidConversionStage = "";
@@ -521,6 +526,10 @@ public class PhysDB extends Database {
             incrementDatabaseVersion();
         }
 
+        if (databaseIsNew) {
+            setInternal("uuidConversionStage", "complete");
+        }
+
         uuidConversionStage = getInternal("uuidConversionStage");
 
         if (uuidConversionStage == null) {
@@ -706,6 +715,8 @@ public class PhysDB extends Database {
             // close everything
             set.close();
         } catch (Exception e) {
+            databaseIsNew = true;
+
             // Doesn't exist, create it
             try {
                 PreparedStatement statement = prepare("INSERT INTO " + prefix + "internal (name, value) VALUES(?, ?)");
