@@ -206,6 +206,18 @@ public class PlayerRegistry {
                     updateCache(found);
                     return found;
                 }
+            } else {
+                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(name);
+
+                if (offlinePlayer != null && offlinePlayer.getUniqueId() != null) {
+                    if (offlinePlayer.getName() != null) {
+                        name = offlinePlayer.getName();
+                    }
+
+                    PlayerInfo found = database.getOrCreatePlayerInfo(offlinePlayer.getUniqueId(), name);
+                    updateCache(found);
+                    return found;
+                }
             }
         } catch (Exception e) {
         }
