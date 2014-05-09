@@ -1,4 +1,4 @@
-package org.getlwc.sql;
+package org.getlwc.db.jdbc;
 
 import org.getlwc.util.Tuple;
 import org.getlwc.util.TwoWayHashMap;
@@ -74,7 +74,7 @@ public class JDBCLookupService {
             int size = 0;
             for (Tuple<String, Integer> tuple : database.getLookupAssociations(type)) {
                 lookupValues.put(tuple.first(), tuple.second());
-                size ++;
+                size++;
             }
 
             System.out.println(type + ": " + size + " lookup values");

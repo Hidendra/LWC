@@ -17,6 +17,7 @@ import net.canarymod.hook.world.PistonRetractHook;
 import net.canarymod.hook.world.RedstoneChangeHook;
 import net.canarymod.plugin.PluginListener;
 import org.getlwc.Block;
+import org.getlwc.EventHelper;
 import org.getlwc.ExplosionType;
 import org.getlwc.World;
 import org.getlwc.canary.LWC;
@@ -41,12 +42,12 @@ public class CanaryListener implements PluginListener {
 
     @HookHandler(ignoreCanceled = true)
     public void playerJoin(ConnectionHook event) {
-        plugin.getEngine().getEventHelper().onPlayerJoin(plugin.wrapPlayer(event.getPlayer()));
+        EventHelper.onPlayerJoin(plugin.wrapPlayer(event.getPlayer()));
     }
 
     @HookHandler(ignoreCanceled = true)
     public void playerQuit(DisconnectionHook event) {
-        plugin.getEngine().getEventHelper().onPlayerQuit(plugin.wrapPlayer(event.getPlayer()));
+        EventHelper.onPlayerQuit(plugin.wrapPlayer(event.getPlayer()));
     }
 
     @HookHandler(ignoreCanceled = true)
@@ -55,7 +56,7 @@ public class CanaryListener implements PluginListener {
         World world = plugin.getWorld(hook.getPlayer().getWorld().getName());
         Block block = new CanaryBlock(world, hook.getBlock());
 
-        boolean result = plugin.getEngine().getEventHelper().onBlockInteract(player, block);
+        boolean result = EventHelper.onBlockInteract(player, block);
 
         if (result) {
             hook.setCanceled();
@@ -68,7 +69,7 @@ public class CanaryListener implements PluginListener {
         World world = plugin.getWorld(hook.getPlayer().getWorld().getName());
         Block block = new CanaryBlock(world, hook.getBlockClicked());
 
-        boolean result = plugin.getEngine().getEventHelper().onBlockInteract(player, block);
+        boolean result = EventHelper.onBlockInteract(player, block);
 
         if (result) {
             hook.setCanceled();
@@ -81,7 +82,7 @@ public class CanaryListener implements PluginListener {
         World world = entity.getLocation().getWorld();
         Block block = new CanaryBlock(world, hook.getBlock());
 
-        boolean result = plugin.getEngine().getEventHelper().onBlockInteract(entity, block);
+        boolean result = EventHelper.onBlockInteract(entity, block);
 
         if (result) {
             hook.setCanceled();
@@ -94,7 +95,7 @@ public class CanaryListener implements PluginListener {
         World world = plugin.getWorld(hook.getPlayer().getWorld().getName());
         Block block = new CanaryBlock(world, hook.getBlock());
 
-        boolean result = plugin.getEngine().getEventHelper().onBlockBreak(player, block);
+        boolean result = EventHelper.onBlockBreak(player, block);
 
         if (result) {
             hook.setCanceled();
@@ -107,7 +108,7 @@ public class CanaryListener implements PluginListener {
         World world = plugin.getWorld(hook.getPlayer().getWorld().getName());
         Block block = new CanaryBlock(world, hook.getBlockPlaced());
 
-        boolean result = plugin.getEngine().getEventHelper().onBlockPlace(player, block);
+        boolean result = EventHelper.onBlockPlace(player, block);
 
         if (result) {
             hook.setCanceled();
@@ -120,7 +121,7 @@ public class CanaryListener implements PluginListener {
         World world = plugin.getWorld(hook.getPlayer().getWorld().getName());
         Block block = new CanaryBlock(world, hook.getSign().getBlock());
 
-        boolean result = plugin.getEngine().getEventHelper().onSignChange(player, block);
+        boolean result = EventHelper.onSignChange(player, block);
 
         if (result) {
             hook.setCanceled();
@@ -132,7 +133,7 @@ public class CanaryListener implements PluginListener {
         World world = plugin.getWorld(hook.getSourceBlock().getWorld().getName());
         Block block = new CanaryBlock(world, hook.getSourceBlock());
 
-        boolean result = plugin.getEngine().getEventHelper().onRedstoneChange(block, hook.getOldLevel(), hook.getNewLevel());
+        boolean result = EventHelper.onRedstoneChange(block, hook.getOldLevel(), hook.getNewLevel());
 
         if (result) {
             hook.setCanceled();
@@ -158,7 +159,7 @@ public class CanaryListener implements PluginListener {
             affected.add(world.getBlockAt(block.getX(), block.getY(), block.getZ()));
         }
 
-        boolean result = plugin.getEngine().getEventHelper().onExplosion(type, affected);
+        boolean result = EventHelper.onExplosion(type, affected);
 
         if (result) {
             hook.setCanceled();
@@ -170,7 +171,7 @@ public class CanaryListener implements PluginListener {
         World world = plugin.getWorld(hook.getPiston().getWorld().getName());
         Block block = new CanaryBlock(world, hook.getPiston());
 
-        if (plugin.getEngine().getEventHelper().onPistonExtend(block, plugin.castLocation(hook.getMoving().getLocation()))) {
+        if (EventHelper.onPistonExtend(block, plugin.castLocation(hook.getMoving().getLocation()))) {
             hook.setCanceled();
         }
     }
@@ -180,7 +181,7 @@ public class CanaryListener implements PluginListener {
         World world = plugin.getWorld(hook.getPiston().getWorld().getName());
         Block block = new CanaryBlock(world, hook.getPiston());
 
-        if (plugin.getEngine().getEventHelper().onPistonExtend(block, plugin.castLocation(hook.getMoving().getLocation()))) {
+        if (EventHelper.onPistonExtend(block, plugin.castLocation(hook.getMoving().getLocation()))) {
             hook.setCanceled();
         }
     }

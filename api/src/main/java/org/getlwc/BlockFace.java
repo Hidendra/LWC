@@ -42,6 +42,7 @@ public enum BlockFace {
 
     /**
      * Convert from Notchian block faces to native BlockFace
+     *
      * @param face
      * @return
      */

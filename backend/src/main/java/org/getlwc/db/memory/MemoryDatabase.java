@@ -27,11 +27,14 @@
  * either expressed or implied, of anybody else.
  */
 
-package org.getlwc.sql;
+package org.getlwc.db.memory;
 
 import org.getlwc.Engine;
 import org.getlwc.Location;
+import org.getlwc.db.Database;
+import org.getlwc.db.DatabaseException;
 import org.getlwc.model.AbstractAttribute;
+import org.getlwc.model.AbstractSavable;
 import org.getlwc.model.Protection;
 import org.getlwc.role.ProtectionRole;
 
@@ -107,6 +110,10 @@ public class MemoryDatabase implements Database {
         protectionsIndexById.clear();
         protectionsIndexByLocation.clear();
         protectionsId.set(0);
+    }
+
+    public void saveLater(AbstractSavable savable) {
+        // Not needed
     }
 
     /**

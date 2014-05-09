@@ -51,7 +51,6 @@ public class MaterialRegistry {
      * Get an item material from the registry
      *
      * @param name
-     * @return
      * @return null if the item is not in the registry otherwise the item
      */
     public static Material getItem(String name) {
@@ -59,7 +58,6 @@ public class MaterialRegistry {
     }
 
     /**
-     *
      * Get an item material from the registry by its id
      *
      * @param id

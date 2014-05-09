@@ -10,7 +10,6 @@ import org.jnbt.Tag;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
 
 public class SchematicLoader {
 

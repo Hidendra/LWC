@@ -54,6 +54,7 @@ import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.getlwc.Block;
+import org.getlwc.EventHelper;
 import org.getlwc.ExplosionType;
 import org.getlwc.World;
 import org.getlwc.bukkit.BukkitPlugin;
@@ -82,14 +83,14 @@ public class BukkitListener implements Listener {
         // So instead we run the LWC join method 20 ticks later
         plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
             public void run() {
-                plugin.getEngine().getEventHelper().onPlayerJoin(plugin.wrapPlayer(event.getPlayer()));
+                EventHelper.onPlayerJoin(plugin.wrapPlayer(event.getPlayer()));
             }
         }, 20);
     }
 
     @EventHandler(ignoreCancelled = true)
     public void playerQuit(PlayerQuitEvent event) {
-        plugin.getEngine().getEventHelper().onPlayerQuit(plugin.wrapPlayer(event.getPlayer()));
+        EventHelper.onPlayerQuit(plugin.wrapPlayer(event.getPlayer()));
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -98,7 +99,7 @@ public class BukkitListener implements Listener {
         World world = plugin.getWorld(event.getPlayer().getWorld().getName());
         Block block = new BukkitBlock(world, event.getClickedBlock());
 
-        if (plugin.getEngine().getEventHelper().onBlockInteract(player, block)) {
+        if (EventHelper.onBlockInteract(player, block)) {
             event.setCancelled(true);
             event.setUseInteractedBlock(Event.Result.DENY);
         }
@@ -110,7 +111,7 @@ public class BukkitListener implements Listener {
         World world = plugin.getWorld(event.getEntity().getWorld().getName());
         Block block = new BukkitBlock(world, event.getBlock());
 
-        if (plugin.getEngine().getEventHelper().onBlockInteract(entity, block)) {
+        if (EventHelper.onBlockInteract(entity, block)) {
             event.setCancelled(true);
         }
     }
@@ -121,7 +122,7 @@ public class BukkitListener implements Listener {
         World world = plugin.getWorld(event.getPlayer().getWorld().getName());
         Block block = new BukkitBlock(world, event.getBlock());
 
-        if (plugin.getEngine().getEventHelper().onBlockBreak(player, block)) {
+        if (EventHelper.onBlockBreak(player, block)) {
             event.setCancelled(true);
         }
     }
@@ -132,7 +133,7 @@ public class BukkitListener implements Listener {
         World world = plugin.getWorld(event.getEntity().getWorld().getName());
         Block block = new BukkitBlock(world, event.getBlock());
 
-        if (plugin.getEngine().getEventHelper().onBlockBreak(entity, block)) {
+        if (EventHelper.onBlockBreak(entity, block)) {
             event.setCancelled(true);
         }
     }
@@ -143,7 +144,7 @@ public class BukkitListener implements Listener {
         World world = plugin.getWorld(event.getPlayer().getWorld().getName());
         Block block = new BukkitBlock(world, event.getBlock());
 
-        if (plugin.getEngine().getEventHelper().onBlockPlace(player, block)) {
+        if (EventHelper.onBlockPlace(player, block)) {
             event.setCancelled(true);
         }
     }
@@ -154,7 +155,7 @@ public class BukkitListener implements Listener {
         World world = plugin.getWorld(event.getPlayer().getWorld().getName());
         Block block = new BukkitBlock(world, event.getBlock());
 
-        if (plugin.getEngine().getEventHelper().onSignChange(player, block)) {
+        if (EventHelper.onSignChange(player, block)) {
             event.setCancelled(true);
         }
     }
@@ -164,7 +165,7 @@ public class BukkitListener implements Listener {
         World world = plugin.getWorld(event.getBlock().getWorld().getName());
         Block block = new BukkitBlock(world, event.getBlock());
 
-        if (plugin.getEngine().getEventHelper().onRedstoneChange(block, event.getOldCurrent(), event.getNewCurrent())) {
+        if (EventHelper.onRedstoneChange(block, event.getOldCurrent(), event.getNewCurrent())) {
             event.setNewCurrent(event.getOldCurrent());
         }
     }
@@ -227,7 +228,7 @@ public class BukkitListener implements Listener {
         } // OK, just old build
 
         //
-        if (plugin.getEngine().getEventHelper().onInventoryClickItem(player, plugin.castLocation(location), plugin.castItemStack(event.getCurrentItem()), plugin.castItemStack(event.getCursor()), event.getSlot(), event.getRawSlot(), event.isRightClick(), event.isShiftClick(), doubleClick)) {
+        if (EventHelper.onInventoryClickItem(player, plugin.castLocation(location), plugin.castItemStack(event.getCurrentItem()), plugin.castItemStack(event.getCursor()), event.getSlot(), event.getRawSlot(), event.isRightClick(), event.isShiftClick(), doubleClick)) {
             event.setCancelled(true);
             event.setResult(Event.Result.DENY);
         }
@@ -253,7 +254,7 @@ public class BukkitListener implements Listener {
         /**
          * TODO - does not support removing specific blocks
          */
-        if (plugin.getEngine().getEventHelper().onExplosion(type, affected)) {
+        if (EventHelper.onExplosion(type, affected)) {
             event.setCancelled(true);
         }
     }
@@ -263,7 +264,7 @@ public class BukkitListener implements Listener {
         World world = plugin.getWorld(event.getBlock().getWorld().getName());
         Block block = new BukkitBlock(world, event.getBlock());
 
-        if (plugin.getEngine().getEventHelper().onPistonExtend(block, plugin.castLocation(event.getBlock().getRelative(event.getDirection()).getLocation()))) {
+        if (EventHelper.onPistonExtend(block, plugin.castLocation(event.getBlock().getRelative(event.getDirection()).getLocation()))) {
             event.setCancelled(true);
         }
     }
@@ -273,7 +274,7 @@ public class BukkitListener implements Listener {
         World world = plugin.getWorld(event.getBlock().getWorld().getName());
         Block block = new BukkitBlock(world, event.getBlock());
 
-        if (plugin.getEngine().getEventHelper().onPistonRetract(block, plugin.castLocation(event.getRetractLocation()))) {
+        if (EventHelper.onPistonRetract(block, plugin.castLocation(event.getRetractLocation()))) {
             event.setCancelled(true);
         }
     }
@@ -314,7 +315,7 @@ public class BukkitListener implements Listener {
         World world = plugin.getWorld(location.getWorld().getName());
         Block block = new BukkitBlock(world, location.getBlock());
 
-        return plugin.getEngine().getEventHelper().onInventoryMoveItem(block.getLocation());
+        return EventHelper.onInventoryMoveItem(block.getLocation());
     }
 
 }

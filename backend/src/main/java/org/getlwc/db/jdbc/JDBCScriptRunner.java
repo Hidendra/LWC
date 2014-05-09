@@ -48,7 +48,7 @@
  *  limitations under the License.
  */
 
-package org.getlwc.sql;
+package org.getlwc.db.jdbc;
 
 import java.io.IOException;
 import java.io.LineNumberReader;
@@ -61,7 +61,7 @@ import java.sql.Statement;
 /**
  * Tool to run database scripts
  */
-public class ScriptRunner {
+public class JDBCScriptRunner {
 
     private static final String DEFAULT_DELIMITER = ";";
 
@@ -82,8 +82,8 @@ public class ScriptRunner {
     /**
      * Default constructor
      */
-    public ScriptRunner(Connection connection, boolean autoCommit,
-                        boolean stopOnError) {
+    public JDBCScriptRunner(Connection connection, boolean autoCommit,
+                            boolean stopOnError) {
         this.connection = connection;
         this.autoCommit = autoCommit;
         this.stopOnError = stopOnError;

@@ -17,6 +17,7 @@ public interface RoleFactory extends AbstractFactory {
 
     /**
      * Create a basic {@link Role} with the given name
+     *
      * @param name
      * @return
      */

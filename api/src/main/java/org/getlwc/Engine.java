@@ -32,20 +32,20 @@ package org.getlwc;
 import org.getlwc.command.CommandHandler;
 import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.configuration.Configuration;
+import org.getlwc.db.Database;
 import org.getlwc.economy.EconomyHandler;
 import org.getlwc.factory.AbstractFactoryRegistry;
 import org.getlwc.permission.PermissionHandler;
 import org.getlwc.role.RoleFactory;
-import org.getlwc.sql.Database;
 
 public interface Engine {
 
     /**
-     * Get the version of minecraft this was compiled with
+     * Get the version of minecraft this was targeted to
      *
      * @return
      */
-    public String getCompiledMinecraftVersion();
+    public String getTargetMinecraftVersion();
 
     /**
      * Get the {@link AbstractFactoryRegistry} which manages role associations
@@ -97,13 +97,6 @@ public interface Engine {
     public ConsoleCommandSender getConsoleSender();
 
     /**
-     * Get the queue used to save savables to the database in the background
-     *
-     * @return
-     */
-    public SaveQueue getSaveQueue();
-
-    /**
      * Get the database object
      *
      * @return
@@ -116,13 +109,6 @@ public interface Engine {
      * @return
      */
     public Configuration getConfiguration();
-
-    /**
-     * Get the {@link EventHelper} instance
-     *
-     * @return
-     */
-    public EventHelper getEventHelper();
 
     /**
      * Get the library downloader object
@@ -146,7 +132,7 @@ public interface Engine {
     public PermissionHandler getPermissionHandler();
 
     /**
-     * Called when the plugin is ready to be fully loaded. Initialization is completed here.
+     * Called when the engine is ready to be fully loaded. Initialization is completed here.
      */
     public void startup();
 

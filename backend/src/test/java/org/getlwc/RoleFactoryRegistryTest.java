@@ -5,7 +5,6 @@ import org.getlwc.factory.AbstractFactoryRegistry;
 import org.getlwc.model.Protection;
 import org.getlwc.role.PlayerRoleFactory;
 import org.getlwc.role.ProtectionRole;
-import org.getlwc.role.Role;
 import org.getlwc.role.RoleFactory;
 import org.getlwc.role.RoleFactoryRegistry;
 import org.junit.Before;
@@ -13,8 +12,12 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class RoleFactoryRegistryTest {
 

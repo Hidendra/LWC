@@ -27,48 +27,24 @@
  * either expressed or implied, of anybody else.
  */
 
-package org.getlwc.model;
+package org.getlwc.db;
 
-import org.getlwc.Engine;
+public class DatabaseException extends Exception {
 
-/**
- * Represents an object that can be saved to the database
- */
-public abstract class AbstractSavable {
-
-    /**
-     * The engine instance
-     */
-    private final Engine engine;
-
-    public AbstractSavable(Engine engine) {
-        this.engine = engine;
+    public DatabaseException() {
+        super();
     }
 
-    /**
-     * Flush the object to the database immediately without waiting. This will block
-     * until the object has been saved to the database.
-     */
-    public abstract void saveImmediately();
+    public DatabaseException(String message) {
+        super(message);
+    }
 
-    /**
-     * Checks if the object needs to be saved to the database (modified)
-     *
-     * @return true if a save is needed
-     */
-    public abstract boolean isSaveNeeded();
+    public DatabaseException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-    /**
-     * Remove the object from the database immediately. Returns when the object is removed
-     */
-    public abstract void remove();
-
-    /**
-     * Requests that the object be saved to the database. This may or may not happen immediately nor is it
-     * guaranteed to happen within any given amount of time.
-     */
-    public void save() {
-        engine.getDatabase().saveLater(this);
+    public DatabaseException(Throwable cause) {
+        super(cause);
     }
 
 }

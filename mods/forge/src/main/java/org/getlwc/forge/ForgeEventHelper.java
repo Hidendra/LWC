@@ -42,6 +42,7 @@ import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraftforge.common.MinecraftForge;
 import org.getlwc.Block;
 import org.getlwc.BlockFace;
+import org.getlwc.EventHelper;
 import org.getlwc.Location;
 import org.getlwc.World;
 import org.getlwc.entity.Player;
@@ -148,7 +149,7 @@ public class ForgeEventHelper {
         Player player = mod.wrapPlayer(handle);
         player.setLocale(new Locale(packet.func_149524_c())); // func_149524_c: getLanguage
         mod.getEngine().getConsoleSender().sendMessage("Player " + player.getName() + " loaded using locale: " + player.getLocale());
-        mod.getEngine().getEventHelper().onPlayerJoin(mod.wrapPlayer(handle));
+        EventHelper.onPlayerJoin(mod.wrapPlayer(handle));
     }
 
     /**
@@ -239,7 +240,7 @@ public class ForgeEventHelper {
         }
 
         if (canProceed) {
-            return LWC.instance.getEngine().getEventHelper().onInventoryMoveItem(usingInventory);
+            return EventHelper.onInventoryMoveItem(usingInventory);
         } else {
             return false;
         }
@@ -256,7 +257,7 @@ public class ForgeEventHelper {
      */
     public static boolean onEntityBreakDoor(EntityLiving entity, int x, int y, int z) {
         World world = LWC.instance.getWorld(entity.worldObj.getWorldInfo().getWorldName());
-        return LWC.instance.getEngine().getEventHelper().onBlockBreak(new ForgeEntity(entity), world.getBlockAt(x, y, z));
+        return EventHelper.onBlockBreak(new ForgeEntity(entity), world.getBlockAt(x, y, z));
     }
 
     /**
@@ -287,7 +288,7 @@ public class ForgeEventHelper {
      * @return
      */
     private static boolean onPistonExtend(Block piston, Location extending) {
-        return LWC.instance.getEngine().getEventHelper().onPistonExtend(piston, extending);
+        return EventHelper.onPistonExtend(piston, extending);
     }
 
     /**
@@ -298,7 +299,7 @@ public class ForgeEventHelper {
      * @return
      */
     private static boolean onPistonRetract(Block piston, Location retracting) {
-        return LWC.instance.getEngine().getEventHelper().onPistonRetract(piston, retracting);
+        return EventHelper.onPistonRetract(piston, retracting);
     }
 
     /**

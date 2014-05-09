@@ -37,6 +37,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.getlwc.Block;
+import org.getlwc.EventHelper;
 import org.getlwc.ExplosionType;
 import org.getlwc.World;
 import org.getlwc.command.CommandContext;
@@ -96,7 +97,7 @@ public class ForgeListener {
         Block block = world.getBlockAt(event.x, event.y, event.z);
 
         // send the event for the player around the plugin (and maybe other plugins, too.)
-        if (mod.getEngine().getEventHelper().onBlockInteract(player, block)) {
+        if (EventHelper.onBlockInteract(player, block)) {
             event.setCanceled(true);
             event.setResult(Event.Result.DENY);
         }
@@ -109,7 +110,7 @@ public class ForgeListener {
         Block block = world.getBlockAt(event.blockX, event.blockY, event.blockZ);
 
         // XXX Forge doesn't send an interact event when digging a block so we check the block so messages are sent
-        if (mod.getEngine().getEventHelper().onBlockInteract(player, block) || mod.getEngine().getEventHelper().onBlockBreak(player, block)) {
+        if (EventHelper.onBlockInteract(player, block) || EventHelper.onBlockBreak(player, block)) {
             event.setCanceled(true);
             event.setResult(Event.Result.DENY);
         }
@@ -121,7 +122,7 @@ public class ForgeListener {
         World world = player.getLocation().getWorld();
         Block block = world.getBlockAt(event.blockX, event.blockY, event.blockZ);
 
-        if (mod.getEngine().getEventHelper().onBlockPlace(player, block)) {
+        if (EventHelper.onBlockPlace(player, block)) {
             event.setCanceled(true);
             event.setResult(Event.Result.DENY);
         }
@@ -133,7 +134,7 @@ public class ForgeListener {
         World world = player.getLocation().getWorld();
         Block block = world.getBlockAt(event.packet.func_149346_c(), event.packet.func_149345_d(), event.packet.func_149344_e()); // Natives: x/y/z
 
-        if (mod.getEngine().getEventHelper().onSignChange(player, block)) {
+        if (EventHelper.onSignChange(player, block)) {
             event.setCanceled(true);
             event.setResult(Event.Result.DENY);
         }
@@ -155,7 +156,7 @@ public class ForgeListener {
             throw new UnsupportedOperationException("Unsupported explosion entity: " + event.entity);
         }
 
-        if (mod.getEngine().getEventHelper().onExplosion(type, event.getAffectedBlocks())) {
+        if (EventHelper.onExplosion(type, event.getAffectedBlocks())) {
             event.setCanceled(true);
             event.setResult(Event.Result.DENY);
         }

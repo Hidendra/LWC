@@ -42,6 +42,10 @@ import org.getlwc.command.SimpleCommandHandler;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.configuration.FileConfiguration;
 import org.getlwc.configuration.YamlConfiguration;
+import org.getlwc.db.Database;
+import org.getlwc.db.DatabaseException;
+import org.getlwc.db.jdbc.JDBCDatabase;
+import org.getlwc.db.memory.MemoryDatabase;
 import org.getlwc.economy.DefaultEconomyHandler;
 import org.getlwc.economy.EconomyHandler;
 import org.getlwc.factory.AbstractFactoryRegistry;
@@ -51,17 +55,13 @@ import org.getlwc.role.GroupRoleRegistry;
 import org.getlwc.role.PlayerRoleFactory;
 import org.getlwc.role.RoleFactory;
 import org.getlwc.role.RoleFactoryRegistry;
-import org.getlwc.sql.Database;
-import org.getlwc.sql.DatabaseException;
-import org.getlwc.sql.JDBCDatabase;
-import org.getlwc.sql.MemoryDatabase;
 
 public class SimpleEngine implements Engine {
 
     /**
      * The instance of the engine
      */
-    private static Engine instance = null;
+    private static SimpleEngine instance = null;
 
     /**
      * The protection manager
@@ -72,16 +72,6 @@ public class SimpleEngine implements Engine {
      * The registry for protection roles
      */
     private final AbstractFactoryRegistry<RoleFactory> roleRegistry = new RoleFactoryRegistry();
-
-    /**
-     * The savable background queue
-     */
-    private final SaveQueue saveQueue = new SaveQueue();
-
-    /**
-     * The {@link EventHelper} instance that assists in consolidating event handling
-     */
-    private final EventHelper eventHelper = new SimpleEventHelper(this);
 
     /**
      * The {@link LibraryDownloader} responsible for downloading library files
@@ -166,7 +156,7 @@ public class SimpleEngine implements Engine {
      *
      * @return
      */
-    public static Engine getInstance() {
+    public static SimpleEngine getInstance() {
         return instance;
     }
 
@@ -260,7 +250,7 @@ public class SimpleEngine implements Engine {
     /**
      * {@inheritDoc}
      */
-    public String getCompiledMinecraftVersion() {
+    public String getTargetMinecraftVersion() {
         return internalConfig.getString("minecraft.version");
     }
 
@@ -316,13 +306,6 @@ public class SimpleEngine implements Engine {
     /**
      * {@inheritDoc}
      */
-    public SaveQueue getSaveQueue() {
-        return saveQueue;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public Database getDatabase() {
         return database;
     }
@@ -346,16 +329,8 @@ public class SimpleEngine implements Engine {
     /**
      * {@inheritDoc}
      */
-    public EventHelper getEventHelper() {
-        return eventHelper;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void shutdown() {
         consoleSender.sendTranslatedMessage("Shutting down!");
-        saveQueue.flushAndClose();
         commandHandler.clearCommands();
         roleRegistry.clear();
         database.disconnect();

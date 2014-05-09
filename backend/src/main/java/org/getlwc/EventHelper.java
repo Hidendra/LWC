@@ -43,16 +43,18 @@ import org.getlwc.role.ProtectionRole;
 import java.util.List;
 import java.util.Map;
 
-public class SimpleEventHelper implements EventHelper {
+public class EventHelper {
 
     /**
      * The {@link Engine} instance
      */
-    private final SimpleEngine engine;
+    private static SimpleEngine engine;
 
-    public SimpleEventHelper(SimpleEngine engine) {
-        this.engine = engine;
+    static {
+        engine = SimpleEngine.getInstance();
     }
+
+    private EventHelper() { }
 
     /**
      * A generic method that checks if an entity is allowed to interact with the given block.
@@ -61,7 +63,7 @@ public class SimpleEventHelper implements EventHelper {
      * @param block
      * @return true if the given entity can access the block (i.e. no protection there OR they can access the protection)
      */
-    private boolean silentAccessCheck(Entity entity, Block block) {
+    private static boolean silentAccessCheck(Entity entity, Block block) {
         Protection protection = engine.getProtectionManager().findProtection(block.getLocation());
 
         if (protection == null) {
@@ -85,9 +87,11 @@ public class SimpleEventHelper implements EventHelper {
     }
 
     /**
-     * {@inheritDoc}
+     * Called when a player joins the server
+     *
+     * @param player
      */
-    public void onPlayerJoin(Player player) {
+    public static void onPlayerJoin(Player player) {
         if (player.hasPermission("lwc.admin")) { // TODO not a hardcoded permission?
             MessageStore store = I18n.getMessageStore();
             Locale defaultLocale = store.getDefaultLocale();
@@ -116,16 +120,22 @@ public class SimpleEventHelper implements EventHelper {
     }
 
     /**
-     * {@inheritDoc}
+     * Called when a player quits the server
+     *
+     * @param player
      */
-    public void onPlayerQuit(Player player) {
+    public static void onPlayerQuit(Player player) {
         engine.getServerLayer().removePlayer(player.getName());
     }
 
     /**
-     * {@inheritDoc}
+     * Called when an entity interacts with a block in the world
+     *
+     * @param entity
+     * @param block
+     * @return true if the event is to be cancelled, false otherwise
      */
-    public boolean onBlockInteract(Entity entity, Block block) {
+    public static boolean onBlockInteract(Entity entity, Block block) {
         boolean cancel;
 
         // Match the block to a protection
@@ -177,16 +187,24 @@ public class SimpleEventHelper implements EventHelper {
     }
 
     /**
-     * {@inheritDoc}
+     * Called when an entity breaks a block in the world
+     *
+     * @param entity
+     * @param block
+     * @return
      */
-    public boolean onBlockBreak(Entity entity, Block block) {
+    public static boolean onBlockBreak(Entity entity, Block block) {
         return !silentAccessCheck(entity, block);
     }
 
     /**
-     * {@inheritDoc}
+     * Called when an entity places a block in the world
+     *
+     * @param entity
+     * @param block
+     * @return
      */
-    public boolean onBlockPlace(Entity entity, Block block) {
+    public static boolean onBlockPlace(Entity entity, Block block) {
         System.out.println("[internal] Block placed @ " + block);
 
         // Nothing yet.
@@ -197,18 +215,26 @@ public class SimpleEventHelper implements EventHelper {
     }
 
     /**
-     * {@inheritDoc}
+     * Called when an entity changes text on a sign
+     *
+     * @param entity
+     * @param block
+     * @return
      */
-    public boolean onSignChange(Entity entity, Block block) {
+    public static boolean onSignChange(Entity entity, Block block) {
         System.out.println("[internal] Sign changed @ " + block);
 
         return !silentAccessCheck(entity, block);
     }
 
     /**
-     * {@inheritDoc}
+     * Called when an explosion occurs in the world
+     *
+     * @param type
+     * @param blocksAffected
+     * @return
      */
-    public boolean onExplosion(ExplosionType type, List<Block> blocksAffected) {
+    public static boolean onExplosion(ExplosionType type, List<Block> blocksAffected) {
         System.out.println("[internal] Explosion occurred! type=" + type + " blocks affected=" + blocksAffected.size());
         // TODO
 
@@ -216,9 +242,14 @@ public class SimpleEventHelper implements EventHelper {
     }
 
     /**
-     * {@inheritDoc}
+     * Called when the redstone level changes on a block
+     *
+     * @param block
+     * @param oldLevel
+     * @param newLevel
+     * @return
      */
-    public boolean onRedstoneChange(Block block, int oldLevel, int newLevel) {
+    public static boolean onRedstoneChange(Block block, int oldLevel, int newLevel) {
         ProtectionManager manager = engine.getProtectionManager();
 
         if (!manager.isBlockProtectable(block)) {
@@ -238,17 +269,28 @@ public class SimpleEventHelper implements EventHelper {
     }
 
     /**
-     * {@inheritDoc}
+     * Called when a move item event occurs at the given location
+     *
+     * @param location
+     * @return
      */
-    public boolean onInventoryMoveItem(Location location) {
+    public static boolean onInventoryMoveItem(Location location) {
         System.out.println("[internal] onInventoryMoveItem @ " + location);
         return true;
     }
 
     /**
-     * {@inheritDoc}
+     * Called when a player clicks a slot in an inventory
+     *
+     * @param player
+     * @param location
+     * @param clicked
+     * @param rightClick
+     * @param shiftClick
+     * @param doubleClick
+     * @return
      */
-    public boolean onInventoryClickItem(Player player, Location location, ItemStack clicked, ItemStack cursor, int slot, int rawSlot, boolean rightClick, boolean shiftClick, boolean doubleClick) {
+    public static boolean onInventoryClickItem(Player player, Location location, ItemStack clicked, ItemStack cursor, int slot, int rawSlot, boolean rightClick, boolean shiftClick, boolean doubleClick) {
         if (!doubleClick) {
             // Nifty trick: these will different IFF they are interacting with the player's inventory or hotbar instead of the block's inventory
             if (slot != rawSlot) {
@@ -286,9 +328,13 @@ public class SimpleEventHelper implements EventHelper {
     }
 
     /**
-     * {@inheritDoc}
+     * Called when a piston extends
+     *
+     * @param piston
+     * @param extending the location the piston will push
+     * @return
      */
-    public boolean onPistonExtend(Block piston, Location extending) {
+    public static boolean onPistonExtend(Block piston, Location extending) {
         Block block = extending.getBlock();
 
         if (block.hasTileEntity()) {
@@ -300,9 +346,13 @@ public class SimpleEventHelper implements EventHelper {
     }
 
     /**
-     * {@inheritDoc}
+     * Called when a piston retracts
+     *
+     * @param piston
+     * @param retracting the location the piston will retract from (or attempt to pull if sticky)
+     * @return
      */
-    public boolean onPistonRetract(Block piston, Location retracting) {
+    public static boolean onPistonRetract(Block piston, Location retracting) {
         if (piston.isOneOf("minecraft:sticky_piston")) {
             // A piston that cannot pull anything when retracting *should* be harmless so they can simply be globally allowed
             return false;
@@ -325,7 +375,7 @@ public class SimpleEventHelper implements EventHelper {
      * @param stack2
      * @return
      */
-    private boolean areEnchantmentsEqual(ItemStack stack1, ItemStack stack2) {
+    private static boolean areEnchantmentsEqual(ItemStack stack1, ItemStack stack2) {
         if (stack1 == null || stack2 == null) {
             return false;
         }

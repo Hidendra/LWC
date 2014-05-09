@@ -27,24 +27,31 @@
  * either expressed or implied, of anybody else.
  */
 
-package org.getlwc.sql;
+package org.getlwc.db;
 
-public class DatabaseException extends Exception {
+import org.getlwc.model.AbstractSavable;
 
-    public DatabaseException() {
-        super();
-    }
+public interface Database extends ProtectionDatabase, AttributeDatabase, RoleDatabase {
 
-    public DatabaseException(String message) {
-        super(message);
-    }
+    /**
+     * Connect to the database
+     *
+     * @return
+     * @throws DatabaseException
+     */
+    public boolean connect() throws DatabaseException;
 
-    public DatabaseException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    /**
+     * Disconnct from the database
+     */
+    public void disconnect();
 
-    public DatabaseException(Throwable cause) {
-        super(cause);
-    }
+    /**
+     * Save an object at some point in the future. It is not guaranteed when (or if)
+     * it will be saved.
+     *
+     * @param savable
+     */
+    public void saveLater(AbstractSavable savable);
 
 }

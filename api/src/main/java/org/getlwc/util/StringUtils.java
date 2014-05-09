@@ -46,6 +46,7 @@ public class StringUtils {
 
     /**
      * Escape a string. Primarily, replace single quotes with double quotes.
+     *
      * @param msg
      * @return
      */
@@ -53,7 +54,7 @@ public class StringUtils {
         StringBuffer buffer = new StringBuffer();
         char[] chrmsg = msg.toCharArray();
 
-        for (int i = 0; i < chrmsg.length; i ++) {
+        for (int i = 0; i < chrmsg.length; i++) {
             if (chrmsg[i] == '\'') {
                 buffer.append("''");
             } else {

@@ -86,9 +86,7 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
             // gravity block (e.g. the block above would be destroyed if this one was removed)
             else if (above.isOneOf("minecraft:standing_sign")) {
                 blocks.add(above);
-            }
-
-            else {
+            } else {
 
                 // wall-attached blocks
                 BlockFace[] POSSIBLE = new BlockFace[]{BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};

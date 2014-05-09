@@ -126,7 +126,7 @@ public class CommandContext {
      * to return non-null if the index is within those ranges. If the index is not in the given argument
      * ranges then the default value will be returned
      *
-     * @param index the index number. For example, the first argument is 1, second argument 2, etc
+     * @param index        the index number. For example, the first argument is 1, second argument 2, etc
      * @param defaultValue
      * @return
      */

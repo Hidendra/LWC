@@ -87,7 +87,7 @@ public class BenchmarkCommands {
 
         int total = 0;
 
-        for (int round = 0; round < rounds; round ++) {
+        for (int round = 0; round < rounds; round++) {
             Random random = new Random();
             long start = System.currentTimeMillis();
             for (int i = 0; i < 10000; i++) {

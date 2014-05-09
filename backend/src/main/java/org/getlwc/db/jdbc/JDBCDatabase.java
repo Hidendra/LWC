@@ -27,12 +27,16 @@
  * either expressed or implied, of anybody else.
  */
 
-package org.getlwc.sql;
+package org.getlwc.db.jdbc;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.getlwc.Engine;
 import org.getlwc.Location;
+import org.getlwc.SaveQueue;
+import org.getlwc.db.Database;
+import org.getlwc.db.DatabaseException;
 import org.getlwc.model.AbstractAttribute;
+import org.getlwc.model.AbstractSavable;
 import org.getlwc.model.Protection;
 import org.getlwc.model.State;
 import org.getlwc.role.ProtectionRole;
@@ -135,6 +139,11 @@ public class JDBCDatabase implements Database {
      *
      */
     private JDBCLookupService lookup = new JDBCLookupService(this);
+
+    /**
+     * The queue used to save savables later
+     */
+    private SaveQueue saveQueue = new SaveQueue();
 
     public JDBCDatabase(Engine engine, JDBCConnectionDetails details) {
         if (details == null) {
@@ -263,7 +272,7 @@ public class JDBCDatabase implements Database {
             // create a connection for our attempt
             connection = pool.getConnection();
 
-            ScriptRunner runner = new ScriptRunner(connection, false, false);
+            JDBCScriptRunner runner = new JDBCScriptRunner(connection, false, false);
             runner.setLogWriter(null);
             runner.runScript(new InputStreamReader(stream));
         } catch (Exception e) {
@@ -277,8 +286,13 @@ public class JDBCDatabase implements Database {
      * {@inheritDoc}
      */
     public void disconnect() {
+        saveQueue.flushAndClose();
         pool.close();
         pool = null;
+    }
+
+    public void saveLater(AbstractSavable savable) {
+        saveQueue.add(savable);
     }
 
     /**

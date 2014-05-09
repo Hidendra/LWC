@@ -64,7 +64,7 @@ public class SaveQueue {
      *
      * @param savable
      */
-    public void push(AbstractSavable savable) {
+    public void add(AbstractSavable savable) {
         queue.offer(savable);
     }
 
@@ -92,6 +92,7 @@ public class SaveQueue {
                     AbstractSavable savable = queue.take();
                     savable.saveImmediately();
                     // System.out.println("Saving: " + savable.toString());
+                    Thread.sleep(50L);
                 } catch (InterruptedException e) {
                     continue;
                 }

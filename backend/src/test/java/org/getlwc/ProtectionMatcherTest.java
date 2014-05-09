@@ -3,11 +3,9 @@ package org.getlwc;
 import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.configuration.YamlConfiguration;
-import org.getlwc.entity.Player;
+import org.getlwc.db.Database;
+import org.getlwc.db.memory.MemoryDatabase;
 import org.getlwc.lang.Locale;
-import org.getlwc.model.Protection;
-import org.getlwc.sql.Database;
-import org.getlwc.sql.MemoryDatabase;
 import org.getlwc.world.MemoryWorld;
 import org.getlwc.world.Schematic;
 import org.getlwc.world.SchematicLoader;
@@ -21,8 +19,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 /**
  * In order to best test the matcher a small world was created with a variety of blocks to match.
