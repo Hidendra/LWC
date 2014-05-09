@@ -31,6 +31,7 @@ package com.griefcraft.migration;
 import com.griefcraft.model.History;
 import com.griefcraft.model.Protection;
 import com.griefcraft.sql.PhysDB;
+import com.griefcraft.util.PlayerRegistry;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -75,6 +76,25 @@ public class DatabaseMigrator {
                 for (History history : tmp) {
                     // make sure it's assumed it does not exist in the database
                     history.setExists(false);
+
+                    // Convert player names to the lwc_players format
+                    if (history.hasKey("creator")) {
+                        String name = history.getString("creator");
+                        try {
+                            Integer.parseInt(name);
+                        } catch (NumberFormatException e) {
+                            history.setMetaData("creator", Integer.toString(PlayerRegistry.getPlayerInfo(name).getId()));
+                        }
+                    }
+
+                    if (history.hasKey("destroyer")) {
+                        String name = history.getString("destroyer");
+                        try {
+                            Integer.parseInt(name);
+                        } catch (NumberFormatException e) {
+                            history.setMetaData("destroyer", Integer.toString(PlayerRegistry.getPlayerInfo(name).getId()));
+                        }
+                    }
 
                     // sync the history object with the active database (ala MySQL)
                     history.sync();
