@@ -94,8 +94,7 @@ public class SimpleLibraryDownloader implements LibraryDownloader {
         DEST_LIBRARY_FOLDER = DEST_LIBRARY_FOLDER.replaceAll("\\\\", "/");
 
         // resource libraries
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/resourcelibs.txt")));
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/resourcelibs.txt")))) {
             String file;
 
             while ((file = reader.readLine()) != null) {
@@ -394,17 +393,16 @@ public class SimpleLibraryDownloader implements LibraryDownloader {
         try {
             URLConnection connection = url.openConnection();
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String response = "";
-            String line;
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                String response = "";
+                String line;
 
-            while ((line = reader.readLine()) != null) {
-                response += line;
+                while ((line = reader.readLine()) != null) {
+                    response += line;
+                }
+
+                return response;
             }
-
-            reader.close();
-
-            return response;
         } catch (IOException e) {
             return null;
         }

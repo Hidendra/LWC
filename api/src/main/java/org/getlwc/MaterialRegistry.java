@@ -115,8 +115,7 @@ public class MaterialRegistry {
      * Load all of the items
      */
     private static void loadBlocks() {
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(MaterialRegistry.class.getResourceAsStream(BLOCKS_FILE)));
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(MaterialRegistry.class.getResourceAsStream(BLOCKS_FILE)))) {
             String line;
 
             while ((line = reader.readLine()) != null) {

@@ -190,8 +190,6 @@ public class JDBCDatabase implements Database {
         // setup the database pool
         pool = new ComboPooledDataSource();
 
-        Connection connection = null;
-        Statement stmt = null;
         try {
             pool.setDriverClass(driver.getClassName());
             pool.setJdbcUrl(connectionString);
@@ -211,9 +209,6 @@ public class JDBCDatabase implements Database {
             e.printStackTrace();
             pool = null;
             return false;
-        } finally {
-            safeClose(stmt);
-            safeClose(connection);
         }
     }
 
@@ -223,18 +218,12 @@ public class JDBCDatabase implements Database {
     private void verifyBase() {
         boolean baseRequired;
 
-        Connection connection = null;
-        Statement stmt = null;
-        try {
-            connection = pool.getConnection();
-            stmt = connection.createStatement();
-            stmt.executeQuery("SELECT 1 FROM " + details.getPrefix() + "protections");
+        try (Connection connection = pool.getConnection();
+             Statement stmt = connection.createStatement()) {
+            stmt.executeQuery("SELECT 1 FROM " + details.getPrefix() + "protections").close();
             baseRequired = false;
         } catch (SQLException e) {
             baseRequired = true;
-        } finally {
-            safeClose(stmt);
-            safeClose(connection);
         }
 
         if (baseRequired) {
@@ -253,8 +242,7 @@ public class JDBCDatabase implements Database {
     private void executeInternalSQLFile(String path) {
         String file = "";
 
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(path)));
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(path)))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 file += line + "\n";
@@ -266,21 +254,15 @@ public class JDBCDatabase implements Database {
         // fix the prefix
         file = file.replaceAll("__PREFIX__", details.getPrefix());
 
-        Connection connection = null;
-        try {
+        try (Connection connection = pool.getConnection()) {
             // convert the SQL to a stream so we can use a (mostly) unmodified ScriptRunner class
             InputStream stream = new ByteArrayInputStream(file.getBytes("UTF-8"));
-
-            // create a connection for our attempt
-            connection = pool.getConnection();
 
             JDBCScriptRunner runner = new JDBCScriptRunner(connection, false, false);
             runner.setLogWriter(null);
             runner.runScript(new InputStreamReader(stream));
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            safeClose(connection);
         }
     }
 
@@ -307,42 +289,6 @@ public class JDBCDatabase implements Database {
     }
 
     /**
-     * Safely close a {@link Connection} object
-     *
-     * @param conn
-     */
-    private void safeClose(Connection conn) {
-        try {
-            if (conn != null) {
-                conn.close();
-            }
-        } catch (SQLException e) {
-            try {
-                conn.close();
-            } catch (SQLException ex) {
-            }
-        }
-    }
-
-    /**
-     * Safely close a {@link Statement} object
-     *
-     * @param stmt
-     */
-    private void safeClose(Statement stmt) {
-        try {
-            if (stmt != null) {
-                stmt.close();
-            }
-        } catch (SQLException e) {
-            try {
-                stmt.close();
-            } catch (SQLException ex) {
-            }
-        }
-    }
-
-    /**
      * Get all of the lookup associations for the given type in the database
      *
      * @param type
@@ -351,19 +297,12 @@ public class JDBCDatabase implements Database {
     public List<Tuple<String, Integer>> getLookupAssociations(JDBCLookupService.LookupType type) {
         List<Tuple<String, Integer>> result = new ArrayList<Tuple<String, Integer>>();
 
-        try {
-            Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT id, name FROM " + details.getPrefix() + "lookup_" + type.getSuffix());
+        try (Connection connection = pool.getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT id, name FROM " + details.getPrefix() + "lookup_" + type.getSuffix());
+             ResultSet set = statement.executeQuery()) {
 
-            try {
-                ResultSet set = statement.executeQuery();
-
-                while (set.next()) {
-                    result.add(new Tuple<String, Integer>(set.getString("name"), set.getInt("id")));
-                }
-            } finally {
-                safeClose(statement);
-                safeClose(connection);
+            while (set.next()) {
+                result.add(new Tuple<String, Integer>(set.getString("name"), set.getInt("id")));
             }
         } catch (SQLException e) {
             handleException(e);
@@ -379,26 +318,15 @@ public class JDBCDatabase implements Database {
      * @return
      */
     public int createLookup(JDBCLookupService.LookupType type, String name) {
-        try {
-            Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "lookup_" + type.getSuffix() + " (name) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
+        try (Connection connection = pool.getConnection();
+             PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "lookup_" + type.getSuffix() + " (name) VALUES (?)", Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, name);
+            statement.executeUpdate();
 
-            try {
-                statement.setString(1, name);
-                statement.executeUpdate();
-
-                ResultSet set = statement.getGeneratedKeys();
-
-                try {
-                    if (set.next()) {
-                        return set.getInt(1);
-                    }
-                } finally {
-                    set.close();
+            try (ResultSet set = statement.getGeneratedKeys()) {
+                if (set.next()) {
+                    return set.getInt(1);
                 }
-            } finally {
-                safeClose(statement);
-                safeClose(connection);
             }
         } catch (SQLException e) {
             handleException(e);
@@ -411,34 +339,25 @@ public class JDBCDatabase implements Database {
      * {@inheritDoc}
      */
     public Protection createProtection(Location location) {
-        try {
-            Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protections (type, updated, created, accessed) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-            ResultSet generatedKeys;
+        try (Connection connection = pool.getConnection();
+             PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protections (type, updated, created, accessed) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+            statement.setInt(1, Protection.Type.BLOCK.ordinal());
+            int epoch = (int) (System.currentTimeMillis() / 1000L);
+            statement.setInt(2, epoch);
+            statement.setInt(3, epoch);
+            statement.setInt(4, epoch);
 
-            try {
-                statement.setInt(1, Protection.Type.BLOCK.ordinal());
-                int epoch = (int) (System.currentTimeMillis() / 1000L);
-                statement.setInt(2, epoch);
-                statement.setInt(3, epoch);
-                statement.setInt(4, epoch);
+            int affected = statement.executeUpdate();
 
-                int affected = statement.executeUpdate();
+            if (affected == 0) {
+                return null;
+            }
 
-                if (affected == 0) {
-                    return null;
-                }
-
-                //
-                generatedKeys = statement.getGeneratedKeys();
-
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     int protectionId = generatedKeys.getInt(1);
                     addProtectionBlock(protectionId, location);
                 }
-            } finally {
-                safeClose(statement);
-                safeClose(connection);
             }
         } catch (SQLException e) {
             handleException(e);
@@ -455,25 +374,18 @@ public class JDBCDatabase implements Database {
      * @return true if the block was added; false otherwise
      */
     private boolean addProtectionBlock(int protectionId, Location location) {
-        try {
-            Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_blocks (protection_id, world, x, y, z) VALUES (?, ?, ?, ?, ?)");
+        try (Connection connection = pool.getConnection();
+             PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_blocks (protection_id, world, x, y, z) VALUES (?, ?, ?, ?, ?)")) {
+            statement.setInt(1, protectionId);
+            statement.setInt(2, lookup.get(JDBCLookupService.LookupType.WORLD_NAME, location.getWorld().getName()));
+            statement.setInt(3, location.getBlockX());
+            statement.setInt(4, location.getBlockY());
+            statement.setInt(5, location.getBlockZ());
 
-            try {
-                statement.setInt(1, protectionId);
-                statement.setInt(2, lookup.get(JDBCLookupService.LookupType.WORLD_NAME, location.getWorld().getName()));
-                statement.setInt(3, location.getBlockX());
-                statement.setInt(4, location.getBlockY());
-                statement.setInt(5, location.getBlockZ());
+            int affected = statement.executeUpdate();
 
-                int affected = statement.executeUpdate();
-
-                if (affected == 0) {
-                    return true;
-                }
-            } finally {
-                safeClose(statement);
-                safeClose(connection);
+            if (affected == 0) {
+                return true;
             }
         } catch (SQLException e) {
             handleException(e);
@@ -486,29 +398,18 @@ public class JDBCDatabase implements Database {
      * {@inheritDoc}
      */
     public Protection loadProtection(Location location) {
-        try {
-            Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT protection_id FROM " + details.getPrefix() + "protection_blocks WHERE x = ? AND y = ? AND z = ? AND world = ?");
+        try (Connection connection = pool.getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT protection_id FROM " + details.getPrefix() + "protection_blocks WHERE x = ? AND y = ? AND z = ? AND world = ?")) {
+            statement.setInt(1, location.getBlockX());
+            statement.setInt(2, location.getBlockY());
+            statement.setInt(3, location.getBlockZ());
+            statement.setInt(4, lookup.get(JDBCLookupService.LookupType.WORLD_NAME, location.getWorld().getName()));
 
-            try {
-                statement.setInt(1, location.getBlockX());
-                statement.setInt(2, location.getBlockY());
-                statement.setInt(3, location.getBlockZ());
-                statement.setInt(4, lookup.get(JDBCLookupService.LookupType.WORLD_NAME, location.getWorld().getName()));
-
-                ResultSet set = statement.executeQuery();
-
-                try {
-                    if (set.next()) {
-                        // TODO compress into a join? At the time this is the very simplest solution
-                        return loadProtection(set.getInt("protection_id"));
-                    }
-                } finally {
-                    set.close();
+            try (ResultSet set = statement.executeQuery()) {
+                if (set.next()) {
+                    // TODO compress into a join? At the time this is the very simplest solution
+                    return loadProtection(set.getInt("protection_id"));
                 }
-            } finally {
-                safeClose(statement);
-                safeClose(connection);
             }
         } catch (SQLException e) {
             handleException(e);
@@ -521,25 +422,14 @@ public class JDBCDatabase implements Database {
      * {@inheritDoc}
      */
     public Protection loadProtection(int id) {
-        try {
-            Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT id, type, updated, created, accessed FROM " + details.getPrefix() + "protections WHERE id = ?");
+        try (Connection connection = pool.getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT id, type, updated, created, accessed FROM " + details.getPrefix() + "protections WHERE id = ?")) {
+            statement.setInt(1, id);
 
-            try {
-                statement.setInt(1, id);
-
-                ResultSet set = statement.executeQuery();
-
-                try {
-                    if (set.next()) {
-                        return resolveProtection(set);
-                    }
-                } finally {
-                    set.close();
+            try (ResultSet set = statement.executeQuery()) {
+                if (set.next()) {
+                    return resolveProtection(set);
                 }
-            } finally {
-                safeClose(statement);
-                safeClose(connection);
             }
         } catch (SQLException e) {
             handleException(e);
@@ -552,23 +442,15 @@ public class JDBCDatabase implements Database {
      * {@inheritDoc}
      */
     public void saveProtection(Protection protection) {
-        try {
-            Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("UPDATE " + details.getPrefix() + "protections SET type = ?, created = ?, updated = ?, accessed = ? WHERE id = ?");
-
+        try (Connection connection = pool.getConnection();
+             PreparedStatement statement = connection.prepareStatement("UPDATE " + details.getPrefix() + "protections SET type = ?, created = ?, updated = ?, accessed = ? WHERE id = ?")) {
             // TODO create / update / delete protection_blocks / protection_entities
-
-            try {
-                statement.setInt(1, protection.getType().ordinal());
-                statement.setInt(2, protection.getCreated());
-                statement.setInt(3, protection.getUpdated());
-                statement.setInt(4, protection.getAccessed());
-                statement.setInt(5, protection.getId());
-                statement.executeUpdate();
-            } finally {
-                safeClose(statement);
-                safeClose(connection);
-            }
+            statement.setInt(1, protection.getType().ordinal());
+            statement.setInt(2, protection.getCreated());
+            statement.setInt(3, protection.getUpdated());
+            statement.setInt(4, protection.getAccessed());
+            statement.setInt(5, protection.getId());
+            statement.executeUpdate();
         } catch (SQLException e) {
             handleException(e);
         }
@@ -581,17 +463,10 @@ public class JDBCDatabase implements Database {
         removeRoles(protection);
         removeProtectionAttributes(protection);
 
-        try {
-            Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protections WHERE id = ?");
-
-            try {
-                statement.setInt(1, protection.getId());
-                statement.executeUpdate();
-            } finally {
-                safeClose(statement);
-                safeClose(connection);
-            }
+        try (Connection connection = pool.getConnection();
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protections WHERE id = ?")) {
+            statement.setInt(1, protection.getId());
+            statement.executeUpdate();
         } catch (SQLException e) {
             handleException(e);
         }
@@ -601,36 +476,22 @@ public class JDBCDatabase implements Database {
      * {@inheritDoc}
      */
     public void saveOrCreateRole(ProtectionRole role) {
-        try {
-            Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_roles (protection_id, type, name, role) VALUES (?, ?, ?, ?)");
-
-            try {
-                statement.setInt(1, role.getProtection().getId());
-                statement.setInt(2, lookup.get(JDBCLookupService.LookupType.ROLE_TYPE, role.getType()));
-                statement.setInt(3, lookup.get(JDBCLookupService.LookupType.ROLE_NAME, role.getName()));
-                statement.setInt(4, role.getAccess().ordinal());
-                statement.executeUpdate();
-            } finally {
-                safeClose(statement);
-                safeClose(connection);
-            }
+        try (Connection connection = pool.getConnection();
+             PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_roles (protection_id, type, name, role) VALUES (?, ?, ?, ?)")) {
+            statement.setInt(1, role.getProtection().getId());
+            statement.setInt(2, lookup.get(JDBCLookupService.LookupType.ROLE_TYPE, role.getType()));
+            statement.setInt(3, lookup.get(JDBCLookupService.LookupType.ROLE_NAME, role.getName()));
+            statement.setInt(4, role.getAccess().ordinal());
+            statement.executeUpdate();
         } catch (SQLException e) {
-            try {
-                Connection connection = pool.getConnection();
-                PreparedStatement statement = connection.prepareStatement("UPDATE " + details.getPrefix() + "protection_roles SET name = ?, role = ? WHERE protection_id = ? AND type = ? AND name = ?");
-
-                try {
-                    statement.setString(1, role.getName());
-                    statement.setInt(2, role.getAccess().ordinal());
-                    statement.setInt(3, role.getProtection().getId());
-                    statement.setString(4, role.getType());
-                    statement.setString(5, role.getName());
-                    statement.executeUpdate();
-                } finally {
-                    safeClose(statement);
-                    safeClose(connection);
-                }
+            try (Connection connection = pool.getConnection();
+                 PreparedStatement statement = connection.prepareStatement("UPDATE " + details.getPrefix() + "protection_roles SET name = ?, role = ? WHERE protection_id = ? AND type = ? AND name = ?")) {
+                statement.setString(1, role.getName());
+                statement.setInt(2, role.getAccess().ordinal());
+                statement.setInt(3, role.getProtection().getId());
+                statement.setString(4, role.getType());
+                statement.setString(5, role.getName());
+                statement.executeUpdate();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -641,19 +502,12 @@ public class JDBCDatabase implements Database {
      * {@inheritDoc}
      */
     public void removeRole(ProtectionRole role) {
-        try {
-            Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_roles WHERE protection_id = ? AND type = ? AND name = ?");
-
-            try {
-                statement.setInt(1, role.getProtection().getId());
-                statement.setInt(2, lookup.get(JDBCLookupService.LookupType.ROLE_TYPE, role.getType()));
-                statement.setInt(3, lookup.get(JDBCLookupService.LookupType.ROLE_NAME, role.getName()));
-                statement.executeUpdate();
-            } finally {
-                safeClose(statement);
-                safeClose(connection);
-            }
+        try (Connection connection = pool.getConnection();
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_roles WHERE protection_id = ? AND type = ? AND name = ?")) {
+            statement.setInt(1, role.getProtection().getId());
+            statement.setInt(2, lookup.get(JDBCLookupService.LookupType.ROLE_TYPE, role.getType()));
+            statement.setInt(3, lookup.get(JDBCLookupService.LookupType.ROLE_NAME, role.getName()));
+            statement.executeUpdate();
         } catch (SQLException e) {
             handleException(e);
         }
@@ -663,17 +517,10 @@ public class JDBCDatabase implements Database {
      * {@inheritDoc}
      */
     public void removeRoles(Protection protection) {
-        try {
-            Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_roles WHERE protection_id = ?");
-
-            try {
-                statement.setInt(1, protection.getId());
-                statement.executeUpdate();
-            } finally {
-                safeClose(statement);
-                safeClose(connection);
-            }
+        try (Connection connection = pool.getConnection();
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_roles WHERE protection_id = ?")) {
+            statement.setInt(1, protection.getId());
+            statement.executeUpdate();
         } catch (SQLException e) {
             handleException(e);
         }
@@ -683,33 +530,19 @@ public class JDBCDatabase implements Database {
      * {@inheritDoc}
      */
     public void saveOrCreateProtectionAttribute(Protection protection, AbstractAttribute attribute) {
-        try {
-            Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_attributes (protection_id, attribute_name, attribute_value) VALUES (?, ?, ?)");
-
-            try {
-                statement.setInt(1, protection.getId());
-                statement.setInt(2, lookup.get(JDBCLookupService.LookupType.ATTRIBUTE_NAME, attribute.getName()));
-                statement.setString(3, attribute.getStorableValue());
-                statement.executeUpdate();
-            } finally {
-                safeClose(statement);
-                safeClose(connection);
-            }
+        try (Connection connection = pool.getConnection();
+             PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_attributes (protection_id, attribute_name, attribute_value) VALUES (?, ?, ?)")) {
+            statement.setInt(1, protection.getId());
+            statement.setInt(2, lookup.get(JDBCLookupService.LookupType.ATTRIBUTE_NAME, attribute.getName()));
+            statement.setString(3, attribute.getStorableValue());
+            statement.executeUpdate();
         } catch (SQLException e) {
-            try {
-                Connection connection = pool.getConnection();
-                PreparedStatement statement = connection.prepareStatement("UPDATE " + details.getPrefix() + "protection_attributes SET attribute_value = ? WHERE protection_id = ? AND attribute_name = ?");
-
-                try {
-                    statement.setString(1, attribute.getStorableValue());
-                    statement.setInt(2, protection.getId());
-                    statement.setInt(3, lookup.get(JDBCLookupService.LookupType.ATTRIBUTE_NAME, attribute.getName()));
-                    statement.executeUpdate();
-                } finally {
-                    safeClose(statement);
-                    safeClose(connection);
-                }
+            try (Connection connection = pool.getConnection();
+                 PreparedStatement statement = connection.prepareStatement("UPDATE " + details.getPrefix() + "protection_attributes SET attribute_value = ? WHERE protection_id = ? AND attribute_name = ?")) {
+                statement.setString(1, attribute.getStorableValue());
+                statement.setInt(2, protection.getId());
+                statement.setInt(3, lookup.get(JDBCLookupService.LookupType.ATTRIBUTE_NAME, attribute.getName()));
+                statement.executeUpdate();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -720,18 +553,11 @@ public class JDBCDatabase implements Database {
      * {@inheritDoc}
      */
     public void removeProtectionAttribute(Protection protection, AbstractAttribute attribute) {
-        try {
-            Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_attributes WHERE protection_id = ? AND attribute_name = ?");
-
-            try {
-                statement.setInt(1, protection.getId());
-                statement.setInt(2, lookup.get(JDBCLookupService.LookupType.ATTRIBUTE_NAME, attribute.getName()));
-                statement.executeUpdate();
-            } finally {
-                safeClose(statement);
-                safeClose(connection);
-            }
+        try (Connection connection = pool.getConnection();
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_attributes WHERE protection_id = ? AND attribute_name = ?")) {
+            statement.setInt(1, protection.getId());
+            statement.setInt(2, lookup.get(JDBCLookupService.LookupType.ATTRIBUTE_NAME, attribute.getName()));
+            statement.executeUpdate();
         } catch (SQLException e) {
             handleException(e);
         }
@@ -741,17 +567,10 @@ public class JDBCDatabase implements Database {
      * {@inheritDoc}
      */
     public void removeProtectionAttributes(Protection protection) {
-        try {
-            Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_attributes WHERE protection_id = ?");
-
-            try {
-                statement.setInt(1, protection.getId());
-                statement.executeUpdate();
-            } finally {
-                safeClose(statement);
-                safeClose(connection);
-            }
+        try (Connection connection = pool.getConnection();
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_attributes WHERE protection_id = ?")) {
+            statement.setInt(1, protection.getId());
+            statement.executeUpdate();
         } catch (SQLException e) {
             handleException(e);
         }
@@ -763,15 +582,11 @@ public class JDBCDatabase implements Database {
     public Set<AbstractAttribute> loadProtectionAttributes(Protection protection) {
         Set<AbstractAttribute> attributes = new HashSet<AbstractAttribute>();
 
-        try {
-            Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT attribute_name, attribute_value FROM " + details.getPrefix() + "protection_attributes WHERE protection_id = ?");
+        try (Connection connection = pool.getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT attribute_name, attribute_value FROM " + details.getPrefix() + "protection_attributes WHERE protection_id = ?")) {
+            statement.setInt(1, protection.getId());
 
-            try {
-                statement.setInt(1, protection.getId());
-
-                ResultSet set = statement.executeQuery();
-
+            try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
                     AbstractAttribute attribute = engine.getProtectionManager().createProtectionAttribute(lookup.get(JDBCLookupService.LookupType.ATTRIBUTE_NAME, set.getInt("attribute_name")));
 
@@ -785,11 +600,6 @@ public class JDBCDatabase implements Database {
                     attribute.loadValue(set.getString("attribute_value"));
                     attributes.add(attribute);
                 }
-
-                set.close();
-            } finally {
-                safeClose(statement);
-                safeClose(connection);
             }
         } catch (SQLException e) {
             handleException(e);
@@ -804,15 +614,11 @@ public class JDBCDatabase implements Database {
     public Set<ProtectionRole> loadProtectionRoles(Protection protection) {
         Set<ProtectionRole> roles = new HashSet<ProtectionRole>();
 
-        try {
-            Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT type, name, role FROM " + details.getPrefix() + "protection_roles WHERE protection_id = ?");
+        try (Connection connection = pool.getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT type, name, role FROM " + details.getPrefix() + "protection_roles WHERE protection_id = ?")) {
+            statement.setInt(1, protection.getId());
 
-            try {
-                statement.setInt(1, protection.getId());
-
-                ResultSet set = statement.executeQuery();
-
+            try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
                     String type = lookup.get(JDBCLookupService.LookupType.ROLE_TYPE, set.getInt("type"));
                     String name = lookup.get(JDBCLookupService.LookupType.ROLE_NAME, set.getInt("name"));
@@ -824,11 +630,6 @@ public class JDBCDatabase implements Database {
                         roles.add(role);
                     }
                 }
-
-                set.close();
-            } finally {
-                safeClose(statement);
-                safeClose(connection);
             }
         } catch (SQLException e) {
             handleException(e);
@@ -856,15 +657,11 @@ public class JDBCDatabase implements Database {
 
         switch (type) {
             case BLOCK:
-                try {
-                    Connection connection = pool.getConnection();
-                    PreparedStatement statement = connection.prepareStatement("SELECT world, x, y, z FROM " + details.getPrefix() + "protection_blocks WHERE protection_id = ?");
+                try (Connection connection = pool.getConnection();
+                     PreparedStatement statement = connection.prepareStatement("SELECT world, x, y, z FROM " + details.getPrefix() + "protection_blocks WHERE protection_id = ?")) {
+                    statement.setInt(1, protectionId);
 
-                    try {
-                        statement.setInt(1, protectionId);
-
-                        ResultSet blockSet = statement.executeQuery();
-
+                    try (ResultSet blockSet = statement.executeQuery()) {
                         if (blockSet.next()) {
                             // TODO allow multiple blocks per protection ?
                             World world = engine.getServerLayer().getWorld(lookup.get(JDBCLookupService.LookupType.WORLD_NAME, blockSet.getInt("world")));
@@ -874,11 +671,6 @@ public class JDBCDatabase implements Database {
 
                             protection = new BlockProtection(engine, protectionId, new Location(world, x, y, z));
                         }
-
-                        blockSet.close();
-                    } finally {
-                        safeClose(statement);
-                        safeClose(connection);
                     }
                 } catch (SQLException e) {
                     handleException(e);
