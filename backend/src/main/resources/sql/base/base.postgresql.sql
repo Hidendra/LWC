@@ -1,14 +1,14 @@
 CREATE TABLE __PREFIX__protections (
   id SERIAL NOT NULL PRIMARY KEY,
-  x INTEGER NOT NULL,
-  y INTEGER NOT NULL,
-  z INTEGER NOT NULL,
-  world INTEGER NOT NULL,
+  type INTEGER NOT NULL,
   created INTEGER NOT NULL,
   updated INTEGER NOT NULL,
   accessed INTEGER NOT NULL
 );
-CREATE UNIQUE INDEX __PREFIX__position ON __PREFIX__protections (x, y, z, world);
+CREATE INDEX __PREFIX__protection_type ON __PREFIX__protections (type);
+CREATE INDEX __PREFIX__protection_created ON __PREFIX__protections (created);
+CREATE INDEX __PREFIX__protection_updated ON __PREFIX__protections (updated);
+CREATE INDEX __PREFIX__protection_accessed ON __PREFIX__protections (accessed);
 
 CREATE TABLE __PREFIX__lookup_attribute_name (
   id INTEGER NOT NULL PRIMARY KEY,

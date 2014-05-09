@@ -14,3 +14,13 @@ CREATE TABLE __PREFIX__protection_roles (
 ) ;
 CREATE INDEX __PREFIX__protection_id ON __PREFIX__protection_roles (protection_id);
 CREATE UNIQUE INDEX __PREFIX__roles ON __PREFIX__protection_roles (protection_id, type, name);
+
+CREATE TABLE __PREFIX__protection_blocks (
+  protection_id INTEGER NOT NULL,
+  world INTEGER NOT NULL,
+  x INTEGER NOT NULL,
+  y INTEGER NOT NULL,
+  z INTEGER NOT NULL
+) ;
+CREATE INDEX __PREFIX__blocks_id ON __PREFIX__protection_blocks (protection_id);
+CREATE UNIQUE INDEX __PREFIX__blocks on __PREFIX__protection_blocks (world, x, y, z);

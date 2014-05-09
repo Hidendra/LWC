@@ -45,7 +45,25 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class Protection extends AbstractSavable {
+public abstract class Protection extends AbstractSavable {
+
+    /**
+     * The type of protection. The ordering of the types should never change as the ordinal
+     * value is used internally.
+     */
+    public enum Type {
+
+        /**
+         * Protection is protecting a block
+         */
+        BLOCK,
+
+        /**
+         * Protection is protecting an entity
+         */
+        ENTITY
+
+    }
 
     /**
      * The LWC engine instance
@@ -58,24 +76,9 @@ public class Protection extends AbstractSavable {
     private int id;
 
     /**
-     * The world this protection is in
+     * The protection's type
      */
-    private World world;
-
-    /**
-     * The x coordinate of the protection
-     */
-    private int x;
-
-    /**
-     * The y coordinate of the protection
-     */
-    private int y;
-
-    /**
-     * The z coordinate of the protection
-     */
-    private int z;
+    private Type type;
 
     /**
      * The unix timestamp of when the protection was created
@@ -120,7 +123,7 @@ public class Protection extends AbstractSavable {
     @Override
     public String toString() {
         // TODO add in updated, created
-        return String.format("Protection(id=%d, world=\"%s\", location=[%d, %d, %d])", id, world, x, y, z);
+        return String.format("Protection(id=%d)", id);
     }
 
     public Protection(Engine engine, int id) {
@@ -286,31 +289,8 @@ public class Protection extends AbstractSavable {
         return Collections.unmodifiableSet(roles);
     }
 
-    /**
-     * Get the current location of the protection
-     *
-     * @return
-     */
-    public Location getLocation() {
-        return new Location(getWorld(), getX(), getY(), getZ());
-    }
-
-    public void setWorld(World world) {
-        this.world = world;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-        state = State.MODIFIED;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-        state = State.MODIFIED;
-    }
-
-    public void setZ(int z) {
-        this.z = z;
+    public void setType(Type type) {
+        this.type = type;
         state = State.MODIFIED;
     }
 
@@ -332,20 +312,8 @@ public class Protection extends AbstractSavable {
         return id;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public int getZ() {
-        return z;
-    }
-
-    public World getWorld() {
-        return world;
+    public Type getType() {
+        return type;
     }
 
     public int getUpdated() {

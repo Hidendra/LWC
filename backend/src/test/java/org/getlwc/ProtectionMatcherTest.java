@@ -73,14 +73,11 @@ public class ProtectionMatcherTest {
         protectionManager = new SimpleProtectionManager(engine);
         world = new MemoryWorld();
 
-        SaveQueue saveQueue = new SaveQueue();
-
         // engine mocks
         when(engine.getConfiguration()).thenReturn(configuration);
         when(engine.getConsoleSender()).thenReturn(consoleCommandSender);
         when(engine.getDatabase()).thenReturn(database);
         when(engine.getProtectionManager()).thenReturn(protectionManager);
-        when(engine.getSaveQueue()).thenReturn(saveQueue);
 
         loadWorld();
 

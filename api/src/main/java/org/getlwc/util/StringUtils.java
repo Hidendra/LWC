@@ -43,7 +43,6 @@ public class StringUtils {
      */
     private final static Pattern QUOTED_STRING_REGEX = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
 
-
     /**
      * Escape a string. Primarily, replace single quotes with double quotes.
      *

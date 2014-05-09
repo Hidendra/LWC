@@ -33,10 +33,12 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.getlwc.Engine;
 import org.getlwc.Location;
 import org.getlwc.SaveQueue;
+import org.getlwc.World;
 import org.getlwc.db.Database;
 import org.getlwc.db.DatabaseException;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.AbstractSavable;
+import org.getlwc.model.BlockProtection;
 import org.getlwc.model.Protection;
 import org.getlwc.model.State;
 import org.getlwc.role.ProtectionRole;
@@ -286,7 +288,6 @@ public class JDBCDatabase implements Database {
      * {@inheritDoc}
      */
     public void disconnect() {
-        saveQueue.flushAndClose();
         pool.close();
         pool = null;
     }
@@ -412,18 +413,29 @@ public class JDBCDatabase implements Database {
     public Protection createProtection(Location location) {
         try {
             Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protections (world, x, y, z, updated, created, accessed) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protections (type, updated, created, accessed) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            ResultSet generatedKeys;
 
             try {
-                statement.setInt(1, lookup.get(JDBCLookupService.LookupType.WORLD_NAME, location.getWorld().getName()));
-                statement.setInt(2, location.getBlockX());
-                statement.setInt(3, location.getBlockY());
-                statement.setInt(4, location.getBlockZ());
+                statement.setInt(1, Protection.Type.BLOCK.ordinal());
                 int epoch = (int) (System.currentTimeMillis() / 1000L);
-                statement.setInt(5, epoch);
-                statement.setInt(6, epoch);
-                statement.setInt(7, epoch);
-                statement.executeUpdate();
+                statement.setInt(2, epoch);
+                statement.setInt(3, epoch);
+                statement.setInt(4, epoch);
+
+                int affected = statement.executeUpdate();
+
+                if (affected == 0) {
+                    return null;
+                }
+
+                //
+                generatedKeys = statement.getGeneratedKeys();
+
+                if (generatedKeys.next()) {
+                    int protectionId = generatedKeys.getInt(1);
+                    addProtectionBlock(protectionId, location);
+                }
             } finally {
                 safeClose(statement);
                 safeClose(connection);
@@ -436,18 +448,85 @@ public class JDBCDatabase implements Database {
     }
 
     /**
+     * Add a protection's block to the database.
+     *
+     * @param protectionId
+     * @param location
+     * @return true if the block was added; false otherwise
+     */
+    private boolean addProtectionBlock(int protectionId, Location location) {
+        try {
+            Connection connection = pool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_blocks (protection_id, world, x, y, z) VALUES (?, ?, ?, ?, ?)");
+
+            try {
+                statement.setInt(1, protectionId);
+                statement.setInt(2, lookup.get(JDBCLookupService.LookupType.WORLD_NAME, location.getWorld().getName()));
+                statement.setInt(3, location.getBlockX());
+                statement.setInt(4, location.getBlockY());
+                statement.setInt(5, location.getBlockZ());
+
+                int affected = statement.executeUpdate();
+
+                if (affected == 0) {
+                    return true;
+                }
+            } finally {
+                safeClose(statement);
+                safeClose(connection);
+            }
+        } catch (SQLException e) {
+            handleException(e);
+        }
+
+        return false;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public Protection loadProtection(Location location) {
         try {
             Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT id, world, x, y, z, updated, created, accessed FROM " + details.getPrefix() + "protections WHERE x = ? AND y = ? AND z = ? AND world = ?");
+            PreparedStatement statement = connection.prepareStatement("SELECT protection_id FROM " + details.getPrefix() + "protection_blocks WHERE x = ? AND y = ? AND z = ? AND world = ?");
 
             try {
                 statement.setInt(1, location.getBlockX());
                 statement.setInt(2, location.getBlockY());
                 statement.setInt(3, location.getBlockZ());
                 statement.setInt(4, lookup.get(JDBCLookupService.LookupType.WORLD_NAME, location.getWorld().getName()));
+
+                ResultSet set = statement.executeQuery();
+
+                try {
+                    if (set.next()) {
+                        // TODO compress into a join? At the time this is the very simplest solution
+                        return loadProtection(set.getInt("protection_id"));
+                    }
+                } finally {
+                    set.close();
+                }
+            } finally {
+                safeClose(statement);
+                safeClose(connection);
+            }
+        } catch (SQLException e) {
+            handleException(e);
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Protection loadProtection(int id) {
+        try {
+            Connection connection = pool.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT id, type, updated, created, accessed FROM " + details.getPrefix() + "protections WHERE id = ?");
+
+            try {
+                statement.setInt(1, id);
 
                 ResultSet set = statement.executeQuery();
 
@@ -472,49 +551,19 @@ public class JDBCDatabase implements Database {
     /**
      * {@inheritDoc}
      */
-    public Protection loadProtection(int id) {
-        try {
-            Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT id, world, x, y, z, updated, created, accessed FROM " + details.getPrefix() + "protections WHERE id = ?");
-
-            try {
-                statement.setInt(1, id);
-
-                ResultSet set = statement.executeQuery();
-
-                try {
-                    return resolveProtection(set);
-                } finally {
-                    set.close();
-                }
-            } finally {
-                safeClose(statement);
-                safeClose(connection);
-            }
-        } catch (SQLException e) {
-            handleException(e);
-        }
-
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void saveProtection(Protection protection) {
         try {
             Connection connection = pool.getConnection();
-            PreparedStatement statement = connection.prepareStatement("UPDATE " + details.getPrefix() + "protections SET x = ?, y = ?, z = ?, world = ?, created = ?, updated = ?, accessed = ? WHERE id = ?");
+            PreparedStatement statement = connection.prepareStatement("UPDATE " + details.getPrefix() + "protections SET type = ?, created = ?, updated = ?, accessed = ? WHERE id = ?");
+
+            // TODO create / update / delete protection_blocks / protection_entities
 
             try {
-                statement.setInt(1, protection.getX());
-                statement.setInt(2, protection.getY());
-                statement.setInt(3, protection.getZ());
-                statement.setInt(4, lookup.get(JDBCLookupService.LookupType.WORLD_NAME, protection.getWorld().getName()));
-                statement.setInt(5, protection.getCreated());
-                statement.setInt(6, protection.getUpdated());
-                statement.setInt(7, protection.getAccessed());
-                statement.setInt(8, protection.getId());
+                statement.setInt(1, protection.getType().ordinal());
+                statement.setInt(2, protection.getCreated());
+                statement.setInt(3, protection.getUpdated());
+                statement.setInt(4, protection.getAccessed());
+                statement.setInt(5, protection.getId());
                 statement.executeUpdate();
             } finally {
                 safeClose(statement);
@@ -795,11 +844,57 @@ public class JDBCDatabase implements Database {
      * @return
      */
     private Protection resolveProtection(ResultSet set) throws SQLException {
-        Protection protection = new Protection(engine, set.getInt("id"));
-        protection.setWorld(engine.getServerLayer().getWorld(lookup.get(JDBCLookupService.LookupType.WORLD_NAME, set.getInt("world"))));
-        protection.setX(set.getInt("x"));
-        protection.setY(set.getInt("y"));
-        protection.setZ(set.getInt("z"));
+        Protection protection = null;
+        int protectionId = set.getInt("id");
+        int typeId = set.getInt("type");
+
+        if (typeId < 0 || typeId >= Protection.Type.values().length) {
+            return null;
+        }
+
+        Protection.Type type = Protection.Type.values()[typeId];
+
+        switch (type) {
+            case BLOCK:
+                try {
+                    Connection connection = pool.getConnection();
+                    PreparedStatement statement = connection.prepareStatement("SELECT world, x, y, z FROM " + details.getPrefix() + "protection_blocks WHERE protection_id = ?");
+
+                    try {
+                        statement.setInt(1, protectionId);
+
+                        ResultSet blockSet = statement.executeQuery();
+
+                        if (blockSet.next()) {
+                            // TODO allow multiple blocks per protection ?
+                            World world = engine.getServerLayer().getWorld(lookup.get(JDBCLookupService.LookupType.WORLD_NAME, blockSet.getInt("world")));
+                            int x = blockSet.getInt("x");
+                            int y = blockSet.getInt("y");
+                            int z = blockSet.getInt("z");
+
+                            protection = new BlockProtection(engine, protectionId, new Location(world, x, y, z));
+                        }
+
+                        blockSet.close();
+                    } finally {
+                        safeClose(statement);
+                        safeClose(connection);
+                    }
+                } catch (SQLException e) {
+                    handleException(e);
+                    return null;
+                }
+
+                break;
+
+            default:
+                throw new UnsupportedOperationException("Unsupported protection type: " + type);
+        }
+
+        if (protection == null) {
+            return null;
+        }
+
         protection.setUpdated(set.getInt("updated"));
         protection.setCreated(set.getInt("created"));
         protection.setAccessed(set.getInt("accessed"));

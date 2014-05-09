@@ -35,6 +35,7 @@ import org.getlwc.db.Database;
 import org.getlwc.db.DatabaseException;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.AbstractSavable;
+import org.getlwc.model.BlockProtection;
 import org.getlwc.model.Protection;
 import org.getlwc.role.ProtectionRole;
 
@@ -83,7 +84,10 @@ public class MemoryDatabase implements Database {
     private void internalAddProtection(Protection protection) {
         protections.add(protection);
         protectionsIndexById.put(protection.getId(), protection);
-        protectionsIndexByLocation.put(protection.getLocation(), protection);
+
+        if (protection instanceof BlockProtection) {
+            protectionsIndexByLocation.put(((BlockProtection) protection).getLocation(), protection);
+        }
     }
 
     /**
@@ -92,7 +96,10 @@ public class MemoryDatabase implements Database {
     private void internalRemoveProtection(Protection protection) {
         protections.remove(protection);
         protectionsIndexById.remove(protection.getId());
-        protectionsIndexByLocation.remove(protection.getLocation());
+
+        if (protection instanceof BlockProtection) {
+            protectionsIndexByLocation.remove(((BlockProtection) protection).getLocation());
+        }
     }
 
     /**
@@ -120,11 +127,7 @@ public class MemoryDatabase implements Database {
      * {@inheritDoc}
      */
     public Protection createProtection(Location location) {
-        Protection protection = new Protection(engine, protectionsId.getAndIncrement());
-        protection.setWorld(location.getWorld());
-        protection.setX(location.getBlockX());
-        protection.setY(location.getBlockY());
-        protection.setZ(location.getBlockZ());
+        Protection protection = new BlockProtection(engine, protectionsId.getAndIncrement(), location);
         internalAddProtection(protection);
         return protection;
     }
