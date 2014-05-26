@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class SimpleProviderManager<P extends Provider<T>, T> implements ProviderManager<P, T> {
+public class SimpleProviderManager<P extends Provider> implements ProviderManager<P> {
 
     /**
      * A map of the providers this manager managers

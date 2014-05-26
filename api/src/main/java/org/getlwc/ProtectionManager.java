@@ -68,13 +68,13 @@ public interface ProtectionManager {
      *
      * @return
      */
-    public ProviderManager<ProtectionProvider<ProtectionRole>, ProtectionRole> getRoleManager();
+    public ProviderManager<ProtectionProvider<ProtectionRole>> getRoleManager();
 
     /**
      * Get the manager for attributes
      *
      * @return
      */
-    public ProviderManager<BasicProvider<AbstractAttribute>, AbstractAttribute> getAttributeManager();
+    public ProviderManager<BasicProvider<AbstractAttribute>> getAttributeManager();
 
 }

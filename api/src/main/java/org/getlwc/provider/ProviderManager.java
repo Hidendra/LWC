@@ -2,7 +2,7 @@ package org.getlwc.provider;
 
 import java.util.Map;
 
-public interface ProviderManager<P extends Provider<T>, T> extends Map<String, P> {
+public interface ProviderManager<P extends Provider> extends Map<String, P> {
 
     /**
      * Attempts to match a provider to a given input. If the input dose not correlate identically

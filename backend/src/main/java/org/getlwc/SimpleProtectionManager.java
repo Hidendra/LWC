@@ -54,12 +54,12 @@ public class SimpleProtectionManager implements ProtectionManager {
      * The role manager
      * TODO add default (Player)
      */
-    private final SimpleProviderManager<ProtectionProvider<ProtectionRole>, ProtectionRole> roleProviderManager = new SimpleProviderManager<>();
+    private final SimpleProviderManager<ProtectionProvider<ProtectionRole>> roleProviderManager = new SimpleProviderManager<>();
 
     /**
      * The attribute manager
      */
-    private final SimpleProviderManager<BasicProvider<AbstractAttribute>, AbstractAttribute> attributeProviderManager = new SimpleProviderManager<>();
+    private final SimpleProviderManager<BasicProvider<AbstractAttribute>> attributeProviderManager = new SimpleProviderManager<>();
 
     public SimpleProtectionManager(Engine engine) {
         this.engine = engine;
@@ -131,12 +131,12 @@ public class SimpleProtectionManager implements ProtectionManager {
     }
 
     @Override
-    public ProviderManager<ProtectionProvider<ProtectionRole>, ProtectionRole> getRoleManager() {
+    public ProviderManager<ProtectionProvider<ProtectionRole>> getRoleManager() {
         return roleProviderManager;
     }
 
     @Override
-    public ProviderManager<BasicProvider<AbstractAttribute>, AbstractAttribute> getAttributeManager() {
+    public ProviderManager<BasicProvider<AbstractAttribute>> getAttributeManager() {
         return attributeProviderManager;
     }
 
