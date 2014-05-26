@@ -3,7 +3,8 @@ resources:
   c3p0:
     testClass: com.mchange.v2.c3p0.ComboPooledDataSource
     files:
-    - c3p0-0.9.1.2.jar
+    - mchange-commons-java-0.2.7.jar
+    - c3p0-0.9.5-pre8.jar
   databases:
     mysql:
       testClass: org.gjt.mm.mysql.Driver
