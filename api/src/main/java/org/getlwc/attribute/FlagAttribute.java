@@ -29,7 +29,7 @@ public class FlagAttribute extends AbstractAttribute<FlagAttribute.Flag> {
     }
 
     @Override
-    public void loadValue(String value) {
+    public void loadData(String value) {
         this.value = Flag.values()[Integer.parseInt(value)];
     }
 

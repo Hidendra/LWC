@@ -34,9 +34,7 @@ import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.db.Database;
 import org.getlwc.economy.EconomyHandler;
-import org.getlwc.factory.AbstractFactoryRegistry;
 import org.getlwc.permission.PermissionHandler;
-import org.getlwc.role.RoleFactory;
 
 public interface Engine {
 
@@ -46,13 +44,6 @@ public interface Engine {
      * @return
      */
     public String getTargetMinecraftVersion();
-
-    /**
-     * Get the {@link AbstractFactoryRegistry} which manages role associations
-     *
-     * @return
-     */
-    public AbstractFactoryRegistry<RoleFactory> getRoleRegistry();
 
     /**
      * Get the protection manager

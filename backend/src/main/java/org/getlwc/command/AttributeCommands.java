@@ -35,6 +35,8 @@ import org.getlwc.event.events.ProtectionEvent;
 import org.getlwc.event.notifiers.ProtectionEventNotifier;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
+import org.getlwc.provider.BasicProvider;
+import org.getlwc.provider.Provider;
 import org.getlwc.role.ProtectionRole;
 import org.getlwc.util.StringUtils;
 
@@ -59,7 +61,7 @@ public class AttributeCommands {
     )
     public void set(CommandContext context) {
         final Player player = (Player) context.getCommandSender();
-        String attributeName = context.getArgument(1);
+        final String attributeName = context.getArgument(1);
         String value = "";
 
         String[] arguments = context.getArgumentsArray();
@@ -68,22 +70,14 @@ public class AttributeCommands {
         }
 
         // verify the attribute
-        final AbstractAttribute<?> attribute = engine.getProtectionManager().createProtectionAttribute(attributeName);
+        final BasicProvider<AbstractAttribute> provider = engine.getProtectionManager().getAttributeManager().get(attributeName);
 
-        if (attribute == null) {
+        if (provider == null) {
             player.sendTranslatedMessage("&4Invalid attribute name.");
             return;
         }
 
-        // import our provided value into the attribute
-        try {
-            attribute.loadValue(value);
-            // TODO better exception ?
-        } catch (Exception e) {
-            player.sendTranslatedMessage("&4Invalid attribute value.");
-            return;
-        }
-
+        final String finalAttributeValue = value;
         player.sendTranslatedMessage("&2Click on your protection to set the attribute");
         player.onAnyInteract(new ProtectionEventNotifier() {
             @Override
@@ -95,6 +89,9 @@ public class AttributeCommands {
                     player.sendTranslatedMessage("&4Only managers and above can modify the attributes of a protection.");
                     return true;
                 }
+
+                AbstractAttribute attribute = provider.create();
+                attribute.loadData(finalAttributeValue);
 
                 protection.addAttribute(attribute);
                 protection.save();
@@ -119,9 +116,9 @@ public class AttributeCommands {
         final String attributeName = context.getArgument(1).toLowerCase();
 
         // verify the attribute
-        final AbstractAttribute<?> attribute = engine.getProtectionManager().createProtectionAttribute(attributeName);
+        final Provider<AbstractAttribute> provider = engine.getProtectionManager().getAttributeManager().get(attributeName);
 
-        if (attribute == null) {
+        if (provider == null) {
             player.sendTranslatedMessage("&4Invalid attribute name.");
             return;
         }

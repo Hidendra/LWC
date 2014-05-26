@@ -5,8 +5,8 @@ import org.getlwc.entity.Player;
 import org.getlwc.event.events.ProtectionEvent;
 import org.getlwc.event.notifiers.ProtectionEventNotifier;
 import org.getlwc.model.Protection;
+import org.getlwc.provider.ProtectionProvider;
 import org.getlwc.role.ProtectionRole;
-import org.getlwc.role.RoleFactory;
 import org.getlwc.util.StringUtils;
 
 public class AddRemoveCommands {
@@ -62,17 +62,19 @@ public class AddRemoveCommands {
                         if (token.startsWith("-")) {
                             token = token.substring(1);
 
-                            RoleFactory factory = engine.getRoleRegistry().find(token);
-                            ProtectionRole role = factory != null ? factory.create(protection, token, ProtectionRole.Access.NONE) : null;
+                            ProtectionProvider<ProtectionRole> provider = engine.getProtectionManager().getRoleManager().match(token);
+                            ProtectionRole role = provider != null ? provider.create(protection) : null;
 
                             if (role == null) {
                                 player.sendTranslatedMessage("&4\"{0}\" does not match any usable roles", token);
                                 return true;
                             }
 
+                            role.setName(token);
+
                             ProtectionRole delete = null;
                             for (ProtectionRole protectionRole : protection.getRoles()) {
-                                if (role.getType() == protectionRole.getType() && role.getName().equalsIgnoreCase(protectionRole.getName())) {
+                                if (role.getType().equals(protectionRole.getType()) && role.getName().equalsIgnoreCase(protectionRole.getName())) {
                                     delete = protectionRole;
                                     break;
                                 }
@@ -104,13 +106,15 @@ public class AddRemoveCommands {
                         if (access == null) {
                             access = ProtectionRole.Access.MEMBER;
 
-                            RoleFactory factory = engine.getRoleRegistry().find(token);
-                            ProtectionRole role = factory != null ? factory.create(protection, token, access) : null;
+                            ProtectionProvider<ProtectionRole> provider = engine.getProtectionManager().getRoleManager().match(token);
+                            ProtectionRole role = provider != null ? provider.create(protection) : null;
 
                             if (role == null) {
                                 player.sendTranslatedMessage("&4\"{0}\" does not match any usable roles", token);
                                 return true;
                             }
+
+                            role.setName(token);
 
                             ProtectionRole existing = protection.getRole(role.getType(), role.getName());
 
@@ -119,13 +123,14 @@ public class AddRemoveCommands {
                                 existing.save();
                                 player.sendTranslatedMessage("&2Changed {0} to {1} successfully!", existing.getName(), existing.getAccess());
                             } else {
+                                role.setProtectionAccess(access);
                                 protection.addRole(role);
                                 protection.save();
                                 player.sendTranslatedMessage("&2Added a {0} for \"{1}\" to the protection with access level {2} successfully!", role.getClass().getSimpleName(), token, access);
                             }
                         }
 
-                        if (access != null && !ProtectionRole.Access.USABLE_ACCESS_LEVELS.contains(access)) {
+                        if (!ProtectionRole.Access.USABLE_ACCESS_LEVELS.contains(access)) {
                             player.sendTranslatedMessage("&4Protection access level &7{0}&4 is not allowed.", access);
                             access = null;
                             i++;
@@ -143,13 +148,15 @@ public class AddRemoveCommands {
                             i++;
                         }
                     } else {
-                        RoleFactory factory = engine.getRoleRegistry().find(token);
-                        ProtectionRole role = factory != null ? factory.create(protection, token, access) : null;
+                        ProtectionProvider<ProtectionRole> provider = engine.getProtectionManager().getRoleManager().match(token);
+                        ProtectionRole role = provider != null ? provider.create(protection) : null;
 
                         if (role == null) {
                             player.sendTranslatedMessage("&4\"{0}\" does not match any usable roles", token);
                             return true;
                         }
+
+                        role.setName(token);
 
                         ProtectionRole existing = protection.getRole(role.getType(), role.getName());
 
@@ -158,6 +165,7 @@ public class AddRemoveCommands {
                             existing.save();
                             player.sendTranslatedMessage("&2Changed {0} to {1} successfully!", existing.getName(), existing.getAccess());
                         } else {
+                            role.setProtectionAccess(access);
                             protection.addRole(role);
                             protection.save();
                             player.sendTranslatedMessage("&2Added a {0} for \"{1}\" to the protection with access level {2} successfully!", role.getClass().getSimpleName(), token, access);

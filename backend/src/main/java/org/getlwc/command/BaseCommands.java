@@ -32,7 +32,6 @@ package org.getlwc.command;
 import org.getlwc.Block;
 import org.getlwc.Engine;
 import org.getlwc.ProtectionManager;
-import org.getlwc.attribute.HashedString;
 import org.getlwc.entity.Player;
 import org.getlwc.event.events.BlockEvent;
 import org.getlwc.event.events.ProtectionEvent;
@@ -41,6 +40,7 @@ import org.getlwc.event.notifiers.ProtectionEventNotifier;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.BlockProtection;
 import org.getlwc.model.Protection;
+import org.getlwc.provider.BasicProvider;
 import org.getlwc.role.ProtectionRole;
 import org.getlwc.role.Role;
 import org.getlwc.util.StringUtils;
@@ -165,9 +165,16 @@ public class BaseCommands {
 
                 Protection protection = manager.createProtection(player.getUUID(), block.getLocation());
                 if (protection != null) {
-                    AbstractAttribute<HashedString> passwordAttribute = engine.getProtectionManager().createProtectionAttribute("password");
-                    passwordAttribute.setValue(new HashedString(password, false));
-                    protection.addAttribute(passwordAttribute);
+                    BasicProvider<AbstractAttribute> provider = engine.getProtectionManager().getAttributeManager().get("lwc:attr:password");
+
+                    if (provider == null) {
+                        // TODO errrrror
+                        return false;
+                    }
+
+                    AbstractAttribute attribute = provider.create();
+                    attribute.loadData(password);
+                    protection.addAttribute(attribute);
                     protection.save();
 
                     player.sendTranslatedMessage("&2Created a new protection &4with a password&2 successfully.\n" +

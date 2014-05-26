@@ -29,9 +29,12 @@
 
 package org.getlwc;
 
-import org.getlwc.attribute.ProtectionAttributeFactory;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
+import org.getlwc.provider.BasicProvider;
+import org.getlwc.provider.ProtectionProvider;
+import org.getlwc.provider.ProviderManager;
+import org.getlwc.role.ProtectionRole;
 
 public interface ProtectionManager {
 
@@ -61,19 +64,17 @@ public interface ProtectionManager {
     public Protection createProtection(String owner, Location location);
 
     /**
-     * Register an attribute factory that is used to create {@link org.getlwc.model.AbstractAttribute} objects
-     * for protections when they are loaded.
+     * Get the manager for roles
      *
-     * @param factory
-     */
-    public void registerAttributeFactory(ProtectionAttributeFactory factory);
-
-    /**
-     * Create a protection attribute for the given name
-     *
-     * @param name
      * @return
      */
-    public AbstractAttribute createProtectionAttribute(String name);
+    public ProviderManager<ProtectionProvider<ProtectionRole>, ProtectionRole> getRoleManager();
+
+    /**
+     * Get the manager for attributes
+     *
+     * @return
+     */
+    public ProviderManager<BasicProvider<AbstractAttribute>, AbstractAttribute> getAttributeManager();
 
 }

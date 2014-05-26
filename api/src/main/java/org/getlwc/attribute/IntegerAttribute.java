@@ -39,9 +39,18 @@ public class IntegerAttribute extends AbstractAttribute<Integer> {
         this.value = value;
     }
 
+    public IntegerAttribute(Engine engine, String name) {
+        this(engine, name, 0);
+    }
+
     @Override
-    public void loadValue(String value) {
+    public void loadData(String value) {
         this.value = Integer.parseInt(value);
+    }
+
+    @Override
+    public String getStorableValue() {
+        return Integer.toString(value);
     }
 
 }

@@ -40,8 +40,15 @@ public class HashedStringAttribute extends AbstractAttribute<HashedString> {
         this.value = new HashedString(value, false);
     }
 
+    public HashedStringAttribute(Engine engine, String name) {
+        this(engine, name, "");
+    }
+
     @Override
-    public void loadValue(String value) {
+    public void loadData(String value) {
+        // TODO prepend header to verify if it is hashed or not
+        // and have the class check if it is hashed, not this class
+        // (new hash library?)
         this.value = new HashedString(value, value.length() == 64);
     }
 

@@ -38,6 +38,11 @@ public abstract class ProtectionRole extends Role implements AccessProvider {
         return getClass().getSimpleName() + ": name=\"" + getName() + "\" access=" + access.toString() + " protection=\"" + protection + "\"";
     }
 
+    @Override
+    public void loadData(String data) {
+        throw new UnsupportedOperationException("ProtectionRole.loadData is not used");
+    }
+
     /**
      * Get the protection that this role is for
      *

@@ -39,9 +39,18 @@ public class DoubleAttribute extends AbstractAttribute<Double> {
         this.value = value;
     }
 
+    public DoubleAttribute(Engine engine, String name) {
+        this(engine, name, 0);
+    }
+
     @Override
-    public void loadValue(String value) {
+    public void loadData(String value) {
         this.value = Double.parseDouble(value);
+    }
+
+    @Override
+    public String getStorableValue() {
+        return Double.toString(value);
     }
 
 }

@@ -29,14 +29,17 @@
 
 package org.getlwc;
 
-import org.getlwc.attribute.AttributeFactoryRegistry;
-import org.getlwc.attribute.ProtectionAttributeFactory;
+import org.getlwc.attribute.provider.DescriptionProvider;
+import org.getlwc.attribute.provider.PasswordProvider;
 import org.getlwc.configuration.Configuration;
-import org.getlwc.factory.AbstractFactoryRegistry;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
-import org.getlwc.role.PlayerRoleFactory;
+import org.getlwc.provider.BasicProvider;
+import org.getlwc.provider.ProtectionProvider;
+import org.getlwc.provider.ProviderManager;
+import org.getlwc.provider.SimpleProviderManager;
 import org.getlwc.role.ProtectionRole;
+import org.getlwc.role.provider.PlayerRoleProvider;
 
 import java.util.Map;
 
@@ -48,12 +51,28 @@ public class SimpleProtectionManager implements ProtectionManager {
     private Engine engine;
 
     /**
-     * Registry for attribute factories
+     * The role manager
+     * TODO add default (Player)
      */
-    private final AbstractFactoryRegistry<ProtectionAttributeFactory> attributeRegistry = new AttributeFactoryRegistry();
+    private final SimpleProviderManager<ProtectionProvider<ProtectionRole>, ProtectionRole> roleProviderManager = new SimpleProviderManager<>();
+
+    /**
+     * The attribute manager
+     */
+    private final SimpleProviderManager<BasicProvider<AbstractAttribute>, AbstractAttribute> attributeProviderManager = new SimpleProviderManager<>();
 
     public SimpleProtectionManager(Engine engine) {
         this.engine = engine;
+
+        //
+        //
+        ProtectionProvider<ProtectionRole> playerProvider = new PlayerRoleProvider(engine);
+        roleProviderManager.put("lwc:role:player", playerProvider);
+        roleProviderManager.setDefaultProvider(playerProvider);
+
+        //
+        attributeProviderManager.put("lwc:attr:description", new DescriptionProvider(engine));
+        attributeProviderManager.put("lwc:attr:password", new PasswordProvider(engine));
     }
 
     /**
@@ -95,36 +114,30 @@ public class SimpleProtectionManager implements ProtectionManager {
         }
 
         // add the Owner role to the database for the player
-        protection.addRole(new PlayerRoleFactory.PlayerRole(engine, protection, owner, ProtectionRole.Access.OWNER));
-        protection.save();
+        ProtectionProvider<ProtectionRole> provider = roleProviderManager.get("lwc:role:player");
+
+        if (provider == null) {
+            engine.getConsoleSender().sendTranslatedMessage("No player role provider found! Creating protection with no owner...");
+        } else {
+            // TODO - helper function?
+            ProtectionRole role = provider.create(protection);
+            role.setName(owner);
+            role.setProtectionAccess(ProtectionRole.Access.OWNER);
+            protection.addRole(role);
+            protection.save();
+        }
 
         return protection;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void registerAttributeFactory(ProtectionAttributeFactory factory) {
-        if (factory == null) {
-            throw new IllegalArgumentException("factory cannot be null");
-        }
-
-        attributeRegistry.register(factory);
+    @Override
+    public ProviderManager<ProtectionProvider<ProtectionRole>, ProtectionRole> getRoleManager() {
+        return roleProviderManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public AbstractAttribute createProtectionAttribute(String name) {
-        ProtectionAttributeFactory factory = attributeRegistry.get(name.toLowerCase());
-        return factory == null ? null : factory.createAttribute();
-    }
-
-    /**
-     * Clear all attributes
-     */
-    public void clearAttributes() {
-        attributeRegistry.clear();
+    @Override
+    public ProviderManager<BasicProvider<AbstractAttribute>, AbstractAttribute> getAttributeManager() {
+        return attributeProviderManager;
     }
 
     /**

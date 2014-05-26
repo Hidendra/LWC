@@ -1,6 +1,8 @@
 package org.getlwc;
 
+import org.getlwc.command.CommandHandler;
 import org.getlwc.command.ConsoleCommandSender;
+import org.getlwc.command.SimpleCommandHandler;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.configuration.YamlConfiguration;
 import org.getlwc.db.Database;
@@ -22,6 +24,7 @@ import java.util.List;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -70,13 +73,17 @@ public class ProtectionMatcherTest {
 
         configuration = new YamlConfiguration(getClass().getResourceAsStream("/config/config.yml"));
         database = new MemoryDatabase(engine);
-        protectionManager = new SimpleProtectionManager(engine);
         world = new MemoryWorld();
+        CommandHandler commandHandler = new SimpleCommandHandler(engine);
 
         // engine mocks
+        when(engine.getServerLayer()).thenReturn(mock(ServerLayer.class));
         when(engine.getConfiguration()).thenReturn(configuration);
         when(engine.getConsoleSender()).thenReturn(consoleCommandSender);
         when(engine.getDatabase()).thenReturn(database);
+        when(engine.getCommandHandler()).thenReturn(commandHandler);
+
+        protectionManager = new SimpleProtectionManager(engine);
         when(engine.getProtectionManager()).thenReturn(protectionManager);
 
         loadWorld();

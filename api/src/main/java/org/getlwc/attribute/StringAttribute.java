@@ -39,8 +39,12 @@ public class StringAttribute extends AbstractAttribute<String> {
         this.value = value;
     }
 
+    public StringAttribute(Engine engine, String name) {
+        this(engine, name, "");
+    }
+
     @Override
-    public void loadValue(String value) {
+    public void loadData(String value) {
         this.value = value;
     }
 

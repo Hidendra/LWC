@@ -30,8 +30,9 @@
 package org.getlwc.model;
 
 import org.getlwc.Engine;
+import org.getlwc.provider.Providable;
 
-public abstract class AbstractAttribute<T> {
+public abstract class AbstractAttribute<T> implements Providable {
 
     /**
      * The Engine instance
@@ -58,14 +59,6 @@ public abstract class AbstractAttribute<T> {
         this.engine = engine;
         this.name = name;
     }
-
-    /**
-     * Load an attribute's value from the given string representation.
-     * This is the inverse of the function getStorableValue()
-     *
-     * @param value
-     */
-    public abstract void loadValue(String value);
 
     /**
      * Get the attribute's value

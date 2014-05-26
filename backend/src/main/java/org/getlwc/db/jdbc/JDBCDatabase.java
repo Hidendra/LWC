@@ -41,8 +41,9 @@ import org.getlwc.model.AbstractSavable;
 import org.getlwc.model.BlockProtection;
 import org.getlwc.model.Protection;
 import org.getlwc.model.State;
+import org.getlwc.provider.BasicProvider;
+import org.getlwc.provider.ProtectionProvider;
 import org.getlwc.role.ProtectionRole;
-import org.getlwc.role.RoleFactory;
 import org.getlwc.util.Tuple;
 
 import java.io.BufferedReader;
@@ -138,7 +139,8 @@ public class JDBCDatabase implements Database {
     private final JDBCConnectionDetails details;
 
     /**
-     *
+     * The service used to translate names / ids between each other. This just saves space in the database
+     * to save the space that a string would have taken
      */
     private JDBCLookupService lookup = new JDBCLookupService(this);
 
@@ -588,17 +590,22 @@ public class JDBCDatabase implements Database {
 
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
-                    AbstractAttribute attribute = engine.getProtectionManager().createProtectionAttribute(lookup.get(JDBCLookupService.LookupType.ATTRIBUTE_NAME, set.getInt("attribute_name")));
+                    String attributeName = lookup.get(JDBCLookupService.LookupType.ATTRIBUTE_NAME, set.getInt("attribute_name"));
+                    BasicProvider<AbstractAttribute> provider = engine.getProtectionManager().getAttributeManager().get(attributeName);
 
-                    if (attribute == null) {
-                        // the attribute is no longer registered
-                        // perhaps it was a plugin's attribute
-                        // but it was removed ?
+                    if (provider == null) {
+                        // possibly from another plugin but no longer on the server
+                        // just gracefully ignore it
                         continue;
                     }
 
-                    attribute.loadValue(set.getString("attribute_value"));
-                    attributes.add(attribute);
+                    String attributeValue = set.getString("attribute_value");
+                    AbstractAttribute loaded = provider.create();
+
+                    if (loaded != null) {
+                        loaded.loadData(attributeValue);
+                        attributes.add(loaded);
+                    }
                 }
             }
         } catch (SQLException e) {
@@ -623,10 +630,19 @@ public class JDBCDatabase implements Database {
                     String type = lookup.get(JDBCLookupService.LookupType.ROLE_TYPE, set.getInt("type"));
                     String name = lookup.get(JDBCLookupService.LookupType.ROLE_NAME, set.getInt("name"));
 
-                    RoleFactory factory = engine.getRoleRegistry().get(type);
-                    ProtectionRole role = factory.create(protection, name, ProtectionRole.Access.values()[set.getInt("role")]);
+                    ProtectionProvider<ProtectionRole> provider = engine.getProtectionManager().getRoleManager().get(type);
+
+                    if (provider == null) {
+                        // possibly from another plugin but no longer on the server
+                        // just gracefully ignore it
+                        continue;
+                    }
+
+                    ProtectionRole role = provider.create(protection);
 
                     if (role != null) {
+                        role.setName(name);
+                        role.setProtectionAccess(ProtectionRole.Access.values()[set.getInt("role")]);
                         roles.add(role);
                     }
                 }

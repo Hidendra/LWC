@@ -32,8 +32,6 @@ package org.getlwc.model;
 import org.getlwc.AccessProvider;
 import org.getlwc.Engine;
 import org.getlwc.InteractProvider;
-import org.getlwc.Location;
-import org.getlwc.World;
 import org.getlwc.entity.Entity;
 import org.getlwc.entity.Player;
 import org.getlwc.role.ProtectionRole;

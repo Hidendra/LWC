@@ -32,8 +32,9 @@ package org.getlwc.role;
 import org.getlwc.Engine;
 import org.getlwc.entity.Player;
 import org.getlwc.model.AbstractSavable;
+import org.getlwc.provider.Providable;
 
-public abstract class Role extends AbstractSavable {
+public abstract class Role extends AbstractSavable implements Providable {
 
     /**
      * The Engine instance

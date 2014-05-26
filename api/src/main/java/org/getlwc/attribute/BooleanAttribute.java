@@ -34,14 +34,28 @@ import org.getlwc.model.AbstractAttribute;
 
 public class BooleanAttribute extends AbstractAttribute<Boolean> {
 
+    /**
+     * Default value of boolean attributes when unspecified
+     */
+    public static final boolean DEFAULT = true;
+
     public BooleanAttribute(Engine engine, String name, boolean value) {
         super(engine, name);
         this.value = value;
     }
 
+    public BooleanAttribute(Engine engine, String name) {
+        this(engine, name, DEFAULT);
+    }
+
     @Override
-    public void loadValue(String value) {
+    public void loadData(String value) {
         this.value = Boolean.parseBoolean(value);
+    }
+
+    @Override
+    public String getStorableValue() {
+        return Boolean.toString(value);
     }
 
 }

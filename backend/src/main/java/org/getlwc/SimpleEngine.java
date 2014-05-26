@@ -29,8 +29,6 @@
 
 package org.getlwc;
 
-import org.getlwc.attribute.DescriptionAttributeFactory;
-import org.getlwc.attribute.PasswordAttributeFactory;
 import org.getlwc.command.AddRemoveCommands;
 import org.getlwc.command.AttributeCommands;
 import org.getlwc.command.BaseCommands;
@@ -48,13 +46,8 @@ import org.getlwc.db.jdbc.JDBCDatabase;
 import org.getlwc.db.memory.MemoryDatabase;
 import org.getlwc.economy.DefaultEconomyHandler;
 import org.getlwc.economy.EconomyHandler;
-import org.getlwc.factory.AbstractFactoryRegistry;
 import org.getlwc.permission.DefaultPermissionHandler;
 import org.getlwc.permission.PermissionHandler;
-import org.getlwc.role.GroupRoleRegistry;
-import org.getlwc.role.PlayerRoleFactory;
-import org.getlwc.role.RoleFactory;
-import org.getlwc.role.RoleFactoryRegistry;
 
 public class SimpleEngine implements Engine {
 
@@ -66,12 +59,7 @@ public class SimpleEngine implements Engine {
     /**
      * The protection manager
      */
-    private final SimpleProtectionManager protectionManager = new SimpleProtectionManager(this);
-
-    /**
-     * The registry for protection roles
-     */
-    private final AbstractFactoryRegistry<RoleFactory> roleRegistry = new RoleFactoryRegistry();
+    private final SimpleProtectionManager protectionManager;
 
     /**
      * The {@link LibraryDownloader} responsible for downloading library files
@@ -145,6 +133,7 @@ public class SimpleEngine implements Engine {
         I18n.init(this);
 
         commandHandler = new SimpleCommandHandler(this);
+        protectionManager = new SimpleProtectionManager(this);
 
         consoleSender.sendTranslatedMessage("Server: {0} ({1})", serverInfo.getSoftwareName(), serverInfo.getServerVersion());
         consoleSender.sendTranslatedMessage("Backend: {0}", getBackendVersion());
@@ -198,12 +187,6 @@ public class SimpleEngine implements Engine {
         // Register any commands
         registerCommands();
 
-        // register default roles
-        registerDefaultRoles();
-
-        // default attributes
-        registerDefaultAttributes();
-
         consoleSender.sendTranslatedMessage("Economy handler: {0}", economyHandler.getName());
         consoleSender.sendTranslatedMessage("Permission handler: {0}", permissionHandler.getName());
     }
@@ -252,13 +235,6 @@ public class SimpleEngine implements Engine {
      */
     public String getTargetMinecraftVersion() {
         return internalConfig.getString("minecraft.version");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public AbstractFactoryRegistry<RoleFactory> getRoleRegistry() {
-        return roleRegistry;
     }
 
     /**
@@ -332,7 +308,6 @@ public class SimpleEngine implements Engine {
     public void shutdown() {
         consoleSender.sendTranslatedMessage("Shutting down!");
         commandHandler.clearCommands();
-        roleRegistry.clear();
         database.disconnect();
         database = null;
     }
@@ -399,19 +374,6 @@ public class SimpleEngine implements Engine {
         } catch (CommandException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Register the default roles
-     */
-    private void registerDefaultRoles() {
-        roleRegistry.register(new PlayerRoleFactory(this));
-        roleRegistry.register(new GroupRoleRegistry(this));
-    }
-
-    private void registerDefaultAttributes() {
-        protectionManager.registerAttributeFactory(new DescriptionAttributeFactory(this));
-        protectionManager.registerAttributeFactory(new PasswordAttributeFactory(this));
     }
 
 }
