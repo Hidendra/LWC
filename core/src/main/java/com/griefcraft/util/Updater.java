@@ -103,7 +103,7 @@ public class Updater {
                 this.verifyFile(new UpdaterFile(getFullNativeLibraryPath(), UPDATE_SITE + "/shared/lib/" + nativeLibraryPath.replaceAll(DEST_LIBRARY_FOLDER, "")));
             } else {
                 // XXX backwards compat:- nuke any old Linux binaries so that SQLite does not load them and then crash the JVM
-                File file = new File(DEST_LIBRARY_FOLDER + "native/Linux/amd64/sqlitejdbc.so");
+                File file = new File(DEST_LIBRARY_FOLDER + "native/Linux/amd64/libsqlitejdbc.so");
 
                 if (file.exists()) {
                     file.delete();
