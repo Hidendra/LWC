@@ -96,8 +96,19 @@ public class Updater {
             // sqlite.jar
             this.verifyFile(new UpdaterFile(DEST_LIBRARY_FOLDER + "sqlite.jar", UPDATE_SITE + "/shared/lib/sqlite.jar"));
 
-            // Native library
-            this.verifyFile(new UpdaterFile(getFullNativeLibraryPath(), UPDATE_SITE + "/shared/lib/" + getFullNativeLibraryPath().replaceAll(DEST_LIBRARY_FOLDER, "")));
+            String nativeLibraryPath = getFullNativeLibraryPath();
+
+            if (nativeLibraryPath != null) {
+                // Native library
+                this.verifyFile(new UpdaterFile(getFullNativeLibraryPath(), UPDATE_SITE + "/shared/lib/" + nativeLibraryPath.replaceAll(DEST_LIBRARY_FOLDER, "")));
+            } else {
+                // XXX backwards compat:- nuke any old Linux binaries so that SQLite does not load them and then crash the JVM
+                File file = new File(DEST_LIBRARY_FOLDER + "native/Linux/amd64/sqlitejdbc.so");
+
+                if (file.exists()) {
+                    file.delete();
+                }
+            }
         }
     }
 
@@ -126,14 +137,21 @@ public class Updater {
     }
 
     /**
-     * @return the full path to the native library for sqlite
+     * @return the full path to the native library for sqlite. null if none exists
      */
     public String getFullNativeLibraryPath() {
-        return getOSSpecificFolder() + getOSSpecificFileName();
+        String osFolder = getOSSpecificFolder();
+        String osFileName = getOSSpecificFileName();
+
+        if (osFolder == null || osFileName == null) {
+            return null;
+        }
+
+        return osFolder + osFileName;
     }
 
     /**
-     * @return the os/arch specific file name for sqlite's native library
+     * @return the os/arch specific file name for sqlite's native library. null if none exists
      */
     public String getOSSpecificFileName() {
         String osname = System.getProperty("os.name").toLowerCase();
@@ -142,13 +160,15 @@ public class Updater {
             return "sqlitejdbc.dll";
         } else if (osname.contains("mac")) {
             return "libsqlitejdbc.jnilib";
-        } else { /* We assume linux/unix */
+        } else if (osname.contains("bsd")) {
+            return null;
+        } else { /* We assume linux */
             return "libsqlitejdbc.so";
         }
     }
 
     /**
-     * @return the os/arch specific folder location for SQLite's native library
+     * @return the os/arch specific folder location for SQLite's native library. null if none exists
      */
     public String getOSSpecificFolder() {
         String osname = System.getProperty("os.name").toLowerCase();
@@ -158,7 +178,9 @@ public class Updater {
             return DEST_LIBRARY_FOLDER + "native/Windows/" + arch + "/";
         } else if (osname.contains("mac")) {
             return DEST_LIBRARY_FOLDER + "native/Mac/" + arch + "/";
-        } else { /* We assume linux/unix */
+        } else if (osname.contains("bsd")) {
+            return null;
+        } else { /* We assume linux */
             return DEST_LIBRARY_FOLDER + "native/Linux/" + arch + "/";
         }
     }
