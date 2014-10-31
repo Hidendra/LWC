@@ -13,6 +13,8 @@
         <!-- Latest supported Minecraft version -->
         <minecraft.version>1.7.2</minecraft.version>
 
+        <additionalparam>-Xdoclint:none</additionalparam>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

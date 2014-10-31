@@ -29,7 +29,7 @@
         </repository>
         <repository>
             <id>jnbt</id>
-            <url>http://maven.angry.com.au/release/</url>
+            <url>http://einzbern.turenar.mydns.jp/maven/</url>
         </repository>
     </repositories>
 
@@ -75,9 +75,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>jnbt</groupId>
+            <groupId>org.jnbt</groupId>
             <artifactId>jnbt</artifactId>
-            <version>1.1</version>
+            <version>1.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -107,28 +107,6 @@
                     <source>1.7</source>
                     <target>1.7</target>
                 </configuration>
-            </plugin>
-
-            <!-- bundle api with the backend -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>1.4</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <artifactSet>
-                                <includes>
-                                    <include>org.getlwc:api</include>
-                                </includes>
-                            </artifactSet>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
 
             <!-- i18n -->
@@ -191,7 +169,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.0</version>
+                <version>2.3</version>
                 <executions>
                     <execution>
                         <phase>package</phase>

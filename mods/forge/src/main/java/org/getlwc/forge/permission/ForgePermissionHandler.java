@@ -46,7 +46,9 @@ public class ForgePermissionHandler implements PermissionHandler {
         if (server.isSinglePlayer()) {
             return server instanceof IntegratedServer && server.getServerOwner().equalsIgnoreCase(player.getName());
         } else {
-            return server.getConfigurationManager().getOps().contains(player.getName().toLowerCase());
+            // TODO ?
+            // return server.getConfigurationManager().getOps().contains(player.getName().toLowerCase());
+            return false;
         }
     }
 

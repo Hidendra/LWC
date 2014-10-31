@@ -107,7 +107,7 @@ public class ForgeBlock extends Block {
 
                     if (blocks.size() == 0) { // no sub blocks; can ignore the data value
                         if (getType() == blockID) {
-                            name = block.func_149739_a(); // func_149739_a: getUnlocalizedName
+                            name = block.getUnlocalizedName();
                             break;
                         }
                     } else { // has sub blocks so the data value uniquely identifies the block
@@ -142,7 +142,7 @@ public class ForgeBlock extends Block {
      */
     @Override
     public int getType() {
-        return GameData.blockRegistry.getId(world.getHandle().func_147439_a(x, y, z)); // func_147439_a: getBlockAt
+        return GameData.blockRegistry.getId(world.getHandle().getBlock(x, y, z));
     }
 
     /**
@@ -208,7 +208,7 @@ public class ForgeBlock extends Block {
      */
     @Override
     public boolean hasTileEntity() {
-        return world.getHandle().func_147438_o(x, y, z) != null; // func_147438_o: getBlockTileEntity
+        return world.getHandle().getTileEntity(x, y, z) != null;
     }
 
 }

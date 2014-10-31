@@ -92,7 +92,7 @@ public class ForgePlayer extends SimplePlayer {
      */
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
-            handle.func_145747_a(new ChatComponentText(Color.replaceColors(line))); // func_145747_a: sendMessage
+            handle.addChatComponentMessage(new ChatComponentText(Color.replaceColors(line)));
         }
     }
 

@@ -90,7 +90,7 @@ public class ForgeEventHelper {
         World world = LWC.instance.getWorld(nativeWorld.getWorldInfo().getWorldName());
 
         for (net.minecraft.world.ChunkPosition loc : affectedLocations) {
-            Block block = world.getBlockAt(loc.field_151329_a, loc.field_151327_b, loc.field_151328_c);
+            Block block = world.getBlockAt(loc.chunkPosX, loc.chunkPosY, loc.chunkPosZ);
 
             // Check that it isn't air (we don't need to know about air internally)
             if (block.isOneOf("minecraft:air")) {
@@ -181,7 +181,7 @@ public class ForgeEventHelper {
      */
     public static boolean onUpdatePistonState(net.minecraft.world.World handle, int x, int y, int z) {
         int data = handle.getBlockMetadata(x, y, z);
-        int notchFace = BlockPistonBase.func_150076_b(data); // func_150076_b: getOrientation
+        int notchFace = BlockPistonBase.getPistonOrientation(data);
 
         if (data != 7) {
             boolean powered = isPistonIndirectlyPowered(handle, x, y, z, notchFace);
@@ -191,9 +191,9 @@ public class ForgeEventHelper {
             Block piston = world.getBlockAt(x, y, z);
             Location reaching = piston.getRelative(face).getLocation();
 
-            if (powered && !BlockPistonBase.func_150075_c(data)) { // func_150075_c: isExtended
+            if (powered && !BlockPistonBase.isExtended(data)) {
                 return onPistonExtend(piston, reaching);
-            } else if (!powered && BlockPistonBase.func_150075_c(data)) { // func_150075_c: isExtended
+            } else if (!powered && BlockPistonBase.isExtended(data)) {
                 return onPistonRetract(piston, reaching);
             }
         }
@@ -216,7 +216,7 @@ public class ForgeEventHelper {
         // else
         //     hopper is attached to a block
         // i.e. TileEntityHopper.getOutputInventory() (private)
-        World world = LWC.instance.getWorld(handle.func_145831_w().getWorldInfo().getWorldName()); // func_145831_w: getWorldObj
+        World world = LWC.instance.getWorld(handle.getWorldObj().getWorldInfo().getWorldName());
         Block hopper = world.getBlockAt((int) handle.getXPos(), (int) handle.getYPos(), (int) handle.getZPos());
         Location usingInventory;
 
@@ -225,10 +225,10 @@ public class ForgeEventHelper {
         } else {
             // int direction = BlockHopper.getDirectionFromMetadata(hopper.getData());
             // usingInventory = hopper.getRelative(Facing.offsetsXForSide[direction], Facing.offsetsYForSide[direction], Facing.offsetsZForSide[direction]).getLocation();
-            usingInventory = hopper.getRelative(BlockFace.fromNotch(BlockHopper.func_149918_b(hopper.getData()))).getLocation(); // func_149918_b: getDirectionFromMetadata
+            usingInventory = hopper.getRelative(BlockFace.fromNotch(BlockHopper.getDirectionFromMetadata(hopper.getData()))).getLocation();
         }
 
-        IInventory inventory = TileEntityHopper.func_145893_b(handle.func_145831_w(), usingInventory.getBlockX(), usingInventory.getBlockY(), usingInventory.getBlockZ()); // func_145893_b: getInventoryAtLocation, func_145831_w: getWorldObj
+        IInventory inventory = TileEntityHopper.func_145893_b(handle.getWorldObj(), usingInventory.getBlockX(), usingInventory.getBlockY(), usingInventory.getBlockZ()); // func_145893_b: getInventoryAtLocation
 
         boolean canProceed;
 

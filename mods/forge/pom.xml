@@ -87,7 +87,7 @@
         <dependency>
             <groupId>forge</groupId>
             <artifactId>minecraft-server</artifactId>
-            <version>1.7.2</version>
+            <version>1.7.10-10.13.1.1226</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

@@ -191,7 +191,7 @@ public class LWC {
         Map<Integer, Integer> ret = new HashMap<Integer, Integer>();
 
         for (int index = 0; index < enchantments.tagCount(); index++) {
-            NBTTagCompound compound = enchantments.func_150305_b(index); // tagAt
+            NBTTagCompound compound = enchantments.getCompoundTagAt(index);
 
             ret.put((int) compound.getShort("id"), (int) compound.getShort("lvl"));
         }
