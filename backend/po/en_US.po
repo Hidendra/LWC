@@ -2,12 +2,12 @@
 # Copyright (C) 2012-2013 Tyler Blair
 # This file is distributed under the same license as the LWC package.
 # Tyler Blair <hidendra@griefcraft.com>, 2012-2013.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2014-11-01 13:27-0300\n"
+"POT-Creation-Date: 2014-11-01 16:25-0300\n"
 "PO-Revision-Date: 2013-06-18 23:02-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -123,67 +123,66 @@ msgstr "&2Granted access to the protection!"
 msgid "&4Invalid password."
 msgstr "&4Invalid password."
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:36
-msgid "&eClick on a protection to apply modifications."
-msgstr "&eClick on a protection to apply modifications."
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:38
+#, java-format
+msgid "&4Unknown access level: {0}"
+msgstr "&4Unknown access level: {0}"
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:46
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:43
+#, java-format
+msgid "&fClick on a protection to apply the modification: &4remove &e{0}&f"
+msgstr "&fClick on a protection to apply the modification: &4remove &e{0}&f"
+
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:45
+#, java-format
+msgid ""
+"&fClick on a protection to apply the modification: &2add/change &e{0}&f to "
+"&e{1}"
+msgstr ""
+"&fClick on a protection to apply the modification: &2add/change &e{0}&f to "
+"&e{1}"
+
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:56
 msgid "&4Access denied."
 msgstr "&4Access denied."
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:69
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:113
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:155
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:64
 #, java-format
-msgid "&4\"{0}\" does not match any usable roles"
-msgstr "&4\"{0}\" does not match any usable roles"
+msgid "&4Role identifier not recognized: {0}"
+msgstr "&4Role identifier not recognized: {0}"
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:84
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:74
 msgid "&4Only owners can remove other owners."
 msgstr "&4Only owners can remove other owners."
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:89
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:76
 msgid "&4Only owners can remove managers."
 msgstr "&4Only owners can remove managers."
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:94
-#, java-format
-msgid "&eRemoving role: &7{0}"
-msgstr "&eRemoving role: &7{0}"
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:78
+msgid "&2Removed successfully."
+msgstr "&2Removed successfully."
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:97
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:81
 #, java-format
 msgid "&4Protection does not contain role matching: &e{0}"
 msgstr "&4Protection does not contain role matching: &e{0}"
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:124
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:166
-#, java-format
-msgid "&2Changed {0} to {1} successfully!"
-msgstr "&2Changed {0} to {1} successfully!"
-
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:129
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:171
-#, java-format
-msgid ""
-"&2Added a {0} for \"{1}\" to the protection with access level {2} "
-"successfully!"
-msgstr ""
-"&2Added a {0} for \"{1}\" to the protection with access level {2} "
-"successfully!"
-
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:134
-#, java-format
-msgid "&4Protection access level &7{0}&4 is not allowed."
-msgstr "&4Protection access level &7{0}&4 is not allowed."
-
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:140
-msgid "&4Only owners can add other owners."
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:88
+msgid "&4Only owners can modify other owners."
 msgstr "&4Only owners can add other owners."
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:146
-msgid "&4Only owners can add managers."
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:90
+msgid "&4Only owners can modify managers."
 msgstr "&4Only owners can add managers."
+
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:96
+msgid "&2Changed successfully."
+msgstr "&2Changed successfully."
+
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:103
+msgid "&2Added successfully."
+msgstr "&2Added successfully."
 
 #: backend/src/main/java/org/getlwc/command/AttributeCommands.java:76
 #: backend/src/main/java/org/getlwc/command/AttributeCommands.java:122
@@ -427,14 +426,12 @@ msgstr "  >> {0}: {1}%"
 msgid "No player role provider found! Creating protection with no owner..."
 msgstr ""
 
-#: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:185
 #: mods/canarymod/src/main/java/org/getlwc/canary/CanaryServerLayer.java:175
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:190
 #, java-format
 msgid "An error was encountered while processing a command: {0}"
 msgstr "An error was encountered while processing a command: {0}"
 
-#: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:189
 #: mods/canarymod/src/main/java/org/getlwc/canary/CanaryServerLayer.java:179
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:194
 msgid "&4[LWC] An internal error occurred while processing this command"
@@ -477,6 +474,22 @@ msgstr ""
 #, java-format
 msgid "Using BuildCraft version: {0}"
 msgstr "Using BuildCraft version: {0}"
+
+#~ msgid "&eRemoving role: &7{0}"
+#~ msgstr "&eRemoving role: &7{0}"
+
+#~ msgid ""
+#~ "&2Added a {0} for \"{1}\" to the protection with access level {2} "
+#~ "successfully!"
+#~ msgstr ""
+#~ "&2Added a {0} for \"{1}\" to the protection with access level {2} "
+#~ "successfully!"
+
+#~ msgid "&4\"{0}\" does not match any usable roles"
+#~ msgstr "&4\"{0}\" does not match any usable roles"
+
+#~ msgid "&4Protection access level &7{0}&4 is not allowed."
+#~ msgstr "&4Protection access level &7{0}&4 is not allowed."
 
 #~ msgid "&4Invalid attribute value."
 #~ msgstr "&4Invalid attribute value."

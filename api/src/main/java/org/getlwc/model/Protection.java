@@ -204,7 +204,7 @@ public abstract class Protection extends AbstractSavable {
      */
     public ProtectionRole getRole(String type, String name) {
         for (ProtectionRole role : roles) {
-            if (role.getType().equals(type) && role.getName().equals(name)) {
+            if (role.getType().equals(type) && role.getName().equalsIgnoreCase(name)) {
                 return role;
             }
         }

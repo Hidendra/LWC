@@ -215,7 +215,7 @@ public abstract class ProtectionRole extends Role implements AccessProvider {
          * @param name
          * @return NULL if no {@link org.getlwc.role.ProtectionRole.Access} is matched
          */
-        public static Access match(String name) {
+        public static Access fromString(String name) {
             for (Access access : Access.values()) {
                 if (access.toString().equalsIgnoreCase(name)) {
                     return access;
