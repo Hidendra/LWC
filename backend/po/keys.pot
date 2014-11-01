@@ -11,7 +11,7 @@ msgstr ""
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
 "\n"
-"POT-Creation-Date: 2014-10-31 15:43-0300\n"
+"POT-Creation-Date: 2014-11-01 13:27-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -403,14 +403,14 @@ msgid "No player role provider found! Creating protection with no owner..."
 msgstr ""
 
 #: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:185
-#: mods/canarymod/src/main/java/org/getlwc/canary/CanaryServerLayer.java:171
+#: mods/canarymod/src/main/java/org/getlwc/canary/CanaryServerLayer.java:175
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:190
 #, java-format
 msgid "An error was encountered while processing a command: {0}"
 msgstr ""
 
 #: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:189
-#: mods/canarymod/src/main/java/org/getlwc/canary/CanaryServerLayer.java:175
+#: mods/canarymod/src/main/java/org/getlwc/canary/CanaryServerLayer.java:179
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:194
 msgid "&4[LWC] An internal error occurred while processing this command"
 msgstr ""

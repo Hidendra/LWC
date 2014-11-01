@@ -87,6 +87,10 @@ public class CanaryServerLayer extends ServerLayer {
                     return command.max();
                 }
 
+                public int version() {
+                    return 1;
+                }
+
                 public Class<? extends Annotation> annotationType() {
                     return Command.class;
                 }

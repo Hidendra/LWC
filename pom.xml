@@ -11,9 +11,7 @@
 
     <properties>
         <!-- Latest supported Minecraft version -->
-        <minecraft.version>1.7.2</minecraft.version>
-
-        <additionalparam>-Xdoclint:none</additionalparam>
+        <minecraft.version>1.7.10</minecraft.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
