@@ -1,6 +1,0 @@
-name: LWC
-author: Hidendra
-main: org.getlwc.bukkit.BukkitPlugin
-version: ${project.version}
-load: postworld
-softdepend: [ 'Vault' ]
