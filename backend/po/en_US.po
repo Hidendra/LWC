@@ -2,12 +2,12 @@
 # Copyright (C) 2012-2013 Tyler Blair
 # This file is distributed under the same license as the LWC package.
 # Tyler Blair <hidendra@griefcraft.com>, 2012-2013.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2014-10-14 15:52-0300\n"
+"POT-Creation-Date: 2014-10-31 15:33-0300\n"
 "PO-Revision-Date: 2013-06-18 23:02-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -434,7 +434,6 @@ msgstr ""
 msgid "An error was encountered while processing a command: {0}"
 msgstr "An error was encountered while processing a command: {0}"
 
-#. / console
 #: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:189
 #: mods/canarymod/src/main/java/org/getlwc/canary/CanaryServerLayer.java:175
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:194

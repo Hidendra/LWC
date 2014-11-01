@@ -11,7 +11,7 @@ msgstr ""
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
 "\n"
-"POT-Creation-Date: 2014-10-15 18:19-0300\n"
+"POT-Creation-Date: 2014-10-31 15:43-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -409,7 +409,6 @@ msgstr ""
 msgid "An error was encountered while processing a command: {0}"
 msgstr ""
 
-#. / console
 #: mods/bukkit/src/main/java/org/getlwc/bukkit/BukkitPlugin.java:189
 #: mods/canarymod/src/main/java/org/getlwc/canary/CanaryServerLayer.java:175
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:194
