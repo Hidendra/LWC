@@ -42,7 +42,6 @@
 
         <!-- Server Mods -->
         <module>mods/canarymod</module>
-        <module>mods/workbench</module>
         <module>mods/forge</module>
         <module>mods/universal</module>
     </modules>
