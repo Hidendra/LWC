@@ -23,15 +23,6 @@ public class CanaryPlayer extends SimplePlayer {
     public CanaryPlayer(LWC plugin, net.canarymod.api.entity.living.humanoid.Player handle) {
         this.plugin = plugin;
         this.handle = handle;
-        loadLocale();
-    }
-
-    /**
-     * Load the player's locale
-     */
-    private void loadLocale() {
-        setLocale(new Locale(handle.getLocale()));
-        plugin.getEngine().getConsoleSender().sendMessage("Player " + getName() + " loaded using locale: " + getLocale());
     }
 
     /**

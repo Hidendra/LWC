@@ -44,7 +44,7 @@ public abstract class Player extends PlayerEventHandler implements Entity, Comma
     /**
      * This player's locale
      */
-    private Locale locale = null;
+    private Locale locale = new Locale("en_US");
 
     /**
      * Simple unpersisted attribute store for the player

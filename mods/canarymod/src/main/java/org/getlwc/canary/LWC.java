@@ -11,6 +11,7 @@ import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
 import org.getlwc.canary.listeners.CanaryListener;
 import org.getlwc.canary.permission.CanaryPermissionHandler;
+import org.getlwc.lang.Locale;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,7 +58,14 @@ public class LWC extends Plugin {
      * @return
      */
     public org.getlwc.entity.Player wrapPlayer(net.canarymod.api.entity.living.humanoid.Player player) {
-        return layer.getPlayer(player.getName());
+        org.getlwc.entity.Player res = layer.getPlayer(player.getName());
+
+        if (!res.getLocale().getName().equals(player.getLocale())) {
+            res.setLocale(new Locale(player.getLocale()));
+            engine.getConsoleSender().sendMessage("Player " + getName() + " loaded using locale: " + res.getLocale().toString());
+        }
+
+        return res;
     }
 
     /**
