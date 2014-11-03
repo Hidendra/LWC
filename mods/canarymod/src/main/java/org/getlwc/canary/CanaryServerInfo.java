@@ -5,11 +5,11 @@ import org.getlwc.ServerInfo;
 
 public class CanaryServerInfo implements ServerInfo {
 
-    public String getSoftwareName() {
+    public String getServerImplementationTitle() {
         return Canary.getImplementationTitle();
     }
 
-    public String getServerVersion() {
+    public String getServerImplementationVersion() {
         return Canary.getImplementationVersion();
     }
 

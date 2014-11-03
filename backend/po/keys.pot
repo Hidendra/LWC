@@ -11,7 +11,7 @@ msgstr ""
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
 "\n"
-"POT-Creation-Date: 2014-11-01 16:26-0300\n"
+"POT-Creation-Date: 2014-11-03 13:19-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -324,46 +324,41 @@ msgid ""
 "trace has been printed out to the log file"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:138
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:132
 #, java-format
 msgid "Server: {0} ({1})"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:139
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:133
 #, java-format
-msgid "Backend: {0}"
+msgid "Plugin: {0} ({1})"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:140
-#, java-format
-msgid "This version was built on: {0}"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:190
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:183
 #, java-format
 msgid "Economy handler: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:191
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:184
 #, java-format
 msgid "Permission handler: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:309
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:300
 msgid "Shutting down!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:329
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:320
 #, java-format
 msgid "Driver \"{0}\" is not supported."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:359
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:350
 #, java-format
 msgid "Connected to the database with driver: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:361
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:352
 msgid "Failed to connect to the database!"
 msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2014-11-01 16:25-0300\n"
+"POT-Creation-Date: 2014-11-03 13:18-0400\n"
 "PO-Revision-Date: 2013-06-18 23:02-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -349,46 +349,41 @@ msgstr ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "
 "trace has been printed out to the log file"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:138
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:132
 #, java-format
 msgid "Server: {0} ({1})"
 msgstr "Server: {0} ({1})"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:139
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:133
 #, java-format
-msgid "Backend: {0}"
-msgstr "Backend: {0}"
+msgid "Plugin: {0} ({1})"
+msgstr "Plugin: {0} ({1})"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:140
-#, java-format
-msgid "This version was built on: {0}"
-msgstr "This version was built on: {0}"
-
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:190
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:183
 #, java-format
 msgid "Economy handler: {0}"
 msgstr "Economy handler: {0}"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:191
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:184
 #, java-format
 msgid "Permission handler: {0}"
 msgstr "Permission handler: {0}"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:309
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:300
 msgid "Shutting down!"
 msgstr "Shutting down!"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:329
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:320
 #, java-format
 msgid "Driver \"{0}\" is not supported."
 msgstr "Driver \"{0}\" is not supported."
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:359
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:350
 #, java-format
 msgid "Connected to the database with driver: {0}"
 msgstr "Connected to the database with driver: {0}"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:361
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:352
 msgid "Failed to connect to the database!"
 msgstr "Failed to connect to the database!"
 
@@ -474,6 +469,12 @@ msgstr ""
 #, java-format
 msgid "Using BuildCraft version: {0}"
 msgstr "Using BuildCraft version: {0}"
+
+#~ msgid "Backend: {0}"
+#~ msgstr "Backend: {0}"
+
+#~ msgid "This version was built on: {0}"
+#~ msgstr "This version was built on: {0}"
 
 #~ msgid "&eRemoving role: &7{0}"
 #~ msgstr "&eRemoving role: &7{0}"

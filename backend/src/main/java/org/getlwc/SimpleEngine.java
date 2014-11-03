@@ -97,11 +97,6 @@ public class SimpleEngine implements Engine {
     private Configuration configuration;
 
     /**
-     * The internal config (engine.yml inside of the jar file)
-     */
-    private Configuration internalConfig;
-
-    /**
      * The languages configuration
      */
     private Configuration languagesConfig;
@@ -128,16 +123,14 @@ public class SimpleEngine implements Engine {
         FileConfiguration.init(this);
 
         configuration = new YamlConfiguration("config.yml");
-        internalConfig = new YamlConfiguration(getClass().getResourceAsStream("/engine.yml"));
         languagesConfig = new YamlConfiguration(getClass().getResourceAsStream("/languages.yml"));
         I18n.init(this);
 
         commandHandler = new SimpleCommandHandler(this);
         protectionManager = new SimpleProtectionManager(this);
 
-        consoleSender.sendTranslatedMessage("Server: {0} ({1})", serverInfo.getSoftwareName(), serverInfo.getServerVersion());
-        consoleSender.sendTranslatedMessage("Backend: {0}", getBackendVersion());
-        consoleSender.sendTranslatedMessage("This version was built on: {0}", internalConfig.get("git.buildTime"));
+        consoleSender.sendTranslatedMessage("Server: {0} ({1})", serverInfo.getServerImplementationTitle(), serverInfo.getServerImplementationVersion());
+        consoleSender.sendTranslatedMessage("Plugin: {0} ({1})", getImplementationTitle(), getImplementationVersion());
     }
 
     /**
@@ -233,13 +226,6 @@ public class SimpleEngine implements Engine {
     /**
      * {@inheritDoc}
      */
-    public String getTargetMinecraftVersion() {
-        return internalConfig.getString("minecraft.version");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public ProtectionManager getProtectionManager() {
         return protectionManager;
     }
@@ -254,8 +240,8 @@ public class SimpleEngine implements Engine {
     /**
      * {@inheritDoc}
      */
-    public String getBackendVersion() {
-        return internalConfig.getString("version") + " (" + internalConfig.getString("git.describe") + ")";
+    public String getImplementationVersion() {
+        return SimpleEngine.class.getPackage().getImplementationVersion();
     }
 
     /**
@@ -263,6 +249,11 @@ public class SimpleEngine implements Engine {
      */
     public ServerInfo getServerInfo() {
         return serverInfo;
+    }
+
+    @Override
+    public String getImplementationTitle() {
+        return SimpleEngine.class.getPackage().getImplementationTitle();
     }
 
     /**

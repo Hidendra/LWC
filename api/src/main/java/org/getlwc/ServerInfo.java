@@ -32,17 +32,17 @@ package org.getlwc;
 public interface ServerInfo {
 
     /**
-     * Get the name of the software that runs the server
+     * Get the title of the implementation software that runs the server
      *
      * @return
      */
-    public String getSoftwareName();
+    public String getServerImplementationTitle();
 
     /**
      * Get the version of the server that is running
      *
      * @return
      */
-    public String getServerVersion();
+    public String getServerImplementationVersion();
 
 }

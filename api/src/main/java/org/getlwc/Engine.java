@@ -39,13 +39,6 @@ import org.getlwc.permission.PermissionHandler;
 public interface Engine {
 
     /**
-     * Get the version of minecraft this was targeted to
-     *
-     * @return
-     */
-    public String getTargetMinecraftVersion();
-
-    /**
      * Get the protection manager
      *
      * @return
@@ -67,11 +60,18 @@ public interface Engine {
     public ServerInfo getServerInfo();
 
     /**
+     * Get the implementation name
+     *
+     * @return
+     */
+    public String getImplementationTitle();
+
+    /**
      * Get the API version
      *
      * @return
      */
-    public String getBackendVersion();
+    public String getImplementationVersion();
 
     /**
      * Get the command handler

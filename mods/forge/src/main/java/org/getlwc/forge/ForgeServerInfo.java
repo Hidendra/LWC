@@ -29,17 +29,19 @@
 
 package org.getlwc.forge;
 
+import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.common.MinecraftForge;
 import org.getlwc.ServerInfo;
 import org.getlwc.configuration.YamlConfiguration;
 
 public class ForgeServerInfo implements ServerInfo {
 
-    public String getSoftwareName() {
-        return "Forge"; // ToDo ssp
+    public String getServerImplementationTitle() {
+        return "Forge";
     }
 
-    public String getServerVersion() {
-        return "Compiled on: Minecraft " + new YamlConfiguration(getClass().getResourceAsStream("/engine.yml")).getString("minecraft.version");
+    public String getServerImplementationVersion() {
+        return ForgeVersion.getVersion();
     }
 
 }
