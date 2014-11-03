@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2014-11-03 17:20-0400\n"
+"POT-Creation-Date: 2014-11-03 17:50-0400\n"
 "PO-Revision-Date: 2013-06-18 23:02-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -387,44 +387,43 @@ msgstr "Connected to the database with driver: {0}"
 msgid "Failed to connect to the database!"
 msgstr "Failed to connect to the database!"
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:251
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:255
 #, java-format
-msgid "[{0}/{1}] Verifying file {2} => {3}"
-msgstr "[{0}/{1}] Verifying file {2} => {3}"
+msgid "Verifying file {0}"
+msgstr "Verifying file {0}"
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:253
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:257
 #, java-format
-msgid "[{0}/{1}] Downloading file {2} => {3}"
-msgstr "[{0}/{1}] Downloading file {2} => {3}"
+msgid "Downloading file {0} to {1}"
+msgstr "Downloading file {0} to {1}"
+
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:271
+#, java-format
+msgid "{0}: no checksum available from remote host"
+msgstr "{0}: no checksum available from remote host"
 
 #: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:277
 #, java-format
-msgid "  .. md5 {0} WARN: no checksum available from remote host"
-msgstr "  .. md5 {0} WARN: no checksum available from remote host"
+msgid "{0}: checksum is OK"
+msgstr "{0}: checksum is OK"
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:283
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:280
 #, java-format
-msgid "  .. md5 {0} OK"
-msgstr "  .. md5 {0} OK"
+msgid ""
+"{0}: checksum check FAILED. Found {1}, but was expecting {2}. File will be "
+"redownloaded."
+msgstr ""
+"{0}: checksum check FAILED. Found {1}, but was expecting {2}. File will be "
+"redownloaded."
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:286
-#, java-format
-msgid "  .. md5 {0} FAIL {1} (expected: {2})"
-msgstr "  .. md5 {0} FAIL {1} (expected: {2})"
-
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:287
-#, java-format
-msgid "Will redownload {0} ({1}/{2} tries)"
-msgstr "Will redownload {0} ({1}/{2} tries)"
-
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:341
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:325
 #, java-format
 msgid "  >> {0}: {1}%"
 msgstr "  >> {0}: {1}%"
 
 #: backend/src/main/java/org/getlwc/SimpleProtectionManager.java:120
 msgid "No player role provider found! Creating protection with no owner..."
-msgstr ""
+msgstr "No player role provider found! Creating protection with no owner..."
 
 #: mods/canarymod/src/main/java/org/getlwc/canary/CanaryServerLayer.java:175
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:190
@@ -432,7 +431,6 @@ msgstr ""
 msgid "An error was encountered while processing a command: {0}"
 msgstr "An error was encountered while processing a command: {0}"
 
-#. / console
 #: mods/canarymod/src/main/java/org/getlwc/canary/CanaryServerLayer.java:179
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:194
 msgid "&4[LWC] An internal error occurred while processing this command"
@@ -475,6 +473,15 @@ msgstr ""
 #, java-format
 msgid "Using BuildCraft version: {0}"
 msgstr "Using BuildCraft version: {0}"
+
+#~ msgid "  .. md5 {0} OK"
+#~ msgstr "  .. md5 {0} OK"
+
+#~ msgid "  .. md5 {0} FAIL {1} (expected: {2})"
+#~ msgstr "  .. md5 {0} FAIL {1} (expected: {2})"
+
+#~ msgid "Will redownload {0} ({1}/{2} tries)"
+#~ msgstr "Will redownload {0} ({1}/{2} tries)"
 
 #~ msgid "Backend: {0}"
 #~ msgstr "Backend: {0}"

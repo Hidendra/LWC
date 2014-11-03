@@ -99,6 +99,11 @@ public class SimpleLibraryDownloader implements LibraryDownloader {
     protected void init() {
         DEST_LIBRARY_FOLDER = new File(engine.getServerLayer().getEngineHomeFolder(), "lib").getPath() + File.separator;
         DEST_LIBRARY_FOLDER = DEST_LIBRARY_FOLDER.replaceAll("\\\\", "/");
+
+        File folder = new File(getNativeLibraryFolder());
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
     }
 
     /**
@@ -239,7 +244,6 @@ public class SimpleLibraryDownloader implements LibraryDownloader {
                 return;
             }
 
-            int current = 1;
             while ((libraryFile = fileQueue.poll()) != null) {
                 try {
                     File local = new File(libraryFile.getLocalLocation());
@@ -248,43 +252,32 @@ public class SimpleLibraryDownloader implements LibraryDownloader {
                     int tries = 1;
 
                     if (local.exists()) {
-                        engine.getConsoleSender().sendTranslatedMessage("[{0}/{1}] Verifying file {2} => {3}", current, size, local.getName(), local.getParent());
+                        engine.getConsoleSender().sendTranslatedMessage("Verifying file {0}", local.toString());
                     } else {
-                        engine.getConsoleSender().sendTranslatedMessage("[{0}/{1}] Downloading file {2} => {3}", current, size, local.getName(), local.getParent());
+                        engine.getConsoleSender().sendTranslatedMessage("Downloading file {0} to {1}", local.getName(), local.getParent());
                     }
 
-                    // check native folders
-                    File folder = new File(getNativeLibraryFolder());
-                    if (!folder.exists()) {
-                        folder.mkdirs();
-                    }
-
-                    // create the local file
-                    local.createNewFile();
-
-                    URL url = new URL(remote);
-                    URL md5Url = new URL(remote + ".md5");
+                    URL fileURL = new URL(remote);
+                    URL md5URL = new URL(remote + ".md5");
 
                     do {
                         if (!local.exists()) {
-                            downloadLibrary(url, local);
+                            downloadLibrary(fileURL, local);
                         }
 
-                        // Try md5 if it is available
-                        String expectedMD5 = readURLFully(md5Url);
+                        String expectedMD5 = readURLFully(md5URL);
 
                         if (expectedMD5 == null) {
-                            engine.getConsoleSender().sendTranslatedMessage("  .. md5 {0} WARN: no checksum available from remote host", local.getName());
+                            engine.getConsoleSender().sendTranslatedMessage("{0}: no checksum available from remote host", local.getName());
                             break;
                         } else {
                             String realMD5 = MD5Checksum.calculateHumanChecksum(local);
 
                             if (expectedMD5.equals(realMD5)) {
-                                engine.getConsoleSender().sendTranslatedMessage("  .. md5 {0} OK", local.getName());
+                                engine.getConsoleSender().sendTranslatedMessage("{0}: checksum is OK", local.getName());
                                 break;
                             } else {
-                                engine.getConsoleSender().sendTranslatedMessage("  .. md5 {0} FAIL {1} (expected: {2})", local.getName(), realMD5, expectedMD5);
-                                engine.getConsoleSender().sendTranslatedMessage("Will redownload {0} ({1}/{2} tries)", local.getName(), tries, MAX_DOWNLOAD_TRIES);
+                                engine.getConsoleSender().sendTranslatedMessage("{0}: checksum check FAILED. Found {1}, but was expecting {2}. File will be redownloaded.", local.getName(), realMD5, expectedMD5);
                                 local.delete();
                             }
                         }
@@ -296,8 +289,6 @@ public class SimpleLibraryDownloader implements LibraryDownloader {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-                current++;
             }
         }
     }
@@ -309,21 +300,14 @@ public class SimpleLibraryDownloader implements LibraryDownloader {
      * @param downloadTo
      */
     private void downloadLibrary(URL url, File downloadTo) throws IOException {
-        // open the output
         OutputStream outputStream = new FileOutputStream(downloadTo);
-
         URLConnection connection = url.openConnection();
-
         InputStream inputStream = connection.getInputStream();
-
-        // hopefully, the content length provided isn't -1
         int contentLength = connection.getContentLength();
 
-        // Keep a running tally
         int bytesTransfered = 0;
         long lastUpdate = 0L;
 
-        // begin transferring
         byte[] buffer = new byte[1024];
         int read;
 
@@ -344,7 +328,6 @@ public class SimpleLibraryDownloader implements LibraryDownloader {
             }
         }
 
-        // ok!
         outputStream.close();
         inputStream.close();
     }
