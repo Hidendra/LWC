@@ -26,7 +26,7 @@ public final class Locale {
 
     @Override
     public String toString() {
-        return "Locale: " + name;
+        return name;
     }
 
     @Override
