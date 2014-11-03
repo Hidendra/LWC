@@ -488,11 +488,11 @@ public class JDBCDatabase implements Database {
         } catch (SQLException e) {
             try (Connection connection = pool.getConnection();
                  PreparedStatement statement = connection.prepareStatement("UPDATE " + details.getPrefix() + "protection_roles SET name = ?, role = ? WHERE protection_id = ? AND type = ? AND name = ?")) {
-                statement.setString(1, role.getName());
+                statement.setInt(1, lookup.get(JDBCLookupService.LookupType.ROLE_NAME, role.getName()));
                 statement.setInt(2, role.getAccess().ordinal());
                 statement.setInt(3, role.getProtection().getId());
-                statement.setString(4, role.getType());
-                statement.setString(5, role.getName());
+                statement.setInt(4, lookup.get(JDBCLookupService.LookupType.ROLE_TYPE, role.getType()));
+                statement.setInt(5, lookup.get(JDBCLookupService.LookupType.ROLE_NAME, role.getName()));
                 statement.executeUpdate();
             } catch (SQLException ex) {
                 ex.printStackTrace();
