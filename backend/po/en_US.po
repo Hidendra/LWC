@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2014-11-03 16:23-0400\n"
+"POT-Creation-Date: 2014-11-03 17:20-0400\n"
 "PO-Revision-Date: 2013-06-18 23:02-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -387,32 +387,37 @@ msgstr "Connected to the database with driver: {0}"
 msgid "Failed to connect to the database!"
 msgstr "Failed to connect to the database!"
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:261
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:251
+#, java-format
+msgid "[{0}/{1}] Verifying file {2} => {3}"
+msgstr "[{0}/{1}] Verifying file {2} => {3}"
+
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:253
 #, java-format
 msgid "[{0}/{1}] Downloading file {2} => {3}"
 msgstr "[{0}/{1}] Downloading file {2} => {3}"
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:288
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:277
 #, java-format
 msgid "  .. md5 {0} WARN: no checksum available from remote host"
 msgstr "  .. md5 {0} WARN: no checksum available from remote host"
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:294
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:283
 #, java-format
 msgid "  .. md5 {0} OK"
 msgstr "  .. md5 {0} OK"
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:297
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:286
 #, java-format
 msgid "  .. md5 {0} FAIL {1} (expected: {2})"
 msgstr "  .. md5 {0} FAIL {1} (expected: {2})"
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:298
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:287
 #, java-format
 msgid "Will redownload {0} ({1}/{2} tries)"
 msgstr "Will redownload {0} ({1}/{2} tries)"
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:351
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:341
 #, java-format
 msgid "  >> {0}: {1}%"
 msgstr "  >> {0}: {1}%"

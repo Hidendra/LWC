@@ -193,19 +193,6 @@ public class SimpleLibraryDownloader implements LibraryDownloader {
             return false;
         }
 
-        File file = new File(updaterFile.getLocalLocation());
-
-        // Does it exist on the FS?
-        if (file.exists()) {
-            if (file.getName().endsWith(".jar")) {
-                ensureLoaded(file);
-            }
-
-            // So it does!
-            return false;
-        }
-
-        // It does not exist ..
         fileQueue.offer(updaterFile);
         return true;
     }
@@ -258,16 +245,18 @@ public class SimpleLibraryDownloader implements LibraryDownloader {
                     File local = new File(libraryFile.getLocalLocation());
                     String remote = libraryFile.getRemoteLocation();
 
-                    engine.getConsoleSender().sendTranslatedMessage("[{0}/{1}] Downloading file {2} => {3}", current, size, local.getName(), local.getParent());
+                    int tries = 1;
+
+                    if (local.exists()) {
+                        engine.getConsoleSender().sendTranslatedMessage("[{0}/{1}] Verifying file {2} => {3}", current, size, local.getName(), local.getParent());
+                    } else {
+                        engine.getConsoleSender().sendTranslatedMessage("[{0}/{1}] Downloading file {2} => {3}", current, size, local.getName(), local.getParent());
+                    }
 
                     // check native folders
                     File folder = new File(getNativeLibraryFolder());
                     if (!folder.exists()) {
                         folder.mkdirs();
-                    }
-
-                    if (local.exists()) {
-                        local.delete();
                     }
 
                     // create the local file
@@ -276,26 +265,27 @@ public class SimpleLibraryDownloader implements LibraryDownloader {
                     URL url = new URL(remote);
                     URL md5Url = new URL(remote + ".md5");
 
-                    int tries = 1;
-
                     do {
-                        downloadLibrary(url, local);
+                        if (!local.exists()) {
+                            downloadLibrary(url, local);
+                        }
 
                         // Try md5 if it is available
-                        String md5 = readURLFully(md5Url);
+                        String expectedMD5 = readURLFully(md5Url);
 
-                        if (md5 == null) {
+                        if (expectedMD5 == null) {
                             engine.getConsoleSender().sendTranslatedMessage("  .. md5 {0} WARN: no checksum available from remote host", local.getName());
                             break;
                         } else {
-                            String realMd5 = MD5Checksum.calculateHumanChecksum(local);
+                            String realMD5 = MD5Checksum.calculateHumanChecksum(local);
 
-                            if (md5.equals(realMd5)) {
+                            if (expectedMD5.equals(realMD5)) {
                                 engine.getConsoleSender().sendTranslatedMessage("  .. md5 {0} OK", local.getName());
                                 break;
                             } else {
-                                engine.getConsoleSender().sendTranslatedMessage("  .. md5 {0} FAIL {1} (expected: {2})", local.getName(), md5, realMd5);
+                                engine.getConsoleSender().sendTranslatedMessage("  .. md5 {0} FAIL {1} (expected: {2})", local.getName(), realMD5, expectedMD5);
                                 engine.getConsoleSender().sendTranslatedMessage("Will redownload {0} ({1}/{2} tries)", local.getName(), tries, MAX_DOWNLOAD_TRIES);
+                                local.delete();
                             }
                         }
                     } while (tries++ <= MAX_DOWNLOAD_TRIES);
