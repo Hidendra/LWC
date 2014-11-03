@@ -111,10 +111,8 @@
                     <!-- that's the default value, you don't have to set it -->
                     <prefix>git</prefix>
 
-                    <!-- that's the default value -->
-                    <dateFormat>dd.MM.yyyy '@' HH:mm:ss z</dateFormat>
+                    <dateFormat>yyyy-MM-dd '@' HH:mm:ss z</dateFormat>
 
-                    <!-- true is default here, it prints some more information during the build -->
                     <verbose>false</verbose>
 
                     <!--
