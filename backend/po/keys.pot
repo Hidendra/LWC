@@ -11,7 +11,7 @@ msgstr ""
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
 "\n"
-"POT-Creation-Date: 2014-11-03 13:19-0400\n"
+"POT-Creation-Date: 2014-11-03 16:27-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -324,70 +324,70 @@ msgid ""
 "trace has been printed out to the log file"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:132
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:135
 #, java-format
 msgid "Server: {0} ({1})"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:133
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:136
 #, java-format
 msgid "Plugin: {0} ({1})"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:183
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:186
 #, java-format
 msgid "Economy handler: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:184
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:187
 #, java-format
 msgid "Permission handler: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:300
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:303
 msgid "Shutting down!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:320
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:323
 #, java-format
 msgid "Driver \"{0}\" is not supported."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:350
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:353
 #, java-format
 msgid "Connected to the database with driver: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:352
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:355
 msgid "Failed to connect to the database!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:284
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:261
 #, java-format
 msgid "[{0}/{1}] Downloading file {2} => {3}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:311
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:288
 #, java-format
 msgid "  .. md5 {0} WARN: no checksum available from remote host"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:317
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:294
 #, java-format
 msgid "  .. md5 {0} OK"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:320
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:297
 #, java-format
 msgid "  .. md5 {0} FAIL {1} (expected: {2})"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:321
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:298
 #, java-format
 msgid "Will redownload {0} ({1}/{2} tries)"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:374
+#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:351
 #, java-format
 msgid "  >> {0}: {1}%"
 msgstr ""
@@ -402,6 +402,7 @@ msgstr ""
 msgid "An error was encountered while processing a command: {0}"
 msgstr ""
 
+#. / console
 #: mods/canarymod/src/main/java/org/getlwc/canary/CanaryServerLayer.java:179
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:194
 msgid "&4[LWC] An internal error occurred while processing this command"

@@ -34,6 +34,8 @@ import org.getlwc.configuration.YamlConfiguration;
 import org.getlwc.util.ClassUtils;
 import org.getlwc.util.LibraryFile;
 import org.getlwc.util.MD5Checksum;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -73,14 +75,19 @@ public class SimpleLibraryDownloader implements LibraryDownloader {
     private Engine engine;
 
     /**
-     * The queue of files that need to be downloaded
+     * The queue of files that need to be downloaded or verified
      */
     private final Queue<LibraryFile> fileQueue = new ConcurrentLinkedQueue<LibraryFile>();
 
     /**
-     * The configuration file for resources.yml
+     * The base url to download resources from
      */
-    private Configuration resourceConfiguration = null;
+    private String baseUrl = null;
+
+    /**
+     * A map of all available resources
+     */
+    private JSONObject resources = null;
 
     public SimpleLibraryDownloader(Engine engine) {
         this.engine = engine;
@@ -92,56 +99,26 @@ public class SimpleLibraryDownloader implements LibraryDownloader {
     protected void init() {
         DEST_LIBRARY_FOLDER = new File(engine.getServerLayer().getEngineHomeFolder(), "lib").getPath() + File.separator;
         DEST_LIBRARY_FOLDER = DEST_LIBRARY_FOLDER.replaceAll("\\\\", "/");
-
-        // resource libraries
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/resourcelibs.txt")))) {
-            String file;
-
-            while ((file = reader.readLine()) != null) {
-                file = file.trim();
-
-                if (file.startsWith("#") || file.isEmpty()) {
-                    continue;
-                }
-
-                String[] split = file.split(":");
-                String fileName = split[0];
-
-                if (split.length > 1) {
-                    String testClass = split[1];
-
-                    if (ClassUtils.isClassLoaded(testClass)) {
-                        continue;
-                    }
-                }
-
-                verifyFile(new LibraryFile(DEST_LIBRARY_FOLDER + fileName, DEFAULT_UPDATE_SITE + fileName));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        downloadFiles();
     }
 
     /**
      * {@inheritDoc}
      */
     public void ensureResourceInstalled(String resource) {
-        if (resourceConfiguration == null) {
-            resourceConfiguration = new YamlConfiguration(getClass().getResourceAsStream("/resources.yml"));
+        if (baseUrl == null) {
+            JSONObject json = (JSONObject) JSONValue.parse(new InputStreamReader(getClass().getResourceAsStream("/resources.json")));
+
+            baseUrl = json.get("url").toString();
+            resources = (JSONObject) json.get("resources");
         }
 
-        // base url for the update site
-        String baseurl = resourceConfiguration.getString("baseUrl", DEFAULT_UPDATE_SITE);
-
-        Map<Object, Object> res = (Map<Object, Object>) resourceConfiguration.get("resources." + resource);
+        Map<Object, Object> res = (Map<Object, Object>) resources.get(resource);
 
         if (res == null) {
             return;
         }
 
-        String testClass = (String) res.get("testClass");
+        String testClass = (String) res.get("class");
 
         if (testClass == null) {
             return;
@@ -156,12 +133,12 @@ public class SimpleLibraryDownloader implements LibraryDownloader {
 
         for (Object o : files) {
             String file = (String) o;
-            verifyFile(new LibraryFile(DEST_LIBRARY_FOLDER + file, baseurl + file));
+            verifyFile(new LibraryFile(DEST_LIBRARY_FOLDER + file, baseUrl + file));
         }
 
         // SQLite native library
         if (resource.equals("databases.sqlite")) {
-            verifyFile(new LibraryFile(getFullNativeLibraryPath(), baseurl + getFullNativeLibraryPath().replaceAll(DEST_LIBRARY_FOLDER, "")));
+            verifyFile(new LibraryFile(getFullNativeLibraryPath(), baseUrl + getFullNativeLibraryPath().replaceAll(DEST_LIBRARY_FOLDER, "")));
         }
 
         downloadFiles();

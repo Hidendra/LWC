@@ -1,8 +1,0 @@
-# These files are required to get LWC past the bare minimum startup stage
-# They will be downloaded (if needed) from the LWC server.
-# The rest of the library files will download from the configured location (see resources.yml)
-# The class name is the class that is checked before the library is downloaded. If the class already
-# exists in the class loader then the file will not be downloaded and loaded.
-
-gettext-commons-0.9.6.jar:org.xnap.commons.i18n.I18n
-snakeyaml-1.11.jar:org.yaml.snakeyaml.Yaml

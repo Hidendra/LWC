@@ -119,6 +119,9 @@ public class SimpleEngine implements Engine {
         serverLayer.getEngineHomeFolder().mkdirs();
 
         downloader.init();
+        downloader.ensureResourceInstalled("gettext");
+        downloader.ensureResourceInstalled("snakeyaml");
+
         System.setProperty("org.sqlite.lib.path", downloader.getNativeLibraryFolder());
         FileConfiguration.init(this);
 
