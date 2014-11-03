@@ -2,7 +2,6 @@
     "url": "http://update.getlwc.org/shared/lib/",
 
     "resources": {
-
         "gettext": {
             "class": "org.xnap.commons.i18n.I18n",
             "files": [
@@ -52,6 +51,5 @@
                 "postgresql-9.2-1003.jdbc4.jar"
             ]
         }
-
     }
 }
