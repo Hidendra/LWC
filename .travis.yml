@@ -1,2 +1,4 @@
 language: java
 jdk: oraclejdk7
+install: true
+script: mvn clean install
