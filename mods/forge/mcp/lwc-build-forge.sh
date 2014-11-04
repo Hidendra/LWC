@@ -8,7 +8,7 @@ mkdir -p src tmp
 rsync -av --progress --delete ../src/. src/
 
 echo " >>> Building with ForgeGradle"
-bash gradlew -b lwc.gradle build
+bash gradlew -b build.gradle build
 
 echo " >>> Proceeding to final phase"
 unzip build/libs/lwc.jar -d tmp/

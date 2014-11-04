@@ -210,7 +210,7 @@ public class LWC {
             return null;
         }
 
-        int itemId = GameData.itemRegistry.getId(item.getItem());
+        int itemId = GameData.getItemRegistry().getId(item.getItem());
 
         return new ItemStack(itemId, item.stackSize, (short) item.getItemDamage(), item.getMaxStackSize(), castEnchantments(item.getEnchantmentTagList()));
     }

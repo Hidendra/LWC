@@ -93,7 +93,7 @@
         <dependency>
             <groupId>buildcraft</groupId>
             <artifactId>buildcraft</artifactId>
-            <version>1.6.2-4.0.1.19.338</version>
+            <version>1.7.10-6.1.5</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

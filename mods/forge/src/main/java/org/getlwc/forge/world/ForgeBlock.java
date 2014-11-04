@@ -88,12 +88,12 @@ public class ForgeBlock extends Block {
         String name = null;
 
         try {
-            Iterator iter = GameData.blockRegistry.iterator();
+            Iterator iter = GameData.getBlockRegistry().iterator();
 
             while (iter.hasNext()) {
                 net.minecraft.block.Block block = (net.minecraft.block.Block) iter.next();
 
-                int blockID = GameData.blockRegistry.getId(block);
+                int blockID = GameData.getBlockRegistry().getId(block);
 
                 if (block != null && blockID > 0) {
                     List<net.minecraft.item.ItemStack> blocks = new ArrayList<net.minecraft.item.ItemStack>();
@@ -142,7 +142,7 @@ public class ForgeBlock extends Block {
      */
     @Override
     public int getType() {
-        return GameData.blockRegistry.getId(world.getHandle().getBlock(x, y, z));
+        return GameData.getBlockRegistry().getId(world.getHandle().getBlock(x, y, z));
     }
 
     /**
