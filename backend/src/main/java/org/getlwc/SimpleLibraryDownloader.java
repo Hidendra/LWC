@@ -123,15 +123,13 @@ public class SimpleLibraryDownloader implements LibraryDownloader {
             return;
         }
 
-        String testClass = (String) res.get("class");
+        if (res.containsKey("class")) {
+            String testClass = (String) res.get("class");
 
-        if (testClass == null) {
-            return;
-        }
-
-        // Check to see if the class is already loaded (not needed if so)
-        if (ClassUtils.isClassLoaded(testClass)) {
-            return;
+            // Check to see if the class is already loaded (not needed if so)
+            if (ClassUtils.isClassLoaded(testClass)) {
+                return;
+            }
         }
 
         List<Object> files = (List<Object>) res.get("files");
