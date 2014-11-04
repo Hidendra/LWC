@@ -78,26 +78,26 @@ public class ConfigUpdater {
         path = path.substring(path.indexOf('/'), path.lastIndexOf('!'));
 
         // Load our jar file
-        ZipFile jarFile = new ZipFile(URLDecoder.decode(path, "UTF-8"));
+        try (ZipFile jarFile = new ZipFile(URLDecoder.decode(path, "UTF-8"))) {
+            // Begin loading the files
+            Enumeration entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry file = (ZipEntry) entries.nextElement();
+                String name = file.getName();
 
-        // Begin loading the files
-        Enumeration entries = jarFile.entries();
-        while (entries.hasMoreElements()) {
-            ZipEntry file = (ZipEntry) entries.nextElement();
-            String name = file.getName();
+                // We only want config dir
+                if (!name.startsWith("config/") || !name.endsWith(".yml")) {
+                    continue;
+                }
 
-            // We only want config dir
-            if (!name.startsWith("config/") || !name.endsWith(".yml")) {
-                continue;
+                // Get just the name
+                String realName = name.substring(name.indexOf('/') + 1);
+
+                // Insert it
+                FileConfiguration configuration = new FileConfiguration((File) null);
+                configuration.load(jarFile.getInputStream(file));
+                referenceConfigFileCache.put(realName, configuration);
             }
-
-            // Get just the name
-            String realName = name.substring(name.indexOf('/') + 1);
-
-            // Insert it
-            FileConfiguration configuration = new FileConfiguration((File) null);
-            configuration.load(jarFile.getInputStream(file));
-            referenceConfigFileCache.put(realName, configuration);
         }
 
         return referenceConfigFileCache;

@@ -213,11 +213,12 @@ public class StringUtils {
      * @return the converted hash
      */
     private static String byteArray2Hex(byte[] hash) {
-        Formatter formatter = new Formatter();
-        for (final byte b : hash) {
-            formatter.format("%02x", b);
+        try (Formatter formatter = new Formatter()) {
+            for (final byte b : hash) {
+                formatter.format("%02x", b);
+            }
+            return formatter.toString();
         }
-        return formatter.toString();
     }
 
 }

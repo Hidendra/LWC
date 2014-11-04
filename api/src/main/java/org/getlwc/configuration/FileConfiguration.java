@@ -189,13 +189,8 @@ public class FileConfiguration extends ConfigurationNode {
      * @param destFolder
      */
     private static void extractFile(String path, String destFolder) {
-        InputStream is = null;
-        OutputStream os = null;
-
-        try {
-            is = updater.getClass().getResourceAsStream(path);
-            os = new FileOutputStream(destFolder);
-
+        try (InputStream is = updater.getClass().getResourceAsStream(path);
+            OutputStream os = new FileOutputStream(destFolder)) {
             byte[] buffer = new byte[1024];
             int length;
             while ((length = is.read(buffer)) > 0) {
@@ -203,19 +198,6 @@ public class FileConfiguration extends ConfigurationNode {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                }
-            }
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (IOException e) {
-                }
-            }
         }
     }
 

@@ -21,9 +21,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -86,7 +84,12 @@ public class ProtectionMatcherTest {
         protectionManager = new SimpleProtectionManager(engine);
         when(engine.getProtectionManager()).thenReturn(protectionManager);
 
-        loadWorld();
+        try {
+            loadWorld();
+        } catch (IOException e) {
+            e.printStackTrace();
+            fail("Exception occurred: " + e.getMessage());
+        }
 
         // implicit protections
         createProtection("Hidendra", 3, 1, 14);
@@ -241,26 +244,26 @@ public class ProtectionMatcherTest {
     /**
      * Load the world from the schematic file
      */
-    private void loadWorld() {
-        InputStream stream = getClass().getResourceAsStream("/world.schematic");
+    private void loadWorld() throws IOException {
+        try (InputStream stream = getClass().getResourceAsStream("/world.schematic")) {
+            Schematic schematic;
 
-        Schematic schematic;
+            try {
+                schematic = SchematicLoader.loadSchematicBlocks(stream);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
 
-        try {
-            schematic = SchematicLoader.loadSchematicBlocks(stream);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
+            for (int x = 0; x < schematic.getWidth(); ++x) {
+                for (int y = 0; y < schematic.getHeight(); ++y) {
+                    for (int z = 0; z < schematic.getLength(); ++z) {
+                        int index = y * schematic.getWidth() * schematic.getLength() + z * schematic.getWidth() + x;
 
-        for (int x = 0; x < schematic.getWidth(); ++x) {
-            for (int y = 0; y < schematic.getHeight(); ++y) {
-                for (int z = 0; z < schematic.getLength(); ++z) {
-                    int index = y * schematic.getWidth() * schematic.getLength() + z * schematic.getWidth() + x;
-
-                    Block block = world.getBlockAt(x, y, z);
-                    block.setType(schematic.getBlocks()[index] & 0xFF);
-                    block.setData(schematic.getData()[index]);
+                        Block block = world.getBlockAt(x, y, z);
+                        block.setType(schematic.getBlocks()[index] & 0xFF);
+                        block.setData(schematic.getData()[index]);
+                    }
                 }
             }
         }

@@ -258,11 +258,12 @@ public class JDBCDatabase implements Database {
 
         try (Connection connection = pool.getConnection()) {
             // convert the SQL to a stream so we can use a (mostly) unmodified ScriptRunner class
-            InputStream stream = new ByteArrayInputStream(file.getBytes("UTF-8"));
-
             JDBCScriptRunner runner = new JDBCScriptRunner(connection, false, false);
             runner.setLogWriter(null);
-            runner.runScript(new InputStreamReader(stream));
+
+            try (InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(file.getBytes("UTF-8")))) {
+                runner.runScript(reader);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

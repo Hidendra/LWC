@@ -21,32 +21,32 @@ public class SchematicLoader {
      * @throws IOException
      */
     public static Schematic loadSchematicBlocks(InputStream stream) throws IOException {
-        NBTInputStream nbtStream = new NBTInputStream(stream);
+        try (NBTInputStream nbtStream = new NBTInputStream(stream)) {
+            CompoundTag schematicTag = (CompoundTag) nbtStream.readTag();
 
-        CompoundTag schematicTag = (CompoundTag) nbtStream.readTag();
+            if (!schematicTag.getName().equals("Schematic")) {
+                throw new IllegalArgumentException("Tag \"Schematic\" does not exist or is not first");
+            }
 
-        if (!schematicTag.getName().equals("Schematic")) {
-            throw new IllegalArgumentException("Tag \"Schematic\" does not exist or is not first");
+            Map<String, Tag> schematic = schematicTag.getValue();
+
+            if (!schematic.containsKey("Blocks")) {
+                throw new IllegalArgumentException("Schematic file is missing a \"Blocks\" tag");
+            }
+
+            short width = getChildTag(schematic, "Width", ShortTag.class).getValue();
+            short length = getChildTag(schematic, "Length", ShortTag.class).getValue();
+            short height = getChildTag(schematic, "Height", ShortTag.class).getValue();
+
+            String materials = getChildTag(schematic, "Materials", StringTag.class).getValue();
+            if (!materials.equals("Alpha")) {
+                throw new IllegalArgumentException("Schematic file is not an Alpha schematic");
+            }
+
+            byte[] blocks = getChildTag(schematic, "Blocks", ByteArrayTag.class).getValue();
+            byte[] blockData = getChildTag(schematic, "Data", ByteArrayTag.class).getValue();
+            return new Schematic(blocks, blockData, width, length, height);
         }
-
-        Map<String, Tag> schematic = schematicTag.getValue();
-
-        if (!schematic.containsKey("Blocks")) {
-            throw new IllegalArgumentException("Schematic file is missing a \"Blocks\" tag");
-        }
-
-        short width = getChildTag(schematic, "Width", ShortTag.class).getValue();
-        short length = getChildTag(schematic, "Length", ShortTag.class).getValue();
-        short height = getChildTag(schematic, "Height", ShortTag.class).getValue();
-
-        String materials = getChildTag(schematic, "Materials", StringTag.class).getValue();
-        if (!materials.equals("Alpha")) {
-            throw new IllegalArgumentException("Schematic file is not an Alpha schematic");
-        }
-
-        byte[] blocks = getChildTag(schematic, "Blocks", ByteArrayTag.class).getValue();
-        byte[] blockData = getChildTag(schematic, "Data", ByteArrayTag.class).getValue();
-        return new Schematic(blocks, blockData, width, length, height);
     }
 
     /**

@@ -300,36 +300,36 @@ public class SimpleLibraryDownloader implements LibraryDownloader {
      * @param downloadTo
      */
     private void downloadLibrary(URL url, File downloadTo) throws IOException {
-        OutputStream outputStream = new FileOutputStream(downloadTo);
-        URLConnection connection = url.openConnection();
-        InputStream inputStream = connection.getInputStream();
-        int contentLength = connection.getContentLength();
+        try (OutputStream outputStream = new FileOutputStream(downloadTo)) {
+            URLConnection connection = url.openConnection();
 
-        int bytesTransfered = 0;
-        long lastUpdate = 0L;
+            try (InputStream inputStream = connection.getInputStream()) {
+                int contentLength = connection.getContentLength();
 
-        byte[] buffer = new byte[1024];
-        int read;
+                int bytesTransfered = 0;
+                long lastUpdate = 0L;
 
-        while ((read = inputStream.read(buffer)) > 0) {
-            outputStream.write(buffer, 0, read);
-            bytesTransfered += read;
+                byte[] buffer = new byte[1024];
+                int read;
 
-            if (contentLength > 0) {
-                if (System.currentTimeMillis() - lastUpdate > 500L) {
-                    int percentTransferred = (int) (((float) bytesTransfered / contentLength) * 100);
-                    lastUpdate = System.currentTimeMillis();
+                while ((read = inputStream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, read);
+                    bytesTransfered += read;
 
-                    // omit 0/100% ..
-                    if (percentTransferred != 0 && percentTransferred != 100) {
-                        engine.getConsoleSender().sendTranslatedMessage("  >> {0}: {1}%", downloadTo.getName(), percentTransferred);
+                    if (contentLength > 0) {
+                        if (System.currentTimeMillis() - lastUpdate > 500L) {
+                            int percentTransferred = (int) (((float) bytesTransfered / contentLength) * 100);
+                            lastUpdate = System.currentTimeMillis();
+
+                            // omit 0/100% ..
+                            if (percentTransferred != 0 && percentTransferred != 100) {
+                                engine.getConsoleSender().sendTranslatedMessage("  >> {0}: {1}%", downloadTo.getName(), percentTransferred);
+                            }
+                        }
                     }
                 }
             }
         }
-
-        outputStream.close();
-        inputStream.close();
     }
 
     /**
