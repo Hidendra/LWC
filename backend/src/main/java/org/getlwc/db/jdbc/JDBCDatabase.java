@@ -49,7 +49,6 @@ import org.getlwc.util.Tuple;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -156,7 +155,7 @@ public class JDBCDatabase implements Database {
 
         this.engine = engine;
         this.details = details;
-        engine.getLibraryDownloader().ensureResourceInstalled("c3p0");
+        engine.getResourceDownloader().ensureResourceInstalled("c3p0");
     }
 
     /**
@@ -166,7 +165,7 @@ public class JDBCDatabase implements Database {
         Driver driver = details.getDriver();
 
         // Load any resources required for the driver
-        engine.getLibraryDownloader().ensureResourceInstalled("databases." + driver.toString().toLowerCase());
+        engine.getResourceDownloader().ensureResourceInstalled("databases." + driver.toString().toLowerCase());
 
         // Get the path to the database
         String databasePath;

@@ -29,7 +29,7 @@
 
 package org.getlwc;
 
-public interface LibraryDownloader {
+public interface ResourceDownloader {
 
     /**
      * Ensure the specified resource is installed and loaded. If it is not installed it will be downloaded.

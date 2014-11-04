@@ -62,9 +62,9 @@ public class SimpleEngine implements Engine {
     private SimpleProtectionManager protectionManager;
 
     /**
-     * The {@link LibraryDownloader} responsible for downloading library files
+     * The {@link ResourceDownloader} responsible for downloading library files
      */
-    private final SimpleLibraryDownloader downloader = new SimpleLibraryDownloader(this);
+    private final SimpleResourceDownloader downloader = new SimpleResourceDownloader(this);
 
     /**
      * The server layer
@@ -190,7 +190,7 @@ public class SimpleEngine implements Engine {
     /**
      * {@inheritDoc}
      */
-    public LibraryDownloader getLibraryDownloader() {
+    public ResourceDownloader getResourceDownloader() {
         return downloader;
     }
 

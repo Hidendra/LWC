@@ -29,8 +29,6 @@
 
 package org.getlwc;
 
-import org.getlwc.configuration.Configuration;
-import org.getlwc.configuration.YamlConfiguration;
 import org.getlwc.util.ClassUtils;
 import org.getlwc.util.LibraryFile;
 import org.getlwc.util.MD5Checksum;
@@ -52,7 +50,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class SimpleLibraryDownloader implements LibraryDownloader {
+public class SimpleResourceDownloader implements ResourceDownloader {
 
     /**
      * URL to the base update site
@@ -89,7 +87,7 @@ public class SimpleLibraryDownloader implements LibraryDownloader {
      */
     private JSONObject resources = null;
 
-    public SimpleLibraryDownloader(Engine engine) {
+    public SimpleResourceDownloader(Engine engine) {
         this.engine = engine;
     }
 

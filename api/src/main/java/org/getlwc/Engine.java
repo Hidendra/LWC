@@ -106,7 +106,7 @@ public interface Engine {
      *
      * @return
      */
-    public LibraryDownloader getLibraryDownloader();
+    public ResourceDownloader getResourceDownloader();
 
     /**
      * Get the economy handler for the server
