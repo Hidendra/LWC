@@ -1,4 +1,4 @@
-LWC
+LWC ![](https://api.travis-ci.org/Hidendra/LWC.png)
 ======
 
 *The* chest (and other blocks) protection plugin.
