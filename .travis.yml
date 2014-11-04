@@ -1,4 +1,4 @@
 language: java
 jdk: oraclejdk7
 install: true
-script: mvn clean install
+script: mvn -Dmaven.javadoc.skip=true clean install
