@@ -59,7 +59,7 @@ public class SimpleEngine implements Engine {
     /**
      * The protection manager
      */
-    private final SimpleProtectionManager protectionManager;
+    private SimpleProtectionManager protectionManager;
 
     /**
      * The {@link LibraryDownloader} responsible for downloading library files
@@ -129,9 +129,6 @@ public class SimpleEngine implements Engine {
         languagesConfig = new YamlConfiguration(getClass().getResourceAsStream("/languages.yml"));
         I18n.init(this);
 
-        commandHandler = new SimpleCommandHandler(this);
-        protectionManager = new SimpleProtectionManager(this);
-
         consoleSender.sendTranslatedMessage("Server: {0} ({1})", serverInfo.getServerImplementationTitle(), serverInfo.getServerImplementationVersion());
         consoleSender.sendTranslatedMessage("Plugin: {0} ({1})", getImplementationTitle(), getImplementationVersion());
     }
@@ -177,6 +174,9 @@ public class SimpleEngine implements Engine {
      * {@inheritDoc}
      */
     public void startup() {
+        commandHandler = new SimpleCommandHandler(this);
+        protectionManager = new SimpleProtectionManager(this);
+
         // connect to the db
         openDatabase();
 
