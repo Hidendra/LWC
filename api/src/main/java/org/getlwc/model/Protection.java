@@ -423,7 +423,7 @@ public abstract class Protection extends AbstractSavable {
         /**
          * User can modify the protection (add and remove members) but not add or remove other managers.
          */
-        MANAGER(I18n.markAsTranslatable("manager")),
+        ADMIN(I18n.markAsTranslatable("admin")),
 
         /**
          * User has the same access as the user who created the protection. They can remove the protection,

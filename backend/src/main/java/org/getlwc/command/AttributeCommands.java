@@ -84,7 +84,7 @@ public class AttributeCommands {
                 Protection protection = event.getProtection();
 
                 Protection.Access currAccess = protection.getAccess(player);
-                if (currAccess.ordinal() < Protection.Access.MANAGER.ordinal()) {
+                if (currAccess.ordinal() < Protection.Access.ADMIN.ordinal()) {
                     player.sendTranslatedMessage("&4Only managers and above can modify the attributes of a protection.");
                     return true;
                 }
@@ -129,7 +129,7 @@ public class AttributeCommands {
                 Protection protection = event.getProtection();
 
                 Protection.Access currAccess = protection.getAccess(player);
-                if (currAccess.ordinal() < Protection.Access.MANAGER.ordinal()) {
+                if (currAccess.ordinal() < Protection.Access.ADMIN.ordinal()) {
                     player.sendTranslatedMessage("&4Only managers and above can modify the attributes of a protection.");
                     return true;
                 }

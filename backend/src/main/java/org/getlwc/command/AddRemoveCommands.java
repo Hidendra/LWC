@@ -5,8 +5,6 @@ import org.getlwc.entity.Player;
 import org.getlwc.event.events.ProtectionEvent;
 import org.getlwc.event.notifiers.ProtectionEventNotifier;
 import org.getlwc.model.Protection;
-import org.getlwc.provider.ProtectionProvider;
-import org.getlwc.role.AbstractRole;
 import org.getlwc.role.PlayerRole;
 import org.getlwc.role.Role;
 
@@ -67,7 +65,7 @@ public class AddRemoveCommands {
 
                 Protection.Access playerAccess = protection.getAccess(player);
 
-                if (playerAccess.ordinal() < Protection.Access.MANAGER.ordinal()) {
+                if (playerAccess.ordinal() < Protection.Access.ADMIN.ordinal()) {
                     player.sendTranslatedMessage("&4Access denied.");
                     return true;
                 }
@@ -84,7 +82,7 @@ public class AddRemoveCommands {
 
                     if (role.getAccess() == Protection.Access.OWNER && playerAccess != Protection.Access.OWNER) {
                         player.sendTranslatedMessage("&4Only owners can remove other owners.");
-                    } else if (role.getAccess() == Protection.Access.MANAGER && playerAccess != Protection.Access.OWNER) {
+                    } else if (role.getAccess() == Protection.Access.ADMIN && playerAccess != Protection.Access.OWNER) {
                         player.sendTranslatedMessage("&4Only owners can remove managers.");
                     } else if (toDelete != null) {
                         player.sendTranslatedMessage("&2Removed successfully.");
@@ -98,7 +96,7 @@ public class AddRemoveCommands {
                     if (existing != null) {
                         if (role.getAccess() == Protection.Access.OWNER && playerAccess != Protection.Access.OWNER) {
                             player.sendTranslatedMessage("&4Only owners can modify other owners.");
-                        } else if (role.getAccess() == Protection.Access.MANAGER && playerAccess != Protection.Access.OWNER) {
+                        } else if (role.getAccess() == Protection.Access.ADMIN && playerAccess != Protection.Access.OWNER) {
                             player.sendTranslatedMessage("&4Only owners can modify managers.");
                         } else {
                             existing.setAccess(access);
