@@ -70,7 +70,7 @@ public class AddRemoveCommands {
                 if (playerAccess.ordinal() < Protection.Access.MANAGER.ordinal()) {
                     player.sendTranslatedMessage("&4Access denied.");
                     return true;
-                } // /cadd group VIP
+                }
 
                 Role role = engine.getProtectionManager().getRoleRegistry().loadRole(baseRoleType, roleName);
 
