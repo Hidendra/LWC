@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -92,30 +93,30 @@ public class ProtectionMatcherTest {
         }
 
         // implicit protections
-        createProtection("Hidendra", 3, 1, 14);
-        createProtection("Hidendra", 6, 1, 14);
-        createProtection("Hidendra", 8, 1, 11);
-        createProtection("Hidendra", 6, 1, 11);
-        createProtection("Hidendra", 4, 1, 11);
-        createProtection("Hidendra", 6, 1, 8);
-        createProtection("Hidendra", 9, 1, 8);
-        createProtection("Hidendra", 6, 1, 5);
-        createProtection("Hidendra", 5, 1, 5);
-        createProtection("Hidendra", 12, 1, 0);
-        createProtection("Hidendra", 10, 2, 0);
-        createProtection("Hidendra", 6, 1, 0);
-        createProtection("Hidendra", 5, 2, 0);
-        createProtection("Hidendra", 3, 2, 0);
-        createProtection("Hidendra", 0, 1, 0);
-        createProtection("Hidendra", 14, 2, 6); // sign
-        createProtection("Hidendra", 14, 2, 8); // sign
-        createProtection("Hidendra", 13, 1, 10); // sign
-        createProtection("Hidendra", 13, 1, 12); // sign
-        createProtection("Hidendra", 11, 1, 12); // trap door
-        createProtection("Hidendra", 12, 2, 8); // wooden button
-        createProtection("Hidendra", 12, 2, 6); // stone button
-        createProtection("Hidendra", 13, 2, 3); // lever on wall
-        createProtection("Hidendra", 14, 2, 1); // lever on ground
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 3, 1, 14);
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 6, 1, 14);
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 8, 1, 11);
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 6, 1, 11);
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 4, 1, 11);
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 6, 1, 8);
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 9, 1, 8);
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 6, 1, 5);
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 5, 1, 5);
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 12, 1, 0);
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 10, 2, 0);
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 6, 1, 0);
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 5, 2, 0);
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 3, 2, 0);
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 0, 1, 0);
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 14, 2, 6); // sign
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 14, 2, 8); // sign
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 13, 1, 10); // sign
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 13, 1, 12); // sign
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 11, 1, 12); // trap door
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 12, 2, 8); // wooden button
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 12, 2, 6); // stone button
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 13, 2, 3); // lever on wall
+        createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"), 14, 2, 1); // lever on ground
     }
 
     @Test
@@ -234,7 +235,7 @@ public class ProtectionMatcherTest {
      * @param y
      * @param z
      */
-    private void createProtection(String owner, int x, int y, int z) {
+    private void createProtection(UUID owner, int x, int y, int z) {
         Location location = new Location(world, x, y, z);
 
         implicitProtections.add(location);

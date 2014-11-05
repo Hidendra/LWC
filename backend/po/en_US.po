@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2014-11-03 17:50-0400\n"
+"POT-Creation-Date: 2014-11-05 00:38-0400\n"
 "PO-Revision-Date: 2013-06-18 23:02-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -305,7 +305,7 @@ msgstr ""
 "&eRoles(size={7}):\n"
 "{8}"
 
-#: backend/src/main/java/org/getlwc/db/jdbc/JDBCDatabase.java:232
+#: backend/src/main/java/org/getlwc/db/jdbc/JDBCDatabase.java:231
 msgid "Creating base database via base.sql"
 msgstr "Creating base database via base.sql"
 
@@ -349,12 +349,12 @@ msgstr ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "
 "trace has been printed out to the log file"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:135
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:132
 #, java-format
 msgid "Server: {0} ({1})"
 msgstr "Server: {0} ({1})"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:136
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:133
 #, java-format
 msgid "Plugin: {0} ({1})"
 msgstr "Plugin: {0} ({1})"
@@ -387,27 +387,31 @@ msgstr "Connected to the database with driver: {0}"
 msgid "Failed to connect to the database!"
 msgstr "Failed to connect to the database!"
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:255
+#: backend/src/main/java/org/getlwc/SimpleProtectionManager.java:122
+msgid "No player role provider found! Creating protection with no owner..."
+msgstr "No player role provider found! Creating protection with no owner..."
+
+#: backend/src/main/java/org/getlwc/SimpleResourceDownloader.java:251
 #, java-format
 msgid "Verifying file {0}"
 msgstr "Verifying file {0}"
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:257
+#: backend/src/main/java/org/getlwc/SimpleResourceDownloader.java:253
 #, java-format
 msgid "Downloading file {0} to {1}"
 msgstr "Downloading file {0} to {1}"
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:271
+#: backend/src/main/java/org/getlwc/SimpleResourceDownloader.java:267
 #, java-format
 msgid "{0}: no checksum available from remote host"
 msgstr "{0}: no checksum available from remote host"
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:277
+#: backend/src/main/java/org/getlwc/SimpleResourceDownloader.java:273
 #, java-format
 msgid "{0}: checksum is OK"
 msgstr "{0}: checksum is OK"
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:280
+#: backend/src/main/java/org/getlwc/SimpleResourceDownloader.java:276
 #, java-format
 msgid ""
 "{0}: checksum check FAILED. Found {1}, but was expecting {2}. File will be "
@@ -416,14 +420,10 @@ msgstr ""
 "{0}: checksum check FAILED. Found {1}, but was expecting {2}. File will be "
 "redownloaded."
 
-#: backend/src/main/java/org/getlwc/SimpleLibraryDownloader.java:325
+#: backend/src/main/java/org/getlwc/SimpleResourceDownloader.java:322
 #, java-format
 msgid "  >> {0}: {1}%"
 msgstr "  >> {0}: {1}%"
-
-#: backend/src/main/java/org/getlwc/SimpleProtectionManager.java:120
-msgid "No player role provider found! Creating protection with no owner..."
-msgstr "No player role provider found! Creating protection with no owner..."
 
 #: mods/canarymod/src/main/java/org/getlwc/canary/CanaryServerLayer.java:175
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:190

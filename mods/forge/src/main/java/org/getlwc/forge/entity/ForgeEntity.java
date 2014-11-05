@@ -4,6 +4,8 @@ import org.getlwc.Location;
 import org.getlwc.entity.Entity;
 import org.getlwc.forge.world.ForgeWorld;
 
+import java.util.UUID;
+
 public class ForgeEntity implements Entity {
 
     /**
@@ -15,8 +17,8 @@ public class ForgeEntity implements Entity {
         this.handle = handle;
     }
 
-    public String getUUID() {
-        return handle.getUniqueID().toString();
+    public UUID getUUID() {
+        return handle.getPersistentID();
     }
 
     public String getName() {

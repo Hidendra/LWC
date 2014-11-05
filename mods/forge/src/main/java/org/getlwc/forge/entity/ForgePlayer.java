@@ -42,6 +42,8 @@ import org.getlwc.forge.LWC;
 import org.getlwc.forge.world.ForgeWorld;
 import org.getlwc.util.Color;
 
+import java.util.UUID;
+
 public class ForgePlayer extends SimplePlayer {
 
     /**
@@ -62,9 +64,8 @@ public class ForgePlayer extends SimplePlayer {
     /**
      * {@inheritDoc}
      */
-    public String getUUID() {
-        // TODO: convert to unique id upon public availability of 1.7
-        return handle.getCommandSenderName();
+    public UUID getUUID() {
+        return handle.getPersistentID();
     }
 
     /**

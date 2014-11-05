@@ -4,6 +4,8 @@ import org.getlwc.Location;
 import org.getlwc.canary.LWC;
 import org.getlwc.entity.Entity;
 
+import java.util.UUID;
+
 public class CanaryEntity implements Entity {
 
     /**
@@ -24,8 +26,8 @@ public class CanaryEntity implements Entity {
     /**
      * {@inheritDoc}
      */
-    public String getUUID() {
-        return handle.getUUID().toString();
+    public UUID getUUID() {
+        return handle.getUUID();
     }
 
     /**

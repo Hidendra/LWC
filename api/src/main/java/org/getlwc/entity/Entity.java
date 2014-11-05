@@ -31,6 +31,8 @@ package org.getlwc.entity;
 
 import org.getlwc.Location;
 
+import java.util.UUID;
+
 public interface Entity {
 
     /**
@@ -38,7 +40,7 @@ public interface Entity {
      *
      * @return
      */
-    public String getUUID();
+    public UUID getUUID();
 
     /**
      * Get the entity's name

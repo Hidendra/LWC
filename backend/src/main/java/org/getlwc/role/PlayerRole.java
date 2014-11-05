@@ -3,19 +3,22 @@ package org.getlwc.role;
 import org.getlwc.Engine;
 import org.getlwc.entity.Player;
 import org.getlwc.model.Protection;
+import org.getlwc.model.State;
+
+import java.util.UUID;
 
 public class PlayerRole extends ProtectionRole {
 
-    public PlayerRole(Engine engine, String roleName) {
-        super(engine, null, roleName, null);
-    }
+    private UUID uuid;
 
     public PlayerRole(Engine engine, Protection protection) {
         super(engine, protection, null, null);
     }
 
-    public PlayerRole(Engine engine, Protection protection, String roleName, ProtectionRole.Access roleAccess) {
-        super(engine, protection, roleName, roleAccess);
+    @Override
+    public void setName(String name) {
+        super.setName(name);
+        this.uuid = UUID.fromString(name);
     }
 
     @Override
@@ -33,11 +36,7 @@ public class PlayerRole extends ProtectionRole {
      * {@inheritDoc}
      */
     public ProtectionRole.Access getAccess(Protection protection, Player player) {
-        if (player.getUUID().equalsIgnoreCase(getName())) {
-            return getAccess();
-        } else if (player.getName().equalsIgnoreCase(getName())) {
-            setName(player.getUUID());
-            save();
+        if (player.getUUID().equals(uuid)) {
             return getAccess();
         } else {
             return Access.NONE;

@@ -38,10 +38,12 @@ import org.getlwc.provider.BasicProvider;
 import org.getlwc.provider.ProtectionProvider;
 import org.getlwc.provider.ProviderManager;
 import org.getlwc.provider.SimpleProviderManager;
+import org.getlwc.role.PlayerRole;
 import org.getlwc.role.ProtectionRole;
 import org.getlwc.role.provider.PlayerRoleProvider;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class SimpleProtectionManager implements ProtectionManager {
 
@@ -103,7 +105,7 @@ public class SimpleProtectionManager implements ProtectionManager {
     /**
      * {@inheritDoc}
      */
-    public Protection createProtection(String owner, Location location) {
+    public Protection createProtection(UUID owner, Location location) {
         // First create the protection
         Protection protection = engine.getDatabase().createProtection(location);
 
@@ -120,8 +122,8 @@ public class SimpleProtectionManager implements ProtectionManager {
             engine.getConsoleSender().sendTranslatedMessage("No player role provider found! Creating protection with no owner...");
         } else {
             // TODO - helper function?
-            ProtectionRole role = provider.create(protection);
-            role.setName(owner);
+            PlayerRole role = (PlayerRole) provider.create(protection);
+            role.setName(owner.toString());
             role.setProtectionAccess(ProtectionRole.Access.OWNER);
             protection.addRole(role);
             protection.save();

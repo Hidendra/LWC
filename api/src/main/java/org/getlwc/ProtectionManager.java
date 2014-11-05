@@ -36,6 +36,8 @@ import org.getlwc.provider.ProtectionProvider;
 import org.getlwc.provider.ProviderManager;
 import org.getlwc.role.ProtectionRole;
 
+import java.util.UUID;
+
 public interface ProtectionManager {
 
     /**
@@ -61,7 +63,7 @@ public interface ProtectionManager {
      * @param location
      * @return
      */
-    public Protection createProtection(String owner, Location location);
+    public Protection createProtection(UUID owner, Location location);
 
     /**
      * Get the manager for roles

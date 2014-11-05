@@ -33,6 +33,7 @@ import org.getlwc.Engine;
 import org.getlwc.Location;
 
 import java.util.Random;
+import java.util.UUID;
 
 public class BenchmarkCommands {
 
@@ -62,7 +63,7 @@ public class BenchmarkCommands {
             Random random = new Random();
             long start = System.currentTimeMillis();
             for (int i = 0; i < 10000; i++) {
-                engine.getProtectionManager().createProtection("virulent",
+                engine.getProtectionManager().createProtection(UUID.fromString("86553713-3d20-4923-9fd6-587aa7ed7c16"),
                         new Location(engine.getServerLayer().getDefaultWorld(), random.nextDouble() * 100000, random.nextDouble() * 100000, random.nextDouble() * 100000));
             }
             long time = System.currentTimeMillis() - start;

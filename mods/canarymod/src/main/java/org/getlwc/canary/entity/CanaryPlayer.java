@@ -8,6 +8,8 @@ import org.getlwc.entity.SimplePlayer;
 import org.getlwc.lang.Locale;
 import org.getlwc.util.Color;
 
+import java.util.UUID;
+
 public class CanaryPlayer extends SimplePlayer {
 
     /**
@@ -28,9 +30,8 @@ public class CanaryPlayer extends SimplePlayer {
     /**
      * {@inheritDoc}
      */
-    public String getUUID() {
-        // TODO: convert to unique id upon public availability of 1.7
-        return handle.getName();
+    public UUID getUUID() {
+        return handle.getUUID();
     }
 
     /**
