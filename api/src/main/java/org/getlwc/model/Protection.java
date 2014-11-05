@@ -30,6 +30,8 @@
 package org.getlwc.model;
 
 import org.getlwc.*;
+import org.getlwc.component.BasicComponentHolder;
+import org.getlwc.component.Component;
 import org.getlwc.entity.Entity;
 import org.getlwc.entity.Player;
 import org.getlwc.role.Role;
@@ -38,7 +40,7 @@ import java.util.*;
 
 import static org.getlwc.I18n._;
 
-public abstract class Protection implements Savable {
+public class Protection extends BasicComponentHolder<Component> implements Savable {
 
     /**
      * The type of protection. The ordering of the types should never change as the ordinal

@@ -11,7 +11,7 @@ msgstr ""
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
 "\n"
-"POT-Creation-Date: 2014-11-05 15:59-0400\n"
+"POT-Creation-Date: 2014-11-05 17:28-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -70,31 +70,31 @@ msgstr ""
 msgid "Using default locale: {0}"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/model/Protection.java:399
+#: api/src/main/java/org/getlwc/model/Protection.java:408
 msgid "explicit_deny"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/model/Protection.java:404
+#: api/src/main/java/org/getlwc/model/Protection.java:413
 msgid "none"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/model/Protection.java:411
+#: api/src/main/java/org/getlwc/model/Protection.java:420
 msgid "guest"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/model/Protection.java:416
+#: api/src/main/java/org/getlwc/model/Protection.java:425
 msgid "depositonly"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/model/Protection.java:421
+#: api/src/main/java/org/getlwc/model/Protection.java:430
 msgid "member"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/model/Protection.java:426
-msgid "manager"
+#: api/src/main/java/org/getlwc/model/Protection.java:435
+msgid "admin"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/model/Protection.java:433
+#: api/src/main/java/org/getlwc/model/Protection.java:442
 msgid "owner"
 msgstr ""
 
@@ -121,62 +121,62 @@ msgstr ""
 msgid "&4Invalid password."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:52
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:51
 #, java-format
 msgid "&4Unknown access level: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:57
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:56
 #, java-format
 msgid "&fClick on a protection to apply the modification: &4remove &e{0}&f"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:59
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:58
 #, java-format
 msgid ""
 "&fClick on a protection to apply the modification: &2add/change &e{0}&f to "
 "&e{1}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:70
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:69
 msgid "&4Access denied."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:77
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:76
 #, java-format
 msgid "&4Role identifier not recognized: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:85
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:84
 msgid "&4Only owners can remove other owners."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:87
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:86
 msgid "&4Only owners can remove managers."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:89
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:88
 msgid "&2Removed successfully."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:92
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:91
 #, java-format
 msgid "&4Protection does not contain role matching: &e{0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:99
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:98
 msgid "&4Only owners can modify other owners."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:101
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:100
 msgid "&4Only owners can modify managers."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:107
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:106
 msgid "&2Changed successfully."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:114
+#: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:113
 msgid "&2Added successfully."
 msgstr ""
 
@@ -213,79 +213,68 @@ msgstr ""
 msgid "&4The protection does not have the attribute {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:87
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:86
 msgid "Similar commands:"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:90
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:89
 msgid "&4No commands found."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:100
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:99
 #, java-format
 msgid "- &6/{0}&r: {1}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:114
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:152
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:113
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:151
 msgid "&eClick on a block to protect it!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:123
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:162
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:122
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:161
 msgid "&4That block is not protectable"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:129
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:128
 msgid ""
 "&2Created a new protection successfully.\n"
 "Want to give another player access to your protection?\n"
 "Use: &e/lwc modify NAME (or: /cadd NAME)"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:133
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:184
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:132
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:183
 msgid ""
 "&4Failed to create the protection. Your block is most likely not protected."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:180
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:179
 msgid ""
 "&2Created a new protection &4with a password&2 successfully.\n"
 "Want to give another player access to your protection?\n"
 "Use: &e/lwc modify NAME (or: /cadd NAME)"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:201
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:200
 msgid "&eClick on a protection to remove the lock!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:210
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:209
 msgid "&2The protection has been removed successfully."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:212
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:211
 msgid "&4You do not have the required access level to do that!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:230
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:229
 msgid "&eClick on a protection to view info on it."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:270
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:269
 #, java-format
 msgid "&7{0}&f: {1}\n"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:275
-#, java-format
-msgid ""
-"Location: &7[{0} {1} {2}]&f in the world \"&7{3}&f\"\n"
-"Created on: &7{4}\n"
-"Last updated on: &7{5}\n"
-"Last accessed on: &7{6}\n"
-"&eRoles(size={7}):\n"
-"{8}"
 msgstr ""
 
 #: backend/src/main/java/org/getlwc/db/jdbc/JDBCDatabase.java:227

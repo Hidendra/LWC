@@ -29,7 +29,7 @@
 
 package org.getlwc.db;
 
-import org.getlwc.model.AbstractSavable;
+import org.getlwc.model.Savable;
 
 public interface Database extends ProtectionDatabase, AttributeDatabase, RoleDatabase {
 
@@ -52,6 +52,6 @@ public interface Database extends ProtectionDatabase, AttributeDatabase, RoleDat
      *
      * @param savable
      */
-    public void saveLater(AbstractSavable savable);
+    public void saveLater(Savable savable);
 
 }

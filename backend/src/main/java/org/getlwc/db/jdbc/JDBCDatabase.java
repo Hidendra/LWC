@@ -31,11 +31,11 @@ package org.getlwc.db.jdbc;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.getlwc.*;
+import org.getlwc.component.LocationSetComponent;
 import org.getlwc.db.Database;
 import org.getlwc.db.DatabaseException;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Savable;
-import org.getlwc.model.BlockProtection;
 import org.getlwc.model.Protection;
 import org.getlwc.model.State;
 import org.getlwc.provider.BasicProvider;
@@ -648,7 +648,6 @@ public class JDBCDatabase implements Database {
      * @return
      */
     private Protection resolveProtection(ResultSet set) throws SQLException {
-        Protection protection = null;
         int protectionId = set.getInt("id");
         int typeId = set.getInt("type");
 
@@ -656,34 +655,33 @@ public class JDBCDatabase implements Database {
             return null;
         }
 
-        Protection.Type type = Protection.Type.values()[typeId];
+        Protection protection = new Protection(engine, protectionId);
 
-        switch (type) {
-            case BLOCK:
-                try (Connection connection = pool.getConnection();
-                     PreparedStatement statement = connection.prepareStatement("SELECT world, x, y, z FROM " + details.getPrefix() + "protection_blocks WHERE protection_id = ?")) {
-                    statement.setInt(1, protectionId);
+        {
+            try (Connection connection = pool.getConnection();
+                 PreparedStatement statement = connection.prepareStatement("SELECT world, x, y, z FROM " + details.getPrefix() + "protection_blocks WHERE protection_id = ?")) {
+                statement.setInt(1, protectionId);
 
-                    try (ResultSet blockSet = statement.executeQuery()) {
-                        if (blockSet.next()) {
-                            // TODO allow multiple blocks per protection ?
-                            World world = engine.getServerLayer().getWorld(lookup.get(JDBCLookupService.LookupType.WORLD_NAME, blockSet.getInt("world")));
-                            int x = blockSet.getInt("x");
-                            int y = blockSet.getInt("y");
-                            int z = blockSet.getInt("z");
+                try (ResultSet blockSet = statement.executeQuery()) {
+                    if (blockSet.next()) {
+                        // TODO allow multiple blocks per protection ?
+                        World world = engine.getServerLayer().getWorld(lookup.get(JDBCLookupService.LookupType.WORLD_NAME, blockSet.getInt("world")));
+                        int x = blockSet.getInt("x");
+                        int y = blockSet.getInt("y");
+                        int z = blockSet.getInt("z");
 
-                            protection = new BlockProtection(engine, protectionId, new Location(world, x, y, z));
+                        if (!protection.hasComponent(LocationSetComponent.class)) {
+                            protection.addComponent(new LocationSetComponent());
                         }
+
+                        Location location = new Location(world, x, y, z);
+                        protection.getComponent(LocationSetComponent.class).add(location);
                     }
-                } catch (SQLException e) {
-                    handleException(e);
-                    return null;
                 }
-
-                break;
-
-            default:
-                throw new UnsupportedOperationException("Unsupported protection type: " + type);
+            } catch (SQLException e) {
+                handleException(e);
+                return null;
+            }
         }
 
         if (protection == null) {

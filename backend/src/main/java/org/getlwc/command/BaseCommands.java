@@ -38,7 +38,6 @@ import org.getlwc.event.events.ProtectionEvent;
 import org.getlwc.event.notifiers.BlockEventNotifier;
 import org.getlwc.event.notifiers.ProtectionEventNotifier;
 import org.getlwc.model.AbstractAttribute;
-import org.getlwc.model.BlockProtection;
 import org.getlwc.model.Protection;
 import org.getlwc.provider.BasicProvider;
 import org.getlwc.role.AbstractRole;
@@ -271,15 +270,7 @@ public class BaseCommands {
                 }
 
                 // TODO change this to support any protection ...
-                BlockProtection blockProtection = (BlockProtection) protection;
-                player.sendTranslatedMessage("Location: &7[{0} {1} {2}]&f in the world \"&7{3}&f\"\n" +
-                        "Created on: &7{4}\n" +
-                        "Last updated on: &7{5}\n" +
-                        "Last accessed on: &7{6}\n" +
-                        "&eRoles(size={7}):\n" +
-                        "{8}", blockProtection.getLocation().getX(), blockProtection.getLocation().getY(), blockProtection.getLocation().getZ(), blockProtection.getLocation().getWorld().getName(),
-                        TimeUtil.timeToString(System.currentTimeMillis() / 1000L - protection.getCreated()), TimeUtil.timeToString(System.currentTimeMillis() / 1000L - protection.getUpdated()),
-                        TimeUtil.timeToString(System.currentTimeMillis() / 1000L - protection.getAccessed()), protection.getRoles().size(), rolesText);
+                player.sendMessage("<<Place holder message until this is readded>>");
 
                 return true;
             }

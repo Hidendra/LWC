@@ -31,11 +31,11 @@ package org.getlwc.db.memory;
 
 import org.getlwc.Engine;
 import org.getlwc.Location;
+import org.getlwc.component.LocationSetComponent;
 import org.getlwc.db.Database;
 import org.getlwc.db.DatabaseException;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Savable;
-import org.getlwc.model.BlockProtection;
 import org.getlwc.model.Protection;
 import org.getlwc.role.Role;
 
@@ -85,8 +85,10 @@ public class MemoryDatabase implements Database {
         protections.add(protection);
         protectionsIndexById.put(protection.getId(), protection);
 
-        if (protection instanceof BlockProtection) {
-            protectionsIndexByLocation.put(((BlockProtection) protection).getLocation(), protection);
+        if (protection.hasComponent(LocationSetComponent.class)) {
+            for (Location location : protection.getComponent(LocationSetComponent.class).getAll()) {
+                protectionsIndexByLocation.put(location, protection);
+            }
         }
     }
 
@@ -97,8 +99,10 @@ public class MemoryDatabase implements Database {
         protections.remove(protection);
         protectionsIndexById.remove(protection.getId());
 
-        if (protection instanceof BlockProtection) {
-            protectionsIndexByLocation.remove(((BlockProtection) protection).getLocation());
+        if (protection.hasComponent(LocationSetComponent.class)) {
+            for (Location location : protection.getComponent(LocationSetComponent.class).getAll()) {
+                protectionsIndexByLocation.remove(location);
+            }
         }
     }
 
@@ -127,7 +131,10 @@ public class MemoryDatabase implements Database {
      * {@inheritDoc}
      */
     public Protection createProtection(Location location) {
-        Protection protection = new BlockProtection(engine, protectionsId.getAndIncrement(), location);
+        Protection protection = new Protection(engine, protectionsId.getAndIncrement());
+        protection.addComponent(new LocationSetComponent());
+        protection.getComponent(LocationSetComponent.class).add(location);
+
         internalAddProtection(protection);
         return protection;
     }
