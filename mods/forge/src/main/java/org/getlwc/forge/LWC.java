@@ -53,10 +53,7 @@ import org.getlwc.forge.permission.ForgePermissionHandler;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * FORGE DONE WRONG
- */
-@Mod(modid = "LWC", name = "LWC", version = "0.0.1-SNAPSHOT")
+@Mod(modid = "LWC", name = "LWC", version = "0.0.1-SNAPSHOT", acceptableRemoteVersions = "*")
 public class LWC {
 
     // The instance of your mod that Forge uses.
