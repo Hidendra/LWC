@@ -29,7 +29,7 @@
 
 package org.getlwc;
 
-import org.getlwc.model.AbstractSavable;
+import org.getlwc.model.Savable;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -39,7 +39,7 @@ public class SaveQueue {
     /**
      * The queue of savables
      */
-    private final BlockingQueue<AbstractSavable> queue = new LinkedBlockingQueue<AbstractSavable>();
+    private final BlockingQueue<Savable> queue = new LinkedBlockingQueue<Savable>();
 
     /**
      * The queue's thread
@@ -64,7 +64,7 @@ public class SaveQueue {
      *
      * @param savable
      */
-    public void add(AbstractSavable savable) {
+    public void add(Savable savable) {
         queue.offer(savable);
     }
 
@@ -74,7 +74,7 @@ public class SaveQueue {
     public void flushAndClose() {
         running = false;
         thread.interrupt();
-        AbstractSavable savable;
+        Savable savable;
         while ((savable = queue.poll()) != null) {
             savable.saveImmediately();
         }
@@ -89,7 +89,7 @@ public class SaveQueue {
                 }
 
                 try {
-                    AbstractSavable savable = queue.take();
+                    Savable savable = queue.take();
                     savable.saveImmediately();
                     // System.out.println("Saving: " + savable.toString());
                     Thread.sleep(50L);

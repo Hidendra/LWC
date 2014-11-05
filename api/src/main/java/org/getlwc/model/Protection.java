@@ -38,7 +38,7 @@ import java.util.*;
 
 import static org.getlwc.I18n._;
 
-public abstract class Protection extends AbstractSavable {
+public abstract class Protection implements Savable {
 
     /**
      * The type of protection. The ordering of the types should never change as the ordinal
@@ -120,7 +120,6 @@ public abstract class Protection extends AbstractSavable {
     }
 
     public Protection(Engine engine, int id) {
-        super(engine);
         this.engine = engine;
         this.id = id;
 
@@ -383,6 +382,11 @@ public abstract class Protection extends AbstractSavable {
         // now remove the protection
         engine.getDatabase().removeProtection(this);
         state = State.REMOVED;
+    }
+
+    @Override
+    public void save() {
+        engine.getDatabase().saveLater(this);
     }
 
     /**

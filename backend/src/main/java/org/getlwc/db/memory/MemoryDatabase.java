@@ -34,7 +34,7 @@ import org.getlwc.Location;
 import org.getlwc.db.Database;
 import org.getlwc.db.DatabaseException;
 import org.getlwc.model.AbstractAttribute;
-import org.getlwc.model.AbstractSavable;
+import org.getlwc.model.Savable;
 import org.getlwc.model.BlockProtection;
 import org.getlwc.model.Protection;
 import org.getlwc.role.Role;
@@ -119,7 +119,7 @@ public class MemoryDatabase implements Database {
         protectionsId.set(0);
     }
 
-    public void saveLater(AbstractSavable savable) {
+    public void saveLater(Savable savable) {
         // Not needed
     }
 

@@ -34,16 +34,7 @@ import org.getlwc.Engine;
 /**
  * Represents an object that can be saved to the database
  */
-public abstract class AbstractSavable {
-
-    /**
-     * The engine instance
-     */
-    private final Engine engine;
-
-    public AbstractSavable(Engine engine) {
-        this.engine = engine;
-    }
+public interface Savable {
 
     /**
      * Flush the object to the database immediately without waiting. This will block
@@ -67,8 +58,6 @@ public abstract class AbstractSavable {
      * Requests that the object be saved to the database. This may or may not happen immediately nor is it
      * guaranteed to happen within any given amount of time.
      */
-    public void save() {
-        engine.getDatabase().saveLater(this);
-    }
+    public void save();
 
 }

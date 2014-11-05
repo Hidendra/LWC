@@ -34,7 +34,7 @@ import org.getlwc.*;
 import org.getlwc.db.Database;
 import org.getlwc.db.DatabaseException;
 import org.getlwc.model.AbstractAttribute;
-import org.getlwc.model.AbstractSavable;
+import org.getlwc.model.Savable;
 import org.getlwc.model.BlockProtection;
 import org.getlwc.model.Protection;
 import org.getlwc.model.State;
@@ -272,7 +272,7 @@ public class JDBCDatabase implements Database {
         pool = null;
     }
 
-    public void saveLater(AbstractSavable savable) {
+    public void saveLater(Savable savable) {
         saveQueue.add(savable);
     }
 
