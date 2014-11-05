@@ -2,7 +2,6 @@ package org.getlwc;
 
 import org.getlwc.entity.Entity;
 import org.getlwc.model.Protection;
-import org.getlwc.role.ProtectionRole;
 
 /**
  * A provider that wants to know when a protection is interacted by. If this interface is attached to
@@ -17,6 +16,6 @@ public interface InteractProvider {
      * @param entity
      * @param access
      */
-    public void onInteract(Protection protection, Entity entity, ProtectionRole.Access access);
+    public void onInteract(Protection protection, Entity entity, Protection.Access access);
 
 }

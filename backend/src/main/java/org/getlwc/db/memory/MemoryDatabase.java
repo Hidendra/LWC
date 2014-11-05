@@ -37,7 +37,7 @@ import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.AbstractSavable;
 import org.getlwc.model.BlockProtection;
 import org.getlwc.model.Protection;
-import org.getlwc.role.ProtectionRole;
+import org.getlwc.role.Role;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -160,24 +160,29 @@ public class MemoryDatabase implements Database {
         internalRemoveProtection(protection);
     }
 
+    @Override
+    public Set<Role> loadProtectionRoles(Protection protection) {
+        return new HashSet<>();
+    }
+
     /**
      * {@inheritDoc}
      */
-    public void saveOrCreateRole(ProtectionRole role) {
+    public void saveOrCreateProtectionRole(Protection protection, Role role) {
         // no need to create
     }
 
     /**
      * {@inheritDoc}
      */
-    public void removeRole(ProtectionRole role) {
+    public void removeProtectionRole(Protection protection, Role role) {
         // it will remove itself from the Protection object
     }
 
     /**
      * {@inheritDoc}
      */
-    public void removeRoles(Protection protection) {
+    public void removeAllProtectionRoles(Protection protection) {
         // it will remove itself from the Protection object
     }
 
@@ -207,13 +212,6 @@ public class MemoryDatabase implements Database {
      */
     public Set<AbstractAttribute> loadProtectionAttributes(Protection protection) {
         return new HashSet<AbstractAttribute>(); // nothing to load from
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Set<ProtectionRole> loadProtectionRoles(Protection protection) {
-        return new HashSet<ProtectionRole>(); // nothing to load from
     }
 
 }

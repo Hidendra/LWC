@@ -39,8 +39,8 @@ import org.getlwc.provider.ProtectionProvider;
 import org.getlwc.provider.ProviderManager;
 import org.getlwc.provider.SimpleProviderManager;
 import org.getlwc.role.PlayerRole;
-import org.getlwc.role.ProtectionRole;
-import org.getlwc.role.provider.PlayerRoleProvider;
+import org.getlwc.role.RoleRegistry;
+import org.getlwc.role.SimpleRoleRegistry;
 
 import java.util.Map;
 import java.util.UUID;
@@ -53,10 +53,9 @@ public class SimpleProtectionManager implements ProtectionManager {
     private Engine engine;
 
     /**
-     * The role manager
-     * TODO add default (Player)
+     * The role registry
      */
-    private final SimpleProviderManager<ProtectionProvider<ProtectionRole>> roleProviderManager = new SimpleProviderManager<>();
+    private final RoleRegistry roleRegistry = new SimpleRoleRegistry();
 
     /**
      * The attribute manager
@@ -66,11 +65,7 @@ public class SimpleProtectionManager implements ProtectionManager {
     public SimpleProtectionManager(Engine engine) {
         this.engine = engine;
 
-        //
-        //
-        ProtectionProvider<ProtectionRole> playerProvider = new PlayerRoleProvider(engine);
-        roleProviderManager.put("lwc:role:player", playerProvider);
-        roleProviderManager.setDefaultProvider(playerProvider);
+        roleRegistry.registerRoleType(PlayerRole.TYPE, PlayerRole.class);
 
         //
         attributeProviderManager.put("lwc:attr:description", new DescriptionProvider(engine));
@@ -116,25 +111,18 @@ public class SimpleProtectionManager implements ProtectionManager {
         }
 
         // add the Owner role to the database for the player
-        ProtectionProvider<ProtectionRole> provider = roleProviderManager.get("lwc:role:player");
+        PlayerRole role = roleRegistry.loadRole(PlayerRole.TYPE, owner.toString());
+        role.setAccess(Protection.Access.OWNER);
 
-        if (provider == null) {
-            engine.getConsoleSender().sendTranslatedMessage("No player role provider found! Creating protection with no owner...");
-        } else {
-            // TODO - helper function?
-            PlayerRole role = (PlayerRole) provider.create(protection);
-            role.setName(owner.toString());
-            role.setProtectionAccess(ProtectionRole.Access.OWNER);
-            protection.addRole(role);
-            protection.save();
-        }
+        protection.addRole(role);
+        protection.save();
 
         return protection;
     }
 
     @Override
-    public ProviderManager<ProtectionProvider<ProtectionRole>> getRoleManager() {
-        return roleProviderManager;
+    public RoleRegistry getRoleRegistry() {
+        return roleRegistry;
     }
 
     @Override

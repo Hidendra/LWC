@@ -29,19 +29,14 @@
 
 package org.getlwc.model;
 
-import org.getlwc.AccessProvider;
-import org.getlwc.Engine;
-import org.getlwc.InteractProvider;
+import org.getlwc.*;
 import org.getlwc.entity.Entity;
 import org.getlwc.entity.Player;
-import org.getlwc.role.ProtectionRole;
 import org.getlwc.role.Role;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import static org.getlwc.I18n._;
 
 public abstract class Protection extends AbstractSavable {
 
@@ -101,7 +96,7 @@ public abstract class Protection extends AbstractSavable {
     /**
      * A set of roles this protection contains
      */
-    private final Set<ProtectionRole> roles = new HashSet<ProtectionRole>();
+    private final Set<Role> roles = new HashSet<Role>();
 
     /**
      * The map of attributes this protection contains
@@ -133,7 +128,7 @@ public abstract class Protection extends AbstractSavable {
             addAttribute(attribute);
         }
 
-        for (ProtectionRole role : engine.getDatabase().loadProtectionRoles(this)) {
+        for (Role role : engine.getDatabase().loadProtectionRoles(this)) {
             addRole(role);
         }
     }
@@ -144,7 +139,7 @@ public abstract class Protection extends AbstractSavable {
      * @param access
      * @param entity
      */
-    public void interactedBy(Entity entity, ProtectionRole.Access access) {
+    public void interactedBy(Entity entity, Access access) {
         for (InteractProvider provider : interactProviders) {
             provider.onInteract(this, entity, access);
         }
@@ -156,18 +151,18 @@ public abstract class Protection extends AbstractSavable {
      * @param player
      * @return
      */
-    public ProtectionRole.Access getAccess(Player player) {
-        ProtectionRole.Access access = ProtectionRole.Access.NONE;
+    public Access getAccess(Player player) {
+        Access access = Access.NONE;
 
         for (AccessProvider provider : accessProviders) {
-            ProtectionRole.Access roleAccess = provider.getAccess(this, player);
+            Access roleAccess = provider.getAccess(this, player);
 
             if (roleAccess == null) {
                 continue;
             }
 
             // check for immediate deny
-            if (roleAccess == ProtectionRole.Access.EXPLICIT_DENY) {
+            if (roleAccess == Access.EXPLICIT_DENY) {
                 return roleAccess;
             }
 
@@ -186,7 +181,8 @@ public abstract class Protection extends AbstractSavable {
      *
      * @param role
      */
-    public void addRole(ProtectionRole role) {
+    @Deprecated
+    public void addRole(Role role) {
         roles.add(role);
         accessProviders.add(role);
 
@@ -196,15 +192,15 @@ public abstract class Protection extends AbstractSavable {
     }
 
     /**
-     * Check if a role exists with the same name in this protection
+     * Returns a role of the same type and value from the protection
      *
-     * @param type
-     * @param name
+     * @param matchRole
      * @return
      */
-    public ProtectionRole getRole(String type, String name) {
-        for (ProtectionRole role : roles) {
-            if (role.getType().equals(type) && role.getName().equalsIgnoreCase(name)) {
+    @Deprecated
+    public Role getSimilarRole(Role matchRole) {
+        for (Role role : roles) {
+            if (matchRole.getClass() == role.getClass() && role.serialize().equals(matchRole.serialize())) {
                 return role;
             }
         }
@@ -217,10 +213,11 @@ public abstract class Protection extends AbstractSavable {
      *
      * @param role
      */
-    public void removeRole(ProtectionRole role) {
+    @Deprecated
+    public void removeRole(Role role) {
         roles.remove(role);
         accessProviders.remove(role);
-        engine.getDatabase().removeRole(role);
+        engine.getDatabase().removeProtectionRole(this, role);
 
         if (role instanceof InteractProvider) {
             interactProviders.remove(role);
@@ -283,7 +280,8 @@ public abstract class Protection extends AbstractSavable {
      *
      * @return
      */
-    public Set<ProtectionRole> getRoles() {
+    @Deprecated
+    public Set<Role> getRoles() {
         return Collections.unmodifiableSet(roles);
     }
 
@@ -366,9 +364,7 @@ public abstract class Protection extends AbstractSavable {
 
         // save each role
         for (Role role : roles) {
-            if (role.isSaveNeeded()) {
-                role.saveImmediately();
-            }
+            engine.getDatabase().saveOrCreateProtectionRole(this, role);
         }
     }
 
@@ -379,14 +375,109 @@ public abstract class Protection extends AbstractSavable {
 
     @Override
     public void remove() {
-        // remove all roles for the protection
-        for (Role role : roles) {
-            role.remove();
-        }
+        engine.getDatabase().removeAllProtectionRoles(this);
 
         // now remove the protection
         engine.getDatabase().removeProtection(this);
         state = State.REMOVED;
     }
 
+    /**
+     * Access levels for protections. ordinal values are used here meaning they must remain in a constant order. As well,
+     * the enum values are ranked in power of ascending order meaning Access(4) has more power than
+     * Access(1) will. This also implies that the initial implementation is complete and that adding
+     * any more access levels would be a pain.
+     * <p/>
+     * As well, the only exception to these rules is EXPLICIT_DENY which will immediately deny access to the
+     * protection. This will not always be used but may be useful in some cases.
+     */
+    public static enum Access {
+
+        /**
+         * Immediately reject access to the protection.
+         */
+        EXPLICIT_DENY(I18n.markAsTranslatable("explicit_deny")),
+
+        /**
+         * User has NO access to the protection
+         */
+        NONE(I18n.markAsTranslatable("none")),
+
+        /**
+         * The user can view the protection but not modify it in any way. The implementation of this depends
+         * on the mod and if the mod does not support preventing the inventory from being modified somehow
+         * then access will just be blocked.
+         */
+        GUEST(I18n.markAsTranslatable("guest")),
+
+        /**
+         * User can only deposit into the protection
+         */
+        DEPOSITONLY(I18n.markAsTranslatable("depositonly")),
+
+        /**
+         * User can deposit and withdraw from the protection at will but not add or remove other users to it.
+         */
+        MEMBER(I18n.markAsTranslatable("member")),
+
+        /**
+         * User can modify the protection (add and remove members) but not add or remove other managers.
+         */
+        MANAGER(I18n.markAsTranslatable("manager")),
+
+        /**
+         * User has the same access as the user who created the protection. They can remove the protection,
+         * add or remove ANY level to the protection (i.e. other owners) but they cannot remove themselves
+         * from the protection
+         */
+        OWNER(I18n.markAsTranslatable("owner"));
+
+        /**
+         * Access levels that normal players can set
+         */
+        public final static EnumSet<Access> USABLE_ACCESS_LEVELS = EnumSet.range(NONE, OWNER);
+
+        /**
+         * Access levels that can view or interact with the protection
+         */
+        public final static EnumSet<Access> CAN_ACCESS = EnumSet.range(GUEST, OWNER);
+
+        /**
+         * The translated name for the enum
+         */
+        private String translatedName = null;
+
+        Access(String translatedName) {
+        }
+
+        /**
+         * Get the translated name of the access level
+         *
+         * @return translated name
+         */
+        public String getTranslatedName() {
+            if (translatedName == null) {
+                translatedName = _(toString().toLowerCase());
+            }
+
+            return translatedName;
+        }
+
+        /**
+         * Match a {@link org.getlwc.model.Protection.Access} given a name.
+         *
+         * @param name
+         * @return NULL if no {@link org.getlwc.model.Protection.Access} is matched
+         */
+        public static Access fromString(String name) {
+            for (Access access : Access.values()) {
+                if (access.toString().equalsIgnoreCase(name)) {
+                    return access;
+                }
+            }
+
+            return null;
+        }
+
+    }
 }

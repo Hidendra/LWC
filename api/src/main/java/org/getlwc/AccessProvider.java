@@ -31,7 +31,6 @@ package org.getlwc;
 
 import org.getlwc.entity.Player;
 import org.getlwc.model.Protection;
-import org.getlwc.role.ProtectionRole;
 
 /**
  * An access provider is an object that can say whether or not a player is allowed to access
@@ -45,6 +44,6 @@ public interface AccessProvider {
      * @param player
      * @return
      */
-    public ProtectionRole.Access getAccess(Protection protection, Player player);
+    public Protection.Access getAccess(Protection protection, Player player);
 
 }

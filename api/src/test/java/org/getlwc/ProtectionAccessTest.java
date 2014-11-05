@@ -1,6 +1,6 @@
 package org.getlwc;
 
-import org.getlwc.role.ProtectionRole;
+import org.getlwc.model.Protection;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -9,15 +9,15 @@ public class ProtectionAccessTest {
 
     @Test
     public void testMatch() {
-        for (ProtectionRole.Access access : ProtectionRole.Access.values()) {
-            assertEquals(access, ProtectionRole.Access.fromString(access.toString()));
+        for (Protection.Access access : Protection.Access.values()) {
+            assertEquals(access, Protection.Access.fromString(access.toString()));
         }
     }
 
     @Test
     public void testMatchLower() {
-        for (ProtectionRole.Access access : ProtectionRole.Access.values()) {
-            assertEquals(access, ProtectionRole.Access.fromString(access.toString().toLowerCase()));
+        for (Protection.Access access : Protection.Access.values()) {
+            assertEquals(access, Protection.Access.fromString(access.toString().toLowerCase()));
         }
     }
 

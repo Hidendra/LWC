@@ -41,7 +41,7 @@ import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.BlockProtection;
 import org.getlwc.model.Protection;
 import org.getlwc.provider.BasicProvider;
-import org.getlwc.role.ProtectionRole;
+import org.getlwc.role.AbstractRole;
 import org.getlwc.role.Role;
 import org.getlwc.util.StringUtils;
 import org.getlwc.util.TimeUtil;
@@ -205,7 +205,7 @@ public class BaseCommands {
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
 
-                if (protection.getAccess(player) == ProtectionRole.Access.OWNER) {
+                if (protection.getAccess(player) == Protection.Access.OWNER) {
                     protection.remove();
                     player.sendTranslatedMessage("&2The protection has been removed successfully.");
                 } else {
@@ -224,6 +224,7 @@ public class BaseCommands {
             aliases = {"cinfo"},
             accepts = SenderType.PLAYER
     )
+    // TODO Should be improved (re-do role text)
     public void info(CommandContext context) {
         final Player player = (Player) context.getCommandSender();
         player.sendTranslatedMessage("&eClick on a protection to view info on it.");
@@ -233,12 +234,12 @@ public class BaseCommands {
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
 
-                Map<ProtectionRole.Access, List<Role>> accessMap = new LinkedHashMap<ProtectionRole.Access, List<Role>>();
+                Map<Protection.Access, List<Role>> accessMap = new LinkedHashMap<Protection.Access, List<Role>>();
 
-                for (ProtectionRole.Access access : ProtectionRole.Access.USABLE_ACCESS_LEVELS) {
-                    List<Role> roles = new ArrayList<Role>();
+                for (Protection.Access access : Protection.Access.USABLE_ACCESS_LEVELS) {
+                    List<Role> roles = new ArrayList<>();
 
-                    for (ProtectionRole role : protection.getRoles()) {
+                    for (Role role : protection.getRoles()) {
                         if (role.getAccess() == access) {
                             roles.add(role);
                         }
@@ -248,10 +249,10 @@ public class BaseCommands {
                 }
 
                 String rolesText = "";
-                for (Map.Entry<ProtectionRole.Access, List<Role>> entry : accessMap.entrySet()) {
+                for (Map.Entry<Protection.Access, List<Role>> entry : accessMap.entrySet()) {
                     String stringifiedList = "";
 
-                    ProtectionRole.Access access = entry.getKey();
+                    Protection.Access access = entry.getKey();
                     List<Role> roleList = entry.getValue();
 
                     if (roleList.size() == 0) {
@@ -259,7 +260,7 @@ public class BaseCommands {
                     }
 
                     for (Role role : roleList) {
-                        stringifiedList += role.getName() + ", ";
+                        stringifiedList += role.serialize() + ", ";
                     }
 
                     if (stringifiedList.length() > 0) {

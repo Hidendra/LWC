@@ -38,7 +38,6 @@ import org.getlwc.event.events.ProtectionEvent;
 import org.getlwc.lang.Locale;
 import org.getlwc.lang.MessageStore;
 import org.getlwc.model.Protection;
-import org.getlwc.role.ProtectionRole;
 
 import java.util.List;
 import java.util.Map;
@@ -73,9 +72,9 @@ public class EventHelper {
         if (entity instanceof Player) {
             Player player = (Player) entity;
 
-            ProtectionRole.Access access = protection.getAccess(player);
+            Protection.Access access = protection.getAccess(player);
 
-            if (access.ordinal() > ProtectionRole.Access.NONE.ordinal()) {
+            if (access.ordinal() > Protection.Access.NONE.ordinal()) {
                 return true;
             }
 
@@ -154,19 +153,19 @@ public class EventHelper {
 
                 // default event action
                 if (!cancel && protection != null) {
-                    ProtectionRole.Access access = protection.getAccess(player);
+                    Protection.Access access = protection.getAccess(player);
                     protection.interactedBy(entity, access);
 
                     /// TODO distinguish between left / right click.
 
                     // check if they can access the protection
-                    if (access.ordinal() > ProtectionRole.Access.NONE.ordinal()) {
+                    if (access.ordinal() > Protection.Access.NONE.ordinal()) {
                         return false;
                     }
 
                     // they cannot access the protection o\
                     // so send them a kind message
-                    if (access != ProtectionRole.Access.EXPLICIT_DENY) {
+                    if (access != Protection.Access.EXPLICIT_DENY) {
                         player.sendTranslatedMessage("&4This protection is locked by a magical spell.");
                     }
 

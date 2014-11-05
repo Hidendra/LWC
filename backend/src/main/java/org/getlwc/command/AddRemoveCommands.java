@@ -6,7 +6,9 @@ import org.getlwc.event.events.ProtectionEvent;
 import org.getlwc.event.notifiers.ProtectionEventNotifier;
 import org.getlwc.model.Protection;
 import org.getlwc.provider.ProtectionProvider;
-import org.getlwc.role.ProtectionRole;
+import org.getlwc.role.AbstractRole;
+import org.getlwc.role.PlayerRole;
+import org.getlwc.role.Role;
 
 public class AddRemoveCommands {
 
@@ -19,18 +21,31 @@ public class AddRemoveCommands {
     @Command(
             command = "lwc modify",
             description = "Add/remove/modify access roles that are on a protection",
-            usage = "[-]<role name> [access]",
+            usage = "<player name> [access] | <type> <name> [access]",
             permission = "lwc.modify",
             aliases = {"cmodify", "cadd"},
             min = 1,
+            max = 3,
             accepts = SenderType.PLAYER
     )
     public void modify(CommandContext context) {
         final Player player = (Player) context.getCommandSender();
 
-        String baseRoleName = context.getArgument(1);
-        String accessName = context.getArgument(2, "member");
-        final ProtectionRole.Access access = ProtectionRole.Access.fromString(accessName);
+        final String baseRoleType;
+        String baseRoleName;
+        String accessName;
+
+        if (context.getArgumentsArray().length == 3) {
+            baseRoleType = context.getArgument(1).toLowerCase();
+            baseRoleName = context.getArgument(2);
+            accessName = context.getArgument(3, "member");
+        } else {
+            baseRoleType = PlayerRole.TYPE; // default w/ no args
+            baseRoleName = context.getArgument(1);
+            accessName = context.getArgument(2, "member");
+        }
+
+        final Protection.Access access = Protection.Access.fromString(accessName);
         final boolean isRemoving = baseRoleName.startsWith("-");
         final String roleName = isRemoving ? baseRoleName.substring(1) : baseRoleName;
 
@@ -50,57 +65,54 @@ public class AddRemoveCommands {
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
 
-                ProtectionRole.Access playerAccess = protection.getAccess(player);
+                Protection.Access playerAccess = protection.getAccess(player);
 
-                if (playerAccess.ordinal() < ProtectionRole.Access.MANAGER.ordinal()) {
+                if (playerAccess.ordinal() < Protection.Access.MANAGER.ordinal()) {
                     player.sendTranslatedMessage("&4Access denied.");
                     return true;
-                }
+                } // /cadd group VIP
 
-                ProtectionProvider<ProtectionRole> provider = engine.getProtectionManager().getRoleManager().match(roleName);
-                ProtectionRole role = provider != null ? provider.create(protection) : null;
+                Role role = engine.getProtectionManager().getRoleRegistry().loadRole(baseRoleType, roleName);
 
                 if (role == null) {
                     player.sendTranslatedMessage("&4Role identifier not recognized: {0}", roleName);
                     return true;
                 }
 
-                role.setName(roleName);
-
                 if (isRemoving) {
-                    ProtectionRole toDelete = protection.getRole(role.getType(), role.getName());
+                    Role toDelete = protection.getSimilarRole(role);
 
-                    if (role.getAccess() == ProtectionRole.Access.OWNER && playerAccess != ProtectionRole.Access.OWNER) {
+                    if (role.getAccess() == Protection.Access.OWNER && playerAccess != Protection.Access.OWNER) {
                         player.sendTranslatedMessage("&4Only owners can remove other owners.");
-                    } else if (role.getAccess() == ProtectionRole.Access.MANAGER && playerAccess != ProtectionRole.Access.OWNER) {
+                    } else if (role.getAccess() == Protection.Access.MANAGER && playerAccess != Protection.Access.OWNER) {
                         player.sendTranslatedMessage("&4Only owners can remove managers.");
                     } else if (toDelete != null) {
-                        player.sendTranslatedMessage("&2Removed successfully.", toDelete.getName());
+                        player.sendTranslatedMessage("&2Removed successfully.");
                         protection.removeRole(toDelete);
                     } else {
                         player.sendTranslatedMessage("&4Protection does not contain role matching: &e{0}", roleName);
                     }
                 } else { // either adding or modifying an existing entry
-                    ProtectionRole existing = protection.getRole(role.getType(), role.getName());
+                    Role existing = protection.getSimilarRole(role);
 
                     if (existing != null) {
-                        if (role.getAccess() == ProtectionRole.Access.OWNER && playerAccess != ProtectionRole.Access.OWNER) {
+                        if (role.getAccess() == Protection.Access.OWNER && playerAccess != Protection.Access.OWNER) {
                             player.sendTranslatedMessage("&4Only owners can modify other owners.");
-                        } else if (role.getAccess() == ProtectionRole.Access.MANAGER && playerAccess != ProtectionRole.Access.OWNER) {
+                        } else if (role.getAccess() == Protection.Access.MANAGER && playerAccess != Protection.Access.OWNER) {
                             player.sendTranslatedMessage("&4Only owners can modify managers.");
                         } else {
-                            existing.setProtectionAccess(access);
+                            existing.setAccess(access);
                             protection.addRole(existing);
                             protection.save();
 
-                            player.sendTranslatedMessage("&2Changed successfully.", existing.getName(), existing.getAccess());
+                            player.sendTranslatedMessage("&2Changed successfully.");
                         }
                     } else {
-                        role.setProtectionAccess(access);
+                        role.setAccess(access);
                         protection.addRole(role);
                         protection.save();
 
-                        player.sendTranslatedMessage("&2Added successfully.", role.getClass().getSimpleName(), role.getName(), role.getAccess());
+                        player.sendTranslatedMessage("&2Added successfully.");
                     }
                 }
 

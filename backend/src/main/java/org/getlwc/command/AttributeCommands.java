@@ -37,7 +37,6 @@ import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
 import org.getlwc.provider.BasicProvider;
 import org.getlwc.provider.Provider;
-import org.getlwc.role.ProtectionRole;
 import org.getlwc.util.StringUtils;
 
 public class AttributeCommands {
@@ -84,8 +83,8 @@ public class AttributeCommands {
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
 
-                ProtectionRole.Access currAccess = protection.getAccess(player);
-                if (currAccess.ordinal() < ProtectionRole.Access.MANAGER.ordinal()) {
+                Protection.Access currAccess = protection.getAccess(player);
+                if (currAccess.ordinal() < Protection.Access.MANAGER.ordinal()) {
                     player.sendTranslatedMessage("&4Only managers and above can modify the attributes of a protection.");
                     return true;
                 }
@@ -129,8 +128,8 @@ public class AttributeCommands {
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
 
-                ProtectionRole.Access currAccess = protection.getAccess(player);
-                if (currAccess.ordinal() < ProtectionRole.Access.MANAGER.ordinal()) {
+                Protection.Access currAccess = protection.getAccess(player);
+                if (currAccess.ordinal() < Protection.Access.MANAGER.ordinal()) {
                     player.sendTranslatedMessage("&4Only managers and above can modify the attributes of a protection.");
                     return true;
                 }
