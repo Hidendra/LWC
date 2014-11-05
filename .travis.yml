@@ -10,4 +10,4 @@ addons:
       secure: c95q4+B3zAftsvUpTNE80/Q48YPxBVh+Mc5ZJ5wIBQ2SOyPygTca6I4AVBmrL0TQBfjBGmka49MCdvA11aglVT9vPfWxWIT9qSbJmuHXFY5RlUG6wtHlTw3wLnjrAw6zE0RDzG+E2sEDi81ADe43kG/9xMuzYdPjvEpFT5LK5hM=
     bucket: artifacts.getlwc.org
     paths:
-    - $(git ls-files -o *.jar *.zip | tr "\n" ":")
+    - $(git ls-files -x mcp -o *.jar *.zip | tr "\n" ":")
