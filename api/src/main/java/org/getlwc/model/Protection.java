@@ -229,6 +229,7 @@ public abstract class Protection extends AbstractSavable {
      *
      * @param attribute
      */
+    @Deprecated
     public void addAttribute(AbstractAttribute attribute) {
         attributes.put(attribute.getName(), attribute);
         attribute.setState(State.NEW);
@@ -249,6 +250,7 @@ public abstract class Protection extends AbstractSavable {
      * @param name
      * @return
      */
+    @Deprecated
     public AbstractAttribute getAttribute(String name) {
         return attributes.get(name);
     }
@@ -258,6 +260,7 @@ public abstract class Protection extends AbstractSavable {
      *
      * @param name
      */
+    @Deprecated
     public void removeAttribute(String name) {
         if (!attributes.containsKey(name)) {
             return;

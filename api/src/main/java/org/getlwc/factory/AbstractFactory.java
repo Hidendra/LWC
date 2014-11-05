@@ -1,5 +1,6 @@
 package org.getlwc.factory;
 
+@Deprecated
 public interface AbstractFactory {
 
     /**

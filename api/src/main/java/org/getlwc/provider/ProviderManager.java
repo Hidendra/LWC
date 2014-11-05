@@ -2,6 +2,7 @@ package org.getlwc.provider;
 
 import java.util.Map;
 
+@Deprecated
 public interface ProviderManager<P extends Provider> extends Map<String, P> {
 
     /**

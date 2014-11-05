@@ -32,6 +32,7 @@ package org.getlwc.attribute;
 import org.getlwc.factory.AbstractFactory;
 import org.getlwc.model.AbstractAttribute;
 
+@Deprecated
 public interface ProtectionAttributeFactory<T> extends AbstractFactory {
 
     /**
