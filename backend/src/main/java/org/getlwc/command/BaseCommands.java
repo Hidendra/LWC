@@ -32,6 +32,7 @@ package org.getlwc.command;
 import org.getlwc.Block;
 import org.getlwc.Engine;
 import org.getlwc.ProtectionManager;
+import org.getlwc.component.RoleSetComponent;
 import org.getlwc.entity.Player;
 import org.getlwc.event.events.BlockEvent;
 import org.getlwc.event.events.ProtectionEvent;
@@ -238,7 +239,7 @@ public class BaseCommands {
                 for (Protection.Access access : Protection.Access.USABLE_ACCESS_LEVELS) {
                     List<Role> roles = new ArrayList<>();
 
-                    for (Role role : protection.getRoles()) {
+                    for (Role role : protection.getComponent(RoleSetComponent.class).getAll()) {
                         if (role.getAccess() == access) {
                             roles.add(role);
                         }

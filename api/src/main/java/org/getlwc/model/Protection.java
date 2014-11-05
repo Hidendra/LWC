@@ -32,6 +32,7 @@ package org.getlwc.model;
 import org.getlwc.*;
 import org.getlwc.component.BasicComponentHolder;
 import org.getlwc.component.Component;
+import org.getlwc.component.RoleSetComponent;
 import org.getlwc.entity.Entity;
 import org.getlwc.entity.Player;
 import org.getlwc.role.Role;
@@ -96,11 +97,6 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
     private State state = State.NEW;
 
     /**
-     * A set of roles this protection contains
-     */
-    private final Set<Role> roles = new HashSet<Role>();
-
-    /**
      * The map of attributes this protection contains
      */
     private final Map<String, AbstractAttribute> attributes = new HashMap<String, AbstractAttribute>();
@@ -125,12 +121,14 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
         this.engine = engine;
         this.id = id;
 
+        addComponent(new RoleSetComponent());
+
         for (AbstractAttribute<?> attribute : engine.getDatabase().loadProtectionAttributes(this)) {
             addAttribute(attribute);
         }
 
         for (Role role : engine.getDatabase().loadProtectionRoles(this)) {
-            addRole(role);
+            getComponent(RoleSetComponent.class).add(role);
         }
     }
 
@@ -155,6 +153,22 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
     public Access getAccess(Player player) {
         Access access = Access.NONE;
 
+        for (Role role : getComponent(RoleSetComponent.class).getAll()) {
+            Access roleAccess = role.getAccess(this, player);
+
+            if (roleAccess == null) {
+                continue;
+            }
+
+            if (roleAccess == Access.EXPLICIT_DENY) {
+                return roleAccess;
+            }
+
+            if (roleAccess.ordinal() > access.ordinal()) {
+                access = roleAccess;
+            }
+        }
+
         for (AccessProvider provider : accessProviders) {
             Access roleAccess = provider.getAccess(this, player);
 
@@ -162,67 +176,16 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
                 continue;
             }
 
-            // check for immediate deny
             if (roleAccess == Access.EXPLICIT_DENY) {
                 return roleAccess;
             }
 
-            // compare the access -- higher access has higher precedence.
             if (roleAccess.ordinal() > access.ordinal()) {
                 access = roleAccess;
             }
         }
 
         return access;
-    }
-
-    /**
-     * Add a role to a protection. It will be allowed to govern access to this protection immediately
-     * the next time the protection is used.
-     *
-     * @param role
-     */
-    @Deprecated
-    public void addRole(Role role) {
-        roles.add(role);
-        accessProviders.add(role);
-
-        if (role instanceof InteractProvider) {
-            interactProviders.add((InteractProvider) role);
-        }
-    }
-
-    /**
-     * Returns a role of the same type and value from the protection
-     *
-     * @param matchRole
-     * @return
-     */
-    @Deprecated
-    public Role getSimilarRole(Role matchRole) {
-        for (Role role : roles) {
-            if (matchRole.getClass() == role.getClass() && role.serialize().equals(matchRole.serialize())) {
-                return role;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Remove a role from the protection, which will prevent it from governing access on the protection
-     *
-     * @param role
-     */
-    @Deprecated
-    public void removeRole(Role role) {
-        roles.remove(role);
-        accessProviders.remove(role);
-        engine.getDatabase().removeProtectionRole(this, role);
-
-        if (role instanceof InteractProvider) {
-            interactProviders.remove(role);
-        }
     }
 
     /**
@@ -277,16 +240,6 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
         if (attribute instanceof InteractProvider) {
             interactProviders.remove(attribute);
         }
-    }
-
-    /**
-     * Returns an unmodifiable {@link Set} of the roles this protection contains
-     *
-     * @return
-     */
-    @Deprecated
-    public Set<Role> getRoles() {
-        return Collections.unmodifiableSet(roles);
     }
 
     public void setType(Type type) {
@@ -367,7 +320,7 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
         }
 
         // save each role
-        for (Role role : roles) {
+        for (Role role : getComponent(RoleSetComponent.class).getAll()) {
             engine.getDatabase().saveOrCreateProtectionRole(this, role);
         }
     }

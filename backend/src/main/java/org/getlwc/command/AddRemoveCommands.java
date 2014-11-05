@@ -1,6 +1,7 @@
 package org.getlwc.command;
 
 import org.getlwc.Engine;
+import org.getlwc.component.RoleSetComponent;
 import org.getlwc.entity.Player;
 import org.getlwc.event.events.ProtectionEvent;
 import org.getlwc.event.notifiers.ProtectionEventNotifier;
@@ -78,7 +79,7 @@ public class AddRemoveCommands {
                 }
 
                 if (isRemoving) {
-                    Role toDelete = protection.getSimilarRole(role);
+                    Role toDelete = protection.getComponent(RoleSetComponent.class).getSimilar(role);
 
                     if (role.getAccess() == Protection.Access.OWNER && playerAccess != Protection.Access.OWNER) {
                         player.sendTranslatedMessage("&4Only owners can remove other owners.");
@@ -86,12 +87,12 @@ public class AddRemoveCommands {
                         player.sendTranslatedMessage("&4Only owners can remove managers.");
                     } else if (toDelete != null) {
                         player.sendTranslatedMessage("&2Removed successfully.");
-                        protection.removeRole(toDelete);
+                        protection.getComponent(RoleSetComponent.class).remove(toDelete);
                     } else {
                         player.sendTranslatedMessage("&4Protection does not contain role matching: &e{0}", roleName);
                     }
                 } else { // either adding or modifying an existing entry
-                    Role existing = protection.getSimilarRole(role);
+                    Role existing = protection.getComponent(RoleSetComponent.class).getSimilar(role);
 
                     if (existing != null) {
                         if (role.getAccess() == Protection.Access.OWNER && playerAccess != Protection.Access.OWNER) {
@@ -100,14 +101,13 @@ public class AddRemoveCommands {
                             player.sendTranslatedMessage("&4Only owners can modify managers.");
                         } else {
                             existing.setAccess(access);
-                            protection.addRole(existing);
                             protection.save();
 
                             player.sendTranslatedMessage("&2Changed successfully.");
                         }
                     } else {
                         role.setAccess(access);
-                        protection.addRole(role);
+                        protection.getComponent(RoleSetComponent.class).add(existing);
                         protection.save();
 
                         player.sendTranslatedMessage("&2Added successfully.");

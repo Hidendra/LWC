@@ -31,6 +31,7 @@ package org.getlwc;
 
 import org.getlwc.attribute.provider.DescriptionProvider;
 import org.getlwc.attribute.provider.PasswordProvider;
+import org.getlwc.component.RoleSetComponent;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
@@ -114,7 +115,7 @@ public class SimpleProtectionManager implements ProtectionManager {
         PlayerRole role = roleRegistry.loadRole(PlayerRole.TYPE, owner.toString());
         role.setAccess(Protection.Access.OWNER);
 
-        protection.addRole(role);
+        protection.getComponent(RoleSetComponent.class).add(role);
         protection.save();
 
         return protection;
