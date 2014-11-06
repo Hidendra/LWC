@@ -1,11 +1,9 @@
 CREATE TABLE __PREFIX__protections (
   id SERIAL NOT NULL PRIMARY KEY,
-  type INTEGER NOT NULL,
   created INTEGER NOT NULL,
   updated INTEGER NOT NULL,
   accessed INTEGER NOT NULL
 );
-CREATE INDEX __PREFIX__protection_type ON __PREFIX__protections (type);
 CREATE INDEX __PREFIX__protection_created ON __PREFIX__protections (created);
 CREATE INDEX __PREFIX__protection_updated ON __PREFIX__protections (updated);
 CREATE INDEX __PREFIX__protection_accessed ON __PREFIX__protections (accessed);

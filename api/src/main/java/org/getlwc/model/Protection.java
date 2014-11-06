@@ -44,24 +44,6 @@ import static org.getlwc.I18n._;
 public class Protection extends BasicComponentHolder<Component> implements Savable {
 
     /**
-     * The type of protection. The ordering of the types should never change as the ordinal
-     * value is used internally.
-     */
-    public enum Type {
-
-        /**
-         * Protection is protecting a block
-         */
-        BLOCK,
-
-        /**
-         * Protection is protecting an entity
-         */
-        ENTITY
-
-    }
-
-    /**
      * The LWC engine instance
      */
     private final Engine engine;
@@ -70,11 +52,6 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
      * The protection's internal id
      */
     private int id;
-
-    /**
-     * The protection's type
-     */
-    private Type type;
 
     /**
      * The unix timestamp of when the protection was created
@@ -242,11 +219,6 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
         }
     }
 
-    public void setType(Type type) {
-        this.type = type;
-        state = State.MODIFIED;
-    }
-
     public void setUpdated(int updated) {
         this.updated = updated;
         state = State.MODIFIED;
@@ -263,10 +235,6 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
 
     public int getId() {
         return id;
-    }
-
-    public Type getType() {
-        return type;
     }
 
     public int getUpdated() {

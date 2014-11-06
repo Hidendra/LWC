@@ -338,12 +338,11 @@ public class JDBCDatabase implements Database {
      */
     public Protection createProtection(Location location) {
         try (Connection connection = pool.getConnection();
-             PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protections (type, updated, created, accessed) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
-            statement.setInt(1, Protection.Type.BLOCK.ordinal());
+             PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protections (updated, created, accessed) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             int epoch = (int) (System.currentTimeMillis() / 1000L);
+            statement.setInt(1, epoch);
             statement.setInt(2, epoch);
             statement.setInt(3, epoch);
-            statement.setInt(4, epoch);
 
             int affected = statement.executeUpdate();
 
@@ -421,7 +420,7 @@ public class JDBCDatabase implements Database {
      */
     public Protection loadProtection(int id) {
         try (Connection connection = pool.getConnection();
-             PreparedStatement statement = connection.prepareStatement("SELECT id, type, updated, created, accessed FROM " + details.getPrefix() + "protections WHERE id = ?")) {
+             PreparedStatement statement = connection.prepareStatement("SELECT id, updated, created, accessed FROM " + details.getPrefix() + "protections WHERE id = ?")) {
             statement.setInt(1, id);
 
             try (ResultSet set = statement.executeQuery()) {
@@ -441,13 +440,12 @@ public class JDBCDatabase implements Database {
      */
     public void saveProtection(Protection protection) {
         try (Connection connection = pool.getConnection();
-             PreparedStatement statement = connection.prepareStatement("UPDATE " + details.getPrefix() + "protections SET type = ?, created = ?, updated = ?, accessed = ? WHERE id = ?")) {
+             PreparedStatement statement = connection.prepareStatement("UPDATE " + details.getPrefix() + "protections SET created = ?, updated = ?, accessed = ? WHERE id = ?")) {
             // TODO create / update / delete protection_blocks / protection_entities
-            statement.setInt(1, protection.getType().ordinal());
-            statement.setInt(2, protection.getCreated());
-            statement.setInt(3, protection.getUpdated());
-            statement.setInt(4, protection.getAccessed());
-            statement.setInt(5, protection.getId());
+            statement.setInt(1, protection.getCreated());
+            statement.setInt(2, protection.getUpdated());
+            statement.setInt(3, protection.getAccessed());
+            statement.setInt(4, protection.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             handleException(e);
@@ -649,11 +647,6 @@ public class JDBCDatabase implements Database {
      */
     private Protection resolveProtection(ResultSet set) throws SQLException {
         int protectionId = set.getInt("id");
-        int typeId = set.getInt("type");
-
-        if (typeId < 0 || typeId >= Protection.Type.values().length) {
-            return null;
-        }
 
         Protection protection = new Protection(engine, protectionId);
 
