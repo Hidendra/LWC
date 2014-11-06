@@ -219,39 +219,77 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
         }
     }
 
+    /**
+     * Sets the unix epoch when the protection was updated
+     *
+     * @param updated
+     */
     public void setUpdated(int updated) {
         this.updated = updated;
         state = State.MODIFIED;
     }
 
+    /**
+     * Sets the unix epoch the protection was created at
+     *
+     * @param created
+     */
     public void setCreated(int created) {
         this.created = created;
         state = State.MODIFIED;
     }
 
-    public void setModified(boolean modified) {
+    /**
+     * Sets the unix epoch the protection was last modified at
+     *
+     * @param accessed
+     */
+    public void setAccessed(int accessed) {
+        this.accessed = accessed;
         state = State.MODIFIED;
     }
 
+    /**
+     * Marks the protection as modified so that it is forcibly saved to the database the next time it's saved.
+     */
+    public void markModified() {
+        state = State.MODIFIED;
+    }
+
+    /**
+     * Returns the protection's unique id
+     *
+     * @return the protection's unique d
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Returns the unix epoch the protection was last updated at
+     *
+     * @return unix epoch the protection was last updated at
+     */
     public int getUpdated() {
         return updated;
     }
 
+    /**
+     * Returns the unix epoch the protection was created at
+     *
+     * @return unix epoch the protection was created at
+     */
     public int getCreated() {
         return created;
     }
 
+    /**
+     * Returns the unix epoch the protection was last accessed at
+     *
+     * @return the unix epoch the protection was last accessed at
+     */
     public int getAccessed() {
         return accessed;
-    }
-
-    public void setAccessed(int accessed) {
-        this.accessed = accessed;
-        state = State.MODIFIED;
     }
 
     /**
