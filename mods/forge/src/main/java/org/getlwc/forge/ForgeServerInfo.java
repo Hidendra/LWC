@@ -30,9 +30,7 @@
 package org.getlwc.forge;
 
 import net.minecraftforge.common.ForgeVersion;
-import net.minecraftforge.common.MinecraftForge;
 import org.getlwc.ServerInfo;
-import org.getlwc.configuration.YamlConfiguration;
 
 public class ForgeServerInfo implements ServerInfo {
 

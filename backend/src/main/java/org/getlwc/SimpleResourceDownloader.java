@@ -30,8 +30,8 @@
 package org.getlwc;
 
 import org.getlwc.util.ClassUtils;
-import org.getlwc.util.ResourceFile;
 import org.getlwc.util.MD5Checksum;
+import org.getlwc.util.ResourceFile;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 

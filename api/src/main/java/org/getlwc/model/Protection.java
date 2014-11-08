@@ -29,14 +29,17 @@
 
 package org.getlwc.model;
 
-import org.getlwc.*;
+import org.getlwc.Engine;
+import org.getlwc.I18n;
 import org.getlwc.component.BasicComponentHolder;
 import org.getlwc.component.Component;
 import org.getlwc.component.RoleSetComponent;
 import org.getlwc.entity.Player;
 import org.getlwc.role.Role;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.getlwc.I18n._;
 

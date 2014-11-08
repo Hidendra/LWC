@@ -29,8 +29,6 @@
 
 package org.getlwc.model;
 
-import org.getlwc.Engine;
-
 /**
  * Represents an object that can be saved to the database
  */

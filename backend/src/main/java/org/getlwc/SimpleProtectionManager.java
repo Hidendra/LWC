@@ -31,9 +31,9 @@ package org.getlwc;
 
 import org.getlwc.component.RoleSetComponent;
 import org.getlwc.configuration.Configuration;
+import org.getlwc.content.role.PlayerRole;
 import org.getlwc.content.role.PlayerRoleFactory;
 import org.getlwc.model.Protection;
-import org.getlwc.content.role.PlayerRole;
 import org.getlwc.role.RoleCreationException;
 import org.getlwc.role.RoleRegistry;
 import org.getlwc.role.SimpleRoleRegistry;

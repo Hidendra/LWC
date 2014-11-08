@@ -29,14 +29,10 @@
 
 package org.getlwc.forge.entity;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.ChatComponentText;
 import org.getlwc.ItemStack;
 import org.getlwc.Location;
-import org.getlwc.entity.Player;
 import org.getlwc.entity.SimplePlayer;
 import org.getlwc.forge.LWC;
 import org.getlwc.forge.world.ForgeWorld;

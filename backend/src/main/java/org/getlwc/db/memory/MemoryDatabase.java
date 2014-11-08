@@ -35,8 +35,8 @@ import org.getlwc.component.LocationSetComponent;
 import org.getlwc.db.Database;
 import org.getlwc.db.DatabaseException;
 import org.getlwc.model.Metadata;
-import org.getlwc.model.Savable;
 import org.getlwc.model.Protection;
+import org.getlwc.model.Savable;
 import org.getlwc.role.Role;
 
 import java.util.HashMap;

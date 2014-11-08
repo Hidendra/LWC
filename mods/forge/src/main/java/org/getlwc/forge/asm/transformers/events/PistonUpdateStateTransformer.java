@@ -1,6 +1,5 @@
 package org.getlwc.forge.asm.transformers.events;
 
-import org.getlwc.forge.LWC;
 import org.getlwc.forge.asm.AbstractSingleClassTransformer;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.tree.InsnNode;

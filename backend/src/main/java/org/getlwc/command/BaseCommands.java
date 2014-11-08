@@ -39,10 +39,8 @@ import org.getlwc.event.events.ProtectionEvent;
 import org.getlwc.event.notifiers.BlockEventNotifier;
 import org.getlwc.event.notifiers.ProtectionEventNotifier;
 import org.getlwc.model.Protection;
-import org.getlwc.role.AbstractRole;
 import org.getlwc.role.Role;
 import org.getlwc.util.StringUtils;
-import org.getlwc.util.TimeUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
