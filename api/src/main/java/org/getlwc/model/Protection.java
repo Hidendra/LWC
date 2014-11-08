@@ -33,7 +33,6 @@ import org.getlwc.*;
 import org.getlwc.component.BasicComponentHolder;
 import org.getlwc.component.Component;
 import org.getlwc.component.RoleSetComponent;
-import org.getlwc.entity.Entity;
 import org.getlwc.entity.Player;
 import org.getlwc.role.Role;
 
@@ -74,9 +73,9 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
     private State state = State.NEW;
 
     /**
-     * The map of attributes this protection contains
+     * Metadata for the protection
      */
-    private final Map<String, AbstractAttribute> attributes = new HashMap<String, AbstractAttribute>();
+    private final Map<String, Metadata> metadata = new HashMap<>();
 
     @Override
     public String toString() {
@@ -90,8 +89,8 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
 
         addComponent(new RoleSetComponent());
 
-        for (AbstractAttribute<?> attribute : engine.getDatabase().loadProtectionAttributes(this)) {
-            addAttribute(attribute);
+        for (Metadata meta : engine.getDatabase().loadProtectionMetadata(this)) {
+            metadata.put(meta.getKey(), meta);
         }
 
         for (Role role : engine.getDatabase().loadProtectionRoles(this)) {
@@ -128,15 +127,23 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
     }
 
     /**
-     * Add an attribute to the protection
+     * Adds metadata to the protection
      *
-     * @param attribute
+     * @param meta
      */
-    @Deprecated
-    public void addAttribute(AbstractAttribute attribute) {
-        attributes.put(attribute.getName(), attribute);
-        attribute.setState(State.NEW);
+    public void addMeta(Metadata meta) {
+        metadata.put(meta.getKey(), meta);
         state = State.MODIFIED;
+    }
+
+    /**
+     * Returns metadata for the protection
+     *
+     * @param key
+     * @return
+     */
+    public Metadata getMeta(String key) {
+        return metadata.get(key);
     }
 
     /**
@@ -237,12 +244,10 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
             state = State.UNMODIFIED;
         }
 
-        // save each attribute
-        for (AbstractAttribute<?> attribute : attributes.values()) {
-            if (attribute.getState() == State.NEW || attribute.getState() == State.MODIFIED) {
-                engine.getDatabase().saveOrCreateProtectionAttribute(this, attribute);
-                attribute.setState(State.UNMODIFIED);
-            }
+        // save metadata
+        // TODO only save new or removed metadata
+        for (Metadata meta : metadata.values()) {
+            engine.getDatabase().saveOrCreateProtectionMetadata(this, meta);
         }
 
         // save each role

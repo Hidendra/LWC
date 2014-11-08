@@ -29,16 +29,10 @@
 
 package org.getlwc;
 
-import org.getlwc.attribute.provider.DescriptionProvider;
-import org.getlwc.attribute.provider.PasswordProvider;
 import org.getlwc.component.RoleSetComponent;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.content.role.PlayerRoleFactory;
-import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
-import org.getlwc.provider.BasicProvider;
-import org.getlwc.provider.ProviderManager;
-import org.getlwc.provider.SimpleProviderManager;
 import org.getlwc.content.role.PlayerRole;
 import org.getlwc.role.RoleCreationException;
 import org.getlwc.role.RoleRegistry;
@@ -59,19 +53,10 @@ public class SimpleProtectionManager implements ProtectionManager {
      */
     private final RoleRegistry roleRegistry = new SimpleRoleRegistry();
 
-    /**
-     * The attribute manager
-     */
-    private final SimpleProviderManager<BasicProvider<AbstractAttribute>> attributeProviderManager = new SimpleProviderManager<>();
-
     public SimpleProtectionManager(Engine engine) {
         this.engine = engine;
 
         roleRegistry.registerRoleLoader(PlayerRole.TYPE, new PlayerRoleFactory(engine));
-
-        //
-        attributeProviderManager.put("lwc:attr:description", new DescriptionProvider(engine));
-        attributeProviderManager.put("lwc:attr:password", new PasswordProvider(engine));
     }
 
     /**
@@ -130,11 +115,6 @@ public class SimpleProtectionManager implements ProtectionManager {
     @Override
     public RoleRegistry getRoleRegistry() {
         return roleRegistry;
-    }
-
-    @Override
-    public ProviderManager<BasicProvider<AbstractAttribute>> getAttributeManager() {
-        return attributeProviderManager;
     }
 
     /**

@@ -38,9 +38,7 @@ import org.getlwc.event.events.BlockEvent;
 import org.getlwc.event.events.ProtectionEvent;
 import org.getlwc.event.notifiers.BlockEventNotifier;
 import org.getlwc.event.notifiers.ProtectionEventNotifier;
-import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
-import org.getlwc.provider.BasicProvider;
 import org.getlwc.role.AbstractRole;
 import org.getlwc.role.Role;
 import org.getlwc.util.StringUtils;
@@ -127,57 +125,6 @@ public class BaseCommands {
                 Protection protection = manager.createProtection(player.getUUID(), block.getLocation());
                 if (protection != null) {
                     player.sendTranslatedMessage("&2Created a new protection successfully.\n" +
-                            "Want to give another player access to your protection?\n" +
-                            "Use: &e/lwc modify NAME (or: /cadd NAME)");
-                } else {
-                    player.sendTranslatedMessage("&4Failed to create the protection. Your block is most likely not protected.");
-                }
-
-                return true;
-            }
-        });
-    }
-
-    @Command(
-            command = "lwc create password",
-            description = "Create a protection with a password",
-            permission = "lwc.create.password",
-            usage = "<password>",
-            aliases = {"cpassword"},
-            accepts = SenderType.PLAYER,
-            min = 1
-    )
-    public void createPasswordProtection(CommandContext context) {
-        final Player player = (Player) context.getCommandSender();
-        player.sendTranslatedMessage("&eClick on a block to protect it!");
-        final String password = StringUtils.join(context.getArgumentsArray());
-
-        player.onAnyInteract(new BlockEventNotifier() {
-            @Override
-            public boolean call(BlockEvent event) {
-                ProtectionManager manager = engine.getProtectionManager();
-                Block block = event.getBlock();
-
-                if (!manager.isBlockProtectable(block)) {
-                    player.sendTranslatedMessage("&4That block is not protectable");
-                    return false;
-                }
-
-                Protection protection = manager.createProtection(player.getUUID(), block.getLocation());
-                if (protection != null) {
-                    BasicProvider<AbstractAttribute> provider = engine.getProtectionManager().getAttributeManager().get("lwc:attr:password");
-
-                    if (provider == null) {
-                        // TODO errrrror
-                        return false;
-                    }
-
-                    AbstractAttribute attribute = provider.create();
-                    attribute.loadData(password);
-                    protection.addAttribute(attribute);
-                    protection.save();
-
-                    player.sendTranslatedMessage("&2Created a new protection &4with a password&2 successfully.\n" +
                             "Want to give another player access to your protection?\n" +
                             "Use: &e/lwc modify NAME (or: /cadd NAME)");
                 } else {

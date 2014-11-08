@@ -154,7 +154,6 @@ public class EventHelper {
                 // default event action
                 if (!cancel && protection != null) {
                     Protection.Access access = protection.getAccess(player);
-                    protection.interactedBy(entity, access);
 
                     /// TODO distinguish between left / right click.
 

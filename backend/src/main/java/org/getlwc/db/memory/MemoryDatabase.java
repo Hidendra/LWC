@@ -34,7 +34,7 @@ import org.getlwc.Location;
 import org.getlwc.component.LocationSetComponent;
 import org.getlwc.db.Database;
 import org.getlwc.db.DatabaseException;
-import org.getlwc.model.AbstractAttribute;
+import org.getlwc.model.Metadata;
 import org.getlwc.model.Savable;
 import org.getlwc.model.Protection;
 import org.getlwc.role.Role;
@@ -196,29 +196,29 @@ public class MemoryDatabase implements Database {
     /**
      * {@inheritDoc}
      */
-    public void saveOrCreateProtectionAttribute(Protection protection, AbstractAttribute attribute) {
+    public void saveOrCreateProtectionMetadata(Protection protection, Metadata meta) {
         // no need to create
     }
 
     /**
      * {@inheritDoc}
      */
-    public void removeProtectionAttribute(Protection protection, AbstractAttribute attribute) {
+    public void removeProtectionMetadata(Protection protection, Metadata meta) {
         // it will remove itself from the Protection object
     }
 
     /**
      * {@inheritDoc}
      */
-    public void removeProtectionAttributes(Protection protection) {
+    public void removeAllProtectionMetadata(Protection protection) {
         // it will remove itself from the Protection object
     }
 
     /**
      * {@inheritDoc}
      */
-    public Set<AbstractAttribute> loadProtectionAttributes(Protection protection) {
-        return new HashSet<AbstractAttribute>(); // nothing to load from
+    public Set<Metadata> loadProtectionMetadata(Protection protection) {
+        return new HashSet<>(); // nothing to load from
     }
 
 }

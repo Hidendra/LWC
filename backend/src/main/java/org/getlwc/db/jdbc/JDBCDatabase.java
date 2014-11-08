@@ -34,11 +34,10 @@ import org.getlwc.*;
 import org.getlwc.component.LocationSetComponent;
 import org.getlwc.db.Database;
 import org.getlwc.db.DatabaseException;
-import org.getlwc.model.AbstractAttribute;
+import org.getlwc.model.Metadata;
 import org.getlwc.model.Savable;
 import org.getlwc.model.Protection;
 import org.getlwc.model.State;
-import org.getlwc.provider.BasicProvider;
 import org.getlwc.role.Role;
 import org.getlwc.role.RoleCreationException;
 import org.getlwc.util.Tuple;
@@ -458,7 +457,7 @@ public class JDBCDatabase implements Database {
      */
     public void removeProtection(Protection protection) {
         removeAllProtectionRoles(protection);
-        removeProtectionAttributes(protection);
+        removeAllProtectionMetadata(protection);
 
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protections WHERE id = ?")) {
@@ -526,19 +525,19 @@ public class JDBCDatabase implements Database {
     /**
      * {@inheritDoc}
      */
-    public void saveOrCreateProtectionAttribute(Protection protection, AbstractAttribute attribute) {
+    public void saveOrCreateProtectionMetadata(Protection protection, Metadata meta) {
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_meta (protection_id, meta_name, meta_value) VALUES (?, ?, ?)")) {
             statement.setInt(1, protection.getId());
-            statement.setInt(2, lookup.get(JDBCLookupService.LookupType.META_NAME, attribute.getName()));
-            statement.setString(3, attribute.getStorableValue());
+            statement.setInt(2, lookup.get(JDBCLookupService.LookupType.META_NAME, meta.getKey()));
+            statement.setString(3, meta.asString());
             statement.executeUpdate();
         } catch (SQLException e) {
             try (Connection connection = pool.getConnection();
                  PreparedStatement statement = connection.prepareStatement("UPDATE " + details.getPrefix() + "protection_meta SET meta_value = ? WHERE protection_id = ? AND meta_name = ?")) {
-                statement.setString(1, attribute.getStorableValue());
+                statement.setString(1, meta.getValue());
                 statement.setInt(2, protection.getId());
-                statement.setInt(3, lookup.get(JDBCLookupService.LookupType.META_NAME, attribute.getName()));
+                statement.setInt(3, lookup.get(JDBCLookupService.LookupType.META_NAME, meta.getKey()));
                 statement.executeUpdate();
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -549,11 +548,11 @@ public class JDBCDatabase implements Database {
     /**
      * {@inheritDoc}
      */
-    public void removeProtectionAttribute(Protection protection, AbstractAttribute attribute) {
+    public void removeProtectionMetadata(Protection protection, Metadata meta) {
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_meta WHERE protection_id = ? AND meta_name = ?")) {
             statement.setInt(1, protection.getId());
-            statement.setInt(2, lookup.get(JDBCLookupService.LookupType.META_NAME, attribute.getName()));
+            statement.setInt(2, lookup.get(JDBCLookupService.LookupType.META_NAME, meta.getKey()));
             statement.executeUpdate();
         } catch (SQLException e) {
             handleException(e);
@@ -563,7 +562,7 @@ public class JDBCDatabase implements Database {
     /**
      * {@inheritDoc}
      */
-    public void removeProtectionAttributes(Protection protection) {
+    public void removeAllProtectionMetadata(Protection protection) {
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_meta WHERE protection_id = ?")) {
             statement.setInt(1, protection.getId());
@@ -576,8 +575,8 @@ public class JDBCDatabase implements Database {
     /**
      * {@inheritDoc}
      */
-    public Set<AbstractAttribute> loadProtectionAttributes(Protection protection) {
-        Set<AbstractAttribute> attributes = new HashSet<AbstractAttribute>();
+    public Set<Metadata> loadProtectionMetadata(Protection protection) {
+        Set<Metadata> metadata = new HashSet<>();
 
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("SELECT meta_name, meta_value FROM " + details.getPrefix() + "protection_meta WHERE protection_id = ?")) {
@@ -585,29 +584,17 @@ public class JDBCDatabase implements Database {
 
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
-                    String attributeName = lookup.get(JDBCLookupService.LookupType.META_NAME, set.getInt("meta_name"));
-                    BasicProvider<AbstractAttribute> provider = engine.getProtectionManager().getAttributeManager().get(attributeName);
+                    String key = lookup.get(JDBCLookupService.LookupType.META_NAME, set.getInt("meta_name"));
+                    String value = set.getString("meta_value");
 
-                    if (provider == null) {
-                        // possibly from another plugin but no longer on the server
-                        // just gracefully ignore it
-                        continue;
-                    }
-
-                    String attributeValue = set.getString("meta_value");
-                    AbstractAttribute loaded = provider.create();
-
-                    if (loaded != null) {
-                        loaded.loadData(attributeValue);
-                        attributes.add(loaded);
-                    }
+                    metadata.add(new Metadata(key, value));
                 }
             }
         } catch (SQLException e) {
             handleException(e);
         }
 
-        return attributes;
+        return metadata;
     }
 
     /**

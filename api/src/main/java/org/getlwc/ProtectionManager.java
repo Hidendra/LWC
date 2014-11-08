@@ -29,10 +29,7 @@
 
 package org.getlwc;
 
-import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
-import org.getlwc.provider.BasicProvider;
-import org.getlwc.provider.ProviderManager;
 import org.getlwc.role.RoleRegistry;
 
 import java.util.UUID;
@@ -70,12 +67,5 @@ public interface ProtectionManager {
      * @return
      */
     public RoleRegistry getRoleRegistry();
-
-    /**
-     * Get the manager for attributes
-     *
-     * @return
-     */
-    public ProviderManager<BasicProvider<AbstractAttribute>> getAttributeManager();
 
 }

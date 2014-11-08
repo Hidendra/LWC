@@ -31,7 +31,7 @@ package org.getlwc.db;
 
 import org.getlwc.model.Savable;
 
-public interface Database extends ProtectionDatabase, AttributeDatabase, RoleDatabase {
+public interface Database extends ProtectionDatabase, RoleDatabase {
 
     /**
      * Connect to the database

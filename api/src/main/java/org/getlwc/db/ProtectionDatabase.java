@@ -1,7 +1,10 @@
 package org.getlwc.db;
 
 import org.getlwc.Location;
+import org.getlwc.model.Metadata;
 import org.getlwc.model.Protection;
+
+import java.util.Set;
 
 public interface ProtectionDatabase {
 
@@ -41,5 +44,38 @@ public interface ProtectionDatabase {
      * @param protection
      */
     public void removeProtection(Protection protection);
+
+    /**
+     * Load all of a protection's attributes from the database
+     *
+     * @param protection
+     * @return
+     */
+    public Set<Metadata> loadProtectionMetadata(Protection protection);
+
+    /**
+     * Save or create an attribute in the database.
+     *
+     * @param meta
+     * @param protection
+     * @param meta
+     */
+    public void saveOrCreateProtectionMetadata(Protection protection, Metadata meta);
+
+    /**
+     * Remove a protection's attribute from the database
+     *
+     * @param meta
+     * @param protection
+     * @param meta
+     */
+    public void removeProtectionMetadata(Protection protection, Metadata meta);
+
+    /**
+     * Remove all protection attributes from a protection from the database
+     *
+     * @param protection
+     */
+    public void removeAllProtectionMetadata(Protection protection);
 
 }
