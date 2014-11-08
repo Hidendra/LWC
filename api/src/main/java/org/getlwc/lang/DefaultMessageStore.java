@@ -103,7 +103,7 @@ public class DefaultMessageStore implements MessageStore {
         ResourceBundle bundle = null;
 
         try {
-            String filePath = "/lang/lwc_" + locale.getName() + ".lang";
+            String filePath = "/lang/" + locale.getName() + ".lang";
             InputStream stream;
 
             // try compressed version first

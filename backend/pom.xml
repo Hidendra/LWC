@@ -124,7 +124,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <targetBundle>lang.lwc_</targetBundle>
+                    <targetBundle>lang.</targetBundle>
                     <poDirectory>po</poDirectory>
                     <sourceDirectory>${project.basedir}/../</sourceDirectory>
                     <keywords>-k --keyword=_ --keyword=sendTranslatedMessage --keyword=markAsTranslatable --package-name=LWC
