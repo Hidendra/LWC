@@ -272,8 +272,7 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
             state = State.UNMODIFIED;
         }
 
-        // save metadata
-        // TODO only save new or removed metadata
+        // sync metadata
         synchronized (metadata) {
             for (Map.Entry<Metadata, State> entry : metadataState.entrySet()) {
                 Metadata meta = entry.getKey();
@@ -289,7 +288,7 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
             metadataState.clear();
         }
 
-        // save each role
+        // sync roles
         for (Role role : getComponent(RoleSetComponent.class).getAll()) {
             engine.getDatabase().saveOrCreateProtectionRole(this, role);
         }
