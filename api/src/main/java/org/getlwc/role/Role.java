@@ -25,13 +25,6 @@ public interface Role extends AccessProvider {
     public String serialize();
 
     /**
-     * Deserializes the role from the given string, as retrieved from storage.
-     *
-     * @param value
-     */
-    public void deserialize(String value);
-
-    /**
      * Returns the access that this role provides
      *
      * @return

@@ -33,13 +33,14 @@ import org.getlwc.attribute.provider.DescriptionProvider;
 import org.getlwc.attribute.provider.PasswordProvider;
 import org.getlwc.component.RoleSetComponent;
 import org.getlwc.configuration.Configuration;
+import org.getlwc.content.role.PlayerRoleFactory;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
 import org.getlwc.provider.BasicProvider;
-import org.getlwc.provider.ProtectionProvider;
 import org.getlwc.provider.ProviderManager;
 import org.getlwc.provider.SimpleProviderManager;
-import org.getlwc.role.PlayerRole;
+import org.getlwc.content.role.PlayerRole;
+import org.getlwc.role.RoleCreationException;
 import org.getlwc.role.RoleRegistry;
 import org.getlwc.role.SimpleRoleRegistry;
 
@@ -66,7 +67,7 @@ public class SimpleProtectionManager implements ProtectionManager {
     public SimpleProtectionManager(Engine engine) {
         this.engine = engine;
 
-        roleRegistry.registerRoleType(PlayerRole.TYPE, PlayerRole.class);
+        roleRegistry.registerRoleLoader(PlayerRole.TYPE, new PlayerRoleFactory(engine));
 
         //
         attributeProviderManager.put("lwc:attr:description", new DescriptionProvider(engine));
@@ -87,7 +88,6 @@ public class SimpleProtectionManager implements ProtectionManager {
     public Protection findProtection(Location location) {
         ProtectionMatcher matcher = new SimpleProtectionMatcher(engine);
 
-        // Get the block at the location
         // this will be our base block -- or reference point -- of where the protection is matched from
         Block base = location.getWorld().getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ());
 
@@ -112,10 +112,16 @@ public class SimpleProtectionManager implements ProtectionManager {
         }
 
         // add the Owner role to the database for the player
-        PlayerRole role = roleRegistry.loadRole(PlayerRole.TYPE, owner.toString());
-        role.setAccess(Protection.Access.OWNER);
+        try {
+            PlayerRole role = roleRegistry.loadRole(PlayerRole.TYPE, owner.toString());
+            role.setAccess(Protection.Access.OWNER);
 
-        protection.getComponent(RoleSetComponent.class).add(role);
+            protection.getComponent(RoleSetComponent.class).add(role);
+        } catch (RoleCreationException e) {
+            System.out.println("Failed to attach owner to protection: " + e.getMessage());
+            protection.remove();
+            return null;
+        }
         protection.save();
 
         return protection;

@@ -40,6 +40,7 @@ import org.getlwc.model.Protection;
 import org.getlwc.model.State;
 import org.getlwc.provider.BasicProvider;
 import org.getlwc.role.Role;
+import org.getlwc.role.RoleCreationException;
 import org.getlwc.util.Tuple;
 
 import java.io.BufferedReader;
@@ -624,7 +625,13 @@ public class JDBCDatabase implements Database {
                     String type = lookup.get(JDBCLookupService.LookupType.ROLE_TYPE, set.getInt("type"));
                     String name = lookup.get(JDBCLookupService.LookupType.ROLE_NAME, set.getInt("name"));
 
-                    Role role = engine.getProtectionManager().getRoleRegistry().loadRole(type, name);
+                    Role role = null;
+
+                    try {
+                        role = engine.getProtectionManager().getRoleRegistry().loadRole(type, name);
+                    } catch (RoleCreationException e) {
+                        e.printStackTrace();
+                    }
 
                     if (role != null) {
                         role.setAccess(Protection.Access.values()[set.getInt("role")]);

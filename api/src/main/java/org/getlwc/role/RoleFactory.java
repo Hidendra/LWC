@@ -1,20 +1,13 @@
 package org.getlwc.role;
 
-public interface RoleFactory {
+public interface RoleFactory<T extends Role> {
 
     /**
-     * Creates a new role
-     *
-     * @return
-     */
-    public Role createRole();
-
-    /**
-     * Loads a role from the given value
+     * Creates a role from the given value
      *
      * @param value
      * @return
      */
-    public Role loadRole(String value);
+    public T createFromValue(String value) throws RoleCreationException;
 
 }

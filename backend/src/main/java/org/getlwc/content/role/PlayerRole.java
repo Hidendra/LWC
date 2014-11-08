@@ -1,6 +1,7 @@
-package org.getlwc.role;
+package org.getlwc.content.role;
 
 import org.getlwc.entity.Player;
+import org.getlwc.role.AbstractRole;
 
 import java.util.UUID;
 
@@ -10,6 +11,10 @@ public class PlayerRole extends AbstractRole {
 
     private UUID uuid;
 
+    public PlayerRole(UUID uuid) {
+        this.uuid = uuid;
+    }
+
     @Override
     public String getType() {
         return TYPE;
@@ -18,11 +23,6 @@ public class PlayerRole extends AbstractRole {
     @Override
     public String serialize() {
         return uuid.toString();
-    }
-
-    @Override
-    public void deserialize(String value) {
-        uuid = UUID.fromString(value);
     }
 
     @Override

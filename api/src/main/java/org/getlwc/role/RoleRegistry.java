@@ -3,20 +3,12 @@ package org.getlwc.role;
 public interface RoleRegistry {
 
     /**
-     * Registers a new role type for use
+     * Registers a new role loader for use
      *
      * @param type
-     * @param roleClass
+     * @param factory
      */
-    public void registerRoleType(String type, Class<? extends Role> roleClass);
-
-    /**
-     * Creates a new role of the given type
-     *
-     * @param type
-     * @return
-     */
-    public <V extends Role> V createRole(String type);
+    public void registerRoleLoader(String type, RoleFactory<?> factory);
 
     /**
      * Loads a role of the given type with the given value
@@ -25,6 +17,6 @@ public interface RoleRegistry {
      * @param value
      * @return
      */
-    public <V extends Role> V loadRole(String type, String value);
+    public <V extends Role> V loadRole(String type, String value) throws RoleCreationException;
 
 }

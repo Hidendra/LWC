@@ -6,8 +6,10 @@ import org.getlwc.entity.Player;
 import org.getlwc.event.events.ProtectionEvent;
 import org.getlwc.event.notifiers.ProtectionEventNotifier;
 import org.getlwc.model.Protection;
-import org.getlwc.role.PlayerRole;
+import org.getlwc.content.role.PlayerRole;
 import org.getlwc.role.Role;
+import org.getlwc.role.RoleCreationException;
+import org.getlwc.util.Color;
 
 public class AddRemoveCommands {
 
@@ -71,7 +73,14 @@ public class AddRemoveCommands {
                     return true;
                 }
 
-                Role role = engine.getProtectionManager().getRoleRegistry().loadRole(baseRoleType, roleName);
+                Role role = null;
+
+                try {
+                    engine.getProtectionManager().getRoleRegistry().loadRole(baseRoleType, roleName);
+                } catch (RoleCreationException e) {
+                    player.sendMessage(Color.RED + e.getMessage());
+                    return true;
+                }
 
                 if (role == null) {
                     player.sendTranslatedMessage("&4Role identifier not recognized: {0}", roleName);
