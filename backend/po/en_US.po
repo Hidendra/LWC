@@ -156,8 +156,8 @@ msgid "&4Only owners can remove other owners."
 msgstr "&4Only owners can remove other owners."
 
 #: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:96
-msgid "&4Only owners can remove managers."
-msgstr "&4Only owners can remove managers."
+msgid "&4Only owners can remove admins."
+msgstr "&4Only owners can remove admins."
 
 #: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:98
 msgid "&2Removed successfully."
@@ -173,8 +173,8 @@ msgid "&4Only owners can modify other owners."
 msgstr "&4Only owners can add other owners."
 
 #: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:110
-msgid "&4Only owners can modify managers."
-msgstr "&4Only owners can add managers."
+msgid "&4Only owners can modify admins."
+msgstr "&4Only owners can add admins."
 
 #: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:115
 msgid "&2Changed successfully."

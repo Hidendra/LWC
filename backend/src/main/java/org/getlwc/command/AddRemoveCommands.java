@@ -93,7 +93,7 @@ public class AddRemoveCommands {
                     if (role.getAccess() == Protection.Access.OWNER && playerAccess != Protection.Access.OWNER) {
                         player.sendTranslatedMessage("&4Only owners can remove other owners.");
                     } else if (role.getAccess() == Protection.Access.ADMIN && playerAccess != Protection.Access.OWNER) {
-                        player.sendTranslatedMessage("&4Only owners can remove managers.");
+                        player.sendTranslatedMessage("&4Only owners can remove admins.");
                     } else if (toDelete != null) {
                         player.sendTranslatedMessage("&2Removed successfully.");
                         protection.getComponent(RoleSetComponent.class).remove(toDelete);
@@ -107,7 +107,7 @@ public class AddRemoveCommands {
                         if (role.getAccess() == Protection.Access.OWNER && playerAccess != Protection.Access.OWNER) {
                             player.sendTranslatedMessage("&4Only owners can modify other owners.");
                         } else if (role.getAccess() == Protection.Access.ADMIN && playerAccess != Protection.Access.OWNER) {
-                            player.sendTranslatedMessage("&4Only owners can modify managers.");
+                            player.sendTranslatedMessage("&4Only owners can modify admins.");
                         } else {
                             existing.setAccess(access);
                             protection.save();
