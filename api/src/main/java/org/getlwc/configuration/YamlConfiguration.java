@@ -32,6 +32,7 @@ package org.getlwc.configuration;
 import java.io.IOException;
 import java.io.InputStream;
 
+@Deprecated
 public class YamlConfiguration implements Configuration {
 
     /**

@@ -32,7 +32,6 @@ package org.getlwc;
 import org.getlwc.model.AbstractAttribute;
 import org.getlwc.model.Protection;
 import org.getlwc.provider.BasicProvider;
-import org.getlwc.provider.ProtectionProvider;
 import org.getlwc.provider.ProviderManager;
 import org.getlwc.role.RoleRegistry;
 

@@ -1,5 +1,6 @@
 package org.getlwc.provider;
 
+@Deprecated
 public interface BasicProvider<T> extends Provider<T> {
 
     /**

@@ -46,6 +46,7 @@ import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public class FileConfiguration extends ConfigurationNode {
 
     private static Engine engine;
