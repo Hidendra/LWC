@@ -1,7 +1,6 @@
 package org.getlwc.component;
 
 import java.util.Collection;
-import java.util.List;
 
 public interface ComponentHolder<T extends Component> {
 

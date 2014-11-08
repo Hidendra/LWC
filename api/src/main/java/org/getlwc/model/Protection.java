@@ -80,6 +80,11 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
      */
     private final Map<String, Metadata> metadata = new HashMap<>();
 
+    /**
+     * State for local metadata
+     */
+    private final Map<Metadata, State> metadataState = new HashMap<>();
+
     @Override
     public String toString() {
         // TODO add in updated, created
@@ -135,8 +140,26 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
      * @param meta
      */
     public void addMeta(Metadata meta) {
-        metadata.put(meta.getKey(), meta);
-        state = State.MODIFIED;
+        synchronized (metadata) {
+            metadataState.put(meta, metadata.containsKey(meta.getKey()) ? State.MODIFIED : State.NEW);
+            metadata.put(meta.getKey(), meta);
+            state = State.MODIFIED;
+        }
+    }
+
+    /**
+     * Removes metadata from the protection
+     *
+     * @param key
+     */
+    public void removeMeta(String key) {
+        synchronized (metadata) {
+            if (metadata.containsKey(key)) {
+                metadataState.put(metadata.get(key), State.REMOVED);
+                metadata.remove(key);
+                state = State.MODIFIED;
+            }
+        }
     }
 
     /**
@@ -146,7 +169,9 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
      * @return
      */
     public Metadata getMeta(String key) {
-        return metadata.get(key);
+        synchronized (metadata) {
+            return metadata.get(key);
+        }
     }
 
     /**
@@ -249,8 +274,19 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
 
         // save metadata
         // TODO only save new or removed metadata
-        for (Metadata meta : metadata.values()) {
-            engine.getDatabase().saveOrCreateProtectionMetadata(this, meta);
+        synchronized (metadata) {
+            for (Map.Entry<Metadata, State> entry : metadataState.entrySet()) {
+                Metadata meta = entry.getKey();
+                State state = entry.getValue();
+
+                if (state == State.NEW || state == State.MODIFIED) {
+                    engine.getDatabase().saveOrCreateProtectionMetadata(this, meta);
+                } else if (state == State.REMOVED) {
+                    engine.getDatabase().removeProtectionMetadata(this, meta);
+                }
+            }
+
+            metadataState.clear();
         }
 
         // save each role
