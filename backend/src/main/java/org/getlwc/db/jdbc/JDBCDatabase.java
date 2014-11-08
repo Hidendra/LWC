@@ -528,17 +528,17 @@ public class JDBCDatabase implements Database {
      */
     public void saveOrCreateProtectionAttribute(Protection protection, AbstractAttribute attribute) {
         try (Connection connection = pool.getConnection();
-             PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_attributes (protection_id, attribute_name, attribute_value) VALUES (?, ?, ?)")) {
+             PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_meta (protection_id, meta_name, meta_value) VALUES (?, ?, ?)")) {
             statement.setInt(1, protection.getId());
-            statement.setInt(2, lookup.get(JDBCLookupService.LookupType.ATTRIBUTE_NAME, attribute.getName()));
+            statement.setInt(2, lookup.get(JDBCLookupService.LookupType.META_NAME, attribute.getName()));
             statement.setString(3, attribute.getStorableValue());
             statement.executeUpdate();
         } catch (SQLException e) {
             try (Connection connection = pool.getConnection();
-                 PreparedStatement statement = connection.prepareStatement("UPDATE " + details.getPrefix() + "protection_attributes SET attribute_value = ? WHERE protection_id = ? AND attribute_name = ?")) {
+                 PreparedStatement statement = connection.prepareStatement("UPDATE " + details.getPrefix() + "protection_meta SET meta_value = ? WHERE protection_id = ? AND meta_name = ?")) {
                 statement.setString(1, attribute.getStorableValue());
                 statement.setInt(2, protection.getId());
-                statement.setInt(3, lookup.get(JDBCLookupService.LookupType.ATTRIBUTE_NAME, attribute.getName()));
+                statement.setInt(3, lookup.get(JDBCLookupService.LookupType.META_NAME, attribute.getName()));
                 statement.executeUpdate();
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -551,9 +551,9 @@ public class JDBCDatabase implements Database {
      */
     public void removeProtectionAttribute(Protection protection, AbstractAttribute attribute) {
         try (Connection connection = pool.getConnection();
-             PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_attributes WHERE protection_id = ? AND attribute_name = ?")) {
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_meta WHERE protection_id = ? AND meta_name = ?")) {
             statement.setInt(1, protection.getId());
-            statement.setInt(2, lookup.get(JDBCLookupService.LookupType.ATTRIBUTE_NAME, attribute.getName()));
+            statement.setInt(2, lookup.get(JDBCLookupService.LookupType.META_NAME, attribute.getName()));
             statement.executeUpdate();
         } catch (SQLException e) {
             handleException(e);
@@ -565,7 +565,7 @@ public class JDBCDatabase implements Database {
      */
     public void removeProtectionAttributes(Protection protection) {
         try (Connection connection = pool.getConnection();
-             PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_attributes WHERE protection_id = ?")) {
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_meta WHERE protection_id = ?")) {
             statement.setInt(1, protection.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -580,12 +580,12 @@ public class JDBCDatabase implements Database {
         Set<AbstractAttribute> attributes = new HashSet<AbstractAttribute>();
 
         try (Connection connection = pool.getConnection();
-             PreparedStatement statement = connection.prepareStatement("SELECT attribute_name, attribute_value FROM " + details.getPrefix() + "protection_attributes WHERE protection_id = ?")) {
+             PreparedStatement statement = connection.prepareStatement("SELECT meta_name, meta_value FROM " + details.getPrefix() + "protection_meta WHERE protection_id = ?")) {
             statement.setInt(1, protection.getId());
 
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
-                    String attributeName = lookup.get(JDBCLookupService.LookupType.ATTRIBUTE_NAME, set.getInt("attribute_name"));
+                    String attributeName = lookup.get(JDBCLookupService.LookupType.META_NAME, set.getInt("meta_name"));
                     BasicProvider<AbstractAttribute> provider = engine.getProtectionManager().getAttributeManager().get(attributeName);
 
                     if (provider == null) {
@@ -594,7 +594,7 @@ public class JDBCDatabase implements Database {
                         continue;
                     }
 
-                    String attributeValue = set.getString("attribute_value");
+                    String attributeValue = set.getString("meta_value");
                     AbstractAttribute loaded = provider.create();
 
                     if (loaded != null) {

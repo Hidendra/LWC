@@ -20,7 +20,7 @@ public class JDBCLookupService {
         /**
          * An attribute's name
          */
-        ATTRIBUTE_NAME("attribute_name"),
+        META_NAME("meta_name"),
 
         /**
          * A role's type

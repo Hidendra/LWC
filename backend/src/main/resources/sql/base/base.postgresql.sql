@@ -8,7 +8,7 @@ CREATE INDEX __PREFIX__protection_created ON __PREFIX__protections (created);
 CREATE INDEX __PREFIX__protection_updated ON __PREFIX__protections (updated);
 CREATE INDEX __PREFIX__protection_accessed ON __PREFIX__protections (accessed);
 
-CREATE TABLE __PREFIX__lookup_attribute_name (
+CREATE TABLE __PREFIX__lookup_meta_name (
   id INTEGER NOT NULL PRIMARY KEY,
   name varchar(255) NOT NULL
 );

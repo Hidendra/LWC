@@ -1,8 +1,8 @@
-CREATE TABLE __PREFIX__protection_attributes (
+CREATE TABLE __PREFIX__protection_meta (
   protection_id INTEGER NOT NULL,
-  attribute_name INTEGER NOT NULL,
-  attribute_value varchar(255) NOT NULL,
-  PRIMARY KEY (protection_id,attribute_name)
+  meta_name INTEGER NOT NULL,
+  meta_value varchar(255) NOT NULL,
+  PRIMARY KEY (protection_id,meta_name)
 ) ;
 
 CREATE TABLE __PREFIX__protection_roles (
