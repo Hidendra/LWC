@@ -2,12 +2,12 @@
 # Copyright (C) 2012-2013 Tyler Blair
 # This file is distributed under the same license as the LWC package.
 # Tyler Blair <hidendra@griefcraft.com>, 2012-2013.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2014-11-07 23:36-0400\n"
+"POT-Creation-Date: 2014-11-08 01:16-0400\n"
 "PO-Revision-Date: 2013-06-18 23:02-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -184,39 +184,6 @@ msgstr "&2Changed successfully."
 msgid "&2Added successfully."
 msgstr "&2Added successfully."
 
-#: backend/src/main/java/org/getlwc/command/AttributeCommands.java:75
-#: backend/src/main/java/org/getlwc/command/AttributeCommands.java:121
-msgid "&4Invalid attribute name."
-msgstr "&4Invalid attribute name."
-
-#: backend/src/main/java/org/getlwc/command/AttributeCommands.java:80
-msgid "&2Click on your protection to set the attribute"
-msgstr "&2Click on your protection to set the attribute"
-
-#: backend/src/main/java/org/getlwc/command/AttributeCommands.java:88
-#: backend/src/main/java/org/getlwc/command/AttributeCommands.java:133
-msgid "&4Only managers and above can modify the attributes of a protection."
-msgstr "&4Only managers and above can modify the attributes of a protection."
-
-#: backend/src/main/java/org/getlwc/command/AttributeCommands.java:97
-#, java-format
-msgid "&2Added the attribute {0} to the protection successfully."
-msgstr "&2Added the attribute {0} to the protection successfully."
-
-#: backend/src/main/java/org/getlwc/command/AttributeCommands.java:125
-msgid "&2Click on your protection to remove the attribute"
-msgstr "&2Click on your protection to remove the attribute"
-
-#: backend/src/main/java/org/getlwc/command/AttributeCommands.java:140
-#, java-format
-msgid "&2Removed the attribute {0} from the protection successfully."
-msgstr "&2Removed the attribute {0} from the protection successfully."
-
-#: backend/src/main/java/org/getlwc/command/AttributeCommands.java:142
-#, java-format
-msgid "&4The protection does not have the attribute {0}"
-msgstr "&4The protection does not have the attribute {0}"
-
 #: backend/src/main/java/org/getlwc/command/BaseCommands.java:87
 msgid "Similar commands:"
 msgstr "Similar commands:"
@@ -337,41 +304,41 @@ msgstr ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "
 "trace has been printed out to the log file"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:132
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:131
 #, java-format
 msgid "Server: {0} ({1})"
 msgstr "Server: {0} ({1})"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:133
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:132
 #, java-format
 msgid "Plugin: {0} ({1})"
 msgstr "Plugin: {0} ({1})"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:186
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:185
 #, java-format
 msgid "Economy handler: {0}"
 msgstr "Economy handler: {0}"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:187
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:186
 #, java-format
 msgid "Permission handler: {0}"
 msgstr "Permission handler: {0}"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:303
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:302
 msgid "Shutting down!"
 msgstr "Shutting down!"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:323
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:322
 #, java-format
 msgid "Driver \"{0}\" is not supported."
 msgstr "Driver \"{0}\" is not supported."
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:353
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:352
 #, java-format
 msgid "Connected to the database with driver: {0}"
 msgstr "Connected to the database with driver: {0}"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:355
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:354
 msgid "Failed to connect to the database!"
 msgstr "Failed to connect to the database!"
 
@@ -457,6 +424,28 @@ msgstr ""
 #, java-format
 msgid "Using BuildCraft version: {0}"
 msgstr "Using BuildCraft version: {0}"
+
+#~ msgid "&4Invalid attribute name."
+#~ msgstr "&4Invalid attribute name."
+
+#~ msgid "&2Click on your protection to set the attribute"
+#~ msgstr "&2Click on your protection to set the attribute"
+
+#~ msgid "&4Only managers and above can modify the attributes of a protection."
+#~ msgstr ""
+#~ "&4Only managers and above can modify the attributes of a protection."
+
+#~ msgid "&2Added the attribute {0} to the protection successfully."
+#~ msgstr "&2Added the attribute {0} to the protection successfully."
+
+#~ msgid "&2Click on your protection to remove the attribute"
+#~ msgstr "&2Click on your protection to remove the attribute"
+
+#~ msgid "&2Removed the attribute {0} from the protection successfully."
+#~ msgstr "&2Removed the attribute {0} from the protection successfully."
+
+#~ msgid "&4The protection does not have the attribute {0}"
+#~ msgstr "&4The protection does not have the attribute {0}"
 
 #~ msgid ""
 #~ "Location: &7[{0} {1} {2}]&f in the world \"&7{3}&f\"\n"
