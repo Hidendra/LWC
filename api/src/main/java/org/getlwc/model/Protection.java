@@ -78,16 +78,6 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
      */
     private final Map<String, AbstractAttribute> attributes = new HashMap<String, AbstractAttribute>();
 
-    /**
-     * The possible access providers the protection has
-     */
-    private final Set<AccessProvider> accessProviders = new HashSet<AccessProvider>();
-
-    /**
-     * The interact providers that want to know when this protection is interacted with
-     */
-    private final Set<InteractProvider> interactProviders = new HashSet<InteractProvider>();
-
     @Override
     public String toString() {
         // TODO add in updated, created
@@ -106,18 +96,6 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
 
         for (Role role : engine.getDatabase().loadProtectionRoles(this)) {
             getComponent(RoleSetComponent.class).add(role);
-        }
-    }
-
-    /**
-     * Called when the protection is interacted with by a player
-     *
-     * @param access
-     * @param entity
-     */
-    public void interactedBy(Entity entity, Access access) {
-        for (InteractProvider provider : interactProviders) {
-            provider.onInteract(this, entity, access);
         }
     }
 
@@ -146,22 +124,6 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
             }
         }
 
-        for (AccessProvider provider : accessProviders) {
-            Access roleAccess = provider.getAccess(this, player);
-
-            if (roleAccess == null) {
-                continue;
-            }
-
-            if (roleAccess == Access.EXPLICIT_DENY) {
-                return roleAccess;
-            }
-
-            if (roleAccess.ordinal() > access.ordinal()) {
-                access = roleAccess;
-            }
-        }
-
         return access;
     }
 
@@ -175,48 +137,6 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
         attributes.put(attribute.getName(), attribute);
         attribute.setState(State.NEW);
         state = State.MODIFIED;
-
-        if (attribute instanceof AccessProvider) {
-            accessProviders.add((AccessProvider) attribute);
-        }
-
-        if (attribute instanceof InteractProvider) {
-            interactProviders.add((InteractProvider) attribute);
-        }
-    }
-
-    /**
-     * Get an attribute from the protection. If it does not exist, NULL will be returned.
-     *
-     * @param name
-     * @return
-     */
-    @Deprecated
-    public AbstractAttribute getAttribute(String name) {
-        return attributes.get(name);
-    }
-
-    /**
-     * Remove an attribute from the protection
-     *
-     * @param name
-     */
-    @Deprecated
-    public void removeAttribute(String name) {
-        if (!attributes.containsKey(name)) {
-            return;
-        }
-
-        AbstractAttribute attribute = attributes.remove(name);
-        engine.getDatabase().removeProtectionAttribute(this, attribute);
-
-        if (attribute instanceof AccessProvider) {
-            accessProviders.remove(attribute);
-        }
-
-        if (attribute instanceof InteractProvider) {
-            interactProviders.remove(attribute);
-        }
     }
 
     /**
