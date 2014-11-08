@@ -30,7 +30,7 @@
 package org.getlwc;
 
 import org.getlwc.util.ClassUtils;
-import org.getlwc.util.LibraryFile;
+import org.getlwc.util.ResourceFile;
 import org.getlwc.util.MD5Checksum;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -75,7 +75,7 @@ public class SimpleResourceDownloader implements ResourceDownloader {
     /**
      * The queue of files that need to be downloaded or verified
      */
-    private final Queue<LibraryFile> fileQueue = new ConcurrentLinkedQueue<LibraryFile>();
+    private final Queue<ResourceFile> fileQueue = new ConcurrentLinkedQueue<ResourceFile>();
 
     /**
      * The base url to download resources from
@@ -134,12 +134,12 @@ public class SimpleResourceDownloader implements ResourceDownloader {
 
         for (Object o : files) {
             String file = (String) o;
-            verifyFile(new LibraryFile(DEST_LIBRARY_FOLDER + file, baseUrl + file));
+            verifyFile(new ResourceFile(DEST_LIBRARY_FOLDER + file, baseUrl + file));
         }
 
         // SQLite native library
         if (resource.equals("databases.sqlite")) {
-            verifyFile(new LibraryFile(getFullNativeLibraryPath(), baseUrl + getFullNativeLibraryPath().replaceAll(DEST_LIBRARY_FOLDER, "")));
+            verifyFile(new ResourceFile(getFullNativeLibraryPath(), baseUrl + getFullNativeLibraryPath().replaceAll(DEST_LIBRARY_FOLDER, "")));
         }
 
         downloadFiles();
@@ -189,7 +189,7 @@ public class SimpleResourceDownloader implements ResourceDownloader {
      * @param updaterFile
      * @return true if the file was queued to be downloaded
      */
-    private boolean verifyFile(LibraryFile updaterFile) {
+    private boolean verifyFile(ResourceFile updaterFile) {
         if (updaterFile == null) {
             return false;
         }
@@ -233,17 +233,17 @@ public class SimpleResourceDownloader implements ResourceDownloader {
      */
     public void downloadFiles() {
         synchronized (fileQueue) {
-            LibraryFile libraryFile;
+            ResourceFile resourceFile;
             int size = fileQueue.size();
 
             if (size == 0) {
                 return;
             }
 
-            while ((libraryFile = fileQueue.poll()) != null) {
+            while ((resourceFile = fileQueue.poll()) != null) {
                 try {
-                    File local = new File(libraryFile.getLocalLocation());
-                    String remote = libraryFile.getRemoteLocation();
+                    File local = new File(resourceFile.getLocalLocation());
+                    String remote = resourceFile.getRemoteLocation();
 
                     int tries = 1;
 

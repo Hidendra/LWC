@@ -29,7 +29,7 @@
 
 package org.getlwc.util;
 
-public class LibraryFile {
+public class ResourceFile {
 
     /**
      * The local url location
@@ -41,23 +41,23 @@ public class LibraryFile {
      */
     private String remoteLocation;
 
-    public LibraryFile(String location) {
+    public ResourceFile(String location) {
         this.remoteLocation = location;
         this.localLocation = location;
     }
 
-    public LibraryFile(String localLocation, String remoteLocation) {
+    public ResourceFile(String localLocation, String remoteLocation) {
         this.localLocation = localLocation;
         this.remoteLocation = remoteLocation;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof LibraryFile)) {
+        if (!(obj instanceof ResourceFile)) {
             return false;
         }
 
-        LibraryFile other = (LibraryFile) obj;
+        ResourceFile other = (ResourceFile) obj;
 
         return other.getLocalLocation().equals(localLocation) && other.getRemoteLocation().equals(remoteLocation);
     }
