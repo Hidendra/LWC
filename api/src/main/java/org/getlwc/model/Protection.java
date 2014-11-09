@@ -302,10 +302,10 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
     @Override
     public void remove() {
         engine.getDatabase().removeAllProtectionRoles(this);
-
-        // now remove the protection
+        engine.getDatabase().removeAllProtectionMetadata(this);
         engine.getDatabase().removeProtection(this);
         state = State.REMOVED;
+        metadataState.clear();
     }
 
     @Override
