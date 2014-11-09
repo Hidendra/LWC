@@ -81,7 +81,8 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
     private final Map<String, Metadata> metadata = new HashMap<>();
 
     /**
-     * State for local metadata
+     * State for local metadata. Metadata will only be mapped to state in this map
+     * if metadata has added, changed, or removed.
      */
     private final Map<Metadata, State> metadataState = new HashMap<>();
 
