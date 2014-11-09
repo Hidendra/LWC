@@ -205,13 +205,6 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
     }
 
     /**
-     * Marks the protection as modified so that it is forcibly saved to the database the next time it's saved.
-     */
-    public void markModified() {
-        state = State.MODIFIED;
-    }
-
-    /**
      * Returns the protection's unique id
      *
      * @return the protection's unique d
