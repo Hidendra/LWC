@@ -37,6 +37,7 @@ import org.getlwc.bukkit.world.BukkitWorld;
 import org.getlwc.entity.Player;
 
 import java.io.File;
+import java.util.UUID;
 
 public class BukkitServerLayer extends ServerLayer {
 
@@ -83,6 +84,23 @@ public class BukkitServerLayer extends ServerLayer {
         }
 
         return new BukkitWorld(handle);
+    }
+
+    @Override
+    public UUID getOfflinePlayer(String ident) {
+        Player player = getPlayer(ident);
+
+        if (player != null) {
+            return player.getUUID();
+        }
+
+        org.bukkit.OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(ident);
+
+        if (offlinePlayer != null) {
+            return offlinePlayer.getUniqueId();
+        } else {
+            return null;
+        }
     }
 
     /**

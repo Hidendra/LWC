@@ -4,6 +4,8 @@ import org.getlwc.Location;
 import org.getlwc.bukkit.BukkitPlugin;
 import org.getlwc.entity.Entity;
 
+import java.util.UUID;
+
 public class BukkitEntity implements Entity {
 
     /**
@@ -28,8 +30,8 @@ public class BukkitEntity implements Entity {
     /**
      * {@inheritDoc}
      */
-    public String getUUID() {
-        return handle.getUniqueId().toString();
+    public UUID getUUID() {
+        return handle.getUniqueId();
     }
 
     /**

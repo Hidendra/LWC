@@ -34,14 +34,11 @@ import org.getlwc.ServerInfo;
 
 public class BukkitServerInfo implements ServerInfo {
 
-    public String getSoftwareName() {
+    public String getServerImplementationTitle() {
         return "Bukkit";
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String getServerVersion() {
+    public String getServerImplementationVersion() {
         return Bukkit.getVersion();
     }
 

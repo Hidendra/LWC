@@ -33,13 +33,13 @@ import org.getlwc.Engine;
 import org.getlwc.ItemStack;
 import org.getlwc.Location;
 import org.getlwc.bukkit.BukkitPlugin;
-import org.getlwc.entity.Player;
 import org.getlwc.entity.SimplePlayer;
 import org.getlwc.lang.Locale;
 import org.getlwc.util.Color;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.UUID;
 
 public class BukkitPlayer extends SimplePlayer {
 
@@ -89,9 +89,8 @@ public class BukkitPlayer extends SimplePlayer {
     /**
      * {@inheritDoc}
      */
-    public String getUUID() {
-        // TODO: convert to unique id upon public availability of 1.7
-        return handle.getName();
+    public UUID getUUID() {
+        return handle.getUniqueId();
     }
 
     /**
