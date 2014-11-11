@@ -24,7 +24,7 @@ public class AddRemoveCommands {
             description = "Add/remove/modify access roles that are on a protection",
             usage = "<player name> [access] | <type> <name> [access]",
             permission = "lwc.modify",
-            aliases = {"cmodify", "cadd"},
+            aliases = {"cmodify", "cadd", "add"},
             min = 1,
             max = 3,
             accepts = SenderType.PLAYER

@@ -102,7 +102,7 @@ public class BaseCommands {
             command = "lwc create",
             description = "Create a protection",
             permission = "lwc.create",
-            aliases = {"cprivate", "clock"},
+            aliases = {"cprivate", "clock", "protect"},
             accepts = SenderType.PLAYER
     )
     public void createProtection(CommandContext context) {
@@ -138,7 +138,7 @@ public class BaseCommands {
             command = "lwc delete",
             description = "Remove a protection",
             permission = "lwc.remove.protection",
-            aliases = {"cremove"},
+            aliases = {"cremove", "remove"},
             accepts = SenderType.PLAYER
     )
     public void removeProtection(CommandContext context) {
@@ -166,7 +166,7 @@ public class BaseCommands {
             command = "lwc info",
             description = "Get information about a protection",
             permission = "lwc.info",
-            aliases = {"cinfo"},
+            aliases = {"cinfo", "info"},
             accepts = SenderType.PLAYER
     )
     // TODO Should be improved (re-do role text)
