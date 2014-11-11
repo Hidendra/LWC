@@ -71,7 +71,7 @@ public class Tuple<X, Y> {
         }
 
         Tuple tuple = (Tuple) object;
-        return tuple.x == x && tuple.y == y;
+        return tuple.x.equals(x) && tuple.y.equals(y);
     }
 
     @Override
