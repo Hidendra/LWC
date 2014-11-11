@@ -73,10 +73,10 @@ public class AddRemoveCommands {
                     return true;
                 }
 
-                Role role = null;
+                Role role;
 
                 try {
-                    engine.getProtectionManager().getRoleRegistry().loadRole(baseRoleType, roleName);
+                    role = engine.getProtectionManager().getRoleRegistry().loadRole(baseRoleType, roleName);
                 } catch (RoleCreationException e) {
                     player.sendMessage(Color.RED + e.getMessage());
                     return true;
