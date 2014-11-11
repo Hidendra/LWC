@@ -5,6 +5,14 @@ CREATE TABLE __PREFIX__protection_meta (
   PRIMARY KEY (protection_id,meta_name)
 ) ;
 
+CREATE TABLE __PREFIX__player_settings (
+  protection_id INTEGER NOT NULL,
+  player_id VARCHAR(36) NOT NULL,
+  setting_node VARCHAR(255) NOT NULL,
+  setting_value varchar(255) NOT NULL,
+  PRIMARY KEY (protection_id,setting_node)
+) ;
+
 CREATE TABLE __PREFIX__protection_roles (
   protection_id INTEGER NOT NULL,
   type INTEGER NOT NULL,
