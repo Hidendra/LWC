@@ -44,6 +44,7 @@ import org.getlwc.forge.world.ForgeWorld;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.UUID;
 
 public class ForgeServerLayer extends ServerLayer {
 
@@ -109,6 +110,18 @@ public class ForgeServerLayer extends ServerLayer {
             System.err.println(" !!!! LWC is likely not compatible with this version of Minecraft. You need to update!");
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public UUID getOfflinePlayer(String ident) {
+        Player player = getPlayer(ident);
+
+        if (player != null) {
+            return player.getUUID();
+        }
+
+        // TODO
+        return null;
     }
 
     @Override
