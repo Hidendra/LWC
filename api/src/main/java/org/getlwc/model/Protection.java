@@ -164,6 +164,18 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
     }
 
     /**
+     * Returns true if the protection contains the given metadata
+     *
+     * @param key
+     * @return
+     */
+    public boolean hasMeta(String key) {
+        synchronized (metadata) {
+            return metadata.containsKey(key);
+        }
+    }
+
+    /**
      * Returns metadata for the protection
      *
      * @param key
