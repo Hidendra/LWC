@@ -16,6 +16,11 @@ public class PlayerRole extends AbstractRole {
     }
 
     @Override
+    public String toString() {
+        return String.format("PlayerRole(uuid = %s, access = %s)", uuid.toString(), getAccess().toString());
+    }
+
+    @Override
     public String getType() {
         return TYPE;
     }

@@ -32,6 +32,7 @@ package org.getlwc.command;
 import org.getlwc.Block;
 import org.getlwc.Engine;
 import org.getlwc.ProtectionManager;
+import org.getlwc.component.Component;
 import org.getlwc.component.RoleSetComponent;
 import org.getlwc.entity.Player;
 import org.getlwc.event.events.BlockEvent;
@@ -217,6 +218,11 @@ public class BaseCommands {
 
                 // TODO change this to support any protection ...
                 player.sendMessage("<<Place holder message until this is readded>>");
+
+                player.sendMessage("Components:");
+                for (Component component : protection.getComponents()) {
+                    player.sendMessage(component.toString());
+                }
 
                 return true;
             }

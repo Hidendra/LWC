@@ -4,6 +4,11 @@ import org.getlwc.role.Role;
 
 public class RoleSetComponent extends AbstractSetComponent<Role> {
 
+    @Override
+    public String toString() {
+        return String.format("RoleSetComponent(%s)", getAll());
+    }
+
     /**
      * Returns a role of the same type and value from the protection
      *
