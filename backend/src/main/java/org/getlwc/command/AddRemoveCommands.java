@@ -95,8 +95,10 @@ public class AddRemoveCommands {
                     } else if (role.getAccess() == Protection.Access.ADMIN && playerAccess != Protection.Access.OWNER) {
                         player.sendTranslatedMessage("&4Only owners can remove admins.");
                     } else if (toDelete != null) {
-                        player.sendTranslatedMessage("&2Removed successfully.");
                         protection.getComponent(RoleSetComponent.class).remove(toDelete);
+                        protection.save();
+
+                        player.sendTranslatedMessage("&2Removed successfully.");
                     } else {
                         player.sendTranslatedMessage("&4Protection does not contain role matching: &e{0}", roleName);
                     }
