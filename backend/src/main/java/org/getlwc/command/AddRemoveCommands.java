@@ -116,7 +116,7 @@ public class AddRemoveCommands {
                         }
                     } else {
                         role.setAccess(access);
-                        protection.getComponent(RoleSetComponent.class).add(existing);
+                        protection.getComponent(RoleSetComponent.class).add(role);
                         protection.save();
 
                         player.sendTranslatedMessage("&2Added successfully.");
