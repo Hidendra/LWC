@@ -10,7 +10,7 @@ public class DescriptionComponent extends AbstractValueComponent<String> {
 
     @Override
     public String toString() {
-        return String.format("DescriptionComponent(desc = \"%s\")", get());
+        return String.format("DescriptionComponent(\"%s\")", get());
     }
 
 }
