@@ -188,7 +188,7 @@ public class SimpleEngine implements Engine {
         openDatabase();
 
         // Register any commands
-        registerCommands();
+        registerHandlers();
 
         consoleSender.sendTranslatedMessage("Economy handler: {0}", economyHandler.getName());
         consoleSender.sendTranslatedMessage("Permission handler: {0}", permissionHandler.getName());
@@ -371,16 +371,12 @@ public class SimpleEngine implements Engine {
     /**
      * Register the commands we want to use
      */
-    private void registerCommands() {
-        try {
-            commandHandler.registerCommands(new BaseCommands(this));
-            commandHandler.registerCommands(new AddRemoveCommands(this));
-            commandHandler.registerCommands(new BenchmarkCommands(this));
+    private void registerHandlers() {
+        registerObjectEvents(new BaseCommands(this));
+        registerObjectEvents(new AddRemoveCommands(this));
+        registerObjectEvents(new BenchmarkCommands(this));
 
-            registerObjectEvents(new DescriptionModule());
-        } catch (CommandException e) {
-            e.printStackTrace();
-        }
+        registerObjectEvents(new DescriptionModule());
     }
 
     /**
