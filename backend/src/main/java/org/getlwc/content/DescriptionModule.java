@@ -24,7 +24,7 @@ public final class DescriptionModule {
         Protection protection = event.getProtection();
 
         if (protection.hasMeta(META_KEY)) {
-            protection.addComponent(new DescriptionComponent(protection.getMeta(META_KEY).toString()));
+            protection.addComponent(new DescriptionComponent(protection.getMeta(META_KEY).getValue()));
         }
     }
 
