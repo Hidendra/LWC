@@ -56,6 +56,7 @@ public final class DescriptionModule {
                     player.sendTranslatedMessage("&2Removed successfully.");
                 } else {
                     protection.addMeta(new Metadata(META_KEY, description));
+                    protection.addComponent(new DescriptionComponent(description));
                     player.sendTranslatedMessage("&2Added successfully.");
                 }
 
