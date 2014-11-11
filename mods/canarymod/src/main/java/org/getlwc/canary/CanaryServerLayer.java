@@ -18,6 +18,7 @@ import org.getlwc.util.StringUtils;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
+import java.util.UUID;
 
 public class CanaryServerLayer extends ServerLayer {
 
@@ -117,6 +118,23 @@ public class CanaryServerLayer extends ServerLayer {
         } catch (Exception e) {
             System.out.println("Error occurred while registering command: " + baseCommand);
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public UUID getOfflinePlayer(String ident) {
+        Player player = getPlayer(ident);
+
+        if (player != null) {
+            return player.getUUID();
+        }
+
+        net.canarymod.api.OfflinePlayer offlinePlayer = Canary.getServer().getOfflinePlayer(ident);
+
+        if (offlinePlayer != null) {
+            return offlinePlayer.getUUID();
+        } else {
+            return null;
         }
     }
 

@@ -35,6 +35,7 @@ import org.getlwc.entity.Player;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Server mod specific methods
@@ -87,6 +88,15 @@ public abstract class ServerLayer {
      */
     public void onRegisterBaseCommand(String baseCommand, Command command) {
     }
+
+    /**
+     * Resolves an offline player for the ident; either a player name or their UUID.
+     * TODO:- Player info/Offline player obj?
+     *
+     * @param ident
+     * @return
+     */
+    public abstract UUID getOfflinePlayer(String ident);
 
     /**
      * Get a player from the server

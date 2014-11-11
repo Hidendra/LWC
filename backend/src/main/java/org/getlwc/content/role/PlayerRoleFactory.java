@@ -23,8 +23,11 @@ public class PlayerRoleFactory implements RoleFactory<PlayerRole> {
         try {
             uuid = UUID.fromString(value);
         } catch (IllegalArgumentException e) {
-            // TODO attempt to match player name
-            throw new RoleCreationException(_("Could not find UUID for player: {0}", value));
+            uuid = engine.getServerLayer().getOfflinePlayer(value);
+
+            if (uuid == null) {
+                throw new RoleCreationException(_("Could not find UUID for player: {0}", value));
+            }
         }
 
         return new PlayerRole(uuid);
