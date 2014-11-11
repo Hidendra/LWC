@@ -83,7 +83,7 @@ public class AddRemoveCommands {
                 }
 
                 if (role == null) {
-                    player.sendTranslatedMessage("&4Role identifier not recognized: {0}", roleName);
+                    player.sendTranslatedMessage("&4Role identifier not recognized: {0}", baseRoleType);
                     return true;
                 }
 
