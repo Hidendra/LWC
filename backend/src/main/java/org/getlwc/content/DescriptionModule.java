@@ -52,6 +52,7 @@ public final class DescriptionModule {
 
                 if (removingDescription) {
                     protection.removeMeta(META_KEY);
+                    protection.removeComponent(DescriptionComponent.class);
                     player.sendTranslatedMessage("&2Removed successfully.");
                 } else {
                     protection.addMeta(new Metadata(META_KEY, description));
