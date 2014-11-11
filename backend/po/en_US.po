@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2014-11-10 21:47-0400\n"
+"POT-Creation-Date: 2014-11-10 22:03-0400\n"
 "PO-Revision-Date: 2013-06-18 23:02-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -135,6 +135,7 @@ msgid "&4Only owners can remove admins."
 msgstr "&4Only owners can remove admins."
 
 #: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:98
+#: backend/src/main/java/org/getlwc/content/DescriptionModule.java:43
 msgid "&2Removed successfully."
 msgstr "&2Removed successfully."
 
@@ -156,6 +157,7 @@ msgid "&2Changed successfully."
 msgstr "&2Changed successfully."
 
 #: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:122
+#: backend/src/main/java/org/getlwc/content/DescriptionModule.java:46
 msgid "&2Added successfully."
 msgstr "&2Added successfully."
 
@@ -217,6 +219,15 @@ msgstr "&eClick on a protection to view info on it."
 msgid "&7{0}&f: {1}\n"
 msgstr "&7{0}&f: {1}\n"
 
+#: backend/src/main/java/org/getlwc/content/DescriptionModule.java:31
+msgid "Click on the protection to remove its description."
+msgstr "Click on the protection to remove its description."
+
+#: backend/src/main/java/org/getlwc/content/DescriptionModule.java:33
+#, java-format
+msgid "Click on the protection to set the description: &e{0}"
+msgstr "Click on the protection to set the description: &e{0}"
+
 #: backend/src/main/java/org/getlwc/content/role/PlayerRoleFactory.java:29
 #, java-format
 msgid ""
@@ -270,41 +281,41 @@ msgstr ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "
 "trace has been printed out to the log file"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:131
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:132
 #, java-format
 msgid "Server: {0} ({1})"
 msgstr "Server: {0} ({1})"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:132
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:133
 #, java-format
 msgid "Plugin: {0} ({1})"
 msgstr "Plugin: {0} ({1})"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:185
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:186
 #, java-format
 msgid "Economy handler: {0}"
 msgstr "Economy handler: {0}"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:186
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:187
 #, java-format
 msgid "Permission handler: {0}"
 msgstr "Permission handler: {0}"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:302
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:303
 msgid "Shutting down!"
 msgstr "Shutting down!"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:322
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:323
 #, java-format
 msgid "Driver \"{0}\" is not supported."
 msgstr "Driver \"{0}\" is not supported."
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:352
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:353
 #, java-format
 msgid "Connected to the database with driver: {0}"
 msgstr "Connected to the database with driver: {0}"
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:354
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:355
 msgid "Failed to connect to the database!"
 msgstr "Failed to connect to the database!"
 
@@ -418,9 +429,6 @@ msgstr "Using BuildCraft version: {0}"
 
 #~ msgid "&4Invalid attribute name."
 #~ msgstr "&4Invalid attribute name."
-
-#~ msgid "&2Click on your protection to set the attribute"
-#~ msgstr "&2Click on your protection to set the attribute"
 
 #~ msgid "&4Only managers and above can modify the attributes of a protection."
 #~ msgstr ""

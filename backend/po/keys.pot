@@ -11,7 +11,7 @@ msgstr ""
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
 "\n"
-"POT-Creation-Date: 2014-11-10 21:47-0400\n"
+"POT-Creation-Date: 2014-11-10 22:03-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -133,6 +133,7 @@ msgid "&4Only owners can remove admins."
 msgstr ""
 
 #: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:98
+#: backend/src/main/java/org/getlwc/content/DescriptionModule.java:43
 msgid "&2Removed successfully."
 msgstr ""
 
@@ -154,6 +155,7 @@ msgid "&2Changed successfully."
 msgstr ""
 
 #: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:122
+#: backend/src/main/java/org/getlwc/content/DescriptionModule.java:46
 msgid "&2Added successfully."
 msgstr ""
 
@@ -211,6 +213,15 @@ msgstr ""
 msgid "&7{0}&f: {1}\n"
 msgstr ""
 
+#: backend/src/main/java/org/getlwc/content/DescriptionModule.java:31
+msgid "Click on the protection to remove its description."
+msgstr ""
+
+#: backend/src/main/java/org/getlwc/content/DescriptionModule.java:33
+#, java-format
+msgid "Click on the protection to set the description: &e{0}"
+msgstr ""
+
 #: backend/src/main/java/org/getlwc/content/role/PlayerRoleFactory.java:29
 #, java-format
 msgid ""
@@ -254,41 +265,41 @@ msgid ""
 "trace has been printed out to the log file"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:131
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:132
 #, java-format
 msgid "Server: {0} ({1})"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:132
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:133
 #, java-format
 msgid "Plugin: {0} ({1})"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:185
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:186
 #, java-format
 msgid "Economy handler: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:186
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:187
 #, java-format
 msgid "Permission handler: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:302
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:303
 msgid "Shutting down!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:322
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:323
 #, java-format
 msgid "Driver \"{0}\" is not supported."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:352
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:353
 #, java-format
 msgid "Connected to the database with driver: {0}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:354
+#: backend/src/main/java/org/getlwc/SimpleEngine.java:355
 msgid "Failed to connect to the database!"
 msgstr ""
 

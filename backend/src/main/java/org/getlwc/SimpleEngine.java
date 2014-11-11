@@ -39,6 +39,7 @@ import org.getlwc.command.SimpleCommandHandler;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.configuration.FileConfiguration;
 import org.getlwc.configuration.YamlConfiguration;
+import org.getlwc.content.DescriptionModule;
 import org.getlwc.db.Database;
 import org.getlwc.db.DatabaseException;
 import org.getlwc.db.jdbc.JDBCDatabase;
@@ -363,6 +364,8 @@ public class SimpleEngine implements Engine {
             commandHandler.registerCommands(new BaseCommands(this));
             commandHandler.registerCommands(new AddRemoveCommands(this));
             commandHandler.registerCommands(new BenchmarkCommands(this));
+
+            commandHandler.registerCommands(new DescriptionModule());
         } catch (CommandException e) {
             e.printStackTrace();
         }
