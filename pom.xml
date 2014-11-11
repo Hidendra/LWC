@@ -46,6 +46,7 @@
         <module>backend</module>
 
         <!-- Server Mods -->
+        <module>mods/bukkit</module>
         <module>mods/canarymod</module>
         <module>mods/forge</module>
         <module>mods/universal</module>

@@ -2,8 +2,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.getlwc.mods</groupId>
-    <artifactId>universal</artifactId>
-    <name>LWC-Universal</name>
+    <artifactId>bukkit</artifactId>
+    <name>LWC-Bukkit</name>
     <url>getlwc.org</url>
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
@@ -20,6 +20,12 @@
     </properties>
 
     <repositories>
+        <!-- Bukkit -->
+        <repository>
+            <id>bukkit-snapshots</id>
+            <url>http://repo.bukkit.org/content/groups/public</url>
+        </repository>
+
         <repository>
             <id>Plugin Metrics</id>
             <url>http://repo.mcstats.org/content/repositories/public</url>
@@ -34,22 +40,22 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.getlwc.mods</groupId>
+            <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.6.4-R0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.getlwc.mods</groupId>
-            <artifactId>forge</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>net.milkbowl.vault</groupId>
+            <artifactId>Vault</artifactId>
+            <version>1.2.27</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.getlwc.mods</groupId>
-            <artifactId>canarymod</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -86,26 +92,21 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <filters>
+                                <filter>
+                                    <excludes>
+                                        <exclude>org/yaml/**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                             <artifactSet>
                                 <includes>
-                                    <include>org.getlwc.mods:*</include>
+                                    <include>org.getlwc:backend</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <FMLCorePlugin>org.getlwc.forge.asm.LWCCorePlugin</FMLCorePlugin>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
             </plugin>
 
             <plugin>
