@@ -1,6 +1,6 @@
 package org.getlwc.component;
 
-public abstract class AbstractValueComponent<V> {
+public abstract class AbstractValueComponent<V> extends Component {
 
     /**
      * The value stored by this component
