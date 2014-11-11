@@ -26,7 +26,7 @@ public class PlayerRoleFactory implements RoleFactory<PlayerRole> {
             uuid = engine.getServerLayer().getOfflinePlayer(value);
 
             if (uuid == null) {
-                throw new RoleCreationException(_("Could not find UUID for player: {0}", value));
+                throw new RoleCreationException(_("Could not find UUID for player: {0}. Make sure they have signed into the server before.", value));
             }
         }
 

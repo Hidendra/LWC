@@ -11,7 +11,7 @@ msgstr ""
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
 "\n"
-"POT-Creation-Date: 2014-11-08 01:19-0400\n"
+"POT-Creation-Date: 2014-11-10 21:47-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -70,55 +70,32 @@ msgstr ""
 msgid "Using default locale: {0}"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/model/Protection.java:367
+#: api/src/main/java/org/getlwc/model/Protection.java:324
 msgid "explicit_deny"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/model/Protection.java:372
+#: api/src/main/java/org/getlwc/model/Protection.java:329
 msgid "none"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/model/Protection.java:379
+#: api/src/main/java/org/getlwc/model/Protection.java:336
 msgid "guest"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/model/Protection.java:384
+#: api/src/main/java/org/getlwc/model/Protection.java:341
 msgid "depositonly"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/model/Protection.java:389
+#: api/src/main/java/org/getlwc/model/Protection.java:346
 msgid "member"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/model/Protection.java:394
+#: api/src/main/java/org/getlwc/model/Protection.java:351
 msgid "admin"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/model/Protection.java:401
+#: api/src/main/java/org/getlwc/model/Protection.java:358
 msgid "owner"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/attribute/PasswordAttribute.java:29
-msgid ""
-"&4This protection is locked by a password.\n"
-"&4To enter the password, use: &3/cunlock <password>"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/attribute/provider/PasswordProvider.java:29
-#, java-format
-msgid "Failed to register password commands: {0}"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/attribute/provider/PasswordProvider.java:59
-msgid "&4You have no pending /cunlock."
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/attribute/provider/PasswordProvider.java:67
-msgid "&2Granted access to the protection!"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/attribute/provider/PasswordProvider.java:78
-msgid "&4Invalid password."
 msgstr ""
 
 #: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:54
@@ -180,76 +157,68 @@ msgstr ""
 msgid "&2Added successfully."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:87
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:83
 msgid "Similar commands:"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:90
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:86
 msgid "&4No commands found."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:100
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:96
 #, java-format
 msgid "- &6/{0}&r: {1}"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:114
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:152
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:110
 msgid "&eClick on a block to protect it!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:123
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:162
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:119
 msgid "&4That block is not protectable"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:129
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:125
 msgid ""
 "&2Created a new protection successfully.\n"
 "Want to give another player access to your protection?\n"
 "Use: &e/lwc modify NAME (or: /cadd NAME)"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:133
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:184
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:129
 msgid ""
 "&4Failed to create the protection. Your block is most likely not protected."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:180
-msgid ""
-"&2Created a new protection &4with a password&2 successfully.\n"
-"Want to give another player access to your protection?\n"
-"Use: &e/lwc modify NAME (or: /cadd NAME)"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:201
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:146
 msgid "&eClick on a protection to remove the lock!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:210
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:155
 msgid "&2The protection has been removed successfully."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:212
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:157
 msgid "&4You do not have the required access level to do that!"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:230
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:175
 msgid "&eClick on a protection to view info on it."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:270
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:215
 #, java-format
 msgid "&7{0}&f: {1}\n"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/content/role/PlayerRoleFactory.java:27
+#: backend/src/main/java/org/getlwc/content/role/PlayerRoleFactory.java:29
 #, java-format
-msgid "Could not find UUID for player: {0}"
+msgid ""
+"Could not find UUID for player: {0}. Make sure they have signed into the "
+"server before."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/db/jdbc/JDBCDatabase.java:228
+#: backend/src/main/java/org/getlwc/db/jdbc/JDBCDatabase.java:230
 msgid "Creating base database via base.sql"
 msgstr ""
 
@@ -274,11 +243,11 @@ msgid ""
 "org&r"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/EventHelper.java:169
+#: backend/src/main/java/org/getlwc/EventHelper.java:168
 msgid "&4This protection is locked by a magical spell."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/EventHelper.java:175
+#: backend/src/main/java/org/getlwc/EventHelper.java:174
 #, java-format
 msgid ""
 "&cA severe error occurred while processing the event: {0}&cThe full stack "
@@ -355,13 +324,13 @@ msgstr ""
 msgid "  >> {0}: {1}%"
 msgstr ""
 
-#: mods/canarymod/src/main/java/org/getlwc/canary/CanaryServerLayer.java:175
+#: mods/canarymod/src/main/java/org/getlwc/canary/CanaryServerLayer.java:193
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:190
 #, java-format
 msgid "An error was encountered while processing a command: {0}"
 msgstr ""
 
-#: mods/canarymod/src/main/java/org/getlwc/canary/CanaryServerLayer.java:179
+#: mods/canarymod/src/main/java/org/getlwc/canary/CanaryServerLayer.java:197
 #: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:194
 msgid "&4[LWC] An internal error occurred while processing this command"
 msgstr ""
