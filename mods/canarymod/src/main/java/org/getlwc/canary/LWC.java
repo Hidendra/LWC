@@ -62,7 +62,7 @@ public class LWC extends Plugin {
 
         if (!res.getLocale().getName().equals(player.getLocale())) {
             res.setLocale(new Locale(player.getLocale()));
-            engine.getConsoleSender().sendMessage("Player " + getName() + " loaded using locale: " + res.getLocale().toString());
+            engine.getConsoleSender().sendMessage("Player " + res.getName() + " loaded using locale: " + res.getLocale().toString());
         }
 
         return res;
