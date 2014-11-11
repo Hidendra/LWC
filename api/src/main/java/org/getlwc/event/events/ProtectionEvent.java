@@ -32,7 +32,7 @@ package org.getlwc.event.events;
 import org.getlwc.event.Event;
 import org.getlwc.model.Protection;
 
-public class ProtectionEvent implements Event {
+public class ProtectionEvent extends Event {
 
     /**
      * The protection

@@ -32,7 +32,7 @@ package org.getlwc.event.events;
 import org.getlwc.Block;
 import org.getlwc.event.Event;
 
-public class BlockEvent implements Event {
+public class BlockEvent extends Event {
 
     /**
      * The block object

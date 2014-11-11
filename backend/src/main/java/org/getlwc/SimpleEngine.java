@@ -46,6 +46,8 @@ import org.getlwc.db.jdbc.JDBCDatabase;
 import org.getlwc.db.memory.MemoryDatabase;
 import org.getlwc.economy.DefaultEconomyHandler;
 import org.getlwc.economy.EconomyHandler;
+import org.getlwc.event.EventBus;
+import org.getlwc.event.SimpleEventBus;
 import org.getlwc.permission.DefaultPermissionHandler;
 import org.getlwc.permission.PermissionHandler;
 
@@ -55,6 +57,11 @@ public class SimpleEngine implements Engine {
      * The instance of the engine
      */
     private static SimpleEngine instance = null;
+
+    /**
+     * The event bus for this engine
+     */
+    private EventBus eventBus = new SimpleEventBus();
 
     /**
      * The protection manager
@@ -226,6 +233,11 @@ public class SimpleEngine implements Engine {
         this.permissionHandler = permissionHandler;
     }
 
+    @Override
+    public EventBus getEventBus() {
+        return eventBus;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -365,10 +377,25 @@ public class SimpleEngine implements Engine {
             commandHandler.registerCommands(new AddRemoveCommands(this));
             commandHandler.registerCommands(new BenchmarkCommands(this));
 
-            commandHandler.registerCommands(new DescriptionModule());
+            registerObjectEvents(new DescriptionModule());
         } catch (CommandException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Helper method to register events & commands.
+     *
+     * @param object
+     */
+    private void registerObjectEvents(Object object) {
+        try {
+            commandHandler.registerCommands(object);
+        } catch (CommandException e) {
+            e.printStackTrace();
+        }
+
+        eventBus.registerAll(object);
     }
 
 }

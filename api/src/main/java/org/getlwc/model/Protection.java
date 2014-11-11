@@ -35,6 +35,7 @@ import org.getlwc.component.BasicComponentHolder;
 import org.getlwc.component.Component;
 import org.getlwc.component.RoleSetComponent;
 import org.getlwc.entity.Player;
+import org.getlwc.event.events.ProtectionLoadEvent;
 import org.getlwc.role.Role;
 
 import java.util.EnumSet;
@@ -105,6 +106,8 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
         for (Role role : engine.getDatabase().loadProtectionRoles(this)) {
             getComponent(RoleSetComponent.class).add(role);
         }
+
+        engine.getEventBus().dispatch(new ProtectionLoadEvent(this));
     }
 
     /**

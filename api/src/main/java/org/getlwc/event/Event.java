@@ -29,6 +29,19 @@
 
 package org.getlwc.event;
 
-public interface Event {
+public abstract class Event {
+
+    /**
+     * Flag for if the event has been cancelled
+     */
+    private boolean cancelled = false;
+
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
 
 }

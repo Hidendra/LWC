@@ -34,9 +34,17 @@ import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.db.Database;
 import org.getlwc.economy.EconomyHandler;
+import org.getlwc.event.EventBus;
 import org.getlwc.permission.PermissionHandler;
 
 public interface Engine {
+
+    /**
+     * Get the event bus for this engine
+     *
+     * @return
+     */
+    public EventBus getEventBus();
 
     /**
      * Get the protection manager

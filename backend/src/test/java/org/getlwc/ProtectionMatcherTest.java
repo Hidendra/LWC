@@ -7,6 +7,8 @@ import org.getlwc.configuration.Configuration;
 import org.getlwc.configuration.YamlConfiguration;
 import org.getlwc.db.Database;
 import org.getlwc.db.memory.MemoryDatabase;
+import org.getlwc.event.EventBus;
+import org.getlwc.event.SimpleEventBus;
 import org.getlwc.lang.Locale;
 import org.getlwc.world.MemoryWorld;
 import org.getlwc.world.Schematic;
@@ -71,19 +73,23 @@ public class ProtectionMatcherTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        implicitProtections = new ArrayList<Location>();
+        implicitProtections = new ArrayList<>();
 
         configuration = new YamlConfiguration(getClass().getResourceAsStream("/config/config.yml"));
         database = new MemoryDatabase(engine);
         world = new MemoryWorld();
-        CommandHandler commandHandler = new SimpleCommandHandler(engine);
 
         // engine mocks
         when(engine.getServerLayer()).thenReturn(mock(ServerLayer.class));
         when(engine.getConfiguration()).thenReturn(configuration);
         when(engine.getConsoleSender()).thenReturn(consoleCommandSender);
         when(engine.getDatabase()).thenReturn(database);
+
+        CommandHandler commandHandler = new SimpleCommandHandler(engine);
         when(engine.getCommandHandler()).thenReturn(commandHandler);
+
+        EventBus eventBus = new SimpleEventBus();
+        when(engine.getEventBus()).thenReturn(eventBus);
 
         protectionManager = new SimpleProtectionManager(engine);
         when(engine.getProtectionManager()).thenReturn(protectionManager);
