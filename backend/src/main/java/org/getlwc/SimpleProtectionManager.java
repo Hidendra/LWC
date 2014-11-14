@@ -59,11 +59,13 @@ public class SimpleProtectionManager implements ProtectionManager {
         roleRegistry.registerRoleLoader(PlayerRole.TYPE, new PlayerRoleFactory(engine));
     }
 
+    @Override
     public boolean isBlockProtectable(Block block) {
         String enabled = getProtectionConfiguration("enabled", block.getName(), Integer.toString(block.getType()));
         return enabled.equalsIgnoreCase("true") || enabled.equalsIgnoreCase("yes");
     }
 
+    @Override
     public Protection findProtection(Location location) {
         ProtectionMatcher matcher = new SimpleProtectionMatcher(engine);
 
@@ -77,6 +79,7 @@ public class SimpleProtectionManager implements ProtectionManager {
         return blocks.getResultant();
     }
 
+    @Override
     public Protection createProtection(UUID owner, Location location) {
         // First create the protection
         Protection protection = engine.getDatabase().createProtection(location);

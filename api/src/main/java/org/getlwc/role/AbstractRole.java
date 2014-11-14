@@ -18,6 +18,7 @@ public abstract class AbstractRole implements Role {
      */
     public abstract boolean included(Player player);
 
+    @Override
     public Protection.Access getAccess(Protection protection, Player player) {
         if (included(player)) {
             return access;
@@ -26,10 +27,12 @@ public abstract class AbstractRole implements Role {
         }
     }
 
+    @Override
     public Protection.Access getAccess() {
         return access;
     }
 
+    @Override
     public void setAccess(Protection.Access access) {
         this.access = access;
     }

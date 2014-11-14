@@ -52,6 +52,7 @@ public abstract class AbstractTransformer implements IClassTransformer {
      * @param bytes
      * @return
      */
+    @Override
     public abstract byte[] transform(String name, String transformedName, byte[] bytes);
 
     /**

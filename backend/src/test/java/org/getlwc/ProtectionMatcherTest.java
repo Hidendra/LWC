@@ -52,18 +52,22 @@ public class ProtectionMatcherTest {
     private List<Location> implicitProtections;
 
     ConsoleCommandSender consoleCommandSender = new ConsoleCommandSender() {
+        @Override
         public void sendMessage(String message) {
             System.out.println(message);
         }
 
+        @Override
         public boolean hasPermission(String node) {
             return true;
         }
 
+        @Override
         public Locale getLocale() {
             return null;
         }
 
+        @Override
         public void setLocale(Locale locale) {
             throw new UnsupportedOperationException("");
         }

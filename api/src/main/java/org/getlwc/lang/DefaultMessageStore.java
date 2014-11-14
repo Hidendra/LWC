@@ -47,10 +47,12 @@ public class DefaultMessageStore implements MessageStore {
         }
     }
 
+    @Override
     public String getString(String message) {
         return getString(message, defaultLocale == null ? DEFAULT_LOCALE : defaultLocale);
     }
 
+    @Override
     public String getString(String message, Locale locale) {
         if (message == null) {
             throw new UnsupportedOperationException("message cannot be null");
@@ -82,6 +84,7 @@ public class DefaultMessageStore implements MessageStore {
         return bundle.getString(message);
     }
 
+    @Override
     public ResourceBundle getBundle(Locale locale) {
         if (locale == null) {
             return null;
@@ -116,10 +119,12 @@ public class DefaultMessageStore implements MessageStore {
         return bundle;
     }
 
+    @Override
     public Locale getDefaultLocale() {
         return defaultLocale;
     }
 
+    @Override
     public boolean supports(Locale locale) {
         return getBundle(locale) != null;
     }

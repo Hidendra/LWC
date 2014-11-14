@@ -17,14 +17,17 @@ public class VaultEconomyHandler implements EconomyHandler {
         checkVault();
     }
 
+    @Override
     public String getName() {
         return "Vault";
     }
 
+    @Override
     public boolean isEnabled() {
         return checkVault();
     }
 
+    @Override
     public String format(double amount) {
         if (isEnabled()) {
             return economy.format(amount);
@@ -33,6 +36,7 @@ public class VaultEconomyHandler implements EconomyHandler {
         return "n/a";
     }
 
+    @Override
     public boolean deposit(Player player, double amount) {
         if (isEnabled()) {
             EconomyResponse response = economy.depositPlayer(player.getName(), amount);
@@ -42,6 +46,7 @@ public class VaultEconomyHandler implements EconomyHandler {
         return false;
     }
 
+    @Override
     public boolean withdraw(Player player, double amount) {
         if (isEnabled()) {
             EconomyResponse response = economy.withdrawPlayer(player.getName(), amount);

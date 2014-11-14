@@ -68,6 +68,7 @@ public abstract class Player extends PlayerEventHandler implements Entity, Comma
      *
      * @return the player's locale
      */
+    @Override
     public Locale getLocale() {
         return locale;
     }
@@ -77,6 +78,7 @@ public abstract class Player extends PlayerEventHandler implements Entity, Comma
      *
      * @param locale
      */
+    @Override
     public void setLocale(Locale locale) {
         this.locale = locale;
     }

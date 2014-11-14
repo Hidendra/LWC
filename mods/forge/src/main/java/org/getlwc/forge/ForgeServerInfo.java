@@ -34,10 +34,12 @@ import org.getlwc.ServerInfo;
 
 public class ForgeServerInfo implements ServerInfo {
 
+    @Override
     public String getServerImplementationTitle() {
         return "Forge";
     }
 
+    @Override
     public String getServerImplementationVersion() {
         return ForgeVersion.getVersion();
     }

@@ -20,6 +20,7 @@ public class BuildCraft {
         // Add extraction handler
         buildcraft.api.transport.PipeManager.registerExtractionHandler(new buildcraft.api.transport.IExtractionHandler() {
 
+            @Override
             public boolean canExtractItems(Object extractor, net.minecraft.world.World worldHandle, int x, int y, int z) {
                 /**
                  * TODO: This should only be temporary until we PREVENT pipes entirely from being placed next to the chest.
@@ -39,6 +40,7 @@ public class BuildCraft {
                 return true;
             }
 
+            @Override
             public boolean canExtractFluids(Object extractor, net.minecraft.world.World worldHandle, int x, int y, int z) {
                 return true;
             }

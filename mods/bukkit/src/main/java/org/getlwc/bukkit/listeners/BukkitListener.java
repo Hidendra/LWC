@@ -114,6 +114,7 @@ public class BukkitListener implements Listener {
         // when the player first logs in locale is not populated yet from the client in the login process (Packet204LocaleAndViewDistance)
         // So instead we run the LWC join method 20 ticks later
         plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+            @Override
             public void run() {
                 EventHelper.onPlayerJoin(plugin.wrapPlayer(event.getPlayer()));
             }

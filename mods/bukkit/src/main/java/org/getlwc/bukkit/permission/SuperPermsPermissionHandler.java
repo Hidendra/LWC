@@ -15,19 +15,23 @@ public class SuperPermsPermissionHandler implements PermissionHandler {
      */
     private static final String GROUP_PREFIX = "group.";
 
+    @Override
     public String getName() {
         return "Default";
     }
 
+    @Override
     public boolean isEnabled() {
         return true;
     }
 
+    @Override
     public boolean hasPermission(Player player, String node) {
         org.bukkit.entity.Player handle = Bukkit.getPlayer(player.getName());
         return handle != null && handle.hasPermission(node);
     }
 
+    @Override
     public Set<String> getGroups(Player player) {
         org.bukkit.entity.Player handle = Bukkit.getPlayer(player.getName());
         Set<String> groups = new HashSet<String>();

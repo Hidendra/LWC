@@ -59,46 +59,57 @@ public class YamlConfiguration implements Configuration {
         inputStream = true;
     }
 
+    @Override
     public void set(String key, Object value) {
         configuration.setProperty(key, value);
     }
 
+    @Override
     public Object get(String key) {
         return configuration.getProperty(key);
     }
 
+    @Override
     public String getString(String key) {
         return configuration.getString(key);
     }
 
+    @Override
     public String getString(String key, String defaultValue) {
         return configuration.getString(key, defaultValue);
     }
 
+    @Override
     public boolean getBoolean(String key) {
         return configuration.getBoolean(key, false);
     }
 
+    @Override
     public boolean getBoolean(String key, boolean defaultValue) {
         return configuration.getBoolean(key, defaultValue);
     }
 
+    @Override
     public int getInt(String key) {
         return configuration.getInt(key, 0);
     }
 
+    @Override
     public int getInt(String key, int defaultValue) {
         return configuration.getInt(key, defaultValue);
     }
 
+    @Override
     public double getDouble(String key) {
         return configuration.getDouble(key, 0);
     }
 
+    @Override
     public double getDouble(String key, double defaultValue) {
         return configuration.getDouble(key, defaultValue);
     }
 
+    @Override
     public void save() throws IOException {
         if (inputStream) {
             throw new UnsupportedOperationException("Configuration was loaded from an InputStream. Cannot save()");

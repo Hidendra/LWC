@@ -17,14 +17,17 @@ public class ForgeEntity implements Entity {
         this.handle = handle;
     }
 
+    @Override
     public UUID getUUID() {
         return handle.getPersistentID();
     }
 
+    @Override
     public String getName() {
         return handle.getCommandSenderName();
     }
 
+    @Override
     public Location getLocation() {
         try {
             return new Location(new ForgeWorld(handle.worldObj), (int) handle.posX, (int) handle.posY, (int) handle.posZ);

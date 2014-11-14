@@ -35,20 +35,24 @@ import org.getlwc.lang.Locale;
 
 public class ForgeConsoleCommandSender extends ConsoleCommandSender {
 
+    @Override
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
             FMLLog.info("[LWC]: %s", line);
         }
     }
 
+    @Override
     public boolean hasPermission(String node) {
         return true;
     }
 
+    @Override
     public Locale getLocale() {
         return null;
     }
 
+    @Override
     public void setLocale(Locale locale) {
         throw new UnsupportedOperationException("setLocale is unsupported for console senders");
     }

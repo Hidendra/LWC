@@ -91,6 +91,7 @@ public class SimpleCommandHandler implements CommandHandler {
         commands.clear();
     }
 
+    @Override
     public boolean handleCommand(CommandContext context) throws CommandException {
         Tuple<Command, Method> found;
 
@@ -142,6 +143,7 @@ public class SimpleCommandHandler implements CommandHandler {
         return false;
     }
 
+    @Override
     public List<Command> registerCommands(Object object) throws CommandException {
         List<Command> registered = new ArrayList<Command>();
         Class<?> clazz = object.getClass();
@@ -195,6 +197,7 @@ public class SimpleCommandHandler implements CommandHandler {
         return registered;
     }
 
+    @Override
     public List<Command> findSimilar(String command) {
         List<Command> similar = new ArrayList<Command>();
 
@@ -220,6 +223,7 @@ public class SimpleCommandHandler implements CommandHandler {
         return similar;
     }
 
+    @Override
     public boolean canUseCommand(CommandSender sender, Command command) {
         if (!command.permission().isEmpty()) {
             if (!sender.hasPermission(command.permission())) {

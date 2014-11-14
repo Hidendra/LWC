@@ -24,20 +24,24 @@ public class CanaryPlayer extends SimplePlayer {
         this.handle = handle;
     }
 
+    @Override
     public UUID getUUID() {
         return handle.getUUID();
     }
 
+    @Override
     public String getName() {
         return handle.getName();
     }
 
+    @Override
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
             handle.message(Color.replaceColors(line));
         }
     }
 
+    @Override
     public Location getLocation() {
         return new Location(plugin.getWorld(handle.getWorld().getName()), handle.getX(), handle.getY(), handle.getZ());
     }

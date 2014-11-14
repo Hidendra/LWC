@@ -48,20 +48,24 @@ public class BukkitConsoleCommandSender extends ConsoleCommandSender {
         this.handle = handle;
     }
 
+    @Override
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
             handle.sendMessage("[LWC] " + Color.replaceColors(line));
         }
     }
 
+    @Override
     public boolean hasPermission(String node) {
         return true;
     }
 
+    @Override
     public Locale getLocale() {
         return null;
     }
 
+    @Override
     public void setLocale(Locale locale) {
         throw new UnsupportedOperationException("setLocale is unsupported for console senders");
     }

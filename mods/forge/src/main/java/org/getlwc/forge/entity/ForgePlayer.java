@@ -54,14 +54,17 @@ public class ForgePlayer extends SimplePlayer {
         this.mod = LWC.instance;
     }
 
+    @Override
     public UUID getUUID() {
         return handle.getPersistentID();
     }
 
+    @Override
     public String getName() {
         return handle.getCommandSenderName();
     }
 
+    @Override
     public Location getLocation() {
         try {
             return new Location(new ForgeWorld(handle.worldObj), (int) handle.posX, (int) handle.posY, (int) handle.posZ);
@@ -72,6 +75,7 @@ public class ForgePlayer extends SimplePlayer {
         return null;
     }
 
+    @Override
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
             handle.addChatComponentMessage(new ChatComponentText(Color.replaceColors(line)));

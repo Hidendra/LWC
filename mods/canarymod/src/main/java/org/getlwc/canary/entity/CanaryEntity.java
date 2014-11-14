@@ -20,14 +20,17 @@ public class CanaryEntity implements Entity {
         this.handle = handle;
     }
 
+    @Override
     public UUID getUUID() {
         return handle.getUUID();
     }
 
+    @Override
     public String getName() {
         return plugin.getName();
     }
 
+    @Override
     public Location getLocation() {
         return new Location(plugin.getWorld(handle.getWorld().getName()), handle.getX(), handle.getY(), handle.getZ());
     }

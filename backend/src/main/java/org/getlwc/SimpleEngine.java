@@ -177,6 +177,7 @@ public class SimpleEngine implements Engine {
         return instance;
     }
 
+    @Override
     public void startup() {
         commandHandler = new SimpleCommandHandler(this);
         protectionManager = new SimpleProtectionManager(this);
@@ -191,10 +192,12 @@ public class SimpleEngine implements Engine {
         consoleSender.sendTranslatedMessage("Permission handler: {0}", permissionHandler.getName());
     }
 
+    @Override
     public ResourceDownloader getResourceDownloader() {
         return downloader;
     }
 
+    @Override
     public EconomyHandler getEconomyHandler() {
         return economyHandler;
     }
@@ -208,6 +211,7 @@ public class SimpleEngine implements Engine {
         this.economyHandler = economyHandler;
     }
 
+    @Override
     public PermissionHandler getPermissionHandler() {
         return permissionHandler;
     }
@@ -226,18 +230,22 @@ public class SimpleEngine implements Engine {
         return eventBus;
     }
 
+    @Override
     public ProtectionManager getProtectionManager() {
         return protectionManager;
     }
 
+    @Override
     public ServerLayer getServerLayer() {
         return serverLayer;
     }
 
+    @Override
     public String getImplementationVersion() {
         return SimpleEngine.class.getPackage().getImplementationVersion();
     }
 
+    @Override
     public ServerInfo getServerInfo() {
         return serverInfo;
     }
@@ -247,18 +255,22 @@ public class SimpleEngine implements Engine {
         return SimpleEngine.class.getPackage().getImplementationTitle();
     }
 
+    @Override
     public CommandHandler getCommandHandler() {
         return commandHandler;
     }
 
+    @Override
     public ConsoleCommandSender getConsoleSender() {
         return consoleSender;
     }
 
+    @Override
     public Database getDatabase() {
         return database;
     }
 
+    @Override
     public Configuration getConfiguration() {
         return configuration;
     }
@@ -272,6 +284,7 @@ public class SimpleEngine implements Engine {
         return languagesConfig;
     }
 
+    @Override
     public void shutdown() {
         consoleSender.sendTranslatedMessage("Shutting down!");
         commandHandler.clearCommands();

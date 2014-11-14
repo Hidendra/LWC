@@ -56,10 +56,12 @@ public class ForgeWorld implements World {
         return handle;
     }
 
+    @Override
     public String getName() {
         return handle.getWorldInfo().getWorldName();
     }
 
+    @Override
     public Block getBlockAt(int x, int y, int z) {
         return new org.getlwc.forge.world.ForgeBlock(this, x, y, z);
     }

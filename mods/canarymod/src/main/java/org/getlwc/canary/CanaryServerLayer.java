@@ -52,46 +52,57 @@ public class CanaryServerLayer extends ServerLayer {
             // create the annotation we will use instead
             Command commandAnnotation = new Command() {
 
+                @Override
                 public String[] aliases() {
                     return new String[]{baseCommand}; // required
                 }
 
+                @Override
                 public String[] permissions() {
                     return new String[]{command.permission()}; // required
                 }
 
+                @Override
                 public String description() {
                     return command.description(); // required
                 }
 
+                @Override
                 public String toolTip() {
                     return ""; // required
                 }
 
+                @Override
                 public String parent() {
                     return "";
                 }
 
+                @Override
                 public String helpLookup() {
                     return "";
                 }
 
+                @Override
                 public String[] searchTerms() {
                     return new String[]{""};
                 }
 
+                @Override
                 public int min() {
                     return command.min();
                 }
 
+                @Override
                 public int max() {
                     return command.max();
                 }
 
+                @Override
                 public int version() {
                     return 1;
                 }
 
+                @Override
                 public Class<? extends Annotation> annotationType() {
                     return Command.class;
                 }

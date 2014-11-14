@@ -51,6 +51,7 @@ public class LWCCorePlugin implements IFMLLoadingPlugin, IFMLCallHook {
         return null;
     }
 
+    @Override
     public String[] getASMTransformerClass() {
         INITIALIZED = true;
         return new String[] {
@@ -67,22 +68,27 @@ public class LWCCorePlugin implements IFMLLoadingPlugin, IFMLCallHook {
         };
     }
 
+    @Override
     public String getModContainerClass() {
         return null;
     }
 
+    @Override
     public String getSetupClass() {
         return "org.getlwc.forge.asm.LWCCorePlugin";
     }
 
+    @Override
     public void injectData(Map<String, Object> data) {
 
     }
 
+    @Override
     public String getAccessTransformerClass() {
         return null;
     }
 
+    @Override
     public Void call() throws Exception {
         if (LWC.instance == null) {
             System.out.println("LWC => init()");

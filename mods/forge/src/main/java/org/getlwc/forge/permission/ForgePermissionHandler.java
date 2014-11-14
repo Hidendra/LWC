@@ -12,14 +12,17 @@ import java.util.Set;
 // might as well be no permission plugin
 public class ForgePermissionHandler implements PermissionHandler {
 
+    @Override
     public String getName() {
         return "Default";
     }
 
+    @Override
     public boolean isEnabled() {
         return true;
     }
 
+    @Override
     public boolean hasPermission(Player player, String node) {
         if (!node.startsWith("lwc.mod") && !node.startsWith("lwc.admin")) {
             return true;
@@ -30,6 +33,7 @@ public class ForgePermissionHandler implements PermissionHandler {
         }
     }
 
+    @Override
     public Set<String> getGroups(Player player) {
         return new HashSet<String>();
     }

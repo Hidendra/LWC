@@ -82,19 +82,23 @@ public class BukkitPlayer extends SimplePlayer {
         }
     }
 
+    @Override
     public UUID getUUID() {
         return handle.getUniqueId();
     }
 
+    @Override
     public String getName() {
         return handle.getName();
     }
 
+    @Override
     public Location getLocation() {
         org.bukkit.Location lhandle = handle.getLocation();
         return new Location(plugin.getWorld(lhandle.getWorld().getName()), lhandle.getX(), lhandle.getY(), lhandle.getZ());
     }
 
+    @Override
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
             handle.sendMessage(Color.replaceColors(line));

@@ -14,10 +14,12 @@ public class CanaryWorld implements World {
         this.handle = handle;
     }
 
+    @Override
     public String getName() {
         return handle.getName();
     }
 
+    @Override
     public Block getBlockAt(int x, int y, int z) {
         return new CanaryBlock(this, handle.getBlockAt(x, y, z));
     }

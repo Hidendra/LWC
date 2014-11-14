@@ -43,17 +43,21 @@ public class NativeCommandHandler extends CommandBase {
         this.command = command;
     }
 
+    @Override
     public String getCommandName() {
         return command;
     }
 
+    @Override
     public String getCommandUsage(ICommandSender iCommandSender) {
         return "";
     }
 
+    @Override
     public void processCommand(ICommandSender iCommandSender, String[] strings) {
     }
 
+    @Override
     public int compareTo(Object o) {
         if (!(o instanceof CommandBase)) {
             return 0;
