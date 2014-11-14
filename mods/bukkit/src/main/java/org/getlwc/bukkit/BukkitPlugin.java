@@ -97,36 +97,6 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
         return layer.getWorld(worldName);
     }
 
-    /**
-     * Called when a player uses a command
-     *
-     * @param event
-     */
-    @SuppressWarnings("unused")
-    @EventHandler(ignoreCancelled = true)
-    public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
-        Player player = wrapPlayer(event.getPlayer());
-        String message = event.getMessage();
-
-        if (_onCommand(CommandContext.Type.PLAYER, player, message)) {
-            event.setCancelled(true);
-        }
-    }
-
-    /**
-     * Called when the console uses a command.
-     * Using LOWEST because of kTriggers
-     *
-     * @param event
-     */
-    @SuppressWarnings("unused")
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onServerCommand(ServerCommandEvent event) {
-        if (_onCommand(CommandContext.Type.SERVER, engine.getConsoleSender(), event.getCommand())) {
-            // TODO how to cancel? just change the command to something else?
-        }
-    }
-
     @Override
     public void onEnable() {
         logger = this.getLogger();
@@ -149,55 +119,6 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         engine = null;
-    }
-
-    /**
-     * Command processor
-     *
-     * @param sender
-     * @param message the name of the command followed by any arguments.
-     * @return true if the command event should be cancelled
-     */
-    private boolean _onCommand(CommandContext.Type type, CommandSender sender, String message) {
-        // Normalize the command, removing any prepended /, etc
-        message = normalizeCommand(message);
-        int indexOfSpace = message.indexOf(' ');
-
-        try {
-            if (indexOfSpace != -1) {
-                String command = message.substring(0, indexOfSpace);
-                String arguments = message.substring(indexOfSpace + 1);
-
-                return engine.getCommandHandler().handleCommand(new CommandContext(type, sender, command, arguments));
-            } else { // No arguments
-                return engine.getCommandHandler().handleCommand(new CommandContext(type, sender, message));
-            }
-        } catch (CommandException e) {
-            engine.getConsoleSender().sendTranslatedMessage("An error was encountered while processing a command: {0}", e.getMessage());
-            e.printStackTrace();
-
-            sender.sendTranslatedMessage("&4[LWC] An internal error occurred while processing this command");
-            return false;
-        }
-    }
-
-    /**
-     * Normalize a command, making player and console commands appear to be the same format
-     *
-     * @param message
-     * @return
-     */
-    private String normalizeCommand(String message) {
-        // Remove a prepended /
-        if (message.startsWith("/")) {
-            if (message.length() == 1) {
-                return "";
-            } else {
-                message = message.substring(1);
-            }
-        }
-
-        return message.trim();
     }
 
     /**

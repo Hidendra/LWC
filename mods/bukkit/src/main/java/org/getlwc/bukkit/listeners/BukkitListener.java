@@ -34,6 +34,7 @@ import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
@@ -47,9 +48,11 @@ import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.getlwc.Block;
@@ -59,6 +62,9 @@ import org.getlwc.World;
 import org.getlwc.bukkit.BukkitPlugin;
 import org.getlwc.bukkit.entity.BukkitEntity;
 import org.getlwc.bukkit.world.BukkitBlock;
+import org.getlwc.command.CommandContext;
+import org.getlwc.command.CommandException;
+import org.getlwc.command.CommandSender;
 import org.getlwc.entity.Entity;
 import org.getlwc.entity.Player;
 
@@ -70,6 +76,36 @@ public class BukkitListener implements Listener {
 
     public BukkitListener(BukkitPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    /**
+     * Called when a player uses a command
+     *
+     * @param event
+     */
+    @SuppressWarnings("unused")
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+        Player player = plugin.wrapPlayer(event.getPlayer());
+        String message = event.getMessage();
+
+        if (handlerCommandEvent(CommandContext.Type.PLAYER, player, message)) {
+            event.setCancelled(true);
+        }
+    }
+
+    /**
+     * Called when the console uses a command.
+     * Using LOWEST because of kTriggers
+     *
+     * @param event
+     */
+    @SuppressWarnings("unused")
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onServerCommand(ServerCommandEvent event) {
+        if (handlerCommandEvent(CommandContext.Type.SERVER, plugin.getEngine().getConsoleSender(), event.getCommand())) {
+            // TODO how to cancel? just change the command to something else?
+        }
     }
 
     @SuppressWarnings("unused")
@@ -318,6 +354,55 @@ public class BukkitListener implements Listener {
         Block block = new BukkitBlock(world, location.getBlock());
 
         return EventHelper.onInventoryMoveItem(block.getLocation());
+    }
+
+    /**
+     * Command processor
+     *
+     * @param sender
+     * @param message the name of the command followed by any arguments.
+     * @return true if the command event should be cancelled
+     */
+    private boolean handlerCommandEvent(CommandContext.Type type, CommandSender sender, String message) {
+        // Normalize the command, removing any prepended /, etc
+        message = normalizeCommand(message);
+        int indexOfSpace = message.indexOf(' ');
+
+        try {
+            if (indexOfSpace != -1) {
+                String command = message.substring(0, indexOfSpace);
+                String arguments = message.substring(indexOfSpace + 1);
+
+                return plugin.getEngine().getCommandHandler().handleCommand(new CommandContext(type, sender, command, arguments));
+            } else { // No arguments
+                return plugin.getEngine().getCommandHandler().handleCommand(new CommandContext(type, sender, message));
+            }
+        } catch (CommandException e) {
+            plugin.getEngine().getConsoleSender().sendTranslatedMessage("An error was encountered while processing a command: {0}", e.getMessage());
+            e.printStackTrace();
+
+            sender.sendTranslatedMessage("&4[LWC] An internal error occurred while processing this command");
+            return false;
+        }
+    }
+
+    /**
+     * Normalize a command, making player and console commands appear to be the same format
+     *
+     * @param message
+     * @return
+     */
+    private String normalizeCommand(String message) {
+        // Remove a prepended /
+        if (message.startsWith("/")) {
+            if (message.length() == 1) {
+                return "";
+            } else {
+                message = message.substring(1);
+            }
+        }
+
+        return message.trim();
     }
 
 }
