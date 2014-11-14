@@ -82,40 +82,25 @@ public class BukkitPlayer extends SimplePlayer {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public UUID getUUID() {
         return handle.getUniqueId();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public String getName() {
         return handle.getName();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Location getLocation() {
         org.bukkit.Location lhandle = handle.getLocation();
         return new Location(plugin.getWorld(lhandle.getWorld().getName()), lhandle.getX(), lhandle.getY(), lhandle.getZ());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
             handle.sendMessage(Color.replaceColors(line));
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ItemStack getItemInHand() {
         return plugin.castItemStack(handle.getItemInHand());

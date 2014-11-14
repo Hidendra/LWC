@@ -157,9 +157,6 @@ public class JDBCDatabase implements Database {
         engine.getResourceDownloader().ensureResourceInstalled("c3p0");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public boolean connect() throws DatabaseException {
         Driver driver = details.getDriver();
 
@@ -267,9 +264,6 @@ public class JDBCDatabase implements Database {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void disconnect() {
         pool.close();
         pool = null;
@@ -336,9 +330,6 @@ public class JDBCDatabase implements Database {
         return -1;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Protection createProtection(Location location) {
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protections (updated, created, accessed) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
@@ -394,9 +385,6 @@ public class JDBCDatabase implements Database {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Protection loadProtection(Location location) {
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("SELECT protection_id FROM " + details.getPrefix() + "protection_blocks WHERE x = ? AND y = ? AND z = ? AND world = ?")) {
@@ -418,9 +406,6 @@ public class JDBCDatabase implements Database {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Protection loadProtection(int id) {
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("SELECT id, updated, created, accessed FROM " + details.getPrefix() + "protections WHERE id = ?")) {
@@ -438,9 +423,6 @@ public class JDBCDatabase implements Database {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void saveProtection(Protection protection) {
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("UPDATE " + details.getPrefix() + "protections SET created = ?, updated = ?, accessed = ? WHERE id = ?")) {
@@ -455,9 +437,6 @@ public class JDBCDatabase implements Database {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void removeProtection(Protection protection) {
         removeAllProtectionRoles(protection);
         removeAllProtectionMetadata(protection);
@@ -471,9 +450,6 @@ public class JDBCDatabase implements Database {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void saveOrCreateProtectionRole(Protection protection, Role role) {
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_roles (protection_id, type, name, role) VALUES (?, ?, ?, ?)")) {
@@ -497,9 +473,6 @@ public class JDBCDatabase implements Database {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void removeProtectionRole(Protection protection, Role role) {
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_roles WHERE protection_id = ? AND type = ? AND name = ?")) {
@@ -512,9 +485,6 @@ public class JDBCDatabase implements Database {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void removeAllProtectionRoles(Protection protection) {
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_roles WHERE protection_id = ?")) {
@@ -525,9 +495,6 @@ public class JDBCDatabase implements Database {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void saveOrCreateProtectionMetadata(Protection protection, Metadata meta) {
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_meta (protection_id, meta_name, meta_value) VALUES (?, ?, ?)")) {
@@ -548,9 +515,6 @@ public class JDBCDatabase implements Database {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void removeProtectionMetadata(Protection protection, Metadata meta) {
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_meta WHERE protection_id = ? AND meta_name = ?")) {
@@ -562,9 +526,6 @@ public class JDBCDatabase implements Database {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void removeAllProtectionMetadata(Protection protection) {
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_meta WHERE protection_id = ?")) {
@@ -575,9 +536,6 @@ public class JDBCDatabase implements Database {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Set<Metadata> loadProtectionMetadata(Protection protection) {
         Set<Metadata> metadata = new HashSet<>();
 
@@ -600,9 +558,6 @@ public class JDBCDatabase implements Database {
         return metadata;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Set<Role> loadProtectionRoles(Protection protection) {
         Set<Role> roles = new HashSet<>();
 

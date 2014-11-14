@@ -92,9 +92,6 @@ public class MemoryDatabase implements Database {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     private void internalRemoveProtection(Protection protection) {
         protections.remove(protection);
         protectionsIndexById.remove(protection.getId());
@@ -106,16 +103,10 @@ public class MemoryDatabase implements Database {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public boolean connect() throws DatabaseException {
         return true; // already connected
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void disconnect() {
         protections.clear();
         protectionsIndexById.clear();
@@ -127,9 +118,6 @@ public class MemoryDatabase implements Database {
         // Not needed
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Protection createProtection(Location location) {
         Protection protection = new Protection(engine, protectionsId.getAndIncrement());
         protection.addComponent(new LocationSetComponent());
@@ -139,30 +127,18 @@ public class MemoryDatabase implements Database {
         return protection;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Protection loadProtection(Location location) {
         return protectionsIndexByLocation.get(location);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Protection loadProtection(int id) {
         return protectionsIndexById.get(id);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void saveProtection(Protection protection) {
         internalAddProtection(protection);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void removeProtection(Protection protection) {
         internalRemoveProtection(protection);
     }
@@ -172,51 +148,30 @@ public class MemoryDatabase implements Database {
         return new HashSet<>();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void saveOrCreateProtectionRole(Protection protection, Role role) {
         // no need to create
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void removeProtectionRole(Protection protection, Role role) {
         // it will remove itself from the Protection object
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void removeAllProtectionRoles(Protection protection) {
         // it will remove itself from the Protection object
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void saveOrCreateProtectionMetadata(Protection protection, Metadata meta) {
         // no need to create
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void removeProtectionMetadata(Protection protection, Metadata meta) {
         // it will remove itself from the Protection object
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void removeAllProtectionMetadata(Protection protection) {
         // it will remove itself from the Protection object
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Set<Metadata> loadProtectionMetadata(Protection protection) {
         return new HashSet<>(); // nothing to load from
     }

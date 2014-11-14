@@ -40,9 +40,6 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
         this.engine = engine;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public ProtectionSet matchProtection(Block base) {
         ProtectionSet blocks = new ProtectionSet(engine);
 

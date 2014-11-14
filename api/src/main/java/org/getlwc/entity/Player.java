@@ -58,9 +58,7 @@ public abstract class Player extends PlayerEventHandler implements Entity, Comma
      */
     public abstract ItemStack getItemInHand();
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void sendTranslatedMessage(String message, Object... arguments) {
         sendMessage(_(message, this, arguments));
     }

@@ -47,16 +47,10 @@ public class DefaultMessageStore implements MessageStore {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public String getString(String message) {
         return getString(message, defaultLocale == null ? DEFAULT_LOCALE : defaultLocale);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public String getString(String message, Locale locale) {
         if (message == null) {
             throw new UnsupportedOperationException("message cannot be null");
@@ -88,9 +82,6 @@ public class DefaultMessageStore implements MessageStore {
         return bundle.getString(message);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public ResourceBundle getBundle(Locale locale) {
         if (locale == null) {
             return null;
@@ -125,16 +116,10 @@ public class DefaultMessageStore implements MessageStore {
         return bundle;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Locale getDefaultLocale() {
         return defaultLocale;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public boolean supports(Locale locale) {
         return getBundle(locale) != null;
     }

@@ -104,9 +104,6 @@ public class SimpleResourceDownloader implements ResourceDownloader {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void ensureResourceInstalled(String resource) {
         if (baseUrl == null) {
             JSONObject json = (JSONObject) JSONValue.parse(new InputStreamReader(getClass().getResourceAsStream("/resources.json")));

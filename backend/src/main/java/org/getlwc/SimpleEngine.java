@@ -177,9 +177,6 @@ public class SimpleEngine implements Engine {
         return instance;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void startup() {
         commandHandler = new SimpleCommandHandler(this);
         protectionManager = new SimpleProtectionManager(this);
@@ -194,16 +191,10 @@ public class SimpleEngine implements Engine {
         consoleSender.sendTranslatedMessage("Permission handler: {0}", permissionHandler.getName());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public ResourceDownloader getResourceDownloader() {
         return downloader;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public EconomyHandler getEconomyHandler() {
         return economyHandler;
     }
@@ -217,9 +208,6 @@ public class SimpleEngine implements Engine {
         this.economyHandler = economyHandler;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public PermissionHandler getPermissionHandler() {
         return permissionHandler;
     }
@@ -238,30 +226,18 @@ public class SimpleEngine implements Engine {
         return eventBus;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public ProtectionManager getProtectionManager() {
         return protectionManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public ServerLayer getServerLayer() {
         return serverLayer;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public String getImplementationVersion() {
         return SimpleEngine.class.getPackage().getImplementationVersion();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public ServerInfo getServerInfo() {
         return serverInfo;
     }
@@ -271,30 +247,18 @@ public class SimpleEngine implements Engine {
         return SimpleEngine.class.getPackage().getImplementationTitle();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public CommandHandler getCommandHandler() {
         return commandHandler;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public ConsoleCommandSender getConsoleSender() {
         return consoleSender;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Database getDatabase() {
         return database;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Configuration getConfiguration() {
         return configuration;
     }
@@ -308,9 +272,6 @@ public class SimpleEngine implements Engine {
         return languagesConfig;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void shutdown() {
         consoleSender.sendTranslatedMessage("Shutting down!");
         commandHandler.clearCommands();

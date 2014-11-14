@@ -27,23 +27,14 @@ public class BukkitEntity implements Entity {
         this.handle = handle;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public UUID getUUID() {
         return handle.getUniqueId();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public String getName() {
         return handle.getType().getName();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Location getLocation() {
         org.bukkit.Location lhandle = handle.getLocation();
         return new Location(plugin.getWorld(lhandle.getWorld().getName()), lhandle.getX(), lhandle.getY(), lhandle.getZ());

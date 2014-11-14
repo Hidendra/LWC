@@ -14,16 +14,10 @@ public class MemoryWorld implements World {
      */
     private Map<Location, Block> blocks = new HashMap<>();
 
-    /**
-     * {@inheritDoc}
-     */
     public String getName() {
         return "memory";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Block getBlockAt(int x, int y, int z) {
         Location point = new Location(this, x, y, z);
         Block block = blocks.get(point);

@@ -4,9 +4,6 @@ import org.getlwc.entity.Player;
 
 public class DefaultEconomyHandler implements EconomyHandler {
 
-    /**
-     * {@inheritDoc}
-     */
     public String getName() {
         return "None";
     }
