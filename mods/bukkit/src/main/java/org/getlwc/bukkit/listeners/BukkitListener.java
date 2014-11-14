@@ -66,15 +66,13 @@ import java.util.List;
 
 public class BukkitListener implements Listener {
 
-    /**
-     * The plugin object
-     */
     private BukkitPlugin plugin;
 
     public BukkitListener(BukkitPlugin plugin) {
         this.plugin = plugin;
     }
 
+    @SuppressWarnings("unused")
     @EventHandler(ignoreCancelled = true)
     public void playerJoin(final PlayerJoinEvent event) {
         // when the player first logs in locale is not populated yet from the client in the login process (Packet204LocaleAndViewDistance)
@@ -86,11 +84,13 @@ public class BukkitListener implements Listener {
         }, 20);
     }
 
+    @SuppressWarnings("unused")
     @EventHandler(ignoreCancelled = true)
     public void playerQuit(PlayerQuitEvent event) {
         EventHelper.onPlayerQuit(plugin.wrapPlayer(event.getPlayer()));
     }
 
+    @SuppressWarnings("unused")
     @EventHandler(ignoreCancelled = true)
     public void playerInteract(PlayerInteractEvent event) {
         Player player = plugin.wrapPlayer(event.getPlayer());
@@ -103,6 +103,7 @@ public class BukkitListener implements Listener {
         }
     }
 
+    @SuppressWarnings("unused")
     @EventHandler(ignoreCancelled = true)
     public void entityInteract(EntityInteractEvent event) {
         Entity entity = new BukkitEntity(plugin, event.getEntity());
@@ -114,6 +115,7 @@ public class BukkitListener implements Listener {
         }
     }
 
+    @SuppressWarnings("unused")
     @EventHandler(ignoreCancelled = true)
     public void blockBreak(BlockBreakEvent event) {
         Player player = plugin.wrapPlayer(event.getPlayer());
@@ -125,6 +127,7 @@ public class BukkitListener implements Listener {
         }
     }
 
+    @SuppressWarnings("unused")
     @EventHandler(ignoreCancelled = true)
     public void entityBreakDoor(EntityBreakDoorEvent event) {
         Entity entity = new BukkitEntity(plugin, event.getEntity());
@@ -136,6 +139,7 @@ public class BukkitListener implements Listener {
         }
     }
 
+    @SuppressWarnings("unused")
     @EventHandler(ignoreCancelled = true)
     public void blockPlace(BlockPlaceEvent event) {
         Player player = plugin.wrapPlayer(event.getPlayer());
@@ -147,6 +151,7 @@ public class BukkitListener implements Listener {
         }
     }
 
+    @SuppressWarnings("unused")
     @EventHandler(ignoreCancelled = true)
     public void signChange(SignChangeEvent event) {
         Player player = plugin.wrapPlayer(event.getPlayer());
@@ -158,6 +163,7 @@ public class BukkitListener implements Listener {
         }
     }
 
+    @SuppressWarnings("unused")
     @EventHandler(ignoreCancelled = true)
     public void redstoneChange(BlockRedstoneEvent event) {
         World world = plugin.getWorld(event.getBlock().getWorld().getName());
@@ -168,6 +174,7 @@ public class BukkitListener implements Listener {
         }
     }
 
+    @SuppressWarnings("unused")
     @EventHandler(ignoreCancelled = true)
     public void inventoryMoveItem(InventoryMoveItemEvent event) {
         if (handleMoveItemEvent(event.getSource()) || handleMoveItemEvent(event.getDestination())) {
@@ -175,6 +182,7 @@ public class BukkitListener implements Listener {
         }
     }
 
+    @SuppressWarnings("unused")
     @EventHandler(ignoreCancelled = true)
     public void inventoryClickItem(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof org.bukkit.entity.Player)) {
@@ -217,21 +225,15 @@ public class BukkitListener implements Listener {
             return;
         }
 
-        boolean doubleClick = false;
+        boolean doubleClick = false; // ?
 
-        // backwards compatibility
-        try {
-            // doubleClick = event.isDoubleClick();
-        } catch (Throwable e) {
-        } // OK, just old build
-
-        //
         if (EventHelper.onInventoryClickItem(player, plugin.castLocation(location), plugin.castItemStack(event.getCurrentItem()), plugin.castItemStack(event.getCursor()), event.getSlot(), event.getRawSlot(), event.isRightClick(), event.isShiftClick(), doubleClick)) {
             event.setCancelled(true);
             event.setResult(Event.Result.DENY);
         }
     }
 
+    @SuppressWarnings("unused")
     @EventHandler(ignoreCancelled = true)
     public void entityExplode(EntityExplodeEvent event) {
         ExplosionType type = null;
@@ -257,6 +259,7 @@ public class BukkitListener implements Listener {
         }
     }
 
+    @SuppressWarnings("unused")
     @EventHandler(ignoreCancelled = true)
     public void pistonExtend(BlockPistonExtendEvent event) {
         World world = plugin.getWorld(event.getBlock().getWorld().getName());
@@ -267,6 +270,7 @@ public class BukkitListener implements Listener {
         }
     }
 
+    @SuppressWarnings("unused")
     @EventHandler(ignoreCancelled = true)
     public void pistonRetract(BlockPistonRetractEvent event) {
         World world = plugin.getWorld(event.getBlock().getWorld().getName());

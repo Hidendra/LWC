@@ -61,14 +61,10 @@ import java.util.logging.Logger;
 public class BukkitPlugin extends JavaPlugin implements Listener {
 
     private Logger logger = null;
-
-    /**
-     * The LWC engine
-     */
     private SimpleEngine engine;
 
     /**
-     * The server layer
+     * The server layer that provides Bukkit-specific calls
      */
     private final ServerLayer layer = new BukkitServerLayer(this);
 
@@ -106,13 +102,12 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
      *
      * @param event
      */
+    @SuppressWarnings("unused")
     @EventHandler(ignoreCancelled = true)
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
-        // Create the internal object
         Player player = wrapPlayer(event.getPlayer());
         String message = event.getMessage();
 
-        // Should we cancel the object?
         if (_onCommand(CommandContext.Type.PLAYER, player, message)) {
             event.setCancelled(true);
         }
@@ -124,6 +119,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
      *
      * @param event
      */
+    @SuppressWarnings("unused")
     @EventHandler(priority = EventPriority.LOWEST)
     public void onServerCommand(ServerCommandEvent event) {
         if (_onCommand(CommandContext.Type.SERVER, engine.getConsoleSender(), event.getCommand())) {
@@ -134,8 +130,6 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         logger = this.getLogger();
-
-        // Create a new LWC engine
         engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new BukkitServerInfo(), new BukkitConsoleCommandSender(getServer().getConsoleSender()));
 
         // Register events
@@ -167,8 +161,6 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
     private boolean _onCommand(CommandContext.Type type, CommandSender sender, String message) {
         // Normalize the command, removing any prepended /, etc
         message = normalizeCommand(message);
-
-        // Separate the command and arguments
         int indexOfSpace = message.indexOf(' ');
 
         try {
@@ -181,14 +173,10 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
                 return engine.getCommandHandler().handleCommand(new CommandContext(type, sender, message));
             }
         } catch (CommandException e) {
-            // Notify the console
             engine.getConsoleSender().sendTranslatedMessage("An error was encountered while processing a command: {0}", e.getMessage());
             e.printStackTrace();
 
-            // Notify the player / console
             sender.sendTranslatedMessage("&4[LWC] An internal error occurred while processing this command");
-
-            // We failed.. oh we failed
             return false;
         }
     }
@@ -233,23 +221,6 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
         List<Block> ret = new ArrayList<Block>();
 
         for (org.bukkit.block.Block block : list) {
-            ret.add(world.getBlockAt(block.getX(), block.getY(), block.getZ()));
-        }
-
-        return ret;
-    }
-
-    /**
-     * Cast a list of state blocks to our native block list
-     *
-     * @param world
-     * @param list
-     * @return
-     */
-    public List<Block> castBlockStateList(World world, List<org.bukkit.block.BlockState> list) {
-        List<Block> ret = new ArrayList<Block>();
-
-        for (org.bukkit.block.BlockState block : list) {
             ret.add(world.getBlockAt(block.getX(), block.getY(), block.getZ()));
         }
 

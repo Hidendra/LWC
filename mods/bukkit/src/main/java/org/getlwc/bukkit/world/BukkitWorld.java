@@ -35,7 +35,7 @@ import org.getlwc.World;
 public class BukkitWorld implements World {
 
     /**
-     * The bukkit world handle
+     * native Bukkit handle
      */
     private final org.bukkit.World handle;
 
@@ -47,16 +47,10 @@ public class BukkitWorld implements World {
         this.handle = handle;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public String getName() {
         return handle.getName();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Block getBlockAt(int x, int y, int z) {
         org.bukkit.block.Block blockHandle = handle.getBlockAt(x, y, z);
 

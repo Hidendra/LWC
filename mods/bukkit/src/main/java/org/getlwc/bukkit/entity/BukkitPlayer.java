@@ -44,14 +44,10 @@ import java.util.UUID;
 public class BukkitPlayer extends SimplePlayer {
 
     private Engine engine;
-
-    /**
-     * The plugin object
-     */
     private final BukkitPlugin plugin;
 
     /**
-     * The player handle
+     * native Bukkit handle
      */
     private final org.bukkit.entity.Player handle;
 

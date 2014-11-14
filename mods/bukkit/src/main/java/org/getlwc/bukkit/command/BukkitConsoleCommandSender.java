@@ -36,7 +36,7 @@ import org.getlwc.util.Color;
 public class BukkitConsoleCommandSender extends ConsoleCommandSender {
 
     /**
-     * The command sender handle
+     * native Bukkit handler
      */
     private org.bukkit.command.ConsoleCommandSender handle;
 
@@ -48,32 +48,20 @@ public class BukkitConsoleCommandSender extends ConsoleCommandSender {
         this.handle = handle;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
             handle.sendMessage("[LWC] " + Color.replaceColors(line));
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public boolean hasPermission(String node) {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Locale getLocale() {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void setLocale(Locale locale) {
         throw new UnsupportedOperationException("setLocale is unsupported for console senders");
     }

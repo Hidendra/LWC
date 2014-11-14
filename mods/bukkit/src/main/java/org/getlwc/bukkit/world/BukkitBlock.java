@@ -32,7 +32,6 @@ package org.getlwc.bukkit.world;
 import org.getlwc.Block;
 import org.getlwc.World;
 
-// TODO implement hashCode / equals
 public class BukkitBlock extends Block {
 
     /**
@@ -54,65 +53,47 @@ public class BukkitBlock extends Block {
         this.handle = handle;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public int getType() {
         return handle.getTypeId();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public byte getData() {
         return handle.getData();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public World getWorld() {
         return world;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public int getX() {
         return handle.getX();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public int getY() {
         return handle.getY();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public int getZ() {
         return handle.getZ();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void setType(int type) {
         handle.setTypeId(type);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void setData(byte data) {
         handle.setData(data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean hasTileEntity() {
         // Bukkit does not expose tile entities in any way shape or form or even if they exist.
         // I could check handle.getState to see if it's a CraftBlockState (i.e. the default)

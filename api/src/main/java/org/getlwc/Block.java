@@ -105,6 +105,20 @@ public abstract class Block {
         return String.format("Block(name=%s data=%d loc=[%d %d %d \"%s\"])", getName(), getData(), getX(), getY(), getZ(), getWorld().getName());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (!(o instanceof Block)) return false;
+        Block other = (Block) o;
+
+        return this.getX() == other.getX() && this.getY() == other.getY() && this.getZ() == other.getZ() && this.getWorld().equals(other.getWorld());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getY() << 24 ^ this.getX() ^ this.getZ() ^ this.getWorld().hashCode();
+    }
+
     /**
      * Get the block's name.
      *
