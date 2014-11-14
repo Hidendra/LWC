@@ -53,9 +53,6 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
         this.classNames = classNames;
     }
 
-    /**
-     * @inheritDoc
-     */
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes) {
 
@@ -115,7 +112,6 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
 
     /**
      * Transform the given matched class
-     *
      *
      * @return
      */

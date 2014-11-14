@@ -46,7 +46,7 @@ import java.util.Map;
 public class ForgeBlock extends Block {
 
     /**
-     * The world handle
+     * native Forge handle
      */
     private final ForgeWorld world;
 
@@ -137,75 +137,46 @@ public class ForgeBlock extends Block {
         return name;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getType() {
         return GameData.getBlockRegistry().getId(world.getHandle().getBlock(x, y, z));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public byte getData() {
         return (byte) world.getHandle().getBlockMetadata(x, y, z);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public World getWorld() {
         return world;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getX() {
         return x;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getY() {
         return y;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getZ() {
         return z;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setType(int type) {
         throw new UnsupportedOperationException("block.setType() is unsupported");
-        // world.getHandle().setBlock(x, y, z, type);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setData(byte data) {
         throw new UnsupportedOperationException("block.setData() is unsupported");
-        // world.getHandle().setBlockMetadata(x, y, z, data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean hasTileEntity() {
         return world.getHandle().getTileEntity(x, y, z) != null;

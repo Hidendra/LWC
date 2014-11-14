@@ -42,13 +42,10 @@ import java.util.UUID;
 
 public class ForgePlayer extends SimplePlayer {
 
-    /**
-     * The mod handle
-     */
     private LWC mod;
 
     /**
-     * Player handle
+     * native Forge handle
      */
     private EntityPlayer handle;
 
@@ -57,23 +54,14 @@ public class ForgePlayer extends SimplePlayer {
         this.mod = LWC.instance;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public UUID getUUID() {
         return handle.getPersistentID();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public String getName() {
         return handle.getCommandSenderName();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Location getLocation() {
         try {
             return new Location(new ForgeWorld(handle.worldObj), (int) handle.posX, (int) handle.posY, (int) handle.posZ);
@@ -84,20 +72,15 @@ public class ForgePlayer extends SimplePlayer {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
             handle.addChatComponentMessage(new ChatComponentText(Color.replaceColors(line)));
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ItemStack getItemInHand() {
         return mod.castItemStack(handle.getHeldItem());
     }
+
 }

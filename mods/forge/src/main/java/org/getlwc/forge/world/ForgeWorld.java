@@ -35,7 +35,7 @@ import org.getlwc.World;
 public class ForgeWorld implements World {
 
     /**
-     * The native world handle
+     * native Forge handle
      */
     private net.minecraft.world.World handle;
 
@@ -56,16 +56,10 @@ public class ForgeWorld implements World {
         return handle;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public String getName() {
         return handle.getWorldInfo().getWorldName();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Block getBlockAt(int x, int y, int z) {
         return new org.getlwc.forge.world.ForgeBlock(this, x, y, z);
     }
