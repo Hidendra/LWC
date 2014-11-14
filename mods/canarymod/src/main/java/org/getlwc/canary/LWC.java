@@ -18,13 +18,10 @@ import java.util.Map;
 
 public class LWC extends Plugin {
 
-    /**
-     * Internal engine handle
-     */
     private SimpleEngine engine;
 
     /**
-     * The Canary server layer
+     * The server layer that provides Canary-specific calls
      */
     private final ServerLayer layer = new CanaryServerLayer(this);
 

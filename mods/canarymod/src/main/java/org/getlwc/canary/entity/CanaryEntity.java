@@ -8,9 +8,6 @@ import java.util.UUID;
 
 public class CanaryEntity implements Entity {
 
-    /**
-     * The LWC plugin object
-     */
     private LWC plugin;
 
     /**
@@ -23,23 +20,14 @@ public class CanaryEntity implements Entity {
         this.handle = handle;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public UUID getUUID() {
         return handle.getUUID();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public String getName() {
         return plugin.getName();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Location getLocation() {
         return new Location(plugin.getWorld(handle.getWorld().getName()), handle.getX(), handle.getY(), handle.getZ());
     }

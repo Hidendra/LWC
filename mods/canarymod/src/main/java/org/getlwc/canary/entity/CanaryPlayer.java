@@ -12,13 +12,10 @@ import java.util.UUID;
 
 public class CanaryPlayer extends SimplePlayer {
 
-    /**
-     * The plugin object
-     */
     private LWC plugin;
 
     /**
-     * Canary player handle
+     * native Canary handle
      */
     private net.canarymod.api.entity.living.humanoid.Player handle;
 
@@ -27,32 +24,20 @@ public class CanaryPlayer extends SimplePlayer {
         this.handle = handle;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public UUID getUUID() {
         return handle.getUUID();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public String getName() {
         return handle.getName();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
             handle.message(Color.replaceColors(line));
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Location getLocation() {
         return new Location(plugin.getWorld(handle.getWorld().getName()), handle.getX(), handle.getY(), handle.getZ());
     }

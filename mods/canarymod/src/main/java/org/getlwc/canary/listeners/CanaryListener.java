@@ -40,16 +40,19 @@ public class CanaryListener implements PluginListener {
         this.plugin = plugin;
     }
 
+    @SuppressWarnings("unused")
     @HookHandler(ignoreCanceled = true)
     public void playerJoin(ConnectionHook event) {
         EventHelper.onPlayerJoin(plugin.wrapPlayer(event.getPlayer()));
     }
 
+    @SuppressWarnings("unused")
     @HookHandler(ignoreCanceled = true)
     public void playerQuit(DisconnectionHook event) {
         EventHelper.onPlayerQuit(plugin.wrapPlayer(event.getPlayer()));
     }
 
+    @SuppressWarnings("unused")
     @HookHandler(ignoreCanceled = true)
     public void blockLeftClick(BlockLeftClickHook hook) {
         Player player = plugin.wrapPlayer(hook.getPlayer());
@@ -63,6 +66,7 @@ public class CanaryListener implements PluginListener {
         }
     }
 
+    @SuppressWarnings("unused")
     @HookHandler(ignoreCanceled = true)
     public void blockRightClick(BlockRightClickHook hook) {
         Player player = plugin.wrapPlayer(hook.getPlayer());
@@ -76,6 +80,7 @@ public class CanaryListener implements PluginListener {
         }
     }
 
+    @SuppressWarnings("unused")
     @HookHandler(ignoreCanceled = true)
     public void entityInteract(EndermanPickupBlockHook hook) {
         Entity entity = new CanaryEntity(plugin, hook.getEnderman());
@@ -89,6 +94,7 @@ public class CanaryListener implements PluginListener {
         }
     }
 
+    @SuppressWarnings("unused")
     @HookHandler(ignoreCanceled = true)
     public void blockDestroy(BlockDestroyHook hook) {
         Player player = plugin.wrapPlayer(hook.getPlayer());
@@ -102,6 +108,7 @@ public class CanaryListener implements PluginListener {
         }
     }
 
+    @SuppressWarnings("unused")
     @HookHandler(ignoreCanceled = true)
     public void blockPlace(BlockPlaceHook hook) {
         Player player = plugin.wrapPlayer(hook.getPlayer());
@@ -115,6 +122,7 @@ public class CanaryListener implements PluginListener {
         }
     }
 
+    @SuppressWarnings("unused")
     @HookHandler(ignoreCanceled = true)
     public void signChange(SignChangeHook hook) {
         Player player = plugin.wrapPlayer(hook.getPlayer());
@@ -128,6 +136,7 @@ public class CanaryListener implements PluginListener {
         }
     }
 
+    @SuppressWarnings("unused")
     @HookHandler(ignoreCanceled = true)
     public void redstoneChange(RedstoneChangeHook hook) {
         World world = plugin.getWorld(hook.getSourceBlock().getWorld().getName());
@@ -140,6 +149,7 @@ public class CanaryListener implements PluginListener {
         }
     }
 
+    @SuppressWarnings("unused")
     @HookHandler(ignoreCanceled = true)
     public void entityExplode(ExplosionHook hook) {
         ExplosionType type = null;
@@ -166,6 +176,7 @@ public class CanaryListener implements PluginListener {
         }
     }
 
+    @SuppressWarnings("unused")
     @HookHandler(ignoreCanceled = true)
     public void onPistonExtend(PistonExtendHook hook) {
         World world = plugin.getWorld(hook.getPiston().getWorld().getName());
@@ -176,6 +187,7 @@ public class CanaryListener implements PluginListener {
         }
     }
 
+    @SuppressWarnings("unused")
     @HookHandler(ignoreCanceled = true)
     public void onPistonRetract(PistonRetractHook hook) {
         World world = plugin.getWorld(hook.getPiston().getWorld().getName());
