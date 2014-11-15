@@ -133,11 +133,13 @@ public interface Engine {
     /**
      * Called when the engine is ready to be fully loaded. Initialization is completed here.
      */
+    @Deprecated
     public void startup();
 
     /**
      * Called when the engine needs to be shutdown
      */
+    @Deprecated
     public void shutdown();
 
 }
