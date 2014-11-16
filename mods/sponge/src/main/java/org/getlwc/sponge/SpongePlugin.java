@@ -4,6 +4,7 @@ import org.getlwc.ItemStack;
 import org.getlwc.ServerInfo;
 import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
+import org.spongepowered.api.event.Subscribe;
 import org.spongepowered.api.event.state.ServerStartingEvent;
 import org.spongepowered.api.event.state.ServerStoppingEvent;
 import org.spongepowered.api.plugin.Plugin;
@@ -15,9 +16,8 @@ public class SpongePlugin {
 
     private SimpleEngine engine;
 
-    // no annotation in Sponge yet
     @SuppressWarnings("unused")
-    // @SpongeEventHandler
+    @Subscribe
     public void onStartup(ServerStartingEvent event) {
         ServerLayer serverLayer = new SpongeServerLayer(event.getGame());
         ServerInfo serverInfo = new SpongeServerInfo(event.getGame());
@@ -27,9 +27,8 @@ public class SpongePlugin {
         engine.startup();
     }
 
-    // no annotation in Sponge yet
     @SuppressWarnings("unused")
-    // @SpongeEventHandler
+    @Subscribe
     public void onShutdown(ServerStoppingEvent event) {
         engine.shutdown();
         engine = null;
