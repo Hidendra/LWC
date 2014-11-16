@@ -376,41 +376,41 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
         /**
          * Immediately reject access to the protection.
          */
-        EXPLICIT_DENY(I18n.markAsTranslatable("explicit_deny")),
+        EXPLICIT_DENY,
 
         /**
          * User has NO access to the protection
          */
-        NONE(I18n.markAsTranslatable("none")),
+        NONE,
 
         /**
          * The user can view the protection but not modify it in any way. The implementation of this depends
          * on the mod and if the mod does not support preventing the inventory from being modified somehow
          * then access will just be blocked.
          */
-        GUEST(I18n.markAsTranslatable("guest")),
+        GUEST,
 
         /**
          * User can only deposit into the protection
          */
-        DEPOSITONLY(I18n.markAsTranslatable("depositonly")),
+        DEPOSITONLY,
 
         /**
          * User can deposit and withdraw from the protection at will but not add or remove other users to it.
          */
-        MEMBER(I18n.markAsTranslatable("member")),
+        MEMBER,
 
         /**
          * User can modify the protection (add and remove members) but not add or remove other managers.
          */
-        ADMIN(I18n.markAsTranslatable("admin")),
+        ADMIN,
 
         /**
          * User has the same access as the user who created the protection. They can remove the protection,
          * add or remove ANY level to the protection (i.e. other owners) but they cannot remove themselves
          * from the protection
          */
-        OWNER(I18n.markAsTranslatable("owner"));
+        OWNER;
 
         /**
          * Access levels that normal players can set
@@ -421,27 +421,6 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
          * Access levels that can view or interact with the protection
          */
         public final static EnumSet<Access> CAN_ACCESS = EnumSet.range(GUEST, OWNER);
-
-        /**
-         * The translated name for the enum
-         */
-        private String translatedName = null;
-
-        Access(String translatedName) {
-        }
-
-        /**
-         * Get the translated name of the access level
-         *
-         * @return translated name
-         */
-        public String getTranslatedName() {
-            if (translatedName == null) {
-                translatedName = _(toString().toLowerCase());
-            }
-
-            return translatedName;
-        }
 
         /**
          * Match a {@link org.getlwc.model.Protection.Access} given a name.
