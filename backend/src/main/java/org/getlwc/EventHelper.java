@@ -171,8 +171,9 @@ public class EventHelper {
                     return true;
                 }
             } catch (EventException e) {
-                player.sendTranslatedMessage("&cA severe error occurred while processing the event: {0}"
-                        + "&cThe full stack trace has been printed out to the log file", e.getMessage());
+                /// {0}: message from the exception/error that was thrown
+                player.sendTranslatedMessage("&cA severe error occurred while processing the event: {0}\n"
+                        + "&cThe stack trace has been printed out to the console.", e.getMessage());
                 e.printStackTrace();
                 return true; // Better safe than sorry
             }
