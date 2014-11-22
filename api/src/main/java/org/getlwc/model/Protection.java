@@ -30,7 +30,6 @@
 package org.getlwc.model;
 
 import org.getlwc.Engine;
-import org.getlwc.I18n;
 import org.getlwc.component.BasicComponentHolder;
 import org.getlwc.component.Component;
 import org.getlwc.component.RoleSetComponent;
@@ -115,7 +114,7 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
 
         populateRoleStateCache();
 
-        engine.getEventBus().dispatch(new ProtectionLoadEvent(this));
+        engine.getEventBus().post(new ProtectionLoadEvent(this));
     }
 
     /**
