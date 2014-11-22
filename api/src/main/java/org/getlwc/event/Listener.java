@@ -8,4 +8,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Listener {
+
+    /**
+     * Returns true if the listener should ignore cancelled events. Defaults to false.
+     *
+     * @return
+     */
+    boolean ignoreCancelled() default false;
+
 }

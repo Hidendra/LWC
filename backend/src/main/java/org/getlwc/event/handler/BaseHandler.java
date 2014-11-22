@@ -1,11 +1,17 @@
 package org.getlwc.event.handler;
 
 import org.getlwc.event.Event;
+import org.getlwc.event.Listener;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class BaseHandler {
+
+    /**
+     * The listener annotation
+     */
+    private Listener listener;
 
     /**
      * The object registering this handler
@@ -17,7 +23,8 @@ public class BaseHandler {
      */
     private Method method;
 
-    public BaseHandler(Object parent, Method method) {
+    public BaseHandler(Listener listener, Object parent, Method method) {
+        this.listener = listener;
         this.parent = parent;
         this.method = method;
     }
@@ -65,6 +72,10 @@ public class BaseHandler {
      * @param event
      */
     public void invoke(Event event) {
+        if (listener.ignoreCancelled() && event.isCancelled()) {
+            return;
+        }
+
         try {
             method.invoke(parent, event);
         } catch (IllegalAccessException | InvocationTargetException e) {

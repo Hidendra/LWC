@@ -2,10 +2,12 @@ package org.getlwc.event.handler;
 
 import org.getlwc.component.Component;
 import org.getlwc.event.Event;
+import org.getlwc.event.Listener;
 import org.getlwc.event.ProtectionListener;
 import org.getlwc.event.ProtectionEvent;
 import org.getlwc.model.Protection;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 public class ProtectionHandler extends BaseHandler {
@@ -15,8 +17,18 @@ public class ProtectionHandler extends BaseHandler {
      */
     private ProtectionListener listener;
 
-    public ProtectionHandler(Object parent, Method method, ProtectionListener listener) {
-        super(parent, method);
+    public ProtectionHandler(final ProtectionListener listener, Object parent, Method method) {
+        super(new Listener() {
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return Listener.class;
+            }
+
+            @Override
+            public boolean ignoreCancelled() {
+                return listener.ignoreCancelled();
+            }
+        }, parent, method);
         this.listener = listener;
     }
 

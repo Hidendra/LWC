@@ -72,9 +72,9 @@ public class SimpleEventBus implements EventBus {
             BaseHandler handler = null;
 
             if (method.isAnnotationPresent(Listener.class)) {
-                handler = new BaseHandler(object, method);
+                handler = new BaseHandler(method.getAnnotation(Listener.class), object, method);
             } else if (method.isAnnotationPresent(ProtectionListener.class)) {
-                handler = new ProtectionHandler(object, method, method.getAnnotation(ProtectionListener.class));
+                handler = new ProtectionHandler(method.getAnnotation(ProtectionListener.class), object, method);
             }
 
             if (handler != null) {

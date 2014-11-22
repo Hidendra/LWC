@@ -19,4 +19,11 @@ public @interface ProtectionListener {
      */
     Class<? extends Component>[] components() default {};
 
+    /**
+     * Returns true if the listener should ignore cancelled events. Defaults to false.
+     *
+     * @return
+     */
+    boolean ignoreCancelled() default false;
+
 }
