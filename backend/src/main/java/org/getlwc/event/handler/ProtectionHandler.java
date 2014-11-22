@@ -3,7 +3,7 @@ package org.getlwc.event.handler;
 import org.getlwc.component.Component;
 import org.getlwc.event.Event;
 import org.getlwc.event.ProtectionListener;
-import org.getlwc.event.events.ProtectionEvent;
+import org.getlwc.event.ProtectionEvent;
 import org.getlwc.model.Protection;
 
 import java.lang.reflect.Method;

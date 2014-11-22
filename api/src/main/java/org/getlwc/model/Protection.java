@@ -34,7 +34,7 @@ import org.getlwc.component.BasicComponentHolder;
 import org.getlwc.component.Component;
 import org.getlwc.component.RoleSetComponent;
 import org.getlwc.entity.Player;
-import org.getlwc.event.events.ProtectionLoadEvent;
+import org.getlwc.event.protection.ProtectionLoadEvent;
 import org.getlwc.role.Role;
 import org.getlwc.util.Tuple;
 

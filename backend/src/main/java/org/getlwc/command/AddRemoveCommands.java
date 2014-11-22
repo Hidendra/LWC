@@ -4,7 +4,7 @@ import org.getlwc.Engine;
 import org.getlwc.component.RoleSetComponent;
 import org.getlwc.content.role.PlayerRole;
 import org.getlwc.entity.Player;
-import org.getlwc.event.events.ProtectionEvent;
+import org.getlwc.event.ProtectionEvent;
 import org.getlwc.event.notifiers.ProtectionEventNotifier;
 import org.getlwc.model.Protection;
 import org.getlwc.role.Role;
