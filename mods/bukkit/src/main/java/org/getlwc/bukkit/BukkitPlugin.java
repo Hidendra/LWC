@@ -29,11 +29,7 @@
 
 package org.getlwc.bukkit;
 
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.getlwc.Block;
 import org.getlwc.Engine;
@@ -47,10 +43,9 @@ import org.getlwc.bukkit.economy.VaultEconomyHandler;
 import org.getlwc.bukkit.listeners.BukkitListener;
 import org.getlwc.bukkit.permission.SuperPermsPermissionHandler;
 import org.getlwc.bukkit.permission.VaultPermissionHandler;
-import org.getlwc.command.CommandContext;
-import org.getlwc.command.CommandException;
-import org.getlwc.command.CommandSender;
 import org.getlwc.entity.Player;
+import org.getlwc.event.server.ServerStartingEvent;
+import org.getlwc.event.server.ServerStoppingEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -113,11 +108,12 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
             engine.setPermissionHandler(new SuperPermsPermissionHandler());
         }
 
-        engine.startup();
+        engine.getEventBus().post(new ServerStartingEvent());
     }
 
     @Override
     public void onDisable() {
+        engine.getEventBus().post(new ServerStoppingEvent());
         engine = null;
     }
 

@@ -28,13 +28,13 @@ public class SpongePlugin implements Owner {
 
         engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, serverInfo, new SpongeConsoleCommandSender());
         // TODO Sponge permission handler when it's ready
-        engine.startup();
+        engine.getEventBus().post(new org.getlwc.event.server.ServerStartingEvent());
     }
 
     @SuppressWarnings("unused")
     @Subscribe
     public void onShutdown(ServerStoppingEvent event) {
-        engine.shutdown();
+        engine.getEventBus().post(new org.getlwc.event.server.ServerStoppingEvent());
         engine = null;
     }
 

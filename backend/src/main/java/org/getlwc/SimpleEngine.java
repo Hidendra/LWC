@@ -47,7 +47,10 @@ import org.getlwc.db.memory.MemoryDatabase;
 import org.getlwc.economy.DefaultEconomyHandler;
 import org.getlwc.economy.EconomyHandler;
 import org.getlwc.event.EventBus;
+import org.getlwc.event.Listener;
 import org.getlwc.event.SimpleEventBus;
+import org.getlwc.event.server.ServerStartingEvent;
+import org.getlwc.event.server.ServerStoppingEvent;
 import org.getlwc.permission.DefaultPermissionHandler;
 import org.getlwc.permission.PermissionHandler;
 
@@ -135,10 +138,35 @@ public class SimpleEngine implements Engine {
         configuration = new YamlConfiguration("config.yml");
         languagesConfig = new YamlConfiguration(getClass().getResourceAsStream("/languages.yml"));
         I18n.init(this);
+        eventBus.registerAll(this);
 
         consoleSender.sendTranslatedMessage("Server: {0} ({1})", serverInfo.getServerImplementationTitle(), serverInfo.getServerImplementationVersion());
         consoleSender.sendTranslatedMessage("Plugin: {0} ({1})", getImplementationTitle(), getImplementationVersion());
     }
+
+    @Listener
+    public void onStartup(ServerStartingEvent event) {
+        commandHandler = new SimpleCommandHandler(this);
+        protectionManager = new SimpleProtectionManager(this);
+
+        // connect to the db
+        openDatabase();
+
+        // Register any commands
+        registerHandlers();
+
+        consoleSender.sendTranslatedMessage("Economy handler: {0}", economyHandler.getName());
+        consoleSender.sendTranslatedMessage("Permission handler: {0}", permissionHandler.getName());
+    }
+
+    @Listener
+    public void onShutdown(ServerStoppingEvent event) {
+        consoleSender.sendTranslatedMessage("Shutting down!");
+        commandHandler.clearCommands();
+        database.disconnect();
+        database = null;
+    }
+
 
     /**
      * Gets the Engine instance. Does not create the engine if it has not been created.
@@ -175,21 +203,6 @@ public class SimpleEngine implements Engine {
         instance = new SimpleEngine(serverLayer, serverInfo, consoleSender);
 
         return instance;
-    }
-
-    @Override
-    public void startup() {
-        commandHandler = new SimpleCommandHandler(this);
-        protectionManager = new SimpleProtectionManager(this);
-
-        // connect to the db
-        openDatabase();
-
-        // Register any commands
-        registerHandlers();
-
-        consoleSender.sendTranslatedMessage("Economy handler: {0}", economyHandler.getName());
-        consoleSender.sendTranslatedMessage("Permission handler: {0}", permissionHandler.getName());
     }
 
     @Override
@@ -282,14 +295,6 @@ public class SimpleEngine implements Engine {
      */
     public Configuration getLanguagesConfiguration() {
         return languagesConfig;
-    }
-
-    @Override
-    public void shutdown() {
-        consoleSender.sendTranslatedMessage("Shutting down!");
-        commandHandler.clearCommands();
-        database.disconnect();
-        database = null;
     }
 
     /**

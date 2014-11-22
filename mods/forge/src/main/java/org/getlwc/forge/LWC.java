@@ -45,6 +45,8 @@ import org.getlwc.Engine;
 import org.getlwc.ItemStack;
 import org.getlwc.SimpleEngine;
 import org.getlwc.World;
+import org.getlwc.event.server.ServerStartingEvent;
+import org.getlwc.event.server.ServerStoppingEvent;
 import org.getlwc.forge.asm.AbstractTransformer;
 import org.getlwc.forge.asm.LWCCorePlugin;
 import org.getlwc.forge.listeners.ForgeListener;
@@ -110,7 +112,7 @@ public class LWC {
             proxy.init();
             layer.init();
             engine.setPermissionHandler(new ForgePermissionHandler());
-            engine.startup();
+            engine.getEventBus().post(new ServerStartingEvent());
             MinecraftForge.EVENT_BUS.register(listener);
         }
     }
@@ -120,7 +122,8 @@ public class LWC {
         if (LWCCorePlugin.INITIALIZED) {
             MinecraftForge.EVENT_BUS.unregister(listener);
             layer.clearCache();
-            engine.shutdown();
+            engine.getEventBus().post(new ServerStoppingEvent());
+            engine = null;
         }
     }
 

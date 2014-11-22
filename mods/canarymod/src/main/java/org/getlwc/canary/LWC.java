@@ -11,6 +11,8 @@ import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
 import org.getlwc.canary.listeners.CanaryListener;
 import org.getlwc.canary.permission.CanaryPermissionHandler;
+import org.getlwc.event.server.ServerStartingEvent;
+import org.getlwc.event.server.ServerStoppingEvent;
 import org.getlwc.lang.Locale;
 
 import java.util.HashMap;
@@ -29,7 +31,7 @@ public class LWC extends Plugin {
     public boolean enable() {
         engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new CanaryServerInfo(), new CanaryConsoleCommandSender());
         engine.setPermissionHandler(new CanaryPermissionHandler());
-        engine.startup();
+        engine.getEventBus().post(new ServerStartingEvent());
 
         // Hooks
         Canary.hooks().registerListener(new CanaryListener(this), this);
@@ -39,6 +41,8 @@ public class LWC extends Plugin {
 
     @Override
     public void disable() {
+        engine.getEventBus().post(new ServerStoppingEvent());
+        engine = null;
     }
 
     /**
