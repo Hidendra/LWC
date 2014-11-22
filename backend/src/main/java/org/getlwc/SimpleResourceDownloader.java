@@ -246,9 +246,9 @@ public class SimpleResourceDownloader implements ResourceDownloader {
                     int tries = 1;
 
                     if (local.exists()) {
-                        engine.getConsoleSender().sendTranslatedMessage("Verifying file {0}", local.toString());
+                        engine.getConsoleSender().sendFormattedMessage("Verifying file {0}", local.toString());
                     } else {
-                        engine.getConsoleSender().sendTranslatedMessage("Downloading file {0} to {1}", local.getName(), local.getParent());
+                        engine.getConsoleSender().sendFormattedMessage("Downloading file {0} to {1}", local.getName(), local.getParent());
                     }
 
                     URL fileURL = new URL(remote);
@@ -262,16 +262,16 @@ public class SimpleResourceDownloader implements ResourceDownloader {
                         String expectedMD5 = readURLFully(md5URL);
 
                         if (expectedMD5 == null) {
-                            engine.getConsoleSender().sendTranslatedMessage("{0}: no checksum available from remote host", local.getName());
+                            engine.getConsoleSender().sendFormattedMessage("{0}: no checksum available from remote host", local.getName());
                             break;
                         } else {
                             String realMD5 = MD5Checksum.calculateHumanChecksum(local);
 
                             if (expectedMD5.equals(realMD5)) {
-                                engine.getConsoleSender().sendTranslatedMessage("{0}: checksum is OK", local.getName());
+                                engine.getConsoleSender().sendFormattedMessage("{0}: checksum is OK", local.getName());
                                 break;
                             } else {
-                                engine.getConsoleSender().sendTranslatedMessage("{0}: checksum check FAILED. Found {1}, but was expecting {2}. File will be redownloaded.", local.getName(), realMD5, expectedMD5);
+                                engine.getConsoleSender().sendFormattedMessage("{0}: checksum check FAILED. Found {1}, but was expecting {2}. File will be redownloaded.", local.getName(), realMD5, expectedMD5);
                                 local.delete();
                             }
                         }
@@ -317,7 +317,7 @@ public class SimpleResourceDownloader implements ResourceDownloader {
 
                             // omit 0/100% ..
                             if (percentTransferred != 0 && percentTransferred != 100) {
-                                engine.getConsoleSender().sendTranslatedMessage("  >> {0}: {1}%", downloadTo.getName(), percentTransferred);
+                                engine.getConsoleSender().sendFormattedMessage("  >> {0}: {1}%", downloadTo.getName(), percentTransferred);
                             }
                         }
                     }

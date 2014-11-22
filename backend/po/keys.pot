@@ -11,7 +11,7 @@ msgstr ""
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
 "\n"
-"POT-Creation-Date: 2014-11-20 19:45-0400\n"
+"POT-Creation-Date: 2014-11-22 00:09-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,11 +49,11 @@ msgstr ""
 msgid "&2Aliases:     {0}"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/event/PlayerEventHandler.java:113
+#: api/src/main/java/org/getlwc/event/PlayerEventHandler.java:117
 msgid "&4That block is not protected!"
 msgstr ""
 
-#: api/src/main/java/org/getlwc/event/PlayerEventHandler.java:116
+#: api/src/main/java/org/getlwc/event/PlayerEventHandler.java:120
 msgid ""
 "&4That block is protected! Please interact with a block that is not "
 "protected."
@@ -236,121 +236,4 @@ msgstr ""
 msgid ""
 "&cA severe error occurred while processing the event: {0}\n"
 "&cThe stack trace has been printed out to the console."
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:139
-#, java-format
-msgid "Server: {0} ({1})"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:140
-#, java-format
-msgid "Plugin: {0} ({1})"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:191
-#, java-format
-msgid "Economy handler: {0}"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:192
-#, java-format
-msgid "Permission handler: {0}"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:289
-msgid "Shutting down!"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:309
-#, java-format
-msgid "Driver \"{0}\" is not supported."
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:339
-#, java-format
-msgid "Connected to the database with driver: {0}"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleEngine.java:341
-msgid "Failed to connect to the database!"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleResourceDownloader.java:249
-#, java-format
-msgid "Verifying file {0}"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleResourceDownloader.java:251
-#, java-format
-msgid "Downloading file {0} to {1}"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleResourceDownloader.java:265
-#, java-format
-msgid "{0}: no checksum available from remote host"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleResourceDownloader.java:271
-#, java-format
-msgid "{0}: checksum is OK"
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleResourceDownloader.java:274
-#, java-format
-msgid ""
-"{0}: checksum check FAILED. Found {1}, but was expecting {2}. File will be "
-"redownloaded."
-msgstr ""
-
-#: backend/src/main/java/org/getlwc/SimpleResourceDownloader.java:320
-#, java-format
-msgid "  >> {0}: {1}%"
-msgstr ""
-
-#: mods/bukkit/src/main/java/org/getlwc/bukkit/listeners/BukkitListener.java:382
-#: mods/canarymod/src/main/java/org/getlwc/canary/CanaryServerLayer.java:204
-#: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:190
-#, java-format
-msgid "An error was encountered while processing a command: {0}"
-msgstr ""
-
-#: mods/bukkit/src/main/java/org/getlwc/bukkit/listeners/BukkitListener.java:385
-#: mods/canarymod/src/main/java/org/getlwc/canary/CanaryServerLayer.java:208
-#: mods/forge/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:194
-msgid "&4[LWC] An internal error occurred while processing this command"
-msgstr ""
-
-#: mods/forge/src/main/java/org/getlwc/forge/asm/AbstractMultiClassTransformer.java:97
-#, java-format
-msgid "[ASM] Patched {0} ({1}) successfully!"
-msgstr ""
-
-#: mods/forge/src/main/java/org/getlwc/forge/asm/AbstractMultiClassTransformer.java:100
-#, java-format
-msgid "[ASM] {0} ({1}) was not changed during transformations"
-msgstr ""
-
-#: mods/forge/src/main/java/org/getlwc/forge/asm/AbstractMultiClassTransformer.java:105
-#, java-format
-msgid "[ASM] Failed to patch {0} ({1})"
-msgstr ""
-
-#: mods/forge/src/main/java/org/getlwc/forge/asm/AbstractTransformer.java:68
-#, java-format
-msgid "[ASM] Loaded native class mappings for Minecraft {0}"
-msgstr ""
-
-#: mods/forge/src/main/java/org/getlwc/forge/asm/AbstractTransformer.java:71
-#, java-format
-msgid ""
-"[ASM] ================   NOTE !!!   ================\n"
-"[ASM] There are no included native mappings for Minecraft {0}\n"
-"[ASM] If this is a major Minecraft release then LWC IS MOST LIKELY BROKEN!\n"
-"[ASM] MAKE SURE YOU ARE USING THE LATEST VERSION!"
-msgstr ""
-
-#: mods/forge/src/main/java/org/getlwc/forge/modsupport/BuildCraft.java:18
-#, java-format
-msgid "Using BuildCraft version: {0}"
 msgstr ""

@@ -140,8 +140,8 @@ public class SimpleEngine implements Engine {
         I18n.init(this);
         eventBus.registerAll(this);
 
-        consoleSender.sendTranslatedMessage("Server: {0} ({1})", serverInfo.getServerImplementationTitle(), serverInfo.getServerImplementationVersion());
-        consoleSender.sendTranslatedMessage("Plugin: {0} ({1})", getImplementationTitle(), getImplementationVersion());
+        consoleSender.sendFormattedMessage("Server: {0} ({1})", serverInfo.getServerImplementationTitle(), serverInfo.getServerImplementationVersion());
+        consoleSender.sendFormattedMessage("Plugin: {0} ({1})", getImplementationTitle(), getImplementationVersion());
     }
 
     @Listener
@@ -155,13 +155,13 @@ public class SimpleEngine implements Engine {
         // Register any commands
         registerHandlers();
 
-        consoleSender.sendTranslatedMessage("Economy handler: {0}", economyHandler.getName());
-        consoleSender.sendTranslatedMessage("Permission handler: {0}", permissionHandler.getName());
+        consoleSender.sendFormattedMessage("Economy handler: {0}", economyHandler.getName());
+        consoleSender.sendFormattedMessage("Permission handler: {0}", permissionHandler.getName());
     }
 
     @Listener
     public void onShutdown(ServerStoppingEvent event) {
-        consoleSender.sendTranslatedMessage("Shutting down!");
+        consoleSender.sendFormattedMessage("Shutting down!");
         commandHandler.clearCommands();
         database.disconnect();
         database = null;
@@ -311,7 +311,7 @@ public class SimpleEngine implements Engine {
             JDBCDatabase.Driver driver = JDBCDatabase.Driver.resolveDriver(driverName);
 
             if (driver == null) {
-                consoleSender.sendTranslatedMessage("Driver \"{0}\" is not supported.", driverName);
+                consoleSender.sendFormattedMessage("Driver \"{0}\" is not supported.", driverName);
                 return;
             }
 
@@ -341,9 +341,9 @@ public class SimpleEngine implements Engine {
         }
 
         if (result) {
-            consoleSender.sendTranslatedMessage("Connected to the database with driver: {0}", databaseType);
+            consoleSender.sendFormattedMessage("Connected to the database with driver: {0}", databaseType);
         } else {
-            consoleSender.sendTranslatedMessage("Failed to connect to the database!");
+            consoleSender.sendFormattedMessage("Failed to connect to the database!");
         }
     }
 

@@ -379,10 +379,10 @@ public class BukkitListener implements Listener {
                 return plugin.getEngine().getCommandHandler().handleCommand(new CommandContext(type, sender, message));
             }
         } catch (CommandException e) {
-            plugin.getEngine().getConsoleSender().sendTranslatedMessage("An error was encountered while processing a command: {0}", e.getMessage());
+            plugin.getEngine().getConsoleSender().sendFormattedMessage("An error was encountered while processing a command: {0}", e.getMessage());
             e.printStackTrace();
 
-            sender.sendTranslatedMessage("&4[LWC] An internal error occurred while processing this command");
+            sender.sendFormattedMessage("&4[LWC] An internal error occurred while processing this command");
             return false;
         }
     }
