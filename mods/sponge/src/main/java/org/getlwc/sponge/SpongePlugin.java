@@ -1,28 +1,32 @@
 package org.getlwc.sponge;
 
+import org.getlwc.Engine;
 import org.getlwc.ItemStack;
 import org.getlwc.ServerInfo;
 import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
+import org.getlwc.entity.Player;
 import org.spongepowered.api.event.Subscribe;
 import org.spongepowered.api.event.state.ServerStartingEvent;
 import org.spongepowered.api.event.state.ServerStoppingEvent;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.util.Owner;
 
 import java.util.HashMap;
 
 @Plugin(id = "lwc", name = "LWC", version = "0.0.1-SNAPSHOT")
-public class SpongePlugin {
+public class SpongePlugin implements Owner {
 
     private SimpleEngine engine;
+    private ServerLayer layer;
 
     @SuppressWarnings("unused")
     @Subscribe
     public void onStartup(ServerStartingEvent event) {
-        ServerLayer serverLayer = new SpongeServerLayer(event.getGame());
+        layer = new SpongeServerLayer(this, event.getGame());
         ServerInfo serverInfo = new SpongeServerInfo(event.getGame());
 
-        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(serverLayer, serverInfo, new SpongeConsoleCommandSender());
+        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, serverInfo, new SpongeConsoleCommandSender());
         // TODO Sponge permission handler when it's ready
         engine.startup();
     }
@@ -32,6 +36,25 @@ public class SpongePlugin {
     public void onShutdown(ServerStoppingEvent event) {
         engine.shutdown();
         engine = null;
+    }
+
+    /**
+     * Wrap a player object to a native version we can work with
+     *
+     * @param player
+     * @return
+     */
+    public Player wrapPlayer(org.spongepowered.api.entity.Player player) {
+        return layer.getPlayer(player.getName());
+    }
+
+    /**
+     * Returns the engine being used for this plugin
+     *
+     * @return
+     */
+    public Engine getEngine() {
+        return engine;
     }
 
     /**
