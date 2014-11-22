@@ -42,6 +42,7 @@ import java.util.Map;
 
 import static org.getlwc.I18n._;
 
+@Deprecated
 public class PlayerEventHandler {
 
     public enum Type {
@@ -77,6 +78,7 @@ public class PlayerEventHandler {
      *
      * @param notifier
      */
+    @Deprecated
     public void onProtectionInteract(ProtectionEventNotifier notifier) {
         checkNotifier(notifier);
         addEventNotifier(Type.PLAYER_INTERACT_PROTECTION, notifier);
@@ -87,6 +89,7 @@ public class PlayerEventHandler {
      *
      * @param notifier
      */
+    @Deprecated
     public void onBlockInteract(BlockEventNotifier notifier) {
         checkNotifier(notifier);
         addEventNotifier(Type.PLAYER_INTERACT_BLOCK, notifier);
@@ -101,6 +104,7 @@ public class PlayerEventHandler {
      *
      * @param notifier {@link ProtectionEventNotifier} or {@link BlockEventNotifier}
      */
+    @Deprecated
     public void onAnyInteract(EventNotifier<?> notifier) {
         checkNotifier(notifier);
         final Player player = (Player) this;
@@ -127,6 +131,7 @@ public class PlayerEventHandler {
      * @return true if the event should be cancelled, false otherwise
      * @throws EventException
      */
+    @Deprecated
     public boolean callEvent(Type type, Event event) throws EventException {
         // Check temporary notifier
         {

@@ -29,6 +29,7 @@
 
 package org.getlwc.event;
 
+@Deprecated
 public abstract class EventNotifier<T> {
 
     /**

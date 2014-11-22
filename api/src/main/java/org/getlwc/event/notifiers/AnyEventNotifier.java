@@ -32,6 +32,7 @@ package org.getlwc.event.notifiers;
 import org.getlwc.entity.Player;
 import org.getlwc.event.EventNotifier;
 
+@Deprecated
 public class AnyEventNotifier extends EventNotifier {
 
     /**
