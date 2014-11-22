@@ -3,11 +3,11 @@ package org.getlwc.event;
 public interface EventBus {
 
     /**
-     * Dispatches an event onto the event bus
+     * Posts an event onto the event bus
      *
      * @param event
      */
-    public boolean dispatch(Event event);
+    public boolean post(Event event);
 
     /**
      * Registers all listeners for the given object

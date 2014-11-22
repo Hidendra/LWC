@@ -19,7 +19,7 @@ public class SimpleEventBus implements EventBus {
     private Map<Class<? extends Event>, Set<BaseHandler>> handlers = new HashMap<>();
 
     @Override
-    public boolean dispatch(Event event) {
+    public boolean post(Event event) {
         Set<BaseHandler> handlerList = handlers.get(event.getClass());
 
         if (handlerList == null) {
