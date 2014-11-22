@@ -34,6 +34,7 @@ import org.getlwc.command.CommandSender;
 import org.getlwc.event.PlayerEventHandler;
 import org.getlwc.lang.Locale;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,6 +58,15 @@ public abstract class Player extends PlayerEventHandler implements Entity, Comma
      * @return
      */
     public abstract ItemStack getItemInHand();
+
+    @Override
+    public void sendFormattedMessage(String message, Object... arguments) {
+        if (arguments.length == 0) {
+            sendMessage(message);
+        } else {
+            sendMessage(MessageFormat.format(message, arguments));
+        }
+    }
 
     @Override
     public void sendTranslatedMessage(String message, Object... arguments) {

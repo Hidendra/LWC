@@ -29,9 +29,20 @@
 
 package org.getlwc.command;
 
+import java.text.MessageFormat;
+
 import static org.getlwc.I18n._;
 
 public abstract class ConsoleCommandSender implements CommandSender {
+
+    @Override
+    public void sendFormattedMessage(String message, Object... arguments) {
+        if (arguments.length == 0) {
+            sendMessage(message);
+        } else {
+            sendMessage(MessageFormat.format(message, arguments));
+        }
+    }
 
     @Override
     public void sendTranslatedMessage(String message, Object... arguments) {
