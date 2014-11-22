@@ -31,10 +31,13 @@ package org.getlwc;
 
 import org.getlwc.entity.Entity;
 import org.getlwc.entity.Player;
+import org.getlwc.event.Event;
 import org.getlwc.event.EventException;
 import org.getlwc.event.PlayerEventHandler;
 import org.getlwc.event.BlockEvent;
 import org.getlwc.event.ProtectionEvent;
+import org.getlwc.event.block.BlockInteractEvent;
+import org.getlwc.event.protection.ProtectionInteractEvent;
 import org.getlwc.lang.Locale;
 import org.getlwc.lang.MessageStore;
 import org.getlwc.model.Protection;
@@ -145,11 +148,18 @@ public class EventHelper {
             Player player = (Player) entity;
 
             try {
+                Event event;
+
                 if (protection == null) {
                     cancel = player.callEvent(PlayerEventHandler.Type.PLAYER_INTERACT_BLOCK, new BlockEvent(block));
+                    event = new BlockInteractEvent(block);
                 } else {
                     cancel = player.callEvent(PlayerEventHandler.Type.PLAYER_INTERACT_PROTECTION, new ProtectionEvent(protection));
+                    event = new ProtectionInteractEvent(protection);
                 }
+
+                engine.getEventBus().post(event);
+                cancel = cancel || event.isCancelled();
 
                 // default event action
                 if (!cancel && protection != null) {
