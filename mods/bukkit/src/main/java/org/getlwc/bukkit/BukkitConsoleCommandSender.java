@@ -27,7 +27,7 @@
  * either expressed or implied, of anybody else.
  */
 
-package org.getlwc.bukkit.command;
+package org.getlwc.bukkit;
 
 import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.lang.Locale;

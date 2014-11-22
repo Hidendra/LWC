@@ -38,7 +38,6 @@ import org.getlwc.Location;
 import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
 import org.getlwc.World;
-import org.getlwc.bukkit.command.BukkitConsoleCommandSender;
 import org.getlwc.bukkit.economy.VaultEconomyHandler;
 import org.getlwc.bukkit.listeners.BukkitListener;
 import org.getlwc.bukkit.permission.SuperPermsPermissionHandler;
