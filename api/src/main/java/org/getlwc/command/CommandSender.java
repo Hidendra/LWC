@@ -46,7 +46,7 @@ public interface CommandSender {
      * @param message
      * @param arguments
      */
-    public void sendFormattedMessage(String message, Object... arguments);
+    public void sendMessage(String message, Object... arguments);
 
     /**
      * Send a translated message to the player. The given arguments will be used in place of any formatters

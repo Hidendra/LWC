@@ -43,10 +43,10 @@ public class SpongeServerLayer extends ServerLayer {
                 try {
                     return plugin.getEngine().getCommandHandler().handleCommand(new CommandContext(type, sender, baseCommand, arguments));
                 } catch (org.getlwc.command.CommandException e) {
-                    plugin.getEngine().getConsoleSender().sendFormattedMessage("An error was encountered while processing a command: {0}", e.getMessage());
+                    plugin.getEngine().getConsoleSender().sendMessage("An error was encountered while processing a command: {0}", e.getMessage());
                     e.printStackTrace();
 
-                    sender.sendFormattedMessage("&4[LWC] An internal error occurred while processing this command");
+                    sender.sendMessage("&4[LWC] An internal error occurred while processing this command");
                     return false;
                 }
             }

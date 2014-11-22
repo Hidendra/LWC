@@ -36,7 +36,7 @@ import static org.getlwc.I18n._;
 public abstract class ConsoleCommandSender implements CommandSender {
 
     @Override
-    public void sendFormattedMessage(String message, Object... arguments) {
+    public void sendMessage(String message, Object... arguments) {
         if (arguments.length == 0) {
             sendMessage(message);
         } else {

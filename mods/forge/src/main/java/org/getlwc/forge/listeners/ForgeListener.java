@@ -187,11 +187,11 @@ public class ForgeListener {
             }
         } catch (CommandException e) {
             // Notify the console
-            mod.getEngine().getConsoleSender().sendFormattedMessage("An error was encountered while processing a command: {0}", e.getMessage());
+            mod.getEngine().getConsoleSender().sendMessage("An error was encountered while processing a command: {0}", e.getMessage());
             e.printStackTrace();
 
             // Notify the player / console
-            sender.sendFormattedMessage("&4[LWC] An internal error occurred while processing this command");
+            sender.sendMessage("&4[LWC] An internal error occurred while processing this command");
 
             // We failed.. oh we failed
             return false;

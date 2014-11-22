@@ -140,8 +140,8 @@ public class SimpleEngine implements Engine {
         I18n.init(this);
         eventBus.registerAll(this);
 
-        consoleSender.sendFormattedMessage("Server: {0} ({1})", serverInfo.getServerImplementationTitle(), serverInfo.getServerImplementationVersion());
-        consoleSender.sendFormattedMessage("Plugin: {0} ({1})", getImplementationTitle(), getImplementationVersion());
+        consoleSender.sendMessage("Server: {0} ({1})", serverInfo.getServerImplementationTitle(), serverInfo.getServerImplementationVersion());
+        consoleSender.sendMessage("Plugin: {0} ({1})", getImplementationTitle(), getImplementationVersion());
     }
 
     @Listener
@@ -155,13 +155,13 @@ public class SimpleEngine implements Engine {
         // Register any commands
         registerHandlers();
 
-        consoleSender.sendFormattedMessage("Economy handler: {0}", economyHandler.getName());
-        consoleSender.sendFormattedMessage("Permission handler: {0}", permissionHandler.getName());
+        consoleSender.sendMessage("Economy handler: {0}", economyHandler.getName());
+        consoleSender.sendMessage("Permission handler: {0}", permissionHandler.getName());
     }
 
     @Listener
     public void onShutdown(ServerStoppingEvent event) {
-        consoleSender.sendFormattedMessage("Shutting down!");
+        consoleSender.sendMessage("Shutting down!");
         commandHandler.clearCommands();
         database.disconnect();
         database = null;
@@ -311,7 +311,7 @@ public class SimpleEngine implements Engine {
             JDBCDatabase.Driver driver = JDBCDatabase.Driver.resolveDriver(driverName);
 
             if (driver == null) {
-                consoleSender.sendFormattedMessage("Driver \"{0}\" is not supported.", driverName);
+                consoleSender.sendMessage("Driver \"{0}\" is not supported.", driverName);
                 return;
             }
 
@@ -341,9 +341,9 @@ public class SimpleEngine implements Engine {
         }
 
         if (result) {
-            consoleSender.sendFormattedMessage("Connected to the database with driver: {0}", databaseType);
+            consoleSender.sendMessage("Connected to the database with driver: {0}", databaseType);
         } else {
-            consoleSender.sendFormattedMessage("Failed to connect to the database!");
+            consoleSender.sendMessage("Failed to connect to the database!");
         }
     }
 

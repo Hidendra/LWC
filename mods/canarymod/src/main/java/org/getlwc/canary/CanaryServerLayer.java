@@ -201,11 +201,11 @@ public class CanaryServerLayer extends ServerLayer {
             }
         } catch (CommandException e) {
             // Notify the console
-            plugin.getEngine().getConsoleSender().sendFormattedMessage("An error was encountered while processing a command: {0}", e.getMessage());
+            plugin.getEngine().getConsoleSender().sendMessage("An error was encountered while processing a command: {0}", e.getMessage());
             e.printStackTrace();
 
             // Notify the player / console
-            sender.sendFormattedMessage("&4[LWC] An internal error occurred while processing this command");
+            sender.sendMessage("&4[LWC] An internal error occurred while processing this command");
 
             // We failed.. oh we failed
             return false;

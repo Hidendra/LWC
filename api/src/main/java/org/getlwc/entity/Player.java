@@ -60,7 +60,7 @@ public abstract class Player extends PlayerEventHandler implements Entity, Comma
     public abstract ItemStack getItemInHand();
 
     @Override
-    public void sendFormattedMessage(String message, Object... arguments) {
+    public void sendMessage(String message, Object... arguments) {
         if (arguments.length == 0) {
             sendMessage(message);
         } else {
