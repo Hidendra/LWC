@@ -55,19 +55,4 @@ public class BukkitConsoleCommandSender extends ConsoleCommandSender {
         }
     }
 
-    @Override
-    public boolean hasPermission(String node) {
-        return true;
-    }
-
-    @Override
-    public Locale getLocale() {
-        return null;
-    }
-
-    @Override
-    public void setLocale(Locale locale) {
-        throw new UnsupportedOperationException("setLocale is unsupported for console senders");
-    }
-
 }

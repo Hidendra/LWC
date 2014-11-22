@@ -29,6 +29,8 @@
 
 package org.getlwc.command;
 
+import org.getlwc.lang.Locale;
+
 import java.text.MessageFormat;
 
 import static org.getlwc.I18n._;
@@ -47,6 +49,21 @@ public abstract class ConsoleCommandSender implements CommandSender {
     @Override
     public void sendTranslatedMessage(String message, Object... arguments) {
         sendMessage(_(message, this, arguments));
+    }
+
+    @Override
+    public boolean hasPermission(String node) {
+        return true;
+    }
+
+    @Override
+    public Locale getLocale() {
+        return null;
+    }
+
+    @Override
+    public void setLocale(Locale locale) {
+        throw new UnsupportedOperationException("setLocale is unsupported for console senders");
     }
 
 }
