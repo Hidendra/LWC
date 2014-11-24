@@ -32,6 +32,7 @@ package org.getlwc.command;
 import org.getlwc.Engine;
 import org.getlwc.cache.LRUCache;
 import org.getlwc.entity.Player;
+import org.getlwc.event.engine.BaseCommandRegisteredEvent;
 import org.getlwc.util.StringUtils;
 import org.getlwc.util.Tuple;
 
@@ -255,6 +256,7 @@ public class SimpleCommandHandler implements CommandHandler {
         if (!baseCommands.contains(normalized)) {
             if (engine != null) {
                 engine.getServerLayer().onRegisterBaseCommand(normalized, command);
+                engine.getEventBus().post(new BaseCommandRegisteredEvent(normalized, command));
             }
             baseCommands.add(normalized);
         }
