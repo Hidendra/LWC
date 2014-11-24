@@ -86,6 +86,7 @@ public abstract class ServerLayer {
      *
      * @param baseCommand
      */
+    @Deprecated
     public void onRegisterBaseCommand(String baseCommand, Command command) {
     }
 
