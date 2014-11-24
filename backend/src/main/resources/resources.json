@@ -24,6 +24,13 @@
             ]
         },
 
+        "flywaydb": {
+            "class": "org.flywaydb.core.Flyway",
+            "files": [
+                "flyway-core-3.0.jar"
+            ]
+        },
+
         "databases.mysql": {
             "class": "org.gjt.mm.mysql.Driver",
             "files": [
