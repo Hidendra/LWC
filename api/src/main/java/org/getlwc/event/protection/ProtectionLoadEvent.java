@@ -1,6 +1,5 @@
 package org.getlwc.event.protection;
 
-import org.getlwc.event.ProtectionEvent;
 import org.getlwc.model.Protection;
 
 /**

@@ -30,7 +30,7 @@
 package org.getlwc.event.notifiers;
 
 import org.getlwc.event.EventNotifier;
-import org.getlwc.event.BlockEvent;
+import org.getlwc.event.block.BlockEvent;
 
 @Deprecated
 public abstract class BlockEventNotifier extends EventNotifier<BlockEvent> {

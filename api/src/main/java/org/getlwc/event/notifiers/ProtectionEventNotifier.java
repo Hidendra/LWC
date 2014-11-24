@@ -30,7 +30,7 @@
 package org.getlwc.event.notifiers;
 
 import org.getlwc.event.EventNotifier;
-import org.getlwc.event.ProtectionEvent;
+import org.getlwc.event.protection.ProtectionEvent;
 
 @Deprecated
 public abstract class ProtectionEventNotifier extends EventNotifier<ProtectionEvent> {

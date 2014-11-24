@@ -27,7 +27,7 @@
  * either expressed or implied, of anybody else.
  */
 
-package org.getlwc.event;
+package org.getlwc.event.protection;
 
 import org.getlwc.event.Event;
 import org.getlwc.model.Protection;

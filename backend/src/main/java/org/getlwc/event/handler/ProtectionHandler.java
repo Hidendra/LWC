@@ -4,7 +4,7 @@ import org.getlwc.component.Component;
 import org.getlwc.event.Event;
 import org.getlwc.event.Listener;
 import org.getlwc.event.ProtectionListener;
-import org.getlwc.event.ProtectionEvent;
+import org.getlwc.event.protection.ProtectionEvent;
 import org.getlwc.model.Protection;
 
 import java.lang.annotation.Annotation;
