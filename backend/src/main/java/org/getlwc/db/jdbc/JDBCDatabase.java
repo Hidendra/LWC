@@ -226,7 +226,6 @@ public class JDBCDatabase implements Database {
         // fixes issue where flyway could not load its metadata sql file
         flyway.setClassLoader(Flyway.class.getClassLoader());
 
-        flyway.init();
         flyway.migrate();
     }
 
