@@ -11,6 +11,11 @@ public abstract class AbstractRole implements Role {
     private Protection.Access access;
 
     /**
+     * If the access has changed
+     */
+    private boolean accessChanged;
+
+    /**
      * Checks if a player is inside this role
      *
      * @param player
@@ -35,6 +40,17 @@ public abstract class AbstractRole implements Role {
     @Override
     public void setAccess(Protection.Access access) {
         this.access = access;
+        accessChanged = true;
+    }
+
+    @Override
+    public boolean accessChanged() {
+        return accessChanged;
+    }
+
+    @Override
+    public void markUnchanged() {
+        accessChanged = false;
     }
 
 }

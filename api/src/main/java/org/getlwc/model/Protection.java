@@ -105,6 +105,7 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
 
         for (Role role : engine.getDatabase().loadProtectionRoles(this)) {
             getComponent(RoleSetComponent.class).add(role);
+            role.markUnchanged();
         }
 
         getComponent(RoleSetComponent.class).resetObservedState();
@@ -283,7 +284,14 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
             state = State.UNMODIFIED;
         }
 
-        // sync metadata
+        saveMetadata();
+        saveRoles();
+    }
+
+    /**
+     * Save the metadata for this protection
+     */
+    private void saveMetadata() {
         synchronized (metadata) {
             for (Map.Entry<Metadata, State> entry : metadataState.entrySet()) {
                 Metadata meta = entry.getKey();
@@ -298,8 +306,12 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
 
             metadataState.clear();
         }
+    }
 
-        // sync roles
+    /**
+     * Save the roles for this protection
+     */
+    private void saveRoles() {
         RoleSetComponent roles = getComponent(RoleSetComponent.class);
 
         for (Role role : roles.getObjectsRemoved()) {
@@ -308,6 +320,13 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
 
         for (Role role : roles.getObjectsAdded()) {
             engine.getDatabase().saveOrCreateProtectionRole(this, role);
+        }
+
+        for (Role role : roles.getAll()) {
+            if (role.accessChanged()) {
+                engine.getDatabase().saveOrCreateProtectionRole(this, role);
+                role.markUnchanged();
+            }
         }
 
         roles.resetObservedState();

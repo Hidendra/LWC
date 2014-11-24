@@ -38,4 +38,16 @@ public interface Role extends AccessProvider {
      */
     public void setAccess(Protection.Access access);
 
+    /**
+     * Returns true if the access on the role has been changed
+     *
+     * @return
+     */
+    public boolean accessChanged();
+
+    /**
+     * Marks the role as unchanged
+     */
+    public void markUnchanged();
+
 }
