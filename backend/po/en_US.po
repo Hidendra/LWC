@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2014-11-22 00:09-0400\n"
+"POT-Creation-Date: 2014-11-24 12:59-0400\n"
 "PO-Revision-Date: 2013-06-18 23:02-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -209,13 +209,9 @@ msgstr ""
 "Could not find UUID for player: {0}. Make sure they have signed into the "
 "server before."
 
-#: backend/src/main/java/org/getlwc/db/jdbc/JDBCDatabase.java:228
-msgid "Creating base database via base.sql"
-msgstr "Creating base database via base.sql"
-
 #. / TL: The double apostrophe is to work around a bug in a library.
 #. /     If you need to use it please leave it as a single apostrophe.
-#: backend/src/main/java/org/getlwc/EventHelper.java:103
+#: backend/src/main/java/org/getlwc/EventHelper.java:106
 #, java-format
 msgid ""
 "Your client''s locale {0} is not supported by LWC. {1} will be used "
@@ -227,7 +223,7 @@ msgstr ""
 
 #. / TL: The double apostrophe is to work around a bug in a library.
 #. /     If you need to use it please leave it as a single apostrophe.
-#: backend/src/main/java/org/getlwc/EventHelper.java:114
+#: backend/src/main/java/org/getlwc/EventHelper.java:117
 #, java-format
 msgid ""
 "Your client''s locale {0} was recently translated for LWC. It may not be "
@@ -240,12 +236,12 @@ msgstr ""
 "Want to help translate/proofread LWC? Go to: &3&nhttp://translate.getlwc."
 "org&r"
 
-#: backend/src/main/java/org/getlwc/EventHelper.java:168
+#: backend/src/main/java/org/getlwc/EventHelper.java:178
 msgid "&4This protection is locked by a magical spell."
 msgstr "&4This protection is locked by a magical spell."
 
 #. / {0}: message from the exception/error that was thrown
-#: backend/src/main/java/org/getlwc/EventHelper.java:175
+#: backend/src/main/java/org/getlwc/EventHelper.java:185
 #, java-format
 msgid ""
 "&cA severe error occurred while processing the event: {0}\n"
@@ -253,3 +249,58 @@ msgid ""
 msgstr ""
 "&cA severe error occurred while processing the event: {0}\n"
 "&cThe stack trace has been printed out to the console."
+
+#: mods/forge/mcp/build/sources/java/org/getlwc/forge/asm/AbstractMultiClassTransformer.java:100
+#: mods/forge/mcp/src/main/java/org/getlwc/forge/asm/AbstractMultiClassTransformer.java:100
+#, java-format
+msgid "[ASM] Patched {0} ({1}) successfully!"
+msgstr ""
+
+#: mods/forge/mcp/build/sources/java/org/getlwc/forge/asm/AbstractMultiClassTransformer.java:103
+#: mods/forge/mcp/src/main/java/org/getlwc/forge/asm/AbstractMultiClassTransformer.java:103
+#, java-format
+msgid "[ASM] {0} ({1}) was not changed during transformations"
+msgstr ""
+
+#: mods/forge/mcp/build/sources/java/org/getlwc/forge/asm/AbstractMultiClassTransformer.java:108
+#: mods/forge/mcp/src/main/java/org/getlwc/forge/asm/AbstractMultiClassTransformer.java:108
+#, java-format
+msgid "[ASM] Failed to patch {0} ({1})"
+msgstr ""
+
+#: mods/forge/mcp/build/sources/java/org/getlwc/forge/asm/AbstractTransformer.java:67
+#: mods/forge/mcp/src/main/java/org/getlwc/forge/asm/AbstractTransformer.java:67
+#, java-format
+msgid "[ASM] Loaded native class mappings for Minecraft {0}"
+msgstr ""
+
+#: mods/forge/mcp/build/sources/java/org/getlwc/forge/asm/AbstractTransformer.java:70
+#: mods/forge/mcp/src/main/java/org/getlwc/forge/asm/AbstractTransformer.java:70
+#, java-format
+msgid ""
+"[ASM] ================   NOTE !!!   ================\n"
+"[ASM] There are no included native mappings for Minecraft {0}\n"
+"[ASM] If this is a major Minecraft release then LWC IS MOST LIKELY BROKEN!\n"
+"[ASM] MAKE SURE YOU ARE USING THE LATEST VERSION!"
+msgstr ""
+
+#: mods/forge/mcp/build/sources/java/org/getlwc/forge/listeners/ForgeListener.java:190
+#: mods/forge/mcp/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:190
+#, java-format
+msgid "An error was encountered while processing a command: {0}"
+msgstr ""
+
+#. / console
+#: mods/forge/mcp/build/sources/java/org/getlwc/forge/listeners/ForgeListener.java:194
+#: mods/forge/mcp/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:194
+msgid "&4[LWC] An internal error occurred while processing this command"
+msgstr ""
+
+#: mods/forge/mcp/build/sources/java/org/getlwc/forge/modsupport/BuildCraft.java:18
+#: mods/forge/mcp/src/main/java/org/getlwc/forge/modsupport/BuildCraft.java:18
+#, java-format
+msgid "Using BuildCraft version: {0}"
+msgstr ""
+
+#~ msgid "Creating base database via base.sql"
+#~ msgstr "Creating base database via base.sql"

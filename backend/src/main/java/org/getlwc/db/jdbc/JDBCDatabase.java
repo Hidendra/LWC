@@ -30,6 +30,7 @@
 package org.getlwc.db.jdbc;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.flywaydb.core.Flyway;
 import org.getlwc.Engine;
 import org.getlwc.Location;
 import org.getlwc.SaveQueue;
@@ -54,11 +55,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 public class JDBCDatabase implements Database {
 
@@ -154,7 +151,6 @@ public class JDBCDatabase implements Database {
 
         this.engine = engine;
         this.details = details;
-        engine.getResourceDownloader().ensureResourceInstalled("c3p0");
     }
 
     @Override
@@ -162,6 +158,8 @@ public class JDBCDatabase implements Database {
         Driver driver = details.getDriver();
 
         // Load any resources required for the driver
+        engine.getResourceDownloader().ensureResourceInstalled("c3p0");
+        engine.getResourceDownloader().ensureResourceInstalled("flywaydb");
         engine.getResourceDownloader().ensureResourceInstalled("databases." + driver.toString().toLowerCase());
 
         // Get the path to the database
@@ -200,7 +198,7 @@ public class JDBCDatabase implements Database {
                 pool.setPassword("");
             }
 
-            verifyBase();
+            migrate();
             lookup.populate();
             return true;
         } catch (Exception e) {
@@ -213,56 +211,23 @@ public class JDBCDatabase implements Database {
     /**
      * Verify the base SQL. If the base tables were not created, create them
      */
-    private void verifyBase() {
-        boolean baseRequired;
+    private void migrate() {
+        Flyway flyway = new Flyway();
 
-        try (Connection connection = pool.getConnection();
-             Statement stmt = connection.createStatement()) {
-            stmt.executeQuery("SELECT 1 FROM " + details.getPrefix() + "protections").close();
-            baseRequired = false;
-        } catch (SQLException e) {
-            baseRequired = true;
-        }
+        Map<String, String> placeholders = new HashMap<>();
+        placeholders.put("prefix", details.getPrefix());
 
-        if (baseRequired) {
-            engine.getConsoleSender().sendTranslatedMessage("Creating base database via base.sql");
+        flyway.setLocations("/db/common", String.format("/db/%s", details.getDriver().toString().toLowerCase()));
+        flyway.setTable(details.getPrefix() + "schema_version");
+        flyway.setPlaceholders(placeholders);
+        flyway.setSqlMigrationPrefix("v");
+        flyway.setDataSource(new SingleConnectionDataSource(pool));
 
-            executeInternalSQLFile("/sql/base/base.sql");
-            executeInternalSQLFile("/sql/base/base." + details.getDriver().toString().toLowerCase() + ".sql");
-        }
-    }
+        // fixes issue where flyway could not load its metadata sql file
+        flyway.setClassLoader(Flyway.class.getClassLoader());
 
-    /**
-     * Execute an internal SQL file
-     *
-     * @param path
-     */
-    private void executeInternalSQLFile(String path) {
-        String file = "";
-
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(path)))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                file += line + "\n";
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // fix the prefix
-        file = file.replaceAll("__PREFIX__", details.getPrefix());
-
-        try (Connection connection = pool.getConnection()) {
-            // convert the SQL to a stream so we can use a (mostly) unmodified ScriptRunner class
-            JDBCScriptRunner runner = new JDBCScriptRunner(connection, false, false);
-            runner.setLogWriter(null);
-
-            try (InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(file.getBytes("UTF-8")))) {
-                runner.runScript(reader);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        flyway.init();
+        flyway.migrate();
     }
 
     @Override

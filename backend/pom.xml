@@ -63,6 +63,11 @@
             <version>0.9.2.1</version>
         </dependency>
         <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>3.0</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.10</version>
@@ -183,6 +188,7 @@
                                     <exclude>org.xnap.commons:gettext-commons</exclude>
                                     <exclude>org.yaml:*</exclude>
                                     <exclude>com.mchange:*</exclude>
+                                    <exclude>org.flywaydb:*</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>
