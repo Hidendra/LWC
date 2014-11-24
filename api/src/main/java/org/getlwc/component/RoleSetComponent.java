@@ -2,7 +2,7 @@ package org.getlwc.component;
 
 import org.getlwc.role.Role;
 
-public class RoleSetComponent extends AbstractSetComponent<Role> {
+public class RoleSetComponent extends AbstractObservedSetComponent<Role> {
 
     @Override
     public String toString() {

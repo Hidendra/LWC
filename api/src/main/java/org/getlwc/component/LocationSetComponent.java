@@ -2,7 +2,7 @@ package org.getlwc.component;
 
 import org.getlwc.Location;
 
-public class LocationSetComponent extends AbstractSetComponent<Location> {
+public class LocationSetComponent extends AbstractObservedSetComponent<Location> {
 
     @Override
     public String toString() {

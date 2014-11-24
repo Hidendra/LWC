@@ -87,11 +87,6 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
      */
     private final Map<Metadata, State> metadataState = new HashMap<>();
 
-    /**
-     * Cache for role states, so that they can be properly synchronized to the database.
-     */
-    private final Map<Tuple<String, String>, Tuple<Role, Access>> roleStateCache = new HashMap<>();
-
     @Override
     public String toString() {
         // TODO add in updated, created
@@ -112,7 +107,7 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
             getComponent(RoleSetComponent.class).add(role);
         }
 
-        populateRoleStateCache();
+        getComponent(RoleSetComponent.class).resetObservedState();
 
         engine.getEventBus().post(new ProtectionLoadEvent(this));
     }
@@ -305,30 +300,17 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
         }
 
         // sync roles
-        synchronized (roleStateCache) {
-            for (Role role : getComponent(RoleSetComponent.class).getAll()) {
-                Tuple<String, String> cacheKey = new Tuple<>(role.getType(), role.serialize());
+        RoleSetComponent roles = getComponent(RoleSetComponent.class);
 
-                if (roleStateCache.containsKey(cacheKey)) {
-                    if (role.getAccess() != roleStateCache.get(cacheKey).second()) {
-                        engine.getDatabase().saveOrCreateProtectionRole(this, role); // update
-                    }
-
-                    roleStateCache.remove(cacheKey);
-                } else {
-                    engine.getDatabase().saveOrCreateProtectionRole(this, role);
-                }
-            }
-
-            // any roles remaining in the cache were removed from the protection as they were seen in the last
-            // save but were not removed by the pass of all current roles attached to the protection
-            for (Tuple<Role, Access> pair : roleStateCache.values()) {
-                engine.getDatabase().removeProtectionRole(this, pair.first());
-            }
-
-            roleStateCache.clear();
-            populateRoleStateCache();
+        for (Role role : roles.getObjectsRemoved()) {
+            engine.getDatabase().removeProtectionRole(this, role);
         }
+
+        for (Role role : roles.getObjectsAdded()) {
+            engine.getDatabase().saveOrCreateProtectionRole(this, role);
+        }
+
+        roles.resetObservedState();
     }
 
     @Override
@@ -348,17 +330,6 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
     @Override
     public void save() {
         engine.getDatabase().saveLater(this);
-    }
-
-    /**
-     * Populates the role state cache
-     */
-    private void populateRoleStateCache() {
-        synchronized (roleStateCache) {
-            for (Role role : getComponent(RoleSetComponent.class).getAll()) {
-                roleStateCache.put(new Tuple<>(role.getType(), role.serialize()), new Tuple<>(role, role.getAccess()));
-            }
-        }
     }
 
     /**
