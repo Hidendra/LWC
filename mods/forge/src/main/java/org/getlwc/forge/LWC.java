@@ -112,6 +112,7 @@ public class LWC {
             proxy.init();
             layer.init();
             engine.setPermissionHandler(new ForgePermissionHandler());
+            engine.getEventBus().registerAll(new EngineEventListener(engine, this));
             engine.getEventBus().post(new ServerStartingEvent());
             MinecraftForge.EVENT_BUS.register(listener);
         }

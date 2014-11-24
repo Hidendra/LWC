@@ -81,16 +81,6 @@ public abstract class ServerLayer {
     protected abstract World internalGetWorld(String worldName);
 
     /**
-     * Called when a base command is registered (e.g "lwc info" the base command is "lwc").
-     * This allows server mods to register the command if it needs to be listened for.
-     *
-     * @param baseCommand
-     */
-    @Deprecated
-    public void onRegisterBaseCommand(String baseCommand, Command command) {
-    }
-
-    /**
      * Resolves an offline player for the ident; either a player name or their UUID.
      * TODO:- Player info/Offline player obj?
      *

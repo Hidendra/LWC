@@ -255,7 +255,6 @@ public class SimpleCommandHandler implements CommandHandler {
 
         if (!baseCommands.contains(normalized)) {
             if (engine != null) {
-                engine.getServerLayer().onRegisterBaseCommand(normalized, command);
                 engine.getEventBus().post(new BaseCommandRegisteredEvent(normalized, command));
             }
             baseCommands.add(normalized);

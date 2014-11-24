@@ -53,11 +53,6 @@ public class ForgeServerLayer extends ServerLayer {
      */
     private LWC mod;
 
-    /**
-     * Cached method for CommandHandler.registerCommand
-     */
-    private Method cachedRegisterCommandMethod = null;
-
     public ForgeServerLayer() {
         mod = LWC.instance;
     }
@@ -82,34 +77,6 @@ public class ForgeServerLayer extends ServerLayer {
     protected void clearCache() {
         players.clear();
         worlds.clear();
-    }
-
-    @Override
-    public void onRegisterBaseCommand(String baseCommand, Command command) {
-        try {
-            if (cachedRegisterCommandMethod == null) {
-                // find registerCommand(ICommand) without invoking it directly
-                for (Method method : net.minecraft.command.CommandHandler.class.getDeclaredMethods()) {
-                    Class<?>[] paramTypes = method.getParameterTypes();
-
-                    if (paramTypes.length != 1) {
-                        continue;
-                    }
-
-                    if (paramTypes[0].getCanonicalName().equals(AbstractSingleClassTransformer.getClassName("ICommand", true)) || paramTypes[0].getCanonicalName().equals(AbstractSingleClassTransformer.getClassName("ICommand", false))) {
-                        cachedRegisterCommandMethod = method;
-                        break;
-                    }
-                }
-            }
-
-            if (cachedRegisterCommandMethod != null) {
-                cachedRegisterCommandMethod.invoke(FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager(), new NativeCommandHandler(baseCommand));
-            }
-        } catch (Exception e) {
-            System.err.println(" !!!! LWC is likely not compatible with this version of Minecraft. You need to update!");
-            e.printStackTrace();
-        }
     }
 
     @Override

@@ -43,11 +43,6 @@ public class CanaryServerLayer extends ServerLayer {
     }
 
     @Override
-    public void onRegisterBaseCommand(final String baseCommand, final org.getlwc.command.Command command) {
-        //
-    }
-
-    @Override
     public UUID getOfflinePlayer(String ident) {
         Player player = getPlayer(ident);
 

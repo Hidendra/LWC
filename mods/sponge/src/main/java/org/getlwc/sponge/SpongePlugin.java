@@ -6,6 +6,7 @@ import org.getlwc.ServerInfo;
 import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
 import org.getlwc.entity.Player;
+import org.spongepowered.api.Game;
 import org.spongepowered.api.event.Subscribe;
 import org.spongepowered.api.event.state.ServerStartingEvent;
 import org.spongepowered.api.event.state.ServerStoppingEvent;
@@ -28,6 +29,7 @@ public class SpongePlugin implements Owner {
 
         engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, serverInfo, new SpongeConsoleCommandSender());
         // TODO Sponge permission handler when it's ready
+        engine.getEventBus().registerAll(new EngineEventListener(engine, this));
         engine.getEventBus().post(new org.getlwc.event.server.ServerStartingEvent());
     }
 
@@ -55,6 +57,15 @@ public class SpongePlugin implements Owner {
      */
     public Engine getEngine() {
         return engine;
+    }
+
+    /**
+     * Get the game this plugin is using
+     *
+     * @return
+     */
+    public Game getGame() {
+        return null; // TODO
     }
 
     /**
