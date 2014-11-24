@@ -14,6 +14,7 @@ public interface ProtectionDatabase {
      * @param location
      * @return
      */
+    @Deprecated
     public Protection createProtection(Location location);
 
     /**

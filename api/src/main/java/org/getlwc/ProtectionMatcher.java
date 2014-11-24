@@ -29,6 +29,7 @@
 
 package org.getlwc;
 
+@Deprecated
 public interface ProtectionMatcher {
 
     /**
@@ -37,6 +38,7 @@ public interface ProtectionMatcher {
      * @param base
      * @return
      */
+    @Deprecated
     public ProtectionSet matchProtection(Block base);
 
 }

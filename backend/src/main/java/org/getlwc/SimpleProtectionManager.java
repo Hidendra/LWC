@@ -66,6 +66,7 @@ public class SimpleProtectionManager implements ProtectionManager {
     }
 
     @Override
+    @Deprecated // Rename to loadProtection
     public Protection findProtection(Location location) {
         ProtectionMatcher matcher = new SimpleProtectionMatcher(engine);
 
