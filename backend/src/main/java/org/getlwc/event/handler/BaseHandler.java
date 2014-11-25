@@ -6,7 +6,7 @@ import org.getlwc.event.Listener;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class BaseHandler {
+public class BaseHandler implements EventHandler {
 
     /**
      * The object registering this handler
@@ -43,13 +43,18 @@ public class BaseHandler {
         return result;
     }
 
-    /**
-     * Returns the event type this handler is for
-     *
-     * @return
-     */
+    @Override
     public Class<? extends Event> getEventType() {
         return (Class<? extends Event>) method.getParameterTypes()[0];
+    }
+
+    @Override
+    public void invoke(Event event) {
+        try {
+            method.invoke(parent, event);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 
     public Object getParent() {
@@ -58,19 +63,6 @@ public class BaseHandler {
 
     public Method getMethod() {
         return method;
-    }
-
-    /**
-     * Invokes the handler with the given event
-     *
-     * @param event
-     */
-    public void invoke(Event event) {
-        try {
-            method.invoke(parent, event);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
     }
 
 }

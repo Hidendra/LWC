@@ -31,7 +31,10 @@ package org.getlwc.entity;
 
 import org.getlwc.ItemStack;
 import org.getlwc.command.CommandSender;
+import org.getlwc.event.EventConsumer;
+import org.getlwc.event.EventFuture;
 import org.getlwc.event.PlayerEventHandler;
+import org.getlwc.event.protection.ProtectionInteractEvent;
 import org.getlwc.lang.Locale;
 
 import java.text.MessageFormat;
@@ -58,6 +61,21 @@ public abstract class Player extends PlayerEventHandler implements Entity, Comma
      * @return
      */
     public abstract ItemStack getItemInHand();
+
+    /**
+     * Calls the given consumer the next time the player interacts with a protection.
+     *
+     * @param consumer
+     * @returns the future representing this event
+     */
+    public abstract EventFuture onNextProtectionInteract(EventConsumer<ProtectionInteractEvent> consumer);
+
+    /**
+     * Calls the given consumer every time the player interacts with a protection.
+     * @param consumer
+     * @return
+     */
+    public abstract EventFuture onEveryProtectionInteract(EventConsumer<ProtectionInteractEvent> consumer);
 
     @Override
     public void sendMessage(String message, Object... arguments) {

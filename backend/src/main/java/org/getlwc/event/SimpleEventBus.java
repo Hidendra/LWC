@@ -3,12 +3,15 @@ package org.getlwc.event;
 import org.getlwc.event.filter.BaseEventFilter;
 import org.getlwc.event.filter.ProtectionEventFilter;
 import org.getlwc.event.handler.BaseHandler;
+import org.getlwc.event.handler.EventHandler;
 import org.getlwc.event.handler.FilteredHandler;
+import org.getlwc.event.handler.SubscribeHandler;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,17 +21,26 @@ public class SimpleEventBus implements EventBus {
     /**
      * All handlers for the bus
      */
-    private Map<Class<? extends Event>, Set<BaseHandler>> handlers = new HashMap<>();
+    private final Map<Class<? extends Event>, Set<EventHandler>> handlers = new HashMap<>();
 
     @Override
     public boolean post(Event event) {
-        Set<BaseHandler> handlerList = handlers.get(event.getClass());
+        Set<EventHandler> handlerList = handlers.get(event.getClass());
 
         if (handlerList == null) {
             return false;
         }
 
-        for (BaseHandler handler : handlerList) {
+        Iterator<EventHandler> iter = handlerList.iterator();
+
+        while (iter.hasNext()) {
+            EventHandler handler = iter.next();
+
+            if (handler instanceof EventFuture && ((EventFuture) handler).isCancelled()) {
+                iter.remove();
+                continue;
+            }
+
             handler.invoke(event);
         }
 
@@ -36,22 +48,49 @@ public class SimpleEventBus implements EventBus {
     }
 
     @Override
-    public void registerAll(Object object) {
-        for (BaseHandler handler : findHandlers(object)) {
-            Class<? extends Event> type = handler.getEventType();
+    public <T extends Event> EventFuture subscribe(Class<T> clazz, EventConsumer<T> consumer) {
+        SubscribeHandler handler = new SubscribeHandler<>(this, clazz, consumer);
+        register(handler);
+        return handler;
+    }
 
-            verifyHandlerList(type);
-            handlers.get(type).add(handler);
+    /**
+     * Unsubscribes the subscribed handler
+     *
+     * @param handler
+     */
+    public void unsubscribe(EventHandler handler) {
+        synchronized (handlers) {
+            verifyHandlerList(handler.getEventType());
+            handlers.get(handler.getEventType()).remove(handler);
+        }
+    }
+
+    /**
+     * Registers an event handler
+     *
+     * @param handler
+     */
+    public void register(EventHandler handler) {
+        verifyHandlerList(handler.getEventType());
+        handlers.get(handler.getEventType()).add(handler);
+    }
+
+    @Override
+    public void subscribe(Object object) {
+        synchronized (handlers) {
+            for (EventHandler handler : findHandlers(object)) {
+                register(handler);
+            }
         }
     }
 
     @Override
-    public void unregisterAll(Object object) {
-        for (BaseHandler handler : findHandlers(object)) {
-            Class<? extends Event> type = handler.getEventType();
-
-            verifyHandlerList(type);
-            handlers.get(type).remove(handler);
+    public void unsubscribe(Object object) {
+        synchronized (handlers) {
+            for (EventHandler handler : findHandlers(object)) {
+                unsubscribe(handler);
+            }
         }
     }
 
@@ -61,8 +100,8 @@ public class SimpleEventBus implements EventBus {
      * @param object
      * @return
      */
-    private List<BaseHandler> findHandlers(Object object) {
-        List<BaseHandler> result = new ArrayList<>();
+    private List<EventHandler> findHandlers(Object object) {
+        List<EventHandler> result = new ArrayList<>();
 
         for (Method method : object.getClass().getMethods()) {
             Class<?>[] parameters = method.getParameterTypes();
@@ -97,7 +136,7 @@ public class SimpleEventBus implements EventBus {
      */
     private void verifyHandlerList(Class<? extends Event> clazz) {
         if (!handlers.containsKey(clazz)) {
-            handlers.put(clazz, new HashSet<BaseHandler>());
+            handlers.put(clazz, new HashSet<EventHandler>());
         }
     }
 

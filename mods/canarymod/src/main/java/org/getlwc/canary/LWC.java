@@ -32,7 +32,7 @@ public class LWC extends Plugin {
         engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new CanaryServerInfo(), new CanaryConsoleCommandSender(getLogman()));
         engine.setPermissionHandler(new CanaryPermissionHandler());
 
-        engine.getEventBus().registerAll(new EngineEventListener(engine, this));
+        engine.getEventBus().subscribe(new EngineEventListener(engine, this));
         engine.getEventBus().post(new ServerStartingEvent());
 
         // Hooks

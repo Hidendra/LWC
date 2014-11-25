@@ -138,7 +138,7 @@ public class SimpleEngine implements Engine {
         configuration = new YamlConfiguration("config.yml");
         languagesConfig = new YamlConfiguration(getClass().getResourceAsStream("/languages.yml"));
         I18n.init(this);
-        eventBus.registerAll(this);
+        eventBus.subscribe(this);
 
         consoleSender.sendMessage("Server: {0} ({1})", serverInfo.getServerImplementationTitle(), serverInfo.getServerImplementationVersion());
         consoleSender.sendMessage("Plugin: {0} ({1})", getImplementationTitle(), getImplementationVersion());
@@ -370,7 +370,7 @@ public class SimpleEngine implements Engine {
             e.printStackTrace();
         }
 
-        eventBus.registerAll(object);
+        eventBus.subscribe(object);
     }
 
 }
