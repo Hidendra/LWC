@@ -31,7 +31,7 @@ public class BuildCraft {
                 World world = engine.getServerLayer().getWorld(worldHandle.getWorldInfo().getWorldName());
                 Location location = new Location(world, x, y, z);
 
-                Protection protection = engine.getProtectionManager().findProtection(location);
+                Protection protection = engine.getProtectionManager().loadProtection(location);
 
                 if (protection != null) {
                     return false;
