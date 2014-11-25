@@ -47,8 +47,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class SimpleResourceDownloader implements ResourceDownloader {
 
@@ -71,11 +69,6 @@ public class SimpleResourceDownloader implements ResourceDownloader {
      * The Engine instance
      */
     private Engine engine;
-
-    /**
-     * The queue of files that need to be downloaded or verified
-     */
-    private final Queue<ResourceFile> fileQueue = new ConcurrentLinkedQueue<ResourceFile>();
 
     /**
      * The base url to download resources from
@@ -121,8 +114,7 @@ public class SimpleResourceDownloader implements ResourceDownloader {
 
         // SQLite native library
         if (resource.equals("databases.sqlite")) {
-            verifyFile(new ResourceFile(getFullNativeLibraryPath(), baseUrl + getFullNativeLibraryPath().replaceAll(DEST_LIBRARY_FOLDER, "")));
-            downloadFiles();
+            downloadFile(new ResourceFile(getFullNativeLibraryPath(), baseUrl + getFullNativeLibraryPath().replaceAll(DEST_LIBRARY_FOLDER, "")));
         }
 
         if (res.containsKey("class")) {
@@ -138,10 +130,8 @@ public class SimpleResourceDownloader implements ResourceDownloader {
 
         for (Object o : files) {
             String file = (String) o;
-            verifyFile(new ResourceFile(DEST_LIBRARY_FOLDER + file, baseUrl + file));
+            downloadFile(new ResourceFile(DEST_LIBRARY_FOLDER + file, baseUrl + file));
         }
-
-        downloadFiles();
     }
 
     /**
@@ -183,21 +173,6 @@ public class SimpleResourceDownloader implements ResourceDownloader {
     }
 
     /**
-     * Verify a file and if it does not exist, download it
-     *
-     * @param updaterFile
-     * @return true if the file was queued to be downloaded
-     */
-    private boolean verifyFile(ResourceFile updaterFile) {
-        if (updaterFile == null) {
-            return false;
-        }
-
-        fileQueue.offer(updaterFile);
-        return true;
-    }
-
-    /**
      * Ensure the given file is in the class path. It must be a jar file.
      *
      * @param file
@@ -230,61 +205,50 @@ public class SimpleResourceDownloader implements ResourceDownloader {
     /**
      * Download all the files in the queue
      */
-    public void downloadFiles() {
-        synchronized (fileQueue) {
-            ResourceFile resourceFile;
-            int size = fileQueue.size();
+    public void downloadFile(ResourceFile resourceFile) {
+        try {
+            File local = new File(resourceFile.getLocalLocation());
+            String remote = resourceFile.getRemoteLocation();
 
-            if (size == 0) {
-                return;
+            int tries = 1;
+
+            if (local.exists()) {
+                engine.getConsoleSender().sendMessage("Verifying file {0}", local.toString());
+            } else {
+                engine.getConsoleSender().sendMessage("Downloading file {0} to {1}", local.getName(), local.getParent());
             }
 
-            while ((resourceFile = fileQueue.poll()) != null) {
-                try {
-                    File local = new File(resourceFile.getLocalLocation());
-                    String remote = resourceFile.getRemoteLocation();
+            URL fileURL = new URL(remote);
+            URL md5URL = new URL(remote + ".md5");
 
-                    int tries = 1;
-
-                    if (local.exists()) {
-                        engine.getConsoleSender().sendMessage("Verifying file {0}", local.toString());
-                    } else {
-                        engine.getConsoleSender().sendMessage("Downloading file {0} to {1}", local.getName(), local.getParent());
-                    }
-
-                    URL fileURL = new URL(remote);
-                    URL md5URL = new URL(remote + ".md5");
-
-                    do {
-                        if (!local.exists()) {
-                            downloadLibrary(fileURL, local);
-                        }
-
-                        String expectedMD5 = readURLFully(md5URL);
-
-                        if (expectedMD5 == null) {
-                            engine.getConsoleSender().sendMessage("{0}: no checksum available from remote host", local.getName());
-                            break;
-                        } else {
-                            String realMD5 = MD5Checksum.calculateHumanChecksum(local);
-
-                            if (expectedMD5.equals(realMD5)) {
-                                engine.getConsoleSender().sendMessage("{0}: checksum is OK", local.getName());
-                                break;
-                            } else {
-                                engine.getConsoleSender().sendMessage("{0}: checksum check FAILED. Found {1}, but was expecting {2}. File will be redownloaded.", local.getName(), realMD5, expectedMD5);
-                                local.delete();
-                            }
-                        }
-                    } while (tries++ <= MAX_DOWNLOAD_TRIES);
-
-                    if (local.getName().endsWith(".jar")) {
-                        ensureLoaded(local);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+            do {
+                if (!local.exists()) {
+                    downloadFully(fileURL, local);
                 }
+
+                String expectedMD5 = readURLFully(md5URL);
+
+                if (expectedMD5 == null) {
+                    engine.getConsoleSender().sendMessage("{0}: no checksum available from remote host", local.getName());
+                    break;
+                } else {
+                    String realMD5 = MD5Checksum.calculateHumanChecksum(local);
+
+                    if (expectedMD5.equals(realMD5)) {
+                        engine.getConsoleSender().sendMessage("{0}: checksum is OK", local.getName());
+                        break;
+                    } else {
+                        engine.getConsoleSender().sendMessage("{0}: checksum check FAILED. Found {1}, but was expecting {2}. File will be redownloaded.", local.getName(), realMD5, expectedMD5);
+                        local.delete();
+                    }
+                }
+            } while (tries++ <= MAX_DOWNLOAD_TRIES);
+
+            if (local.getName().endsWith(".jar")) {
+                ensureLoaded(local);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -294,7 +258,7 @@ public class SimpleResourceDownloader implements ResourceDownloader {
      * @param url
      * @param downloadTo
      */
-    private void downloadLibrary(URL url, File downloadTo) throws IOException {
+    private void downloadFully(URL url, File downloadTo) throws IOException {
         try (OutputStream outputStream = new FileOutputStream(downloadTo)) {
             URLConnection connection = url.openConnection();
 
