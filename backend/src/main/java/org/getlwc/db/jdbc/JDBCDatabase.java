@@ -46,10 +46,6 @@ import org.getlwc.role.Role;
 import org.getlwc.role.RoleCreationException;
 import org.getlwc.util.Tuple;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -226,7 +222,14 @@ public class JDBCDatabase implements Database {
         // fixes issue where flyway could not load its metadata sql file
         flyway.setClassLoader(Flyway.class.getClassLoader());
 
-        flyway.migrate();
+        try {
+            flyway.migrate();
+        } catch (Exception e) { // FlywayException will crash the VM as Flyway is not loaded until init
+            engine.getConsoleSender().sendMessage("Database migrations failed. Repairing & trying again.");
+
+            flyway.repair();
+            flyway.migrate();
+        }
     }
 
     @Override
