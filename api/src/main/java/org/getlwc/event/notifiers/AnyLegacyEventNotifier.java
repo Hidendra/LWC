@@ -29,18 +29,59 @@
 
 package org.getlwc.event.notifiers;
 
-import org.getlwc.event.EventNotifier;
-import org.getlwc.event.block.BlockEvent;
+import org.getlwc.entity.Player;
+import org.getlwc.event.LegacyEventNotifier;
 
 @Deprecated
-public abstract class BlockEventNotifier extends EventNotifier<BlockEvent> {
+public class AnyLegacyEventNotifier extends LegacyEventNotifier {
 
-    public BlockEventNotifier(boolean temporary) {
-        super(temporary);
+    /**
+     * The slave event notifier if we are acting as the parent
+     */
+    private LegacyEventNotifier slave = null;
+
+    /**
+     * The player to send the message to if we are acting as a slave
+     */
+    private Player player = null;
+
+    /**
+     * The message to send to the player if we are acting as a slave
+     */
+    private String message = null;
+
+    /**
+     * Create an {@link AnyLegacyEventNotifier} as a parent. Once this notifier is called, it will kill the slave
+     * notifier that notifies of the inverse
+     *
+     * @param slave
+     */
+    public AnyLegacyEventNotifier(LegacyEventNotifier<?> slave) {
+        this.slave = slave;
     }
 
-    public BlockEventNotifier() {
-        super();
+    /**
+     * Create an {@link AnyLegacyEventNotifier} as a slave. It will simply send the message to the player if
+     * this notifier is triggered
+     *
+     * @param message
+     */
+    public AnyLegacyEventNotifier(Player player, String message) {
+        super(true);
+        this.player = player;
+        this.message = message;
+    }
+
+    @Override
+    public boolean call(Object event) {
+        if (slave != null) {
+            return slave.call(event);
+        } else if (message != null) {
+            player.sendMessage(message);
+            return true;
+        }
+
+        throw new UnsupportedOperationException("AnyEventNotifier is in an illegal state: no actions");
     }
 
 }

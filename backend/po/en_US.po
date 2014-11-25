@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2014-11-24 12:59-0400\n"
+"POT-Creation-Date: 2014-11-25 09:06-0400\n"
 "PO-Revision-Date: 2013-06-18 23:02-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -17,31 +17,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.5.5\n"
 
-#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:279
+#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:280
 msgid "&4You do not have permission to use this command."
 msgstr "&4You do not have permission to use this command."
 
-#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:356
+#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:357
 #, java-format
 msgid "&2=== &6/{0} &2==="
 msgstr "&2=== &6/{0} &2==="
 
-#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:375
+#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:376
 #, java-format
 msgid "&2Usage:       &6/{0} {1}"
 msgstr "&2Usage:       &6/{0} {1}"
 
-#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:389
+#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:390
 #, java-format
 msgid "&2Description: &6{0}"
 msgstr "&2Description: &6{0}"
 
-#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:393
+#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:394
 #, java-format
 msgid "&2Permission:  &6{0}"
 msgstr "&2Permission:  &6{0}"
 
-#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:416
+#: api/src/main/java/org/getlwc/command/SimpleCommandHandler.java:417
 #, java-format
 msgid "&2Aliases:     {0}"
 msgstr "&2Aliases:     {0}"
@@ -154,7 +154,7 @@ msgstr "&eClick on a block to protect it!"
 msgid "&4That block is not protectable"
 msgstr "&4That block is not protectable"
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:126
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:127
 msgid ""
 "&2Created a new protection successfully.\n"
 "Want to give another player access to your protection?\n"
@@ -164,29 +164,29 @@ msgstr ""
 "Want to give another player access to your protection?\n"
 "Use: &e/lwc modify NAME (or: /cadd NAME)"
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:130
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:131
 msgid ""
 "&4Failed to create the protection. Your block is most likely not protected."
 msgstr ""
 "&4Failed to create the protection. Your block is most likely not protected."
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:147
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:148
 msgid "&eClick on a protection to remove the lock!"
 msgstr "&eClick on a protection to remove the lock!"
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:156
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:157
 msgid "&2The protection has been removed successfully."
 msgstr "&2The protection has been removed successfully."
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:158
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:159
 msgid "&4You do not have the required access level to do that!"
 msgstr "&4You do not have the required access level to do that!"
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:176
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:177
 msgid "&eClick on a protection to view info on it."
 msgstr "&eClick on a protection to view info on it."
 
-#: backend/src/main/java/org/getlwc/command/BaseCommands.java:216
+#: backend/src/main/java/org/getlwc/command/BaseCommands.java:217
 #, java-format
 msgid "&7{0}&f: {1}\n"
 msgstr "&7{0}&f: {1}\n"

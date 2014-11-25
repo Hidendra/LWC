@@ -1,41 +1,24 @@
-package org.getlwc.event.handler;
+package org.getlwc.event.filter;
 
 import org.getlwc.component.Component;
 import org.getlwc.event.Event;
-import org.getlwc.event.Listener;
 import org.getlwc.event.ProtectionListener;
 import org.getlwc.event.protection.ProtectionEvent;
 import org.getlwc.model.Protection;
+import org.getlwc.util.Filter;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
+public class ProtectionEventFilter implements Filter<Event> {
 
-public class ProtectionHandler extends BaseHandler {
-
-    /**
-     * The listener annotation attached to this handler
-     */
     private ProtectionListener listener;
 
-    public ProtectionHandler(final ProtectionListener listener, Object parent, Method method) {
-        super(new Listener() {
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return Listener.class;
-            }
-
-            @Override
-            public boolean ignoreCancelled() {
-                return listener.ignoreCancelled();
-            }
-        }, parent, method);
+    public ProtectionEventFilter(ProtectionListener listener) {
         this.listener = listener;
     }
 
     @Override
-    public void invoke(Event event) {
+    public boolean accept(Event event) {
         if (!(event instanceof ProtectionEvent)) {
-            return;
+            return false;
         }
 
         ProtectionEvent protectionEvent = (ProtectionEvent) event;
@@ -54,9 +37,7 @@ public class ProtectionHandler extends BaseHandler {
             }
         }
 
-        if (shouldCallEvent) {
-            super.invoke(event);
-        }
+        return shouldCallEvent;
     }
 
 }

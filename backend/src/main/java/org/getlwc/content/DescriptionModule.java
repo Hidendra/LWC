@@ -8,7 +8,7 @@ import org.getlwc.entity.Player;
 import org.getlwc.event.ProtectionListener;
 import org.getlwc.event.protection.ProtectionEvent;
 import org.getlwc.event.protection.ProtectionLoadEvent;
-import org.getlwc.event.notifiers.ProtectionEventNotifier;
+import org.getlwc.event.notifiers.ProtectionLegacyEventNotifier;
 import org.getlwc.model.Metadata;
 import org.getlwc.model.Protection;
 
@@ -45,7 +45,7 @@ public final class DescriptionModule {
             player.sendTranslatedMessage("Click on the protection to set the description: &e{0}", description);
         }
 
-        player.onAnyInteract(new ProtectionEventNotifier() {
+        player.onAnyInteract(new ProtectionLegacyEventNotifier() {
             @Override
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();

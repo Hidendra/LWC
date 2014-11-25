@@ -37,8 +37,8 @@ import org.getlwc.component.RoleSetComponent;
 import org.getlwc.entity.Player;
 import org.getlwc.event.block.BlockEvent;
 import org.getlwc.event.protection.ProtectionEvent;
-import org.getlwc.event.notifiers.BlockEventNotifier;
-import org.getlwc.event.notifiers.ProtectionEventNotifier;
+import org.getlwc.event.notifiers.BlockLegacyEventNotifier;
+import org.getlwc.event.notifiers.ProtectionLegacyEventNotifier;
 import org.getlwc.model.Protection;
 import org.getlwc.role.Role;
 import org.getlwc.util.StringUtils;
@@ -110,7 +110,7 @@ public class BaseCommands {
         final Player player = (Player) context.getCommandSender();
         player.sendTranslatedMessage("&eClick on a block to protect it!");
 
-        player.onAnyInteract(new BlockEventNotifier() {
+        player.onAnyInteract(new BlockLegacyEventNotifier() {
             @Override
             public boolean call(BlockEvent event) {
                 ProtectionManager manager = engine.getProtectionManager();
@@ -147,7 +147,7 @@ public class BaseCommands {
         final Player player = (Player) context.getCommandSender();
         player.sendTranslatedMessage("&eClick on a protection to remove the lock!");
 
-        player.onAnyInteract(new ProtectionEventNotifier() {
+        player.onAnyInteract(new ProtectionLegacyEventNotifier() {
             @Override
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();
@@ -176,7 +176,7 @@ public class BaseCommands {
         final Player player = (Player) context.getCommandSender();
         player.sendTranslatedMessage("&eClick on a protection to view info on it.");
 
-        player.onAnyInteract(new ProtectionEventNotifier() {
+        player.onAnyInteract(new ProtectionLegacyEventNotifier() {
             @Override
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();

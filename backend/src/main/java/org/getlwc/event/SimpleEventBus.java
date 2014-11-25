@@ -1,7 +1,9 @@
 package org.getlwc.event;
 
+import org.getlwc.event.filter.BaseEventFilter;
+import org.getlwc.event.filter.ProtectionEventFilter;
 import org.getlwc.event.handler.BaseHandler;
-import org.getlwc.event.handler.ProtectionHandler;
+import org.getlwc.event.handler.FilteredHandler;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -72,9 +74,11 @@ public class SimpleEventBus implements EventBus {
             BaseHandler handler = null;
 
             if (method.isAnnotationPresent(Listener.class)) {
-                handler = new BaseHandler(method.getAnnotation(Listener.class), object, method);
+                Listener listener = method.getAnnotation(Listener.class);
+                handler = new FilteredHandler(object, method, new BaseEventFilter(listener));
             } else if (method.isAnnotationPresent(ProtectionListener.class)) {
-                handler = new ProtectionHandler(method.getAnnotation(ProtectionListener.class), object, method);
+                ProtectionListener listener = method.getAnnotation(ProtectionListener.class);
+                handler = new FilteredHandler(object, method, new ProtectionEventFilter(listener));
             }
 
             if (handler != null) {

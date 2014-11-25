@@ -5,7 +5,7 @@ import org.getlwc.component.RoleSetComponent;
 import org.getlwc.content.role.PlayerRole;
 import org.getlwc.entity.Player;
 import org.getlwc.event.protection.ProtectionEvent;
-import org.getlwc.event.notifiers.ProtectionEventNotifier;
+import org.getlwc.event.notifiers.ProtectionLegacyEventNotifier;
 import org.getlwc.model.Protection;
 import org.getlwc.role.Role;
 import org.getlwc.role.RoleCreationException;
@@ -61,7 +61,7 @@ public class AddRemoveCommands {
             player.sendTranslatedMessage("&fClick on a protection to apply the modification: &2add/change &e{0}&f to &e{1}", roleName, access);
         }
 
-        player.onAnyInteract(new ProtectionEventNotifier() {
+        player.onAnyInteract(new ProtectionLegacyEventNotifier() {
             @Override
             public boolean call(ProtectionEvent event) {
                 Protection protection = event.getProtection();

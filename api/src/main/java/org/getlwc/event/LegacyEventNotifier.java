@@ -27,61 +27,50 @@
  * either expressed or implied, of anybody else.
  */
 
-package org.getlwc.event.notifiers;
-
-import org.getlwc.entity.Player;
-import org.getlwc.event.EventNotifier;
+package org.getlwc.event;
 
 @Deprecated
-public class AnyEventNotifier extends EventNotifier {
+public abstract class LegacyEventNotifier<T> {
 
     /**
-     * The slave event notifier if we are acting as the parent
+     * If the event should be removed after it is called
      */
-    private EventNotifier slave = null;
+    private final boolean temporary;
 
-    /**
-     * The player to send the message to if we are acting as a slave
-     */
-    private Player player = null;
+    public LegacyEventNotifier(boolean temporary) {
+        this.temporary = temporary;
+    }
 
-    /**
-     * The message to send to the player if we are acting as a slave
-     */
-    private String message = null;
-
-    /**
-     * Create an {@link AnyEventNotifier} as a parent. Once this notifier is called, it will kill the slave
-     * notifier that notifies of the inverse
-     *
-     * @param slave
-     */
-    public AnyEventNotifier(EventNotifier<?> slave) {
-        this.slave = slave;
+    public LegacyEventNotifier() {
+        this(true);
     }
 
     /**
-     * Create an {@link AnyEventNotifier} as a slave. It will simply send the message to the player if
-     * this notifier is triggered
-     *
-     * @param message
+     * Runs the event
      */
-    public AnyEventNotifier(Player player, String message) {
-        super(true);
-        this.player = player;
-        this.message = message;
+    public abstract boolean call(T event);
+
+    /**
+     * Check if the event is temporary
+     *
+     * @return
+     */
+    public boolean isTemporary() {
+        return temporary;
     }
 
-    @Override
-    public boolean call(Object event) {
-        if (slave != null) {
-            return slave.call(event);
-        } else if (message != null) {
-            player.sendMessage(message);
-            return true;
+    /**
+     * Calls the notifier using an unsafe cast. The only protection assumed is if the argument given is null.
+     *
+     * @param event
+     * @return
+     */
+    protected boolean unsafeCall(Event event) {
+        if (event == null) {
+            return call(null);
+        } else {
+            return call((T) event);
         }
-
-        throw new UnsupportedOperationException("AnyEventNotifier is in an illegal state: no actions");
     }
 
 }

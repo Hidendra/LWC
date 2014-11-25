@@ -29,17 +29,17 @@
 
 package org.getlwc.event.notifiers;
 
-import org.getlwc.event.EventNotifier;
-import org.getlwc.event.protection.ProtectionEvent;
+import org.getlwc.event.LegacyEventNotifier;
+import org.getlwc.event.block.BlockEvent;
 
 @Deprecated
-public abstract class ProtectionEventNotifier extends EventNotifier<ProtectionEvent> {
+public abstract class BlockLegacyEventNotifier extends LegacyEventNotifier<BlockEvent> {
 
-    public ProtectionEventNotifier(boolean temporary) {
+    public BlockLegacyEventNotifier(boolean temporary) {
         super(temporary);
     }
 
-    public ProtectionEventNotifier() {
+    public BlockLegacyEventNotifier() {
         super();
     }
 

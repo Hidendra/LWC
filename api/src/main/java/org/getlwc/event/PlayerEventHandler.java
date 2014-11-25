@@ -30,9 +30,9 @@
 package org.getlwc.event;
 
 import org.getlwc.entity.Player;
-import org.getlwc.event.notifiers.AnyEventNotifier;
-import org.getlwc.event.notifiers.BlockEventNotifier;
-import org.getlwc.event.notifiers.ProtectionEventNotifier;
+import org.getlwc.event.notifiers.AnyLegacyEventNotifier;
+import org.getlwc.event.notifiers.BlockLegacyEventNotifier;
+import org.getlwc.event.notifiers.ProtectionLegacyEventNotifier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,7 +62,7 @@ public class PlayerEventHandler {
     /**
      * The map of non-temporary event notifiers
      */
-    private final Map<Type, List<EventNotifier>> notifiers = new HashMap<Type, List<EventNotifier>>();
+    private final Map<Type, List<LegacyEventNotifier>> notifiers = new HashMap<Type, List<LegacyEventNotifier>>();
 
     /**
      * We only allow one temporary event notifier for each event type to prevent large amounts of
@@ -71,7 +71,7 @@ public class PlayerEventHandler {
      * the player to execute an action. If it's overridden by another temporary notifier, then
      * it can be assumed that they want to do something else instead.
      */
-    private final Map<Type, EventNotifier<?>> temporaryNotifiers = new HashMap<Type, EventNotifier<?>>();
+    private final Map<Type, LegacyEventNotifier<?>> temporaryNotifiers = new HashMap<Type, LegacyEventNotifier<?>>();
 
     /**
      * Queue the notifier to be called next time the player interacts with a protection
@@ -79,7 +79,7 @@ public class PlayerEventHandler {
      * @param notifier
      */
     @Deprecated
-    public void onProtectionInteract(ProtectionEventNotifier notifier) {
+    public void onProtectionInteract(ProtectionLegacyEventNotifier notifier) {
         checkNotifier(notifier);
         addEventNotifier(Type.PLAYER_INTERACT_PROTECTION, notifier);
     }
@@ -90,34 +90,34 @@ public class PlayerEventHandler {
      * @param notifier
      */
     @Deprecated
-    public void onBlockInteract(BlockEventNotifier notifier) {
+    public void onBlockInteract(BlockLegacyEventNotifier notifier) {
         checkNotifier(notifier);
         addEventNotifier(Type.PLAYER_INTERACT_BLOCK, notifier);
     }
 
     /**
      * Queues the notifier given, and will block the inverse.
-     * For example, if a {@link ProtectionEventNotifier} is given, and the player instead interacts with a block,
+     * For example, if a {@link org.getlwc.event.notifiers.ProtectionLegacyEventNotifier} is given, and the player instead interacts with a block,
      * they will be told to interact with a Protection instead. The same holds true for interacting with Blocks:
      * if they instead interact with a Protection they'll be told to interact with a Block instead.
      * This saves mucho boiler plate ;)
      *
-     * @param notifier {@link ProtectionEventNotifier} or {@link BlockEventNotifier}
+     * @param notifier {@link org.getlwc.event.notifiers.ProtectionLegacyEventNotifier} or {@link org.getlwc.event.notifiers.BlockLegacyEventNotifier}
      */
     @Deprecated
-    public void onAnyInteract(EventNotifier<?> notifier) {
+    public void onAnyInteract(LegacyEventNotifier<?> notifier) {
         checkNotifier(notifier);
         final Player player = (Player) this;
 
         // Remove any previous AnyEventNotifiers so that they do not collide
-        removeNotifiersMatchingClass(AnyEventNotifier.class);
+        removeNotifiersMatchingClass(AnyLegacyEventNotifier.class);
 
-        if (notifier instanceof ProtectionEventNotifier) {
-            addEventNotifier(Type.PLAYER_INTERACT_PROTECTION, new AnyEventNotifier(notifier));
-            addEventNotifier(Type.PLAYER_INTERACT_BLOCK, new AnyEventNotifier(player, _("&4That block is not protected!", player)));
-        } else if (notifier instanceof BlockEventNotifier) {
-            addEventNotifier(Type.PLAYER_INTERACT_BLOCK, new AnyEventNotifier(notifier));
-            addEventNotifier(Type.PLAYER_INTERACT_PROTECTION, new AnyEventNotifier(player, _("&4That block is protected! Please interact with a block that is not protected.", player)));
+        if (notifier instanceof ProtectionLegacyEventNotifier) {
+            addEventNotifier(Type.PLAYER_INTERACT_PROTECTION, new AnyLegacyEventNotifier(notifier));
+            addEventNotifier(Type.PLAYER_INTERACT_BLOCK, new AnyLegacyEventNotifier(player, _("&4That block is not protected!", player)));
+        } else if (notifier instanceof BlockLegacyEventNotifier) {
+            addEventNotifier(Type.PLAYER_INTERACT_BLOCK, new AnyLegacyEventNotifier(notifier));
+            addEventNotifier(Type.PLAYER_INTERACT_PROTECTION, new AnyLegacyEventNotifier(player, _("&4That block is protected! Please interact with a block that is not protected.", player)));
         } else {
             throw new UnsupportedOperationException("The notifier must be a Protection- or Block- EventNotifier");
         }
@@ -135,12 +135,12 @@ public class PlayerEventHandler {
     public boolean callEvent(Type type, Event event) throws EventException {
         // Check temporary notifier
         {
-            EventNotifier<?> notifier = temporaryNotifiers.get(type);
+            LegacyEventNotifier<?> notifier = temporaryNotifiers.get(type);
 
             if (notifier != null) {
                 temporaryNotifiers.remove(type);
 
-                if (notifier instanceof AnyEventNotifier) {
+                if (notifier instanceof AnyLegacyEventNotifier) {
                     temporaryNotifiers.remove(Type.PLAYER_INTERACT_BLOCK);
                     temporaryNotifiers.remove(Type.PLAYER_INTERACT_PROTECTION);
                 }
@@ -151,15 +151,15 @@ public class PlayerEventHandler {
             }
         }
 
-        List<EventNotifier> notifiers = this.notifiers.get(type);
+        List<LegacyEventNotifier> notifiers = this.notifiers.get(type);
 
         if (notifiers == null) {
             return false; // Nothing to call
         }
 
-        Iterator<EventNotifier> iter = notifiers.iterator();
+        Iterator<LegacyEventNotifier> iter = notifiers.iterator();
         while (iter.hasNext()) {
-            EventNotifier<?> notifier = iter.next();
+            LegacyEventNotifier<?> notifier = iter.next();
 
             // First remove the event if it is temporary
             if (notifier.isTemporary()) {
@@ -186,7 +186,7 @@ public class PlayerEventHandler {
      * @return
      * @throws EventException
      */
-    private boolean internalCallEvent(Event event, EventNotifier notifier) throws EventException {
+    private boolean internalCallEvent(Event event, LegacyEventNotifier notifier) throws EventException {
         try {
             boolean result = notifier.unsafeCall(event);
 
@@ -206,7 +206,7 @@ public class PlayerEventHandler {
      * @param type
      * @param notifier
      */
-    private void addEventNotifier(Type type, EventNotifier notifier) {
+    private void addEventNotifier(Type type, LegacyEventNotifier notifier) {
         if (type == null) {
             throw new IllegalArgumentException("Event type cannot be null");
         }
@@ -224,7 +224,7 @@ public class PlayerEventHandler {
         checkNotifiers(type);
 
         // Get the list
-        List<EventNotifier> notifiers = this.notifiers.get(type);
+        List<LegacyEventNotifier> notifiers = this.notifiers.get(type);
 
         // write into it
         notifiers.add(notifier);
@@ -235,7 +235,7 @@ public class PlayerEventHandler {
      *
      * @param notifier
      */
-    private void checkNotifier(EventNotifier<?> notifier) {
+    private void checkNotifier(LegacyEventNotifier<?> notifier) {
         if (notifier == null) {
             throw new IllegalArgumentException("Event notifier cannot be null");
         }
@@ -247,10 +247,10 @@ public class PlayerEventHandler {
      * @param type
      */
     private void checkNotifiers(Type type) {
-        List<EventNotifier> notifiers = this.notifiers.get(type);
+        List<LegacyEventNotifier> notifiers = this.notifiers.get(type);
 
         if (notifiers == null) {
-            this.notifiers.put(type, new ArrayList<EventNotifier>());
+            this.notifiers.put(type, new ArrayList<LegacyEventNotifier>());
         }
     }
 
@@ -259,10 +259,10 @@ public class PlayerEventHandler {
      *
      * @param clazz
      */
-    private void removeNotifiersMatchingClass(Class<? extends EventNotifier> clazz) {
+    private void removeNotifiersMatchingClass(Class<? extends LegacyEventNotifier> clazz) {
         synchronized (notifiers) {
-            for (List<EventNotifier> list : notifiers.values()) {
-                Iterator<EventNotifier> iter = list.iterator();
+            for (List<LegacyEventNotifier> list : notifiers.values()) {
+                Iterator<LegacyEventNotifier> iter = list.iterator();
 
                 while (iter.hasNext()) {
                     if (clazz.isInstance(iter.next())) {
@@ -273,7 +273,7 @@ public class PlayerEventHandler {
         }
 
         synchronized (temporaryNotifiers) {
-            Iterator<Map.Entry<Type, EventNotifier<?>>> iter = temporaryNotifiers.entrySet().iterator();
+            Iterator<Map.Entry<Type, LegacyEventNotifier<?>>> iter = temporaryNotifiers.entrySet().iterator();
 
             while (iter.hasNext()) {
                 if (clazz.isInstance(iter.next().getValue())) {
