@@ -1,4 +1,4 @@
+name=LWC
 main-class=org.getlwc.canary.LWC
-isLibrary=false
 author=Hidendra
 version=${project.version}
