@@ -205,7 +205,7 @@ public class JDBCDatabase implements Database {
     }
 
     /**
-     * Verify the base SQL. If the base tables were not created, create them
+     * Migrate the database up to the latest version.
      */
     private void migrate() {
         Flyway flyway = new Flyway();
@@ -224,7 +224,7 @@ public class JDBCDatabase implements Database {
 
         try {
             flyway.migrate();
-        } catch (Exception e) { // FlywayException will crash the VM as Flyway is not loaded until init
+        } catch (Exception e) { // FlywayException will crash LWC as Flyway is not loaded until init
             engine.getConsoleSender().sendMessage("Database migrations failed. Repairing & trying again.");
 
             flyway.repair();
