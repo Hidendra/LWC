@@ -91,6 +91,7 @@ public abstract class SimplePlayer extends Player {
             @Override
             public void accept(BlockInteractEvent event) {
                 consumer.accept(event);
+                nextFuture.cancel();
             }
         });
 
