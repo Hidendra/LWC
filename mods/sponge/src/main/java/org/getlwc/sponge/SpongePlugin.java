@@ -29,7 +29,7 @@ public class SpongePlugin implements Owner {
 
         engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, serverInfo, new SpongeConsoleCommandSender());
         // TODO Sponge permission handler when it's ready
-        engine.getEventBus().registerAll(new EngineEventListener(engine, this));
+        engine.getEventBus().subscribe(new EngineEventListener(engine, this));
         engine.getEventBus().post(new org.getlwc.event.server.ServerStartingEvent());
     }
 
