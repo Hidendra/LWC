@@ -63,7 +63,17 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
             // add the other half of the door
             if (otherDoor != null) {
                 blocks.add(otherDoor);
+
+                // and the block below it
+                Block bottomHalf = base.getY() < otherDoor.getY() ? base : otherDoor;
+
+                blocks.add(bottomHalf.getRelative(BlockFace.DOWN));
             }
+        }
+
+        // Add the block below the sign as destroying it destroys the sign
+        else if (base.isOneOf("minecraft:standing_sign")) {
+            blocks.add(base.getRelative(BlockFace.DOWN));
         }
 
         // other

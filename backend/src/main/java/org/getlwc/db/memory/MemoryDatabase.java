@@ -196,16 +196,20 @@ public class MemoryDatabase implements Database {
 
     @Override
     public void addProtectionLocation(Protection protection, Location location) {
-        // it will add itself to the Protection object
+        protectionsIndexByLocation.put(location, protection);
     }
 
     @Override
     public void removeProtectionLocation(Protection protection, Location location) {
-        // it will remove itself from the Protection object
+        protectionsIndexByLocation.remove(location);
     }
 
     @Override
     public void removeAllProtectionLocations(Protection protection) {
-        // it will remove itself from the Protection object
+        if (protection.hasComponent(LocationSetComponent.class)) {
+            for (Location location : protection.getComponent(LocationSetComponent.class).getAll()) {
+                removeProtectionLocation(protection, location);
+            }
+        }
     }
 }

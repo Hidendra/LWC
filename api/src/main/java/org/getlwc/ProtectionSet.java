@@ -155,7 +155,9 @@ public class ProtectionSet {
      * @param block
      */
     public void add(Block block) {
-        add(getBlockType(block), block);
+        if (block != null) {
+            add(getBlockType(block), block);
+        }
     }
 
     /**
