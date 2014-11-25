@@ -76,108 +76,69 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
             blocks.add(base.getRelative(BlockFace.DOWN));
         }
 
-        // other
-        else {
-            Block above = base.getRelative(BlockFace.UP);
+        // Add the block wall signs are attached to
+        else if (base.isOneOf("minecraft:wall_sign")) {
+            byte direction = base.getData();
 
-            // door above the current block
-            if (above.isOneOf("minecraft:wooden_door", "minecraft:iron_door")) {
-                blocks.add(above);
-                blocks.add(above.getRelative(BlockFace.UP)); // top of the door
+            byte EAST = 0x5;
+            byte WEST = 0x4;
+            byte SOUTH = 0x3;
+            byte NORTH = 0x2;
+
+            if ((direction & EAST) == EAST) {
+                blocks.add(base.getRelative(BlockFace.WEST));
+            } else if ((direction & WEST) == WEST) {
+                blocks.add(base.getRelative(BlockFace.EAST));
+            } else if ((direction & SOUTH) == SOUTH) {
+                blocks.add(base.getRelative(BlockFace.NORTH));
+            } else if ((direction & NORTH) == NORTH) {
+                blocks.add(base.getRelative(BlockFace.SOUTH));
             }
+        }
 
-            // lever that is attached to a block above
-            else if (above.isOneOf("minecraft:lever") && ((above.getData() & 0x5) == 0x5 || (above.getData() & 0x6) == 0x6)) {
-                blocks.add(above);
-            }
+        // Add block buttons/levers are attached to
+        else if (base.isOneOf("minecraft:lever", "minecraft:stone_button", "minecraft:wooden_button")) {
+            byte direction = base.getData();
 
-            // gravity block (e.g. the block above would be destroyed if this one was removed)
-            else if (above.isOneOf("minecraft:standing_sign")) {
-                blocks.add(above);
-            } else {
+            byte EAST = 0x1;
+            byte WEST = 0x2;
+            byte SOUTH = 0x3;
+            byte NORTH = 0x4;
 
-                // wall-attached blocks
-                BlockFace[] POSSIBLE = new BlockFace[]{BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
-
-                for (BlockFace face : POSSIBLE) {
-                    Block block = base.getRelative(face);
-                    byte direction = block.getData();
-
-                    // wall sign
-                    if (block.isOneOf("minecraft:wall_sign")) {
-                        byte EAST = 0x05;
-                        byte WEST = 0x04;
-                        byte SOUTH = 0x03;
-                        byte NORTH = 0x02;
-
-                        if (face == BlockFace.EAST && (direction & EAST) == EAST) {
-                            blocks.add(block);
-                            break;
-                        } else if (face == BlockFace.WEST && (direction & WEST) == WEST) {
-                            blocks.add(block);
-                            break;
-                        } else if (face == BlockFace.SOUTH && (direction & SOUTH) == SOUTH) {
-                            blocks.add(block);
-                            break;
-                        } else if (face == BlockFace.NORTH && (direction & NORTH) == NORTH) {
-                            blocks.add(block);
-                            break;
-                        }
-                    }
-
-                    // lever, stone button, wood button
-                    else if (block.isOneOf("minecraft:lever", "minecraft:stone_button", "minecraft:wooden_button")) {
-                        byte EAST = 0x1;
-                        byte WEST = 0x2;
-                        byte SOUTH = 0x3;
-                        byte NORTH = 0x4;
-
-                        // x & 0x2 returns 0x2 when direction = 0x6 which happens to be for levers if it's a ground lever -.-
-                        if (block.isOneOf("minecraft:lever") && ((direction & 0x5) == 0x5 || (direction & 0x6) == 0x6)) {
-                            break;
-                        }
-
-                        if (face == BlockFace.EAST && (direction & EAST) == EAST) {
-                            blocks.add(block);
-                            break;
-                        } else if (face == BlockFace.WEST && (direction & WEST) == WEST) {
-                            blocks.add(block);
-                            break;
-                        } else if (face == BlockFace.SOUTH && (direction & SOUTH) == SOUTH) {
-                            blocks.add(block);
-                            break;
-                        } else if (face == BlockFace.NORTH && (direction & NORTH) == NORTH) {
-                            blocks.add(block);
-                            break;
-                        }
-                    }
-
-                    // trap door
-                    else if (block.isOneOf("minecraft:trapdoor")) {
-                        byte EAST = 0x2;
-                        byte WEST = 0x3;
-                        byte SOUTH = 0x0;
-                        byte NORTH = 0x1;
-
-                        if (face == BlockFace.WEST && (direction & EAST) == EAST) {
-                            blocks.add(block);
-                            break;
-                        } else if (face == BlockFace.EAST && (direction & WEST) == WEST) {
-                            blocks.add(block);
-                            break;
-                        } else if (face == BlockFace.NORTH && (direction & SOUTH) == SOUTH) {
-                            blocks.add(block);
-                            break;
-                        } else if (face == BlockFace.SOUTH && (direction & NORTH) == NORTH) {
-                            blocks.add(block);
-                            break;
-                        }
-                    }
-
+            // ground lever
+            if (base.isOneOf("minecraft:lever") && ((direction & 0x5) == 0x5 || (direction & 0x6) == 0x6)) {
+                blocks.add(base.getRelative(BlockFace.DOWN));
+            } else { // otherwise it's something on the wall
+                if ((direction & EAST) == EAST) {
+                    blocks.add(base.getRelative(BlockFace.WEST));
+                } else if ((direction & WEST) == WEST) {
+                    blocks.add(base.getRelative(BlockFace.EAST));
+                } else if ((direction & SOUTH) == SOUTH) {
+                    blocks.add(base.getRelative(BlockFace.NORTH));
+                } else if ((direction & NORTH) == NORTH) {
+                    blocks.add(base.getRelative(BlockFace.SOUTH));
                 }
-
             }
+        }
 
+        // Add block trapdoors are attached to
+        else if (base.isOneOf("minecraft:trapdoor")) {
+            byte direction = base.getData();
+
+            byte EAST = 0x2;
+            byte WEST = 0x3;
+            byte SOUTH = 0x0;
+            byte NORTH = 0x1;
+
+            if ((direction & EAST) == EAST) {
+                blocks.add(base.getRelative(BlockFace.EAST));
+            } else if ((direction & WEST) == WEST) {
+                blocks.add(base.getRelative(BlockFace.WEST));
+            } else if ((direction & SOUTH) == SOUTH) {
+                blocks.add(base.getRelative(BlockFace.SOUTH));
+            } else if ((direction & NORTH) == NORTH) {
+                blocks.add(base.getRelative(BlockFace.NORTH));
+            }
         }
 
         for (ProtectionSet.BlockType type : ProtectionSet.BlockType.values()) {
