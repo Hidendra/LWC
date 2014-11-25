@@ -119,6 +119,12 @@ public class SimpleResourceDownloader implements ResourceDownloader {
             return;
         }
 
+        // SQLite native library
+        if (resource.equals("databases.sqlite")) {
+            verifyFile(new ResourceFile(getFullNativeLibraryPath(), baseUrl + getFullNativeLibraryPath().replaceAll(DEST_LIBRARY_FOLDER, "")));
+            downloadFiles();
+        }
+
         if (res.containsKey("class")) {
             String testClass = (String) res.get("class");
 
@@ -133,11 +139,6 @@ public class SimpleResourceDownloader implements ResourceDownloader {
         for (Object o : files) {
             String file = (String) o;
             verifyFile(new ResourceFile(DEST_LIBRARY_FOLDER + file, baseUrl + file));
-        }
-
-        // SQLite native library
-        if (resource.equals("databases.sqlite")) {
-            verifyFile(new ResourceFile(getFullNativeLibraryPath(), baseUrl + getFullNativeLibraryPath().replaceAll(DEST_LIBRARY_FOLDER, "")));
         }
 
         downloadFiles();
