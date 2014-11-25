@@ -34,15 +34,6 @@ import java.util.Set;
 
 public class SimpleProtectionMatcher implements ProtectionMatcher {
 
-    /**
-     * The LWC engine instance
-     */
-    private Engine engine;
-
-    public SimpleProtectionMatcher(Engine engine) {
-        this.engine = engine;
-    }
-
     @Override
     public Set<Block> matchBlocks(Block base) {
         Set<Block> locations = new HashSet<>();

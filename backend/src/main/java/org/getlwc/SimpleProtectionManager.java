@@ -125,7 +125,7 @@ public class SimpleProtectionManager implements ProtectionManager {
     private Set<Location> getBlocksForPossibleProtection(Location location) {
         Set<Location> result = new HashSet<>();
 
-        ProtectionMatcher matcher = new SimpleProtectionMatcher(engine);
+        ProtectionMatcher matcher = new SimpleProtectionMatcher();
         Set<Block> blocks = matcher.matchBlocks(location.getBlock());
 
         for (Block block : blocks) {
