@@ -315,42 +315,17 @@ public class JDBCDatabase implements Database {
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     int protectionId = generatedKeys.getInt(1);
-                    addProtectionBlock(protectionId, location);
+
+                    Protection protection = loadProtection(protectionId);
+                    addProtectionLocation(protection, location);
                 }
             }
+
+            return loadProtection(location);
         } catch (SQLException e) {
             handleException(e);
+            return null;
         }
-
-        return loadProtection(location);
-    }
-
-    /**
-     * Add a protection's block to the database.
-     *
-     * @param protectionId
-     * @param location
-     * @return true if the block was added; false otherwise
-     */
-    private boolean addProtectionBlock(int protectionId, Location location) {
-        try (Connection connection = pool.getConnection();
-             PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_blocks (protection_id, world, x, y, z) VALUES (?, ?, ?, ?, ?)")) {
-            statement.setInt(1, protectionId);
-            statement.setInt(2, lookup.get(JDBCLookupService.LookupType.WORLD_NAME, location.getWorld().getName()));
-            statement.setInt(3, location.getBlockX());
-            statement.setInt(4, location.getBlockY());
-            statement.setInt(5, location.getBlockZ());
-
-            int affected = statement.executeUpdate();
-
-            if (affected == 0) {
-                return true;
-            }
-        } catch (SQLException e) {
-            handleException(e);
-        }
-
-        return false;
     }
 
     @Override
@@ -364,7 +339,6 @@ public class JDBCDatabase implements Database {
 
             try (ResultSet set = statement.executeQuery()) {
                 if (set.next()) {
-                    // TODO compress into a join? At the time this is the very simplest solution
                     return loadProtection(set.getInt("protection_id"));
                 }
             }
@@ -383,7 +357,22 @@ public class JDBCDatabase implements Database {
 
             try (ResultSet set = statement.executeQuery()) {
                 if (set.next()) {
-                    return resolveProtection(set);
+                    Protection protection = resolveProtection(set);
+
+                    Set<Location> locations = loadProtectionLocations(protection);
+
+                    if (locations.size() > 0) {
+                        LocationSetComponent locationSet = new LocationSetComponent();
+
+                        for (Location location : locations) {
+                            locationSet.add(location);
+                        }
+
+                        locationSet.resetObservedState();
+                        protection.addComponent(locationSet);
+                    }
+
+                    return protection;
                 }
             }
         } catch (SQLException e) {
@@ -417,6 +406,70 @@ public class JDBCDatabase implements Database {
              PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protections WHERE id = ?")) {
             statement.setInt(1, protection.getId());
             statement.executeUpdate();
+        } catch (SQLException e) {
+            handleException(e);
+        }
+    }
+
+    @Override
+    public Set<Location> loadProtectionLocations(Protection protection) {
+        Set<Location> result = new HashSet<>();
+
+        try (Connection connection = pool.getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT world, x, y, z FROM " + details.getPrefix() + "protection_blocks WHERE protection_id = ?")) {
+            statement.setInt(1, protection.getId());
+
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
+                    World world = engine.getServerLayer().getWorld(lookup.get(JDBCLookupService.LookupType.WORLD_NAME, set.getInt("world")));
+                    int x = set.getInt("x");
+                    int y = set.getInt("y");
+                    int z = set.getInt("z");
+
+                    result.add(new Location(world, x, y, z));
+                }
+            }
+        } catch (SQLException e) {
+            handleException(e);
+            return null;
+        }
+
+        return result;
+    }
+
+    @Override
+    public void addProtectionLocation(Protection protection, Location location) {
+        try (Connection connection = pool.getConnection();
+             PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_blocks (protection_id, world, x, y, z) VALUES (?, ?, ?, ?, ?)")) {
+            statement.setInt(1, protection.getId());
+            statement.setInt(2, lookup.get(JDBCLookupService.LookupType.WORLD_NAME, location.getWorld().getName()));
+            statement.setInt(3, location.getBlockX());
+            statement.setInt(4, location.getBlockY());
+            statement.setInt(5, location.getBlockZ());
+        } catch (SQLException e) {
+            handleException(e);
+        }
+    }
+
+    @Override
+    public void removeProtectionLocation(Protection protection, Location location) {
+        try (Connection connection = pool.getConnection();
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_blocks WHERE protection_id = ? AND world = ? AND x = ? AND y = ? AND z = ?")) {
+            statement.setInt(1, protection.getId());
+            statement.setInt(2, lookup.get(JDBCLookupService.LookupType.WORLD_NAME, location.getWorld().getName()));
+            statement.setInt(3, location.getBlockX());
+            statement.setInt(4, location.getBlockY());
+            statement.setInt(5, location.getBlockZ());
+        } catch (SQLException e) {
+            handleException(e);
+        }
+    }
+
+    @Override
+    public void removeAllProtectionLocations(Protection protection) {
+        try (Connection connection = pool.getConnection();
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_blocks WHERE protection_id = ?")) {
+            statement.setInt(1, protection.getId());
         } catch (SQLException e) {
             handleException(e);
         }
@@ -581,37 +634,6 @@ public class JDBCDatabase implements Database {
         int protectionId = set.getInt("id");
 
         Protection protection = new Protection(engine, protectionId);
-
-        {
-            try (Connection connection = pool.getConnection();
-                 PreparedStatement statement = connection.prepareStatement("SELECT world, x, y, z FROM " + details.getPrefix() + "protection_blocks WHERE protection_id = ?")) {
-                statement.setInt(1, protectionId);
-
-                try (ResultSet blockSet = statement.executeQuery()) {
-                    if (blockSet.next()) {
-                        // TODO allow multiple blocks per protection ?
-                        World world = engine.getServerLayer().getWorld(lookup.get(JDBCLookupService.LookupType.WORLD_NAME, blockSet.getInt("world")));
-                        int x = blockSet.getInt("x");
-                        int y = blockSet.getInt("y");
-                        int z = blockSet.getInt("z");
-
-                        if (!protection.hasComponent(LocationSetComponent.class)) {
-                            protection.addComponent(new LocationSetComponent());
-                        }
-
-                        Location location = new Location(world, x, y, z);
-                        protection.getComponent(LocationSetComponent.class).add(location);
-                    }
-                }
-            } catch (SQLException e) {
-                handleException(e);
-                return null;
-            }
-        }
-
-        if (protection == null) {
-            return null;
-        }
 
         protection.setUpdated(set.getInt("updated"));
         protection.setCreated(set.getInt("created"));

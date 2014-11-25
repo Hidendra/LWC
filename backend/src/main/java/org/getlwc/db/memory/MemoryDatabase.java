@@ -191,4 +191,23 @@ public class MemoryDatabase implements Database {
         return new HashSet<>(); // nothing to load from
     }
 
+    @Override
+    public Set<Location> loadProtectionLocations(Protection protection) {
+        return new HashSet<>();
+    }
+
+    @Override
+    public void addProtectionLocation(Protection protection, Location location) {
+        // it will add itself to the Protection object
+    }
+
+    @Override
+    public void removeProtectionLocation(Protection protection, Location location) {
+        // it will remove itself from the Protection object
+    }
+
+    @Override
+    public void removeAllProtectionLocations(Protection protection) {
+        // it will remove itself from the Protection object
+    }
 }
