@@ -4,8 +4,8 @@ import org.getlwc.Engine;
 import org.getlwc.component.RoleSetComponent;
 import org.getlwc.content.role.PlayerRole;
 import org.getlwc.entity.Player;
-import org.getlwc.event.protection.ProtectionEvent;
-import org.getlwc.event.notifiers.ProtectionLegacyEventNotifier;
+import org.getlwc.event.EventConsumer;
+import org.getlwc.event.protection.ProtectionInteractEvent;
 import org.getlwc.model.Protection;
 import org.getlwc.role.Role;
 import org.getlwc.role.RoleCreationException;
@@ -61,16 +61,17 @@ public class AddRemoveCommands {
             player.sendTranslatedMessage("&fClick on a protection to apply the modification: &2add/change &e{0}&f to &e{1}", roleName, access);
         }
 
-        player.onAnyInteract(new ProtectionLegacyEventNotifier() {
+        player.onNextProtectionInteract(new EventConsumer<ProtectionInteractEvent>() {
             @Override
-            public boolean call(ProtectionEvent event) {
-                Protection protection = event.getProtection();
+            public void accept(ProtectionInteractEvent event) {
+                event.markCancelled();
 
+                Protection protection = event.getProtection();
                 Protection.Access playerAccess = protection.getAccess(player);
 
                 if (playerAccess.ordinal() < Protection.Access.ADMIN.ordinal()) {
                     player.sendTranslatedMessage("&4Access denied.");
-                    return true;
+                    return;
                 }
 
                 Role role;
@@ -79,12 +80,12 @@ public class AddRemoveCommands {
                     role = engine.getProtectionManager().getRoleRegistry().loadRole(baseRoleType, roleName);
                 } catch (RoleCreationException e) {
                     player.sendMessage(Color.RED + e.getMessage());
-                    return true;
+                    return;
                 }
 
                 if (role == null) {
                     player.sendTranslatedMessage("&4Role identifier not recognized: {0}", baseRoleType);
-                    return true;
+                    return;
                 }
 
                 if (isRemoving) {
@@ -124,8 +125,6 @@ public class AddRemoveCommands {
                         player.sendTranslatedMessage("&2Added successfully.");
                     }
                 }
-
-                return true;
             }
         });
     }

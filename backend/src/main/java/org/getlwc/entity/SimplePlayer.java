@@ -3,6 +3,7 @@ package org.getlwc.entity;
 import org.getlwc.SimpleEngine;
 import org.getlwc.event.EventConsumer;
 import org.getlwc.event.EventFuture;
+import org.getlwc.event.block.BlockInteractEvent;
 import org.getlwc.event.protection.ProtectionInteractEvent;
 
 import java.util.ArrayList;
@@ -56,4 +57,33 @@ public abstract class SimplePlayer extends Player {
         return future;
     }
 
+    @Override
+    public EventFuture onEveryBlockInteract(final EventConsumer<BlockInteractEvent> consumer) {
+        EventFuture future = SimpleEngine.getInstance().getEventBus().subscribe(BlockInteractEvent.class, new EventConsumer<BlockInteractEvent>() {
+            @Override
+            public void accept(BlockInteractEvent event) {
+                consumer.accept(event);
+            }
+        });
+
+        eventFutures.add(future);
+        return future;
+    }
+
+    @Override
+    public EventFuture onNextBlockInteract(final EventConsumer<BlockInteractEvent> consumer) {
+        if (nextFuture != null) {
+            nextFuture.cancel();
+        }
+
+        EventFuture future = SimpleEngine.getInstance().getEventBus().subscribe(BlockInteractEvent.class, new EventConsumer<BlockInteractEvent>() {
+            @Override
+            public void accept(BlockInteractEvent event) {
+                consumer.accept(event);
+            }
+        });
+
+        nextFuture = future;
+        return future;
+    }
 }

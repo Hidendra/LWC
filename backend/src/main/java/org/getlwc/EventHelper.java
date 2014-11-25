@@ -32,10 +32,6 @@ package org.getlwc;
 import org.getlwc.entity.Entity;
 import org.getlwc.entity.Player;
 import org.getlwc.event.Event;
-import org.getlwc.event.EventException;
-import org.getlwc.event.PlayerEventHandler;
-import org.getlwc.event.block.BlockEvent;
-import org.getlwc.event.protection.ProtectionEvent;
 import org.getlwc.event.block.BlockInteractEvent;
 import org.getlwc.event.protection.ProtectionInteractEvent;
 import org.getlwc.lang.Locale;
@@ -151,15 +147,13 @@ public class EventHelper {
                 Event event;
 
                 if (protection == null) {
-                    cancel = player.callEvent(PlayerEventHandler.Type.PLAYER_INTERACT_BLOCK, new BlockEvent(block));
                     event = new BlockInteractEvent(block);
                 } else {
-                    cancel = player.callEvent(PlayerEventHandler.Type.PLAYER_INTERACT_PROTECTION, new ProtectionEvent(protection));
                     event = new ProtectionInteractEvent(protection);
                 }
 
                 engine.getEventBus().post(event);
-                cancel = cancel || event.isCancelled();
+                cancel = event.isCancelled();
 
                 // default event action
                 if (!cancel && protection != null) {
@@ -180,7 +174,7 @@ public class EventHelper {
 
                     return true;
                 }
-            } catch (EventException e) {
+            } catch (Exception e) {
                 /// {0}: message from the exception/error that was thrown
                 player.sendTranslatedMessage("&cA severe error occurred while processing the event: {0}\n"
                         + "&cThe stack trace has been printed out to the console.", e.getMessage());

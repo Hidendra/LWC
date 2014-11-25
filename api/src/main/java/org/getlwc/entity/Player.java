@@ -33,7 +33,7 @@ import org.getlwc.ItemStack;
 import org.getlwc.command.CommandSender;
 import org.getlwc.event.EventConsumer;
 import org.getlwc.event.EventFuture;
-import org.getlwc.event.PlayerEventHandler;
+import org.getlwc.event.block.BlockInteractEvent;
 import org.getlwc.event.protection.ProtectionInteractEvent;
 import org.getlwc.lang.Locale;
 
@@ -43,7 +43,7 @@ import java.util.Map;
 
 import static org.getlwc.I18n._;
 
-public abstract class Player extends PlayerEventHandler implements Entity, CommandSender {
+public abstract class Player implements Entity, CommandSender {
 
     /**
      * This player's locale
@@ -76,6 +76,22 @@ public abstract class Player extends PlayerEventHandler implements Entity, Comma
      * @return
      */
     public abstract EventFuture onEveryProtectionInteract(EventConsumer<ProtectionInteractEvent> consumer);
+
+    /**
+     * Calls the given consumer the next time the player interacts with a block
+     *
+     * @param consumer
+     * @return
+     */
+    public abstract EventFuture onNextBlockInteract(EventConsumer<BlockInteractEvent> consumer);
+
+    /**
+     * Calls the given consumer every time the player interacts with a protection.
+     *
+     * @param consumer
+     * @return
+     */
+    public abstract EventFuture onEveryBlockInteract(EventConsumer<BlockInteractEvent> consumer);
 
     @Override
     public void sendMessage(String message, Object... arguments) {

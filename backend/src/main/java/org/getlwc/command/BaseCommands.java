@@ -35,10 +35,9 @@ import org.getlwc.ProtectionManager;
 import org.getlwc.component.Component;
 import org.getlwc.component.RoleSetComponent;
 import org.getlwc.entity.Player;
-import org.getlwc.event.block.BlockEvent;
-import org.getlwc.event.protection.ProtectionEvent;
-import org.getlwc.event.notifiers.BlockLegacyEventNotifier;
-import org.getlwc.event.notifiers.ProtectionLegacyEventNotifier;
+import org.getlwc.event.EventConsumer;
+import org.getlwc.event.block.BlockInteractEvent;
+import org.getlwc.event.protection.ProtectionInteractEvent;
 import org.getlwc.model.Protection;
 import org.getlwc.role.Role;
 import org.getlwc.util.StringUtils;
@@ -110,15 +109,17 @@ public class BaseCommands {
         final Player player = (Player) context.getCommandSender();
         player.sendTranslatedMessage("&eClick on a block to protect it!");
 
-        player.onAnyInteract(new BlockLegacyEventNotifier() {
+        player.onNextBlockInteract(new EventConsumer<BlockInteractEvent>() {
             @Override
-            public boolean call(BlockEvent event) {
+            public void accept(BlockInteractEvent event) {
+                event.markCancelled();
+
                 ProtectionManager manager = engine.getProtectionManager();
                 Block block = event.getBlock();
 
                 if (!manager.isBlockProtectable(block)) {
                     player.sendTranslatedMessage("&4That block is not protectable");
-                    return false;
+                    return;
                 }
 
                 Protection protection = manager.createProtection(player.getUUID(), block.getLocation());
@@ -130,8 +131,6 @@ public class BaseCommands {
                 } else {
                     player.sendTranslatedMessage("&4Failed to create the protection. Your block is most likely not protected.");
                 }
-
-                return true;
             }
         });
     }
@@ -147,9 +146,11 @@ public class BaseCommands {
         final Player player = (Player) context.getCommandSender();
         player.sendTranslatedMessage("&eClick on a protection to remove the lock!");
 
-        player.onAnyInteract(new ProtectionLegacyEventNotifier() {
+        player.onNextProtectionInteract(new EventConsumer<ProtectionInteractEvent>() {
             @Override
-            public boolean call(ProtectionEvent event) {
+            public void accept(ProtectionInteractEvent event) {
+                event.markCancelled();
+
                 Protection protection = event.getProtection();
 
                 if (protection.getAccess(player) == Protection.Access.OWNER) {
@@ -158,8 +159,6 @@ public class BaseCommands {
                 } else {
                     player.sendTranslatedMessage("&4You do not have the required access level to do that!");
                 }
-
-                return true;
             }
         });
     }
@@ -176,11 +175,12 @@ public class BaseCommands {
         final Player player = (Player) context.getCommandSender();
         player.sendTranslatedMessage("&eClick on a protection to view info on it.");
 
-        player.onAnyInteract(new ProtectionLegacyEventNotifier() {
+        player.onNextProtectionInteract(new EventConsumer<ProtectionInteractEvent>() {
             @Override
-            public boolean call(ProtectionEvent event) {
-                Protection protection = event.getProtection();
+            public void accept(ProtectionInteractEvent event) {
+                event.markCancelled();
 
+                Protection protection = event.getProtection();
                 Map<Protection.Access, List<Role>> accessMap = new LinkedHashMap<Protection.Access, List<Role>>();
 
                 for (Protection.Access access : Protection.Access.USABLE_ACCESS_LEVELS) {
@@ -224,8 +224,6 @@ public class BaseCommands {
                 for (Component component : protection.getComponents()) {
                     player.sendMessage(component.toString());
                 }
-
-                return true;
             }
         });
     }

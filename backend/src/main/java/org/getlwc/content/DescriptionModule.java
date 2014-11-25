@@ -5,10 +5,10 @@ import org.getlwc.command.CommandContext;
 import org.getlwc.command.SenderType;
 import org.getlwc.content.component.DescriptionComponent;
 import org.getlwc.entity.Player;
+import org.getlwc.event.EventConsumer;
 import org.getlwc.event.ProtectionListener;
-import org.getlwc.event.protection.ProtectionEvent;
+import org.getlwc.event.protection.ProtectionInteractEvent;
 import org.getlwc.event.protection.ProtectionLoadEvent;
-import org.getlwc.event.notifiers.ProtectionLegacyEventNotifier;
 import org.getlwc.model.Metadata;
 import org.getlwc.model.Protection;
 
@@ -45,9 +45,11 @@ public final class DescriptionModule {
             player.sendTranslatedMessage("Click on the protection to set the description: &e{0}", description);
         }
 
-        player.onAnyInteract(new ProtectionLegacyEventNotifier() {
+        player.onNextProtectionInteract(new EventConsumer<ProtectionInteractEvent>() {
             @Override
-            public boolean call(ProtectionEvent event) {
+            public void accept(ProtectionInteractEvent event) {
+                event.markCancelled();
+
                 Protection protection = event.getProtection();
 
                 if (removingDescription) {
@@ -61,8 +63,6 @@ public final class DescriptionModule {
                 }
 
                 protection.save();
-
-                return true;
             }
         });
     }
