@@ -66,7 +66,7 @@ public class EventHelper {
      * @return true if the given entity can access the block (i.e. no protection there OR they can access the protection)
      */
     private static boolean silentAccessCheck(Entity entity, Block block) {
-        Protection protection = engine.getProtectionManager().findProtection(block.getLocation());
+        Protection protection = engine.getProtectionManager().loadProtection(block.getLocation());
 
         if (protection == null) {
             return true;
@@ -141,7 +141,7 @@ public class EventHelper {
         boolean cancel;
 
         // Match the block to a protection
-        Protection protection = engine.getProtectionManager().findProtection(block.getLocation());
+        Protection protection = engine.getProtectionManager().loadProtection(block.getLocation());
         engine.getConsoleSender().sendMessage("Protection found: " + protection);
 
         if (entity instanceof Player) {
@@ -265,7 +265,7 @@ public class EventHelper {
             return false;
         }
 
-        Protection protection = manager.findProtection(block.getLocation());
+        Protection protection = manager.loadProtection(block.getLocation());
 
         /**
          * TODO globally disable redstone on protections for now
@@ -350,7 +350,7 @@ public class EventHelper {
             return false;
         }
 
-        Protection protection = engine.getProtectionManager().findProtection(extending);
+        Protection protection = engine.getProtectionManager().loadProtection(extending);
         return protection != null;
     }
 
@@ -373,7 +373,7 @@ public class EventHelper {
             return false;
         }
 
-        Protection protection = engine.getProtectionManager().findProtection(retracting);
+        Protection protection = engine.getProtectionManager().loadProtection(retracting);
         return protection != null;
     }
 

@@ -50,7 +50,7 @@ public interface ProtectionManager {
      * @param location
      * @return
      */
-    public Protection findProtection(Location location);
+    public Protection loadProtection(Location location);
 
     /**
      * Create a protection in the world

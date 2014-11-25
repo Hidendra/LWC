@@ -69,8 +69,7 @@ public class SimpleProtectionManager implements ProtectionManager {
     }
 
     @Override
-    @Deprecated // Rename to loadProtection
-    public Protection findProtection(Location location) {
+    public Protection loadProtection(Location location) {
         return engine.getDatabase().loadProtection(location);
     }
 

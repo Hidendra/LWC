@@ -137,7 +137,7 @@ public class ProtectionMatcherTest {
         assertTrue(implicitProtections.size() > 0);
 
         for (Location location : implicitProtections) {
-            assertNotNull(engine.getProtectionManager().findProtection(location));
+            assertNotNull(engine.getProtectionManager().loadProtection(location));
         }
     }
 
@@ -226,7 +226,7 @@ public class ProtectionMatcherTest {
      * @param z
      */
     private void assertProtectionExists(int x, int y, int z) {
-        assertNotNull(engine.getProtectionManager().findProtection(new Location(world, x, y, z)));
+        assertNotNull(engine.getProtectionManager().loadProtection(new Location(world, x, y, z)));
     }
 
     /**
@@ -237,7 +237,7 @@ public class ProtectionMatcherTest {
      * @param z
      */
     private void assertNoProtectionExists(int x, int y, int z) {
-        assertNull(engine.getProtectionManager().findProtection(new Location(world, x, y, z)));
+        assertNull(engine.getProtectionManager().loadProtection(new Location(world, x, y, z)));
     }
 
     /**
