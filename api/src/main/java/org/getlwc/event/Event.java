@@ -40,8 +40,20 @@ public abstract class Event {
         return cancelled;
     }
 
+    /**
+     * Sets the cancelled flag of the event
+     *
+     * @param cancelled
+     */
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
+    }
+
+    /**
+     * Marks the event as cancelled
+     */
+    public void markCancelled() {
+        setCancelled(true);
     }
 
 }
