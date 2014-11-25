@@ -103,7 +103,7 @@ public class BaseCommands {
             command = "lwc create",
             description = "Create a protection",
             permission = "lwc.create",
-            aliases = {"cprivate", "clock", "protect"},
+            aliases = {"cprivate", "clock", "protect","p"},
             accepts = SenderType.PLAYER
     )
     public void createProtection(CommandContext context) {
