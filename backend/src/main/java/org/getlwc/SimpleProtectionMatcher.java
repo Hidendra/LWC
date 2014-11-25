@@ -29,6 +29,9 @@
 
 package org.getlwc;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class SimpleProtectionMatcher implements ProtectionMatcher {
 
     /**
@@ -41,18 +44,18 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
     }
 
     @Override
-    public ProtectionSet matchProtection(Block base) {
-        ProtectionSet blocks = new ProtectionSet(engine);
+    public Set<Block> matchBlocks(Block base) {
+        Set<Block> locations = new HashSet<>();
 
         // first add the base block, as it must exist on the protection if it matches
-        blocks.add(base);
+        locations.add(base);
 
         // Double chest
         if (base.isOneOf("minecraft:chest", "minecraft:trapped_chest")) {
             Block adjacentChest = base.findBlockRelativeToXZ(base.getName());
 
             if (adjacentChest != null) {
-                blocks.add(adjacentChest);
+                locations.add(adjacentChest);
             }
         }
 
@@ -62,18 +65,18 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
 
             // add the other half of the door
             if (otherDoor != null) {
-                blocks.add(otherDoor);
+                locations.add(otherDoor);
 
                 // and the block below it
                 Block bottomHalf = base.getY() < otherDoor.getY() ? base : otherDoor;
 
-                blocks.add(bottomHalf.getRelative(BlockFace.DOWN));
+                locations.add(bottomHalf.getRelative(BlockFace.DOWN));
             }
         }
 
         // Add the block below the sign as destroying it destroys the sign
         else if (base.isOneOf("minecraft:standing_sign")) {
-            blocks.add(base.getRelative(BlockFace.DOWN));
+            locations.add(base.getRelative(BlockFace.DOWN));
         }
 
         // Add the block wall signs are attached to
@@ -86,13 +89,13 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
             byte NORTH = 0x2;
 
             if ((direction & EAST) == EAST) {
-                blocks.add(base.getRelative(BlockFace.WEST));
+                locations.add(base.getRelative(BlockFace.WEST));
             } else if ((direction & WEST) == WEST) {
-                blocks.add(base.getRelative(BlockFace.EAST));
+                locations.add(base.getRelative(BlockFace.EAST));
             } else if ((direction & SOUTH) == SOUTH) {
-                blocks.add(base.getRelative(BlockFace.NORTH));
+                locations.add(base.getRelative(BlockFace.NORTH));
             } else if ((direction & NORTH) == NORTH) {
-                blocks.add(base.getRelative(BlockFace.SOUTH));
+                locations.add(base.getRelative(BlockFace.SOUTH));
             }
         }
 
@@ -107,16 +110,16 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
 
             // ground lever
             if (base.isOneOf("minecraft:lever") && ((direction & 0x5) == 0x5 || (direction & 0x6) == 0x6)) {
-                blocks.add(base.getRelative(BlockFace.DOWN));
+                locations.add(base.getRelative(BlockFace.DOWN));
             } else { // otherwise it's something on the wall
                 if ((direction & EAST) == EAST) {
-                    blocks.add(base.getRelative(BlockFace.WEST));
+                    locations.add(base.getRelative(BlockFace.WEST));
                 } else if ((direction & WEST) == WEST) {
-                    blocks.add(base.getRelative(BlockFace.EAST));
+                    locations.add(base.getRelative(BlockFace.EAST));
                 } else if ((direction & SOUTH) == SOUTH) {
-                    blocks.add(base.getRelative(BlockFace.NORTH));
+                    locations.add(base.getRelative(BlockFace.NORTH));
                 } else if ((direction & NORTH) == NORTH) {
-                    blocks.add(base.getRelative(BlockFace.SOUTH));
+                    locations.add(base.getRelative(BlockFace.SOUTH));
                 }
             }
         }
@@ -131,25 +134,17 @@ public class SimpleProtectionMatcher implements ProtectionMatcher {
             byte NORTH = 0x1;
 
             if ((direction & EAST) == EAST) {
-                blocks.add(base.getRelative(BlockFace.EAST));
+                locations.add(base.getRelative(BlockFace.EAST));
             } else if ((direction & WEST) == WEST) {
-                blocks.add(base.getRelative(BlockFace.WEST));
+                locations.add(base.getRelative(BlockFace.WEST));
             } else if ((direction & SOUTH) == SOUTH) {
-                blocks.add(base.getRelative(BlockFace.SOUTH));
+                locations.add(base.getRelative(BlockFace.SOUTH));
             } else if ((direction & NORTH) == NORTH) {
-                blocks.add(base.getRelative(BlockFace.NORTH));
+                locations.add(base.getRelative(BlockFace.NORTH));
             }
         }
 
-        for (ProtectionSet.BlockType type : ProtectionSet.BlockType.values()) {
-            for (Block block : blocks.get(type)) {
-                engine.getConsoleSender().sendMessage(type.toString() + " => " + block.toString());
-            }
-        }
-
-        // check for a protection and return
-        blocks.checkForProtections();
-        return blocks;
+        return locations;
     }
 
 }

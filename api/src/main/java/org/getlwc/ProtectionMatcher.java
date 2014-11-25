@@ -29,16 +29,20 @@
 
 package org.getlwc;
 
-@Deprecated
+import java.util.Set;
+
 public interface ProtectionMatcher {
 
     /**
-     * Match a protection at the given base block and return the resultant protection set
+     * Matches the blocks for a given block that a protection would take up,
+     * if that block were to be protected.
+     * i.e. for a double chest, this would return both sides of the chest.
+     * For a wall sign, this would return the sign AND the block it is
+     * attached to (destroying the block destroys the sign, afterall.)
      *
      * @param base
      * @return
      */
-    @Deprecated
-    public ProtectionSet matchProtection(Block base);
+    public Set<Block> matchBlocks(Block base);
 
 }
