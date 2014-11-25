@@ -122,6 +122,7 @@ public class BaseCommands {
                 }
 
                 Protection protection = manager.createProtection(player.getUUID(), block.getLocation());
+
                 if (protection != null) {
                     player.sendTranslatedMessage("&2Created a new protection successfully.\n" +
                             "Want to give another player access to your protection?\n" +

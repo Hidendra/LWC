@@ -9,13 +9,11 @@ import java.util.Set;
 public interface ProtectionDatabase {
 
     /**
-     * Create a protection in the world.
+     * Create an empty protection not attached to anything.
      *
-     * @param location
      * @return
      */
-    @Deprecated
-    public Protection createProtection(Location location);
+    public Protection createProtection();
 
     /**
      * Load a protection from the database at the given location

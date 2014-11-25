@@ -298,7 +298,7 @@ public class JDBCDatabase implements Database {
     }
 
     @Override
-    public Protection createProtection(Location location) {
+    public Protection createProtection() {
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protections (updated, created, accessed) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             int epoch = (int) (System.currentTimeMillis() / 1000L);
@@ -316,16 +316,14 @@ public class JDBCDatabase implements Database {
                 if (generatedKeys.next()) {
                     int protectionId = generatedKeys.getInt(1);
 
-                    Protection protection = loadProtection(protectionId);
-                    addProtectionLocation(protection, location);
+                    return loadProtection(protectionId);
                 }
             }
-
-            return loadProtection(location);
         } catch (SQLException e) {
             handleException(e);
-            return null;
         }
+
+        return null;
     }
 
     @Override
@@ -446,6 +444,7 @@ public class JDBCDatabase implements Database {
             statement.setInt(3, location.getBlockX());
             statement.setInt(4, location.getBlockY());
             statement.setInt(5, location.getBlockZ());
+            statement.execute();
         } catch (SQLException e) {
             handleException(e);
         }
@@ -460,6 +459,7 @@ public class JDBCDatabase implements Database {
             statement.setInt(3, location.getBlockX());
             statement.setInt(4, location.getBlockY());
             statement.setInt(5, location.getBlockZ());
+            statement.execute();
         } catch (SQLException e) {
             handleException(e);
         }
@@ -470,6 +470,7 @@ public class JDBCDatabase implements Database {
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_blocks WHERE protection_id = ?")) {
             statement.setInt(1, protection.getId());
+            statement.execute();
         } catch (SQLException e) {
             handleException(e);
         }

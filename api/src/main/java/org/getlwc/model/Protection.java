@@ -30,8 +30,10 @@
 package org.getlwc.model;
 
 import org.getlwc.Engine;
+import org.getlwc.Location;
 import org.getlwc.component.BasicComponentHolder;
 import org.getlwc.component.Component;
+import org.getlwc.component.LocationSetComponent;
 import org.getlwc.component.RoleSetComponent;
 import org.getlwc.entity.Player;
 import org.getlwc.event.protection.ProtectionLoadEvent;
@@ -285,6 +287,7 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
         }
 
         saveMetadata();
+        saveLocations();
         saveRoles();
     }
 
@@ -305,6 +308,25 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
             }
 
             metadataState.clear();
+        }
+    }
+
+    /**
+     * Save the protected blocks for the protection
+     */
+    private void saveLocations() {
+        LocationSetComponent locations = getComponent(LocationSetComponent.class);
+
+        if (locations != null) {
+            for (Location location : locations.getObjectsRemoved()) {
+                engine.getDatabase().removeProtectionLocation(this, location);
+            }
+
+            for (Location location : locations.getObjectsAdded()) {
+                engine.getDatabase().addProtectionLocation(this, location);
+            }
+
+            locations.resetObservedState();
         }
     }
 

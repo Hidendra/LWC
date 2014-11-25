@@ -118,14 +118,12 @@ public class MemoryDatabase implements Database {
 
     @Override
     public void saveLater(Savable savable) {
-        // Not needed
+        savable.saveImmediately();
     }
 
     @Override
-    public Protection createProtection(Location location) {
+    public Protection createProtection() {
         Protection protection = new Protection(engine, protectionsId.getAndIncrement());
-        protection.addComponent(new LocationSetComponent());
-        protection.getComponent(LocationSetComponent.class).add(location);
 
         internalAddProtection(protection);
         return protection;

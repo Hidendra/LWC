@@ -162,14 +162,22 @@ public class ProtectionSet {
      * Get the blocks for the given block type. The list returned is NOT modifiable and can be expensive.
      * The list has to essentially be copied from a map, so O(N)
      *
-     * @param type
+     * @param type null: ALL blocks
      * @return
      */
     public List<Block> get(BlockType type) {
         List<Block> blocks = new ArrayList<Block>();
 
-        for (BlockNode node : this.blocks.get(type).values()) {
-            blocks.add(node.block);
+        if (type != null) {
+            for (BlockNode node : this.blocks.get(type).values()) {
+                blocks.add(node.block);
+            }
+        } else {
+            for (Map.Entry<BlockType, Map<Location, BlockNode>> entry : this.blocks.entrySet()) {
+                for (BlockNode node : entry.getValue().values()) {
+                    blocks.add(node.block);
+                }
+            }
         }
 
         return Collections.unmodifiableList(blocks);

@@ -29,6 +29,7 @@
 
 package org.getlwc;
 
+import org.getlwc.component.LocationSetComponent;
 import org.getlwc.component.RoleSetComponent;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.content.role.PlayerRole;
@@ -38,7 +39,9 @@ import org.getlwc.role.RoleCreationException;
 import org.getlwc.role.RoleRegistry;
 import org.getlwc.role.SimpleRoleRegistry;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class SimpleProtectionManager implements ProtectionManager {
@@ -68,28 +71,28 @@ public class SimpleProtectionManager implements ProtectionManager {
     @Override
     @Deprecated // Rename to loadProtection
     public Protection findProtection(Location location) {
-        ProtectionMatcher matcher = new SimpleProtectionMatcher(engine);
-
-        // this will be our base block -- or reference point -- of where the protection is matched from
-        Block base = location.getWorld().getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-
-        // attempt to match the protection set
-        ProtectionSet blocks = matcher.matchProtection(base);
-
-        // return the matched protection
-        return blocks.getResultant();
+        return engine.getDatabase().loadProtection(location);
     }
 
     @Override
     public Protection createProtection(UUID owner, Location location) {
         // First create the protection
-        Protection protection = engine.getDatabase().createProtection(location);
+        Protection protection = engine.getDatabase().createProtection();
 
         // ensure it was created
         if (protection == null) {
             System.out.println("createProtection returned null!");
             return null;
         }
+
+        // Add all linked blocks to the protection
+        LocationSetComponent locationSet = new LocationSetComponent();
+
+        for (Location foundLocation : getBlocksForPossibleProtection(location)) {
+            locationSet.add(foundLocation);
+        }
+
+        protection.addComponent(locationSet);
 
         // add the Owner role to the database for the player
         try {
@@ -102,6 +105,7 @@ public class SimpleProtectionManager implements ProtectionManager {
             protection.remove();
             return null;
         }
+
         protection.save();
 
         return protection;
@@ -110,6 +114,27 @@ public class SimpleProtectionManager implements ProtectionManager {
     @Override
     public RoleRegistry getRoleRegistry() {
         return roleRegistry;
+    }
+
+    /**
+     * Gets all blocks that may be part of a given protection, if it were protected (or not).
+     * i.e. double chest, 2 parts of a door + the block under it, etc.
+     *
+     * @param location
+     * @return
+     */
+    private Set<Location> getBlocksForPossibleProtection(Location location) {
+        Set<Location> result = new HashSet<>();
+
+        ProtectionMatcher matcher = new SimpleProtectionMatcher(engine);
+        Block base = location.getBlock();
+        ProtectionSet blocks = matcher.matchProtection(base);
+
+        for (Block block : blocks.get(null)) {
+            result.add(block.getLocation());
+        }
+
+        return result;
     }
 
     /**
