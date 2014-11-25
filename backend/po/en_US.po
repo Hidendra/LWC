@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LWC 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
-"POT-Creation-Date: 2014-11-25 17:20-0400\n"
+"POT-Creation-Date: 2014-11-25 17:31-0400\n"
 "PO-Revision-Date: 2013-06-18 23:02-0400\n"
 "Last-Translator: Tyler Blair <hidendra@griefcraft.com>\n"
 "Language-Team: Tyler Blair <hidendra@griefcraft.com>\n"
@@ -197,6 +197,14 @@ msgstr ""
 "Could not find UUID for player: {0}. Make sure they have signed into the "
 "server before."
 
+#: backend/src/main/java/org/getlwc/entity/SimplePlayer.java:47
+msgid "&4That block is not protected. Please interact with one that is."
+msgstr "&4That block is not protected. Please interact with one that is."
+
+#: backend/src/main/java/org/getlwc/entity/SimplePlayer.java:100
+msgid "&4That block is protected. Please interact with one that isn't."
+msgstr "&4That block is protected. Please interact with one that isn't."
+
 #. / TL: The double apostrophe is to work around a bug in a library.
 #. /     If you need to use it please leave it as a single apostrophe.
 #: backend/src/main/java/org/getlwc/EventHelper.java:102
@@ -292,13 +300,6 @@ msgstr ""
 
 #~ msgid "&4That block is not protected!"
 #~ msgstr "&4That block is not protected!"
-
-#~ msgid ""
-#~ "&4That block is protected! Please interact with a block that is not "
-#~ "protected."
-#~ msgstr ""
-#~ "&4That block is protected! Please interact with a block that is not "
-#~ "protected."
 
 #~ msgid "Creating base database via base.sql"
 #~ msgstr "Creating base database via base.sql"
