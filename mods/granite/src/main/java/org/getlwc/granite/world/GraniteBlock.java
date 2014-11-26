@@ -14,7 +14,7 @@ public class GraniteBlock extends Block {
 
     @Override
     public int getType() {
-        // TOOD
+        // TODO
         return handle.getType().getNumericId();
     }
 
