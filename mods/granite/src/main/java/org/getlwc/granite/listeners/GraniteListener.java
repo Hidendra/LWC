@@ -83,7 +83,7 @@ public class GraniteListener {
         Player player = plugin.wrapPlayer(event.getPlayer());
         Block block = plugin.wrapBlock(event.getBlock());
 
-        boolean result = EventHelper.onBlockPlace(player, block);
+        boolean result = EventHelper.onBlockBreak(player, block);
 
         if (result) {
             event.setCancelled(true);
