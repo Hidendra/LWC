@@ -48,13 +48,4 @@ public class GranitePlayer extends SimplePlayer {
         return new Location(new GraniteWorld(locationHandle.getWorld()), locationHandle.getX(), locationHandle.getY(), locationHandle.getZ());
     }
 
-    /**
-     * Returns the handle for this player
-     *
-     * @return
-     */
-    public org.granitemc.granite.api.entity.player.Player getHandle() {
-        return handle;
-    }
-
 }

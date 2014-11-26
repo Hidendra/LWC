@@ -1,7 +1,6 @@
 package org.getlwc.granite.permission;
 
 import org.getlwc.entity.Player;
-import org.getlwc.granite.entity.GranitePlayer;
 import org.getlwc.permission.PermissionHandler;
 
 import java.util.HashSet;

@@ -1,7 +1,6 @@
 package org.getlwc.granite;
 
 import org.getlwc.ServerInfo;
-import org.granitemc.granite.api.Granite;
 
 public class GraniteServerInfo implements ServerInfo {
 

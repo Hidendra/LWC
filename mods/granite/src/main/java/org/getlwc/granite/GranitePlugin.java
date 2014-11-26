@@ -33,7 +33,6 @@ public class GranitePlugin {
 
         engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, serverInfo, new GraniteConsoleCommandSender());
         engine.setPermissionHandler(new GranitePermissionHandler());
-        engine.getEventBus().subscribe(new EngineEventListener(engine));
         engine.getEventBus().post(new ServerStartingEvent());
 
         container.registerEventHandler(new GraniteListener(this));
