@@ -43,7 +43,7 @@ import java.util.Map;
 
 import static org.getlwc.I18n._;
 
-public abstract class Player implements Entity, CommandSender {
+public abstract class Player extends Entity implements CommandSender {
 
     /**
      * This player's locale
