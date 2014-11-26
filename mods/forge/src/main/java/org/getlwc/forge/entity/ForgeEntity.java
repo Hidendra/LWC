@@ -6,7 +6,7 @@ import org.getlwc.forge.world.ForgeWorld;
 
 import java.util.UUID;
 
-public class ForgeEntity implements Entity {
+public class ForgeEntity extends Entity {
 
     /**
      * The entity handle

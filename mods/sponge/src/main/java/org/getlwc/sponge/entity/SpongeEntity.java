@@ -5,7 +5,7 @@ import org.getlwc.entity.Entity;
 
 import java.util.UUID;
 
-public class SpongeEntity implements Entity {
+public class SpongeEntity extends Entity {
 
     /**
      * native Sponge handle

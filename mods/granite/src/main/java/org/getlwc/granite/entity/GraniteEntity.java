@@ -6,7 +6,7 @@ import org.getlwc.granite.world.GraniteWorld;
 
 import java.util.UUID;
 
-public class GraniteEntity implements Entity {
+public class GraniteEntity extends Entity {
 
     private org.granitemc.granite.api.entity.Entity handle;
 

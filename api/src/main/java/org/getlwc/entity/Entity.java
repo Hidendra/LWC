@@ -33,27 +33,27 @@ import org.getlwc.Location;
 
 import java.util.UUID;
 
-public interface Entity {
+public abstract class Entity {
 
     /**
      * Get the UUID of the entity
      *
      * @return
      */
-    public UUID getUUID();
+    public abstract UUID getUUID();
 
     /**
      * Get the entity's name
      *
      * @return
      */
-    public String getName();
+    public abstract String getName();
 
     /**
      * Get the player's current location
      *
      * @return
      */
-    public Location getLocation();
+    public abstract Location getLocation();
 
 }

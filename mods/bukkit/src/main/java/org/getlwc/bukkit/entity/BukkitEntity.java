@@ -6,7 +6,7 @@ import org.getlwc.entity.Entity;
 
 import java.util.UUID;
 
-public class BukkitEntity implements Entity {
+public class BukkitEntity extends Entity {
 
     /**
      * The plugin object

@@ -6,7 +6,7 @@ import org.getlwc.entity.Entity;
 
 import java.util.UUID;
 
-public class CanaryEntity implements Entity {
+public class CanaryEntity extends Entity {
 
     private LWC plugin;
 
