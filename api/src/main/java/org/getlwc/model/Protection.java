@@ -34,6 +34,7 @@ import org.getlwc.Location;
 import org.getlwc.component.BasicComponentHolder;
 import org.getlwc.component.Component;
 import org.getlwc.component.LocationSetComponent;
+import org.getlwc.component.MetadataComponent;
 import org.getlwc.component.RoleSetComponent;
 import org.getlwc.entity.Player;
 import org.getlwc.event.protection.ProtectionLoadEvent;
@@ -78,17 +79,6 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
      */
     private State state = State.NEW;
 
-    /**
-     * Metadata for the protection
-     */
-    private final Map<String, Metadata> metadata = new HashMap<>();
-
-    /**
-     * State for local metadata. Metadata will only be mapped to state in this map
-     * if metadata has added, changed, or removed.
-     */
-    private final Map<Metadata, State> metadataState = new HashMap<>();
-
     @Override
     public String toString() {
         // TODO add in updated, created
@@ -99,10 +89,11 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
         this.engine = engine;
         this.id = id;
 
+        addComponent(new MetadataComponent());
         addComponent(new RoleSetComponent());
 
         for (Metadata meta : engine.getDatabase().loadProtectionMetadata(this)) {
-            metadata.put(meta.getKey(), meta);
+            addMeta(meta);
         }
 
         for (Role role : engine.getDatabase().loadProtectionRoles(this)) {
@@ -149,11 +140,7 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
      * @param meta
      */
     public void addMeta(Metadata meta) {
-        synchronized (metadata) {
-            metadataState.put(meta, metadata.containsKey(meta.getKey()) ? State.MODIFIED : State.NEW);
-            metadata.put(meta.getKey(), meta);
-            state = State.MODIFIED;
-        }
+        getComponent(MetadataComponent.class).put(meta.getKey().toLowerCase(), meta);
     }
 
     /**
@@ -162,13 +149,7 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
      * @param key
      */
     public void removeMeta(String key) {
-        synchronized (metadata) {
-            if (metadata.containsKey(key)) {
-                metadataState.put(metadata.get(key), State.REMOVED);
-                metadata.remove(key);
-                state = State.MODIFIED;
-            }
-        }
+        getComponent(MetadataComponent.class).remove(key.toLowerCase());
     }
 
     /**
@@ -178,9 +159,7 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
      * @return
      */
     public boolean hasMeta(String key) {
-        synchronized (metadata) {
-            return metadata.containsKey(key);
-        }
+        return getComponent(MetadataComponent.class).containsKey(key);
     }
 
     /**
@@ -190,9 +169,7 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
      * @return
      */
     public Metadata getMeta(String key) {
-        synchronized (metadata) {
-            return metadata.get(key);
-        }
+        return getComponent(MetadataComponent.class).get(key);
     }
 
     /**
@@ -295,19 +272,18 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
      * Save the metadata for this protection
      */
     private void saveMetadata() {
-        synchronized (metadata) {
-            for (Map.Entry<Metadata, State> entry : metadataState.entrySet()) {
-                Metadata meta = entry.getKey();
-                State state = entry.getValue();
+        MetadataComponent component = getComponent(MetadataComponent.class);
 
-                if (state == State.NEW || state == State.MODIFIED) {
-                    engine.getDatabase().saveOrCreateProtectionMetadata(this, meta);
-                } else if (state == State.REMOVED) {
-                    engine.getDatabase().removeProtectionMetadata(this, meta);
-                }
+        if (component != null) {
+            for (Metadata meta : component.getObjectsRemoved()) {
+                engine.getDatabase().removeProtectionMetadata(this, meta);
             }
 
-            metadataState.clear();
+            for (Metadata meta : component.getObjectsAdded()) {
+                engine.getDatabase().saveOrCreateProtectionMetadata(this, meta);
+            }
+
+            component.resetObservedState();
         }
     }
 
@@ -366,7 +342,6 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
         engine.getDatabase().removeAllProtectionMetadata(this);
         engine.getDatabase().removeProtection(this);
         state = State.REMOVED;
-        metadataState.clear();
     }
 
     @Override
