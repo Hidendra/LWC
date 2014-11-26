@@ -20,7 +20,7 @@ public class GraniteUtils {
         // TODO get enchantments from the item
         Map<Integer, Integer> enchantments = new HashMap<>();
 
-        return new ItemStack(itemStackHandle.getType().getNumericId(), 1 /* amount ?? */, (short) itemStackHandle.getItemDamage(), itemStackHandle.getMaxDamage(), enchantments);
+        return new ItemStack(itemStackHandle.getType().getNumericId(), itemStackHandle.getStackSize(), (short) itemStackHandle.getItemDamage(), itemStackHandle.getMaxDamage(), enchantments);
     }
 
 }
