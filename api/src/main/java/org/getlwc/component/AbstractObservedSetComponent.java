@@ -55,7 +55,9 @@ public class AbstractObservedSetComponent<K> extends AbstractSetComponent<K> {
     public boolean remove(K object) {
         boolean result = super.remove(object);
 
-        objectsRemoved.add(object);
+        if (result) {
+            objectsRemoved.add(object);
+        }
 
         return result;
     }
