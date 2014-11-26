@@ -40,7 +40,7 @@
         <dependency>
             <groupId>net.canarymod</groupId>
             <artifactId>CanaryLib</artifactId>
-            <version>1.1.3-SNAPSHOT</version>
+            <version>1.2.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
