@@ -10,7 +10,7 @@ public class GranitePermissionHandler implements PermissionHandler {
 
     @Override
     public String getName() {
-        return "Granite (native)";
+        return "Default";
     }
 
     @Override

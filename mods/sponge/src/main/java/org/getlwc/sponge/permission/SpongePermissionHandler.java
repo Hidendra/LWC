@@ -10,7 +10,7 @@ public class SpongePermissionHandler implements PermissionHandler {
 
     @Override
     public String getName() {
-        return "Sponge (Default)";
+        return "Default";
     }
 
     @Override
