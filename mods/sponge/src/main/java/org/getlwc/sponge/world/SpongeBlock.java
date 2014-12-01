@@ -6,9 +6,9 @@ import org.getlwc.World;
 public class SpongeBlock extends Block {
 
     private SpongeWorld world;
-    private org.spongepowered.api.block.Block handle;
+    private org.spongepowered.api.block.BlockLoc handle;
 
-    public SpongeBlock(SpongeWorld world, org.spongepowered.api.block.Block handle) {
+    public SpongeBlock(SpongeWorld world, org.spongepowered.api.block.BlockLoc handle) {
         this.world = world;
         this.handle = handle;
     }

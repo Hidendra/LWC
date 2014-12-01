@@ -18,8 +18,7 @@ public class SpongeEntity extends Entity {
 
     @Override
     public UUID getUUID() {
-        // TODO
-        throw new UnsupportedOperationException("getUUID() is not yet supported");
+        return handle.getUniqueId();
     }
 
     @Override

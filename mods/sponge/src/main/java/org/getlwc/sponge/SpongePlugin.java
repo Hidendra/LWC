@@ -6,17 +6,17 @@ import org.getlwc.ServerInfo;
 import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
 import org.getlwc.entity.Player;
+import org.getlwc.sponge.permission.SpongePermissionHandler;
 import org.spongepowered.api.Game;
-import org.spongepowered.api.event.Subscribe;
 import org.spongepowered.api.event.state.ServerStartingEvent;
 import org.spongepowered.api.event.state.ServerStoppingEvent;
 import org.spongepowered.api.plugin.Plugin;
-import org.spongepowered.api.util.Owner;
+import org.spongepowered.api.util.event.Subscribe;
 
 import java.util.HashMap;
 
 @Plugin(id = "lwc", name = "LWC", version = "0.0.1-SNAPSHOT")
-public class SpongePlugin implements Owner {
+public class SpongePlugin {
 
     private SimpleEngine engine;
     private ServerLayer layer;
@@ -28,7 +28,7 @@ public class SpongePlugin implements Owner {
         ServerInfo serverInfo = new SpongeServerInfo(event.getGame());
 
         engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, serverInfo, new SpongeConsoleCommandSender());
-        // TODO Sponge permission handler when it's ready
+        engine.setPermissionHandler(new SpongePermissionHandler());
         engine.getEventBus().subscribe(new EngineEventListener(engine, this));
         engine.getEventBus().post(new org.getlwc.event.server.ServerStartingEvent());
     }
@@ -46,7 +46,7 @@ public class SpongePlugin implements Owner {
      * @param player
      * @return
      */
-    public Player wrapPlayer(org.spongepowered.api.entity.Player player) {
+    public Player wrapPlayer(org.spongepowered.api.entity.player.Player player) {
         return layer.getPlayer(player.getName());
     }
 

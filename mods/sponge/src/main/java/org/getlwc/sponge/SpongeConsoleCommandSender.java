@@ -1,7 +1,6 @@
 package org.getlwc.sponge;
 
 import org.getlwc.command.ConsoleCommandSender;
-import org.getlwc.lang.Locale;
 
 public class SpongeConsoleCommandSender extends ConsoleCommandSender {
 

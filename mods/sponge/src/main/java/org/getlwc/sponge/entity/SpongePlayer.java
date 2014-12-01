@@ -3,6 +3,7 @@ package org.getlwc.sponge.entity;
 import org.getlwc.ItemStack;
 import org.getlwc.Location;
 import org.getlwc.entity.SimplePlayer;
+import org.getlwc.sponge.world.SpongeWorld;
 import org.getlwc.util.Color;
 
 import java.util.UUID;
@@ -12,28 +13,26 @@ public class SpongePlayer extends SimplePlayer {
     /**
      * native Sponge handle
      */
-    private org.spongepowered.api.entity.Player handle;
+    private org.spongepowered.api.entity.player.Player handle;
 
-    public SpongePlayer(org.spongepowered.api.entity.Player handle) {
+    public SpongePlayer(org.spongepowered.api.entity.player.Player handle) {
         this.handle = handle;
     }
 
     @Override
     public UUID getUUID() {
-        // TODO
-        throw new UnsupportedOperationException("getUUID() is not yet supported");
+        return handle.getUniqueId();
     }
 
     @Override
     public String getName() {
-        // TODO
-        throw new UnsupportedOperationException("getName() is not yet supported");
+        return handle.getName();
     }
 
     @Override
     public Location getLocation() {
-        // TODO Entity does not even expose the world it's in yet
-        return new Location(null, handle.getX(), handle.getY(), handle.getZ());
+        // todo remove unnecessary object creation
+        return new Location(new SpongeWorld(handle.getWorld()), handle.getX(), handle.getY(), handle.getZ());
     }
 
     @Override

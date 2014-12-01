@@ -11,7 +11,6 @@ import org.getlwc.event.engine.BaseCommandRegisteredEvent;
 import org.spongepowered.api.util.command.CommandCallable;
 import org.spongepowered.api.util.command.CommandException;
 import org.spongepowered.api.util.command.CommandSource;
-import org.spongepowered.api.util.command.Description;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,39 +50,28 @@ public class EngineEventListener {
             }
 
             @Override
-            public Description getDescription() {
-                return new Description() {
-                    @Override
-                    public Optional<String> getShortDescription() {
-                        return Optional.of(command.description());
-                    }
-
-                    @Override
-                    public Optional<String> getHelp() {
-                        return Optional.absent();
-                    }
-
-                    @Override
-                    public String getUsage() {
-                        return command.usage();
-                    }
-
-                    @Override
-                    public List<String> getPermissions() {
-                        List<String> permissions = new ArrayList<>();
-                        permissions.add(command.permission());
-                        return permissions;
-                    }
-                };
-            }
-
-            @Override
             public boolean testPermission(CommandSource source) {
                 if (command.permission() == null || command.permission().isEmpty()) {
                     return true;
                 } else {
                     return commandSourceToSender(source).hasPermission(command.permission());
                 }
+            }
+
+            @Override
+            public Optional<String> getShortDescription() {
+                return Optional.of(command.description());
+            }
+
+            @Override
+            public Optional<String> getHelp() {
+                // TODO is help just a longer description?
+                return Optional.of(command.description());
+            }
+
+            @Override
+            public String getUsage() {
+                return command.usage();
             }
 
             @Override
@@ -96,7 +84,7 @@ public class EngineEventListener {
         aliases.add(baseCommand);
         aliases.addAll(Arrays.asList(command.aliases()));
 
-        plugin.getGame().getCommandDispatcher().registerCommand(callable, plugin, aliases.toArray(new String[aliases.size()]));
+        plugin.getGame().getCommandDispatcher().register(plugin, callable, aliases);
     }
 
     /**
@@ -105,8 +93,8 @@ public class EngineEventListener {
      * @return
      */
     private CommandSender commandSourceToSender(CommandSource source) {
-        if (source instanceof org.spongepowered.api.entity.Player) {
-            return plugin.wrapPlayer((org.spongepowered.api.entity.Player) source);
+        if (source instanceof org.spongepowered.api.entity.player.Player) {
+            return plugin.wrapPlayer((org.spongepowered.api.entity.player.Player) source);
         } else {
             return  plugin.getEngine().getConsoleSender();
         }

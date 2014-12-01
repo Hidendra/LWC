@@ -1,25 +1,13 @@
 package org.getlwc.sponge;
 
-import com.google.common.base.Optional;
 import org.getlwc.ServerLayer;
 import org.getlwc.World;
-import org.getlwc.command.Command;
-import org.getlwc.command.CommandContext;
-import org.getlwc.command.CommandSender;
-import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.entity.Player;
 import org.getlwc.sponge.entity.SpongePlayer;
 import org.getlwc.sponge.world.SpongeWorld;
 import org.spongepowered.api.Game;
-import org.spongepowered.api.util.command.CommandCallable;
-import org.spongepowered.api.util.command.CommandException;
-import org.spongepowered.api.util.command.CommandSource;
-import org.spongepowered.api.util.command.Description;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 public class SpongeServerLayer extends ServerLayer {

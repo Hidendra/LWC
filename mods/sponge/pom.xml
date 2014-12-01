@@ -29,6 +29,12 @@
             <id>Plugin Metrics</id>
             <url>http://repo.mcstats.org/content/repositories/public</url>
         </repository>
+
+        <repository>
+            <id>sponge-maven-repo</id>
+            <name>Sponge maven repo</name>
+            <url>http://repo.spongepowered.org/Sponge/maven</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -41,7 +47,7 @@
         <dependency>
             <groupId>org.spongepowered</groupId>
             <artifactId>spongeapi</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
