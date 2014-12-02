@@ -16,11 +16,10 @@
             ]
         },
 
-        "c3p0": {
-            "class": "com.mchange.v2.c3p0.ComboPooledDataSource",
+        "hikaricp": {
+            "class": "com.zaxxer.hikari.HikariDataSource",
             "files": [
-                "mchange-commons-java-0.2.7.jar",
-                "c3p0-0.9.5-pre8.jar"
+                "HikariCP-java6-2.2.5.jar"
             ]
         },
 

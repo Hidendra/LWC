@@ -29,7 +29,8 @@
 
 package org.getlwc.db.jdbc;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.flywaydb.core.Flyway;
 import org.getlwc.Engine;
 import org.getlwc.Location;
@@ -51,7 +52,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 public class JDBCDatabase implements Database {
 
@@ -122,7 +129,7 @@ public class JDBCDatabase implements Database {
     /**
      * The connection pool
      */
-    private ComboPooledDataSource pool = null;
+    private HikariDataSource pool = null;
 
     /**
      * The connection details to the server
@@ -154,24 +161,9 @@ public class JDBCDatabase implements Database {
         Driver driver = details.getDriver();
 
         // Load any resources required for the driver
-        engine.getResourceDownloader().ensureResourceInstalled("c3p0");
+        engine.getResourceDownloader().ensureResourceInstalled("hikaricp");
         engine.getResourceDownloader().ensureResourceInstalled("flywaydb");
         engine.getResourceDownloader().ensureResourceInstalled("databases." + driver.toString().toLowerCase());
-
-        // Get the path to the database
-        String databasePath;
-
-        // For SQLite the 'database' value will be the path to the sqlite database
-        // for MySQL and other RDBMS this will be the name of the database in the server
-        // and also the hostname
-        if (driver == Driver.SQLITE || driver == Driver.H2) {
-            databasePath = details.getDatabasePath().replaceAll("%home%", engine.getServerLayer().getEngineHomeFolder().getPath().replaceAll("\\\\", "/"));
-        } else {
-            databasePath = "//" + details.getHostname() + "/" + details.getDatabase();
-        }
-
-        // Create the connection string
-        String connectionString = "jdbc:" + driver.toString().toLowerCase() + ":" + databasePath;
 
         // Disable c3p0 logging
         Properties prop = new Properties(System.getProperties());
@@ -180,20 +172,9 @@ public class JDBCDatabase implements Database {
         System.setProperties(prop);
 
         // setup the database pool
-        pool = new ComboPooledDataSource();
+        pool = new HikariDataSource(createHikariConfig(details));
 
         try {
-            pool.setDriverClass(driver.getClassName());
-            pool.setJdbcUrl(connectionString);
-            pool.setUser(details.getUsername());
-            pool.setPassword(details.getPassword());
-            pool.setPreferredTestQuery("SELECT 1;");
-
-            if (driver == Driver.H2) {
-                pool.setUser("sa");
-                pool.setPassword("");
-            }
-
             migrate();
             lookup.populate();
             return true;
@@ -202,6 +183,40 @@ public class JDBCDatabase implements Database {
             pool = null;
             return false;
         }
+    }
+
+    /**
+     * Creates a HikariCP config object for the given connection details.
+     *
+     * @param details
+     * @return
+     */
+    private HikariConfig createHikariConfig(JDBCConnectionDetails details) {
+        HikariConfig config = new HikariConfig();
+
+        // Get the path to the database
+        String databasePath;
+
+        // For SQLite & H2 the path is the path to the db file
+        // for MySQL and others it's the hostname + the database name
+        if (details.getDriver() == Driver.SQLITE || details.getDriver() == Driver.H2) {
+            databasePath = details.getDatabasePath().replaceAll("%home%", engine.getServerLayer().getEngineHomeFolder().getPath().replaceAll("\\\\", "/"));
+        } else {
+            databasePath = "//" + details.getHostname() + "/" + details.getDatabase();
+        }
+
+        config.setJdbcUrl(String.format("jdbc:%s:%s", details.getDriver().toString().toLowerCase(), databasePath));
+        config.setDriverClassName(details.getDriver().getClassName());
+        config.setUsername(details.getUsername());
+        config.setPassword(details.getPassword());
+
+        // h2: enforce the user/pass
+        if (details.getDriver() == Driver.H2) {
+            config.setUsername("sa");
+            config.setPassword("");
+        }
+
+        return config;
     }
 
     /**
