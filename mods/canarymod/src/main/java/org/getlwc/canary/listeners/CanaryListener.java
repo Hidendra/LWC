@@ -20,7 +20,7 @@ import org.getlwc.Block;
 import org.getlwc.EventHelper;
 import org.getlwc.ExplosionType;
 import org.getlwc.World;
-import org.getlwc.canary.LWC;
+import org.getlwc.canary.CanaryPlugin;
 import org.getlwc.canary.entity.CanaryEntity;
 import org.getlwc.canary.world.CanaryBlock;
 import org.getlwc.entity.Entity;
@@ -34,9 +34,9 @@ public class CanaryListener implements PluginListener {
     /**
      * Plugin object
      */
-    private LWC plugin;
+    private CanaryPlugin plugin;
 
-    public CanaryListener(LWC plugin) {
+    public CanaryListener(CanaryPlugin plugin) {
         this.plugin = plugin;
     }
 

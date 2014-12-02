@@ -56,11 +56,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Mod(modid = "LWC", name = "LWC", version = "0.0.1-SNAPSHOT", acceptableRemoteVersions = "*")
-public class LWC {
+public class ForgeMod {
 
     // The instance of your mod that Forge uses.
     @Mod.Instance
-    public static LWC instance;
+    public static ForgeMod instance;
 
     // Says where the client and server 'proxy' code is loaded.
     @SidedProxy(clientSide = "org.getlwc.forge.client.LWCClientProxy", serverSide = "org.getlwc.forge.server.LWCServerProxy")

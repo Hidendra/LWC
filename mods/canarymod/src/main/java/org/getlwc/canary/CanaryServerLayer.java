@@ -1,23 +1,13 @@
 package org.getlwc.canary;
 
 import net.canarymod.Canary;
-import net.canarymod.Translator;
-import net.canarymod.api.Server;
-import net.canarymod.chat.MessageReceiver;
-import net.canarymod.commandsys.CanaryCommand;
-import net.canarymod.commandsys.Command;
 import org.getlwc.ServerLayer;
 import org.getlwc.World;
 import org.getlwc.canary.entity.CanaryPlayer;
 import org.getlwc.canary.world.CanaryWorld;
-import org.getlwc.command.CommandContext;
-import org.getlwc.command.CommandException;
-import org.getlwc.command.CommandSender;
 import org.getlwc.entity.Player;
-import org.getlwc.util.StringUtils;
 
 import java.io.File;
-import java.lang.annotation.Annotation;
 import java.util.UUID;
 
 public class CanaryServerLayer extends ServerLayer {
@@ -25,9 +15,9 @@ public class CanaryServerLayer extends ServerLayer {
     /**
      * Canary plugin object
      */
-    private LWC plugin;
+    private CanaryPlugin plugin;
 
-    public CanaryServerLayer(LWC plugin) {
+    public CanaryServerLayer(CanaryPlugin plugin) {
         this.plugin = plugin;
     }
 

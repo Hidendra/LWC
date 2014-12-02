@@ -43,7 +43,7 @@ import org.getlwc.World;
 import org.getlwc.command.CommandContext;
 import org.getlwc.command.CommandException;
 import org.getlwc.command.CommandSender;
-import org.getlwc.forge.LWC;
+import org.getlwc.forge.ForgeMod;
 import org.getlwc.forge.event.EntityExplodeEvent;
 import org.getlwc.forge.event.PlayerBreakBlockEvent;
 import org.getlwc.forge.event.PlayerPlaceBlockEvent;
@@ -55,9 +55,9 @@ public class ForgeListener {
     /**
      * The mod object
      */
-    private LWC mod;
+    private ForgeMod mod;
 
-    public ForgeListener(LWC mod) {
+    public ForgeListener(ForgeMod mod) {
         this.mod = mod;
     }
 

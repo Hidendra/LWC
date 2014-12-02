@@ -34,7 +34,7 @@ import net.minecraft.util.ChatComponentText;
 import org.getlwc.ItemStack;
 import org.getlwc.Location;
 import org.getlwc.entity.SimplePlayer;
-import org.getlwc.forge.LWC;
+import org.getlwc.forge.ForgeMod;
 import org.getlwc.forge.world.ForgeWorld;
 import org.getlwc.util.Color;
 
@@ -42,7 +42,7 @@ import java.util.UUID;
 
 public class ForgePlayer extends SimplePlayer {
 
-    private LWC mod;
+    private ForgeMod mod;
 
     /**
      * native Forge handle
@@ -51,7 +51,7 @@ public class ForgePlayer extends SimplePlayer {
 
     public ForgePlayer(EntityPlayer handle) {
         this.handle = handle;
-        this.mod = LWC.instance;
+        this.mod = ForgeMod.instance;
     }
 
     @Override

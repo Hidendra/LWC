@@ -18,7 +18,7 @@ import org.getlwc.lang.Locale;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LWC extends Plugin {
+public class CanaryPlugin extends Plugin {
 
     private SimpleEngine engine;
 

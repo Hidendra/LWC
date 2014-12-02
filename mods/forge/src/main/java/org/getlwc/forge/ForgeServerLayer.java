@@ -34,16 +34,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import org.getlwc.ServerLayer;
 import org.getlwc.World;
-import org.getlwc.command.Command;
 import org.getlwc.entity.Player;
-import org.getlwc.forge.asm.AbstractSingleClassTransformer;
 import org.getlwc.forge.entity.ForgePlayer;
 import org.getlwc.forge.modsupport.BuildCraft;
 import org.getlwc.forge.modsupport.ModSupport;
 import org.getlwc.forge.world.ForgeWorld;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.util.UUID;
 
 public class ForgeServerLayer extends ServerLayer {
@@ -51,10 +48,10 @@ public class ForgeServerLayer extends ServerLayer {
     /**
      * The mod instance
      */
-    private LWC mod;
+    private ForgeMod mod;
 
     public ForgeServerLayer() {
-        mod = LWC.instance;
+        mod = ForgeMod.instance;
     }
 
     /**

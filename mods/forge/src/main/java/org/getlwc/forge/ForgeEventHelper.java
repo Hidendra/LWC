@@ -87,7 +87,7 @@ public class ForgeEventHelper {
      */
     public static boolean onExplosion(net.minecraft.world.World nativeWorld, double explosionX, double explosionY, double explosionZ, int explosionRadius, List<net.minecraft.world.ChunkPosition> affectedLocations, net.minecraft.entity.Entity entity) {
         List<Block> affectedBlocks = new ArrayList<Block>();
-        World world = LWC.instance.getWorld(nativeWorld.getWorldInfo().getWorldName());
+        World world = ForgeMod.instance.getWorld(nativeWorld.getWorldInfo().getWorldName());
 
         for (net.minecraft.world.ChunkPosition loc : affectedLocations) {
             Block block = world.getBlockAt(loc.chunkPosX, loc.chunkPosY, loc.chunkPosZ);
@@ -145,7 +145,7 @@ public class ForgeEventHelper {
      * @param packet
      */
     public static void onUpdateClientInfo(EntityPlayerMP handle, C15PacketClientSettings packet) {
-        LWC mod = LWC.instance;
+        ForgeMod mod = ForgeMod.instance;
         Player player = mod.wrapPlayer(handle);
         player.setLocale(new Locale(packet.func_149524_c())); // func_149524_c: getLanguage
         mod.getEngine().getConsoleSender().sendMessage("Player " + player.getName() + " loaded using locale: " + player.getLocale());
@@ -164,7 +164,7 @@ public class ForgeEventHelper {
      * @return
      */
     public static boolean onRedstoneChange(net.minecraft.world.World handle, int x, int y, int z, boolean flag) {
-        LWC.instance.getEngine().getConsoleSender().sendMessage(String.format("onRedstoneChange(%s, %d, %d, %d, %s)", handle.getWorldInfo().getWorldName(), x, y, z, Boolean.toString(flag)));
+        ForgeMod.instance.getEngine().getConsoleSender().sendMessage(String.format("onRedstoneChange(%s, %d, %d, %d, %s)", handle.getWorldInfo().getWorldName(), x, y, z, Boolean.toString(flag)));
 
 
         return true;
@@ -187,7 +187,7 @@ public class ForgeEventHelper {
             boolean powered = isPistonIndirectlyPowered(handle, x, y, z, notchFace);
 
             BlockFace face = BlockFace.fromNotch(notchFace);
-            World world = LWC.instance.getWorld(handle.getWorldInfo().getWorldName());
+            World world = ForgeMod.instance.getWorld(handle.getWorldInfo().getWorldName());
             Block piston = world.getBlockAt(x, y, z);
             Location reaching = piston.getRelative(face).getLocation();
 
@@ -216,7 +216,7 @@ public class ForgeEventHelper {
         // else
         //     hopper is attached to a block
         // i.e. TileEntityHopper.getOutputInventory() (private)
-        World world = LWC.instance.getWorld(handle.getWorldObj().getWorldInfo().getWorldName());
+        World world = ForgeMod.instance.getWorld(handle.getWorldObj().getWorldInfo().getWorldName());
         Block hopper = world.getBlockAt((int) handle.getXPos(), (int) handle.getYPos(), (int) handle.getZPos());
         Location usingInventory;
 
@@ -256,7 +256,7 @@ public class ForgeEventHelper {
      * @return
      */
     public static boolean onEntityBreakDoor(EntityLiving entity, int x, int y, int z) {
-        World world = LWC.instance.getWorld(entity.worldObj.getWorldInfo().getWorldName());
+        World world = ForgeMod.instance.getWorld(entity.worldObj.getWorldInfo().getWorldName());
         return EventHelper.onBlockBreak(new ForgeEntity(entity), world.getBlockAt(x, y, z));
     }
 

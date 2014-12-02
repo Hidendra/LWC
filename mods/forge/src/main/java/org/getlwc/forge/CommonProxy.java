@@ -38,8 +38,8 @@ public abstract class CommonProxy {
      * Called when the mod is initialized
      */
     public void init() {
-        final LWC lwc = LWC.instance;
-        lwc.ensurePostLoaded();
+        final ForgeMod plugin = ForgeMod.instance;
+        plugin.ensurePostLoaded();
     }
 
 }

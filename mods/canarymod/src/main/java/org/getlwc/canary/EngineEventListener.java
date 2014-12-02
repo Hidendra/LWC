@@ -19,9 +19,9 @@ import java.lang.annotation.Annotation;
 public class EngineEventListener {
 
     private Engine engine;
-    private LWC plugin;
+    private CanaryPlugin plugin;
 
-    public EngineEventListener(Engine engine, LWC plugin) {
+    public EngineEventListener(Engine engine, CanaryPlugin plugin) {
         this.engine = engine;
         this.plugin = plugin;
     }

@@ -33,7 +33,7 @@ import cpw.mods.fml.relauncher.FMLInjectionData;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.configuration.YamlConfiguration;
-import org.getlwc.forge.LWC;
+import org.getlwc.forge.ForgeMod;
 
 import java.io.InputStream;
 
@@ -65,10 +65,10 @@ public abstract class AbstractTransformer implements IClassTransformer {
 
             if (stream != null) {
                 mappings = new YamlConfiguration(stream);
-                LWC.instance.getEngine().getConsoleSender().sendMessage("[ASM] Loaded native class mappings for Minecraft {0}", minecraftVersion);
+                ForgeMod.instance.getEngine().getConsoleSender().sendMessage("[ASM] Loaded native class mappings for Minecraft {0}", minecraftVersion);
             } else {
                 mappings = new YamlConfiguration(AbstractTransformer.class.getResourceAsStream("/mappings.yml"));
-                LWC.instance.getEngine().getConsoleSender().sendMessage("[ASM] ================   NOTE !!!   ================\n"
+                ForgeMod.instance.getEngine().getConsoleSender().sendMessage("[ASM] ================   NOTE !!!   ================\n"
                         + "[ASM] There are no included native mappings for Minecraft {0}\n"
                         + "[ASM] If this is a major Minecraft release then LWC IS MOST LIKELY BROKEN!\n"
                         + "[ASM] MAKE SURE YOU ARE USING THE LATEST VERSION!", minecraftVersion);

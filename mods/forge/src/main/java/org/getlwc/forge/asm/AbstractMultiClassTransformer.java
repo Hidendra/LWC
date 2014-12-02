@@ -1,6 +1,6 @@
 package org.getlwc.forge.asm;
 
-import org.getlwc.forge.LWC;
+import org.getlwc.forge.ForgeMod;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -76,7 +76,7 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
                 }
 
                 if (targetClass != null) {
-                    LWC.instance.ensurePostLoaded();
+                    ForgeMod.instance.ensurePostLoaded();
 
                     instructions = new InsnList();
                     classNode = new ClassNode();
@@ -94,15 +94,15 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
                 if (changed) {
                     ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
                     classNode.accept(writer);
-                    LWC.instance.getEngine().getConsoleSender().sendMessage("[ASM] Patched {0} ({1}) successfully!", getClass().getSimpleName() + "::" + targetClass, getClassName(targetClass));
+                    ForgeMod.instance.getEngine().getConsoleSender().sendMessage("[ASM] Patched {0} ({1}) successfully!", getClass().getSimpleName() + "::" + targetClass, getClassName(targetClass));
                     return writer.toByteArray();
                 } else {
-                    LWC.instance.getEngine().getConsoleSender().sendMessage("[ASM] {0} ({1}) was not changed during transformations", getClass().getSimpleName() + "::" + targetClass, getClassName(targetClass));
+                    ForgeMod.instance.getEngine().getConsoleSender().sendMessage("[ASM] {0} ({1}) was not changed during transformations", getClass().getSimpleName() + "::" + targetClass, getClassName(targetClass));
                     return bytes;
                 }
             }
         } catch (Exception e) {
-            LWC.instance.getEngine().getConsoleSender().sendMessage("[ASM] Failed to patch {0} ({1})", getClass().getSimpleName() + "::" + targetClass, getClassName(targetClass));
+            ForgeMod.instance.getEngine().getConsoleSender().sendMessage("[ASM] Failed to patch {0} ({1})", getClass().getSimpleName() + "::" + targetClass, getClassName(targetClass));
             e.printStackTrace();
             return bytes;
         }

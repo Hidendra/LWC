@@ -1,6 +1,6 @@
 package org.getlwc.forge.asm.transformers.events;
 
-import org.getlwc.forge.LWC;
+import org.getlwc.forge.ForgeMod;
 import org.getlwc.forge.asm.AbstractSingleClassTransformer;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.tree.InsnNode;
@@ -34,7 +34,7 @@ public class BlockPlaceTransformer extends AbstractSingleClassTransformer {
             int offset = findMethodOpcode(ALOAD);
 
             if (offset == -1) {
-                LWC.instance.getEngine().getConsoleSender().sendMessage(getClass().getSimpleName() + ": No ALOAD instr found");
+                ForgeMod.instance.getEngine().getConsoleSender().sendMessage(getClass().getSimpleName() + ": No ALOAD instr found");
                 return;
             }
 

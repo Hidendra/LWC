@@ -36,7 +36,7 @@ import org.getlwc.SimpleEngine;
 import org.getlwc.forge.ForgeConsoleCommandSender;
 import org.getlwc.forge.ForgeServerInfo;
 import org.getlwc.forge.ForgeServerLayer;
-import org.getlwc.forge.LWC;
+import org.getlwc.forge.ForgeMod;
 
 import java.util.Map;
 
@@ -90,14 +90,14 @@ public class LWCCorePlugin implements IFMLLoadingPlugin, IFMLCallHook {
 
     @Override
     public Void call() throws Exception {
-        if (LWC.instance == null) {
+        if (ForgeMod.instance == null) {
             System.out.println("LWC => init()");
-            LWC.instance = new LWC();
+            ForgeMod.instance = new ForgeMod();
 
             // create an engine
             ForgeServerLayer layer = new ForgeServerLayer();
             Engine engine = SimpleEngine.getOrCreateEngine(layer, new ForgeServerInfo(), new ForgeConsoleCommandSender());
-            LWC.instance.setupServer(engine, layer);
+            ForgeMod.instance.setupServer(engine, layer);
         }
 
         return null;

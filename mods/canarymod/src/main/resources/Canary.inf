@@ -1,4 +1,4 @@
 name=LWC
-main-class=org.getlwc.canary.LWC
+main-class=org.getlwc.canary.CanaryPlugin
 author=Hidendra
 version=${project.version}

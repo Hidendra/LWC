@@ -11,14 +11,14 @@ import java.lang.reflect.Method;
 public class EngineEventListener {
 
     private Engine engine;
-    private LWC mod;
+    private ForgeMod mod;
 
     /**
      * Cached method for CommandHandler.registerCommand
      */
     private Method cachedRegisterCommandMethod = null;
 
-    public EngineEventListener(Engine engine, LWC mod) {
+    public EngineEventListener(Engine engine, ForgeMod mod) {
         this.engine = engine;
         this.mod = mod;
     }
