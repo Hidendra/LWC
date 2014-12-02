@@ -34,6 +34,7 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.util.config.Configuration;
+import com.griefcraft.util.matchers.DoorMatcher;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -146,10 +147,9 @@ public class DoorsModule extends JavaModule {
             }
         }
 
-        // Either way we are going to be toggling the door open
-        // So toggle both doors to be open. We can safely pass null values to changeDoorStates
-        changeDoorStates(true, ((block.getType() == Material.WOODEN_DOOR || block.getType() == Material.FENCE_GATE || block.getType() == Material.TRAP_DOOR) ? null : block) /* They clicked it so it auto opens already */,
-                doubleDoorBlock);
+        // toggle the other side of the door open
+        boolean opensWhenClicked = (DoorMatcher.WOODEN_DOORS.contains(block.getType()) || block.getType() == Material.FENCE_GATE || block.getType() == Material.TRAP_DOOR);
+        changeDoorStates(true, (opensWhenClicked ? null : block) /* opens when clicked */, doubleDoorBlock);
 
         if (action == Action.OPEN_AND_CLOSE || protection.hasFlag(Flag.Type.AUTOCLOSE)) {
             // Abuse the fact that we still use final variables inside the task
@@ -228,17 +228,12 @@ public class DoorsModule extends JavaModule {
 
         Block found;
 
-        // Try a wooden door
-        if ((found = lwc.findAdjacentBlock(block, Material.WOODEN_DOOR)) != null) {
-            return found;
+        for (Material material : DoorMatcher.PROTECTABLES_DOORS) {
+            if ((found = lwc.findAdjacentBlock(block, material)) != null) {
+                return found;
+            }
         }
 
-        // Now an iron door
-        if ((found = lwc.findAdjacentBlock(block, Material.IRON_DOOR_BLOCK)) != null) {
-            return found;
-        }
-
-        // Nothing at all :-(
         return null;
     }
 
@@ -258,7 +253,11 @@ public class DoorsModule extends JavaModule {
      * @return
      */
     private boolean isValid(Material material) {
-        return material == Material.IRON_DOOR_BLOCK || material == Material.WOODEN_DOOR || material == Material.FENCE_GATE || material == Material.TRAP_DOOR;
+        if (DoorMatcher.PROTECTABLES_DOORS.contains(material)) {
+            return true;
+        }
+
+        return material == Material.FENCE_GATE || material == Material.TRAP_DOOR;
     }
 
     /**
