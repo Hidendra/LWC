@@ -1,8 +1,9 @@
 package org.getlwc.component;
 
-import org.getlwc.model.Metadata;
+import org.getlwc.meta.Meta;
+import org.getlwc.meta.MetaKey;
 
-public class MetadataComponent extends AbstractObservedMapComponent<String, Metadata> {
+public class MetadataComponent extends AbstractObservedMapComponent<MetaKey, Meta> {
 
     @Override
     public String toString() {

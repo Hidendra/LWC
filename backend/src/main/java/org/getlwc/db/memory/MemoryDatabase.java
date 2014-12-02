@@ -34,7 +34,7 @@ import org.getlwc.Location;
 import org.getlwc.component.LocationSetComponent;
 import org.getlwc.db.Database;
 import org.getlwc.db.DatabaseException;
-import org.getlwc.model.Metadata;
+import org.getlwc.meta.Meta;
 import org.getlwc.model.Protection;
 import org.getlwc.model.Savable;
 import org.getlwc.role.Role;
@@ -170,12 +170,12 @@ public class MemoryDatabase implements Database {
     }
 
     @Override
-    public void saveOrCreateProtectionMetadata(Protection protection, Metadata meta) {
+    public void saveOrCreateProtectionMetadata(Protection protection, Meta meta) {
         // no need to create
     }
 
     @Override
-    public void removeProtectionMetadata(Protection protection, Metadata meta) {
+    public void removeProtectionMetadata(Protection protection, Meta meta) {
         // it will remove itself from the Protection object
     }
 
@@ -185,7 +185,7 @@ public class MemoryDatabase implements Database {
     }
 
     @Override
-    public Set<Metadata> loadProtectionMetadata(Protection protection) {
+    public Set<Meta> loadProtectionMetadata(Protection protection) {
         return new HashSet<>(); // nothing to load from
     }
 

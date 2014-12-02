@@ -9,7 +9,8 @@ import org.getlwc.event.EventConsumer;
 import org.getlwc.event.ProtectionListener;
 import org.getlwc.event.protection.ProtectionInteractEvent;
 import org.getlwc.event.protection.ProtectionLoadEvent;
-import org.getlwc.model.Metadata;
+import org.getlwc.meta.Meta;
+import org.getlwc.meta.MetaKey;
 import org.getlwc.model.Protection;
 
 public final class DescriptionModule {
@@ -17,7 +18,7 @@ public final class DescriptionModule {
     /**
      * The metadata key name used to store the description
      */
-    public static final String META_KEY = "description";
+    public static final MetaKey META_KEY = MetaKey.valueOf("description");
 
     @ProtectionListener
     public void bootstrap(ProtectionLoadEvent event) {
@@ -57,7 +58,7 @@ public final class DescriptionModule {
                     protection.removeComponent(DescriptionComponent.class);
                     player.sendTranslatedMessage("&2Removed successfully.");
                 } else {
-                    protection.addMeta(new Metadata(META_KEY, description));
+                    protection.addMeta(new Meta(META_KEY, description));
                     protection.addComponent(new DescriptionComponent(description));
                     player.sendTranslatedMessage("&2Added successfully.");
                 }

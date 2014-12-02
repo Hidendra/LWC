@@ -1,18 +1,18 @@
-package org.getlwc.model;
+package org.getlwc.meta;
 
-public final class Metadata {
+public class Meta {
 
     /**
      * The metadata key
      */
-    private final String key;
+    private final MetaKey key;
 
     /**
      * The metadata value
      */
     private final String value;
 
-    public Metadata(String key, String value) {
+    public Meta(MetaKey key, String value) {
         this.key = key;
         this.value = value;
     }
@@ -27,10 +27,10 @@ public final class Metadata {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Metadata metadata = (Metadata) o;
+        Meta meta = (Meta) o;
 
-        if (key != null ? !key.equals(metadata.key) : metadata.key != null) return false;
-        if (value != null ? !value.equals(metadata.value) : metadata.value != null) return false;
+        if (key != null ? !key.equals(meta.key) : meta.key != null) return false;
+        if (value != null ? !value.equals(meta.value) : meta.value != null) return false;
 
         return true;
     }
@@ -41,7 +41,7 @@ public final class Metadata {
         return result;
     }
 
-    public String getKey() {
+    public MetaKey getKey() {
         return key;
     }
 

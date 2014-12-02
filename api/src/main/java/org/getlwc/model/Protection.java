@@ -38,12 +38,12 @@ import org.getlwc.component.MetadataComponent;
 import org.getlwc.component.RoleSetComponent;
 import org.getlwc.entity.Player;
 import org.getlwc.event.protection.ProtectionLoadEvent;
+import org.getlwc.meta.Meta;
+import org.getlwc.meta.MetaKey;
+import org.getlwc.meta.TemporaryMeta;
 import org.getlwc.role.Role;
-import org.getlwc.util.Tuple;
 
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.getlwc.I18n._;
 
@@ -92,7 +92,7 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
         addComponent(new MetadataComponent());
         addComponent(new RoleSetComponent());
 
-        for (Metadata meta : engine.getDatabase().loadProtectionMetadata(this)) {
+        for (Meta meta : engine.getDatabase().loadProtectionMetadata(this)) {
             addMeta(meta);
         }
 
@@ -139,8 +139,8 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
      *
      * @param meta
      */
-    public void addMeta(Metadata meta) {
-        getComponent(MetadataComponent.class).put(meta.getKey().toLowerCase(), meta);
+    public void addMeta(Meta meta) {
+        getComponent(MetadataComponent.class).put(meta.getKey(), meta);
     }
 
     /**
@@ -148,8 +148,8 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
      *
      * @param key
      */
-    public void removeMeta(String key) {
-        getComponent(MetadataComponent.class).remove(key.toLowerCase());
+    public void removeMeta(MetaKey key) {
+        getComponent(MetadataComponent.class).remove(key);
     }
 
     /**
@@ -158,7 +158,7 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
      * @param key
      * @return
      */
-    public boolean hasMeta(String key) {
+    public boolean hasMeta(MetaKey key) {
         return getComponent(MetadataComponent.class).containsKey(key);
     }
 
@@ -168,7 +168,7 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
      * @param key
      * @return
      */
-    public Metadata getMeta(String key) {
+    public Meta getMeta(MetaKey key) {
         return getComponent(MetadataComponent.class).get(key);
     }
 
@@ -275,11 +275,19 @@ public class Protection extends BasicComponentHolder<Component> implements Savab
         MetadataComponent component = getComponent(MetadataComponent.class);
 
         if (component != null) {
-            for (Metadata meta : component.getObjectsRemoved()) {
+            for (Meta meta : component.getObjectsRemoved()) {
+                if (meta instanceof TemporaryMeta) {
+                    continue;
+                }
+
                 engine.getDatabase().removeProtectionMetadata(this, meta);
             }
 
-            for (Metadata meta : component.getObjectsAdded()) {
+            for (Meta meta : component.getObjectsAdded()) {
+                if (meta instanceof TemporaryMeta) {
+                    continue;
+                }
+
                 engine.getDatabase().saveOrCreateProtectionMetadata(this, meta);
             }
 

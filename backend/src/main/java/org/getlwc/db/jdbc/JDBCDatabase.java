@@ -39,7 +39,8 @@ import org.getlwc.World;
 import org.getlwc.component.LocationSetComponent;
 import org.getlwc.db.Database;
 import org.getlwc.db.DatabaseException;
-import org.getlwc.model.Metadata;
+import org.getlwc.meta.Meta;
+import org.getlwc.meta.MetaKey;
 import org.getlwc.model.Protection;
 import org.getlwc.model.Savable;
 import org.getlwc.model.State;
@@ -57,7 +58,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 public class JDBCDatabase implements Database {
@@ -537,11 +537,11 @@ public class JDBCDatabase implements Database {
     }
 
     @Override
-    public void saveOrCreateProtectionMetadata(Protection protection, Metadata meta) {
+    public void saveOrCreateProtectionMetadata(Protection protection, Meta meta) {
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("INSERT INTO " + details.getPrefix() + "protection_meta (protection_id, meta_name, meta_value) VALUES (?, ?, ?)")) {
             statement.setInt(1, protection.getId());
-            statement.setInt(2, lookup.get(JDBCLookupService.LookupType.META_NAME, meta.getKey()));
+            statement.setInt(2, lookup.get(JDBCLookupService.LookupType.META_NAME, meta.getKey().getKey()));
             statement.setString(3, meta.asString());
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -549,7 +549,7 @@ public class JDBCDatabase implements Database {
                  PreparedStatement statement = connection.prepareStatement("UPDATE " + details.getPrefix() + "protection_meta SET meta_value = ? WHERE protection_id = ? AND meta_name = ?")) {
                 statement.setString(1, meta.getValue());
                 statement.setInt(2, protection.getId());
-                statement.setInt(3, lookup.get(JDBCLookupService.LookupType.META_NAME, meta.getKey()));
+                statement.setInt(3, lookup.get(JDBCLookupService.LookupType.META_NAME, meta.getKey().getKey()));
                 statement.executeUpdate();
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -558,11 +558,11 @@ public class JDBCDatabase implements Database {
     }
 
     @Override
-    public void removeProtectionMetadata(Protection protection, Metadata meta) {
+    public void removeProtectionMetadata(Protection protection, Meta meta) {
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("DELETE FROM " + details.getPrefix() + "protection_meta WHERE protection_id = ? AND meta_name = ?")) {
             statement.setInt(1, protection.getId());
-            statement.setInt(2, lookup.get(JDBCLookupService.LookupType.META_NAME, meta.getKey()));
+            statement.setInt(2, lookup.get(JDBCLookupService.LookupType.META_NAME, meta.getKey().getKey()));
             statement.executeUpdate();
         } catch (SQLException e) {
             handleException(e);
@@ -581,8 +581,8 @@ public class JDBCDatabase implements Database {
     }
 
     @Override
-    public Set<Metadata> loadProtectionMetadata(Protection protection) {
-        Set<Metadata> metadata = new HashSet<>();
+    public Set<Meta> loadProtectionMetadata(Protection protection) {
+        Set<Meta> meta = new HashSet<>();
 
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("SELECT meta_name, meta_value FROM " + details.getPrefix() + "protection_meta WHERE protection_id = ?")) {
@@ -593,14 +593,14 @@ public class JDBCDatabase implements Database {
                     String key = lookup.get(JDBCLookupService.LookupType.META_NAME, set.getInt("meta_name"));
                     String value = set.getString("meta_value");
 
-                    metadata.add(new Metadata(key, value));
+                    meta.add(new Meta(MetaKey.valueOf(key), value));
                 }
             }
         } catch (SQLException e) {
             handleException(e);
         }
 
-        return metadata;
+        return meta;
     }
 
     @Override
