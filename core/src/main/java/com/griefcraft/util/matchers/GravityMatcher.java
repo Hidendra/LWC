@@ -47,6 +47,10 @@ public class GravityMatcher implements ProtectionFinder.Matcher {
     public static final Set<Material> PROTECTABLES_POSTS = EnumSet.of(Material.SIGN_POST, Material.RAILS,
             Material.POWERED_RAIL, Material.DETECTOR_RAIL, Material.LEVER, Material.STONE_BUTTON);
 
+    static {
+        PROTECTABLES_POSTS.add(Material.getMaterial(176)); // Standing banner
+    }
+
     public boolean matches(ProtectionFinder finder) {
         Block block = finder.getBaseBlock();
 

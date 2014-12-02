@@ -64,6 +64,10 @@ public class WallMatcher implements ProtectionFinder.Matcher {
      */
     public static final BlockFace[] POSSIBLE_FACES = new BlockFace[]{ BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST };
 
+    static {
+        PROTECTABLES_WALL.add(Material.getMaterial(177)); // Wall banner
+    }
+
     public boolean matches(ProtectionFinder finder) {
         // The block we are working on
         Block block = finder.getBaseBlock();
