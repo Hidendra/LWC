@@ -187,6 +187,8 @@ protections:
             enabled: true
         trap_door:
             enabled: true
+        iron_trapdoor:
+            enabled: true
         fence_gate:
             enabled: true
         spruce_fence_gate:
