@@ -165,12 +165,6 @@ public class JDBCDatabase implements Database {
         engine.getResourceDownloader().ensureResourceInstalled("flywaydb");
         engine.getResourceDownloader().ensureResourceInstalled("databases." + driver.toString().toLowerCase());
 
-        // Disable c3p0 logging
-        Properties prop = new Properties(System.getProperties());
-        prop.put("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");
-        prop.put("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL", "OFF"); // or any other
-        System.setProperties(prop);
-
         // setup the database pool
         pool = new HikariDataSource(createHikariConfig(details));
 
