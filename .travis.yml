@@ -1,0 +1,13 @@
+language: java
+jdk: oraclejdk7
+install: true
+script: mvn -Dmaven.javadoc.skip=true clean install
+addons:
+  artifacts:
+    key:
+      secure: et4n0n8tn9ghMJ0g/tYDN063NYNDotu0JM02hVDUMupGWkwZWKGPgPNWpDnW3To8Fmg5SRLIqphfAnR5t0dyY/Yp6xHXgSzheUA+4376cH6lirrQMRkmZ0nvK909thiy9uNAvPO3vBdP+kEWtLWLqvjv/z9VYMsc4ELrflLZHsc=
+    secret:
+      secure: c95q4+B3zAftsvUpTNE80/Q48YPxBVh+Mc5ZJ5wIBQ2SOyPygTca6I4AVBmrL0TQBfjBGmka49MCdvA11aglVT9vPfWxWIT9qSbJmuHXFY5RlUG6wtHlTw3wLnjrAw6zE0RDzG+E2sEDi81ADe43kG/9xMuzYdPjvEpFT5LK5hM=
+    bucket: artifacts.getlwc.org
+    paths:
+    - $(git ls-files -x mcp -x original-*.jar -o *.jar *.zip | tr "\n" ":")
