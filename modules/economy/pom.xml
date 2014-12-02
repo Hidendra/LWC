@@ -14,17 +14,17 @@
 
     <repositories>
         <repository>
-            <id>bukkit-snapshots</id>
-            <url>http://repo.bukkit.org/content/groups/public</url>
+            <id>md-5</id>
+            <url>http://repo.md-5.net/content/repositories/snapshots</url>
         </repository>
     </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1.7.9-R0.1-SNAPSHOT</version>
-            <scope>compile</scope>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.7.10-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.griefcraft</groupId>
