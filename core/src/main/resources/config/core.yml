@@ -175,6 +175,16 @@ protections:
             enabled: true
         iron_door:
             enabled: true
+        spruce_door:
+            enabled: true
+        birch_door:
+            enabled: true
+        jungle_door:
+            enabled: true
+        acacia_door:
+            enabled: true
+        dark_oak_door:
+            enabled: true
         trap_door:
             enabled: true
         fence_gate:
