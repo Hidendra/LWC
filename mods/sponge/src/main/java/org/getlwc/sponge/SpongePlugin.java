@@ -1,11 +1,13 @@
 package org.getlwc.sponge;
 
+import org.getlwc.Block;
 import org.getlwc.Engine;
 import org.getlwc.ItemStack;
 import org.getlwc.ServerInfo;
 import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
 import org.getlwc.entity.Player;
+import org.getlwc.sponge.listeners.SpongeEventListener;
 import org.getlwc.sponge.permission.SpongePermissionHandler;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.event.state.ServerStartingEvent;
@@ -31,6 +33,8 @@ public class SpongePlugin {
         engine.setPermissionHandler(new SpongePermissionHandler());
         engine.getEventBus().subscribe(new EngineEventListener(engine, this));
         engine.getEventBus().post(new org.getlwc.event.server.ServerStartingEvent());
+
+        event.getGame().getEventManager().register(this, new SpongeEventListener(this));
     }
 
     @SuppressWarnings("unused")
@@ -48,6 +52,17 @@ public class SpongePlugin {
      */
     public Player wrapPlayer(org.spongepowered.api.entity.player.Player player) {
         return layer.getPlayer(player.getName());
+    }
+
+    /**
+     * Wraps the given sponge block
+     *
+     * @param block
+     * @return
+     */
+    public Block wrapBlock(org.spongepowered.api.block.BlockLoc block) {
+        //
+        return null;
     }
 
     /**
