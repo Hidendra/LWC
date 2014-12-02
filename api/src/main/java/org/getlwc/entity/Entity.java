@@ -30,10 +30,12 @@
 package org.getlwc.entity;
 
 import org.getlwc.Location;
+import org.getlwc.component.BasicComponentHolder;
+import org.getlwc.component.Component;
 
 import java.util.UUID;
 
-public abstract class Entity {
+public abstract class Entity extends BasicComponentHolder<Component> {
 
     /**
      * Get the UUID of the entity

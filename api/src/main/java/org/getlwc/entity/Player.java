@@ -31,6 +31,7 @@ package org.getlwc.entity;
 
 import org.getlwc.ItemStack;
 import org.getlwc.command.CommandSender;
+import org.getlwc.component.MetadataComponent;
 import org.getlwc.event.EventConsumer;
 import org.getlwc.event.EventFuture;
 import org.getlwc.event.block.BlockInteractEvent;
@@ -50,10 +51,9 @@ public abstract class Player extends Entity implements CommandSender {
      */
     private Locale locale = new Locale("en_US");
 
-    /**
-     * Simple unpersisted attribute store for the player
-     */
-    private final Map<String, Object> attributes = new HashMap<String, Object>();
+    public Player() {
+        addComponent(new MetadataComponent());
+    }
 
     /**
      * Get the item in the player's hand
@@ -125,45 +125,6 @@ public abstract class Player extends Entity implements CommandSender {
     @Override
     public void setLocale(Locale locale) {
         this.locale = locale;
-    }
-
-    /**
-     * Set an attribute in the store
-     *
-     * @param name
-     * @param value
-     */
-    public void setAttribute(String name, Object value) {
-        attributes.put(name, value);
-    }
-
-    /**
-     * Get an attribute from the store
-     *
-     * @param name
-     * @return
-     */
-    public Object getAttribute(String name) {
-        return attributes.get(name);
-    }
-
-    /**
-     * Check if the player has the given attribute
-     *
-     * @param name
-     * @return
-     */
-    public boolean hasAttribute(String name) {
-        return attributes.containsKey(name);
-    }
-
-    /**
-     * Remove an attribute from the store
-     *
-     * @param name
-     */
-    public void removeAttribute(String name) {
-        attributes.remove(name);
     }
 
 }
