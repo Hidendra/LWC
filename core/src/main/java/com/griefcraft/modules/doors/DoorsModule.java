@@ -35,6 +35,7 @@ import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.util.config.Configuration;
 import com.griefcraft.util.matchers.DoorMatcher;
+import com.griefcraft.util.matchers.WallMatcher;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -124,7 +125,7 @@ public class DoorsModule extends JavaModule {
 
         // Are we looking at the top half?
         // If we are, we need to get the bottom half instead
-        if (block.getType() != Material.TRAP_DOOR && (block.getData() & 0x8) == 0x8) {
+        if (!WallMatcher.PROTECTABLES_TRAP_DOORS.contains(block.getType()) && (block.getData() & 0x8) == 0x8) {
             // Inspect the bottom half instead, fool!
             block = block.getRelative(BlockFace.DOWN);
         }
@@ -257,11 +258,15 @@ public class DoorsModule extends JavaModule {
             return true;
         }
 
-        if (DoorMatcher.FENCE_GATES.contains(material)) {
+        else if (DoorMatcher.FENCE_GATES.contains(material)) {
             return true;
         }
 
-        return material == Material.TRAP_DOOR;
+        if (WallMatcher.PROTECTABLES_TRAP_DOORS.contains(material)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

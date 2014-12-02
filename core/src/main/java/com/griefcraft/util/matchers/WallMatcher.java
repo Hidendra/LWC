@@ -57,7 +57,7 @@ public class WallMatcher implements ProtectionFinder.Matcher {
      * Same as PROTECTABLE_WALL, except the facing direction is reversed,
      * such as trap doors
      */
-    public static final Set<Material> PROTECTABLES_WALL_REVERSE = EnumSet.of(Material.TRAP_DOOR);
+    public static final Set<Material> PROTECTABLES_TRAP_DOORS = EnumSet.of(Material.TRAP_DOOR);
 
     /**
      * Possible faces around the base block that protections could be at
@@ -66,6 +66,7 @@ public class WallMatcher implements ProtectionFinder.Matcher {
 
     static {
         PROTECTABLES_WALL.add(Material.getMaterial(177)); // Wall banner
+        PROTECTABLES_TRAP_DOORS.add(Material.getMaterial(167)); // Iron trap door
     }
 
     public boolean matches(ProtectionFinder finder) {
@@ -138,7 +139,7 @@ public class WallMatcher implements ProtectionFinder.Matcher {
         }
 
         // Blocks such as trap doors
-        else if (PROTECTABLES_WALL_REVERSE.contains(block.getType())) {
+        else if (PROTECTABLES_TRAP_DOORS.contains(block.getType())) {
             byte EAST = 0x2;
             byte WEST = 0x3;
             byte SOUTH = 0x0;
