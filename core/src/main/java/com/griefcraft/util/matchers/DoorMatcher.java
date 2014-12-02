@@ -45,6 +45,7 @@ public class DoorMatcher implements ProtectionFinder.Matcher {
     public static final Set<Material> PROTECTABLES_DOORS = EnumSet.of(Material.WOODEN_DOOR, Material.IRON_DOOR_BLOCK);
     public static final Set<Material> WOODEN_DOORS = EnumSet.of(Material.WOODEN_DOOR); // doors that open when clicked
     public static final Set<Material> PRESSURE_PLATES = EnumSet.of(Material.STONE_PLATE, Material.WOOD_PLATE);
+    public static final Set<Material> FENCE_GATES = EnumSet.of(Material.FENCE_GATE);
 
     static {
         PROTECTABLES_DOORS.add(Material.getMaterial(193)); // Spruce Door
@@ -58,6 +59,12 @@ public class DoorMatcher implements ProtectionFinder.Matcher {
         WOODEN_DOORS.add(Material.getMaterial(195)); // Jungle Door
         WOODEN_DOORS.add(Material.getMaterial(196)); // Acacia Door
         WOODEN_DOORS.add(Material.getMaterial(197)); // Dark Oak Door
+
+        FENCE_GATES.add(Material.getMaterial(183)); // Spruce Fence Gate
+        FENCE_GATES.add(Material.getMaterial(184)); // Birch Fence Gate
+        FENCE_GATES.add(Material.getMaterial(185)); // Jungle Fence Gate
+        FENCE_GATES.add(Material.getMaterial(186)); // Dark Oak Fence Gate
+        FENCE_GATES.add(Material.getMaterial(187)); // Acacia Fence Gate
     }
 
     private static final BlockFace[] faces = new BlockFace[] {

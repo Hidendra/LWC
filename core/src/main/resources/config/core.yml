@@ -189,6 +189,16 @@ protections:
             enabled: true
         fence_gate:
             enabled: true
+        spruce_fence_gate:
+            enabled: true
+        birch_fence_gate:
+            enabled: true
+        jungle_fence_gate:
+            enabled: true
+        acacia_fence_gate:
+            enabled: true
+        dark_oak_fence_gate:
+            enabled: true
 
 modes:
     droptransfer:

@@ -148,7 +148,7 @@ public class DoorsModule extends JavaModule {
         }
 
         // toggle the other side of the door open
-        boolean opensWhenClicked = (DoorMatcher.WOODEN_DOORS.contains(block.getType()) || block.getType() == Material.FENCE_GATE || block.getType() == Material.TRAP_DOOR);
+        boolean opensWhenClicked = (DoorMatcher.WOODEN_DOORS.contains(block.getType()) || DoorMatcher.FENCE_GATES.contains(block.getType()) || block.getType() == Material.TRAP_DOOR);
         changeDoorStates(true, (opensWhenClicked ? null : block) /* opens when clicked */, doubleDoorBlock);
 
         if (action == Action.OPEN_AND_CLOSE || protection.hasFlag(Flag.Type.AUTOCLOSE)) {
@@ -257,7 +257,11 @@ public class DoorsModule extends JavaModule {
             return true;
         }
 
-        return material == Material.FENCE_GATE || material == Material.TRAP_DOOR;
+        if (DoorMatcher.FENCE_GATES.contains(material)) {
+            return true;
+        }
+
+        return material == Material.TRAP_DOOR;
     }
 
     /**
