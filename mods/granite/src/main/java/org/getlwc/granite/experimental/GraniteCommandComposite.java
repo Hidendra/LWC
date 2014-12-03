@@ -20,8 +20,6 @@ import java.lang.reflect.Method;
 public class GraniteCommandComposite extends CommandComposite {
 
     public GraniteCommandComposite(final GranitePlugin plugin) {
-        super();
-
         addHook("executeCommand", new HookListener() {
             @Override
             public Object activate(Object self, Method method, Method proxyCallback, Hook hook, Object[] args) throws InvocationTargetException, IllegalAccessException {
