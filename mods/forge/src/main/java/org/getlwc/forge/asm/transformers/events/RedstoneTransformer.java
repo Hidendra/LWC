@@ -27,7 +27,7 @@ public class RedstoneTransformer extends AbstractMultiClassTransformer {
 
     @Override
     public void transform() {
-        if (visitMethod("onPoweredBlockChange")) {
+        if (visitMethod("func_150014_a")) { // func_150014_a = onPoweredBlockChange
             LabelNode end = new LabelNode(new Label());
 
             addInstruction(new VarInsnNode(ALOAD, 1));
