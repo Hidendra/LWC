@@ -31,6 +31,7 @@ package org.getlwc.forge.listeners;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
@@ -43,6 +44,7 @@ import org.getlwc.World;
 import org.getlwc.command.CommandContext;
 import org.getlwc.command.CommandException;
 import org.getlwc.command.CommandSender;
+import org.getlwc.entity.Player;
 import org.getlwc.forge.ForgeMod;
 import org.getlwc.forge.event.EntityExplodeEvent;
 import org.getlwc.forge.event.PlayerBreakBlockEvent;
@@ -59,6 +61,11 @@ public class ForgeListener {
 
     public ForgeListener(ForgeMod mod) {
         this.mod = mod;
+    }
+
+    @SubscribeEvent
+    public void playerQuit(PlayerEvent.PlayerLoggedOutEvent event) {
+        EventHelper.onPlayerQuit(mod.wrapPlayer(event.player));
     }
 
     @SubscribeEvent

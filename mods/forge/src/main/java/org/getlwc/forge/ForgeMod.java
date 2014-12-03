@@ -29,6 +29,7 @@
 
 package org.getlwc.forge;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -120,6 +121,7 @@ public class ForgeMod {
         layer.init();
 
         MinecraftForge.EVENT_BUS.register(listener);
+        FMLCommonHandler.instance().bus().register(listener); // required for FML events
 
         engine.setPermissionHandler(new ForgePermissionHandler());
         engine.getEventBus().subscribe(new EngineEventListener(engine, this));
