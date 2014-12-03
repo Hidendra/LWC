@@ -23,7 +23,7 @@ public class HopperSuckItemTransformer extends AbstractSingleClassTransformer {
 
     @Override
     public void transform() {
-        if (visitMethod("suckItemsIntoHopper")) {
+        if (visitMethod("func_145891_a")) { // suckItemsIntoHopper
             LabelNode end = new LabelNode(new Label());
 
             addInstruction(new VarInsnNode(ALOAD, 0));

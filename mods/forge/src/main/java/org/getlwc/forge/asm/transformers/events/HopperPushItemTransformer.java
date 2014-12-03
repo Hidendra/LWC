@@ -22,7 +22,7 @@ public class HopperPushItemTransformer extends AbstractSingleClassTransformer {
 
     @Override
     public void transform() {
-        if (visitMethod("insertItemToInventory")) {
+        if (visitMethod("func_145883_k")) { // insertItemToInventory
             LabelNode end = new LabelNode(new Label());
 
             addInstruction(new VarInsnNode(ALOAD, 0));
