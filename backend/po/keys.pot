@@ -11,7 +11,7 @@ msgstr ""
 " 0.0.1-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
 "\n"
-"POT-Creation-Date: 2014-11-26 15:47-0400\n"
+"POT-Creation-Date: 2014-12-03 01:15-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -95,7 +95,7 @@ msgid "&4Only owners can remove admins."
 msgstr ""
 
 #: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:102
-#: backend/src/main/java/org/getlwc/content/DescriptionModule.java:58
+#: backend/src/main/java/org/getlwc/content/DescriptionModule.java:59
 msgid "&2Removed successfully."
 msgstr ""
 
@@ -117,7 +117,7 @@ msgid "&2Changed successfully."
 msgstr ""
 
 #: backend/src/main/java/org/getlwc/command/AddRemoveCommands.java:125
-#: backend/src/main/java/org/getlwc/content/DescriptionModule.java:62
+#: backend/src/main/java/org/getlwc/content/DescriptionModule.java:63
 msgid "&2Added successfully."
 msgstr ""
 
@@ -175,11 +175,11 @@ msgstr ""
 msgid "&7{0}&f: {1}\n"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/content/DescriptionModule.java:43
+#: backend/src/main/java/org/getlwc/content/DescriptionModule.java:44
 msgid "Click on the protection to remove its description."
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/content/DescriptionModule.java:45
+#: backend/src/main/java/org/getlwc/content/DescriptionModule.java:46
 #, java-format
 msgid "Click on the protection to set the description: &e{0}"
 msgstr ""
@@ -230,56 +230,4 @@ msgstr ""
 msgid ""
 "&cA severe error occurred while processing the event: {0}\n"
 "&cThe stack trace has been printed out to the console."
-msgstr ""
-
-#: mods/forge/mcp/build/sources/java/org/getlwc/forge/asm/AbstractMultiClassTransformer.java:100
-#: mods/forge/mcp/src/main/java/org/getlwc/forge/asm/AbstractMultiClassTransformer.java:100
-#, java-format
-msgid "[ASM] Patched {0} ({1}) successfully!"
-msgstr ""
-
-#: mods/forge/mcp/build/sources/java/org/getlwc/forge/asm/AbstractMultiClassTransformer.java:103
-#: mods/forge/mcp/src/main/java/org/getlwc/forge/asm/AbstractMultiClassTransformer.java:103
-#, java-format
-msgid "[ASM] {0} ({1}) was not changed during transformations"
-msgstr ""
-
-#: mods/forge/mcp/build/sources/java/org/getlwc/forge/asm/AbstractMultiClassTransformer.java:108
-#: mods/forge/mcp/src/main/java/org/getlwc/forge/asm/AbstractMultiClassTransformer.java:108
-#, java-format
-msgid "[ASM] Failed to patch {0} ({1})"
-msgstr ""
-
-#: mods/forge/mcp/build/sources/java/org/getlwc/forge/asm/AbstractTransformer.java:67
-#: mods/forge/mcp/src/main/java/org/getlwc/forge/asm/AbstractTransformer.java:67
-#, java-format
-msgid "[ASM] Loaded native class mappings for Minecraft {0}"
-msgstr ""
-
-#: mods/forge/mcp/build/sources/java/org/getlwc/forge/asm/AbstractTransformer.java:70
-#: mods/forge/mcp/src/main/java/org/getlwc/forge/asm/AbstractTransformer.java:70
-#, java-format
-msgid ""
-"[ASM] ================   NOTE !!!   ================\n"
-"[ASM] There are no included native mappings for Minecraft {0}\n"
-"[ASM] If this is a major Minecraft release then LWC IS MOST LIKELY BROKEN!\n"
-"[ASM] MAKE SURE YOU ARE USING THE LATEST VERSION!"
-msgstr ""
-
-#: mods/forge/mcp/build/sources/java/org/getlwc/forge/listeners/ForgeListener.java:190
-#: mods/forge/mcp/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:190
-#, java-format
-msgid "An error was encountered while processing a command: {0}"
-msgstr ""
-
-#. / console
-#: mods/forge/mcp/build/sources/java/org/getlwc/forge/listeners/ForgeListener.java:194
-#: mods/forge/mcp/src/main/java/org/getlwc/forge/listeners/ForgeListener.java:194
-msgid "&4[LWC] An internal error occurred while processing this command"
-msgstr ""
-
-#: mods/forge/mcp/build/sources/java/org/getlwc/forge/modsupport/BuildCraft.java:18
-#: mods/forge/mcp/src/main/java/org/getlwc/forge/modsupport/BuildCraft.java:18
-#, java-format
-msgid "Using BuildCraft version: {0}"
 msgstr ""

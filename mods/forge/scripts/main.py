@@ -1,13 +1,16 @@
 from mapping import *
 import mc1_7_10
 import json
+import os
 
 MINECRAFT_VERSION = '1.7.10'
-base_path = '/Users/hidendra/.gradle//caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.2.1230/srgs/'
+FORGE_VERSION = '1.7.10-10.13.2.1230'
+
+BASE_PATH = os.path.expanduser('~/.gradle/caches/minecraft/net/minecraftforge/forge/%s/srgs/' % FORGE_VERSION)
 OUTPUT_DIR = '../src/main/resources/'
 
 loader = mc1_7_10.SimpleMappingLoader()
-classes = loader.load_classes(base_path)
+classes = loader.load_classes(BASE_PATH)
 
 class MyEncoder(json.JSONEncoder):
 
