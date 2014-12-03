@@ -63,12 +63,6 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes) {
-
-        if (mappings == null) {
-            // System.out.println("mappings null, name = " + name);
-            return bytes;
-        }
-
         boolean transformed = false;
         targetClass = null;
 
