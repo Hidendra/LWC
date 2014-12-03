@@ -44,7 +44,7 @@ public class MappingLoader {
      * @return
      */
     private static MappedField loadField(JSONObject root) {
-        return new MappedField(root.get("name").toString(), root.get("obfuscated_name").toString());
+        return new MappedField(root.get("name").toString(), root.get("srg_name").toString(), root.get("obfuscated_name").toString());
     }
 
     /**
@@ -54,7 +54,13 @@ public class MappingLoader {
      * @return
      */
     private static MappedMethod loadMethod(JSONObject root) {
-        return new MappedMethod(root.get("name").toString(), root.get("obfuscated_name").toString(), root.get("signature").toString());
+        String name = root.get("name").toString();
+        String srgName = root.get("srg_name").toString();
+        String srgSignature = root.get("srg_signature").toString();
+        String obfName = root.get("obfuscated_name").toString();
+        String obfSignature = root.get("obfuscated_signature").toString();
+
+        return new MappedMethod(name, srgName, srgSignature, obfName, obfSignature);
     }
 
     /**

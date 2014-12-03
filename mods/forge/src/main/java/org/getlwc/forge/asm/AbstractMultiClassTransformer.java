@@ -412,7 +412,7 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
             case OBFUSCATED:
                 return method.getObfuscatedName();
             case SRG:
-                return method.getObfuscatedName();  // TODO obfuscatedName is actually srg
+                return method.getSrgName();
             default:
                 throw new UnsupportedClassVersionError("Unknown CompilationType " + type);
         }
@@ -454,7 +454,7 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
         if (obfuscated) {
             return method.getObfuscatedSignature();
         } else {
-            return method.getObfuscatedSignature(); // TODO no unobfuscated signature
+            return method.getSrgSignature();
         }
     }
 
@@ -501,7 +501,7 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
             case OBFUSCATED:
                 return field.getObfuscatedName();
             case SRG:
-                return field.getObfuscatedName(); // TODO obfuscatedName is actually srg
+                return field.getSrgName();
             default:
                 throw new UnsupportedClassVersionError("Unknown CompilationType " + type);
         }
