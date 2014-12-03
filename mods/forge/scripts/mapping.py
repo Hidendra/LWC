@@ -1,21 +1,24 @@
 class Field:
 
-    def __init__(self, name, obfuscated_name):
+    def __init__(self, name):
         self.name = name
-        self.obfuscated_name = obfuscated_name
+        self.srg_name = None
+        self.obfuscated_name = None
 
     def __str__(self):
-        return 'Field(name = %s, obf = %s)' % (self.name, self.obfuscated_name)
+        return 'Field(name = %s, srg = %s, obf = %s)' % (self.name, self.srg_name, self.obfuscated_name)
 
 class Method:
 
-    def __init__(self, name, obfuscated_name, signature):
+    def __init__(self, name):
         self.name = name
-        self.obfuscated_name = obfuscated_name
-        self.signature = signature
+        self.srg_name = None
+        self.srg_signature = None
+        self.obfuscated_name = None
+        self.obfuscated_signature = None
 
     def __str__(self):
-        return 'Method(name = %s, obf = %s, signature = %s)' % (self.name, self.obfuscated_name, self.signature)
+        return 'Method(name = %s, srg = %s/%s, obf = %s/%s)' % (self.name, self.srg_name, self.srg_signature, self.obfuscated_name, self.obfuscated_signature)
 
 class Class:
 

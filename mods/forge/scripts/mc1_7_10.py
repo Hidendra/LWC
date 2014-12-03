@@ -81,10 +81,10 @@ def load_mcp_srg(classmap, base_path):
                 field = clazz.get_field(source[1])
 
                 if field is None:
-                    field = Field(source[1], dest[1])
+                    field = Field(source[1])
                     clazz.fields.append(field)
-                else:
-                    field.obfuscated_name = dest[1]
+
+                field.srg_name = dest[1]
 
             elif value_type == 'MD:':
                 source = split_class_and_item(split[1])
@@ -96,11 +96,11 @@ def load_mcp_srg(classmap, base_path):
                 method = clazz.get_method(source[1])
 
                 if method is None:
-                    method = Method(source[1], dest[1], dest_signature)
+                    method = Method(source[1])
                     clazz.methods.append(method)
-                else:
-                    method.obfuscated_name = dest[1]
-                    method.signature = dest_signature
+
+                method.srg_name = dest[1]
+                method.srg_signature = dest_signature
 
 def load_mcp_notch(classmap, base_path):
     """
@@ -124,13 +124,24 @@ def load_mcp_notch(classmap, base_path):
                 clazz.obfuscated_name = split[2]
             elif value_type == 'MD:':
                 source = split_class_and_item(split[1])
+                dest = split_class_and_item(split[3])
                 dest_signature = split[4]
 
                 clazz = get_class(classmap, source[0])
                 method = clazz.get_method(source[1])
 
                 if method is not None:
-                    method.signature = dest_signature
+                    method.obfuscated_name = dest[1]
+                    method.obfuscated_signature = dest_signature
+            elif value_type == 'FD:':
+                source = split_class_and_item(split[1])
+                dest = split_class_and_item(split[2])
+
+                clazz = get_class(classmap, source[0])
+                field = clazz.get_field(source[1])
+
+                if field is not None:
+                    field.obfuscated_name = dest[1]
 
 class SimpleMappingLoader(mappingloader.MappingLoader):
 
