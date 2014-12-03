@@ -50,12 +50,15 @@ import org.getlwc.command.Command;
 import org.getlwc.command.CommandContext;
 import org.getlwc.command.CommandException;
 import org.getlwc.command.CommandSender;
+import org.getlwc.entity.Entity;
+import org.getlwc.entity.Player;
 import org.getlwc.event.server.ServerStartingEvent;
 import org.getlwc.event.server.ServerStoppingEvent;
 import org.getlwc.forge.asm.AbstractMultiClassTransformer;
 import org.getlwc.forge.asm.AbstractTransformer;
 import org.getlwc.forge.asm.LWCCorePlugin;
 import org.getlwc.forge.asm.TransformerStatus;
+import org.getlwc.forge.entity.ForgeEntity;
 import org.getlwc.forge.listeners.ForgeListener;
 import org.getlwc.forge.permission.ForgePermissionHandler;
 
@@ -215,12 +218,27 @@ public class ForgeMod {
     }
 
     /**
-     * Wrap a native Canary player
+     * Wraps a native Forge entity
+     *
+     * @param entity
+     * @return
+     */
+    public Entity wrapEntity(net.minecraft.entity.Entity entity) {
+        if (entity instanceof EntityPlayer) {
+            return wrapPlayer((EntityPlayer) entity);
+        } else {
+            // TODO
+            return new ForgeEntity(entity);
+        }
+    }
+
+    /**
+     * Wrap a native Forge player
      *
      * @param player
      * @return
      */
-    public org.getlwc.entity.Player wrapPlayer(EntityPlayer player) {
+    public Player wrapPlayer(EntityPlayer player) {
         return layer.getPlayer(player.getCommandSenderName());
     }
 

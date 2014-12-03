@@ -127,6 +127,18 @@ public class EventHelper {
     }
 
     /**
+     * Called when an entity interacts with another entity in the world
+     *
+     * @param entity
+     * @param target
+     * @return
+     */
+    public static boolean onEntityInteract(Entity entity, Entity target) {
+        //
+        return false;
+    }
+
+    /**
      * Called when an entity interacts with a block in the world
      *
      * @param entity

@@ -36,6 +36,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.CommandEvent;
+import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.getlwc.Block;
 import org.getlwc.EventHelper;
@@ -44,6 +45,8 @@ import org.getlwc.World;
 import org.getlwc.command.CommandContext;
 import org.getlwc.command.CommandException;
 import org.getlwc.command.CommandSender;
+import org.getlwc.entity.Entity;
+import org.getlwc.entity.Player;
 import org.getlwc.forge.ForgeMod;
 import org.getlwc.forge.event.EntityExplodeEvent;
 import org.getlwc.forge.event.PlayerBreakBlockEvent;
@@ -93,6 +96,16 @@ public class ForgeListener {
     }
 
     @SubscribeEvent
+    public void entityInteract(EntityInteractEvent event) {
+        Player player = mod.wrapPlayer(event.entityPlayer);
+        Entity target = mod.wrapEntity(event.target);
+
+        if (EventHelper.onEntityInteract(player, target)) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
     public void playerInteract(PlayerInteractEvent event) {
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
             return;
@@ -102,7 +115,6 @@ public class ForgeListener {
         World world = player.getLocation().getWorld();
         Block block = world.getBlockAt(event.x, event.y, event.z);
 
-        // send the event for the player around the plugin (and maybe other plugins, too.)
         if (EventHelper.onBlockInteract(player, block)) {
             event.setCanceled(true);
             event.setResult(Event.Result.DENY);
