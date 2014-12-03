@@ -1,7 +1,6 @@
 package org.getlwc.forge.asm;
 
 import org.getlwc.SimpleEngine;
-import org.getlwc.forge.ForgeEventHelper;
 import org.getlwc.forge.asm.mappings.MappedClass;
 import org.getlwc.forge.asm.mappings.MappedField;
 import org.getlwc.forge.asm.mappings.MappedMethod;
@@ -15,7 +14,6 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public abstract class AbstractMultiClassTransformer extends AbstractTransformer {
@@ -63,6 +61,13 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes) {
+        // No LWC classes are going to be transformed, so ignore all of them.
+        // This sidesteps the issue where this transformer is called on
+        // AbstractMultiClassTransformer.class which causes some issues.
+        if (name.startsWith("org.getlwc.forge.asm")) {
+            return bytes;
+        }
+
         boolean transformed = false;
         targetClass = null;
 
@@ -125,10 +130,8 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
      * @param methodName
      */
     public boolean visitMethod(String methodName) {
-        Iterator iter = classNode.methods.iterator();
-
-        while (iter.hasNext()) {
-            MethodNode method = (MethodNode) iter.next();
+        for (Object object : classNode.methods) {
+            MethodNode method = (MethodNode) object;
 
             if (methodEquals(method, targetClass, methodName)) {
                 currentMethod = method;
@@ -499,15 +502,6 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
             default:
                 throw new UnsupportedClassVersionError("Unknown CompilationType " + type);
         }
-    }
-
-    /**
-     * Note that it is only known if the class is obfuscated or not only AFTER transform() has been successfully called
-     *
-     * @return true if the class is known to be obfuscated
-     */
-    public boolean isObfuscated() {
-        return obfuscated;
     }
 
 }
