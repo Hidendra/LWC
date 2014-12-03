@@ -34,9 +34,9 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import org.getlwc.Engine;
 import org.getlwc.SimpleEngine;
 import org.getlwc.forge.ForgeConsoleCommandSender;
+import org.getlwc.forge.ForgeMod;
 import org.getlwc.forge.ForgeServerInfo;
 import org.getlwc.forge.ForgeServerLayer;
-import org.getlwc.forge.ForgeMod;
 
 import java.util.Map;
 
@@ -46,10 +46,6 @@ public class LWCCorePlugin implements IFMLLoadingPlugin, IFMLCallHook {
      * If the core mod has been initialized
      */
     public static boolean INITIALIZED = false;
-
-    public String[] getLibraryRequestClass() {
-        return null;
-    }
 
     @Override
     public String[] getASMTransformerClass() {

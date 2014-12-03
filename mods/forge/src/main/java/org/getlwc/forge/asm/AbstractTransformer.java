@@ -31,18 +31,26 @@ package org.getlwc.forge.asm;
 
 import cpw.mods.fml.relauncher.FMLInjectionData;
 import net.minecraft.launchwrapper.IClassTransformer;
-import org.getlwc.configuration.Configuration;
-import org.getlwc.configuration.YamlConfiguration;
 import org.getlwc.forge.ForgeMod;
+import org.getlwc.forge.asm.mappings.MappedClass;
+import org.getlwc.forge.util.asm.MappingLoader;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class AbstractTransformer implements IClassTransformer {
 
     /**
-     * The class/method/field name mappings used by ASM
+     * Mappings of all classes
      */
-    protected static Configuration mappings;
+    protected static final Map<String, MappedClass> mappings = new HashMap<>();
+
+    /**
+     * If mappings have been loaded
+     */
+    private static boolean mappingsLoaded = false;
 
     /**
      * Transform a class
@@ -59,20 +67,30 @@ public abstract class AbstractTransformer implements IClassTransformer {
      * Init and load the mappings file if it has not yet been loaded
      */
     public static void init() {
-        if (mappings == null) {
+        if (!mappingsLoaded) {
             String minecraftVersion = (String) FMLInjectionData.data()[4];
-            InputStream stream = AbstractTransformer.class.getResourceAsStream("/mappings_" + minecraftVersion + ".yml");
+            InputStream stream = AbstractTransformer.class.getResourceAsStream("/mappings/" + minecraftVersion + ".json");
 
             if (stream != null) {
-                mappings = new YamlConfiguration(stream);
                 ForgeMod.instance.getEngine().getConsoleSender().sendMessage("[ASM] Loaded native class mappings for Minecraft {0}", minecraftVersion);
             } else {
-                mappings = new YamlConfiguration(AbstractTransformer.class.getResourceAsStream("/mappings.yml"));
+                stream = AbstractTransformer.class.getResourceAsStream("/mappings/latest.json");
                 ForgeMod.instance.getEngine().getConsoleSender().sendMessage("[ASM] ================   NOTE !!!   ================\n"
                         + "[ASM] There are no included native mappings for Minecraft {0}\n"
                         + "[ASM] If this is a major Minecraft release then LWC IS MOST LIKELY BROKEN!\n"
                         + "[ASM] MAKE SURE YOU ARE USING THE LATEST VERSION!", minecraftVersion);
             }
+
+            try {
+                for (MappedClass clazz : MappingLoader.loadClasses(stream)) {
+                    mappings.put(clazz.getSimpleName(), clazz);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                ForgeMod.instance.getEngine().getConsoleSender().sendMessage("[ASM] Failed to load mappings!");
+            }
+
+            mappingsLoaded = true;
         }
     }
 

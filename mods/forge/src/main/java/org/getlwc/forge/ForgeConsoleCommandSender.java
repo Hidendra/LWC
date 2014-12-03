@@ -31,7 +31,6 @@ package org.getlwc.forge;
 
 import cpw.mods.fml.common.FMLLog;
 import org.getlwc.command.ConsoleCommandSender;
-import org.getlwc.lang.Locale;
 
 public class ForgeConsoleCommandSender extends ConsoleCommandSender {
 

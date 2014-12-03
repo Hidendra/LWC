@@ -1,6 +1,9 @@
 package org.getlwc.forge.asm;
 
 import org.getlwc.forge.ForgeMod;
+import org.getlwc.forge.asm.mappings.MappedClass;
+import org.getlwc.forge.asm.mappings.MappedField;
+import org.getlwc.forge.asm.mappings.MappedMethod;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -307,7 +310,17 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
      * @return
      */
     public static String getClassName(String className, boolean obfuscated) {
-        return mappings.getString("classes." + className + "." + getObfuscatedModifier(obfuscated));
+        MappedClass clazz = mappings.get(className);
+
+        if (clazz == null) {
+            return null;
+        }
+
+        if (obfuscated) {
+            return clazz.getObfuscatedName();
+        } else {
+            return clazz.getCanonicalName();
+        }
     }
 
     /**
@@ -351,10 +364,18 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
      * @return
      */
     public static String getMethodName(String className, String methodName, boolean obfuscated) {
+        MappedClass clazz = mappings.get(className);
+
+        if (clazz == null) {
+            return null;
+        }
+
+        MappedMethod method = clazz.getMethod(methodName);
+
         if (obfuscated) {
-            return mappings.getString("methods." + className + "." + methodName + ".obf");
+            return method.getObfuscatedName();
         } else {
-            return methodName;
+            return method.getName();
         }
     }
 
@@ -367,13 +388,21 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
      * @return
      */
     public static String getMethodName(String className, String methodName, CompilationType type) {
+        MappedClass clazz = mappings.get(className);
+
+        if (clazz == null) {
+            return null;
+        }
+
+        MappedMethod method = clazz.getMethod(methodName);
+
         switch (type) {
             case UNOBFUSCATED:
-                return methodName;
+                return method.getName();
             case OBFUSCATED:
-                return mappings.getString("methods." + className + "." + methodName + ".obf");
+                return method.getObfuscatedName();
             case SRG:
-                return mappings.getString("methods." + className + "." + methodName + ".srg");
+                return method.getObfuscatedName();  // TODO obfuscatedName is actually srg
             default:
                 throw new UnsupportedClassVersionError("Unknown CompilationType " + type);
         }
@@ -399,32 +428,19 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
      * @return
      */
     public static String getMethodSignature(String className, String methodName, boolean obfuscated) {
-        String signature = mappings.getString("methods." + className + "." + methodName + ".signature");
+        MappedClass clazz = mappings.get(className);
 
-        // replace all #ClassName resolvers
-        while (signature.contains("#")) {
-            String matchedClass = "";
-            int index = signature.indexOf('#') + 1;
-            char chr;
-
-            while ((chr = signature.charAt(index)) != ';') {
-                matchedClass += chr;
-                index++;
-
-                if (index >= signature.length()) {
-                    break;
-                }
-
-                if (index > 1000) {
-                    System.out.println("Invalid signature detected for class " + className + " method " + methodName + " signature " + signature);
-                    return "";
-                }
-            }
-
-            signature = signature.replaceAll("#" + matchedClass, getJavaClassName(matchedClass, obfuscated));
+        if (clazz == null) {
+            return null;
         }
 
-        return signature;
+        MappedMethod method = clazz.getMethod(methodName);
+
+        if (obfuscated) {
+            return method.getObfuscatedSignature();
+        } else {
+            return method.getObfuscatedSignature(); // TODO no unobfuscated signature
+        }
     }
 
     /**
@@ -447,13 +463,21 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
      * @return
      */
     public static String getFieldName(String className, String fieldName, CompilationType type) {
+        MappedClass clazz = mappings.get(className);
+
+        if (clazz == null) {
+            return null;
+        }
+
+        MappedField field = clazz.getField(fieldName);
+
         switch (type) {
             case UNOBFUSCATED:
-                return fieldName;
+                return field.getName();
             case OBFUSCATED:
-                return mappings.getString("fields." + className + "." + fieldName + ".obf");
+                return field.getObfuscatedName();
             case SRG:
-                return mappings.getString("fields." + className + "." + fieldName + ".srg");
+                return field.getObfuscatedName(); // TODO obfuscatedName is actually srg
             default:
                 throw new UnsupportedClassVersionError("Unknown CompilationType " + type);
         }
