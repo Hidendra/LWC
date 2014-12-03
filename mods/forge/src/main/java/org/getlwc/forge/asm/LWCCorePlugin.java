@@ -63,6 +63,16 @@ public class LWCCorePlugin implements IFMLLoadingPlugin, IFMLCallHook {
     @Override
     public String[] getASMTransformerClass() {
         INITIALIZED = true;
+
+        for (String className : LWCCorePlugin.TRANSFORMERS) {
+            try {
+                Class<? extends AbstractTransformer> transformerClass = (Class<? extends AbstractTransformer>) Class.forName(className);
+                AbstractMultiClassTransformer.TRANSFORMER_STATUSES.put(transformerClass, TransformerStatus.PENDING);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
         return TRANSFORMERS;
     }
 
@@ -90,12 +100,9 @@ public class LWCCorePlugin implements IFMLLoadingPlugin, IFMLCallHook {
     public Void call() throws Exception {
         if (ForgeMod.instance == null) {
             System.out.println("LWC => init()");
-            ForgeMod.instance = new ForgeMod();
-
-            // create an engine
-            ForgeServerLayer layer = new ForgeServerLayer();
-            Engine engine = SimpleEngine.getOrCreateEngine(layer, new ForgeServerInfo(), new ForgeConsoleCommandSender());
-            ForgeMod.instance.setupServer(engine, layer);
+            new ForgeMod().ensureEngineLoaded();
+        } else {
+            ForgeMod.instance.ensureEngineLoaded();
         }
 
         return null;

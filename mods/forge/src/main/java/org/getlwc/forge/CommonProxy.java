@@ -39,7 +39,7 @@ public abstract class CommonProxy {
      */
     public void init() {
         final ForgeMod plugin = ForgeMod.instance;
-        plugin.ensurePostLoaded();
+        plugin.ensureEngineLoaded();
     }
 
 }

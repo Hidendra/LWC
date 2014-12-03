@@ -51,6 +51,7 @@ import org.getlwc.command.CommandException;
 import org.getlwc.command.CommandSender;
 import org.getlwc.event.server.ServerStartingEvent;
 import org.getlwc.event.server.ServerStoppingEvent;
+import org.getlwc.forge.asm.AbstractMultiClassTransformer;
 import org.getlwc.forge.asm.AbstractTransformer;
 import org.getlwc.forge.asm.LWCCorePlugin;
 import org.getlwc.forge.asm.TransformerStatus;
@@ -86,25 +87,6 @@ public class ForgeMod {
      */
     private ForgeListener listener;
 
-    /**
-     * Injection results for transformers.
-     * true - injected successfully
-     * false - failed to inject
-     */
-    private final Map<Class<? extends AbstractTransformer>, TransformerStatus> transformerResults = new HashMap<>();
-
-    @SuppressWarnings("unchecked")
-    public ForgeMod() {
-        for (String className : LWCCorePlugin.TRANSFORMERS) {
-            try {
-                Class<? extends AbstractTransformer> transformerClass = (Class<? extends AbstractTransformer>) Class.forName(className);
-                transformerResults.put(transformerClass, TransformerStatus.PENDING);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
 
@@ -128,25 +110,25 @@ public class ForgeMod {
 
     @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
-        if (LWCCorePlugin.INITIALIZED) {
-            if (listener == null) {
-                listener = new ForgeListener(this);
-            }
+        ensureEngineLoaded();
 
-            proxy.init();
-            layer.init();
+        if (listener == null) {
+            listener = new ForgeListener(this);
+        }
 
-            engine.setPermissionHandler(new ForgePermissionHandler());
-            engine.getEventBus().subscribe(new EngineEventListener(engine, this));
-            engine.getEventBus().post(new ServerStartingEvent());
+        proxy.init();
+        layer.init();
 
-            try {
-                engine.getCommandHandler().registerCommands(this);
-            } catch (CommandException e) {
-                e.printStackTrace();
-            }
+        MinecraftForge.EVENT_BUS.register(listener);
 
-            MinecraftForge.EVENT_BUS.register(listener);
+        engine.setPermissionHandler(new ForgePermissionHandler());
+        engine.getEventBus().subscribe(new EngineEventListener(engine, this));
+        engine.getEventBus().post(new ServerStartingEvent());
+
+        try {
+            engine.getCommandHandler().registerCommands(this);
+        } catch (CommandException e) {
+            e.printStackTrace();
         }
     }
 
@@ -172,7 +154,7 @@ public class ForgeMod {
         int numPending = 0;
         int numFailed = 0;
 
-        for (Map.Entry<Class<? extends AbstractTransformer>, TransformerStatus> entry : transformerResults.entrySet()) {
+        for (Map.Entry<Class<? extends AbstractTransformer>, TransformerStatus> entry : AbstractMultiClassTransformer.TRANSFORMER_STATUSES.entrySet()) {
             Class<? extends AbstractTransformer> transformer = entry.getKey();
             TransformerStatus status = entry.getValue();
 
@@ -194,7 +176,7 @@ public class ForgeMod {
         sender.sendMessage("Transformers: &2{0}&f successful, &e{1}&f pending, &4{2}&f failed", numSuccessful, numPending, numFailed);
         sender.sendMessage(" ");
 
-        for (Map.Entry<Class<? extends AbstractTransformer>, TransformerStatus> entry : transformerResults.entrySet()) {
+        for (Map.Entry<Class<? extends AbstractTransformer>, TransformerStatus> entry : AbstractMultiClassTransformer.TRANSFORMER_STATUSES.entrySet()) {
             Class<? extends AbstractTransformer> transformer = entry.getKey();
             TransformerStatus status = entry.getValue();
 
@@ -215,23 +197,18 @@ public class ForgeMod {
     }
 
     /**
-     * Notifies of the result of a transformer.
-     *
-     * @param transformer
-     * @param status
-     */
-    public void notifyTransformerResult(Class<? extends AbstractTransformer> transformer, TransformerStatus status) {
-        transformerResults.put(transformer, status);
-    }
-
-    /**
      * Ensures LWC is loaded past the CoreMod phase and the LWC objects are correct for
      * the Mod stage.
      */
-    public void ensurePostLoaded() {
-        if (engine == null) {
-            final Engine engine = SimpleEngine.getInstance();
-            setupServer(engine, (ForgeServerLayer) engine.getServerLayer());
+    public void ensureEngineLoaded() {
+        if (SimpleEngine.getInstance() == null) {
+            layer = new ForgeServerLayer();
+            engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new ForgeServerInfo(), new ForgeConsoleCommandSender());
+
+            AbstractTransformer.init();
+        } else {
+            engine = SimpleEngine.getInstance();
+            layer = (ForgeServerLayer) engine.getServerLayer();
         }
     }
 
@@ -262,20 +239,6 @@ public class ForgeMod {
      */
     public Engine getEngine() {
         return engine;
-    }
-
-    /**
-     * Set the engine
-     *
-     * @param engine
-     */
-    public void setupServer(Engine engine, ForgeServerLayer layer) {
-        if (this.engine != null) {
-            throw new UnsupportedOperationException("LWC was already setup, and cannot be reset");
-        }
-        this.engine = (SimpleEngine) engine;
-        this.layer = layer;
-        AbstractTransformer.init();
     }
 
     /**

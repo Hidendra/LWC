@@ -31,7 +31,7 @@ package org.getlwc.forge.asm;
 
 import cpw.mods.fml.relauncher.FMLInjectionData;
 import net.minecraft.launchwrapper.IClassTransformer;
-import org.getlwc.forge.ForgeMod;
+import org.getlwc.SimpleEngine;
 import org.getlwc.forge.asm.mappings.MappedClass;
 import org.getlwc.forge.util.asm.MappingLoader;
 
@@ -72,10 +72,10 @@ public abstract class AbstractTransformer implements IClassTransformer {
             InputStream stream = AbstractTransformer.class.getResourceAsStream("/mappings/" + minecraftVersion + ".json");
 
             if (stream != null) {
-                ForgeMod.instance.getEngine().getConsoleSender().sendMessage("[ASM] Loaded native class mappings for Minecraft {0}", minecraftVersion);
+                SimpleEngine.getInstance().getConsoleSender().sendMessage("[ASM] Loaded native class mappings for Minecraft {0}", minecraftVersion);
             } else {
                 stream = AbstractTransformer.class.getResourceAsStream("/mappings/latest.json");
-                ForgeMod.instance.getEngine().getConsoleSender().sendMessage("[ASM] ================   NOTE !!!   ================\n"
+                SimpleEngine.getInstance().getConsoleSender().sendMessage("[ASM] ================   NOTE !!!   ================\n"
                         + "[ASM] There are no included native mappings for Minecraft {0}\n"
                         + "[ASM] If this is a major Minecraft release then LWC IS MOST LIKELY BROKEN!\n"
                         + "[ASM] MAKE SURE YOU ARE USING THE LATEST VERSION!", minecraftVersion);
@@ -87,7 +87,7 @@ public abstract class AbstractTransformer implements IClassTransformer {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                ForgeMod.instance.getEngine().getConsoleSender().sendMessage("[ASM] Failed to load mappings!");
+                SimpleEngine.getInstance().getConsoleSender().sendMessage("[ASM] Failed to load mappings!");
             }
 
             mappingsLoaded = true;

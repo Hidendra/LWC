@@ -1,6 +1,6 @@
 package org.getlwc.forge.asm;
 
-import org.getlwc.forge.ForgeMod;
+import org.getlwc.SimpleEngine;
 import org.getlwc.forge.asm.mappings.MappedClass;
 import org.getlwc.forge.asm.mappings.MappedField;
 import org.getlwc.forge.asm.mappings.MappedMethod;
@@ -13,9 +13,13 @@ import org.objectweb.asm.tree.LocalVariableNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public abstract class AbstractMultiClassTransformer extends AbstractTransformer {
+
+    public static final Map<Class<? extends AbstractTransformer>, TransformerStatus> TRANSFORMER_STATUSES = new HashMap<>();
 
     /**
      * The class name (simple, not canonical / full) of the desired class we want to transform
@@ -79,8 +83,6 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
                 }
 
                 if (targetClass != null) {
-                    ForgeMod.instance.ensurePostLoaded();
-
                     instructions = new InsnList();
                     classNode = new ClassNode();
 
@@ -97,17 +99,17 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
                 if (changed) {
                     ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
                     classNode.accept(writer);
-                    ForgeMod.instance.getEngine().getConsoleSender().sendMessage("[ASM] Patched {0} ({1}) successfully!", getClass().getSimpleName() + "::" + targetClass, getClassName(targetClass));
-                    ForgeMod.instance.notifyTransformerResult(getClass(), TransformerStatus.SUCCESSFUL);
+                    SimpleEngine.getInstance().getConsoleSender().sendMessage("[ASM] Patched {0} ({1}) successfully!", getClass().getSimpleName() + "::" + targetClass, getClassName(targetClass));
+                    TRANSFORMER_STATUSES.put(getClass(), TransformerStatus.SUCCESSFUL);
                     return writer.toByteArray();
                 } else {
-                    ForgeMod.instance.getEngine().getConsoleSender().sendMessage("[ASM] {0} ({1}) was not changed during transformations", getClass().getSimpleName() + "::" + targetClass, getClassName(targetClass));
-                    ForgeMod.instance.notifyTransformerResult(getClass(), TransformerStatus.FAILED);
+                    SimpleEngine.getInstance().getConsoleSender().sendMessage("[ASM] {0} ({1}) was not changed during transformations", getClass().getSimpleName() + "::" + targetClass, getClassName(targetClass));
+                    TRANSFORMER_STATUSES.put(getClass(), TransformerStatus.FAILED);
                     return bytes;
                 }
             }
         } catch (Exception e) {
-            ForgeMod.instance.getEngine().getConsoleSender().sendMessage("[ASM] Failed to patch {0} ({1})", getClass().getSimpleName() + "::" + targetClass, getClassName(targetClass));
+            SimpleEngine.getInstance().getConsoleSender().sendMessage("[ASM] Failed to patch {0} ({1})", getClass().getSimpleName() + "::" + targetClass, getClassName(targetClass));
             e.printStackTrace();
             return bytes;
         }
@@ -316,7 +318,7 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
 
         if (clazz == null) {
             if (mappings.size() > 0) {
-                ForgeMod.instance.getEngine().getConsoleSender().sendMessage("Class not found: {0}", className);
+                SimpleEngine.getInstance().getConsoleSender().sendMessage("Class not found: {0}", className);
             }
 
             return null;
@@ -391,7 +393,7 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
         MappedMethod method = clazz.getMethod(methodName);
 
         if (method == null) {
-            ForgeMod.instance.getEngine().getConsoleSender().sendMessage("Method not found: {0}/{1}", clazz.getCanonicalName(), methodName);
+            SimpleEngine.getInstance().getConsoleSender().sendMessage("Method not found: {0}/{1}", clazz.getCanonicalName(), methodName);
             return null;
         }
 
@@ -436,7 +438,7 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
         MappedMethod method = clazz.getMethod(methodName);
 
         if (method == null) {
-            ForgeMod.instance.getEngine().getConsoleSender().sendMessage("Method not found: {0}/{1}", clazz.getCanonicalName(), methodName);
+            SimpleEngine.getInstance().getConsoleSender().sendMessage("Method not found: {0}/{1}", clazz.getCanonicalName(), methodName);
             return null;
         }
 
@@ -476,7 +478,7 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
         MappedField field = clazz.getField(fieldName);
 
         if (field == null) {
-            ForgeMod.instance.getEngine().getConsoleSender().sendMessage("Field not found: {0}/{1}", clazz.getCanonicalName(), fieldName);
+            SimpleEngine.getInstance().getConsoleSender().sendMessage("Field not found: {0}/{1}", clazz.getCanonicalName(), fieldName);
             return null;
         }
 
