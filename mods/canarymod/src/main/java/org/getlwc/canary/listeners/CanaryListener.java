@@ -10,6 +10,7 @@ import net.canarymod.hook.player.BlockPlaceHook;
 import net.canarymod.hook.player.BlockRightClickHook;
 import net.canarymod.hook.player.ConnectionHook;
 import net.canarymod.hook.player.DisconnectionHook;
+import net.canarymod.hook.player.EntityRightClickHook;
 import net.canarymod.hook.player.SignChangeHook;
 import net.canarymod.hook.world.ExplosionHook;
 import net.canarymod.hook.world.PistonExtendHook;
@@ -50,6 +51,17 @@ public class CanaryListener implements PluginListener {
     @HookHandler(ignoreCanceled = true)
     public void playerQuit(DisconnectionHook event) {
         EventHelper.onPlayerQuit(plugin.wrapPlayer(event.getPlayer()));
+    }
+
+    @SuppressWarnings("unused")
+    @HookHandler(ignoreCanceled = true)
+    public void entityRightClick(EntityRightClickHook hook) {
+        Player player = plugin.wrapPlayer(hook.getPlayer());
+        Entity target = plugin.wrapEntity(hook.getEntity());
+
+        if (EventHelper.onEntityInteract(player, target)) {
+            hook.setCanceled();
+        }
     }
 
     @SuppressWarnings("unused")

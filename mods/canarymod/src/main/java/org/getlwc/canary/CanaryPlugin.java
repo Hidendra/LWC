@@ -9,8 +9,11 @@ import org.getlwc.ItemStack;
 import org.getlwc.Location;
 import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
+import org.getlwc.canary.entity.CanaryEntity;
 import org.getlwc.canary.listeners.CanaryListener;
 import org.getlwc.canary.permission.CanaryPermissionHandler;
+import org.getlwc.entity.Entity;
+import org.getlwc.entity.Player;
 import org.getlwc.event.server.ServerStartingEvent;
 import org.getlwc.event.server.ServerStoppingEvent;
 import org.getlwc.lang.Locale;
@@ -55,13 +58,28 @@ public class CanaryPlugin extends Plugin {
     }
 
     /**
-     * Wrap a native Canary player
+     * Wraps a native Canary entity
+     *
+     * @param entity
+     * @return
+     */
+    public Entity wrapEntity(net.canarymod.api.entity.Entity entity) {
+        if (entity instanceof net.canarymod.api.entity.living.humanoid.Player) {
+            return wrapPlayer((net.canarymod.api.entity.living.humanoid.Player) entity);
+        } else {
+            // TODO wasted creation
+            return new CanaryEntity(this, entity);
+        }
+    }
+
+    /**
+     * Wraps a native Canary player
      *
      * @param player
      * @return
      */
-    public org.getlwc.entity.Player wrapPlayer(net.canarymod.api.entity.living.humanoid.Player player) {
-        org.getlwc.entity.Player res = layer.getPlayer(player.getName());
+    public Player wrapPlayer(net.canarymod.api.entity.living.humanoid.Player player) {
+        Player res = layer.getPlayer(player.getName());
 
         if (!res.getLocale().getName().equals(player.getLocale())) {
             res.setLocale(new Locale(player.getLocale()));

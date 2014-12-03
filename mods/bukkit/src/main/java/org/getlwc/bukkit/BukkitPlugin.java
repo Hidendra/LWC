@@ -39,9 +39,11 @@ import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
 import org.getlwc.World;
 import org.getlwc.bukkit.economy.VaultEconomyHandler;
+import org.getlwc.bukkit.entity.BukkitEntity;
 import org.getlwc.bukkit.listeners.BukkitListener;
 import org.getlwc.bukkit.permission.SuperPermsPermissionHandler;
 import org.getlwc.bukkit.permission.VaultPermissionHandler;
+import org.getlwc.entity.Entity;
 import org.getlwc.entity.Player;
 import org.getlwc.event.server.ServerStartingEvent;
 import org.getlwc.event.server.ServerStoppingEvent;
@@ -72,7 +74,22 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
     }
 
     /**
-     * Wrap a player object to a native version we can work with
+     * Wraps a native Bukkit entity
+     *
+     * @param entity
+     * @return
+     */
+    public Entity wrapEntity(org.bukkit.entity.Entity entity) {
+        if (entity instanceof org.bukkit.entity.Player) {
+            return wrapPlayer((org.bukkit.entity.Player) entity);
+        } else {
+            // TODO wasted creations
+            return new BukkitEntity(this, entity);
+        }
+    }
+
+    /**
+     * Wraps a native Bukkit player
      *
      * @param player
      * @return

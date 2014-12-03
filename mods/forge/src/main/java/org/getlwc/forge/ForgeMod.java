@@ -227,7 +227,7 @@ public class ForgeMod {
         if (entity instanceof EntityPlayer) {
             return wrapPlayer((EntityPlayer) entity);
         } else {
-            // TODO
+            // TODO wasted creations
             return new ForgeEntity(entity);
         }
     }

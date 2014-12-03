@@ -49,6 +49,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -137,6 +138,17 @@ public class BukkitListener implements Listener {
         if (EventHelper.onBlockInteract(player, block)) {
             event.setCancelled(true);
             event.setUseInteractedBlock(Event.Result.DENY);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @EventHandler(ignoreCancelled = true)
+    public void playerInteractEntity(PlayerInteractEntityEvent event) {
+        Player player = plugin.wrapPlayer(event.getPlayer());
+        Entity target = plugin.wrapEntity(event.getRightClicked());
+
+        if (EventHelper.onEntityInteract(player, target)) {
+            event.setCancelled(true);
         }
     }
 

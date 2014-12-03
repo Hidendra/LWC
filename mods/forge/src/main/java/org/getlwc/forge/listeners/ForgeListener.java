@@ -96,7 +96,7 @@ public class ForgeListener {
     }
 
     @SubscribeEvent
-    public void entityInteract(EntityInteractEvent event) {
+    public void playerInteractEntity(EntityInteractEvent event) {
         Player player = mod.wrapPlayer(event.entityPlayer);
         Entity target = mod.wrapEntity(event.target);
 
@@ -106,7 +106,7 @@ public class ForgeListener {
     }
 
     @SubscribeEvent
-    public void playerInteract(PlayerInteractEvent event) {
+    public void playerInteractBlock(PlayerInteractEvent event) {
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
             return;
         }
