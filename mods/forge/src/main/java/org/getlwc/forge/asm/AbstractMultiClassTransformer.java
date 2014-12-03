@@ -73,7 +73,6 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
         targetClass = null;
 
         try {
-
             for (String className : classNames) {
                 if (name.equals(getClassName(className, false))) {
                     obfuscated = false;
@@ -111,6 +110,7 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
             }
         } catch (Exception e) {
             SimpleEngine.getInstance().getConsoleSender().sendMessage("[ASM] Failed to patch {0} ({1})", getClass().getSimpleName() + "::" + targetClass, getClassName(targetClass));
+            TRANSFORMER_STATUSES.put(getClass(), TransformerStatus.FAILED);
             e.printStackTrace();
             return bytes;
         }
