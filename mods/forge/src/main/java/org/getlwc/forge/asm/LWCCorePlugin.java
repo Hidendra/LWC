@@ -52,11 +52,12 @@ public class LWCCorePlugin implements IFMLLoadingPlugin, IFMLCallHook {
             "org.getlwc.forge.asm.transformers.events.ExplosionTransformer",
             "org.getlwc.forge.asm.transformers.events.SignUpdateTransformer",
             "org.getlwc.forge.asm.transformers.events.BlockPlaceTransformer",
-            "org.getlwc.forge.asm.transformers.events.RedstoneTransformer",
             "org.getlwc.forge.asm.transformers.events.PistonUpdateStateTransformer",
             "org.getlwc.forge.asm.transformers.events.HopperPushItemTransformer",
             "org.getlwc.forge.asm.transformers.events.HopperSuckItemTransformer",
             "org.getlwc.forge.asm.transformers.events.EntityBreakDoorTransformer",
+            "org.getlwc.forge.asm.transformers.events.redstone.BlockDoorRedstoneTransformer",
+            "org.getlwc.forge.asm.transformers.events.redstone.BlockTrapDoorRedstoneTransformer",
             "org.getlwc.forge.asm.transformers.misc.UpdateClientInfoTransformer"
     };
 

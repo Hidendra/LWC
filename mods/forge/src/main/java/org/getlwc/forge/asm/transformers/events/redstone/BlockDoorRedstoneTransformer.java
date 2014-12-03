@@ -1,6 +1,7 @@
-package org.getlwc.forge.asm.transformers.events;
+package org.getlwc.forge.asm.transformers.events.redstone;
 
 import org.getlwc.forge.asm.AbstractMultiClassTransformer;
+import org.getlwc.forge.asm.AbstractSingleClassTransformer;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
@@ -14,15 +15,10 @@ import static org.objectweb.asm.Opcodes.ILOAD;
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 import static org.objectweb.asm.Opcodes.RETURN;
 
-public class RedstoneTransformer extends AbstractMultiClassTransformer {
+public class BlockDoorRedstoneTransformer extends AbstractSingleClassTransformer {
 
-    /**
-     * The classes we are targeting
-     */
-    private static final String[] TARGET_CLASSES = new String[] { "BlockDoor", "BlockTrapDoor" };
-
-    public RedstoneTransformer() {
-        super(TARGET_CLASSES);
+    public BlockDoorRedstoneTransformer() {
+        super("BlockDoor");
     }
 
     @Override
