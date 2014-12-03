@@ -20,7 +20,7 @@ public class UpdateClientInfoTransformer extends AbstractSingleClassTransformer 
 
     @Override
     public void transform() {
-        if (visitMethod("func_147139_a")) { // updateClientInfo
+        if (visitMethod("func_147100_a")) { // updateClientInfo
             addInstruction(new VarInsnNode(ALOAD, 0));
             addInstruction(new VarInsnNode(ALOAD, 1));
             addInstruction(new MethodInsnNode(INVOKESTATIC, getJavaClassName("ForgeEventHelper"), getMethodName("ForgeEventHelper", "onUpdateClientInfo"), "(L" + getJavaClassName("EntityPlayerMP") + ";L" + getJavaClassName("C15PacketClientSettings") + ";)V"));
