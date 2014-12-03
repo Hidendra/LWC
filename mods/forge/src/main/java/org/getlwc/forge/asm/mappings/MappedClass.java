@@ -61,7 +61,7 @@ public class MappedClass {
      */
     public MappedMethod getMethod(String name) {
         for (MappedMethod method : methods) {
-            if (method.getName().equals(name) || method.getObfuscatedName().equals(name)) {
+            if (method.getName().equals(name) || method.getSrgName().equals(name) || method.getObfuscatedName().equals(name)) {
                 return method;
             }
         }
@@ -77,7 +77,7 @@ public class MappedClass {
      */
     public MappedField getField(String name) {
         for (MappedField field : fields) {
-            if (field.getName().equals(name) || field.getObfuscatedName().equals(name)) {
+            if (field.getName().equals(name) || field.getSrgName().equals(name) || field.getObfuscatedName().equals(name)) {
                 return field;
             }
         }
