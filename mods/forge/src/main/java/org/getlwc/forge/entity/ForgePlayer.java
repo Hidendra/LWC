@@ -87,4 +87,8 @@ public class ForgePlayer extends SimplePlayer {
         return mod.castItemStack(handle.getHeldItem());
     }
 
+    public EntityPlayer getHandle() {
+        return handle;
+    }
+
 }

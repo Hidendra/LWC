@@ -47,21 +47,23 @@ public class LWCCorePlugin implements IFMLLoadingPlugin, IFMLCallHook {
      */
     public static boolean INITIALIZED = false;
 
+    public static final String[] TRANSFORMERS = new String[] {
+            "org.getlwc.forge.asm.transformers.events.BlockBreakTransformer",
+            "org.getlwc.forge.asm.transformers.events.ExplosionTransformer",
+            "org.getlwc.forge.asm.transformers.events.SignUpdateTransformer",
+            "org.getlwc.forge.asm.transformers.events.BlockPlaceTransformer",
+            "org.getlwc.forge.asm.transformers.events.RedstoneTransformer",
+            "org.getlwc.forge.asm.transformers.events.PistonUpdateStateTransformer",
+            "org.getlwc.forge.asm.transformers.events.HopperPushItemTransformer",
+            "org.getlwc.forge.asm.transformers.events.HopperSuckItemTransformer",
+            "org.getlwc.forge.asm.transformers.events.EntityBreakDoorTransformer",
+            "org.getlwc.forge.asm.transformers.misc.UpdateClientInfoTransformer"
+    };
+
     @Override
     public String[] getASMTransformerClass() {
         INITIALIZED = true;
-        return new String[] {
-                "org.getlwc.forge.asm.transformers.events.BlockBreakTransformer",
-                "org.getlwc.forge.asm.transformers.events.ExplosionTransformer",
-                "org.getlwc.forge.asm.transformers.events.SignUpdateTransformer",
-                "org.getlwc.forge.asm.transformers.events.BlockPlaceTransformer",
-                "org.getlwc.forge.asm.transformers.events.RedstoneTransformer",
-                "org.getlwc.forge.asm.transformers.events.PistonUpdateStateTransformer",
-                "org.getlwc.forge.asm.transformers.events.HopperPushItemTransformer",
-                "org.getlwc.forge.asm.transformers.events.HopperSuckItemTransformer",
-                "org.getlwc.forge.asm.transformers.events.EntityBreakDoorTransformer",
-                "org.getlwc.forge.asm.transformers.misc.UpdateClientInfoTransformer"
-        };
+        return TRANSFORMERS;
     }
 
     @Override

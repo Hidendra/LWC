@@ -48,7 +48,7 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
     protected String targetClass = null;
 
     /**
-     * If the class was matched and attempted transformations but was not changed at all
+     * Flag for if the class has been changed (if true, injections will be made)
      */
     private boolean changed = false;
 
@@ -98,9 +98,11 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
                     ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
                     classNode.accept(writer);
                     ForgeMod.instance.getEngine().getConsoleSender().sendMessage("[ASM] Patched {0} ({1}) successfully!", getClass().getSimpleName() + "::" + targetClass, getClassName(targetClass));
+                    ForgeMod.instance.notifyTransformerResult(getClass(), TransformerStatus.SUCCESSFUL);
                     return writer.toByteArray();
                 } else {
                     ForgeMod.instance.getEngine().getConsoleSender().sendMessage("[ASM] {0} ({1}) was not changed during transformations", getClass().getSimpleName() + "::" + targetClass, getClassName(targetClass));
+                    ForgeMod.instance.notifyTransformerResult(getClass(), TransformerStatus.FAILED);
                     return bytes;
                 }
             }
@@ -497,16 +499,6 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
      */
     public boolean isObfuscated() {
         return obfuscated;
-    }
-
-    /**
-     * Get the modifier used in the config file to denote obfuscated or unobfuscated
-     *
-     * @param obfuscated
-     * @return
-     */
-    private static String getObfuscatedModifier(boolean obfuscated) {
-        return obfuscated ? "obf" : "mcp";
     }
 
 }

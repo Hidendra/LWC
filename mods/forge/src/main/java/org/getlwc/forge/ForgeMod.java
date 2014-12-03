@@ -45,10 +45,15 @@ import org.getlwc.Engine;
 import org.getlwc.ItemStack;
 import org.getlwc.SimpleEngine;
 import org.getlwc.World;
+import org.getlwc.command.Command;
+import org.getlwc.command.CommandContext;
+import org.getlwc.command.CommandException;
+import org.getlwc.command.CommandSender;
 import org.getlwc.event.server.ServerStartingEvent;
 import org.getlwc.event.server.ServerStoppingEvent;
 import org.getlwc.forge.asm.AbstractTransformer;
 import org.getlwc.forge.asm.LWCCorePlugin;
+import org.getlwc.forge.asm.TransformerStatus;
 import org.getlwc.forge.listeners.ForgeListener;
 import org.getlwc.forge.permission.ForgePermissionHandler;
 
@@ -81,6 +86,25 @@ public class ForgeMod {
      */
     private ForgeListener listener;
 
+    /**
+     * Injection results for transformers.
+     * true - injected successfully
+     * false - failed to inject
+     */
+    private final Map<Class<? extends AbstractTransformer>, TransformerStatus> transformerResults = new HashMap<>();
+
+    @SuppressWarnings("unchecked")
+    public ForgeMod() {
+        for (String className : LWCCorePlugin.TRANSFORMERS) {
+            try {
+                Class<? extends AbstractTransformer> transformerClass = (Class<? extends AbstractTransformer>) Class.forName(className);
+                transformerResults.put(transformerClass, TransformerStatus.PENDING);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
 
@@ -111,9 +135,17 @@ public class ForgeMod {
 
             proxy.init();
             layer.init();
+
             engine.setPermissionHandler(new ForgePermissionHandler());
             engine.getEventBus().subscribe(new EngineEventListener(engine, this));
             engine.getEventBus().post(new ServerStartingEvent());
+
+            try {
+                engine.getCommandHandler().registerCommands(this);
+            } catch (CommandException e) {
+                e.printStackTrace();
+            }
+
             MinecraftForge.EVENT_BUS.register(listener);
         }
     }
@@ -126,6 +158,70 @@ public class ForgeMod {
             engine.getEventBus().post(new ServerStoppingEvent());
             engine = null;
         }
+    }
+
+    @Command(
+            command = "lwc transformers",
+            description = "Shows the status of Forge transformers",
+            permission = "lwc.admin"
+    )
+    public void commandTransformer(CommandContext context) {
+        CommandSender sender = context.getCommandSender();
+
+        int numSuccessful = 0;
+        int numPending = 0;
+        int numFailed = 0;
+
+        for (Map.Entry<Class<? extends AbstractTransformer>, TransformerStatus> entry : transformerResults.entrySet()) {
+            Class<? extends AbstractTransformer> transformer = entry.getKey();
+            TransformerStatus status = entry.getValue();
+
+            switch (status) {
+                case SUCCESSFUL:
+                    numSuccessful ++;
+                    break;
+
+                case PENDING:
+                    numPending ++;
+                    break;
+
+                case FAILED:
+                    numFailed ++;
+                    break;
+            }
+        }
+
+        sender.sendMessage("Transformers: &2{0}&f successful, &e{1}&f pending, &4{2}&f failed", numSuccessful, numPending, numFailed);
+        sender.sendMessage(" ");
+
+        for (Map.Entry<Class<? extends AbstractTransformer>, TransformerStatus> entry : transformerResults.entrySet()) {
+            Class<? extends AbstractTransformer> transformer = entry.getKey();
+            TransformerStatus status = entry.getValue();
+
+            switch (status) {
+                case SUCCESSFUL:
+                    sender.sendMessage("&2{0}", transformer.getSimpleName());
+                    break;
+
+                case PENDING:
+                    sender.sendMessage("&e{0}", transformer.getSimpleName());
+                    break;
+
+                case FAILED:
+                    sender.sendMessage("&4{0}", transformer.getSimpleName());
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Notifies of the result of a transformer.
+     *
+     * @param transformer
+     * @param status
+     */
+    public void notifyTransformerResult(Class<? extends AbstractTransformer> transformer, TransformerStatus status) {
+        transformerResults.put(transformer, status);
     }
 
     /**
