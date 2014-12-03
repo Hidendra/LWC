@@ -44,7 +44,6 @@ import org.getlwc.World;
 import org.getlwc.command.CommandContext;
 import org.getlwc.command.CommandException;
 import org.getlwc.command.CommandSender;
-import org.getlwc.entity.Player;
 import org.getlwc.forge.ForgeMod;
 import org.getlwc.forge.event.EntityExplodeEvent;
 import org.getlwc.forge.event.PlayerBreakBlockEvent;
@@ -139,7 +138,7 @@ public class ForgeListener {
     public void playerUpdateSign(PlayerUpdateSignEvent event) {
         org.getlwc.entity.Player player = mod.wrapPlayer(event.entityPlayer);
         World world = player.getLocation().getWorld();
-        Block block = world.getBlockAt(event.packet.func_149346_c(), event.packet.func_149345_d(), event.packet.func_149344_e()); // Natives: x/y/z
+        Block block = world.getBlockAt(event.packet.func_149588_c(), event.packet.func_149586_d(), event.packet.func_149585_e()); // Natives: x/y/z
 
         if (EventHelper.onSignChange(player, block)) {
             event.setCanceled(true);

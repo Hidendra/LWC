@@ -36,8 +36,8 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.network.play.client.C12PacketUpdateSign;
 import net.minecraft.network.play.client.C15PacketClientSettings;
-import net.minecraft.network.play.server.S33PacketUpdateSign;
 import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraftforge.common.MinecraftForge;
 import org.getlwc.Block;
@@ -132,7 +132,7 @@ public class ForgeEventHelper {
      * @param packet
      * @return
      */
-    public static boolean onUpdateSign(net.minecraft.entity.player.EntityPlayerMP player, S33PacketUpdateSign packet) {
+    public static boolean onUpdateSign(net.minecraft.entity.player.EntityPlayerMP player, C12PacketUpdateSign packet) {
         Event event = new PlayerUpdateSignEvent(player, packet);
         MinecraftForge.EVENT_BUS.post(event);
         return event.isCanceled() || event.getResult() == Event.Result.DENY;
