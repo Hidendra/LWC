@@ -1,6 +1,7 @@
 package org.getlwc.forge.asm;
 
 import org.getlwc.SimpleEngine;
+import org.getlwc.forge.ForgeEventHelper;
 import org.getlwc.forge.asm.mappings.MappedClass;
 import org.getlwc.forge.asm.mappings.MappedField;
 import org.getlwc.forge.asm.mappings.MappedMethod;
@@ -314,6 +315,10 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
      * @return
      */
     public static String getClassName(String className, boolean obfuscated) {
+        if ("ForgeEventHelper".equals(className)) {
+            return "org.getlwc.forge.ForgeEventHelper";
+        }
+
         MappedClass clazz = mappings.get(className);
 
         if (clazz == null) {
@@ -384,6 +389,10 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
      * @return
      */
     public static String getMethodName(String className, String methodName, CompilationType type) {
+        if ("ForgeEventHelper".equals(className)) {
+            return methodName;
+        }
+
         MappedClass clazz = mappings.get(className);
 
         if (clazz == null) {
@@ -469,6 +478,10 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
      * @return
      */
     public static String getFieldName(String className, String fieldName, CompilationType type) {
+        if ("ForgeEventHelper".equals(className)) {
+            return fieldName;
+        }
+
         MappedClass clazz = mappings.get(className);
 
         if (clazz == null) {
