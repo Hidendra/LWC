@@ -313,6 +313,10 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
         MappedClass clazz = mappings.get(className);
 
         if (clazz == null) {
+            if (mappings.size() > 0) {
+                ForgeMod.instance.getEngine().getConsoleSender().sendMessage("Class not found: {0}", className);
+            }
+
             return null;
         }
 
@@ -364,19 +368,7 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
      * @return
      */
     public static String getMethodName(String className, String methodName, boolean obfuscated) {
-        MappedClass clazz = mappings.get(className);
-
-        if (clazz == null) {
-            return null;
-        }
-
-        MappedMethod method = clazz.getMethod(methodName);
-
-        if (obfuscated) {
-            return method.getObfuscatedName();
-        } else {
-            return method.getName();
-        }
+        return getMethodName(className, methodName, obfuscated ? CompilationType.OBFUSCATED : CompilationType.UNOBFUSCATED);
     }
 
     /**
@@ -395,6 +387,11 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
         }
 
         MappedMethod method = clazz.getMethod(methodName);
+
+        if (method == null) {
+            ForgeMod.instance.getEngine().getConsoleSender().sendMessage("Method not found: {0}/{1}", clazz.getCanonicalName(), methodName);
+            return null;
+        }
 
         switch (type) {
             case UNOBFUSCATED:
@@ -436,6 +433,11 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
 
         MappedMethod method = clazz.getMethod(methodName);
 
+        if (method == null) {
+            ForgeMod.instance.getEngine().getConsoleSender().sendMessage("Method not found: {0}/{1}", clazz.getCanonicalName(), methodName);
+            return null;
+        }
+
         if (obfuscated) {
             return method.getObfuscatedSignature();
         } else {
@@ -470,6 +472,11 @@ public abstract class AbstractMultiClassTransformer extends AbstractTransformer 
         }
 
         MappedField field = clazz.getField(fieldName);
+
+        if (field == null) {
+            ForgeMod.instance.getEngine().getConsoleSender().sendMessage("Field not found: {0}/{1}", clazz.getCanonicalName(), fieldName);
+            return null;
+        }
 
         switch (type) {
             case UNOBFUSCATED:
