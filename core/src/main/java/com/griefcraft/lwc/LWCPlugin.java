@@ -285,7 +285,11 @@ public class LWCPlugin extends JavaPlugin {
         updater = new Updater();
 
         // Set the SQLite native library path
-        System.setProperty("org.sqlite.lib.path", updater.getOSSpecificFolder());
+        String nativeLibraryFolder = updater.getOSSpecificFolder();
+
+        if (nativeLibraryFolder != null) {
+            System.setProperty("org.sqlite.lib.path", nativeLibraryFolder);
+        }
     }
 
     /**
