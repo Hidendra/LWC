@@ -748,6 +748,10 @@ public class LWC {
                     return true;
                 }
 
+                if (protection.getAccess(player.getName(), Permission.Type.PLAYER).ordinal() >= Permission.Access.PLAYER.ordinal()) {
+                    return true;
+                }
+
                 // Check for item keys
                 for (Permission permission : protection.getPermissions()) {
                     if (permission.getType() != Permission.Type.ITEM) {
