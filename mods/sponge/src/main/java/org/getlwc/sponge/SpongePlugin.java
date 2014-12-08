@@ -7,6 +7,7 @@ import org.getlwc.ServerInfo;
 import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
 import org.getlwc.entity.Player;
+import org.getlwc.lang.Locale;
 import org.getlwc.sponge.listeners.SpongeEventListener;
 import org.getlwc.sponge.permission.SpongePermissionHandler;
 import org.spongepowered.api.Game;
@@ -51,6 +52,13 @@ public class SpongePlugin {
      * @return
      */
     public Player wrapPlayer(org.spongepowered.api.entity.player.Player player) {
+        Player res = layer.getPlayer(player.getName());
+
+        if (!res.getLocale().getName().equalsIgnoreCase(player.getLocale().toString())) {
+            res.setLocale(new Locale(player.getLocale().toString()));
+            engine.getConsoleSender().sendMessage("Player " + res.getName() + " loaded using locale: " + res.getLocale().toString());
+        }
+
         return layer.getPlayer(player.getName());
     }
 
