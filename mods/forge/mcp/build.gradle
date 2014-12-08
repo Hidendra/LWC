@@ -29,7 +29,7 @@ repositories {
 }
 
 dependencies {
-    compile "org.getlwc:backend:0.0.1-SNAPSHOT"
+    compile "org.getlwc:backend:5.0.0-SNAPSHOT"
     compile "buildcraft:buildcraft:1.7.10-6.1.5"
 }
 

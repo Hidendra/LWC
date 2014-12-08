@@ -18,7 +18,7 @@ import org.spongepowered.api.util.event.Subscribe;
 
 import java.util.HashMap;
 
-@Plugin(id = "lwc", name = "LWC", version = "0.0.1-SNAPSHOT")
+@Plugin(id = "lwc", name = "LWC", version = "5.0.0-SNAPSHOT")
 public class SpongePlugin {
 
     private SimpleEngine engine;
