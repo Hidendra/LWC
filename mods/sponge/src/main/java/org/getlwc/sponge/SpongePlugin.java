@@ -23,10 +23,12 @@ public class SpongePlugin {
 
     private SimpleEngine engine;
     private ServerLayer layer;
+    private Game game;
 
     @SuppressWarnings("unused")
     @Subscribe
     public void onStartup(ServerStartingEvent event) {
+        game = event.getGame();
         layer = new SpongeServerLayer(this, event.getGame());
         ServerInfo serverInfo = new SpongeServerInfo(event.getGame());
 
@@ -88,7 +90,7 @@ public class SpongePlugin {
      * @return
      */
     public Game getGame() {
-        return null; // TODO
+        return game;
     }
 
     /**
