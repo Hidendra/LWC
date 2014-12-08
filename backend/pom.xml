@@ -189,6 +189,7 @@
                                     <exclude>org.yaml:*</exclude>
                                     <exclude>com.zaxxer:*</exclude>
                                     <exclude>org.flywaydb:*</exclude>
+                                    <exclude>org.javassist:*</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>
