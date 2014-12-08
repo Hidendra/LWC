@@ -16,7 +16,15 @@
             ]
         },
 
+        "slf4j-api": {
+            "class": "org.slf4j.LoggerFactory",
+            "files": [
+                "slf4j-api-1.7.7.jar"
+            ]
+        },
+
         "hikaricp": {
+            "requires": ["slf4j-api"],
             "class": "com.zaxxer.hikari.HikariDataSource",
             "files": [
                 "HikariCP-java6-2.2.5.jar"

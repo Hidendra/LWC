@@ -190,6 +190,7 @@
                                     <exclude>com.zaxxer:*</exclude>
                                     <exclude>org.flywaydb:*</exclude>
                                     <exclude>org.javassist:*</exclude>
+                                    <exclude>org.slf4j:*</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>
