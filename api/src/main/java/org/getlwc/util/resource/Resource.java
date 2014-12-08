@@ -17,6 +17,11 @@ public class Resource {
     private final String key;
 
     /**
+     * Resources that this resource depends on
+     */
+    private final List<String> dependencies = new ArrayList<>();
+
+    /**
      * The list of files this resource includes
      */
     private final List<String> files = new ArrayList<>();
@@ -66,6 +71,14 @@ public class Resource {
 
     public void addFile(String file) {
         files.add(file);
+    }
+
+    public List<String> getDependencies() {
+        return Collections.unmodifiableList(dependencies);
+    }
+
+    public void addDependency(String dependency) {
+        dependencies.add(dependency);
     }
 
 }

@@ -23,7 +23,15 @@
             ]
         },
 
+        "javassist": {
+            "class": "javassist.ClassPath",
+            "files": [
+                "javassist-3.18.2-GA.jar"
+            ]
+        },
+
         "flywaydb": {
+            "requires": ["javassist"],
             "class": "org.flywaydb.core.Flyway",
             "files": [
                 "flyway-core-3.0.jar"

@@ -331,6 +331,12 @@ public class SimpleEngine implements Engine {
                 resource.setOutputDir(resourceData.get("outputDir").toString());
             }
 
+            if (resourceData.containsKey("requires")) {
+                for (Object dependency : (JSONArray) resourceData.get("requires")) {
+                    resource.addDependency(dependency.toString());
+                }
+            }
+
             if (resourceData.containsKey("files")) {
                 for (Object fileObject : (JSONArray) resourceData.get("files")) {
                     resource.addFile(fileObject.toString());

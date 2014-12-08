@@ -77,6 +77,11 @@ public class SimpleResourceDownloader implements ResourceDownloader {
     public void ensureResourceInstalled(String resourceKey) {
         Resource resource = getResource(resourceKey);
 
+        // ensure dependencies are installed first
+        for (String dependency : resource.getDependencies()) {
+            ensureResourceInstalled(dependency);
+        }
+
         // Check to see if the class is already loaded (don't need to download if it is)
         if (resource.getTestClass() != null) {
             if (ClassUtils.isClassLoaded(resource.getTestClass())) {
