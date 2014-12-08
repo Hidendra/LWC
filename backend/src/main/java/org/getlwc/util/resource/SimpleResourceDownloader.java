@@ -93,14 +93,16 @@ public class SimpleResourceDownloader implements ResourceDownloader {
 
     @Override
     public void addResource(Resource resource) {
-        // injects the SQLite native library for this platform
-        // TODO do this a different way?
-        if (resource.getKey().equals("databases.sqlite")) {
-            resource.addFile(getFullNativeLibraryPath());
-        }
+        if (!resources.containsKey(resource.getKey())) {
+            // injects the SQLite native library for this platform
+            // TODO do this a different way?
+            if (resource.getKey().equals("databases.sqlite")) {
+                resource.addFile(getFullNativeLibraryPath());
+            }
 
-        resources.put(resource.getKey(), resource);
-        engine.getConsoleSender().sendMessage("Added resource {0}", resource.toString());
+            resources.put(resource.getKey(), resource);
+            engine.getConsoleSender().sendMessage("Added resource {0}", resource.toString());
+        }
     }
 
     @Override
