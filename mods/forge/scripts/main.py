@@ -9,6 +9,11 @@ FORGE_VERSION = '1.7.10-10.13.2.1230'
 BASE_PATH = os.path.expanduser('~/.gradle/caches/minecraft/net/minecraftforge/forge/%s/srgs/' % FORGE_VERSION)
 OUTPUT_DIR = '../src/main/resources/'
 
+if not os.path.exists(BASE_PATH):
+    print 'Unable to found Forge directory at %s' % BASE_PATH
+    print 'Please make sure Forge %s is installed and built using Gradle' % FORGE_VERSION
+    exit()
+
 loader = mc1_7_10.SimpleMappingLoader()
 classes = loader.load_classes(BASE_PATH)
 
