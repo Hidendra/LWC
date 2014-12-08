@@ -36,6 +36,3 @@ for clazz in classes:
 
 with open('%s/mappings/%s.json' % (OUTPUT_DIR, MINECRAFT_VERSION), 'w') as f:
     json.dump(outputmap, f, cls=MyEncoder, indent=4, separators=(',', ': '))
-
-with open('%s/mappings/latest.json' % OUTPUT_DIR, 'w') as f:
-    json.dump(outputmap, f, cls=MyEncoder, indent=4, separators=(',', ': '))
