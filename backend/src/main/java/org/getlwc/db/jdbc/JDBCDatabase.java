@@ -194,7 +194,7 @@ public class JDBCDatabase implements Database {
         // For SQLite & H2 the path is the path to the db file
         // for MySQL and others it's the hostname + the database name
         if (details.getDriver() == Driver.SQLITE || details.getDriver() == Driver.H2) {
-            databasePath = details.getDatabasePath().replaceAll("%home%", engine.getServerLayer().getEngineHomeFolder().getPath().replaceAll("\\\\", "/"));
+            databasePath = details.getDatabasePath().replaceAll("%home%", engine.getServerLayer().getDataFolder().getPath().replaceAll("\\\\", "/"));
         } else {
             databasePath = "//" + details.getHostname() + "/" + details.getDatabase();
         }

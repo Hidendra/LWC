@@ -21,9 +21,28 @@ public class SpongeServerLayer extends ServerLayer {
     }
 
     @Override
-    public File getEngineHomeFolder() {
-        // TODO better way to get data folder when it's available
-        return new File("plugins/LWC/");
+    public File getDataFolder() {
+        String path = SpongeServerLayer.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+
+        if (path.startsWith("file:")) {
+            path = path.substring(5);
+        }
+
+        // drive letters (windows)
+        if (path.charAt(0) == '\\' && path.charAt(2) == ':') {
+            path = path.substring(3);
+        } else if (path.charAt(1) == ':') {
+            path = path.substring(2);
+        }
+
+        int index = path.indexOf(".jar!");
+
+        if (index != -1) {
+            path = path.substring(0, index + 4);
+        }
+
+        File runningFromJar = new File(path);
+        return new File(new File(runningFromJar.getParentFile().getParent(), "config"), "LWC");
     }
 
     @Override

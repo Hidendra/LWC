@@ -52,11 +52,12 @@ public abstract class ServerLayer {
     protected final Map<String, World> worlds = new HashMap<String, World>();
 
     /**
-     * Get the home folder for the engine. This is typically a folder inside of the mods or plugins folder
+     * Get the data folder that can be used for the engine.
+     * For most servers, this is typically plugins/LWC/ or the equivalent.
      *
      * @return
      */
-    public abstract File getEngineHomeFolder();
+    public abstract File getDataFolder();
 
     /**
      * Get the default world
@@ -95,7 +96,7 @@ public abstract class ServerLayer {
      * @return
      */
     public String getDataPathTo(String dir) {
-        String path = new File(getEngineHomeFolder(), dir).getPath() + File.separator;
+        String path = new File(getDataFolder(), dir).getPath() + File.separator;
         path = path.replaceAll("\\\\", "/"); // normalize
 
         return path;

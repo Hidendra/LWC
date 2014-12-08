@@ -135,7 +135,7 @@ public class SimpleEngine implements Engine {
         this.serverInfo = serverInfo;
         this.consoleSender = consoleSender;
 
-        serverLayer.getEngineHomeFolder().mkdirs();
+        serverLayer.getDataFolder().mkdirs();
 
         loadResourceDownloader();
         downloader.ensureResourceInstalled("gettext");

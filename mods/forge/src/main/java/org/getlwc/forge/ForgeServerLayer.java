@@ -89,7 +89,7 @@ public class ForgeServerLayer extends ServerLayer {
     }
 
     @Override
-    public File getEngineHomeFolder() {
+    public File getDataFolder() {
         String path = ForgeServerLayer.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 
         if (path.startsWith("file:")) {
