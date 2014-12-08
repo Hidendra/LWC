@@ -399,8 +399,6 @@ public class LWC {
         // Their access level
         Permission.Access access = Permission.Access.NONE;
 
-        String playerName = player.getName();
-
         switch (protection.getType()) {
             case PUBLIC:
                 if (protection.isOwner(player)) {
