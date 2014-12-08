@@ -29,15 +29,15 @@ public class SpongePlugin {
     @Subscribe
     public void onStartup(ServerStartingEvent event) {
         game = event.getGame();
-        layer = new SpongeServerLayer(this, event.getGame());
-        ServerInfo serverInfo = new SpongeServerInfo(event.getGame());
+        layer = new SpongeServerLayer(this, game);
+        ServerInfo serverInfo = new SpongeServerInfo(game);
 
         engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, serverInfo, new SpongeConsoleCommandSender());
         engine.setPermissionHandler(new SpongePermissionHandler());
         engine.getEventBus().subscribe(new EngineEventListener(engine, this));
         engine.getEventBus().post(new org.getlwc.event.server.ServerStartingEvent());
 
-        event.getGame().getEventManager().register(this, new SpongeEventListener(this));
+        game.getEventManager().register(this, new SpongeEventListener(this));
     }
 
     @SuppressWarnings("unused")
