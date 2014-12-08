@@ -422,7 +422,11 @@ public class LWC {
                     return true;
                 }
 
-                if (protection.getAccess(playerName, Permission.Type.PLAYER) == Permission.Access.ADMIN) {
+                if (protection.getAccess(player.getUniqueId().toString(), Permission.Type.PLAYER) == Permission.Access.ADMIN) {
+                    return true;
+                }
+
+                if (protection.getAccess(player.getName(), Permission.Type.PLAYER) == Permission.Access.ADMIN) {
                     return true;
                 }
 
