@@ -31,11 +31,14 @@ package org.getlwc.forge.asm;
 
 import cpw.mods.fml.relauncher.FMLInjectionData;
 import net.minecraft.launchwrapper.IClassTransformer;
+import org.getlwc.Engine;
 import org.getlwc.SimpleEngine;
 import org.getlwc.forge.asm.mappings.MappedClass;
 import org.getlwc.forge.util.asm.MappingLoader;
+import org.getlwc.util.resource.Resource;
 
-import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,25 +71,30 @@ public abstract class AbstractTransformer implements IClassTransformer {
      */
     public static void init() {
         if (!mappingsLoaded) {
+            Engine engine = SimpleEngine.getInstance();
             String minecraftVersion = (String) FMLInjectionData.data()[4];
-            InputStream stream = AbstractTransformer.class.getResourceAsStream("/mappings/" + minecraftVersion + ".json");
+            String mappingsFileName = String.format("%s.json", minecraftVersion);
 
-            if (stream != null) {
-                SimpleEngine.getInstance().getConsoleSender().sendMessage("[ASM] Loaded native class mappings for Minecraft {0}", minecraftVersion);
+            Resource resource = new Resource("forge.mappings");
+            resource.setOutputDir("mappings");
+            resource.addFile(mappingsFileName);
 
-                try {
-                    for (MappedClass clazz : MappingLoader.loadClasses(stream)) {
-                        mappings.put(clazz.getSimpleName(), clazz);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    SimpleEngine.getInstance().getConsoleSender().sendMessage("[ASM] Failed to load mappings!");
+            engine.getResourceDownloader().addResource(resource);
+            engine.getResourceDownloader().ensureResourceInstalled("forge.mappings");
+
+            try (InputStream stream = new FileInputStream(new File(engine.getServerLayer().getDataPathTo("mappings"), mappingsFileName))) {
+                for (MappedClass clazz : MappingLoader.loadClasses(stream)) {
+                    mappings.put(clazz.getSimpleName(), clazz);
                 }
-            } else {
-                SimpleEngine.getInstance().getConsoleSender().sendMessage("[ASM] ================   NOTE !!!   ================\n"
+
+                engine.getConsoleSender().sendMessage("[ASM] Loaded native class mappings for Minecraft {0}", minecraftVersion);
+            } catch (Exception e) {
+                e.printStackTrace();
+                engine.getConsoleSender().sendMessage("[ASM] FAILED to load Forge ASM mappings!\n"
                         + "[ASM] There are no included native mappings for Minecraft {0}\n"
                         + "[ASM] LWC IS MOST LIKELY BROKEN!\n"
                         + "[ASM] MAKE SURE YOU ARE USING THE LATEST VERSION!", minecraftVersion);
+
             }
 
             mappingsLoaded = true;
