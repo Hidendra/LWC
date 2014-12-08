@@ -53,6 +53,15 @@ import org.getlwc.event.server.ServerStartingEvent;
 import org.getlwc.event.server.ServerStoppingEvent;
 import org.getlwc.permission.DefaultPermissionHandler;
 import org.getlwc.permission.PermissionHandler;
+import org.getlwc.util.resource.Resource;
+import org.getlwc.util.resource.ResourceDownloader;
+import org.getlwc.util.resource.SimpleResourceDownloader;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+
+import java.io.InputStreamReader;
+import java.util.Map;
 
 public class SimpleEngine implements Engine {
 
@@ -72,9 +81,9 @@ public class SimpleEngine implements Engine {
     private SimpleProtectionManager protectionManager;
 
     /**
-     * The {@link ResourceDownloader} responsible for downloading library files
+     * The {@link org.getlwc.util.resource.ResourceDownloader} responsible for downloading library files
      */
-    private final SimpleResourceDownloader downloader = new SimpleResourceDownloader(this);
+    private SimpleResourceDownloader downloader;
 
     /**
      * The server layer
@@ -128,7 +137,7 @@ public class SimpleEngine implements Engine {
 
         serverLayer.getEngineHomeFolder().mkdirs();
 
-        downloader.init();
+        loadResourceDownloader();
         downloader.ensureResourceInstalled("gettext");
         downloader.ensureResourceInstalled("snakeyaml");
 
@@ -295,6 +304,41 @@ public class SimpleEngine implements Engine {
      */
     public Configuration getLanguagesConfiguration() {
         return languagesConfig;
+    }
+
+    private void loadResourceDownloader() {
+        JSONObject root = (JSONObject) JSONValue.parse(new InputStreamReader(getClass().getResourceAsStream("/resources.json")));
+
+        if (root == null) {
+            consoleSender.sendMessage("Failed to load resources.json. No libraries will be downloaded or loaded.");
+            return;
+        }
+
+        downloader = new SimpleResourceDownloader(this, root.get("url").toString());
+        Map<?, ?> resources = (Map<?, ?>) root.get("resources");
+
+        for (Map.Entry<?, ?> entry : resources.entrySet()) {
+            String resourceKey = entry.getKey().toString();
+            Map<?, ?> resourceData = (Map<?, ?>) entry.getValue();
+
+            Resource resource = new Resource(resourceKey);
+
+            if (resourceData.containsKey("class")) {
+                resource.setTestClass(resourceData.get("class").toString());
+            }
+
+            if (resourceData.containsKey("outputDir")) {
+                resource.setOutputDir(resourceData.get("outputDir").toString());
+            }
+
+            if (resourceData.containsKey("files")) {
+                for (Object fileObject : (JSONArray) resourceData.get("files")) {
+                    resource.addFile(fileObject.toString());
+                }
+            }
+
+            downloader.addResource(resource);
+        }
     }
 
     /**

@@ -29,7 +29,6 @@
 
 package org.getlwc;
 
-import org.getlwc.command.Command;
 import org.getlwc.entity.Player;
 
 import java.io.File;
@@ -88,6 +87,19 @@ public abstract class ServerLayer {
      * @return
      */
     public abstract UUID getOfflinePlayer(String ident);
+
+    /**
+     * Gets the data path to the given subdirectory in the data folder
+     *
+     * @param dir
+     * @return
+     */
+    public String getDataPathTo(String dir) {
+        String path = new File(getEngineHomeFolder(), dir).getPath() + File.separator;
+        path = path.replaceAll("\\\\", "/"); // normalize
+
+        return path;
+    }
 
     /**
      * Get a player from the server
