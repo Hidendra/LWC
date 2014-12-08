@@ -73,21 +73,20 @@ public abstract class AbstractTransformer implements IClassTransformer {
 
             if (stream != null) {
                 SimpleEngine.getInstance().getConsoleSender().sendMessage("[ASM] Loaded native class mappings for Minecraft {0}", minecraftVersion);
+
+                try {
+                    for (MappedClass clazz : MappingLoader.loadClasses(stream)) {
+                        mappings.put(clazz.getSimpleName(), clazz);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    SimpleEngine.getInstance().getConsoleSender().sendMessage("[ASM] Failed to load mappings!");
+                }
             } else {
-                stream = AbstractTransformer.class.getResourceAsStream("/mappings/latest.json");
                 SimpleEngine.getInstance().getConsoleSender().sendMessage("[ASM] ================   NOTE !!!   ================\n"
                         + "[ASM] There are no included native mappings for Minecraft {0}\n"
-                        + "[ASM] If this is a major Minecraft release then LWC IS MOST LIKELY BROKEN!\n"
+                        + "[ASM] LWC IS MOST LIKELY BROKEN!\n"
                         + "[ASM] MAKE SURE YOU ARE USING THE LATEST VERSION!", minecraftVersion);
-            }
-
-            try {
-                for (MappedClass clazz : MappingLoader.loadClasses(stream)) {
-                    mappings.put(clazz.getSimpleName(), clazz);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                SimpleEngine.getInstance().getConsoleSender().sendMessage("[ASM] Failed to load mappings!");
             }
 
             mappingsLoaded = true;
