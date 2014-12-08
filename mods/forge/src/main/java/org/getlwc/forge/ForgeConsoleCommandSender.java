@@ -29,8 +29,8 @@
 
 package org.getlwc.forge;
 
-import cpw.mods.fml.common.FMLLog;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
 import org.getlwc.command.ConsoleCommandSender;
 
 public class ForgeConsoleCommandSender extends ConsoleCommandSender {
@@ -38,7 +38,7 @@ public class ForgeConsoleCommandSender extends ConsoleCommandSender {
     @Override
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
-            FMLLog.log("LWC", Level.INFO, line);
+            LogManager.getLogger("LWC").log(Level.INFO, line);
         }
     }
 
