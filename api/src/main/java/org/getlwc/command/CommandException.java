@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2011-2013 Tyler Blair
+/**
+ * Copyright (c) 2011-2014 Tyler Blair
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
@@ -26,7 +26,6 @@
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-
 package org.getlwc.command;
 
 public class CommandException extends Exception {
