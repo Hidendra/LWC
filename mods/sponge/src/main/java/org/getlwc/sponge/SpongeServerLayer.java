@@ -32,7 +32,7 @@ import org.getlwc.ServerLayer;
 import org.getlwc.World;
 import org.getlwc.entity.Player;
 import org.getlwc.sponge.entity.SpongePlayer;
-import org.getlwc.sponge.world.SpongeWorld;
+import org.getlwc.sponge.world.SpongeExtent;
 import org.spongepowered.api.Game;
 
 import java.io.File;
@@ -85,7 +85,7 @@ public class SpongeServerLayer extends ServerLayer {
 
     @Override
     protected World internalGetWorld(String worldName) {
-        return new SpongeWorld(game.getWorld(worldName));
+        return new SpongeExtent(game.getWorld(worldName));
     }
 
     @Override

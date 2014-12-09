@@ -33,10 +33,10 @@ import org.getlwc.World;
 
 public class SpongeBlock extends Block {
 
-    private SpongeWorld world;
+    private World world;
     private org.spongepowered.api.block.BlockLoc handle;
 
-    public SpongeBlock(SpongeWorld world, org.spongepowered.api.block.BlockLoc handle) {
+    public SpongeBlock(World world, org.spongepowered.api.block.BlockLoc handle) {
         this.world = world;
         this.handle = handle;
     }

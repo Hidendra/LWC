@@ -31,7 +31,7 @@ package org.getlwc.sponge.entity;
 import org.getlwc.ItemStack;
 import org.getlwc.Location;
 import org.getlwc.entity.SimplePlayer;
-import org.getlwc.sponge.world.SpongeWorld;
+import org.getlwc.sponge.world.SpongeExtent;
 import org.getlwc.util.Color;
 
 import java.util.UUID;
@@ -60,7 +60,7 @@ public class SpongePlayer extends SimplePlayer {
     @Override
     public Location getLocation() {
         // todo remove unnecessary object creation
-        return new Location(new SpongeWorld(handle.getWorld()), handle.getX(), handle.getY(), handle.getZ());
+        return new Location(new SpongeExtent(handle.getWorld()), handle.getX(), handle.getY(), handle.getZ());
     }
 
     @Override

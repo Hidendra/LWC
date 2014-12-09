@@ -34,15 +34,19 @@ import org.getlwc.ItemStack;
 import org.getlwc.ServerInfo;
 import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
+import org.getlwc.World;
 import org.getlwc.entity.Player;
 import org.getlwc.lang.Locale;
 import org.getlwc.sponge.listeners.SpongeEventListener;
 import org.getlwc.sponge.permission.SpongePermissionHandler;
+import org.getlwc.sponge.world.SpongeBlock;
+import org.getlwc.sponge.world.SpongeExtent;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.event.state.ServerStartingEvent;
 import org.spongepowered.api.event.state.ServerStoppingEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.util.event.Subscribe;
+import org.spongepowered.api.world.extent.Extent;
 
 import java.util.HashMap;
 
@@ -99,8 +103,18 @@ public class SpongePlugin {
      * @return
      */
     public Block wrapBlock(org.spongepowered.api.block.BlockLoc block) {
-        //
-        return null;
+        Extent extent = block.getExtent();
+        World world;
+
+        if (extent instanceof org.spongepowered.api.world.World) {
+            org.spongepowered.api.world.World worldHandle = (org.spongepowered.api.world.World) extent;
+
+            world = layer.getWorld(worldHandle.getName());
+        } else {
+            world = new SpongeExtent(extent);
+        }
+
+        return new SpongeBlock(world, block);
     }
 
     /**

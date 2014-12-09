@@ -31,20 +31,26 @@ package org.getlwc.sponge.world;
 import org.getlwc.Block;
 import org.getlwc.World;
 
-public class SpongeWorld implements World {
+public class SpongeExtent implements World {
 
     /**
      * native Sponge handle
      */
-    private org.spongepowered.api.world.World handle;
+    private org.spongepowered.api.world.extent.Extent handle;
 
-    public SpongeWorld(org.spongepowered.api.world.World handle) {
+    public SpongeExtent(org.spongepowered.api.world.extent.Extent handle) {
         this.handle = handle;
     }
 
     @Override
     public String getName() {
-        return handle.getName();
+        if (handle instanceof org.spongepowered.api.world.World) {
+            org.spongepowered.api.world.World worldHandle = (org.spongepowered.api.world.World) handle;
+
+            return worldHandle.getName();
+        } else {
+            return handle.getClass().getSimpleName();
+        }
     }
 
     @Override
