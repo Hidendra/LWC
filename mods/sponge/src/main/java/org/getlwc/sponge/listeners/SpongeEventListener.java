@@ -28,7 +28,6 @@
  */
 package org.getlwc.sponge.listeners;
 
-import com.google.common.eventbus.Subscribe;
 import org.getlwc.Block;
 import org.getlwc.EventHelper;
 import org.getlwc.entity.Player;
@@ -36,6 +35,8 @@ import org.getlwc.sponge.SpongePlugin;
 import org.spongepowered.api.event.player.PlayerInteractEvent;
 import org.spongepowered.api.event.player.PlayerJoinEvent;
 import org.spongepowered.api.event.player.PlayerQuitEvent;
+import org.spongepowered.api.util.event.Order;
+import org.spongepowered.api.util.event.Subscribe;
 
 public class SpongeEventListener {
 
@@ -47,7 +48,7 @@ public class SpongeEventListener {
 
     @SuppressWarnings("unused")
     @Subscribe
-    public void onPlayerJoin(final PlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         EventHelper.onPlayerJoin(plugin.wrapPlayer(event.getPlayer()));
     }
 
@@ -58,7 +59,7 @@ public class SpongeEventListener {
     }
 
     @SuppressWarnings("unused")
-    @Subscribe
+    @Subscribe(order = Order.FIRST, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = plugin.wrapPlayer(event.getPlayer());
         Block block = plugin.wrapBlock(event.getBlock().orNull());
