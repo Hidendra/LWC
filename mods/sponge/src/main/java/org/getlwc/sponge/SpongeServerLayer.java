@@ -75,17 +75,29 @@ public class SpongeServerLayer extends ServerLayer {
 
     @Override
     public World getDefaultWorld() {
-        return getWorld(game.getWorlds().iterator().next().getName());
+        return getWorld(game.getServer().get().getWorlds().iterator().next().getName());
     }
 
     @Override
     protected Player internalGetPlayer(String playerName) {
-        return new SpongePlayer(game.getPlayer(playerName).orNull());
+        org.spongepowered.api.entity.player.Player player = game.getServer().get().getPlayer(playerName).orNull();
+
+        if (player != null) {
+            return new SpongePlayer(player);
+        } else {
+            return null;
+        }
     }
 
     @Override
     protected World internalGetWorld(String worldName) {
-        return new SpongeExtent(game.getWorld(worldName));
+        org.spongepowered.api.world.World world = game.getServer().get().getWorld(worldName).orNull();
+
+        if (world != null) {
+            return new SpongeExtent(world);
+        } else {
+            return null;
+        }
     }
 
     @Override
