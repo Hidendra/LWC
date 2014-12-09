@@ -5,7 +5,7 @@ script: mvn -Dmaven.javadoc.skip=true clean install
 notifications:
   webhooks:
     urls:
-      - https://api.getlwc.org/events/travisci
+      - http://api.getlwc.org/events/travisci
     on_success: always
     on_failure: always
     on_start: true
