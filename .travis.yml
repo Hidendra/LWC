@@ -2,6 +2,13 @@ language: java
 jdk: oraclejdk7
 install: true
 script: mvn -Dmaven.javadoc.skip=true clean install
+notifications:
+  webhooks:
+    urls:
+      - secure: "avopbdqwhJ+FFSJJcmyosytmSxFPfsWH64El7GT9aZCngwDzQ3djAOcTlGVP/dwbA9GRBqxT8I77QropP2+UXZc4h1y4ixg+H4u2Nkwi+80icxJL7nLH2gfrFJ1dG7VqlUELZc1LwwVGg/6lb6zvADJyKkz+tUtKbrJScC5La+0="
+    on_success: always
+    on_failure: always
+    on_start: true
 addons:
   artifacts:
     key:
