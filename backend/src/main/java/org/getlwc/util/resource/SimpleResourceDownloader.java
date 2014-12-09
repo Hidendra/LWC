@@ -27,13 +27,11 @@
  * either expressed or implied, of anybody else.
  */
 
-package org.getlwc;
+package org.getlwc.util.resource;
 
+import org.getlwc.Engine;
 import org.getlwc.util.ClassUtils;
 import org.getlwc.util.MD5Checksum;
-import org.getlwc.util.ResourceFile;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -45,20 +43,10 @@ import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 public class SimpleResourceDownloader implements ResourceDownloader {
-
-    /**
-     * URL to the base update site
-     */
-    public final static String DEFAULT_UPDATE_SITE = "http://update.getlwc.org/shared/lib/";
-
-    /**
-     * The folder where libraries are stored
-     */
-    public static String DEST_LIBRARY_FOLDER = "";
 
     /**
      * The maximum number of times a download will be tried (e.g. connection was closed, checksum failed) before it is given up
@@ -78,60 +66,53 @@ public class SimpleResourceDownloader implements ResourceDownloader {
     /**
      * A map of all available resources
      */
-    private JSONObject resources = null;
+    private final Map<String, Resource> resources = new HashMap<>();
 
-    public SimpleResourceDownloader(Engine engine) {
+    public SimpleResourceDownloader(Engine engine, String baseUrl) {
         this.engine = engine;
-    }
-
-    /**
-     * Initialize the downloader. This is to be called after a {@link Engine} has been initialized
-     */
-    protected void init() {
-        DEST_LIBRARY_FOLDER = new File(engine.getServerLayer().getEngineHomeFolder(), "lib").getPath() + File.separator;
-        DEST_LIBRARY_FOLDER = DEST_LIBRARY_FOLDER.replaceAll("\\\\", "/");
-
-        File folder = new File(getNativeLibraryFolder());
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
+        this.baseUrl = baseUrl;
     }
 
     @Override
-    public void ensureResourceInstalled(String resource) {
-        if (baseUrl == null) {
-            JSONObject json = (JSONObject) JSONValue.parse(new InputStreamReader(getClass().getResourceAsStream("/resources.json")));
+    public void ensureResourceInstalled(String resourceKey) {
+        Resource resource = getResource(resourceKey);
 
-            baseUrl = json.get("url").toString();
-            resources = (JSONObject) json.get("resources");
+        // ensure dependencies are installed first
+        for (String dependency : resource.getDependencies()) {
+            ensureResourceInstalled(dependency);
         }
 
-        Map<Object, Object> res = (Map<Object, Object>) resources.get(resource);
-
-        if (res == null) {
-            return;
-        }
-
-        // SQLite native library
-        if (resource.equals("databases.sqlite")) {
-            downloadFile(new ResourceFile(getFullNativeLibraryPath(), baseUrl + getFullNativeLibraryPath().replaceAll(DEST_LIBRARY_FOLDER, "")));
-        }
-
-        if (res.containsKey("class")) {
-            String testClass = (String) res.get("class");
-
-            // Check to see if the class is already loaded (not needed if so)
-            if (ClassUtils.isClassLoaded(testClass)) {
+        // Check to see if the class is already loaded (don't need to download if it is)
+        if (resource.getTestClass() != null) {
+            if (ClassUtils.isClassLoaded(resource.getTestClass())) {
                 return;
             }
         }
 
-        List<Object> files = (List<Object>) res.get("files");
+        for (String file : resource.getFiles()) {
+            String localResourceDataFolder = engine.getServerLayer().getDataPathTo(resource.getOutputDir());
 
-        for (Object o : files) {
-            String file = (String) o;
-            downloadFile(new ResourceFile(DEST_LIBRARY_FOLDER + file, baseUrl + file));
+            downloadFile(new ResourceFile(String.format("%s/%s", localResourceDataFolder, file), String.format("%s/%s/%s", baseUrl, resource.getOutputDir(), file)));
         }
+    }
+
+    @Override
+    public void addResource(Resource resource) {
+        if (!resources.containsKey(resource.getKey())) {
+            // injects the SQLite native library for this platform
+            // TODO do this a different way?
+            if (resource.getKey().equals("databases.sqlite")) {
+                resource.addFile(getFullNativeLibraryPath());
+            }
+
+            resources.put(resource.getKey(), resource);
+            engine.getConsoleSender().sendMessage("Added resource {0}", resource.toString());
+        }
+    }
+
+    @Override
+    public Resource getResource(String key) {
+        return resources.get(key);
     }
 
     /**
@@ -149,11 +130,11 @@ public class SimpleResourceDownloader implements ResourceDownloader {
         String arch = System.getProperty("os.arch").toLowerCase();
 
         if (osname.contains("windows")) {
-            return DEST_LIBRARY_FOLDER + "native/Windows/" + arch + "/";
+            return "native/Windows/" + arch + "/";
         } else if (osname.contains("mac")) {
-            return DEST_LIBRARY_FOLDER + "native/Mac/" + arch + "/";
+            return "native/Mac/" + arch + "/";
         } else { /* We assume linux/unix */
-            return DEST_LIBRARY_FOLDER + "native/Linux/" + arch + "/";
+            return "native/Linux/" + arch + "/";
         }
     }
 
@@ -194,6 +175,7 @@ public class SimpleResourceDownloader implements ResourceDownloader {
             method.setAccessible(true);
             method.invoke(classLoader, new Object[]{file.toURI().toURL()});
         } catch (Exception e) {
+            // cascade up the ClassLoader tree
             if (clazz.getSuperclass() != null) {
                 ensureLoaded(file, clazz.getSuperclass(), classLoader);
             } else {
@@ -209,6 +191,11 @@ public class SimpleResourceDownloader implements ResourceDownloader {
         try {
             File local = new File(resourceFile.getLocalLocation());
             String remote = resourceFile.getRemoteLocation();
+
+            if (!local.isDirectory()) {
+                File directory = local.getParentFile();
+                directory.mkdirs();
+            }
 
             int tries = 1;
 

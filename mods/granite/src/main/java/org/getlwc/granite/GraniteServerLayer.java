@@ -24,7 +24,7 @@ public class GraniteServerLayer extends ServerLayer {
     }
 
     @Override
-    public File getEngineHomeFolder() {
+    public File getDataFolder() {
         return container.getDataDirectory();
     }
 

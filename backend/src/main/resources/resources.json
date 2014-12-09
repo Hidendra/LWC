@@ -1,5 +1,5 @@
 {
-    "url": "http://update.getlwc.org/shared/lib/",
+    "url": "http://update.getlwc.org/shared/",
 
     "resources": {
         "gettext": {
@@ -16,14 +16,30 @@
             ]
         },
 
+        "slf4j-api": {
+            "class": "org.slf4j.LoggerFactory",
+            "files": [
+                "slf4j-api-1.7.7.jar"
+            ]
+        },
+
         "hikaricp": {
+            "requires": ["slf4j-api"],
             "class": "com.zaxxer.hikari.HikariDataSource",
             "files": [
                 "HikariCP-java6-2.2.5.jar"
             ]
         },
 
+        "javassist": {
+            "class": "javassist.ClassPath",
+            "files": [
+                "javassist-3.18.2-GA.jar"
+            ]
+        },
+
         "flywaydb": {
+            "requires": ["javassist"],
             "class": "org.flywaydb.core.Flyway",
             "files": [
                 "flyway-core-3.0.jar"

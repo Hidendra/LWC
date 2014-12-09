@@ -19,7 +19,7 @@ import org.granitemc.granite.api.plugin.Plugin;
 import org.granitemc.granite.api.plugin.PluginContainer;
 import org.granitemc.granite.reflect.GraniteServerComposite;
 
-@Plugin(name = "LWC", id = "lwc", version = "0.0.1-SNAPSHOT")
+@Plugin(name = "LWC", id = "lwc", version = "5.0.0-SNAPSHOT")
 public class GranitePlugin {
 
     private SimpleEngine engine;

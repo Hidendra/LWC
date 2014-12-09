@@ -29,7 +29,6 @@
 
 package org.getlwc;
 
-import org.getlwc.command.Command;
 import org.getlwc.entity.Player;
 
 import java.io.File;
@@ -53,11 +52,12 @@ public abstract class ServerLayer {
     protected final Map<String, World> worlds = new HashMap<String, World>();
 
     /**
-     * Get the home folder for the engine. This is typically a folder inside of the mods or plugins folder
+     * Get the data folder that can be used for the engine.
+     * For most servers, this is typically plugins/LWC/ or the equivalent.
      *
      * @return
      */
-    public abstract File getEngineHomeFolder();
+    public abstract File getDataFolder();
 
     /**
      * Get the default world
@@ -88,6 +88,19 @@ public abstract class ServerLayer {
      * @return
      */
     public abstract UUID getOfflinePlayer(String ident);
+
+    /**
+     * Gets the data path to the given subdirectory in the data folder
+     *
+     * @param dir
+     * @return
+     */
+    public String getDataPathTo(String dir) {
+        String path = new File(getDataFolder(), dir).getPath() + File.separator;
+        path = path.replaceAll("\\\\", "/"); // normalize
+
+        return path;
+    }
 
     /**
      * Get a player from the server

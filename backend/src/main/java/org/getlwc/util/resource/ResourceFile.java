@@ -27,15 +27,53 @@
  * either expressed or implied, of anybody else.
  */
 
-package org.getlwc;
+package org.getlwc.util.resource;
 
-public interface ResourceDownloader {
+public class ResourceFile {
 
     /**
-     * Ensure the specified resource is installed and loaded. If it is not installed it will be downloaded.
-     *
-     * @param resource
+     * The local url location
      */
-    public void ensureResourceInstalled(String resource);
+    private final String localLocation;
+
+    /**
+     * The remote url location
+     */
+    private final String remoteLocation;
+
+    public ResourceFile(String location) {
+        this.remoteLocation = location;
+        this.localLocation = location;
+    }
+
+    public ResourceFile(String localLocation, String remoteLocation) {
+        this.localLocation = localLocation;
+        this.remoteLocation = remoteLocation;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof ResourceFile)) {
+            return false;
+        }
+
+        ResourceFile other = (ResourceFile) obj;
+
+        return other.getLocalLocation().equals(localLocation) && other.getRemoteLocation().equals(remoteLocation);
+    }
+
+    /**
+     * @return the local file location
+     */
+    public String getLocalLocation() {
+        return localLocation;
+    }
+
+    /**
+     * @return the remote url location
+     */
+    public String getRemoteLocation() {
+        return remoteLocation;
+    }
 
 }

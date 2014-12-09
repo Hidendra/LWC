@@ -65,7 +65,7 @@ import org.getlwc.forge.permission.ForgePermissionHandler;
 import java.util.HashMap;
 import java.util.Map;
 
-@Mod(modid = "LWC", name = "LWC", version = "0.0.1-SNAPSHOT", acceptableRemoteVersions = "*")
+@Mod(modid = "LWC", name = "LWC", version = "5.0.0-SNAPSHOT", acceptableRemoteVersions = "*")
 public class ForgeMod {
 
     // The instance of your mod that Forge uses.

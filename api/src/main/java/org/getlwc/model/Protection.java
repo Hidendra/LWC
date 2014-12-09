@@ -45,8 +45,6 @@ import org.getlwc.role.Role;
 
 import java.util.EnumSet;
 
-import static org.getlwc.I18n._;
-
 public class Protection extends BasicComponentHolder<Component> implements Savable {
 
     /**

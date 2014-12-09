@@ -1,6 +1,9 @@
 package org.getlwc.component;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BasicComponentHolder<T extends Component> implements ComponentHolder<T> {
 

@@ -145,7 +145,7 @@ public class FileConfiguration extends ConfigurationNode {
             return loaded.get(config);
         }
 
-        File folder = engine.getServerLayer().getEngineHomeFolder();
+        File folder = engine.getServerLayer().getDataFolder();
         File file = new File(folder, config);
 
         if (!folder.exists()) {

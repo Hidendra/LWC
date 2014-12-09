@@ -18,24 +18,26 @@ import org.spongepowered.api.util.event.Subscribe;
 
 import java.util.HashMap;
 
-@Plugin(id = "lwc", name = "LWC", version = "0.0.1-SNAPSHOT")
+@Plugin(id = "lwc", name = "LWC", version = "5.0.0-SNAPSHOT")
 public class SpongePlugin {
 
     private SimpleEngine engine;
     private ServerLayer layer;
+    private Game game;
 
     @SuppressWarnings("unused")
     @Subscribe
     public void onStartup(ServerStartingEvent event) {
-        layer = new SpongeServerLayer(this, event.getGame());
-        ServerInfo serverInfo = new SpongeServerInfo(event.getGame());
+        game = event.getGame();
+        layer = new SpongeServerLayer(this, game);
+        ServerInfo serverInfo = new SpongeServerInfo(game);
 
         engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, serverInfo, new SpongeConsoleCommandSender());
         engine.setPermissionHandler(new SpongePermissionHandler());
         engine.getEventBus().subscribe(new EngineEventListener(engine, this));
         engine.getEventBus().post(new org.getlwc.event.server.ServerStartingEvent());
 
-        event.getGame().getEventManager().register(this, new SpongeEventListener(this));
+        game.getEventManager().register(this, new SpongeEventListener(this));
     }
 
     @SuppressWarnings("unused")
@@ -88,7 +90,7 @@ public class SpongePlugin {
      * @return
      */
     public Game getGame() {
-        return null; // TODO
+        return game;
     }
 
     /**

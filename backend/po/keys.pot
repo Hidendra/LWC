@@ -8,10 +8,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: LWC\n"
-" 0.0.1-SNAPSHOT\n"
+" 5.0.0-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: hidendra@getlwc.org\n"
 "\n"
-"POT-Creation-Date: 2014-12-03 01:15-0400\n"
+"POT-Creation-Date: 2014-12-08 13:16-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -220,12 +220,12 @@ msgid ""
 "org&r"
 msgstr ""
 
-#: backend/src/main/java/org/getlwc/EventHelper.java:172
+#: backend/src/main/java/org/getlwc/EventHelper.java:184
 msgid "&4This protection is locked by a magical spell."
 msgstr ""
 
 #. / {0}: message from the exception/error that was thrown
-#: backend/src/main/java/org/getlwc/EventHelper.java:179
+#: backend/src/main/java/org/getlwc/EventHelper.java:191
 #, java-format
 msgid ""
 "&cA severe error occurred while processing the event: {0}\n"

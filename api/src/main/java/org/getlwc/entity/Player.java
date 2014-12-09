@@ -39,8 +39,6 @@ import org.getlwc.event.protection.ProtectionInteractEvent;
 import org.getlwc.lang.Locale;
 
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.getlwc.I18n._;
 

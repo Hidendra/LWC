@@ -48,7 +48,7 @@ public class BukkitServerLayer extends ServerLayer {
     }
 
     @Override
-    public File getEngineHomeFolder() {
+    public File getDataFolder() {
         return plugin.getDataFolder();
     }
 

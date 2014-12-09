@@ -27,71 +27,30 @@
  * either expressed or implied, of anybody else.
  */
 
-package org.getlwc.util;
+package org.getlwc.util.resource;
 
-public class ResourceFile {
-
-    /**
-     * The local url location
-     */
-    private String localLocation;
+public interface ResourceDownloader {
 
     /**
-     * The remote url location
-     */
-    private String remoteLocation;
-
-    public ResourceFile(String location) {
-        this.remoteLocation = location;
-        this.localLocation = location;
-    }
-
-    public ResourceFile(String localLocation, String remoteLocation) {
-        this.localLocation = localLocation;
-        this.remoteLocation = remoteLocation;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof ResourceFile)) {
-            return false;
-        }
-
-        ResourceFile other = (ResourceFile) obj;
-
-        return other.getLocalLocation().equals(localLocation) && other.getRemoteLocation().equals(remoteLocation);
-    }
-
-    /**
-     * @return the local file location
-     */
-    public String getLocalLocation() {
-        return localLocation;
-    }
-
-    /**
-     * @return the remote url location
-     */
-    public String getRemoteLocation() {
-        return remoteLocation;
-    }
-
-    /**
-     * Set the local file location
+     * Ensure the specified resource is installed and loaded. If it is not installed it will be downloaded.
      *
-     * @param localLocation
+     * @param resourceKey
      */
-    public void setLocalLocation(String localLocation) {
-        this.localLocation = localLocation;
-    }
+    public void ensureResourceInstalled(String resourceKey);
 
     /**
-     * Set the remote url location
+     * Adds a resource to the manager
      *
-     * @param remoteLocation
+     * @param resource
      */
-    public void setRemoteLocation(String remoteLocation) {
-        this.remoteLocation = remoteLocation;
-    }
+    public void addResource(Resource resource);
+
+    /**
+     * Gets a resource for the given key
+     *
+     * @param key
+     * @return
+     */
+    public Resource getResource(String key);
 
 }

@@ -22,7 +22,7 @@ public class CanaryServerLayer extends ServerLayer {
     }
 
     @Override
-    public File getEngineHomeFolder() {
+    public File getDataFolder() {
         File folder = new File("plugins", "LWC");
 
         if (!folder.exists()) {
