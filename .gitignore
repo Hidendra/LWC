@@ -5,6 +5,7 @@ obj
 target
 build
 javadoc
+site
 
 .classpath
 .project
