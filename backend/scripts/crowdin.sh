@@ -11,7 +11,7 @@ if [ "${CROWDIN_API_KEY}" = "" ]; then
 fi
 
 # directory the project is in
-PROJECT_DIR="`pwd`"
+PROJECT_DIR=$(pwd)
 
 # translations directory
 TRANSLATIONS_DIR="${PROJECT_DIR}/backend/po"
@@ -24,13 +24,13 @@ fi
 # url to fetch translations from
 FETCH_URL="https://api.crowdin.com/api/project/${CROWDIN_PROJECT_ID}/download/all.zip?key=${CROWDIN_API_KEY}"
 
-TMPDIR="`mktemp -d -t ${CROWDIN_PROJECT_ID}-crowdin`"
-trap "rm -rf $TMPDIR" EXIT
+TRANSLATION_TEMP_DIR=$(mktemp -d "${TMPDIR}/${CROWDIN_PROJECT_ID}-crowdin.XXXXXXX")
+trap "rm -rf ${TRANSLATION_TEMP_DIR}" EXIT
 
-echo "Downloading translactions to ${TMPDIR}/all.zip"
-curl -L -o "${TMPDIR}/all.zip" "$FETCH_URL" 
+echo "Downloading translations to ${TRANSLATION_TEMP_DIR}/all.zip"
+curl -L -o "${TRANSLATION_TEMP_DIR}/all.zip" "$FETCH_URL"
 
 echo "Copying downloaded translations to ${TRANSLATIONS_DIR}"
-cd "${TMPDIR}"
+cd "${TRANSLATION_TEMP_DIR}"
 unzip -q all.zip -d extracted
 find extracted -name *.po -exec cp "{}" "${TRANSLATIONS_DIR}" \;
