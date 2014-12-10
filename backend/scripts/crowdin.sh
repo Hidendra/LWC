@@ -33,4 +33,7 @@ curl -L -o "${TRANSLATION_TEMP_DIR}/all.zip" "$FETCH_URL"
 echo "Copying downloaded translations to ${TRANSLATIONS_DIR}"
 cd "${TRANSLATION_TEMP_DIR}"
 unzip -q all.zip -d extracted
-find extracted -name *.po -exec cp "{}" "${TRANSLATIONS_DIR}" \;
+
+NUM_TRANSLATIONS=$(find extracted -name *.po -exec cp "{}" "${TRANSLATIONS_DIR}" \; -print | wc -l | tr -d ' ')
+
+echo "Copied ${NUM_TRANSLATIONS} translation files."
