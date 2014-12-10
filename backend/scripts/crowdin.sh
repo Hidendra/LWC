@@ -24,7 +24,7 @@ fi
 # url to fetch translations from
 FETCH_URL="https://api.crowdin.com/api/project/${CROWDIN_PROJECT_ID}/download/all.zip?key=${CROWDIN_API_KEY}"
 
-TRANSLATION_TEMP_DIR=$(mktemp -d "${TMPDIR}/${CROWDIN_PROJECT_ID}-crowdin.XXXXXXX")
+TRANSLATION_TEMP_DIR=$(mktemp -d ${PROJECT_DIR}/${CROWDIN_PROJECT_ID}.XXXXXXX)
 trap "rm -rf ${TRANSLATION_TEMP_DIR}" EXIT
 
 echo "Downloading translations to ${TRANSLATION_TEMP_DIR}/all.zip"
