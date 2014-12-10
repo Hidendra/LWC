@@ -30,6 +30,7 @@ package com.griefcraft.util.matchers;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.util.ProtectionFinder;
+import com.griefcraft.util.SetUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -50,25 +51,25 @@ public class DoorMatcher implements ProtectionFinder.Matcher {
 
     static {
         // MC 1.8 blocks
-        PROTECTABLES_DOORS.add(Material.getMaterial(193)); // Spruce Door
-        PROTECTABLES_DOORS.add(Material.getMaterial(194)); // Birch Door
-        PROTECTABLES_DOORS.add(Material.getMaterial(195)); // Jungle Door
-        PROTECTABLES_DOORS.add(Material.getMaterial(196)); // Acacia Door
-        PROTECTABLES_DOORS.add(Material.getMaterial(197)); // Dark Oak Door
+        SetUtil.addToSetWithoutNull(PROTECTABLES_DOORS, Material.getMaterial(193)); // Spruce Door
+        SetUtil.addToSetWithoutNull(PROTECTABLES_DOORS, Material.getMaterial(194)); // Birch Door
+        SetUtil.addToSetWithoutNull(PROTECTABLES_DOORS, Material.getMaterial(195)); // Jungle Door
+        SetUtil.addToSetWithoutNull(PROTECTABLES_DOORS, Material.getMaterial(196)); // Acacia Door
+        SetUtil.addToSetWithoutNull(PROTECTABLES_DOORS, Material.getMaterial(197)); // Dark Oak Door
 
-        WOODEN_DOORS.add(Material.getMaterial(193)); // Spruce Door
-        WOODEN_DOORS.add(Material.getMaterial(194)); // Birch Door
-        WOODEN_DOORS.add(Material.getMaterial(195)); // Jungle Door
-        WOODEN_DOORS.add(Material.getMaterial(196)); // Acacia Door
-        WOODEN_DOORS.add(Material.getMaterial(197)); // Dark Oak Door
+        SetUtil.addToSetWithoutNull(WOODEN_DOORS, Material.getMaterial(193)); // Spruce Door
+        SetUtil.addToSetWithoutNull(WOODEN_DOORS, Material.getMaterial(194)); // Birch Door
+        SetUtil.addToSetWithoutNull(WOODEN_DOORS, Material.getMaterial(195)); // Jungle Door
+        SetUtil.addToSetWithoutNull(WOODEN_DOORS, Material.getMaterial(196)); // Acacia Door
+        SetUtil.addToSetWithoutNull(WOODEN_DOORS, Material.getMaterial(197)); // Dark Oak Door
 
-        FENCE_GATES.add(Material.getMaterial(183)); // Spruce Fence Gate
-        FENCE_GATES.add(Material.getMaterial(184)); // Birch Fence Gate
-        FENCE_GATES.add(Material.getMaterial(185)); // Jungle Fence Gate
-        FENCE_GATES.add(Material.getMaterial(186)); // Dark Oak Fence Gate
-        FENCE_GATES.add(Material.getMaterial(187)); // Acacia Fence Gate
+        SetUtil.addToSetWithoutNull(FENCE_GATES, Material.getMaterial(183)); // Spruce Fence Gate
+        SetUtil.addToSetWithoutNull(FENCE_GATES, Material.getMaterial(184)); // Birch Fence Gate
+        SetUtil.addToSetWithoutNull(FENCE_GATES, Material.getMaterial(185)); // Jungle Fence Gate
+        SetUtil.addToSetWithoutNull(FENCE_GATES, Material.getMaterial(186)); // Dark Oak Fence Gate
+        SetUtil.addToSetWithoutNull(FENCE_GATES, Material.getMaterial(187)); // Acacia Fence Gate
 
-        TRAP_DOORS.add(Material.getMaterial(167)); // Iron trap door
+        SetUtil.addToSetWithoutNull(TRAP_DOORS, Material.getMaterial(167)); // Iron trap door
     }
 
     private static final BlockFace[] faces = new BlockFace[] {

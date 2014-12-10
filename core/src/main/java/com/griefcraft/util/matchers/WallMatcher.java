@@ -29,6 +29,7 @@
 package com.griefcraft.util.matchers;
 
 import com.griefcraft.util.ProtectionFinder;
+import com.griefcraft.util.SetUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -65,8 +66,8 @@ public class WallMatcher implements ProtectionFinder.Matcher {
     public static final BlockFace[] POSSIBLE_FACES = new BlockFace[]{ BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST };
 
     static {
-        PROTECTABLES_WALL.add(Material.getMaterial(177)); // Wall banner
-        PROTECTABLES_TRAP_DOORS.add(Material.getMaterial(167)); // Iron trap door
+        SetUtil.addToSetWithoutNull(PROTECTABLES_WALL, Material.getMaterial(177)); // Wall banner
+        SetUtil.addToSetWithoutNull(PROTECTABLES_TRAP_DOORS, Material.getMaterial(167)); // Iron trap door
     }
 
     public boolean matches(ProtectionFinder finder) {
