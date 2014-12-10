@@ -28,7 +28,7 @@ TRANSLATION_TEMP_DIR=$(mktemp -d ${PROJECT_DIR}/${CROWDIN_PROJECT_ID}.XXXXXXX)
 trap "rm -rf ${TRANSLATION_TEMP_DIR}" EXIT
 
 echo "Downloading translations to ${TRANSLATION_TEMP_DIR}/all.zip"
-curl -L -o "${TRANSLATION_TEMP_DIR}/all.zip" "$FETCH_URL"
+curl -Ls -o "${TRANSLATION_TEMP_DIR}/all.zip" "$FETCH_URL"
 
 echo "Copying downloaded translations to ${TRANSLATIONS_DIR}"
 cd "${TRANSLATION_TEMP_DIR}"
