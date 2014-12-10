@@ -2,7 +2,7 @@ language: java
 jdk: oraclejdk7
 install:
  - sudo apt-get install s3cmd
- - pip install mkdocs
+ - sudo pip install mkdocs
 before_script:
  - 'export CROWDIN_PROJECT_ID="getlwc"'
  - 'export DOCS_BUCKET="docs.getlwc.org"'
