@@ -1,13 +1,21 @@
 language: java
 jdk: oraclejdk7
-install: true
+install:
+ - sudo apt-get install s3cmd
+ - pip install mkdocs
+before_script:
+ - 'export CROWDIN_PROJECT_ID="getlwc"'
+ - 'export DOCS_BUCKET="docs.getlwc.org"'
+ - '[ "${TRAVIS_SECURE_ENV_VARS}" = "true" ] && echo -e "[default]\naccess_key = $AWS_ACCESS_KEY_ID\nsecret_key=$AWS_SECRET_ACCESS_KEY" > .s3cfg'
+ - '[ "${TRAVIS_SECURE_ENV_VARS}" = "true" ] && sh backend/scripts/crowdin.sh'
 script: mvn -Dmaven.javadoc.skip=true clean install
+after_success:
+ - '[ "${TRAVIS_SECURE_ENV_VARS}" = "true" ] && mkdocs build --clean'
+ - '[ "${TRAVIS_SECURE_ENV_VARS}" = "true" ] && s3cmd sync --config .s3cfg --delete-removed site/. "s3://${DOCS_BUCKET}/"'
 notifications:
   webhooks:
     urls:
       - http://api.getlwc.org/events/travisci
-    on_success: always
-    on_failure: always
     on_start: true
 addons:
   artifacts:
@@ -18,3 +26,8 @@ addons:
     bucket: artifacts.getlwc.org
     paths:
     - $(git ls-files -x mcp -x original-*.jar -o *.jar *.zip | tr "\n" ":")
+env:
+  global:
+  - secure: VWhdYVwHpkf688jTIvd87y6J62sIQDT3xzUHm9GGI8NPRVw37nv2SbnNqUO9728DrCCJoGSCmCiKCv483Kg6Zj4HmOZzDf+3nMsX6PtZjoIfetMH2QQ+X49bYtKXP3+gLhbt5tkKz0U5yaWA9aVllzn+5Fvrfpkpdel+etK8TXE=
+  - secure: U1Plz/DgJroswv3pOoiAON4rEyhOxUHFcBay0bAfdFhcnZM4B1qgaKbIwij+qzpvTstkvFHfHsXF3gW7l64krA2s8UJnoO4uINIS7nC8OuMx2oiKCuIEhZ+YUnq+8U8cQbT9h81aNuL3czoRGWvA8fYiytrdUG9IhWhLBCUeqG4=
+  - secure: pyXviFqSl/Nu+8L2CpMIT0b/fZ7ClsP7WWTlLWoiuII5sbd0vQitCpwBaa6HV78vsumE8PZmef+cprxO0uUd5DrYPADY71lCWyv8KWo1EBi/3tgztqtH6dzPizZy9b6lBhLmQrSQD+g7WCkjpKFLfdr/oWWkMzycxJikIXfU8g0=
