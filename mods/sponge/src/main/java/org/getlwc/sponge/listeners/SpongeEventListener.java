@@ -62,7 +62,7 @@ public class SpongeEventListener {
     @Subscribe(order = Order.FIRST, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = plugin.wrapPlayer(event.getPlayer());
-        Block block = plugin.wrapBlock(event.getBlock().orNull());
+        Block block = plugin.wrapBlock(event.getBlock());
 
         if (EventHelper.onBlockInteract(player, block)) {
             event.setCancelled(true);
