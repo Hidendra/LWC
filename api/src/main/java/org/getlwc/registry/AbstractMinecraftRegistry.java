@@ -1,4 +1,4 @@
-package org.getlwc.util.registry;
+package org.getlwc.registry;
 
 import org.getlwc.BlockType;
 import org.getlwc.ItemType;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * An implementation of {@link org.getlwc.util.registry.MinecraftRegistry} that caches
+ * An implementation of {@link org.getlwc.registry.MinecraftRegistry} that caches
  * older retrieved block types. When the cache needs to populate an unknown value,
  * it will call <code>internalGetBlockType</code> and <code>internalGetItemType</code>
  */

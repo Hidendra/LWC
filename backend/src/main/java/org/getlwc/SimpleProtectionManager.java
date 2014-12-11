@@ -63,7 +63,7 @@ public class SimpleProtectionManager implements ProtectionManager {
 
     @Override
     public boolean isBlockProtectable(Block block) {
-        String enabled = getProtectionConfiguration("enabled", block.getName(), Integer.toString(block.getType()));
+        String enabled = getProtectionConfiguration("enabled", block.getType().getName(), block.getType().getId());
         return enabled.equalsIgnoreCase("true") || enabled.equalsIgnoreCase("yes");
     }
 

@@ -82,7 +82,7 @@ public abstract class Block {
      *
      * @param type
      */
-    public abstract void setType(int type);
+    public abstract void setType(BlockType type);
 
     /**
      * Set the block's data
@@ -122,6 +122,7 @@ public abstract class Block {
      *
      * @return the block's name. If the block is unknown, "unknown" is returned
      */
+    @Deprecated
     public String getName() {
         BlockType type = getType();
         return type == null ? "unknown" : type.getName();

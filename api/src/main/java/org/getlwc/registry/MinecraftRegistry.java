@@ -26,7 +26,7 @@
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-package org.getlwc.util.registry;
+package org.getlwc.registry;
 
 import org.getlwc.BlockType;
 import org.getlwc.ItemType;
