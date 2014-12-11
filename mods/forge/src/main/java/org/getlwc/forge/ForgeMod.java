@@ -60,6 +60,7 @@ import org.getlwc.forge.asm.TransformerStatus;
 import org.getlwc.forge.entity.ForgeEntity;
 import org.getlwc.forge.listeners.ForgeListener;
 import org.getlwc.forge.permission.ForgePermissionHandler;
+import org.getlwc.util.registry.FallbackMinecraftRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -207,7 +208,7 @@ public class ForgeMod {
     public void ensureEngineLoaded() {
         if (SimpleEngine.getInstance() == null) {
             layer = new ForgeServerLayer();
-            engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new ForgeServerInfo(), new ForgeConsoleCommandSender());
+            engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new ForgeServerInfo(), new FallbackMinecraftRegistry(), new ForgeConsoleCommandSender());
 
             AbstractTransformer.init();
         } else {

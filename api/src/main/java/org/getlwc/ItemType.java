@@ -38,6 +38,14 @@ public interface ItemType {
     public String getId();
 
     /**
+     * Gets the legacy id of this item type
+     *
+     * @return
+     */
+    @Deprecated
+    public int getLegacyId();
+
+    /**
      * Gets the default max stack quantity for this item type.
      *
      * @return Max stack quantity

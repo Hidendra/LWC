@@ -38,6 +38,14 @@ public interface BlockType {
     public String getId();
 
     /**
+     * Gets the legacy id of the block type
+     *
+     * @return
+     */
+    @Deprecated
+    public int getLegacyId();
+
+    /**
      * Gets the name of this block type.
      *
      * @return The name

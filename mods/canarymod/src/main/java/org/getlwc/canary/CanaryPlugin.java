@@ -45,6 +45,7 @@ import org.getlwc.entity.Player;
 import org.getlwc.event.server.ServerStartingEvent;
 import org.getlwc.event.server.ServerStoppingEvent;
 import org.getlwc.lang.Locale;
+import org.getlwc.util.registry.FallbackMinecraftRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -60,7 +61,7 @@ public class CanaryPlugin extends Plugin {
 
     @Override
     public boolean enable() {
-        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new CanaryServerInfo(), new CanaryConsoleCommandSender(getLogman()));
+        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new CanaryServerInfo(), new FallbackMinecraftRegistry(), new CanaryConsoleCommandSender(getLogman()));
         engine.setPermissionHandler(new CanaryPermissionHandler());
 
         engine.getEventBus().subscribe(new EngineEventListener(engine, this));

@@ -29,6 +29,8 @@
 package org.getlwc.granite.world;
 
 import org.getlwc.Block;
+import org.getlwc.BlockType;
+import org.getlwc.SimpleEngine;
 import org.getlwc.World;
 import org.granitemc.granite.api.block.BlockTypes;
 
@@ -41,9 +43,8 @@ public class GraniteBlock extends Block {
     }
 
     @Override
-    public int getType() {
-        // TODO
-        return handle.getType().getNumericId();
+    public BlockType getType() {
+        return SimpleEngine.getInstance().getMinecraftRegistry().getLegacyBlockType(handle.getType().getNumericId());
     }
 
     @Override
@@ -74,8 +75,8 @@ public class GraniteBlock extends Block {
     }
 
     @Override
-    public void setType(int type) {
-        handle.setType(BlockTypes.getById(type));
+    public void setType(BlockType type) {
+        handle.setType(BlockTypes.getById(type.getLegacyId()));
     }
 
     @Override

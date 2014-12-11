@@ -41,6 +41,7 @@ import org.getlwc.sponge.listeners.SpongeEventListener;
 import org.getlwc.sponge.permission.SpongePermissionHandler;
 import org.getlwc.sponge.world.SpongeBlock;
 import org.getlwc.sponge.world.SpongeExtent;
+import org.getlwc.util.registry.FallbackMinecraftRegistry;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.event.state.ServerStartingEvent;
 import org.spongepowered.api.event.state.ServerStoppingEvent;
@@ -64,7 +65,7 @@ public class SpongePlugin {
         layer = new SpongeServerLayer(this, game);
         ServerInfo serverInfo = new SpongeServerInfo(game);
 
-        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, serverInfo, new SpongeConsoleCommandSender());
+        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, serverInfo, new FallbackMinecraftRegistry(), new SpongeConsoleCommandSender());
         engine.setPermissionHandler(new SpongePermissionHandler());
         engine.getEventBus().subscribe(new EngineEventListener(engine, this));
         engine.getEventBus().post(new org.getlwc.event.server.ServerStartingEvent());

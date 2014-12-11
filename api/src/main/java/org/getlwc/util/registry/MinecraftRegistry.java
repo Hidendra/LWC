@@ -44,6 +44,16 @@ public interface MinecraftRegistry {
     public BlockType getBlockType(String id);
 
     /**
+     * Gets the block type for the given id.
+     * This should not be used.
+     *
+     * @param id
+     * @return
+     */
+    @Deprecated
+    public BlockType getLegacyBlockType(int id);
+
+    /**
      * Gets a list of all available {@link org.getlwc.BlockType}s
      *
      * @return an immutable list of all available {@link org.getlwc.BlockType}s in the registry
@@ -57,6 +67,16 @@ public interface MinecraftRegistry {
      * @return The {@link org.getlwc.ItemType} or null if not found
      */
     public ItemType getItemType(String id);
+
+    /**
+     * Gets the item type for the given id.
+     * This should not be used.
+     *
+     * @param id
+     * @return
+     */
+    @Deprecated
+    public ItemType getLegacyItemType(int id);
 
     /**
      * Gets a list of all available {@link org.getlwc.ItemType}s
