@@ -46,6 +46,8 @@ import org.getlwc.entity.Entity;
 import org.getlwc.entity.Player;
 import org.getlwc.event.server.ServerStartingEvent;
 import org.getlwc.event.server.ServerStoppingEvent;
+import org.getlwc.util.registry.FallbackMinecraftRegistry;
+import org.getlwc.util.registry.MinecraftRegistry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -110,7 +112,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         logger = this.getLogger();
-        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new BukkitServerInfo(), new BukkitConsoleCommandSender(getServer().getConsoleSender()));
+        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new BukkitServerInfo(), new FallbackMinecraftRegistry(), new BukkitConsoleCommandSender(getServer().getConsoleSender()));
 
         // Register events
         getServer().getPluginManager().registerEvents(this, this);

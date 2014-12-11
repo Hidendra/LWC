@@ -38,6 +38,8 @@ import org.getlwc.db.memory.MemoryDatabase;
 import org.getlwc.event.EventBus;
 import org.getlwc.event.SimpleEventBus;
 import org.getlwc.lang.Locale;
+import org.getlwc.util.registry.FallbackMinecraftRegistry;
+import org.getlwc.util.registry.MinecraftRegistry;
 import org.getlwc.world.MemoryWorld;
 import org.getlwc.world.Schematic;
 import org.getlwc.world.SchematicLoader;
@@ -76,6 +78,7 @@ public class ProtectionMatcherTest {
     private MemoryWorld world;
     private ProtectionManager protectionManager;
     private Configuration configuration;
+    private FallbackMinecraftRegistry minecraftRegistry;
 
     private List<Location> implicitProtections;
 
@@ -110,12 +113,14 @@ public class ProtectionMatcherTest {
         configuration = new YamlConfiguration(getClass().getResourceAsStream("/config/config.yml"));
         database = new MemoryDatabase(engine);
         world = new MemoryWorld();
+        minecraftRegistry = new FallbackMinecraftRegistry();
 
         // engine mocks
         when(engine.getServerLayer()).thenReturn(mock(ServerLayer.class));
         when(engine.getConfiguration()).thenReturn(configuration);
         when(engine.getConsoleSender()).thenReturn(consoleCommandSender);
         when(engine.getDatabase()).thenReturn(database);
+        when(engine.getMinecraftRegistry()).thenReturn(minecraftRegistry);
 
         CommandHandler commandHandler = new SimpleCommandHandler(engine);
         when(engine.getCommandHandler()).thenReturn(commandHandler);
@@ -303,8 +308,10 @@ public class ProtectionMatcherTest {
                         int index = y * schematic.getWidth() * schematic.getLength() + z * schematic.getWidth() + x;
 
                         Block block = world.getBlockAt(x, y, z);
-                        block.setType(schematic.getBlocks()[index] & 0xFF);
                         block.setData(schematic.getData()[index]);
+
+                        int blockIntegerTypeId = schematic.getBlocks()[index] & 0xFF;
+                        block.setType(minecraftRegistry.getBlockTypeByIntegerId(blockIntegerTypeId));
                     }
                 }
             }

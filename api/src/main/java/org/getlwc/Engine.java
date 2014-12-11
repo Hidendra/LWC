@@ -35,6 +35,7 @@ import org.getlwc.db.Database;
 import org.getlwc.economy.EconomyHandler;
 import org.getlwc.event.EventBus;
 import org.getlwc.permission.PermissionHandler;
+import org.getlwc.util.registry.MinecraftRegistry;
 import org.getlwc.util.resource.ResourceDownloader;
 
 public interface Engine {
@@ -45,6 +46,13 @@ public interface Engine {
      * @return
      */
     public EventBus getEventBus();
+
+    /**
+     * Gets the registry for MC types
+     *
+     * @return
+     */
+    public MinecraftRegistry getMinecraftRegistry();
 
     /**
      * Get the protection manager

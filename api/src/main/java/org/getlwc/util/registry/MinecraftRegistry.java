@@ -26,74 +26,63 @@
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-package org.getlwc.world;
+package org.getlwc.util.registry;
 
-import org.getlwc.Block;
 import org.getlwc.BlockType;
-import org.getlwc.World;
+import org.getlwc.ItemType;
 
-public class MemoryBlock extends Block {
+import java.util.List;
 
-    private World world;
-    private BlockType type;
-    private final int x, y, z;
-    private byte data = 0;
+public interface MinecraftRegistry {
 
-    public MemoryBlock(World world, int x, int y, int z) {
-        this.world = world;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
+    /**
+     * Gets the block type for the given id
+     *
+     * @param id
+     * @return The {@link org.getlwc.BlockType} or null if not found
+     */
+    public BlockType getBlockType(String id);
 
-    @Override
-    public BlockType getType() {
-        return type;
-    }
+    /**
+     * Gets the block type for the given id.
+     * This should not be used.
+     *
+     * @param id
+     * @return
+     */
+    @Deprecated
+    public BlockType getLegacyBlockType(int id);
 
-    @Override
-    public byte getData() {
-        return data;
-    }
+    /**
+     * Gets a list of all available {@link org.getlwc.BlockType}s
+     *
+     * @return an immutable list of all available {@link org.getlwc.BlockType}s in the registry
+     */
+    public List<BlockType> getBlocks();
 
-    @Override
-    public World getWorld() {
-        return world;
-    }
+    /**
+     * Gets the item type for the given id
+     *
+     * @param id
+     * @return The {@link org.getlwc.ItemType} or null if not found
+     */
+    public ItemType getItemType(String id);
 
-    @Override
-    public int getX() {
-        return x;
-    }
+    /**
+     * Gets the item type for the given id.
+     * This should not be used.
+     *
+     * @param id
+     * @return
+     */
+    @Deprecated
+    public ItemType getLegacyItemType(int id);
 
-    @Override
-    public int getY() {
-        return y;
-    }
-
-    @Override
-    public int getZ() {
-        return z;
-    }
-
-    @Override
-    public void setType(BlockType type) {
-        this.type = type;
-    }
-
-    @Override
-    public void setData(byte data) {
-        this.data = data;
-    }
-
-    @Override
-    public boolean hasTileEntity() {
-        switch (type.getName()) {
-            case "minecraft:chest":
-                return true;
-            default:
-                return false;
-        }
-    }
+    /**
+     * Gets a list of all available {@link org.getlwc.ItemType}s
+     *
+     * @return an immutable list of all available {@link org.getlwc.ItemType}s in the registry
+     */
+    public List<ItemType> getItems();
 
 }

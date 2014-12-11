@@ -29,6 +29,8 @@
 package org.getlwc.canary.world;
 
 import org.getlwc.Block;
+import org.getlwc.BlockType;
+import org.getlwc.SimpleEngine;
 import org.getlwc.World;
 
 public class CanaryBlock extends Block {
@@ -49,8 +51,8 @@ public class CanaryBlock extends Block {
     }
 
     @Override
-    public int getType() {
-        return handle.getTypeId();
+    public BlockType getType() {
+        return SimpleEngine.getInstance().getMinecraftRegistry().getLegacyBlockType(handle.getTypeId());
     }
 
     @Override
@@ -79,8 +81,8 @@ public class CanaryBlock extends Block {
     }
 
     @Override
-    public void setType(int type) {
-        handle.setTypeId((short) type);
+    public void setType(BlockType type) {
+        handle.setTypeId((short) type.getLegacyId());
     }
 
     @Override

@@ -52,6 +52,7 @@ import org.getlwc.event.server.ServerStartingEvent;
 import org.getlwc.event.server.ServerStoppingEvent;
 import org.getlwc.permission.DefaultPermissionHandler;
 import org.getlwc.permission.PermissionHandler;
+import org.getlwc.util.registry.MinecraftRegistry;
 import org.getlwc.util.resource.Resource;
 import org.getlwc.util.resource.ResourceDownloader;
 import org.getlwc.util.resource.SimpleResourceDownloader;
@@ -118,6 +119,11 @@ public class SimpleEngine implements Engine {
      * The languages configuration
      */
     private Configuration languagesConfig;
+
+    /**
+     * The minecraft registry
+     */
+    private MinecraftRegistry minecraftRegistry;
 
     /**
      * The economy handler for the server
@@ -193,7 +199,7 @@ public class SimpleEngine implements Engine {
      * @param consoleSender
      * @return
      */
-    public static Engine getOrCreateEngine(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender) {
+    public static Engine getOrCreateEngine(ServerLayer serverLayer, ServerInfo serverInfo, MinecraftRegistry registry, ConsoleCommandSender consoleSender) {
         if (instance != null) {
             return instance;
         }
@@ -209,6 +215,7 @@ public class SimpleEngine implements Engine {
         }
 
         instance = new SimpleEngine(serverLayer, serverInfo, consoleSender);
+        instance.minecraftRegistry = registry;
 
         return instance;
     }
@@ -249,6 +256,11 @@ public class SimpleEngine implements Engine {
     @Override
     public EventBus getEventBus() {
         return eventBus;
+    }
+
+    @Override
+    public MinecraftRegistry getMinecraftRegistry() {
+        return minecraftRegistry;
     }
 
     @Override

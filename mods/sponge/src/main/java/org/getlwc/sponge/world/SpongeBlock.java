@@ -29,6 +29,7 @@
 package org.getlwc.sponge.world;
 
 import org.getlwc.Block;
+import org.getlwc.BlockType;
 import org.getlwc.World;
 
 public class SpongeBlock extends Block {
@@ -42,7 +43,7 @@ public class SpongeBlock extends Block {
     }
 
     @Override
-    public int getType() {
+    public BlockType getType() {
         // no getter for BlockType (yet?)
         throw new UnsupportedOperationException("getType() is not yet supported");
     }
@@ -73,7 +74,7 @@ public class SpongeBlock extends Block {
     }
 
     @Override
-    public void setType(int type) {
+    public void setType(BlockType type) {
         throw new UnsupportedOperationException("setType() is not yet supported");
     }
 

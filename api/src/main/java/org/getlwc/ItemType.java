@@ -26,74 +26,37 @@
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-package org.getlwc.world;
+package org.getlwc;
 
-import org.getlwc.Block;
-import org.getlwc.BlockType;
-import org.getlwc.World;
+public interface ItemType {
 
-public class MemoryBlock extends Block {
+    /**
+     * Gets the id of this item type.
+     *
+     * @return The id
+     */
+    public String getId();
 
-    private World world;
-    private BlockType type;
-    private final int x, y, z;
-    private byte data = 0;
+    /**
+     * Gets the legacy id of this item type
+     *
+     * @return
+     */
+    @Deprecated
+    public int getLegacyId();
 
-    public MemoryBlock(World world, int x, int y, int z) {
-        this.world = world;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
+    /**
+     * Gets the default max stack quantity for this item type.
+     *
+     * @return Max stack quantity
+     */
+    public int getMaxStackQuantity();
 
-    @Override
-    public BlockType getType() {
-        return type;
-    }
-
-    @Override
-    public byte getData() {
-        return data;
-    }
-
-    @Override
-    public World getWorld() {
-        return world;
-    }
-
-    @Override
-    public int getX() {
-        return x;
-    }
-
-    @Override
-    public int getY() {
-        return y;
-    }
-
-    @Override
-    public int getZ() {
-        return z;
-    }
-
-    @Override
-    public void setType(BlockType type) {
-        this.type = type;
-    }
-
-    @Override
-    public void setData(byte data) {
-        this.data = data;
-    }
-
-    @Override
-    public boolean hasTileEntity() {
-        switch (type.getName()) {
-            case "minecraft:chest":
-                return true;
-            default:
-                return false;
-        }
-    }
+    /**
+     * Gets the name of this item type.
+     *
+     * @return The name
+     */
+    public String getName();
 
 }

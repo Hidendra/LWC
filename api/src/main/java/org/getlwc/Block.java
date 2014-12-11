@@ -38,10 +38,9 @@ public abstract class Block {
     /**
      * Gets the block's type
      *
-     * @return
+     * @return Block type.
      */
-    @Deprecated
-    public abstract int getType();
+    public abstract BlockType getType();
 
     /**
      * Gets the block's data
@@ -83,7 +82,7 @@ public abstract class Block {
      *
      * @param type
      */
-    public abstract void setType(int type);
+    public abstract void setType(BlockType type);
 
     /**
      * Set the block's data
@@ -123,9 +122,10 @@ public abstract class Block {
      *
      * @return the block's name. If the block is unknown, "unknown" is returned
      */
+    @Deprecated
     public String getName() {
-        Material material = MaterialRegistry.getBlockById(getType());
-        return material == null ? "unknown" : material.getName();
+        BlockType type = getType();
+        return type == null ? "unknown" : type.getName();
     }
 
     /**
@@ -207,7 +207,7 @@ public abstract class Block {
     private Block findBlockRelative(EnumSet<BlockFace> faces, String... names) {
         Block block;
 
-        Set<String> typeSet = new HashSet<String>();
+        Set<String> typeSet = new HashSet<>();
         Collections.addAll(typeSet, names);
 
         for (BlockFace face : faces) {
