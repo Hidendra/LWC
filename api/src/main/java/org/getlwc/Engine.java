@@ -47,6 +47,13 @@ public interface Engine {
     public EventBus getEventBus();
 
     /**
+     * Gets the registry for MC types
+     *
+     * @return
+     */
+    public MinecraftRegistry getMinecraftRegistry();
+
+    /**
      * Get the protection manager
      *
      * @return
