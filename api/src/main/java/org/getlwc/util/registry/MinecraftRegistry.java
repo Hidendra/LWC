@@ -26,7 +26,10 @@
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-package org.getlwc;
+package org.getlwc.util.registry;
+
+import org.getlwc.BlockType;
+import org.getlwc.ItemType;
 
 import java.util.List;
 
