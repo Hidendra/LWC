@@ -52,7 +52,7 @@ import org.getlwc.event.server.ServerStartingEvent;
 import org.getlwc.event.server.ServerStoppingEvent;
 import org.getlwc.permission.DefaultPermissionHandler;
 import org.getlwc.permission.PermissionHandler;
-import org.getlwc.registry.MinecraftRegistry;
+import org.getlwc.util.registry.MinecraftRegistry;
 import org.getlwc.util.resource.Resource;
 import org.getlwc.util.resource.ResourceDownloader;
 import org.getlwc.util.resource.SimpleResourceDownloader;

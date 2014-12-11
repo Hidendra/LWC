@@ -29,12 +29,13 @@
 package org.getlwc.world;
 
 import org.getlwc.Block;
+import org.getlwc.BlockType;
 import org.getlwc.World;
 
 public class MemoryBlock extends Block {
 
     private World world;
-    private int type = 0;
+    private BlockType type;
     private final int x, y, z;
     private byte data = 0;
 
@@ -46,7 +47,7 @@ public class MemoryBlock extends Block {
     }
 
     @Override
-    public int getType() {
+    public BlockType getType() {
         return type;
     }
 
@@ -76,7 +77,7 @@ public class MemoryBlock extends Block {
     }
 
     @Override
-    public void setType(int type) {
+    public void setType(BlockType type) {
         this.type = type;
     }
 
@@ -87,8 +88,8 @@ public class MemoryBlock extends Block {
 
     @Override
     public boolean hasTileEntity() {
-        switch (type) {
-            case 54:
+        switch (type.getName()) {
+            case "minecraft:chest":
                 return true;
             default:
                 return false;
