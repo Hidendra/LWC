@@ -50,7 +50,7 @@ public class SpongeBlock extends Block {
 
     @Override
     public byte getData() {
-        throw new UnsupportedOperationException("getData() is not yet supported");
+        return handle.getState().getDataValue();
     }
 
     @Override
