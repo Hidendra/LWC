@@ -92,11 +92,35 @@ public abstract class Block {
     public abstract void setData(byte data);
 
     /**
-     * Check if the block has a tile entity
+     * Check if the block has a tile entity. By default, it will just match
+     * blocks that are known to have tile entities but it is recommended to
+     * implement this in servers that can check if a block has a tile entity.
      *
      * @return
      */
-    public abstract boolean hasTileEntity();
+    public boolean hasTileEntity() {
+        switch (getType().getId()) {
+            case "minecraft:standing_sign":
+            case "minecraft:wall_sign":
+            case "minecraft:chest":
+            case "minecraft:trapped_chest":
+            case "minecraft:furnace":
+            case "minecraft:lit_furnace":
+            case "minecraft:dispenser":
+            case "minecraft:dropper":
+            case "minecraft:hopper":
+            case "minecraft:mob_spawner":
+            case "minecraft:note_block":
+            case "minecraft:jukebox":
+            case "minecraft:brewing_stand":
+            case "minecraft:skull":
+            case "minecraft:command_block":
+            case "minecraft:beacon":
+                return true;
+            default:
+                return false;
+        }
+    }
 
     @Override
     public String toString() {

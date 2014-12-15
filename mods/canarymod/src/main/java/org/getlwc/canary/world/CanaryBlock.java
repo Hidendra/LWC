@@ -94,4 +94,5 @@ public class CanaryBlock extends Block {
     public boolean hasTileEntity() {
         return handle.getTileEntity() != null;
     }
+
 }

@@ -85,8 +85,9 @@ public class SpongeBlock extends Block {
 
     @Override
     public boolean hasTileEntity() {
-        // TODO Sponge will hopefully expose this in some way; otherwise may have to do something similar to what Bukkit does
-        throw new UnsupportedOperationException("hasTileEntity() is not yet supported");
+        // TODO Sponge will hopefully expose this in some way
+        // implemented explicitly so I remember :-)
+        return super.hasTileEntity();
     }
 
 }

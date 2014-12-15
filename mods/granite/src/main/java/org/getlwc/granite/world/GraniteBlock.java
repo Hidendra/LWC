@@ -84,10 +84,4 @@ public class GraniteBlock extends Block {
         // TODO
     }
 
-    @Override
-    public boolean hasTileEntity() {
-        // TODO Does Granite expose this? otherwise may have to do something similar to what Bukkit does
-        throw new UnsupportedOperationException("hasTileEntity() is not yet supported");
-    }
-
 }
