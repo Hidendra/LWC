@@ -41,7 +41,6 @@ import org.getlwc.sponge.listeners.SpongeEventListener;
 import org.getlwc.sponge.permission.SpongePermissionHandler;
 import org.getlwc.sponge.world.SpongeBlock;
 import org.getlwc.sponge.world.SpongeExtent;
-import org.getlwc.util.registry.FallbackMinecraftRegistry;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.event.state.ServerStartingEvent;
 import org.spongepowered.api.event.state.ServerStoppingEvent;
@@ -54,6 +53,7 @@ import java.util.HashMap;
 @Plugin(id = "lwc", name = "LWC", version = "5.0.0-SNAPSHOT")
 public class SpongePlugin {
 
+    public static SpongePlugin instance;
     private SimpleEngine engine;
     private ServerLayer layer;
     private Game game;
@@ -61,6 +61,11 @@ public class SpongePlugin {
     @SuppressWarnings("unused")
     @Subscribe
     public void onStartup(ServerStartingEvent event) {
+        if (instance != null) {
+            throw new RuntimeException("LWC cannot be enabled more than once per server!");
+        }
+
+        instance = this;
         game = event.getGame();
         layer = new SpongeServerLayer(this, game);
         ServerInfo serverInfo = new SpongeServerInfo(game);
@@ -78,6 +83,7 @@ public class SpongePlugin {
     public void onShutdown(ServerStoppingEvent event) {
         engine.getEventBus().post(new org.getlwc.event.server.ServerStoppingEvent());
         engine = null;
+        instance = null;
     }
 
     /**

@@ -32,6 +32,7 @@ import org.getlwc.Block;
 import org.getlwc.BlockType;
 import org.getlwc.SimpleEngine;
 import org.getlwc.World;
+import org.getlwc.sponge.SpongePlugin;
 
 public class SpongeBlock extends Block {
 
@@ -75,7 +76,11 @@ public class SpongeBlock extends Block {
 
     @Override
     public void setType(BlockType type) {
-        throw new UnsupportedOperationException("setType() is not yet supported");
+        org.spongepowered.api.block.BlockType dest = SpongePlugin.instance.getGame().getRegistry().getBlock(type.getId()).orNull();
+
+        if (dest != null) {
+            handle.replaceWith(dest);
+        }
     }
 
     @Override
