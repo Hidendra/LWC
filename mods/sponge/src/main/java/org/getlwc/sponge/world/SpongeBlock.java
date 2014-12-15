@@ -30,6 +30,7 @@ package org.getlwc.sponge.world;
 
 import org.getlwc.Block;
 import org.getlwc.BlockType;
+import org.getlwc.SimpleEngine;
 import org.getlwc.World;
 
 public class SpongeBlock extends Block {
@@ -44,8 +45,7 @@ public class SpongeBlock extends Block {
 
     @Override
     public BlockType getType() {
-        // no getter for BlockType (yet?)
-        throw new UnsupportedOperationException("getType() is not yet supported");
+        return SimpleEngine.getInstance().getMinecraftRegistry().getBlockType(handle.getType().getId());
     }
 
     @Override
