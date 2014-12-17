@@ -46,11 +46,9 @@ import java.util.List;
 
 public class EngineEventListener {
 
-    private Engine engine;
     private SpongePlugin plugin;
 
-    public EngineEventListener(Engine engine, SpongePlugin plugin) {
-        this.engine = engine;
+    public EngineEventListener(SpongePlugin plugin) {
         this.plugin = plugin;
     }
 

@@ -72,7 +72,7 @@ public class SpongePlugin {
 
         engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, serverInfo, new SpongeMinecraftRegistry(game), new SpongeConsoleCommandSender());
         engine.setPermissionHandler(new SpongePermissionHandler());
-        engine.getEventBus().subscribe(new EngineEventListener(engine, this));
+        engine.getEventBus().subscribe(new EngineEventListener(this));
         engine.getEventBus().post(new org.getlwc.event.server.ServerStartingEvent());
 
         game.getEventManager().register(this, new SpongeEventListener(this));
