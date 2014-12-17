@@ -28,15 +28,18 @@
  */
 package org.getlwc.sponge;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.getlwc.command.ConsoleCommandSender;
 
 public class SpongeConsoleCommandSender extends ConsoleCommandSender {
 
+    private Logger logger = LogManager.getLogger("LWC");
+
     @Override
     public void sendMessage(String message) {
         for (String line : message.split("\n")) {
-            // TODO sponge equivalent of logger when available
-            System.out.printf("[LWC]: %s\n", line);
+            logger.info("[LWC]: " + line);
         }
     }
 

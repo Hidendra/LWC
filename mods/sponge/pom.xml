@@ -51,6 +51,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.10</version>
@@ -91,13 +96,6 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <filters>
-                                <filter>
-                                    <excludes>
-                                        <exclude>org/yaml/**</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
                             <artifactSet>
                                 <includes>
                                     <include>org.getlwc:backend</include>
