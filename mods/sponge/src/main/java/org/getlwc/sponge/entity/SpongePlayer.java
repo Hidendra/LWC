@@ -28,6 +28,7 @@
  */
 package org.getlwc.sponge.entity;
 
+import com.flowpowered.math.vector.Vector3d;
 import org.getlwc.ItemStack;
 import org.getlwc.Location;
 import org.getlwc.entity.SimplePlayer;
@@ -60,7 +61,8 @@ public class SpongePlayer extends SimplePlayer {
     @Override
     public Location getLocation() {
         // todo remove unnecessary object creation
-        return new Location(new SpongeExtent(handle.getWorld()), handle.getX(), handle.getY(), handle.getZ());
+        Vector3d locHandle = handle.getLocation().getPosition();
+        return new Location(new SpongeExtent(handle.getWorld()), locHandle.getX(), locHandle.getY(), locHandle.getZ());
     }
 
     @Override

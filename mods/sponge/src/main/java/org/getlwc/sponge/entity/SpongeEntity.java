@@ -28,8 +28,10 @@
  */
 package org.getlwc.sponge.entity;
 
+import com.flowpowered.math.vector.Vector3d;
 import org.getlwc.Location;
 import org.getlwc.entity.Entity;
+import org.getlwc.sponge.world.SpongeExtent;
 
 import java.util.UUID;
 
@@ -57,8 +59,10 @@ public class SpongeEntity extends Entity {
 
     @Override
     public Location getLocation() {
-        // TODO Entity does not even expose the world it's in yet
-        return new Location(null, handle.getX(), handle.getY(), handle.getZ());
+        // todo remove unnecessary object creation
+        Vector3d locHandle = handle.getLocation().getPosition();
+        return new Location(new SpongeExtent(handle.getWorld()), locHandle.getX(), locHandle.getY(), locHandle.getZ());
+
     }
 
 }
