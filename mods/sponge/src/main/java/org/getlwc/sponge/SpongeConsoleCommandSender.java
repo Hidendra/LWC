@@ -28,13 +28,13 @@
  */
 package org.getlwc.sponge;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.getlwc.command.ConsoleCommandSender;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SpongeConsoleCommandSender extends ConsoleCommandSender {
 
-    private Logger logger = LogManager.getLogger("LWC");
+    private Logger logger = LoggerFactory.getLogger("LWC");
 
     @Override
     public void sendMessage(String message) {
