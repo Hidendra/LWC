@@ -16,6 +16,14 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!--
+            Plugin-specific data. If a server required annotations for plugins, these
+            will typically be used.
+        -->
+        <plugin.id>lwc</plugin.id>
+        <plugin.name>LWC</plugin.name>
+        <plugin.version>${project.version}</plugin.version>
     </properties>
 
     <repositories>
@@ -194,6 +202,20 @@
                                 </excludes>
                             </artifactSet>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>templating-maven-plugin</artifactId>
+                <version>1.0-alpha-3</version>
+                <executions>
+                    <execution>
+                        <id>filter-src</id>
+                        <goals>
+                            <goal>filter-sources</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

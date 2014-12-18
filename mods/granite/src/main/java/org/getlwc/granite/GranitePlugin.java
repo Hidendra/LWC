@@ -33,6 +33,7 @@ import org.getlwc.Engine;
 import org.getlwc.ServerInfo;
 import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
+import org.getlwc.Version;
 import org.getlwc.command.CommandSender;
 import org.getlwc.entity.Player;
 import org.getlwc.event.server.ServerStartingEvent;
@@ -48,7 +49,7 @@ import org.granitemc.granite.api.plugin.Plugin;
 import org.granitemc.granite.api.plugin.PluginContainer;
 import org.granitemc.granite.reflect.GraniteServerComposite;
 
-@Plugin(name = "LWC", id = "lwc", version = "5.0.0-SNAPSHOT")
+@Plugin(id = Version.PLUGIN_ID,  name = Version.PLUGIN_NAME, version = Version.PLUGIN_VERSION)
 public class GranitePlugin {
 
     private SimpleEngine engine;

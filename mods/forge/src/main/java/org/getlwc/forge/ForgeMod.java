@@ -44,6 +44,7 @@ import net.minecraftforge.common.MinecraftForge;
 import org.getlwc.Engine;
 import org.getlwc.ItemStack;
 import org.getlwc.SimpleEngine;
+import org.getlwc.Version;
 import org.getlwc.World;
 import org.getlwc.command.Command;
 import org.getlwc.command.CommandContext;
@@ -65,7 +66,7 @@ import org.getlwc.util.registry.FallbackMinecraftRegistry;
 import java.util.HashMap;
 import java.util.Map;
 
-@Mod(modid = "LWC", name = "LWC", version = "5.0.0-SNAPSHOT", acceptableRemoteVersions = "*")
+@Mod(modid = Version.PLUGIN_ID, name = Version.PLUGIN_NAME, version = Version.PLUGIN_VERSION, acceptableRemoteVersions = "*")
 public class ForgeMod {
 
     // The instance of your mod that Forge uses.

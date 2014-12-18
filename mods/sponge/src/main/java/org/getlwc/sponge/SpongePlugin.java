@@ -34,6 +34,7 @@ import org.getlwc.ItemStack;
 import org.getlwc.ServerInfo;
 import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
+import org.getlwc.Version;
 import org.getlwc.World;
 import org.getlwc.entity.Player;
 import org.getlwc.lang.Locale;
@@ -50,7 +51,7 @@ import org.spongepowered.api.world.extent.Extent;
 
 import java.util.HashMap;
 
-@Plugin(id = "lwc", name = "LWC", version = "5.0.0-SNAPSHOT")
+@Plugin(id = Version.PLUGIN_ID, name = Version.PLUGIN_NAME, version = Version.PLUGIN_VERSION)
 public class SpongePlugin {
 
     public static SpongePlugin instance;
