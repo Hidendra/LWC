@@ -28,6 +28,7 @@
  */
 package org.getlwc.sponge;
 
+import com.google.inject.Inject;
 import org.getlwc.Block;
 import org.getlwc.Engine;
 import org.getlwc.ItemStack;
@@ -45,9 +46,11 @@ import org.spongepowered.api.Game;
 import org.spongepowered.api.event.state.ServerStartingEvent;
 import org.spongepowered.api.event.state.ServerStoppingEvent;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.service.config.ConfigDir;
 import org.spongepowered.api.util.event.Subscribe;
 import org.spongepowered.api.world.extent.Extent;
 
+import java.io.File;
 import java.util.HashMap;
 
 @Plugin(id = Version.PLUGIN_ID, name = Version.PLUGIN_NAME, version = Version.PLUGIN_VERSION)
@@ -57,6 +60,10 @@ public class SpongePlugin {
     private SimpleEngine engine;
     private ServerLayer layer;
     private Game game;
+
+    @Inject
+    @ConfigDir(sharedRoot = false)
+    private File configDir;
 
     @SuppressWarnings("unused")
     @Subscribe
@@ -139,6 +146,15 @@ public class SpongePlugin {
      */
     public Game getGame() {
         return game;
+    }
+
+    /**
+     * Returns the config directory for this plugin.
+     *
+     * @return
+     */
+    public File getConfigDir() {
+        return configDir;
     }
 
     /**
