@@ -52,6 +52,16 @@ public class BukkitServerLayer extends ServerLayer {
     }
 
     @Override
+    public String getImplementationTitle() {
+        return "Bukkit";
+    }
+
+    @Override
+    public String getImplementationVersion() {
+        return Bukkit.getVersion();
+    }
+
+    @Override
     protected Player internalGetPlayer(String playerName) {
         org.bukkit.entity.Player handle = Bukkit.getPlayer(playerName);
 

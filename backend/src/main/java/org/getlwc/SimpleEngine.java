@@ -91,11 +91,6 @@ public class SimpleEngine implements Engine {
     private ServerLayer serverLayer;
 
     /**
-     * The underlying server's information
-     */
-    private ServerInfo serverInfo;
-
-    /**
      * The command handler
      */
     private SimpleCommandHandler commandHandler;
@@ -135,9 +130,8 @@ public class SimpleEngine implements Engine {
      */
     private PermissionHandler permissionHandler = new DefaultPermissionHandler();
 
-    private SimpleEngine(ServerLayer serverLayer, ServerInfo serverInfo, ConsoleCommandSender consoleSender) {
+    private SimpleEngine(ServerLayer serverLayer, ConsoleCommandSender consoleSender) {
         this.serverLayer = serverLayer;
-        this.serverInfo = serverInfo;
         this.consoleSender = consoleSender;
 
         serverLayer.getDataFolder().mkdirs();
@@ -154,7 +148,7 @@ public class SimpleEngine implements Engine {
         I18n.init(this);
         eventBus.subscribe(this);
 
-        consoleSender.sendMessage("Server: {0} ({1})", serverInfo.getServerImplementationTitle(), serverInfo.getServerImplementationVersion());
+        consoleSender.sendMessage("Server: {0} ({1})", serverLayer.getImplementationTitle(), serverLayer.getImplementationVersion());
         consoleSender.sendMessage("Plugin: {0} ({1})", getImplementationTitle(), getImplementationVersion());
     }
 
@@ -195,11 +189,10 @@ public class SimpleEngine implements Engine {
      * Create an LWC Engine
      *
      * @param serverLayer
-     * @param serverInfo
      * @param consoleSender
      * @return
      */
-    public static Engine getOrCreateEngine(ServerLayer serverLayer, ServerInfo serverInfo, MinecraftRegistry registry, ConsoleCommandSender consoleSender) {
+    public static Engine getOrCreateEngine(ServerLayer serverLayer, MinecraftRegistry registry, ConsoleCommandSender consoleSender) {
         if (instance != null) {
             return instance;
         }
@@ -207,14 +200,11 @@ public class SimpleEngine implements Engine {
         if (serverLayer == null) {
             throw new IllegalArgumentException("Server layer object cannot be null");
         }
-        if (serverInfo == null) {
-            throw new IllegalArgumentException("Server info object cannot be null");
-        }
         if (consoleSender == null) {
             throw new IllegalArgumentException("Console sender object cannot be null");
         }
 
-        instance = new SimpleEngine(serverLayer, serverInfo, consoleSender);
+        instance = new SimpleEngine(serverLayer, consoleSender);
         instance.minecraftRegistry = registry;
 
         return instance;
@@ -276,11 +266,6 @@ public class SimpleEngine implements Engine {
     @Override
     public String getImplementationVersion() {
         return SimpleEngine.class.getPackage().getImplementationVersion();
-    }
-
-    @Override
-    public ServerInfo getServerInfo() {
-        return serverInfo;
     }
 
     @Override

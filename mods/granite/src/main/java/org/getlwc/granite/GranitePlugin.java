@@ -30,7 +30,6 @@ package org.getlwc.granite;
 
 import org.getlwc.Block;
 import org.getlwc.Engine;
-import org.getlwc.ServerInfo;
 import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
 import org.getlwc.Version;
@@ -59,9 +58,8 @@ public class GranitePlugin {
     @OnEnable
     public void onEnable(PluginContainer container) {
         layer = new GraniteServerLayer(container);
-        ServerInfo serverInfo = new GraniteServerInfo();
 
-        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, serverInfo, new FallbackMinecraftRegistry(), new GraniteConsoleCommandSender());
+        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new FallbackMinecraftRegistry(), new GraniteConsoleCommandSender());
         engine.setPermissionHandler(new GranitePermissionHandler());
         engine.getEventBus().post(new ServerStartingEvent());
 

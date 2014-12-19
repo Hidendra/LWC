@@ -61,7 +61,7 @@ public class CanaryPlugin extends Plugin {
 
     @Override
     public boolean enable() {
-        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new CanaryServerInfo(), new FallbackMinecraftRegistry(), new CanaryConsoleCommandSender(getLogman()));
+        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new FallbackMinecraftRegistry(), new CanaryConsoleCommandSender(getLogman()));
         engine.setPermissionHandler(new CanaryPermissionHandler());
 
         engine.getEventBus().subscribe(new EngineEventListener(engine, this));

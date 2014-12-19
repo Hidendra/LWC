@@ -61,6 +61,16 @@ public class CanaryServerLayer extends ServerLayer {
     }
 
     @Override
+    public String getImplementationTitle() {
+        return Canary.getImplementationTitle();
+    }
+
+    @Override
+    public String getImplementationVersion() {
+        return Canary.getImplementationVersion();
+    }
+
+    @Override
     public UUID getOfflinePlayer(String ident) {
         Player player = getPlayer(ident);
 

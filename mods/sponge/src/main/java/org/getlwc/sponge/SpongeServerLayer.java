@@ -74,6 +74,16 @@ public class SpongeServerLayer extends ServerLayer {
     }
 
     @Override
+    public String getImplementationTitle() {
+        return "Sponge";
+    }
+
+    @Override
+    public String getImplementationVersion() {
+        return game.getImplementationVersion();
+    }
+
+    @Override
     public World getDefaultWorld() {
         return getWorld(game.getServer().get().getWorlds().iterator().next().getName());
     }

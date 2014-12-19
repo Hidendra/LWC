@@ -51,6 +51,20 @@ public abstract class ServerLayer {
     protected final Map<String, World> worlds = new HashMap<String, World>();
 
     /**
+     * Get the title of the implementation software that runs the server
+     *
+     * @return
+     */
+    public abstract String getImplementationTitle();
+
+    /**
+     * Get the version of the server that is running
+     *
+     * @return
+     */
+    public abstract String getImplementationVersion();
+
+    /**
      * Get the data folder that can be used for the engine.
      * For most servers, this is typically plugins/LWC/ or the equivalent.
      *

@@ -114,12 +114,12 @@ public class ForgeServerLayer extends ServerLayer {
     }
 
     @Override
-    public String getServerImplementationTitle() {
+    public String getImplementationTitle() {
         return "Forge";
     }
 
     @Override
-    public String getServerImplementationVersion() {
+    public String getImplementationVersion() {
         return ForgeVersion.getVersion();
     }
 

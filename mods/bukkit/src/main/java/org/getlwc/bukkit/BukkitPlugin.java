@@ -112,7 +112,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         logger = this.getLogger();
-        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new BukkitServerInfo(), new FallbackMinecraftRegistry(), new BukkitConsoleCommandSender(getServer().getConsoleSender()));
+        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new FallbackMinecraftRegistry(), new BukkitConsoleCommandSender(getServer().getConsoleSender()));
 
         // Register events
         getServer().getPluginManager().registerEvents(this, this);

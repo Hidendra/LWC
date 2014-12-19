@@ -31,7 +31,6 @@ package org.getlwc.sponge;
 import org.getlwc.Block;
 import org.getlwc.Engine;
 import org.getlwc.ItemStack;
-import org.getlwc.ServerInfo;
 import org.getlwc.ServerLayer;
 import org.getlwc.SimpleEngine;
 import org.getlwc.Version;
@@ -69,9 +68,8 @@ public class SpongePlugin {
         instance = this;
         game = event.getGame();
         layer = new SpongeServerLayer(this, game);
-        ServerInfo serverInfo = new SpongeServerInfo(game);
 
-        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, serverInfo, new SpongeMinecraftRegistry(game), new SpongeConsoleCommandSender());
+        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new SpongeMinecraftRegistry(game), new SpongeConsoleCommandSender());
         engine.setPermissionHandler(new SpongePermissionHandler());
         engine.getEventBus().subscribe(new EngineEventListener(this));
         engine.getEventBus().post(new org.getlwc.event.server.ServerStartingEvent());

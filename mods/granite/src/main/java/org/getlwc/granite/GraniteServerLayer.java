@@ -62,6 +62,17 @@ public class GraniteServerLayer extends ServerLayer {
     }
 
     @Override
+    public String getImplementationTitle() {
+        return "Granite";
+    }
+
+    @Override
+    public String getImplementationVersion() {
+        // TODO
+        return "Unknown";
+    }
+
+    @Override
     protected Player internalGetPlayer(String playerName) {
         org.granitemc.granite.api.entity.player.Player handle = Granite.getServer().getPlayer(playerName);
 

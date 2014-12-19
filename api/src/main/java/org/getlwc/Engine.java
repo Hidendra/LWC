@@ -69,13 +69,6 @@ public interface Engine {
     public ServerLayer getServerLayer();
 
     /**
-     * Get information about the server mod itself
-     *
-     * @return
-     */
-    public ServerInfo getServerInfo();
-
-    /**
      * Get the implementation name
      *
      * @return
