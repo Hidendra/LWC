@@ -85,7 +85,7 @@ public class ForgeEventHelper {
      * @return
      */
     public static boolean onExplosion(net.minecraft.world.World nativeWorld, double explosionX, double explosionY, double explosionZ, int explosionRadius, List<net.minecraft.world.ChunkPosition> affectedLocations, net.minecraft.entity.Entity entity) {
-        List<Block> affectedBlocks = new ArrayList<Block>();
+        List<Block> affectedBlocks = new ArrayList<>();
         World world = ForgeMod.instance.getWorld(nativeWorld.getWorldInfo().getWorldName());
 
         for (net.minecraft.world.ChunkPosition loc : affectedLocations) {

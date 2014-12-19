@@ -43,12 +43,12 @@ public abstract class ServerLayer {
     /**
      * A map of all of the currently loaded players
      */
-    protected final Map<String, Player> players = new HashMap<String, Player>();
+    protected final Map<String, Player> players = new HashMap<>();
 
     /**
      * A map of all of the currently known worlds
      */
-    protected final Map<String, World> worlds = new HashMap<String, World>();
+    protected final Map<String, World> worlds = new HashMap<>();
 
     /**
      * Get the title of the implementation software that runs the server

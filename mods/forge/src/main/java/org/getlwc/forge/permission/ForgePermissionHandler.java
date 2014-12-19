@@ -69,7 +69,7 @@ public class ForgePermissionHandler implements PermissionHandler {
 
     @Override
     public Set<String> getGroups(Player player) {
-        return new HashSet<String>();
+        return new HashSet<>();
     }
 
     /**

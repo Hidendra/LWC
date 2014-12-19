@@ -152,7 +152,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
      * @return
      */
     public List<Block> castBlockList(World world, List<org.bukkit.block.Block> list) {
-        List<Block> ret = new ArrayList<Block>();
+        List<Block> ret = new ArrayList<>();
 
         for (org.bukkit.block.Block block : list) {
             ret.add(world.getBlockAt(block.getX(), block.getY(), block.getZ()));
@@ -168,7 +168,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
      * @return
      */
     public Map<Integer, Integer> castEnchantments(Map<org.bukkit.enchantments.Enchantment, Integer> enchantments) {
-        Map<Integer, Integer> ret = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> ret = new HashMap<>();
 
         for (Map.Entry<org.bukkit.enchantments.Enchantment, Integer> entry : enchantments.entrySet()) {
             ret.put(entry.getKey().getId(), entry.getValue());

@@ -41,7 +41,7 @@ public class TupleTest {
 
     @Before
     public void setUp() {
-        tuple = new Tuple<Object, Object>(first = new Object(), second = new Object());
+        tuple = new Tuple<>(first = new Object(), second = new Object());
     }
 
     @Test
@@ -52,13 +52,13 @@ public class TupleTest {
 
     @Test
     public void testEquals() {
-        Tuple<Object, Object> equiv = new Tuple<Object, Object>(first, second); // should be equivalent to tuple
+        Tuple<Object, Object> equiv = new Tuple<>(first, second); // should be equivalent to tuple
         assertEquals(tuple, equiv);
     }
 
     @Test
     public void testHashcode() {
-        Tuple<Object, Object> equiv = new Tuple<Object, Object>(first, second); // should be equivalent to tuple
+        Tuple<Object, Object> equiv = new Tuple<>(first, second); // should be equivalent to tuple
         assertEquals(tuple.hashCode(), equiv.hashCode());
     }
 

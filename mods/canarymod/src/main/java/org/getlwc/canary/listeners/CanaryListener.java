@@ -203,7 +203,7 @@ public class CanaryListener implements PluginListener {
         }
 
         World world = plugin.getWorld(hook.getEntity().getWorld().getName());
-        List<Block> affected = new ArrayList<Block>();
+        List<Block> affected = new ArrayList<>();
 
         for (net.canarymod.api.world.blocks.Block block : hook.getAffectedBlocks()) {
             affected.add(world.getBlockAt(block.getX(), block.getY(), block.getZ()));

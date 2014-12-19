@@ -50,7 +50,7 @@ public class DefaultMessageStore implements MessageStore {
     /**
      * A store of the loaded resource bundles. The bundle CAN be null (i.e. does not exist)
      */
-    private Map<Locale, ResourceBundle> bundles = new HashMap<Locale, ResourceBundle>();
+    private Map<Locale, ResourceBundle> bundles = new HashMap<>();
 
     /**
      * The default lang

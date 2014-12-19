@@ -60,22 +60,22 @@ public class SimpleCommandHandler implements CommandHandler {
      * A map of all of the commands. It is keyed using the command's command. The method's instance
      * is stored in a separate map.
      */
-    private final Map<String, Tuple<Command, Method>> commands = new HashMap<String, Tuple<Command, Method>>();
+    private final Map<String, Tuple<Command, Method>> commands = new HashMap<>();
 
     /**
      * A map of all of the command instances
      */
-    private final Map<Command, Object> instances = new HashMap<Command, Object>();
+    private final Map<Command, Object> instances = new HashMap<>();
 
     /**
      * A cache of accepted commands
      */
-    private final LRUCache<String, Tuple<Command, Method>> cache = new LRUCache<String, Tuple<Command, Method>>(CACHE_SIZE);
+    private final LRUCache<String, Tuple<Command, Method>> cache = new LRUCache<>(CACHE_SIZE);
 
     /**
      * A set of the known base commands commands can use
      */
-    private final Set<String> baseCommands = new HashSet<String>();
+    private final Set<String> baseCommands = new HashSet<>();
 
     public SimpleCommandHandler(Engine engine) {
         this.engine = engine;
@@ -145,7 +145,7 @@ public class SimpleCommandHandler implements CommandHandler {
 
     @Override
     public List<Command> registerCommands(Object object) throws CommandException {
-        List<Command> registered = new ArrayList<Command>();
+        List<Command> registered = new ArrayList<>();
         Class<?> clazz = object.getClass();
 
         // Iterate through all of the methods
@@ -172,7 +172,7 @@ public class SimpleCommandHandler implements CommandHandler {
                 checkCommand(command);
 
                 // Create the tuple
-                Tuple<Command, Method> tuple = new Tuple<Command, Method>(command, method);
+                Tuple<Command, Method> tuple = new Tuple<>(command, method);
 
                 // Add it to the commands
                 String normalized = normalizeCommand(command.command());
@@ -199,7 +199,7 @@ public class SimpleCommandHandler implements CommandHandler {
 
     @Override
     public List<Command> findSimilar(String command) {
-        List<Command> similar = new ArrayList<Command>();
+        List<Command> similar = new ArrayList<>();
 
         Set<String> commandNames = commands.keySet();
         for (String name : commandNames) {

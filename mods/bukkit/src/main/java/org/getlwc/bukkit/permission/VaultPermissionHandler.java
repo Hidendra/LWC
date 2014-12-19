@@ -69,7 +69,7 @@ public class VaultPermissionHandler extends SuperPermsPermissionHandler {
 
     @Override
     public Set<String> getGroups(Player player) {
-        Set<String> groups = new HashSet<String>();
+        Set<String> groups = new HashSet<>();
 
         if (isEnabled()) {
             org.bukkit.entity.Player handle = Bukkit.getPlayer(player.getName());

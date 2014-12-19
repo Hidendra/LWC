@@ -268,14 +268,14 @@ public class JDBCDatabase implements Database {
      * @return
      */
     public List<Tuple<String, Integer>> getLookupAssociations(JDBCLookupService.LookupType type) {
-        List<Tuple<String, Integer>> result = new ArrayList<Tuple<String, Integer>>();
+        List<Tuple<String, Integer>> result = new ArrayList<>();
 
         try (Connection connection = pool.getConnection();
              PreparedStatement statement = connection.prepareStatement("SELECT id, name FROM " + details.getPrefix() + "lookup_" + type.getSuffix());
              ResultSet set = statement.executeQuery()) {
 
             while (set.next()) {
-                result.add(new Tuple<String, Integer>(set.getString("name"), set.getInt("id")));
+                result.add(new Tuple<>(set.getString("name"), set.getInt("id")));
             }
         } catch (SQLException e) {
             handleException(e);

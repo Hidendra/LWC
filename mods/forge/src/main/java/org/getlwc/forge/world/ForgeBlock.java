@@ -69,7 +69,7 @@ public class ForgeBlock extends Block {
     /**
      * Map of the cached block names
      */
-    private static Map<Tuple<Integer, Byte>, String> cachedModBlockNames = new HashMap<Tuple<Integer, Byte>, String>();
+    private static Map<Tuple<Integer, Byte>, String> cachedModBlockNames = new HashMap<>();
 
     public ForgeBlock(ForgeWorld world, int x, int y, int z) {
         this.world = world;

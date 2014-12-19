@@ -80,7 +80,7 @@ public class JDBCLookupService {
     /**
      * The lookup table for each type
      */
-    private final Map<LookupType, TwoWayHashMap<String, Integer>> lookup = new HashMap<LookupType, TwoWayHashMap<String, Integer>>();
+    private final Map<LookupType, TwoWayHashMap<String, Integer>> lookup = new HashMap<>();
 
     /**
      * The database being used
@@ -96,7 +96,7 @@ public class JDBCLookupService {
      */
     public void populate() {
         for (LookupType type : LookupType.values()) {
-            TwoWayHashMap<String, Integer> lookupValues = new TwoWayHashMap<String, Integer>();
+            TwoWayHashMap<String, Integer> lookupValues = new TwoWayHashMap<>();
             lookup.put(type, lookupValues);
 
             int size = 0;

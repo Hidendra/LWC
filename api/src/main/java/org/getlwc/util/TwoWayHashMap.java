@@ -36,12 +36,12 @@ public class TwoWayHashMap<K, V> {
     /**
      * The forward hash map
      */
-    private Map<K, V> forward = new HashMap<K, V>();
+    private Map<K, V> forward = new HashMap<>();
 
     /**
      * The inverse hash map
      */
-    private Map<V, K> backward = new HashMap<V, K>();
+    private Map<V, K> backward = new HashMap<>();
 
     public synchronized void put(K key, V value) {
         forward.put(key, value);

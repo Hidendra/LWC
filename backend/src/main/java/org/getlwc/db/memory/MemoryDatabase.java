@@ -54,17 +54,17 @@ public class MemoryDatabase implements Database {
     /**
      * A set of all of the protections
      */
-    private final Set<Protection> protections = new HashSet<Protection>();
+    private final Set<Protection> protections = new HashSet<>();
 
     /**
      * Protections indexed by their ID
      */
-    private final Map<Integer, Protection> protectionsIndexById = new HashMap<Integer, Protection>();
+    private final Map<Integer, Protection> protectionsIndexById = new HashMap<>();
 
     /**
      * Protections indexed by their location
      */
-    private Map<Location, Protection> protectionsIndexByLocation = new HashMap<Location, Protection>();
+    private Map<Location, Protection> protectionsIndexByLocation = new HashMap<>();
 
     /**
      * The protection auto increment ID

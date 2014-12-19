@@ -60,7 +60,7 @@ public class ConfigUpdater {
     /**
      * The cache for the reference config files
      */
-    private final Map<String, FileConfiguration> referenceConfigFileCache = new HashMap<String, FileConfiguration>();
+    private final Map<String, FileConfiguration> referenceConfigFileCache = new HashMap<>();
 
     /**
      * Load the reference config files in the local jar file. The key in the map is the
@@ -166,7 +166,7 @@ public class ConfigUpdater {
      * @return
      */
     private List<String> getKeysDepth2(FileConfiguration configuration) {
-        List<String> keys = new ArrayList<String>();
+        List<String> keys = new ArrayList<>();
 
         // go through the root
         for (String key : configuration.getKeys(null)) {

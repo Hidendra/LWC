@@ -122,7 +122,7 @@ public class StringUtils {
      * @return
      */
     public static String[] split(String str) {
-        List<String> matchList = new ArrayList<String>();
+        List<String> matchList = new ArrayList<>();
         Matcher regexMatcher = QUOTED_STRING_REGEX.matcher(str);
 
         while (regexMatcher.find()) {

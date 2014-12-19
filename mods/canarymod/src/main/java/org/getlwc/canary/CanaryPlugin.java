@@ -145,7 +145,7 @@ public class CanaryPlugin extends Plugin {
      * @return
      */
     public Map<Integer, Integer> castEnchantments(Enchantment[] enchantments) {
-        Map<Integer, Integer> ret = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> ret = new HashMap<>();
 
         for (Enchantment enchantment : enchantments) {
             ret.put(enchantment.getType().getId(), (int) enchantment.getLevel());

@@ -56,7 +56,7 @@ public class CanaryPermissionHandler implements PermissionHandler {
 
     @Override
     public Set<String> getGroups(Player player) {
-        Set<String> groups = new HashSet<String>();
+        Set<String> groups = new HashSet<>();
 
         net.canarymod.api.entity.living.humanoid.Player handle = Canary.getServer().getPlayer(player.getName());
 

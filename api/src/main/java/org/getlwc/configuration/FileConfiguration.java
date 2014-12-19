@@ -59,7 +59,7 @@ public class FileConfiguration extends ConfigurationNode {
     /**
      * List of loaded config files
      */
-    private static Map<String, FileConfiguration> loaded = new HashMap<String, FileConfiguration>();
+    private static Map<String, FileConfiguration> loaded = new HashMap<>();
 
     /**
      * The config updater for config files
@@ -210,7 +210,7 @@ public class FileConfiguration extends ConfigurationNode {
         try {
             read(yaml.load(new UnicodeReader(inputStream)));
         } catch (ConfigurationException e) {
-            root = new HashMap<String, Object>();
+            root = new HashMap<>();
         } finally {
             try {
                 if (inputStream != null) {
@@ -229,7 +229,7 @@ public class FileConfiguration extends ConfigurationNode {
             cache.clear();
             load(new FileInputStream(file));
         } catch (IOException e) {
-            root = new HashMap<String, Object>();
+            root = new HashMap<>();
         }
     }
 
@@ -267,7 +267,7 @@ public class FileConfiguration extends ConfigurationNode {
     private void read(Object input) throws ConfigurationException {
         try {
             if (null == input) {
-                root = new HashMap<String, Object>();
+                root = new HashMap<>();
             } else {
                 root = (Map<String, Object>) input;
             }

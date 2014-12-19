@@ -180,7 +180,7 @@ public class BaseCommands {
                 event.markCancelled();
 
                 Protection protection = event.getProtection();
-                Map<Protection.Access, List<Role>> accessMap = new LinkedHashMap<Protection.Access, List<Role>>();
+                Map<Protection.Access, List<Role>> accessMap = new LinkedHashMap<>();
 
                 for (Protection.Access access : Protection.Access.USABLE_ACCESS_LEVELS) {
                     List<Role> roles = new ArrayList<>();

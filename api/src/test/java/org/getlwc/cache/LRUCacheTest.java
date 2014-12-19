@@ -42,7 +42,7 @@ public class LRUCacheTest {
         int initialObjects = 250;
 
         // construct a cache
-        LRUCache<Integer, Object> cache = new LRUCache<Integer, Object>(capacity);
+        LRUCache<Integer, Object> cache = new LRUCache<>(capacity);
 
         // It should be 0 initially
         assertEquals(cache.size(), 0);
@@ -73,7 +73,7 @@ public class LRUCacheTest {
         int writes = 750;
         int reads = 1000;
 
-        LRUCache<Integer, Object> cache = new LRUCache<Integer, Object>(capacity);
+        LRUCache<Integer, Object> cache = new LRUCache<>(capacity);
 
         // Counters should be 0 initially
         assertEquals(cache.getReads(), 0);

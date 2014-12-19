@@ -38,7 +38,7 @@ public class SaveQueue {
     /**
      * The queue of savables
      */
-    private final BlockingQueue<Savable> queue = new LinkedBlockingQueue<Savable>();
+    private final BlockingQueue<Savable> queue = new LinkedBlockingQueue<>();
 
     /**
      * The queue's thread

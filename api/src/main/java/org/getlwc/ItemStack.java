@@ -56,7 +56,7 @@ public final class ItemStack {
     /**
      * The enchantments on the ItemStack
      */
-    private final Map<Integer, Integer> enchantments = new HashMap<Integer, Integer>();
+    private final Map<Integer, Integer> enchantments = new HashMap<>();
 
     public ItemStack(int id, int amount, short durability, int maxStackSize, Map<Integer, Integer> enchantments) {
         this.id = id;

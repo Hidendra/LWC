@@ -269,7 +269,7 @@ public class ForgeMod {
      * @return
      */
     public Map<Integer, Integer> castEnchantments(NBTTagList enchantments) {
-        Map<Integer, Integer> ret = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> ret = new HashMap<>();
 
         for (int index = 0; index < enchantments.tagCount(); index++) {
             NBTTagCompound compound = enchantments.getCompoundTagAt(index);
