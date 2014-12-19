@@ -47,7 +47,6 @@ import org.getlwc.entity.Player;
 import org.getlwc.event.server.ServerStartingEvent;
 import org.getlwc.event.server.ServerStoppingEvent;
 import org.getlwc.util.registry.FallbackMinecraftRegistry;
-import org.getlwc.util.registry.MinecraftRegistry;
 
 import java.util.ArrayList;
 import java.util.HashMap;

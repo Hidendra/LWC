@@ -29,7 +29,6 @@
 package org.getlwc.bukkit;
 
 import org.getlwc.command.ConsoleCommandSender;
-import org.getlwc.lang.Locale;
 import org.getlwc.util.Color;
 
 public class BukkitConsoleCommandSender extends ConsoleCommandSender {

@@ -28,7 +28,6 @@
  */
 package org.getlwc.forge.asm.transformers.events.redstone;
 
-import org.getlwc.forge.asm.AbstractMultiClassTransformer;
 import org.getlwc.forge.asm.AbstractSingleClassTransformer;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.tree.InsnNode;

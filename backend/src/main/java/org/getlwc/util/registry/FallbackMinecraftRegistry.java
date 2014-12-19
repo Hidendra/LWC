@@ -178,13 +178,7 @@ public class FallbackMinecraftRegistry implements MinecraftRegistry {
 
     @Override
     public BlockType getBlockType(String id) {
-        for (BlockType type : blockTypesByLegacyId.values()) {
-            if (type.getName().equals(id)) {
-                return type;
-            }
-        }
-
-        return null;
+        return blockTypesById.get(id);
     }
 
     @Override
@@ -199,13 +193,7 @@ public class FallbackMinecraftRegistry implements MinecraftRegistry {
 
     @Override
     public ItemType getItemType(String id) {
-        for (ItemType type : itemTypesByLegacyId.values()) {
-            if (type.getName().equals(id)) {
-                return type;
-            }
-        }
-
-        return null;
+        return itemTypesById.get(id);
     }
 
     @Override

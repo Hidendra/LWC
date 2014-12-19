@@ -28,7 +28,6 @@
  */
 package org.getlwc.bukkit.world;
 
-import org.bukkit.Material;
 import org.getlwc.Block;
 import org.getlwc.BlockType;
 import org.getlwc.SimpleEngine;

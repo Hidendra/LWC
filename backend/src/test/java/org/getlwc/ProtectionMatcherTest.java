@@ -39,7 +39,6 @@ import org.getlwc.event.EventBus;
 import org.getlwc.event.SimpleEventBus;
 import org.getlwc.lang.Locale;
 import org.getlwc.util.registry.FallbackMinecraftRegistry;
-import org.getlwc.util.registry.MinecraftRegistry;
 import org.getlwc.world.MemoryWorld;
 import org.getlwc.world.Schematic;
 import org.getlwc.world.SchematicLoader;

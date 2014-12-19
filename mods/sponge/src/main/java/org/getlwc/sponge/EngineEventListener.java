@@ -29,7 +29,6 @@
 package org.getlwc.sponge;
 
 import com.google.common.base.Optional;
-import org.getlwc.Engine;
 import org.getlwc.command.Command;
 import org.getlwc.command.CommandContext;
 import org.getlwc.command.CommandSender;

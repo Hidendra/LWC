@@ -29,7 +29,6 @@
 package org.getlwc.event.handler;
 
 import org.getlwc.event.Event;
-import org.getlwc.event.Listener;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

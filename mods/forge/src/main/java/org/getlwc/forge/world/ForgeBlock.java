@@ -33,15 +33,9 @@ import org.getlwc.Block;
 import org.getlwc.BlockType;
 import org.getlwc.SimpleEngine;
 import org.getlwc.World;
-import org.getlwc.forge.asm.AbstractMultiClassTransformer;
-import org.getlwc.forge.asm.CompilationType;
 import org.getlwc.util.Tuple;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 public class ForgeBlock extends Block {

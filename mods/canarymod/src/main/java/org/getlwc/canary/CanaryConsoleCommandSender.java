@@ -30,7 +30,6 @@ package org.getlwc.canary;
 
 import net.canarymod.logger.Logman;
 import org.getlwc.command.ConsoleCommandSender;
-import org.getlwc.lang.Locale;
 
 public class CanaryConsoleCommandSender extends ConsoleCommandSender {
 
