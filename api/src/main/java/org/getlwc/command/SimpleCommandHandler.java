@@ -338,9 +338,7 @@ public class SimpleCommandHandler implements CommandHandler {
         // Now just execute the method
         try {
             method.invoke(instance, context);
-        } catch (InvocationTargetException e) {
-            throw new CommandException(command.command() + " threw an exception!", e);
-        } catch (IllegalAccessException e) {
+        } catch (InvocationTargetException | IllegalAccessException e) {
             throw new CommandException(command.command() + " threw an exception!", e);
         }
     }
