@@ -28,6 +28,7 @@
  */
 package org.getlwc;
 
+@Deprecated
 public interface ServerInfo {
 
     /**
