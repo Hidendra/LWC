@@ -49,18 +49,18 @@ public class StringUtils {
      * @return
      */
     public static String escapeMessageFormat(String msg) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
         char[] chrmsg = msg.toCharArray();
 
         for (int i = 0; i < chrmsg.length; i++) {
             if (chrmsg[i] == '\'') {
-                buffer.append("''");
+                builder.append("''");
             } else {
-                buffer.append(chrmsg[i]);
+                builder.append(chrmsg[i]);
             }
         }
 
-        return buffer.toString();
+        return builder.toString();
     }
 
     /**
