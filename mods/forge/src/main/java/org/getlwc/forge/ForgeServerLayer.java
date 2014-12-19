@@ -31,6 +31,7 @@ package org.getlwc.forge;
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.common.ForgeVersion;
 import org.getlwc.ServerLayer;
 import org.getlwc.World;
 import org.getlwc.entity.Player;
@@ -110,6 +111,16 @@ public class ForgeServerLayer extends ServerLayer {
 
         File runningFromJar = new File(path);
         return new File(new File(runningFromJar.getParentFile().getParent(), "config"), "LWC");
+    }
+
+    @Override
+    public String getServerImplementationTitle() {
+        return "Forge";
+    }
+
+    @Override
+    public String getServerImplementationVersion() {
+        return ForgeVersion.getVersion();
     }
 
     @Override

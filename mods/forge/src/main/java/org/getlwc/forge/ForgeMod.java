@@ -209,7 +209,7 @@ public class ForgeMod {
     public void ensureEngineLoaded() {
         if (SimpleEngine.getInstance() == null) {
             layer = new ForgeServerLayer();
-            engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new ForgeServerInfo(), new FallbackMinecraftRegistry(), new ForgeConsoleCommandSender());
+            engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new FallbackMinecraftRegistry(), new ForgeConsoleCommandSender());
 
             AbstractTransformer.init();
         } else {
