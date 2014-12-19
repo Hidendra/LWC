@@ -52,11 +52,11 @@ public class StringUtils {
         StringBuilder builder = new StringBuilder();
         char[] chrmsg = msg.toCharArray();
 
-        for (int i = 0; i < chrmsg.length; i++) {
-            if (chrmsg[i] == '\'') {
+        for (char chr : chrmsg) {
+            if (chr == '\'') {
                 builder.append("''");
             } else {
-                builder.append(chrmsg[i]);
+                builder.append(chr);
             }
         }
 

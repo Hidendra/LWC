@@ -70,8 +70,8 @@ public class MD5Checksum {
         byte[] checksum = calculateChecksum(file);
         String result = "";
 
-        for (int i = 0; i < checksum.length; i++) {
-            result += Integer.toString((checksum[i] & 0xff) + 0x100, 16).substring(1);
+        for (byte b : checksum) {
+            result += Integer.toString((b & 0xff) + 0x100, 16).substring(1);
         }
 
         return result;
