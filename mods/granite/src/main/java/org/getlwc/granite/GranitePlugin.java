@@ -28,10 +28,13 @@
  */
 package org.getlwc.granite;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 import org.getlwc.Block;
 import org.getlwc.Engine;
+import org.getlwc.EngineGuiceModule;
 import org.getlwc.ServerLayer;
-import org.getlwc.SimpleEngine;
 import org.getlwc.Version;
 import org.getlwc.command.CommandSender;
 import org.getlwc.entity.Player;
@@ -41,7 +44,6 @@ import org.getlwc.granite.experimental.GraniteCommandComposite;
 import org.getlwc.granite.listeners.GraniteListener;
 import org.getlwc.granite.permission.GranitePermissionHandler;
 import org.getlwc.granite.world.GraniteBlock;
-import org.getlwc.util.registry.FallbackMinecraftRegistry;
 import org.granitemc.granite.api.plugin.OnDisable;
 import org.granitemc.granite.api.plugin.OnEnable;
 import org.granitemc.granite.api.plugin.Plugin;
@@ -51,15 +53,16 @@ import org.granitemc.granite.reflect.GraniteServerComposite;
 @Plugin(id = Version.PLUGIN_ID,  name = Version.PLUGIN_NAME, version = Version.PLUGIN_VERSION)
 public class GranitePlugin {
 
-    private SimpleEngine engine;
+    private Engine engine;
     private ServerLayer layer;
 
     @SuppressWarnings("unused")
     @OnEnable
     public void onEnable(PluginContainer container) {
-        layer = new GraniteServerLayer(container);
+        Injector injector = Guice.createInjector(Modules.override(new EngineGuiceModule()).with(new GraniteEngineGuiceModule(container)));
+        engine = injector.getInstance(Engine.class);
+        layer = injector.getInstance(ServerLayer.class);
 
-        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new FallbackMinecraftRegistry(), new GraniteConsoleCommandSender());
         engine.setPermissionHandler(new GranitePermissionHandler());
         engine.getEventBus().post(new ServerStartingEvent());
 

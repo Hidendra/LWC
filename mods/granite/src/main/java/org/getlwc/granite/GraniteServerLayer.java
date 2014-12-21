@@ -39,6 +39,7 @@ import org.granitemc.granite.reflect.GraniteServerComposite;
 import org.granitemc.granite.utils.Mappings;
 import org.granitemc.granite.utils.MinecraftUtils;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.UUID;
@@ -47,6 +48,7 @@ public class GraniteServerLayer extends ServerLayer {
 
     private PluginContainer container;
 
+    @Inject
     public GraniteServerLayer(PluginContainer container) {
         this.container = container;
     }
