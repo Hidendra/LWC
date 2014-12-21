@@ -28,25 +28,35 @@
  */
 package org.getlwc.canary;
 
+import com.google.inject.Provides;
 import net.canarymod.logger.Logman;
+import org.getlwc.AbstractEngineGuiceModule;
+import org.getlwc.ServerLayer;
 import org.getlwc.command.ConsoleCommandSender;
 
-import javax.inject.Inject;
+public class CanaryEngineGuiceModule extends AbstractEngineGuiceModule {
 
-public class CanaryConsoleCommandSender extends ConsoleCommandSender {
+    private CanaryPlugin plugin;
 
-    private Logman logger;
-
-    @Inject
-    public CanaryConsoleCommandSender(Logman logger) {
-        this.logger = logger;
+    public CanaryEngineGuiceModule(CanaryPlugin plugin) {
+        this.plugin = plugin;
     }
 
     @Override
-    public void sendMessage(String message) {
-        for (String line : message.split("\n")) {
-            logger.info(line);
-        }
+    protected void configure() {
+        super.configure();
+        bind(ConsoleCommandSender.class).to(CanaryConsoleCommandSender.class);
+        bind(ServerLayer.class).to(CanaryServerLayer.class);
+    }
+
+    @Provides
+    public CanaryPlugin provideCanaryPlugin() {
+        return plugin;
+    }
+
+    @Provides
+    public Logman provideLogman() {
+        return plugin.getLogman();
     }
 
 }

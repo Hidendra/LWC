@@ -53,16 +53,11 @@ import org.getlwc.event.server.ServerStoppingEvent;
 import org.getlwc.permission.DefaultPermissionHandler;
 import org.getlwc.permission.PermissionHandler;
 import org.getlwc.util.registry.MinecraftRegistry;
-import org.getlwc.util.resource.Resource;
 import org.getlwc.util.resource.ResourceDownloader;
 import org.getlwc.util.resource.SimpleResourceDownloader;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.InputStreamReader;
-import java.util.Map;
 
 @Singleton
 public class SimpleEngine implements Engine {
@@ -70,36 +65,42 @@ public class SimpleEngine implements Engine {
     /**
      * The instance of the engine
      */
+    @Deprecated
     private static SimpleEngine instance = null;
 
     /**
      * The event bus for this engine
      */
-    private EventBus eventBus = new SimpleEventBus();
+    private EventBus eventBus;
 
     /**
      * The protection manager
      */
+    @Inject
     private SimpleProtectionManager protectionManager;
 
     /**
      * The {@link org.getlwc.util.resource.ResourceDownloader} responsible for downloading library files
      */
+    @Inject
     private SimpleResourceDownloader downloader;
 
     /**
      * The server layer
      */
+    @Inject
     private ServerLayer serverLayer;
 
     /**
      * The command handler
      */
+    @Inject
     private SimpleCommandHandler commandHandler;
 
     /**
      * The console sender
      */
+    @Inject
     private ConsoleCommandSender consoleSender;
 
     /**
@@ -120,6 +121,7 @@ public class SimpleEngine implements Engine {
     /**
      * The minecraft registry
      */
+    @Inject
     private MinecraftRegistry minecraftRegistry;
 
     /**
@@ -132,10 +134,17 @@ public class SimpleEngine implements Engine {
      */
     private PermissionHandler permissionHandler = new DefaultPermissionHandler();
 
-    private SimpleEngine(ServerLayer serverLayer, ConsoleCommandSender consoleSender) {
-        this.serverLayer = serverLayer;
-        this.consoleSender = consoleSender;
+    @Inject
+    public SimpleEngine(EventBus eventBus) {
+        this.eventBus = eventBus;
+        instance = this; // TODO deprecated
 
+        eventBus.subscribe(this);
+    }
+
+    @SuppressWarnings("unused")
+    @Listener
+    public void onStartup(ServerStartingEvent event) {
         serverLayer.getDataFolder().mkdirs();
 
         downloader = new SimpleResourceDownloader(this);
@@ -153,14 +162,10 @@ public class SimpleEngine implements Engine {
         configuration = new YamlConfiguration("config.yml");
         languagesConfig = new YamlConfiguration(getClass().getResourceAsStream("/languages.yml"));
         I18n.init(this);
-        eventBus.subscribe(this);
 
         consoleSender.sendMessage("Server: {0} ({1})", serverLayer.getImplementationTitle(), serverLayer.getImplementationVersion());
         consoleSender.sendMessage("Plugin: {0} ({1})", getImplementationTitle(), getImplementationVersion());
-    }
 
-    @Listener
-    public void onStartup(ServerStartingEvent event) {
         commandHandler = new SimpleCommandHandler(this);
         protectionManager = new SimpleProtectionManager(this);
 
@@ -174,6 +179,7 @@ public class SimpleEngine implements Engine {
         consoleSender.sendMessage("Permission handler: {0}", permissionHandler.getName());
     }
 
+    @SuppressWarnings("unused")
     @Listener
     public void onShutdown(ServerStoppingEvent event) {
         consoleSender.sendMessage("Shutting down!");
@@ -188,32 +194,8 @@ public class SimpleEngine implements Engine {
      *
      * @return
      */
+    @Deprecated
     public static SimpleEngine getInstance() {
-        return instance;
-    }
-
-    /**
-     * Create an LWC Engine
-     *
-     * @param serverLayer
-     * @param consoleSender
-     * @return
-     */
-    public static Engine getOrCreateEngine(ServerLayer serverLayer, MinecraftRegistry registry, ConsoleCommandSender consoleSender) {
-        if (instance != null) {
-            return instance;
-        }
-
-        if (serverLayer == null) {
-            throw new IllegalArgumentException("Server layer object cannot be null");
-        }
-        if (consoleSender == null) {
-            throw new IllegalArgumentException("Console sender object cannot be null");
-        }
-
-        instance = new SimpleEngine(serverLayer, consoleSender);
-        instance.minecraftRegistry = registry;
-
         return instance;
     }
 

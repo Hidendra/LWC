@@ -35,6 +35,7 @@ import org.getlwc.canary.entity.CanaryPlayer;
 import org.getlwc.canary.world.CanaryWorld;
 import org.getlwc.entity.Player;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.util.UUID;
 
@@ -45,6 +46,7 @@ public class CanaryServerLayer extends ServerLayer {
      */
     private CanaryPlugin plugin;
 
+    @Inject
     public CanaryServerLayer(CanaryPlugin plugin) {
         this.plugin = plugin;
     }

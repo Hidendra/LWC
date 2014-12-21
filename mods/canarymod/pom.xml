@@ -38,6 +38,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>3.0</version>
+        </dependency>
+        <dependency>
             <groupId>net.canarymod</groupId>
             <artifactId>CanaryLib</artifactId>
             <version>1.2.0-SNAPSHOT</version>

@@ -28,9 +28,13 @@
  */
 package org.getlwc.canary;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Provides;
 import net.canarymod.Canary;
 import net.canarymod.api.inventory.Enchantment;
 import net.canarymod.api.inventory.Item;
+import net.canarymod.logger.Logman;
 import net.canarymod.plugin.Plugin;
 import org.getlwc.Engine;
 import org.getlwc.ItemStack;
@@ -61,7 +65,10 @@ public class CanaryPlugin extends Plugin {
 
     @Override
     public boolean enable() {
-        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new FallbackMinecraftRegistry(), new CanaryConsoleCommandSender(getLogman()));
+        Injector injector = Guice.createInjector(new CanaryEngineGuiceModule(this));
+        engine = (SimpleEngine) injector.getInstance(Engine.class);
+        System.out.println("engine = " + engine);
+
         engine.setPermissionHandler(new CanaryPermissionHandler());
 
         engine.getEventBus().subscribe(new EngineEventListener(engine, this));
@@ -77,6 +84,11 @@ public class CanaryPlugin extends Plugin {
     public void disable() {
         engine.getEventBus().post(new ServerStoppingEvent());
         engine = null;
+    }
+
+    @Provides
+    public CanaryPlugin providePlugin() {
+        return this;
     }
 
     /**
