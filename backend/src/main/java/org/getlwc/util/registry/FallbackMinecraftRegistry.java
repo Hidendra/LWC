@@ -31,6 +31,7 @@ package org.getlwc.util.registry;
 import org.getlwc.BlockType;
 import org.getlwc.ItemType;
 
+import javax.inject.Singleton;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -43,6 +44,7 @@ import java.util.Map;
  * A fallback registry that loads item and block names from text files.
  * Legacy integer ids are supported.
  */
+@Singleton
 public class FallbackMinecraftRegistry implements MinecraftRegistry {
 
     public static final String BLOCK_REGISTRY_RESOURCE = "/registry/blocks.csv";

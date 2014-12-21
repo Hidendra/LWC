@@ -32,6 +32,7 @@ import org.getlwc.Engine;
 import org.getlwc.util.ClassUtils;
 import org.getlwc.util.MD5Checksum;
 
+import javax.inject.Singleton;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,6 +46,7 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
+@Singleton
 public class SimpleResourceDownloader implements ResourceDownloader {
 
     /**

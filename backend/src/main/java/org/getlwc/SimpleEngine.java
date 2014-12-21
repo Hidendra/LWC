@@ -60,9 +60,11 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import javax.inject.Singleton;
 import java.io.InputStreamReader;
 import java.util.Map;
 
+@Singleton
 public class SimpleEngine implements Engine {
 
     /**

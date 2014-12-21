@@ -35,6 +35,7 @@ import org.getlwc.event.handler.EventHandler;
 import org.getlwc.event.handler.FilteredHandler;
 import org.getlwc.event.handler.SubscribeHandler;
 
+import javax.inject.Singleton;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Singleton
 public class SimpleEventBus implements EventBus {
 
     /**

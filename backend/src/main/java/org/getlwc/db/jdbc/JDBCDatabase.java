@@ -47,6 +47,7 @@ import org.getlwc.role.Role;
 import org.getlwc.role.RoleCreationException;
 import org.getlwc.util.Tuple;
 
+import javax.inject.Singleton;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -59,6 +60,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Singleton
 public class JDBCDatabase implements Database {
 
     public enum Driver {

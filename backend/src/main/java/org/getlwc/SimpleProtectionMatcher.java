@@ -28,9 +28,11 @@
  */
 package org.getlwc;
 
+import javax.inject.Singleton;
 import java.util.HashSet;
 import java.util.Set;
 
+@Singleton
 public class SimpleProtectionMatcher implements ProtectionMatcher {
 
     @Override

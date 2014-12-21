@@ -35,6 +35,7 @@ import org.getlwc.event.engine.BaseCommandRegisteredEvent;
 import org.getlwc.util.StringUtils;
 import org.getlwc.util.Tuple;
 
+import javax.inject.Singleton;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Singleton
 public class SimpleCommandHandler implements CommandHandler {
 
     /**

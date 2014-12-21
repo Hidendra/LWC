@@ -38,12 +38,14 @@ import org.getlwc.model.Protection;
 import org.getlwc.model.Savable;
 import org.getlwc.role.Role;
 
+import javax.inject.Singleton;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Singleton
 public class MemoryDatabase implements Database {
 
     /**

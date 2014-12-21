@@ -38,11 +38,13 @@ import org.getlwc.role.RoleCreationException;
 import org.getlwc.role.RoleRegistry;
 import org.getlwc.role.SimpleRoleRegistry;
 
+import javax.inject.Singleton;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+@Singleton
 public class SimpleProtectionManager implements ProtectionManager {
 
     /**
