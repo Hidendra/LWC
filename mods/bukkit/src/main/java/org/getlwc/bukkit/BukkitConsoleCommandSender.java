@@ -31,6 +31,8 @@ package org.getlwc.bukkit;
 import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.util.Color;
 
+import javax.inject.Inject;
+
 public class BukkitConsoleCommandSender extends ConsoleCommandSender {
 
     /**
@@ -38,6 +40,7 @@ public class BukkitConsoleCommandSender extends ConsoleCommandSender {
      */
     private org.bukkit.command.ConsoleCommandSender handle;
 
+    @Inject
     public BukkitConsoleCommandSender(org.bukkit.command.ConsoleCommandSender handle) {
         if (handle == null) {
             throw new IllegalArgumentException("Console sender handle cannot be null");

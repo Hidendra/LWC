@@ -28,14 +28,17 @@
  */
 package org.getlwc.bukkit;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.getlwc.Block;
 import org.getlwc.Engine;
+import org.getlwc.EngineGuiceModule;
 import org.getlwc.ItemStack;
 import org.getlwc.Location;
 import org.getlwc.ServerLayer;
-import org.getlwc.SimpleEngine;
 import org.getlwc.World;
 import org.getlwc.bukkit.economy.VaultEconomyHandler;
 import org.getlwc.bukkit.entity.BukkitEntity;
@@ -46,7 +49,6 @@ import org.getlwc.entity.Entity;
 import org.getlwc.entity.Player;
 import org.getlwc.event.server.ServerStartingEvent;
 import org.getlwc.event.server.ServerStoppingEvent;
-import org.getlwc.util.registry.FallbackMinecraftRegistry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,8 +58,7 @@ import java.util.logging.Logger;
 
 public class BukkitPlugin extends JavaPlugin implements Listener {
 
-    private Logger logger = null;
-    private SimpleEngine engine;
+    private Engine engine;
 
     /**
      * The server layer that provides Bukkit-specific calls
@@ -110,8 +111,8 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        logger = this.getLogger();
-        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new FallbackMinecraftRegistry(), new BukkitConsoleCommandSender(getServer().getConsoleSender()));
+        Injector injector = Guice.createInjector(Modules.override(new EngineGuiceModule()).with(new BukkitEngineGuiceModule(this)));
+        engine = injector.getInstance(Engine.class);
 
         // Register events
         getServer().getPluginManager().registerEvents(this, this);

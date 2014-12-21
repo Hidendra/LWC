@@ -35,6 +35,7 @@ import org.getlwc.bukkit.entity.BukkitPlayer;
 import org.getlwc.bukkit.world.BukkitWorld;
 import org.getlwc.entity.Player;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.util.UUID;
 
@@ -42,6 +43,7 @@ public class BukkitServerLayer extends ServerLayer {
 
     private BukkitPlugin plugin;
 
+    @Inject
     public BukkitServerLayer(BukkitPlugin plugin) {
         this.plugin = plugin;
     }

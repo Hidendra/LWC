@@ -44,8 +44,8 @@ public class CanaryEngineGuiceModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(ConsoleCommandSender.class).to(CanaryConsoleCommandSender.class);
         bind(ServerLayer.class).to(CanaryServerLayer.class);
+        bind(ConsoleCommandSender.class).to(CanaryConsoleCommandSender.class);
     }
 
     @Provides
