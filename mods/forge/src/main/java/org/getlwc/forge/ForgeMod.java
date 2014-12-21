@@ -28,6 +28,9 @@
  */
 package org.getlwc.forge;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
@@ -42,8 +45,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.MinecraftForge;
 import org.getlwc.Engine;
+import org.getlwc.EngineGuiceModule;
 import org.getlwc.ItemStack;
-import org.getlwc.SimpleEngine;
+import org.getlwc.ServerLayer;
 import org.getlwc.Version;
 import org.getlwc.World;
 import org.getlwc.command.Command;
@@ -61,13 +65,15 @@ import org.getlwc.forge.asm.TransformerStatus;
 import org.getlwc.forge.entity.ForgeEntity;
 import org.getlwc.forge.listeners.ForgeListener;
 import org.getlwc.forge.permission.ForgePermissionHandler;
-import org.getlwc.util.registry.FallbackMinecraftRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Mod(modid = Version.PLUGIN_ID, name = Version.PLUGIN_NAME, version = Version.PLUGIN_VERSION, acceptableRemoteVersions = "*")
 public class ForgeMod {
+
+    private Engine engine;
+    private ServerLayer layer;
 
     // The instance of your mod that Forge uses.
     @Mod.Instance
@@ -76,16 +82,6 @@ public class ForgeMod {
     // Says where the client and server 'proxy' code is loaded.
     @SidedProxy(clientSide = "org.getlwc.forge.client.LWCClientProxy", serverSide = "org.getlwc.forge.server.LWCServerProxy")
     public static CommonProxy proxy;
-
-    /**
-     * The LWC engine
-     */
-    private SimpleEngine engine;
-
-    /**
-     * The server layer
-     */
-    private ForgeServerLayer layer;
 
     /**
      * The event listener
@@ -122,7 +118,6 @@ public class ForgeMod {
         }
 
         proxy.init();
-        layer.init();
 
         MinecraftForge.EVENT_BUS.register(listener);
         FMLCommonHandler.instance().bus().register(listener); // required for FML events
@@ -142,7 +137,6 @@ public class ForgeMod {
     public void serverStopping(FMLServerStoppingEvent event) {
         if (LWCCorePlugin.INITIALIZED) {
             MinecraftForge.EVENT_BUS.unregister(listener);
-            layer.clearCache();
             engine.getEventBus().post(new ServerStoppingEvent());
             engine = null;
         }
@@ -207,14 +201,12 @@ public class ForgeMod {
      * the Mod stage.
      */
     public void ensureEngineLoaded() {
-        if (SimpleEngine.getInstance() == null) {
-            layer = new ForgeServerLayer();
-            engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new FallbackMinecraftRegistry(), new ForgeConsoleCommandSender());
+        if (engine == null) {
+            Injector injector = Guice.createInjector(Modules.override(new EngineGuiceModule()).with(new ForgeEngineGuiceModule(this)));
+            engine = injector.getInstance(Engine.class);
+            layer = injector.getInstance(ServerLayer.class);
 
             AbstractTransformer.init();
-        } else {
-            engine = SimpleEngine.getInstance();
-            layer = (ForgeServerLayer) engine.getServerLayer();
         }
     }
 

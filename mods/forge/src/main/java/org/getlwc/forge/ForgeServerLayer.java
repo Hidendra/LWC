@@ -35,11 +35,16 @@ import net.minecraftforge.common.ForgeVersion;
 import org.getlwc.ServerLayer;
 import org.getlwc.World;
 import org.getlwc.entity.Player;
+import org.getlwc.event.EventBus;
+import org.getlwc.event.Listener;
+import org.getlwc.event.server.ServerStartingEvent;
+import org.getlwc.event.server.ServerStoppingEvent;
 import org.getlwc.forge.entity.ForgePlayer;
 import org.getlwc.forge.modsupport.BuildCraft;
 import org.getlwc.forge.modsupport.ModSupport;
 import org.getlwc.forge.world.ForgeWorld;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.util.UUID;
 
@@ -50,8 +55,22 @@ public class ForgeServerLayer extends ServerLayer {
      */
     private ForgeMod mod;
 
-    public ForgeServerLayer() {
-        mod = ForgeMod.instance;
+    @Inject
+    public ForgeServerLayer(ForgeMod mod, EventBus eventBus) {
+        this.mod = mod;
+        eventBus.subscribe(this);
+    }
+
+    @SuppressWarnings("unused")
+    @Listener
+    public void onServerStartup(ServerStartingEvent event) {
+        init();
+    }
+
+    @SuppressWarnings("unused")
+    @Listener
+    public void onServerStop(ServerStoppingEvent event) {
+        clearCache();
     }
 
     /**

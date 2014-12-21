@@ -26,36 +26,30 @@
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-package org.getlwc.bukkit;
+package org.getlwc.forge;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import org.bukkit.Bukkit;
 import org.getlwc.ServerLayer;
 import org.getlwc.command.ConsoleCommandSender;
 
-public class BukkitEngineGuiceModule extends AbstractModule {
+public class ForgeEngineGuiceModule extends AbstractModule {
 
-    private BukkitPlugin plugin;
+    private ForgeMod mod;
 
-    public BukkitEngineGuiceModule(BukkitPlugin plugin) {
-        this.plugin = plugin;
+    public ForgeEngineGuiceModule(ForgeMod mod) {
+        this.mod = mod;
     }
 
     @Override
     protected void configure() {
-        bind(ServerLayer.class).to(BukkitServerLayer.class);
-        bind(ConsoleCommandSender.class).to(BukkitConsoleCommandSender.class);
+        bind(ServerLayer.class).to(ForgeServerLayer.class);
+        bind(ConsoleCommandSender.class).to(ForgeConsoleCommandSender.class);
     }
 
     @Provides
-    public BukkitPlugin providePlugin() {
-        return plugin;
-    }
-
-    @Provides
-    public org.bukkit.command.ConsoleCommandSender provideConsoleCommandSender() {
-        return Bukkit.getServer().getConsoleSender();
+    public ForgeMod provideForgeMod() {
+        return mod;
     }
 
 }
