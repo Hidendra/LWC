@@ -28,12 +28,15 @@
  */
 package org.getlwc.sponge;
 
+import com.google.inject.Guice;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 import org.getlwc.Block;
 import org.getlwc.Engine;
+import org.getlwc.EngineGuiceModule;
 import org.getlwc.ItemStack;
 import org.getlwc.ServerLayer;
-import org.getlwc.SimpleEngine;
 import org.getlwc.Version;
 import org.getlwc.World;
 import org.getlwc.entity.Player;
@@ -57,7 +60,7 @@ import java.util.HashMap;
 public class SpongePlugin {
 
     public static SpongePlugin instance;
-    private SimpleEngine engine;
+    private Engine engine;
     private ServerLayer layer;
     private Game game;
 
@@ -74,9 +77,11 @@ public class SpongePlugin {
 
         instance = this;
         game = event.getGame();
-        layer = new SpongeServerLayer(this, game);
 
-        engine = (SimpleEngine) SimpleEngine.getOrCreateEngine(layer, new SpongeMinecraftRegistry(game), new SpongeConsoleCommandSender());
+        Injector injector = Guice.createInjector(Modules.override(new EngineGuiceModule()).with(new SpongeEngineGuiceModule(this, game)));
+        engine = injector.getInstance(Engine.class);
+        layer = injector.getInstance(ServerLayer.class);
+
         engine.setPermissionHandler(new SpongePermissionHandler());
         engine.getEventBus().subscribe(new EngineEventListener(this));
         engine.getEventBus().post(new org.getlwc.event.server.ServerStartingEvent());

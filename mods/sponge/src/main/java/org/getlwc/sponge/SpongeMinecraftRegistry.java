@@ -33,10 +33,13 @@ import org.getlwc.ItemType;
 import org.getlwc.util.registry.AbstractMinecraftRegistry;
 import org.spongepowered.api.Game;
 
+import javax.inject.Inject;
+
 public class SpongeMinecraftRegistry extends AbstractMinecraftRegistry {
 
     private Game game;
 
+    @Inject
     public SpongeMinecraftRegistry(Game game) {
         this.game = game;
     }
