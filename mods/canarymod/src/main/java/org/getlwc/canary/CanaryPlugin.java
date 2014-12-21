@@ -56,16 +56,13 @@ import java.util.Map;
 public class CanaryPlugin extends Plugin {
 
     private Engine engine;
-
-    /**
-     * The server layer that provides Canary-specific calls
-     */
-    private final ServerLayer layer = new CanaryServerLayer(this);
+    private ServerLayer layer;
 
     @Override
     public boolean enable() {
         Injector injector = Guice.createInjector(Modules.override(new EngineGuiceModule()).with(new CanaryEngineGuiceModule(this)));
         engine = injector.getInstance(Engine.class);
+        layer = injector.getInstance(ServerLayer.class);
 
         engine.setPermissionHandler(new CanaryPermissionHandler());
 

@@ -59,11 +59,7 @@ import java.util.logging.Logger;
 public class BukkitPlugin extends JavaPlugin implements Listener {
 
     private Engine engine;
-
-    /**
-     * The server layer that provides Bukkit-specific calls
-     */
-    private final ServerLayer layer = new BukkitServerLayer(this);
+    private ServerLayer layer;
 
     /**
      * Get the LWC engine
@@ -113,6 +109,7 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
     public void onEnable() {
         Injector injector = Guice.createInjector(Modules.override(new EngineGuiceModule()).with(new BukkitEngineGuiceModule(this)));
         engine = injector.getInstance(Engine.class);
+        layer = injector.getInstance(ServerLayer.class);
 
         // Register events
         getServer().getPluginManager().registerEvents(this, this);
