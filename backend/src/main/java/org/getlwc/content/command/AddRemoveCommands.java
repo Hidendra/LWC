@@ -26,9 +26,12 @@
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-package org.getlwc.command;
+package org.getlwc.content.command;
 
 import org.getlwc.Engine;
+import org.getlwc.command.Command;
+import org.getlwc.command.CommandContext;
+import org.getlwc.command.SenderType;
 import org.getlwc.component.RoleSetComponent;
 import org.getlwc.content.role.PlayerRole;
 import org.getlwc.entity.Player;

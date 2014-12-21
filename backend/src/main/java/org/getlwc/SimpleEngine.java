@@ -28,9 +28,9 @@
  */
 package org.getlwc;
 
-import org.getlwc.command.AddRemoveCommands;
-import org.getlwc.command.BaseCommands;
-import org.getlwc.command.BenchmarkCommands;
+import org.getlwc.content.command.AddRemoveCommands;
+import org.getlwc.content.command.BaseCommands;
+import org.getlwc.content.command.BenchmarkCommands;
 import org.getlwc.command.CommandException;
 import org.getlwc.command.CommandHandler;
 import org.getlwc.command.ConsoleCommandSender;
