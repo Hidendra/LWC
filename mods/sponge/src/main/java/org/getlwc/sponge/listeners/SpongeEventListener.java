@@ -32,7 +32,7 @@ import org.getlwc.Block;
 import org.getlwc.EventHelper;
 import org.getlwc.entity.Player;
 import org.getlwc.sponge.SpongePlugin;
-import org.spongepowered.api.event.player.PlayerInteractBlockEvent;
+import org.spongepowered.api.event.player.PlayerInteractEvent;
 import org.spongepowered.api.event.player.PlayerJoinEvent;
 import org.spongepowered.api.event.player.PlayerQuitEvent;
 import org.spongepowered.api.util.event.Order;
@@ -60,7 +60,7 @@ public class SpongeEventListener {
 
     @SuppressWarnings("unused")
     @Subscribe(order = Order.FIRST, ignoreCancelled = true)
-    public void onPlayerInteract(PlayerInteractBlockEvent event) {
+    public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = plugin.wrapPlayer(event.getPlayer());
         Block block = plugin.wrapBlock(event.getBlock());
 
