@@ -125,10 +125,24 @@ public interface Engine {
     public EconomyHandler getEconomyHandler();
 
     /**
+     * Sets the economy handler for the server
+     *
+     * @param handler
+     */
+    public void setEconomyHandler(EconomyHandler handler);
+
+    /**
      * Get the permission handler for the server
      *
      * @return
      */
     public PermissionHandler getPermissionHandler();
+
+    /**
+     * Sets the permission handler for the server
+     *
+     * @param handler
+     */
+    public void setPermissionHandler(PermissionHandler handler);
 
 }

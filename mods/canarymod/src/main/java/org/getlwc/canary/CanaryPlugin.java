@@ -31,16 +31,16 @@ package org.getlwc.canary;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
+import com.google.inject.util.Modules;
 import net.canarymod.Canary;
 import net.canarymod.api.inventory.Enchantment;
 import net.canarymod.api.inventory.Item;
-import net.canarymod.logger.Logman;
 import net.canarymod.plugin.Plugin;
 import org.getlwc.Engine;
+import org.getlwc.EngineGuiceModule;
 import org.getlwc.ItemStack;
 import org.getlwc.Location;
 import org.getlwc.ServerLayer;
-import org.getlwc.SimpleEngine;
 import org.getlwc.canary.entity.CanaryEntity;
 import org.getlwc.canary.listeners.CanaryListener;
 import org.getlwc.canary.permission.CanaryPermissionHandler;
@@ -49,14 +49,13 @@ import org.getlwc.entity.Player;
 import org.getlwc.event.server.ServerStartingEvent;
 import org.getlwc.event.server.ServerStoppingEvent;
 import org.getlwc.lang.Locale;
-import org.getlwc.util.registry.FallbackMinecraftRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class CanaryPlugin extends Plugin {
 
-    private SimpleEngine engine;
+    private Engine engine;
 
     /**
      * The server layer that provides Canary-specific calls
@@ -65,9 +64,8 @@ public class CanaryPlugin extends Plugin {
 
     @Override
     public boolean enable() {
-        Injector injector = Guice.createInjector(new CanaryEngineGuiceModule(this));
-        engine = (SimpleEngine) injector.getInstance(Engine.class);
-        System.out.println("engine = " + engine);
+        Injector injector = Guice.createInjector(Modules.override(new EngineGuiceModule()).with(new CanaryEngineGuiceModule(this)));
+        engine = injector.getInstance(Engine.class);
 
         engine.setPermissionHandler(new CanaryPermissionHandler());
 

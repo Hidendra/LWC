@@ -47,7 +47,6 @@ import org.getlwc.economy.DefaultEconomyHandler;
 import org.getlwc.economy.EconomyHandler;
 import org.getlwc.event.EventBus;
 import org.getlwc.event.Listener;
-import org.getlwc.event.SimpleEventBus;
 import org.getlwc.event.server.ServerStartingEvent;
 import org.getlwc.event.server.ServerStoppingEvent;
 import org.getlwc.permission.DefaultPermissionHandler;
@@ -209,11 +208,7 @@ public class SimpleEngine implements Engine {
         return economyHandler;
     }
 
-    /**
-     * Set the economy handler that will be used for the server
-     *
-     * @param economyHandler
-     */
+    @Override
     public void setEconomyHandler(EconomyHandler economyHandler) {
         this.economyHandler = economyHandler;
     }
@@ -223,11 +218,7 @@ public class SimpleEngine implements Engine {
         return permissionHandler;
     }
 
-    /**
-     * Set the permission handler that will be used for the server
-     *
-     * @param permissionHandler
-     */
+    @Override
     public void setPermissionHandler(PermissionHandler permissionHandler) {
         this.permissionHandler = permissionHandler;
     }

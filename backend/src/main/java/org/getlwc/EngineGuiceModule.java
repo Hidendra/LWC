@@ -39,11 +39,10 @@ import org.getlwc.util.resource.ResourceDownloader;
 import org.getlwc.util.resource.SimpleResourceDownloader;
 
 /**
- * An abstract Engine Guice module. This provides default binds for
- * the engine, except for {@link org.getlwc.ServerLayer} and
- * {@link org.getlwc.command.ConsoleCommandSender}
+ * The main Engine Guice module. This provides sane default binds for the engine,
+ * except for {@link org.getlwc.ServerLayer} and {@link org.getlwc.command.ConsoleCommandSender}
  */
-public class AbstractEngineGuiceModule extends AbstractModule {
+public class EngineGuiceModule extends AbstractModule {
 
     @Override
     protected void configure() {

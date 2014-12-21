@@ -28,13 +28,13 @@
  */
 package org.getlwc.canary;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import net.canarymod.logger.Logman;
-import org.getlwc.AbstractEngineGuiceModule;
 import org.getlwc.ServerLayer;
 import org.getlwc.command.ConsoleCommandSender;
 
-public class CanaryEngineGuiceModule extends AbstractEngineGuiceModule {
+public class CanaryEngineGuiceModule extends AbstractModule {
 
     private CanaryPlugin plugin;
 
@@ -44,7 +44,6 @@ public class CanaryEngineGuiceModule extends AbstractEngineGuiceModule {
 
     @Override
     protected void configure() {
-        super.configure();
         bind(ConsoleCommandSender.class).to(CanaryConsoleCommandSender.class);
         bind(ServerLayer.class).to(CanaryServerLayer.class);
     }
