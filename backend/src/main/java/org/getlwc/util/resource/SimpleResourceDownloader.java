@@ -31,7 +31,11 @@ package org.getlwc.util.resource;
 import org.getlwc.Engine;
 import org.getlwc.util.ClassUtils;
 import org.getlwc.util.MD5Checksum;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.BufferedReader;
 import java.io.File;
@@ -69,9 +73,55 @@ public class SimpleResourceDownloader implements ResourceDownloader {
      */
     private final Map<String, Resource> resources = new HashMap<>();
 
-    public SimpleResourceDownloader(Engine engine, String baseUrl) {
+    @Inject
+    public SimpleResourceDownloader(Engine engine) {
         this.engine = engine;
-        this.baseUrl = baseUrl;
+    }
+
+    /**
+     * Loads resources
+     */
+    public boolean loadResources() {
+        JSONObject root = (JSONObject) JSONValue.parse(new InputStreamReader(getClass().getResourceAsStream("/resources.json")));
+
+        if (root == null) {
+            return false;
+        }
+
+        this.baseUrl = root.get("url").toString();
+
+        Map<?, ?> resources = (Map<?, ?>) root.get("resources");
+
+        for (Map.Entry<?, ?> entry : resources.entrySet()) {
+            String resourceKey = entry.getKey().toString();
+            Map<?, ?> resourceData = (Map<?, ?>) entry.getValue();
+
+            Resource resource = new Resource(resourceKey);
+
+            if (resourceData.containsKey("class")) {
+                resource.setTestClass(resourceData.get("class").toString());
+            }
+
+            if (resourceData.containsKey("outputDir")) {
+                resource.setOutputDir(resourceData.get("outputDir").toString());
+            }
+
+            if (resourceData.containsKey("requires")) {
+                for (Object dependency : (JSONArray) resourceData.get("requires")) {
+                    resource.addDependency(dependency.toString());
+                }
+            }
+
+            if (resourceData.containsKey("files")) {
+                for (Object fileObject : (JSONArray) resourceData.get("files")) {
+                    resource.addFile(fileObject.toString());
+                }
+            }
+
+            addResource(resource);
+        }
+
+        return true;
     }
 
     @Override

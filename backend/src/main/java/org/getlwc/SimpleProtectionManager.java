@@ -38,6 +38,7 @@ import org.getlwc.role.RoleCreationException;
 import org.getlwc.role.RoleRegistry;
 import org.getlwc.role.SimpleRoleRegistry;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.HashSet;
 import java.util.Map;
@@ -57,6 +58,7 @@ public class SimpleProtectionManager implements ProtectionManager {
      */
     private final RoleRegistry roleRegistry = new SimpleRoleRegistry();
 
+    @Inject
     public SimpleProtectionManager(Engine engine) {
         this.engine = engine;
 

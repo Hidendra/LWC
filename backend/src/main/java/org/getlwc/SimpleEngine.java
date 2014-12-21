@@ -138,7 +138,12 @@ public class SimpleEngine implements Engine {
 
         serverLayer.getDataFolder().mkdirs();
 
-        loadResourceDownloader();
+        downloader = new SimpleResourceDownloader(this);
+
+        if (!downloader.loadResources()) {
+            consoleSender.sendMessage("Failed to load resources.json. No libraries will be downloaded or loaded.");
+        }
+
         downloader.ensureResourceInstalled("gettext");
         downloader.ensureResourceInstalled("snakeyaml");
 
@@ -302,47 +307,6 @@ public class SimpleEngine implements Engine {
      */
     public Configuration getLanguagesConfiguration() {
         return languagesConfig;
-    }
-
-    private void loadResourceDownloader() {
-        JSONObject root = (JSONObject) JSONValue.parse(new InputStreamReader(getClass().getResourceAsStream("/resources.json")));
-
-        if (root == null) {
-            consoleSender.sendMessage("Failed to load resources.json. No libraries will be downloaded or loaded.");
-            return;
-        }
-
-        downloader = new SimpleResourceDownloader(this, root.get("url").toString());
-        Map<?, ?> resources = (Map<?, ?>) root.get("resources");
-
-        for (Map.Entry<?, ?> entry : resources.entrySet()) {
-            String resourceKey = entry.getKey().toString();
-            Map<?, ?> resourceData = (Map<?, ?>) entry.getValue();
-
-            Resource resource = new Resource(resourceKey);
-
-            if (resourceData.containsKey("class")) {
-                resource.setTestClass(resourceData.get("class").toString());
-            }
-
-            if (resourceData.containsKey("outputDir")) {
-                resource.setOutputDir(resourceData.get("outputDir").toString());
-            }
-
-            if (resourceData.containsKey("requires")) {
-                for (Object dependency : (JSONArray) resourceData.get("requires")) {
-                    resource.addDependency(dependency.toString());
-                }
-            }
-
-            if (resourceData.containsKey("files")) {
-                for (Object fileObject : (JSONArray) resourceData.get("files")) {
-                    resource.addFile(fileObject.toString());
-                }
-            }
-
-            downloader.addResource(resource);
-        }
     }
 
     /**

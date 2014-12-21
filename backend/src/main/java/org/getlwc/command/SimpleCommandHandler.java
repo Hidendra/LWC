@@ -35,6 +35,7 @@ import org.getlwc.event.engine.BaseCommandRegisteredEvent;
 import org.getlwc.util.StringUtils;
 import org.getlwc.util.Tuple;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -79,6 +80,7 @@ public class SimpleCommandHandler implements CommandHandler {
      */
     private final Set<String> baseCommands = new HashSet<>();
 
+    @Inject
     public SimpleCommandHandler(Engine engine) {
         this.engine = engine;
     }
