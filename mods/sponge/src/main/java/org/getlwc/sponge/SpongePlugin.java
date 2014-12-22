@@ -62,6 +62,8 @@ public class SpongePlugin {
     public static SpongePlugin instance;
     private Engine engine;
     private ServerLayer layer;
+
+    @Inject
     private Game game;
 
     @Inject
@@ -76,7 +78,6 @@ public class SpongePlugin {
         }
 
         instance = this;
-        game = event.getGame();
 
         Injector injector = Guice.createInjector(Modules.override(new EngineGuiceModule()).with(new SpongeEngineGuiceModule(this, game)));
         engine = injector.getInstance(Engine.class);
