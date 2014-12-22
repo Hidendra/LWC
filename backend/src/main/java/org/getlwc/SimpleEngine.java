@@ -187,7 +187,6 @@ public class SimpleEngine implements Engine {
         database = null;
     }
 
-
     /**
      * Gets the Engine instance. Does not create the engine if it has not been created.
      *
