@@ -30,6 +30,7 @@ package com.griefcraft.util.matchers;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.util.ProtectionFinder;
+import com.griefcraft.util.SetUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -43,7 +44,33 @@ import java.util.Set;
 public class DoorMatcher implements ProtectionFinder.Matcher {
 
     public static final Set<Material> PROTECTABLES_DOORS = EnumSet.of(Material.WOODEN_DOOR, Material.IRON_DOOR_BLOCK);
+    public static final Set<Material> WOODEN_DOORS = EnumSet.of(Material.WOODEN_DOOR); // doors that open when clicked
     public static final Set<Material> PRESSURE_PLATES = EnumSet.of(Material.STONE_PLATE, Material.WOOD_PLATE);
+    public static final Set<Material> FENCE_GATES = EnumSet.of(Material.FENCE_GATE);
+    public static final Set<Material> TRAP_DOORS = EnumSet.of(Material.TRAP_DOOR);
+
+    static {
+        // MC 1.8 blocks
+        SetUtil.addToSetWithoutNull(PROTECTABLES_DOORS, Material.getMaterial(193)); // Spruce Door
+        SetUtil.addToSetWithoutNull(PROTECTABLES_DOORS, Material.getMaterial(194)); // Birch Door
+        SetUtil.addToSetWithoutNull(PROTECTABLES_DOORS, Material.getMaterial(195)); // Jungle Door
+        SetUtil.addToSetWithoutNull(PROTECTABLES_DOORS, Material.getMaterial(196)); // Acacia Door
+        SetUtil.addToSetWithoutNull(PROTECTABLES_DOORS, Material.getMaterial(197)); // Dark Oak Door
+
+        SetUtil.addToSetWithoutNull(WOODEN_DOORS, Material.getMaterial(193)); // Spruce Door
+        SetUtil.addToSetWithoutNull(WOODEN_DOORS, Material.getMaterial(194)); // Birch Door
+        SetUtil.addToSetWithoutNull(WOODEN_DOORS, Material.getMaterial(195)); // Jungle Door
+        SetUtil.addToSetWithoutNull(WOODEN_DOORS, Material.getMaterial(196)); // Acacia Door
+        SetUtil.addToSetWithoutNull(WOODEN_DOORS, Material.getMaterial(197)); // Dark Oak Door
+
+        SetUtil.addToSetWithoutNull(FENCE_GATES, Material.getMaterial(183)); // Spruce Fence Gate
+        SetUtil.addToSetWithoutNull(FENCE_GATES, Material.getMaterial(184)); // Birch Fence Gate
+        SetUtil.addToSetWithoutNull(FENCE_GATES, Material.getMaterial(185)); // Jungle Fence Gate
+        SetUtil.addToSetWithoutNull(FENCE_GATES, Material.getMaterial(186)); // Dark Oak Fence Gate
+        SetUtil.addToSetWithoutNull(FENCE_GATES, Material.getMaterial(187)); // Acacia Fence Gate
+
+        SetUtil.addToSetWithoutNull(TRAP_DOORS, Material.getMaterial(167)); // Iron trap door
+    }
 
     private static final BlockFace[] faces = new BlockFace[] {
             BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH

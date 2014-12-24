@@ -399,8 +399,6 @@ public class LWC {
         // Their access level
         Permission.Access access = Permission.Access.NONE;
 
-        String playerName = player.getName();
-
         switch (protection.getType()) {
             case PUBLIC:
                 if (protection.isOwner(player)) {
@@ -422,7 +420,11 @@ public class LWC {
                     return true;
                 }
 
-                if (protection.getAccess(playerName, Permission.Type.PLAYER) == Permission.Access.ADMIN) {
+                if (protection.getAccess(player.getUniqueId().toString(), Permission.Type.PLAYER) == Permission.Access.ADMIN) {
+                    return true;
+                }
+
+                if (protection.getAccess(player.getName(), Permission.Type.PLAYER) == Permission.Access.ADMIN) {
                     return true;
                 }
 
@@ -745,6 +747,10 @@ public class LWC {
                 }
 
                 if (protection.getAccess(player.getUniqueId().toString(), Permission.Type.PLAYER).ordinal() >= Permission.Access.PLAYER.ordinal()) {
+                    return true;
+                }
+
+                if (protection.getAccess(player.getName(), Permission.Type.PLAYER).ordinal() >= Permission.Access.PLAYER.ordinal()) {
                     return true;
                 }
 

@@ -231,9 +231,13 @@ public class Updater {
                     }
 
                     // check native folders
-                    folder = new File(getOSSpecificFolder());
-                    if (!folder.exists()) {
-                        folder.mkdirs();
+                    String nativeLibraryFolder = getOSSpecificFolder();
+
+                    if (nativeLibraryFolder != null) {
+                        folder = new File(nativeLibraryFolder);
+                        if (!folder.exists()) {
+                            folder.mkdirs();
+                        }
                     }
 
                     if (local.exists()) {

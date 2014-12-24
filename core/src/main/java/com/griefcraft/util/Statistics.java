@@ -107,7 +107,7 @@ public class Statistics {
         sender.sendMessage(Colors.Red + "LWC Report");
         sender.sendMessage("  Version: " + Colors.Green + LWCInfo.FULL_VERSION);
         sender.sendMessage("  Running time: " + Colors.Green + TimeUtil.timeToString(getTimeRunningSeconds()));
-        sender.sendMessage("  Players: " + Colors.Green + Bukkit.getServer().getOnlinePlayers().length + "/" + Bukkit.getServer().getMaxPlayers());
+        sender.sendMessage("  Players: " + Colors.Green + Bukkit.getServer().getOnlinePlayers().size() + "/" + Bukkit.getServer().getMaxPlayers());
         sender.sendMessage("  Item entities: " + Colors.Green + getEntityCount(Item.class) + "/" + getEntityCount(null));
         sender.sendMessage("  Permissions API: " + Colors.Green + lwc.getPermissions().getClass().getSimpleName());
         sender.sendMessage("  Currency API: " + Colors.Green + lwc.getCurrency().getClass().getSimpleName());
