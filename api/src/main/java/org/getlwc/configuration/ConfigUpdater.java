@@ -44,6 +44,7 @@ import java.util.zip.ZipFile;
  * Updates config files with config vars that aren't already stored in the local
  * config file (so the config file appears to always be up to date.)
  */
+@Deprecated
 public class ConfigUpdater {
 
     /**
