@@ -31,6 +31,7 @@ package org.getlwc;
 import org.getlwc.component.LocationSetComponent;
 import org.getlwc.component.RoleSetComponent;
 import org.getlwc.configuration.Configuration;
+import org.getlwc.configuration.YamlConfiguration;
 import org.getlwc.content.role.PlayerRole;
 import org.getlwc.content.role.PlayerRoleFactory;
 import org.getlwc.model.Protection;
@@ -146,7 +147,7 @@ public class SimpleProtectionManager implements ProtectionManager {
      * @return
      */
     private String getProtectionConfiguration(String node, String... match) {
-        Configuration configuration = engine.getConfiguration();
+        YamlConfiguration configuration = engine.getConfiguration();
 
         String value = null;
 

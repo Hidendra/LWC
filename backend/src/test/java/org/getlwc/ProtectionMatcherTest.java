@@ -76,7 +76,7 @@ public class ProtectionMatcherTest {
     private Database database;
     private MemoryWorld world;
     private ProtectionManager protectionManager;
-    private Configuration configuration;
+    private YamlConfiguration configuration;
     private FallbackMinecraftRegistry minecraftRegistry;
 
     private List<Location> implicitProtections;

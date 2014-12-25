@@ -113,12 +113,12 @@ public class SimpleEngine implements Engine {
     /**
      * The configuration file to use
      */
-    private Configuration configuration;
+    private YamlConfiguration configuration;
 
     /**
      * The languages configuration
      */
-    private Configuration languagesConfig;
+    private YamlConfiguration languagesConfig;
 
     /**
      * The minecraft registry
@@ -277,7 +277,7 @@ public class SimpleEngine implements Engine {
     }
 
     @Override
-    public Configuration getConfiguration() {
+    public YamlConfiguration getConfiguration() {
         return configuration;
     }
 
@@ -286,7 +286,8 @@ public class SimpleEngine implements Engine {
      *
      * @return
      */
-    public Configuration getLanguagesConfiguration() {
+    @Deprecated
+    public YamlConfiguration getLanguagesConfiguration() {
         return languagesConfig;
     }
 

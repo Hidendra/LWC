@@ -59,6 +59,11 @@ public class YamlConfiguration implements Configuration {
     }
 
     @Override
+    public boolean contains(String path) {
+        return configuration.hasProperty(path);
+    }
+
+    @Override
     public void set(String path, Object value) {
         configuration.setProperty(path, value);
     }
@@ -73,7 +78,6 @@ public class YamlConfiguration implements Configuration {
         return configuration.getString(path);
     }
 
-    @Override
     public String getString(String key, String defaultValue) {
         return configuration.getString(key, defaultValue);
     }
@@ -83,7 +87,6 @@ public class YamlConfiguration implements Configuration {
         return configuration.getBoolean(path, false);
     }
 
-    @Override
     public boolean getBoolean(String key, boolean defaultValue) {
         return configuration.getBoolean(key, defaultValue);
     }
@@ -93,7 +96,6 @@ public class YamlConfiguration implements Configuration {
         return configuration.getInt(path, 0);
     }
 
-    @Override
     public int getInt(String key, int defaultValue) {
         return configuration.getInt(key, defaultValue);
     }
@@ -103,7 +105,6 @@ public class YamlConfiguration implements Configuration {
         return configuration.getDouble(path, 0);
     }
 
-    @Override
     public double getDouble(String key, double defaultValue) {
         return configuration.getDouble(key, defaultValue);
     }
