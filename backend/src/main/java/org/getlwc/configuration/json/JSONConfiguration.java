@@ -30,6 +30,10 @@ public class JSONConfiguration implements Configuration {
         this.root = root;
     }
 
+    public JSONConfiguration() {
+        this.root = new JSONObject();
+    }
+
     @Override
     public boolean contains(String path) {
         JSONObject node = getNode(getNodePath(path));
@@ -43,7 +47,7 @@ public class JSONConfiguration implements Configuration {
 
     @Override
     public void set(String path, Object value) {
-        JSONObject node = getNode(getNodePath(path));
+        JSONObject node = getOrCreateNode(getNodePath(path));
 
         if (node == null) {
             throw new IllegalStateException("Tried to set() on an unitialized path " + Arrays.toString(getNodePath(path)) + "!");
