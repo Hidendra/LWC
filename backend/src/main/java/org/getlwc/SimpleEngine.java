@@ -28,6 +28,9 @@
  */
 package org.getlwc;
 
+import org.getlwc.configuration.ConfigurationLoader;
+import org.getlwc.configuration.ConfigurationLoaderRegistry;
+import org.getlwc.configuration.json.JSONConfigurationLoader;
 import org.getlwc.content.command.AddRemoveCommands;
 import org.getlwc.content.command.BaseCommands;
 import org.getlwc.content.command.BenchmarkCommands;
@@ -134,11 +137,17 @@ public class SimpleEngine implements Engine {
     private PermissionHandler permissionHandler = new DefaultPermissionHandler();
 
     @Inject
-    public SimpleEngine(EventBus eventBus) {
+    public SimpleEngine(EventBus eventBus, ConfigurationLoaderRegistry configurationRegistry) {
         this.eventBus = eventBus;
         instance = this; // TODO deprecated
 
         eventBus.subscribe(this);
+
+        // config filetypes supported by all mods
+        ConfigurationLoader jsonLoader = new JSONConfigurationLoader();
+        configurationRegistry.bind("json", jsonLoader);
+
+        configurationRegistry.bind(ConfigurationLoaderRegistry.DEFAULT_KEY, jsonLoader);
     }
 
     @SuppressWarnings("unused")

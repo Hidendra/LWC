@@ -31,6 +31,8 @@ package org.getlwc;
 import com.google.inject.AbstractModule;
 import org.getlwc.command.CommandHandler;
 import org.getlwc.command.SimpleCommandHandler;
+import org.getlwc.configuration.ConfigurationLoaderRegistry;
+import org.getlwc.configuration.SimpleConfigurationLoaderRegistry;
 import org.getlwc.event.EventBus;
 import org.getlwc.event.SimpleEventBus;
 import org.getlwc.util.registry.FallbackMinecraftRegistry;
@@ -52,6 +54,7 @@ public class EngineGuiceModule extends AbstractModule {
         bind(ProtectionManager.class).to(SimpleProtectionManager.class);
         bind(CommandHandler.class).to(SimpleCommandHandler.class);
         bind(ResourceDownloader.class).to(SimpleResourceDownloader.class);
+        bind(ConfigurationLoaderRegistry.class).to(SimpleConfigurationLoaderRegistry.class);
     }
 
 }

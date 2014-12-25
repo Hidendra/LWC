@@ -33,86 +33,60 @@ import java.io.IOException;
 public interface Configuration {
 
     /**
+     * Checks if the configuration contains the given key
+     *
+     * @param path
+     * @return true if the config contains the given key
+     */
+    public boolean contains(String path);
+
+    /**
      * Set a configuration value
      *
-     * @param key
+     * @param path
      * @param value
      */
-    public void set(String key, Object value);
+    public void set(String path, Object value);
 
     /**
      * Gets an object from the configuration
      *
-     * @param key
+     * @param path
      * @return
      */
-    public Object get(String key);
+    public Object get(String path);
 
     /**
      * Gets a string from the configuration
      *
-     * @param key
+     * @param path
      * @return
      */
-    public String getString(String key);
-
-    /**
-     * Gets a string from the configuration using the default value if it does not exist
-     *
-     * @param key
-     * @return
-     */
-    public String getString(String key, String defaultValue);
+    public String getString(String path);
 
     /**
      * Gets a boolean from the configuration
      *
-     * @param key
+     * @param path
      * @return
      */
-    public boolean getBoolean(String key);
-
-    /**
-     * Gets a boolean from the configuration using the default value if it does not exist
-     *
-     * @param key
-     * @param defaultValue
-     * @return
-     */
-    public boolean getBoolean(String key, boolean defaultValue);
+    public boolean getBoolean(String path);
 
     /**
      * Gets an int from the configuration
      *
-     * @param key
+     * @param path
      * @return
      */
-    public int getInt(String key);
-
-    /**
-     * Gets an int from the configuration using the default value if it does not exist
-     *
-     * @param key
-     * @return
-     */
-    public int getInt(String key, int defaultValue);
+    public int getInt(String path);
 
     /**
      * Gets a double from the configuration
      *
-     * @param key
+     * @param path
      * @return
      */
-    public double getDouble(String key);
-
-    /**
-     * Gets a double from the configuration using the default value if it does not exist
-     *
-     * @param key
-     * @param defaultValue
-     * @return
-     */
-    public double getDouble(String key, double defaultValue);
+    public double getDouble(String path);
 
     /**
      * Save the configuration file
