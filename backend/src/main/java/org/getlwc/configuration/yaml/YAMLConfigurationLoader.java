@@ -48,13 +48,17 @@ public class YAMLConfigurationLoader implements ConfigurationLoader {
 
     private static final Yaml yaml = new Yaml();
 
+    private ResourceDownloader resourceDownloader;
+
     @Inject
     public YAMLConfigurationLoader(ResourceDownloader resourceDownloader) {
-        resourceDownloader.ensureResourceInstalled("snakeyaml");
+        this.resourceDownloader = resourceDownloader;
     }
 
     @Override
     public Configuration load(File file) {
+        resourceDownloader.ensureResourceInstalled("snakeyaml");
+
         try (Reader reader = new FileReader(file)) {
             return new YAMLConfiguration((Map<String, Object>) yaml.load(reader), file);
         } catch (IOException e) {
@@ -65,6 +69,8 @@ public class YAMLConfigurationLoader implements ConfigurationLoader {
 
     @Override
     public Configuration load(InputStream stream) {
+        resourceDownloader.ensureResourceInstalled("snakeyaml");
+
         try (Reader reader = new InputStreamReader(stream)) {
             return new YAMLConfiguration((Map<String, Object>) yaml.load(reader));
         } catch (IOException e) {
