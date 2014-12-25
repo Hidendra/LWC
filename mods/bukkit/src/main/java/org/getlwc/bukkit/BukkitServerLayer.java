@@ -33,8 +33,6 @@ import org.getlwc.ServerLayer;
 import org.getlwc.World;
 import org.getlwc.bukkit.entity.BukkitPlayer;
 import org.getlwc.bukkit.world.BukkitWorld;
-import org.getlwc.configuration.ConfigurationLoaderRegistry;
-import org.getlwc.configuration.yaml.YAMLConfigurationLoader;
 import org.getlwc.entity.Player;
 
 import javax.inject.Inject;
@@ -48,12 +46,6 @@ public class BukkitServerLayer extends ServerLayer {
     @Inject
     public BukkitServerLayer(BukkitPlugin plugin) {
         this.plugin = plugin;
-    }
-
-    @Inject
-    public void boostrapConfigLoaders(ConfigurationLoaderRegistry registry, YAMLConfigurationLoader yamlLoader) {
-        registry.bind("yml", yamlLoader);
-        registry.bind("yaml", yamlLoader);
     }
 
     @Override

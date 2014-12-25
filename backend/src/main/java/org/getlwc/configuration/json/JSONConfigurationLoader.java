@@ -33,6 +33,7 @@ import org.getlwc.configuration.ConfigurationLoader;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import javax.inject.Singleton;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -40,6 +41,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+@Singleton
 public class JSONConfigurationLoader implements ConfigurationLoader {
 
     @Override

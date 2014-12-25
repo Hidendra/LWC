@@ -45,6 +45,8 @@ import org.getlwc.bukkit.entity.BukkitEntity;
 import org.getlwc.bukkit.listeners.BukkitListener;
 import org.getlwc.bukkit.permission.SuperPermsPermissionHandler;
 import org.getlwc.bukkit.permission.VaultPermissionHandler;
+import org.getlwc.configuration.ConfigurationLoaderRegistry;
+import org.getlwc.configuration.yaml.YAMLConfigurationLoader;
 import org.getlwc.entity.Entity;
 import org.getlwc.entity.Player;
 import org.getlwc.event.server.ServerStartingEvent;
@@ -110,6 +112,12 @@ public class BukkitPlugin extends JavaPlugin implements Listener {
         Injector injector = Guice.createInjector(Modules.override(new EngineGuiceModule()).with(new BukkitEngineGuiceModule(this)));
         engine = injector.getInstance(Engine.class);
         layer = injector.getInstance(ServerLayer.class);
+
+        // bootstrap config loaders
+        ConfigurationLoaderRegistry loaderRegistry = injector.getInstance(ConfigurationLoaderRegistry.class);
+
+        loaderRegistry.bind("yml", injector.getInstance(YAMLConfigurationLoader.class));
+        loaderRegistry.bind("yaml", injector.getInstance(YAMLConfigurationLoader.class));
 
         // Register events
         getServer().getPluginManager().registerEvents(this, this);

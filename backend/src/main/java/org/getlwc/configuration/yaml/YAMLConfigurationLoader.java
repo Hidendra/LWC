@@ -34,6 +34,7 @@ import org.getlwc.configuration.ConfigurationLoader;
 import org.getlwc.util.resource.ResourceDownloader;
 import org.yaml.snakeyaml.Yaml;
 
+import javax.inject.Singleton;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -42,6 +43,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Map;
 
+@Singleton
 public class YAMLConfigurationLoader implements ConfigurationLoader {
 
     private static final Yaml yaml = new Yaml();

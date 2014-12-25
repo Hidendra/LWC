@@ -28,6 +28,9 @@
  */
 package org.getlwc.configuration;
 
+import org.getlwc.command.ConsoleCommandSender;
+
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
 import java.io.InputStream;
@@ -41,6 +44,13 @@ public class SimpleConfigurationLoaderRegistry implements ConfigurationLoaderReg
      * All binded configuration types
      */
     private final Map<String, ConfigurationLoader> loaders = new HashMap<>();
+
+    private ConsoleCommandSender logger;
+
+    @Inject
+    public SimpleConfigurationLoaderRegistry(ConsoleCommandSender logger) {
+        this.logger = logger;
+    }
 
     @Override
     public Configuration load(File file) {
@@ -76,8 +86,9 @@ public class SimpleConfigurationLoaderRegistry implements ConfigurationLoaderReg
 
     @Override
     public void bind(String type, ConfigurationLoader loader) {
+        logger.sendMessage("{0}::bind {1} -> {2}", getClass().getSimpleName(), type, loader.getClass().getCanonicalName());
+
         loaders.put(type, loader);
-        System.out.printf("SimpleConfigurationLoaderRegistry::bind %s -> %s\n", type, loader.getClass().getCanonicalName());
     }
 
     /**

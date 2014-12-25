@@ -85,7 +85,7 @@ public class SimpleEngine implements Engine {
      * The {@link org.getlwc.util.resource.ResourceDownloader} responsible for downloading library files
      */
     @Inject
-    private SimpleResourceDownloader downloader;
+    private ResourceDownloader downloader;
 
     /**
      * The server layer
@@ -155,16 +155,9 @@ public class SimpleEngine implements Engine {
     public void onStartup(ServerStartingEvent event) {
         serverLayer.getDataFolder().mkdirs();
 
-        downloader = new SimpleResourceDownloader(this);
-
-        if (!downloader.loadResources()) {
-            consoleSender.sendMessage("Failed to load resources.json. No libraries will be downloaded or loaded.");
-        }
-
         downloader.ensureResourceInstalled("gettext");
-        downloader.ensureResourceInstalled("snakeyaml");
+        downloader.ensureResourceInstalled("snakeyaml"); // TODO remove when FileConfiguration is removed.
 
-        System.setProperty("org.sqlite.lib.path", downloader.getNativeLibraryFolder());
         FileConfiguration.init(this);
 
         configuration = new YamlConfiguration("config.yml");
