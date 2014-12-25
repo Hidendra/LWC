@@ -26,76 +26,48 @@
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-package org.getlwc.configuration;
+package org.getlwc.configuration.yaml;
 
-import javax.inject.Singleton;
+import com.google.inject.Inject;
+import org.getlwc.configuration.Configuration;
+import org.getlwc.configuration.ConfigurationLoader;
+import org.getlwc.util.resource.ResourceDownloader;
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Map;
 
-@Singleton
-public class SimpleConfigurationLoaderRegistry implements ConfigurationLoaderRegistry {
+public class YAMLConfigurationLoader implements ConfigurationLoader {
 
-    /**
-     * All binded configuration types
-     */
-    private final Map<String, ConfigurationLoader> loaders = new HashMap<>();
+    private static final Yaml yaml = new Yaml();
+
+    @Inject
+    public YAMLConfigurationLoader(ResourceDownloader resourceDownloader) {
+        resourceDownloader.ensureResourceInstalled("snakeyaml");
+    }
 
     @Override
     public Configuration load(File file) {
-        String type = getFileExtension(file);
-
-        if (!loaders.containsKey(type)) {
-            type = DEFAULT_KEY;
+        try (Reader reader = new FileReader(file)) {
+            return new YAMLConfiguration((Map<String, Object>) yaml.load(reader), file);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
-
-        ConfigurationLoader loader = loaders.get(type);
-
-        if (loader == null) {
-            throw new UnknownConfigurationTypeException(type);
-        }
-
-        return loader.load(file);
     }
 
     @Override
-    public Configuration load(String type, InputStream stream) {
-        if (!loaders.containsKey(type)) {
-            type = DEFAULT_KEY;
-        }
-
-        ConfigurationLoader loader = loaders.get(type);
-
-        if (loader == null) {
-            throw new UnknownConfigurationTypeException(type);
-        }
-
-        return loader.load(stream);
-    }
-
-    @Override
-    public void bind(String type, ConfigurationLoader loader) {
-        loaders.put(type, loader);
-        System.out.printf("SimpleConfigurationLoaderRegistry::bind %s -> %s\n", type, loader.getClass().getCanonicalName());
-    }
-
-    /**
-     * Gets the extension of a file
-     * TODO move
-     *
-     * @param file
-     * @return
-     */
-    private String getFileExtension(File file) {
-        String fileName = file.getName();
-
-        int i = fileName.lastIndexOf('.');
-
-        if (i >= 0) {
-            return fileName.substring(i + 1);
-        } else {
-            return "";
+    public Configuration load(InputStream stream) {
+        try (Reader reader = new InputStreamReader(stream)) {
+            return new YAMLConfiguration((Map<String, Object>) yaml.load(reader));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

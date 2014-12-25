@@ -26,45 +26,48 @@
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-package org.getlwc.configuration.json;
+package org.getlwc.configuration.yaml;
 
 import org.getlwc.configuration.Configuration;
-import org.json.simple.JSONObject;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
-public class JSONConfiguration implements Configuration {
+public class YAMLConfiguration implements Configuration {
+
+    private static final Yaml yaml = new Yaml();
 
     /**
      * The root node
      */
-    private JSONObject root;
+    private Map<String, Object> root;
 
     /**
-     * The file the configuration is being serialized to.
-     * If null, the configuration won't be saved
+     * The file to save the config to. If null, it will not be saved.
      */
     private File file = null;
 
-    public JSONConfiguration(JSONObject root, File file) {
+    public YAMLConfiguration(Map<String, Object> root, File file) {
         this.root = root;
         this.file = file;
     }
 
-    public JSONConfiguration(JSONObject root) {
+    public YAMLConfiguration(Map<String, Object> root) {
         this.root = root;
     }
 
-    public JSONConfiguration() {
-        this.root = new JSONObject();
+    public YAMLConfiguration() {
+        this.root = new HashMap<>();
     }
 
     @Override
     public boolean contains(String path) {
-        JSONObject node = getNode(getNodePath(path));
+        Map<String, Object> node = getNode(getNodePath(path));
 
         if (node == null) {
             return false;
@@ -75,7 +78,7 @@ public class JSONConfiguration implements Configuration {
 
     @Override
     public void set(String path, Object value) {
-        JSONObject node = getOrCreateNode(getNodePath(path));
+        Map<String, Object> node = getOrCreateNode(getNodePath(path));
 
         if (node == null) {
             throw new IllegalStateException("Tried to set() on an uninitialized path " + Arrays.toString(getNodePath(path)) + "!");
@@ -86,7 +89,7 @@ public class JSONConfiguration implements Configuration {
 
     @Override
     public Object get(String path) {
-        JSONObject node = getNode(getNodePath(path));
+        Map<String, Object> node = getNode(getNodePath(path));
 
         if (node == null) {
             return null;
@@ -124,7 +127,7 @@ public class JSONConfiguration implements Configuration {
     @Override
     public void save() throws IOException {
         if (file != null) {
-            root.writeJSONString(new FileWriter(file));
+            yaml.dump(root, new FileWriter(file));
         }
     }
 
@@ -134,17 +137,17 @@ public class JSONConfiguration implements Configuration {
      * @param path
      * @return
      */
-    private JSONObject getNode(String[] path) {
-        JSONObject node = root;
+    private Map<String, Object> getNode(String[] path) {
+        Map<String, Object> node = root;
 
         for (String key : path) {
             Object o = node.get(key);
 
-            if (o == null || !(o instanceof JSONObject)) {
+            if (o == null || !(o instanceof Map)) {
                 return null;
             }
 
-            node = (JSONObject) o;
+            node = (Map<String, Object>) o;
         }
 
         return node;
@@ -157,18 +160,18 @@ public class JSONConfiguration implements Configuration {
      * @param path
      * @return
      */
-    private JSONObject getOrCreateNode(String[] path) {
-        JSONObject node = root;
+    private Map<String, Object> getOrCreateNode(String[] path) {
+        Map<String, Object> node = root;
 
         for (String key : path) {
             Object o = node.get(key);
 
-            if (o == null || !(o instanceof JSONObject)) {
-                o = new JSONObject();
+            if (o == null || !(o instanceof Map)) {
+                o = new HashMap<>();
                 node.put(key, o);
             }
 
-            node = (JSONObject) o;
+            node = (Map<String, Object>) o;
         }
 
         return node;

@@ -33,6 +33,7 @@ import com.google.inject.Provides;
 import org.bukkit.Bukkit;
 import org.getlwc.ServerLayer;
 import org.getlwc.command.ConsoleCommandSender;
+import org.getlwc.configuration.yaml.YAMLConfigurationLoader;
 
 public class BukkitEngineGuiceModule extends AbstractModule {
 
@@ -46,6 +47,8 @@ public class BukkitEngineGuiceModule extends AbstractModule {
     protected void configure() {
         bind(ServerLayer.class).to(BukkitServerLayer.class);
         bind(ConsoleCommandSender.class).to(BukkitConsoleCommandSender.class);
+
+        bind(YAMLConfigurationLoader.class);
     }
 
     @Provides
