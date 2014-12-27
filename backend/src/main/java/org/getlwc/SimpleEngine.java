@@ -57,7 +57,6 @@ import org.getlwc.permission.DefaultPermissionHandler;
 import org.getlwc.permission.PermissionHandler;
 import org.getlwc.util.registry.MinecraftRegistry;
 import org.getlwc.util.resource.ResourceDownloader;
-import org.getlwc.util.resource.SimpleResourceDownloader;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -170,7 +169,7 @@ public class SimpleEngine implements Engine {
         FileConfiguration.init(this);
 
         configuration = new YamlConfiguration("config.yml");
-        languagesConfig = configurationRegistry.load("yaml", getClass().getResourceAsStream("/languages.yml"));
+        languagesConfig = configurationRegistry.load("json", getClass().getResourceAsStream("/languages.json"));
         I18n.init(this);
 
         consoleSender.sendMessage("Server: {0} ({1})", serverLayer.getImplementationTitle(), serverLayer.getImplementationVersion());
