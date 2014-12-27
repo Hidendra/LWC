@@ -102,7 +102,11 @@ public class EventHelper {
                 }
             } else {
                 if (engine.getConfiguration().getBoolean("notifications.recentlyTranslated", true)) {
-                    int addedOn = engine.getLanguagesConfiguration().getInt("languages." + playerLocale.getName() + ".addedOn", -1);
+                    int addedOn = engine.getLanguagesConfiguration().getInt("languages." + playerLocale.getName() + ".addedOn");
+
+                    if (addedOn <= 0) {
+                        addedOn = -1;
+                    }
 
                     int days30 = 86400 * 30;
 

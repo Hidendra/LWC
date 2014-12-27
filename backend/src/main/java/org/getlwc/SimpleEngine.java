@@ -119,7 +119,7 @@ public class SimpleEngine implements Engine {
     /**
      * The languages configuration
      */
-    private YamlConfiguration languagesConfig;
+    private Configuration languagesConfig;
 
     /**
      * The minecraft registry
@@ -137,6 +137,11 @@ public class SimpleEngine implements Engine {
      */
     private PermissionHandler permissionHandler = new DefaultPermissionHandler();
 
+    /**
+     * The configuration loader registry
+     */
+    private ConfigurationLoaderRegistry configurationRegistry;
+
     @Inject
     public SimpleEngine(EventBus eventBus, ConfigurationLoaderRegistry configurationRegistry, YAMLConfigurationLoader loader) {
         this.eventBus = eventBus;
@@ -145,6 +150,7 @@ public class SimpleEngine implements Engine {
         eventBus.subscribe(this);
 
         // config filetypes supported by all mods
+        this.configurationRegistry = configurationRegistry;
         ConfigurationLoader jsonLoader = new JSONConfigurationLoader();
         configurationRegistry.bind("json", jsonLoader);
         configurationRegistry.bind("yml", loader);
@@ -164,7 +170,7 @@ public class SimpleEngine implements Engine {
         FileConfiguration.init(this);
 
         configuration = new YamlConfiguration("config.yml");
-        languagesConfig = new YamlConfiguration(getClass().getResourceAsStream("/languages.yml"));
+        languagesConfig = configurationRegistry.load("yaml", getClass().getResourceAsStream("/languages.yml"));
         I18n.init(this);
 
         consoleSender.sendMessage("Server: {0} ({1})", serverLayer.getImplementationTitle(), serverLayer.getImplementationVersion());
@@ -283,7 +289,7 @@ public class SimpleEngine implements Engine {
      * @return
      */
     @Deprecated
-    public YamlConfiguration getLanguagesConfiguration() {
+    public Configuration getLanguagesConfiguration() {
         return languagesConfig;
     }
 
