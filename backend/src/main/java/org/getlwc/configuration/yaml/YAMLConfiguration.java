@@ -66,13 +66,13 @@ public class YAMLConfiguration extends AbstractDefaultConfiguration {
     }
 
     @Override
-    public boolean contains(String path) {
+    public boolean containsPath(String path) {
         Map<String, Object> node = getNode(getNodePath(path));
 
         if (node != null && node.containsKey(getNodeKey(path))) {
             return true;
         } else {
-            return super.contains(path);
+            return super.containsPath(path);
         }
     }
 

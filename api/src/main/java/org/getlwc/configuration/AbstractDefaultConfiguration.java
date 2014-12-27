@@ -49,7 +49,7 @@ public abstract class AbstractDefaultConfiguration implements Configuration {
     private final Map<String, Object> defaults = new HashMap<>();
 
     @Override
-    public boolean contains(String path) {
+    public boolean containsPath(String path) {
         return defaults.containsKey(path);
     }
 
@@ -114,7 +114,7 @@ public abstract class AbstractDefaultConfiguration implements Configuration {
             String path = entry.getKey();
             Object value = entry.getValue();
 
-            if (!contains(path)) {
+            if (!containsPath(path)) {
                 set(path, value);
             }
         }

@@ -38,11 +38,11 @@ public abstract class AbstractDefaultConfigurationTest extends AbstractConfigura
 
     @Test
     public void testDefaultEmptyConfigContains() {
-        assertFalse(emptyConfiguration.contains("some.path"));
+        assertFalse(emptyConfiguration.containsPath("some.path"));
 
         emptyConfiguration.setDefault("some.path", 42);
 
-        assertTrue(emptyConfiguration.contains("some.path"));
+        assertTrue(emptyConfiguration.containsPath("some.path"));
         assertEquals(42, emptyConfiguration.getInt("some.path"));
 
         retestConfigTests();
@@ -54,10 +54,10 @@ public abstract class AbstractDefaultConfigurationTest extends AbstractConfigura
         preloadedConfiguration.setDefault("map.key2", 42);
         preloadedConfiguration.setDefault("map.map.list2", 42);
 
-        assertTrue(preloadedConfiguration.contains("map.key"));
-        assertTrue(preloadedConfiguration.contains("map.key2"));
-        assertTrue(preloadedConfiguration.contains("map.map.list"));
-        assertTrue(preloadedConfiguration.contains("map.map.list2"));
+        assertTrue(preloadedConfiguration.containsPath("map.key"));
+        assertTrue(preloadedConfiguration.containsPath("map.key2"));
+        assertTrue(preloadedConfiguration.containsPath("map.map.list"));
+        assertTrue(preloadedConfiguration.containsPath("map.map.list2"));
 
         assertEquals(42, preloadedConfiguration.getInt("map.key2"));
         assertEquals(42, preloadedConfiguration.getInt("map.map.list2"));

@@ -30,7 +30,6 @@ package org.getlwc.configuration;
 
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -52,16 +51,16 @@ public abstract class AbstractConfigurationTest {
 
     @Test
     public void testHasProperty() {
-        assertFalse(emptyConfiguration.contains("root"));
-        assertFalse(emptyConfiguration.contains("root.node"));
+        assertFalse(emptyConfiguration.containsPath("root"));
+        assertFalse(emptyConfiguration.containsPath("root.node"));
 
-        assertTrue(preloadedConfiguration.contains("map"));
-        assertTrue(preloadedConfiguration.contains("map.key"));
-        assertTrue(preloadedConfiguration.contains("map.map"));
-        assertTrue(preloadedConfiguration.contains("map.map.list"));
-        assertTrue(preloadedConfiguration.contains("primitives"));
-        assertTrue(preloadedConfiguration.contains("primitives.int"));
-        assertTrue(preloadedConfiguration.contains("primitives.bool"));
+        assertTrue(preloadedConfiguration.containsPath("map"));
+        assertTrue(preloadedConfiguration.containsPath("map.key"));
+        assertTrue(preloadedConfiguration.containsPath("map.map"));
+        assertTrue(preloadedConfiguration.containsPath("map.map.list"));
+        assertTrue(preloadedConfiguration.containsPath("primitives"));
+        assertTrue(preloadedConfiguration.containsPath("primitives.int"));
+        assertTrue(preloadedConfiguration.containsPath("primitives.bool"));
     }
 
     @Test
@@ -80,16 +79,16 @@ public abstract class AbstractConfigurationTest {
 
     @Test
     public void testSetOnNonexistentKeys() {
-        assertFalse(emptyConfiguration.contains("some.sub.key"));
+        assertFalse(emptyConfiguration.containsPath("some.sub.key"));
         emptyConfiguration.set("some.sub.key", 42);
-        assertTrue(emptyConfiguration.contains("some.sub.key"));
-        assertFalse(emptyConfiguration.contains("some.sub.other"));
-        assertFalse(emptyConfiguration.contains("some.sub2.key"));
+        assertTrue(emptyConfiguration.containsPath("some.sub.key"));
+        assertFalse(emptyConfiguration.containsPath("some.sub.other"));
+        assertFalse(emptyConfiguration.containsPath("some.sub2.key"));
         assertEquals(42, emptyConfiguration.getInt("some.sub.key"));
 
         emptyConfiguration.set("some", "testString");
-        assertTrue(emptyConfiguration.contains("some"));
-        assertFalse(emptyConfiguration.contains("some.sub.key"));
+        assertTrue(emptyConfiguration.containsPath("some"));
+        assertFalse(emptyConfiguration.containsPath("some.sub.key"));
         assertEquals("testString", emptyConfiguration.get("some"));
     }
 
@@ -102,7 +101,7 @@ public abstract class AbstractConfigurationTest {
 
         preloadedConfiguration.set("map.key", null);
         assertEquals(null, preloadedConfiguration.get("map.key"));
-        assertTrue(preloadedConfiguration.contains("map.key"));
+        assertTrue(preloadedConfiguration.containsPath("map.key"));
     }
 
 }

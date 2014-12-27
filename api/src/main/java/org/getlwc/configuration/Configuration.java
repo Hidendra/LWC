@@ -38,7 +38,7 @@ public interface Configuration {
      * @param path
      * @return true if the config contains the given key
      */
-    public boolean contains(String path);
+    public boolean containsPath(String path);
 
     /**
      * Set a configuration value

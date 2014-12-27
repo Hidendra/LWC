@@ -29,7 +29,6 @@
 package org.getlwc.configuration.json;
 
 import org.getlwc.configuration.AbstractDefaultConfiguration;
-import org.getlwc.configuration.Configuration;
 import org.json.simple.JSONObject;
 
 import java.io.File;
@@ -64,13 +63,13 @@ public class JSONConfiguration extends AbstractDefaultConfiguration {
     }
 
     @Override
-    public boolean contains(String path) {
+    public boolean containsPath(String path) {
         JSONObject node = getNode(getNodePath(path));
 
         if (node != null && node.containsKey(getNodeKey(path))) {
             return true;
         } else {
-            return super.contains(path);
+            return super.containsPath(path);
         }
     }
 

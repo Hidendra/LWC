@@ -59,7 +59,7 @@ public class YamlConfiguration implements Configuration {
     }
 
     @Override
-    public boolean contains(String path) {
+    public boolean containsPath(String path) {
         return configuration.hasProperty(path);
     }
 
