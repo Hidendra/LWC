@@ -46,9 +46,11 @@ import java.io.IOException;
 public class EngineConfiguration {
 
     private Configuration config;
+    private Configuration protectablesView;
 
     public EngineConfiguration(Configuration config) {
         this.config = config;
+        this.protectablesView = config.viewFor("protections");
 
         setDefaults();
 
@@ -84,8 +86,9 @@ public class EngineConfiguration {
         config.setDefault("database.password", "");
         config.setDefault("database.prefix", "lwc_");
 
-        // TODO protections setting
-        // better way of doing it?
+        // global protectable defaults
+        protectablesView.setDefault("enabled", false);
+        protectablesView.setDefault("autoRegister", false);
     }
 
     /**
@@ -106,7 +109,7 @@ public class EngineConfiguration {
      * @return
      */
     public ProtectableConfiguration getProtectableBlockConfig(BlockType type) {
-        Configuration view = config.viewFor("protections.blocks." + type.getId());
+        Configuration view = protectablesView.viewFor("blocks." + type.getId());
         return new ProtectableConfiguration(view);
     }
 
