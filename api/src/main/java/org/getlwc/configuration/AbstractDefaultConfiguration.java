@@ -31,6 +31,7 @@ package org.getlwc.configuration;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * An abstract implementation of {@link org.getlwc.configuration.Configuration} that
@@ -123,7 +124,10 @@ public abstract class AbstractDefaultConfiguration implements Configuration {
             String path = entry.getKey();
             Object value = entry.getValue();
 
-            if (!containsPath(path)) {
+            // get() defers to super.get() (i.e. this) so instead
+            // check if the value is the same as the default. If
+            // it is, it's likely the default, so explicitly set it.
+            if (Objects.equals(get(path), value)) {
                 set(path, value);
             }
         }
