@@ -74,7 +74,7 @@ public abstract class AbstractDefaultConfiguration implements Configuration {
             prefix += ".";
         }
 
-        return createView(prefix, this);
+        return new ConfigurationView(prefix, this);
     }
 
     /**
@@ -127,97 +127,6 @@ public abstract class AbstractDefaultConfiguration implements Configuration {
                 set(path, value);
             }
         }
-    }
-
-    /**
-     * Creates a new view
-     *
-     * @param prefix
-     * @param config
-     * @return
-     */
-    private static Configuration createView(final String prefix, final Configuration config) {
-        return new Configuration() {
-            final Map<String, Object> defaults = new HashMap<>();
-
-            @Override
-            public boolean containsPath(String path) {
-                path = prefix + path;
-
-                if (config.containsPath(path)) {
-                    return true;
-                } else {
-                    return defaults.containsKey(path);
-                }
-            }
-
-            @Override
-            public void set(String path, Object value) {
-                path = prefix + path;
-
-                config.set(path, value);
-            }
-
-            @Override
-            public Object get(String path) {
-                path = prefix + path;
-
-                if (config.containsPath(path)) {
-                    return config.get(path);
-                } else {
-                    return defaults.get(path);
-                }
-            }
-
-            @Override
-            public void setDefault(String path, Object value) {
-                path = prefix + path;
-
-                defaults.put(path, value);
-            }
-
-            @Override
-            public String getString(String path) {
-                Object value = get(path);
-
-                if (value == null) {
-                    return null;
-                }
-
-                return value.toString();
-            }
-
-            @Override
-            public boolean getBoolean(String path) {
-                return castBoolean(get(path));
-            }
-
-            @Override
-            public int getInt(String path) {
-                return castInt(get(path));
-            }
-
-            @Override
-            public double getDouble(String path) {
-                return castDouble(get(path));
-            }
-
-            @Override
-            public void save() throws IOException {
-                config.save();
-            }
-
-            @Override
-            public Configuration viewFor(String viewPrefix) {
-                if (!viewPrefix.endsWith(".")) {
-                    viewPrefix += ".";
-                }
-
-                viewPrefix = prefix + viewPrefix;
-
-                return createView(prefix, this);
-            }
-        };
     }
 
     /**
