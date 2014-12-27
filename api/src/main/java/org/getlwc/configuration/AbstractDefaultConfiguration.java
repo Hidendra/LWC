@@ -68,6 +68,15 @@ public abstract class AbstractDefaultConfiguration implements Configuration {
         bindDefaults();
     }
 
+    @Override
+    public Configuration viewFor(String prefix) {
+        if (!prefix.endsWith(".")) {
+            prefix += ".";
+        }
+
+        return createView(prefix, this);
+    }
+
     /**
      * Gets the path to a given node.
      * e.g. key = String[0], some.sub.key = { "some", "sub" }
@@ -117,6 +126,161 @@ public abstract class AbstractDefaultConfiguration implements Configuration {
             if (!containsPath(path)) {
                 set(path, value);
             }
+        }
+    }
+
+    /**
+     * Creates a new view
+     *
+     * @param prefix
+     * @param config
+     * @return
+     */
+    private static Configuration createView(final String prefix, final Configuration config) {
+        return new Configuration() {
+            final Map<String, Object> defaults = new HashMap<>();
+
+            @Override
+            public boolean containsPath(String path) {
+                path = prefix + path;
+
+                if (config.containsPath(path)) {
+                    return true;
+                } else {
+                    return defaults.containsKey(path);
+                }
+            }
+
+            @Override
+            public void set(String path, Object value) {
+                path = prefix + path;
+
+                config.set(path, value);
+            }
+
+            @Override
+            public Object get(String path) {
+                path = prefix + path;
+
+                if (config.containsPath(path)) {
+                    return config.get(path);
+                } else {
+                    return defaults.get(path);
+                }
+            }
+
+            @Override
+            public void setDefault(String path, Object value) {
+                path = prefix + path;
+
+                defaults.put(path, value);
+            }
+
+            @Override
+            public String getString(String path) {
+                Object value = get(path);
+
+                if (value == null) {
+                    return null;
+                }
+
+                return value.toString();
+            }
+
+            @Override
+            public boolean getBoolean(String path) {
+                return castBoolean(get(path));
+            }
+
+            @Override
+            public int getInt(String path) {
+                return castInt(get(path));
+            }
+
+            @Override
+            public double getDouble(String path) {
+                return castDouble(get(path));
+            }
+
+            @Override
+            public void save() throws IOException {
+                config.save();
+            }
+
+            @Override
+            public Configuration viewFor(String viewPrefix) {
+                if (!viewPrefix.endsWith(".")) {
+                    viewPrefix += ".";
+                }
+
+                viewPrefix = prefix + viewPrefix;
+
+                return createView(prefix, this);
+            }
+        };
+    }
+
+    /**
+     * Casts a value to an integer.
+     *
+     * @param o
+     * @return the casted integer; if unknown it returns 0
+     */
+    protected static int castInt(Object o) {
+        if (o == null) {
+            return 0;
+        } else if (o instanceof Byte) {
+            return (int) (Byte) o;
+        } else if (o instanceof Integer) {
+            return (int) o;
+        } else if (o instanceof Double) {
+            return (int) (double) (Double) o;
+        } else if (o instanceof Float) {
+            return (int) (float) (Float) o;
+        } else if (o instanceof Long) {
+            return (int) (long) (Long) o;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Casts a value to a double.
+     *
+     * @param o
+     * @return the casted integer; if unknown it returns 0
+     */
+    protected static double castDouble(Object o) {
+        if (o == null) {
+            return 0;
+        } else if (o instanceof Float) {
+            return (double) (Float) o;
+        } else if (o instanceof Double) {
+            return (double) o;
+        } else if (o instanceof Byte) {
+            return (double) (Byte) o;
+        } else if (o instanceof Integer) {
+            return (double) (Integer) o;
+        } else if (o instanceof Long) {
+            return (double) (Long) o;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Casts a value to a boolean.
+     *
+     * @param o
+     * @return the casted integer; if unknown it returns 0
+     */
+    protected static boolean castBoolean(Object o) {
+        if (o == null) {
+            return false;
+        } else if (o instanceof Boolean) {
+            return (boolean) o;
+        } else {
+            return false;
         }
     }
 

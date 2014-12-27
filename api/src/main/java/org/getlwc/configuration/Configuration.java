@@ -101,5 +101,13 @@ public interface Configuration {
      */
     public void save() throws IOException;
 
+    /**
+     * Creates a view for the given prefix.
+     * The view will remain consistent with updates to this config,
+     * however defaults set on the view will NOT cascade to this config.
+     * @param prefix
+     * @return
+     */
+    public Configuration viewFor(String prefix);
 
 }

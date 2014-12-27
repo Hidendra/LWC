@@ -34,6 +34,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractConfigurationTest {
@@ -102,6 +103,18 @@ public abstract class AbstractConfigurationTest {
         preloadedConfiguration.set("map.key", null);
         assertEquals(null, preloadedConfiguration.get("map.key"));
         assertTrue(preloadedConfiguration.containsPath("map.key"));
+    }
+
+    @Test
+    public void testView() {
+        assertNotNull(emptyConfiguration.viewFor("some.path"));
+
+        Configuration mapView = preloadedConfiguration.viewFor("map");
+        assertEquals("value", mapView.getString("key"));
+        assertNotNull(mapView.get("map.list"));
+
+        Configuration mapSubView = mapView.viewFor("map");
+        assertNotNull(mapSubView.get("list"));
     }
 
 }

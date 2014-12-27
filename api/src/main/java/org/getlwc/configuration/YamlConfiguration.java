@@ -123,4 +123,9 @@ public class YamlConfiguration implements Configuration {
         configuration.save();
     }
 
+    @Override
+    public Configuration viewFor(String prefix) {
+        throw new UnsupportedOperationException();
+    }
+
 }
