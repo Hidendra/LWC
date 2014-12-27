@@ -60,7 +60,8 @@ public class ConfigurationView extends AbstractDefaultConfiguration {
 
     @Override
     public void set(String path, Object value) {
-        // nothing to set
+        path = prefix + path;
+        parent.set(path, value);
     }
 
     @Override

@@ -35,6 +35,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractConfigurationTest {
@@ -106,7 +107,7 @@ public abstract class AbstractConfigurationTest {
     }
 
     @Test
-    public void testView() {
+    public void testViewGet() {
         assertNotNull(emptyConfiguration.viewFor("some.path"));
 
         Configuration mapView = preloadedConfiguration.viewFor("map");
@@ -115,6 +116,35 @@ public abstract class AbstractConfigurationTest {
 
         Configuration mapSubView = mapView.viewFor("map");
         assertNotNull(mapSubView.get("list"));
+    }
+
+    @Test
+    public void testViewDefaults() {
+        Configuration mapView = preloadedConfiguration.viewFor("map");
+
+        mapView.setDefault("non.existent", 42);
+        mapView.setDefault("testKey", 43);
+
+        assertEquals(42, mapView.getInt("non.existent"));
+        assertEquals(43, mapView.getInt("testKey"));
+
+        assertFalse(preloadedConfiguration.containsPath("non.existent"));
+        assertFalse(preloadedConfiguration.containsPath("testKey"));
+        assertNull(preloadedConfiguration.get("non.existent"));
+        assertNull(preloadedConfiguration.get("testKey"));
+    }
+
+    @Test
+    public void testViewSet() {
+        Configuration mapView = preloadedConfiguration.viewFor("map");
+
+        mapView.set("value", 42);
+        mapView.set("value2", 42);
+
+        assertEquals(42, mapView.get("value"));
+        assertEquals(42, mapView.get("value2"));
+        assertEquals(42, preloadedConfiguration.get("map.value"));
+        assertEquals(42, preloadedConfiguration.get("map.value2"));
     }
 
 }
