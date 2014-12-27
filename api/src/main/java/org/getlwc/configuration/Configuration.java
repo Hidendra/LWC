@@ -57,6 +57,14 @@ public interface Configuration {
     public Object get(String path);
 
     /**
+     * Sets a default value for the configuration.
+     *
+     * @param path
+     * @param value
+     */
+    public void setDefault(String path, Object value);
+
+    /**
      * Gets a string from the configuration
      *
      * @param path

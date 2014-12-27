@@ -28,6 +28,7 @@
  */
 package org.getlwc.configuration.json;
 
+import org.getlwc.configuration.AbstractDefaultConfiguration;
 import org.getlwc.configuration.Configuration;
 import org.json.simple.JSONObject;
 
@@ -36,7 +37,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class JSONConfiguration implements Configuration {
+public class JSONConfiguration extends AbstractDefaultConfiguration {
 
     /**
      * The root node
@@ -66,11 +67,11 @@ public class JSONConfiguration implements Configuration {
     public boolean contains(String path) {
         JSONObject node = getNode(getNodePath(path));
 
-        if (node == null) {
-            return false;
+        if (node != null && node.containsKey(getNodeKey(path))) {
+            return true;
+        } else {
+            return super.contains(path);
         }
-
-        return node.containsKey(getNodeKey(path));
     }
 
     @Override
@@ -78,7 +79,7 @@ public class JSONConfiguration implements Configuration {
         JSONObject node = getOrCreateNode(getNodePath(path));
 
         if (node == null) {
-            throw new IllegalStateException("Tried to set() on an uninitialized path " + Arrays.toString(getNodePath(path)) + "!");
+            throw new IllegalStateException("Tried to set() on an unitialized path " + Arrays.toString(getNodePath(path)) + "!");
         }
 
         node.put(getNodeKey(path), value);
@@ -86,13 +87,14 @@ public class JSONConfiguration implements Configuration {
 
     @Override
     public Object get(String path) {
+        String nodeKey = getNodeKey(path);
         JSONObject node = getNode(getNodePath(path));
 
-        if (node == null) {
-            return null;
+        if (node != null && node.containsKey(nodeKey)) {
+            return node.get(nodeKey);
+        } else {
+            return super.get(path);
         }
-
-        return node.get(getNodeKey(path));
     }
 
     @Override
@@ -123,6 +125,8 @@ public class JSONConfiguration implements Configuration {
 
     @Override
     public void save() throws IOException {
+        super.save();
+
         if (file != null) {
             root.writeJSONString(new FileWriter(file));
         }
@@ -172,42 +176,6 @@ public class JSONConfiguration implements Configuration {
         }
 
         return node;
-    }
-
-    /**
-     * Gets the path to a given node.
-     * e.g. key = String[0], some.sub.key = { "some", "sub" }
-     *
-     * @param path
-     * @return
-     */
-    private String[] getNodePath(String path) {
-        String[] split = path.split("\\.");
-
-        if (split.length == 1) {
-            return new String[0];
-        } else {
-            String[] result = new String[split.length - 1];
-            System.arraycopy(split, 0, result, 0, result.length);
-            return result;
-        }
-    }
-
-    /**
-     * Gets the key of final node that is accessed with.
-     * e.g. key = key, some.sub.key = key
-     *
-     * @param path
-     * @return
-     */
-    private String getNodeKey(String path) {
-        String[] split = path.split("\\.");
-
-        if (split.length == 1) {
-            return split[0];
-        } else {
-            return split[split.length - 1];
-        }
     }
 
     /**

@@ -74,6 +74,11 @@ public class YamlConfiguration implements Configuration {
     }
 
     @Override
+    public void setDefault(String path, Object value) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public String getString(String path) {
         return configuration.getString(path);
     }

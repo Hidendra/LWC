@@ -33,7 +33,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.junit.Before;
 
-public class JSONConfigurationTest extends AbstractConfigurationTest {
+public class JSONConfigurationTest extends AbstractDefaultConfigurationTest {
 
     @Before
     public void setup() {

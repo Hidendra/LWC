@@ -28,7 +28,7 @@
  */
 package org.getlwc.configuration.yaml;
 
-import org.getlwc.configuration.Configuration;
+import org.getlwc.configuration.AbstractDefaultConfiguration;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -38,7 +38,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class YAMLConfiguration implements Configuration {
+public class YAMLConfiguration extends AbstractDefaultConfiguration {
 
     private static final Yaml yaml = new Yaml();
 
@@ -69,11 +69,11 @@ public class YAMLConfiguration implements Configuration {
     public boolean contains(String path) {
         Map<String, Object> node = getNode(getNodePath(path));
 
-        if (node == null) {
-            return false;
+        if (node != null && node.containsKey(getNodeKey(path))) {
+            return true;
+        } else {
+            return super.contains(path);
         }
-
-        return node.containsKey(getNodeKey(path));
     }
 
     @Override
@@ -89,13 +89,14 @@ public class YAMLConfiguration implements Configuration {
 
     @Override
     public Object get(String path) {
+        String nodeKey = getNodeKey(path);
         Map<String, Object> node = getNode(getNodePath(path));
 
-        if (node == null) {
-            return null;
+        if (node != null && node.containsKey(nodeKey)) {
+            return node.get(nodeKey);
+        } else {
+            return super.get(path);
         }
-
-        return node.get(getNodeKey(path));
     }
 
     @Override
@@ -126,6 +127,8 @@ public class YAMLConfiguration implements Configuration {
 
     @Override
     public void save() throws IOException {
+        super.save();
+
         if (file != null) {
             yaml.dump(root, new FileWriter(file));
         }
@@ -175,42 +178,6 @@ public class YAMLConfiguration implements Configuration {
         }
 
         return node;
-    }
-
-    /**
-     * Gets the path to a given node.
-     * e.g. key = String[0], some.sub.key = { "some", "sub" }
-     *
-     * @param path
-     * @return
-     */
-    private String[] getNodePath(String path) {
-        String[] split = path.split("\\.");
-
-        if (split.length == 1) {
-            return new String[0];
-        } else {
-            String[] result = new String[split.length - 1];
-            System.arraycopy(split, 0, result, 0, result.length);
-            return result;
-        }
-    }
-
-    /**
-     * Gets the key of final node that is accessed with.
-     * e.g. key = key, some.sub.key = key
-     *
-     * @param path
-     * @return
-     */
-    private String getNodeKey(String path) {
-        String[] split = path.split("\\.");
-
-        if (split.length == 1) {
-            return split[0];
-        } else {
-            return split[split.length - 1];
-        }
     }
 
     /**
