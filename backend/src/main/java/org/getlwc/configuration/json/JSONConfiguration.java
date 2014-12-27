@@ -30,10 +30,12 @@ package org.getlwc.configuration.json;
 
 import org.getlwc.configuration.AbstractDefaultConfiguration;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Arrays;
 
 public class JSONConfiguration extends AbstractDefaultConfiguration {
@@ -127,7 +129,11 @@ public class JSONConfiguration extends AbstractDefaultConfiguration {
         super.save();
 
         if (file != null) {
-            root.writeJSONString(new FileWriter(file));
+            System.out.println("JSONConfiguration::save " + root.toString());
+
+            try (Writer writer = new FileWriter(file)) {
+                JSONValue.writeJSONString(root, writer);
+            }
         }
     }
 

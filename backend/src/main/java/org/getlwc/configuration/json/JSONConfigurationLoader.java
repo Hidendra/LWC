@@ -46,11 +46,23 @@ public class JSONConfigurationLoader implements ConfigurationLoader {
 
     @Override
     public Configuration load(File file) {
-        try (InputStream stream = new FileInputStream(file)) {
-            return new JSONConfiguration(loadFromStream(stream), file);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+        if (file.exists()) {
+            try (InputStream stream = new FileInputStream(file)) {
+                return new JSONConfiguration(loadFromStream(stream), file);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else {
+            try {
+                file.createNewFile();
+                Configuration config = new JSONConfiguration(new JSONObject(), file);
+                config.save();
+                return config;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
     }
 

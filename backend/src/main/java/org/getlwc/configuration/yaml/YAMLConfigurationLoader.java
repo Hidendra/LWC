@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.HashMap;
 import java.util.Map;
 
 @Singleton
@@ -59,11 +60,23 @@ public class YAMLConfigurationLoader implements ConfigurationLoader {
     public Configuration load(File file) {
         resourceDownloader.ensureResourceInstalled("snakeyaml");
 
-        try (Reader reader = new FileReader(file)) {
-            return new YAMLConfiguration((Map<String, Object>) yaml.load(reader), file);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+        if (file.exists()) {
+            try (Reader reader = new FileReader(file)) {
+                return new YAMLConfiguration((Map<String, Object>) yaml.load(reader), file);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else {
+            try {
+                file.createNewFile();
+                Configuration config = new YAMLConfiguration(new HashMap<String, Object>(), file);
+                config.save();
+                return config;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
     }
 

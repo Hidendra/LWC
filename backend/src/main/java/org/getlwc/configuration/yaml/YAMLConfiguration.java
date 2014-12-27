@@ -29,18 +29,22 @@
 package org.getlwc.configuration.yaml;
 
 import org.getlwc.configuration.AbstractDefaultConfiguration;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
+import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class YAMLConfiguration extends AbstractDefaultConfiguration {
 
-    private static final Yaml yaml = new Yaml();
+    private static final Yaml yaml;
 
     /**
      * The root node
@@ -51,6 +55,14 @@ public class YAMLConfiguration extends AbstractDefaultConfiguration {
      * The file to save the config to. If null, it will not be saved.
      */
     private File file = null;
+
+    static {
+        DumperOptions options = new DumperOptions();
+        options.setIndent(4);
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+
+        yaml = new Yaml(new SafeConstructor(), new Representer(), options);
+    }
 
     public YAMLConfiguration(Map<String, Object> root, File file) {
         this.root = root;
@@ -130,7 +142,9 @@ public class YAMLConfiguration extends AbstractDefaultConfiguration {
         super.save();
 
         if (file != null) {
-            yaml.dump(root, new FileWriter(file));
+            try (Writer writer = new FileWriter(file)) {
+                yaml.dump(root, writer);
+            }
         }
     }
 
