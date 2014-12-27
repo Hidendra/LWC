@@ -36,6 +36,7 @@ import org.getlwc.configuration.Configuration;
 import org.getlwc.configuration.ConfigurationLoaderRegistry;
 import org.getlwc.configuration.SimpleConfigurationLoaderRegistry;
 import org.getlwc.configuration.files.EngineConfiguration;
+import org.getlwc.configuration.yaml.YAMLConfigurationLoader;
 import org.getlwc.event.EventBus;
 import org.getlwc.event.SimpleEventBus;
 import org.getlwc.util.registry.FallbackMinecraftRegistry;
@@ -62,6 +63,8 @@ public class EngineGuiceModule extends AbstractModule {
         bind(ResourceDownloader.class).to(SimpleResourceDownloader.class);
         bind(ConfigurationLoaderRegistry.class).to(SimpleConfigurationLoaderRegistry.class);
         bind(EngineConfiguration.class).toProvider(DefaultEngineConfigurationProvider.class);
+
+        bind(YAMLConfigurationLoader.class);
     }
 
     /**

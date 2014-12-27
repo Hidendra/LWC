@@ -28,21 +28,21 @@
  */
 package org.getlwc;
 
-import org.getlwc.configuration.ConfigurationLoader;
-import org.getlwc.configuration.ConfigurationLoaderRegistry;
-import org.getlwc.configuration.json.JSONConfigurationLoader;
-import org.getlwc.configuration.yaml.YAMLConfigurationLoader;
-import org.getlwc.content.command.AddRemoveCommands;
-import org.getlwc.content.command.BaseCommands;
-import org.getlwc.content.command.BenchmarkCommands;
 import org.getlwc.command.CommandException;
 import org.getlwc.command.CommandHandler;
 import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.command.SimpleCommandHandler;
 import org.getlwc.configuration.Configuration;
+import org.getlwc.configuration.ConfigurationLoader;
+import org.getlwc.configuration.ConfigurationLoaderRegistry;
 import org.getlwc.configuration.FileConfiguration;
 import org.getlwc.configuration.YamlConfiguration;
+import org.getlwc.configuration.json.JSONConfigurationLoader;
+import org.getlwc.configuration.yaml.YAMLConfigurationLoader;
 import org.getlwc.content.DescriptionModule;
+import org.getlwc.content.command.AddRemoveCommands;
+import org.getlwc.content.command.BaseCommands;
+import org.getlwc.content.command.BenchmarkCommands;
 import org.getlwc.db.Database;
 import org.getlwc.db.DatabaseException;
 import org.getlwc.db.jdbc.JDBCDatabase;
@@ -142,7 +142,7 @@ public class SimpleEngine implements Engine {
     private ConfigurationLoaderRegistry configurationRegistry;
 
     @Inject
-    public SimpleEngine(EventBus eventBus, ConfigurationLoaderRegistry configurationRegistry, YAMLConfigurationLoader loader) {
+    public SimpleEngine(EventBus eventBus, ConfigurationLoaderRegistry configurationRegistry, YAMLConfigurationLoader yamlLoader) {
         this.eventBus = eventBus;
         instance = this; // TODO deprecated
 
@@ -152,8 +152,8 @@ public class SimpleEngine implements Engine {
         this.configurationRegistry = configurationRegistry;
         ConfigurationLoader jsonLoader = new JSONConfigurationLoader();
         configurationRegistry.bind("json", jsonLoader);
-        configurationRegistry.bind("yml", loader);
-        configurationRegistry.bind("yaml", loader);
+        configurationRegistry.bind("yml", yamlLoader);
+        configurationRegistry.bind("yaml", yamlLoader);
 
         configurationRegistry.bind(ConfigurationLoaderRegistry.DEFAULT_KEY, jsonLoader);
     }

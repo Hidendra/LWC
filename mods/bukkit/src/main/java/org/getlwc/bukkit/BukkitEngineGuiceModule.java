@@ -37,7 +37,6 @@ import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.configuration.Configuration;
 import org.getlwc.configuration.ConfigurationLoaderRegistry;
 import org.getlwc.configuration.files.EngineConfiguration;
-import org.getlwc.configuration.yaml.YAMLConfigurationLoader;
 
 import javax.inject.Provider;
 import java.io.File;
@@ -55,8 +54,6 @@ public class BukkitEngineGuiceModule extends AbstractModule {
         bind(ServerLayer.class).to(BukkitServerLayer.class);
         bind(ConsoleCommandSender.class).to(BukkitConsoleCommandSender.class);
         bind(EngineConfiguration.class).toProvider(BukkitEngineConfigurationProvider.class);
-
-        bind(YAMLConfigurationLoader.class);
     }
 
     @Provides
