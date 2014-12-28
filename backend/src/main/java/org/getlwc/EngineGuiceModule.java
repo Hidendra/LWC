@@ -30,6 +30,7 @@ package org.getlwc;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
+import com.google.inject.Scopes;
 import org.getlwc.command.CommandHandler;
 import org.getlwc.command.SimpleCommandHandler;
 import org.getlwc.configuration.Configuration;
@@ -62,7 +63,7 @@ public class EngineGuiceModule extends AbstractModule {
         bind(CommandHandler.class).to(SimpleCommandHandler.class);
         bind(ResourceDownloader.class).to(SimpleResourceDownloader.class);
         bind(ConfigurationLoaderRegistry.class).to(SimpleConfigurationLoaderRegistry.class);
-        bind(EngineConfiguration.class).toProvider(DefaultEngineConfigurationProvider.class);
+        bind(EngineConfiguration.class).toProvider(DefaultEngineConfigurationProvider.class).in(Scopes.SINGLETON);
 
         bind(YAMLConfigurationLoader.class);
     }

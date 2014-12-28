@@ -30,10 +30,15 @@ package org.getlwc.sponge;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 import org.getlwc.ServerLayer;
 import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.util.registry.MinecraftRegistry;
+import org.slf4j.Logger;
 import org.spongepowered.api.Game;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 public class SpongeEngineGuiceModule extends AbstractModule {
 
@@ -48,7 +53,7 @@ public class SpongeEngineGuiceModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(ServerLayer.class).to(SpongeServerLayer.class);
-        bind(ConsoleCommandSender.class).to(SpongeConsoleCommandSender.class);
+        bind(ConsoleCommandSender.class).toProvider(SpongePluginLogProvider.class).in(Scopes.SINGLETON);
         bind(MinecraftRegistry.class).to(SpongeMinecraftRegistry.class);
     }
 
@@ -60,6 +65,22 @@ public class SpongeEngineGuiceModule extends AbstractModule {
     @Provides
     public Game provideGame() {
         return game;
+    }
+
+    private static class SpongePluginLogProvider implements Provider<ConsoleCommandSender> {
+
+        private SpongePlugin plugin;
+
+        @Inject
+        public SpongePluginLogProvider(SpongePlugin plugin) {
+            this.plugin = plugin;
+        }
+
+        @Override
+        public ConsoleCommandSender get() {
+            return new SpongeConsoleCommandSender(plugin.getLogger());
+        }
+
     }
 
 }

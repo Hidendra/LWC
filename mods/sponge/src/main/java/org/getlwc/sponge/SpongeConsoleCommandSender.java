@@ -34,7 +34,11 @@ import org.slf4j.LoggerFactory;
 
 public class SpongeConsoleCommandSender extends ConsoleCommandSender {
 
-    private Logger logger = LoggerFactory.getLogger("LWC");
+    private Logger logger;
+
+    public SpongeConsoleCommandSender(Logger logger) {
+        this.logger = logger;
+    }
 
     @Override
     public void sendMessage(String message) {

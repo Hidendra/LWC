@@ -45,6 +45,7 @@ import org.getlwc.sponge.listeners.SpongeEventListener;
 import org.getlwc.sponge.permission.SpongePermissionHandler;
 import org.getlwc.sponge.world.SpongeBlock;
 import org.getlwc.sponge.world.SpongeExtent;
+import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.event.state.ServerStartingEvent;
 import org.spongepowered.api.event.state.ServerStoppingEvent;
@@ -65,6 +66,9 @@ public class SpongePlugin {
 
     @Inject
     private Game game;
+
+    @Inject
+    private Logger logger;
 
     @Inject
     @ConfigDir(sharedRoot = false)
@@ -161,6 +165,15 @@ public class SpongePlugin {
      */
     public File getConfigDir() {
         return configDir;
+    }
+
+    /**
+     * Returns the logger for this plugin
+     *
+     * @return
+     */
+    public Logger getLogger() {
+        return logger;
     }
 
     /**
