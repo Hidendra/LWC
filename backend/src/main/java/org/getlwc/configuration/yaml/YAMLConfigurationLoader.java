@@ -47,8 +47,6 @@ import java.util.Map;
 @Singleton
 public class YAMLConfigurationLoader implements ConfigurationLoader {
 
-    private static final Yaml yaml = new Yaml();
-
     private ResourceDownloader resourceDownloader;
 
     @Inject
@@ -62,7 +60,7 @@ public class YAMLConfigurationLoader implements ConfigurationLoader {
 
         if (file.exists()) {
             try (Reader reader = new FileReader(file)) {
-                return new YAMLConfiguration((Map<String, Object>) yaml.load(reader), file);
+                return new YAMLConfiguration((Map<String, Object>) new Yaml().load(reader), file);
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;
@@ -85,7 +83,7 @@ public class YAMLConfigurationLoader implements ConfigurationLoader {
         resourceDownloader.ensureResourceInstalled("snakeyaml");
 
         try (Reader reader = new InputStreamReader(stream)) {
-            return new YAMLConfiguration((Map<String, Object>) yaml.load(reader));
+            return new YAMLConfiguration((Map<String, Object>) new Yaml().load(reader));
         } catch (IOException e) {
             e.printStackTrace();
             return null;
