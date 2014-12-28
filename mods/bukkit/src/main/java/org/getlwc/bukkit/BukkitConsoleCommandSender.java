@@ -32,7 +32,9 @@ import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.util.Color;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class BukkitConsoleCommandSender extends ConsoleCommandSender {
 
     /**

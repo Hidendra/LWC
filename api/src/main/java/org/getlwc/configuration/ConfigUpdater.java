@@ -179,16 +179,18 @@ public class ConfigUpdater {
             keys.add(key);
 
             // Add the subnodes
-            for (String subkey : configuration.getKeys(key)) {
-                String fullKey = key + "." + subkey;
+            if (configuration.getKeys(key) != null) {
+                for (String subkey : configuration.getKeys(key)) {
+                    String fullKey = key + "." + subkey;
 
-                // Is it blacklisted?
-                if (BLACKLIST.contains(fullKey)) {
-                    continue;
+                    // Is it blacklisted?
+                    if (BLACKLIST.contains(fullKey)) {
+                        continue;
+                    }
+
+                    // good good!
+                    keys.add(fullKey);
                 }
-
-                // good good!
-                keys.add(fullKey);
             }
         }
 

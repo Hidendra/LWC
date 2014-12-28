@@ -26,19 +26,23 @@
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-package org.getlwc.granite;
+package org.getlwc.configuration;
 
-import org.getlwc.command.ConsoleCommandSender;
-import org.granitemc.granite.api.Granite;
+public class UnknownConfigurationTypeException extends RuntimeException {
 
-import javax.inject.Singleton;
+    public UnknownConfigurationTypeException() {
+    }
 
-@Singleton
-public class GraniteConsoleCommandSender extends ConsoleCommandSender {
+    public UnknownConfigurationTypeException(String message) {
+        super(message);
+    }
 
-    @Override
-    public void sendMessage(String message) {
-        Granite.getLogger().info("[LWC] " + message);
+    public UnknownConfigurationTypeException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public UnknownConfigurationTypeException(Throwable cause) {
+        super(cause);
     }
 
 }

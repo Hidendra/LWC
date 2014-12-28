@@ -32,7 +32,9 @@ import net.canarymod.logger.Logman;
 import org.getlwc.command.ConsoleCommandSender;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class CanaryConsoleCommandSender extends ConsoleCommandSender {
 
     private Logman logger;

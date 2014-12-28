@@ -48,6 +48,35 @@ public class ConfigurationNode {
     }
 
     /**
+     * Checks if the path exists.
+     *
+     * @param path
+     * @return true if the path exists.
+     */
+    public boolean hasProperty(String path) {
+        if (!path.contains(".")) {
+            return root.containsKey(path);
+        }
+
+        String[] parts = path.split("\\.");
+        Map<String, Object> node = root;
+
+        for (int i = 0; i < parts.length; i++) {
+            Object o = node.get(parts[i]);
+
+            if (o == null) {
+                return false;
+            }
+
+            if (i == parts.length - 1) {
+                return node.containsKey(parts[i]);
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Gets a property at a location. This will either return an Object
      * or null, with null meaning that no configuration value exists at
      * that location. This could potentially return a default value (not yet

@@ -28,17 +28,21 @@
  */
 package org.getlwc;
 
-import org.getlwc.content.command.AddRemoveCommands;
-import org.getlwc.content.command.BaseCommands;
-import org.getlwc.content.command.BenchmarkCommands;
 import org.getlwc.command.CommandException;
 import org.getlwc.command.CommandHandler;
 import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.command.SimpleCommandHandler;
 import org.getlwc.configuration.Configuration;
+import org.getlwc.configuration.ConfigurationLoader;
+import org.getlwc.configuration.ConfigurationLoaderRegistry;
 import org.getlwc.configuration.FileConfiguration;
 import org.getlwc.configuration.YamlConfiguration;
+import org.getlwc.configuration.json.JSONConfigurationLoader;
+import org.getlwc.configuration.yaml.YAMLConfigurationLoader;
 import org.getlwc.content.DescriptionModule;
+import org.getlwc.content.command.AddRemoveCommands;
+import org.getlwc.content.command.BaseCommands;
+import org.getlwc.content.command.BenchmarkCommands;
 import org.getlwc.db.Database;
 import org.getlwc.db.DatabaseException;
 import org.getlwc.db.jdbc.JDBCDatabase;
@@ -53,7 +57,6 @@ import org.getlwc.permission.DefaultPermissionHandler;
 import org.getlwc.permission.PermissionHandler;
 import org.getlwc.util.registry.MinecraftRegistry;
 import org.getlwc.util.resource.ResourceDownloader;
-import org.getlwc.util.resource.SimpleResourceDownloader;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -82,7 +85,7 @@ public class SimpleEngine implements Engine {
      * The {@link org.getlwc.util.resource.ResourceDownloader} responsible for downloading library files
      */
     @Inject
-    private SimpleResourceDownloader downloader;
+    private ResourceDownloader downloader;
 
     /**
      * The server layer
@@ -110,7 +113,7 @@ public class SimpleEngine implements Engine {
     /**
      * The configuration file to use
      */
-    private Configuration configuration;
+    private YamlConfiguration configuration;
 
     /**
      * The languages configuration
@@ -133,12 +136,26 @@ public class SimpleEngine implements Engine {
      */
     private PermissionHandler permissionHandler = new DefaultPermissionHandler();
 
+    /**
+     * The configuration loader registry
+     */
+    private ConfigurationLoaderRegistry configurationRegistry;
+
     @Inject
-    public SimpleEngine(EventBus eventBus) {
+    public SimpleEngine(EventBus eventBus, ConfigurationLoaderRegistry configurationRegistry, YAMLConfigurationLoader yamlLoader) {
         this.eventBus = eventBus;
         instance = this; // TODO deprecated
 
         eventBus.subscribe(this);
+
+        // config filetypes supported by all mods
+        this.configurationRegistry = configurationRegistry;
+        ConfigurationLoader jsonLoader = new JSONConfigurationLoader();
+        configurationRegistry.bind("json", jsonLoader);
+        configurationRegistry.bind("yml", yamlLoader);
+        configurationRegistry.bind("yaml", yamlLoader);
+
+        configurationRegistry.bind(ConfigurationLoaderRegistry.DEFAULT_KEY, jsonLoader);
     }
 
     @SuppressWarnings("unused")
@@ -146,20 +163,13 @@ public class SimpleEngine implements Engine {
     public void onStartup(ServerStartingEvent event) {
         serverLayer.getDataFolder().mkdirs();
 
-        downloader = new SimpleResourceDownloader(this);
-
-        if (!downloader.loadResources()) {
-            consoleSender.sendMessage("Failed to load resources.json. No libraries will be downloaded or loaded.");
-        }
-
         downloader.ensureResourceInstalled("gettext");
-        downloader.ensureResourceInstalled("snakeyaml");
+        downloader.ensureResourceInstalled("snakeyaml"); // TODO remove when FileConfiguration is removed.
 
-        System.setProperty("org.sqlite.lib.path", downloader.getNativeLibraryFolder());
         FileConfiguration.init(this);
 
         configuration = new YamlConfiguration("config.yml");
-        languagesConfig = new YamlConfiguration(getClass().getResourceAsStream("/languages.yml"));
+        languagesConfig = configurationRegistry.load("json", getClass().getResourceAsStream("/languages.json"));
         I18n.init(this);
 
         consoleSender.sendMessage("Server: {0} ({1})", serverLayer.getImplementationTitle(), serverLayer.getImplementationVersion());
@@ -268,7 +278,7 @@ public class SimpleEngine implements Engine {
     }
 
     @Override
-    public Configuration getConfiguration() {
+    public YamlConfiguration getConfiguration() {
         return configuration;
     }
 
@@ -277,6 +287,7 @@ public class SimpleEngine implements Engine {
      *
      * @return
      */
+    @Deprecated
     public Configuration getLanguagesConfiguration() {
         return languagesConfig;
     }

@@ -26,19 +26,57 @@
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-package org.getlwc.granite;
+package org.getlwc.db;
 
-import org.getlwc.command.ConsoleCommandSender;
-import org.granitemc.granite.api.Granite;
+/**
+ * Connection details for connecting to a database
+ */
+public final class DatabaseConnectionDetails {
 
-import javax.inject.Singleton;
+    private final String driver;
+    private final String path;
+    private final String hostname;
+    private final String database;
+    private final String username;
+    private final String password;
+    private final String prefix;
 
-@Singleton
-public class GraniteConsoleCommandSender extends ConsoleCommandSender {
+    public DatabaseConnectionDetails(String driver, String path, String hostname, String database, String username, String password, String prefix) {
+        this.driver = driver;
+        this.path = path;
+        this.hostname = hostname;
+        this.database = database;
+        this.username = username;
+        this.password = password;
+        this.prefix = prefix;
+    }
 
-    @Override
-    public void sendMessage(String message) {
-        Granite.getLogger().info("[LWC] " + message);
+    public String getDriver() {
+        return driver;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public String getDatabase() {
+        return database;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getPrefix() {
+        return prefix;
     }
 
 }

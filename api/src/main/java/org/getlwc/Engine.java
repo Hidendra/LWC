@@ -31,6 +31,7 @@ package org.getlwc;
 import org.getlwc.command.CommandHandler;
 import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.configuration.Configuration;
+import org.getlwc.configuration.YamlConfiguration;
 import org.getlwc.db.Database;
 import org.getlwc.economy.EconomyHandler;
 import org.getlwc.event.EventBus;
@@ -108,7 +109,8 @@ public interface Engine {
      *
      * @return
      */
-    public Configuration getConfiguration();
+    @Deprecated
+    public YamlConfiguration getConfiguration();
 
     /**
      * Get the library downloader object

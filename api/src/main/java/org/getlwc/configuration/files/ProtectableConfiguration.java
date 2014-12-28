@@ -26,19 +26,52 @@
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-package org.getlwc.granite;
+package org.getlwc.configuration.files;
 
-import org.getlwc.command.ConsoleCommandSender;
-import org.granitemc.granite.api.Granite;
+import org.getlwc.configuration.Configuration;
 
-import javax.inject.Singleton;
+/**
+ * Configuration for a protectable.
+ */
+public class ProtectableConfiguration {
 
-@Singleton
-public class GraniteConsoleCommandSender extends ConsoleCommandSender {
+    /**
+     * The config for the protectable. That is, the root has all of the options for the protectable.
+     *
+     * In practice, this is just a view on another config.
+     */
+    private Configuration config;
 
-    @Override
-    public void sendMessage(String message) {
-        Granite.getLogger().info("[LWC] " + message);
+    public ProtectableConfiguration(Configuration config) {
+        this.config = config;
+
+        setDefaults();
+    }
+
+    /**
+     * Sets the defaults for the config
+     */
+    private void setDefaults() {
+        config.setDefault("enabled", true);
+        config.setDefault("autoRegister", false);
+    }
+
+    /**
+     * Checks if the protectable is enabled.
+     *
+     * @return
+     */
+    public boolean isEnabled() {
+        return config.getBoolean("enabled");
+    }
+
+    /**
+     * Checks if the protactable should automatically register when placed
+     *
+     * @return
+     */
+    public boolean shouldAutoRegister() {
+        return config.getBoolean("autoRegister");
     }
 
 }

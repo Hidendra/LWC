@@ -26,86 +26,88 @@
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-package org.getlwc.bukkit;
+package org.getlwc.configuration;
 
-import org.bukkit.Bukkit;
-import org.getlwc.ServerLayer;
-import org.getlwc.World;
-import org.getlwc.bukkit.entity.BukkitPlayer;
-import org.getlwc.bukkit.world.BukkitWorld;
-import org.getlwc.entity.Player;
+import org.getlwc.command.ConsoleCommandSender;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
-import java.util.UUID;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 @Singleton
-public class BukkitServerLayer extends ServerLayer {
+public class SimpleConfigurationLoaderRegistry implements ConfigurationLoaderRegistry {
 
-    private BukkitPlugin plugin;
+    /**
+     * All binded configuration types
+     */
+    private final Map<String, ConfigurationLoader> loaders = new HashMap<>();
+
+    private ConsoleCommandSender logger;
 
     @Inject
-    public BukkitServerLayer(BukkitPlugin plugin) {
-        this.plugin = plugin;
+    public SimpleConfigurationLoaderRegistry(ConsoleCommandSender logger) {
+        this.logger = logger;
     }
 
     @Override
-    public File getDataFolder() {
-        return plugin.getDataFolder();
-    }
+    public Configuration load(File file) {
+        String type = getFileExtension(file);
 
-    @Override
-    public String getImplementationTitle() {
-        return "Bukkit";
-    }
-
-    @Override
-    public String getImplementationVersion() {
-        return Bukkit.getVersion();
-    }
-
-    @Override
-    protected Player internalGetPlayer(String playerName) {
-        org.bukkit.entity.Player handle = Bukkit.getPlayer(playerName);
-
-        if (handle == null) {
-            return null;
+        if (!loaders.containsKey(type)) {
+            type = DEFAULT_KEY;
         }
 
-        return new BukkitPlayer(plugin.getEngine(), plugin, handle);
+        ConfigurationLoader loader = loaders.get(type);
+
+        if (loader == null) {
+            throw new UnknownConfigurationTypeException(type);
+        }
+
+        return loader.load(file);
     }
 
     @Override
-    protected World internalGetWorld(String worldName) {
-        org.bukkit.World handle = Bukkit.getWorld(worldName);
-
-        if (handle == null) {
-            return null;
+    public Configuration load(String type, InputStream stream) {
+        if (!loaders.containsKey(type)) {
+            type = DEFAULT_KEY;
         }
 
-        return new BukkitWorld(handle);
+        ConfigurationLoader loader = loaders.get(type);
+
+        if (loader == null) {
+            throw new UnknownConfigurationTypeException(type);
+        }
+
+        return loader.load(stream);
     }
 
     @Override
-    public UUID getOfflinePlayer(String ident) {
-        Player player = getPlayer(ident);
+    public void bind(String type, ConfigurationLoader loader) {
+        logger.sendMessage("{0}::bind {1} -> {2}", getClass().getSimpleName(), type, loader.getClass().getCanonicalName());
 
-        if (player != null) {
-            return player.getUUID();
-        }
+        loaders.put(type, loader);
+    }
 
-        org.bukkit.OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(ident);
+    /**
+     * Gets the extension of a file
+     * TODO move
+     *
+     * @param file
+     * @return
+     */
+    private String getFileExtension(File file) {
+        String fileName = file.getName();
 
-        if (offlinePlayer != null) {
-            return offlinePlayer.getUniqueId();
+        int i = fileName.lastIndexOf('.');
+
+        if (i >= 0) {
+            return fileName.substring(i + 1);
         } else {
-            return null;
+            return "";
         }
     }
 
-    @Override
-    public World getDefaultWorld() {
-        return getWorld(Bukkit.getWorlds().get(0).getName());
-    }
 }

@@ -28,7 +28,8 @@
  */
 package org.getlwc.util.resource;
 
-import org.getlwc.Engine;
+import org.getlwc.ServerLayer;
+import org.getlwc.command.ConsoleCommandSender;
 import org.getlwc.util.ClassUtils;
 import org.getlwc.util.MD5Checksum;
 import org.json.simple.JSONArray;
@@ -59,9 +60,15 @@ public class SimpleResourceDownloader implements ResourceDownloader {
     public static final int MAX_DOWNLOAD_TRIES = 5;
 
     /**
-     * The Engine instance
+     * The console logger
      */
-    private Engine engine;
+    private ConsoleCommandSender logger;
+
+    /**
+     * The server layer.
+     * TODO this is just used for library dirs -- replace with some kind of @Dir annotation?
+     */
+    private ServerLayer serverLayer;
 
     /**
      * The base url to download resources from
@@ -73,9 +80,16 @@ public class SimpleResourceDownloader implements ResourceDownloader {
      */
     private final Map<String, Resource> resources = new HashMap<>();
 
+    /**
+     * Flag for if the resource definitions have been loaded yet.
+     * They are lazily loaded.
+     */
+    private boolean loaded = false;
+
     @Inject
-    public SimpleResourceDownloader(Engine engine) {
-        this.engine = engine;
+    public SimpleResourceDownloader(ConsoleCommandSender logger, ServerLayer serverLayer) {
+        this.logger = logger;
+        this.serverLayer = serverLayer;
     }
 
     /**
@@ -87,6 +101,8 @@ public class SimpleResourceDownloader implements ResourceDownloader {
         if (root == null) {
             return false;
         }
+
+        loaded = true;
 
         this.baseUrl = root.get("url").toString();
 
@@ -126,6 +142,10 @@ public class SimpleResourceDownloader implements ResourceDownloader {
 
     @Override
     public void ensureResourceInstalled(String resourceKey) {
+        if (!loaded) {
+            loadResources();
+        }
+
         Resource resource = getResource(resourceKey);
 
         // ensure dependencies are installed first
@@ -141,7 +161,7 @@ public class SimpleResourceDownloader implements ResourceDownloader {
         }
 
         for (String file : resource.getFiles()) {
-            String localResourceDataFolder = engine.getServerLayer().getDataPathTo(resource.getOutputDir());
+            String localResourceDataFolder = serverLayer.getDataPathTo(resource.getOutputDir());
 
             downloadFile(new ResourceFile(String.format("%s/%s", localResourceDataFolder, file), String.format("%s/%s/%s", baseUrl, resource.getOutputDir(), file)));
         }
@@ -149,20 +169,29 @@ public class SimpleResourceDownloader implements ResourceDownloader {
 
     @Override
     public void addResource(Resource resource) {
+        if (!loaded) {
+            loadResources();
+        }
+
         if (!resources.containsKey(resource.getKey())) {
             // injects the SQLite native library for this platform
             // TODO do this a different way?
             if (resource.getKey().equals("databases.sqlite")) {
                 resource.addFile(getFullNativeLibraryPath());
+                System.setProperty("org.sqlite.lib.path", getNativeLibraryFolder());
             }
 
             resources.put(resource.getKey(), resource);
-            engine.getConsoleSender().sendMessage("Added resource {0}", resource.toString());
+            logger.sendMessage("Added resource {0}", resource.toString());
         }
     }
 
     @Override
     public Resource getResource(String key) {
+        if (!loaded) {
+            loadResources();
+        }
+
         return resources.get(key);
     }
 
@@ -251,9 +280,9 @@ public class SimpleResourceDownloader implements ResourceDownloader {
             int tries = 1;
 
             if (local.exists()) {
-                engine.getConsoleSender().sendMessage("Verifying file {0}", local.toString());
+                logger.sendMessage("Verifying file {0}", local.toString());
             } else {
-                engine.getConsoleSender().sendMessage("Downloading file {0} to {1}", local.getName(), local.getParent());
+                logger.sendMessage("Downloading file {0} to {1}", local.getName(), local.getParent());
             }
 
             URL fileURL = new URL(remote);
@@ -267,16 +296,16 @@ public class SimpleResourceDownloader implements ResourceDownloader {
                 String expectedMD5 = readURLFully(md5URL);
 
                 if (expectedMD5 == null) {
-                    engine.getConsoleSender().sendMessage("{0}: no checksum available from remote host", local.getName());
+                    logger.sendMessage("{0}: no checksum available from remote host", local.getName());
                     break;
                 } else {
                     String realMD5 = MD5Checksum.calculateHumanChecksum(local);
 
                     if (expectedMD5.equals(realMD5)) {
-                        engine.getConsoleSender().sendMessage("{0}: checksum is OK", local.getName());
+                        logger.sendMessage("{0}: checksum is OK", local.getName());
                         break;
                     } else {
-                        engine.getConsoleSender().sendMessage("{0}: checksum check FAILED. Found {1}, but was expecting {2}. File will be redownloaded.", local.getName(), realMD5, expectedMD5);
+                        logger.sendMessage("{0}: checksum check FAILED. Found {1}, but was expecting {2}. File will be redownloaded.", local.getName(), realMD5, expectedMD5);
                         local.delete();
                     }
                 }
@@ -320,7 +349,7 @@ public class SimpleResourceDownloader implements ResourceDownloader {
 
                             // omit 0/100% ..
                             if (percentTransferred != 0 && percentTransferred != 100) {
-                                engine.getConsoleSender().sendMessage("  >> {0}: {1}%", downloadTo.getName(), percentTransferred);
+                                logger.sendMessage("  >> {0}: {1}%", downloadTo.getName(), percentTransferred);
                             }
                         }
                     }

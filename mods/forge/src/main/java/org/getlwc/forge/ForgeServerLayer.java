@@ -45,9 +45,11 @@ import org.getlwc.forge.modsupport.ModSupport;
 import org.getlwc.forge.world.ForgeWorld;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.File;
 import java.util.UUID;
 
+@Singleton
 public class ForgeServerLayer extends ServerLayer {
 
     /**

@@ -29,14 +29,23 @@
 package org.getlwc;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
 import org.getlwc.command.CommandHandler;
 import org.getlwc.command.SimpleCommandHandler;
+import org.getlwc.configuration.Configuration;
+import org.getlwc.configuration.ConfigurationLoaderRegistry;
+import org.getlwc.configuration.SimpleConfigurationLoaderRegistry;
+import org.getlwc.configuration.files.EngineConfiguration;
+import org.getlwc.configuration.yaml.YAMLConfigurationLoader;
 import org.getlwc.event.EventBus;
 import org.getlwc.event.SimpleEventBus;
 import org.getlwc.util.registry.FallbackMinecraftRegistry;
 import org.getlwc.util.registry.MinecraftRegistry;
 import org.getlwc.util.resource.ResourceDownloader;
 import org.getlwc.util.resource.SimpleResourceDownloader;
+
+import javax.inject.Provider;
+import java.io.File;
 
 /**
  * The main Engine Guice module. This provides sane default binds for the engine,
@@ -52,6 +61,32 @@ public class EngineGuiceModule extends AbstractModule {
         bind(ProtectionManager.class).to(SimpleProtectionManager.class);
         bind(CommandHandler.class).to(SimpleCommandHandler.class);
         bind(ResourceDownloader.class).to(SimpleResourceDownloader.class);
+        bind(ConfigurationLoaderRegistry.class).to(SimpleConfigurationLoaderRegistry.class);
+        bind(EngineConfiguration.class).toProvider(DefaultEngineConfigurationProvider.class);
+
+        bind(YAMLConfigurationLoader.class);
+    }
+
+    /**
+     * Default config provider that defaults to yaml
+     */
+    private static class DefaultEngineConfigurationProvider implements Provider<EngineConfiguration> {
+
+        @Inject
+        private ConfigurationLoaderRegistry registry;
+
+        // TODO replace with @ConfigDir?
+        @Inject
+        @Deprecated
+        private ServerLayer serverLayer;
+
+        @Override
+        public EngineConfiguration get() {
+            File configDir = serverLayer.getDataFolder();
+            Configuration config = registry.load(new File(configDir, "config.json"));
+            return new EngineConfiguration(config);
+        }
+
     }
 
 }

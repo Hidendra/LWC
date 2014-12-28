@@ -26,86 +26,99 @@
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-package org.getlwc.bukkit;
+package org.getlwc.configuration;
 
-import org.bukkit.Bukkit;
-import org.getlwc.ServerLayer;
-import org.getlwc.World;
-import org.getlwc.bukkit.entity.BukkitPlayer;
-import org.getlwc.bukkit.world.BukkitWorld;
-import org.getlwc.entity.Player;
+import java.io.IOException;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.io.File;
-import java.util.UUID;
+public class ConfigurationView extends AbstractDefaultConfiguration {
 
-@Singleton
-public class BukkitServerLayer extends ServerLayer {
+    /**
+     * Prefix being viewed
+     */
+    private String prefix;
 
-    private BukkitPlugin plugin;
+    /**
+     * The parent configuration
+     */
+    private Configuration parent;
 
-    @Inject
-    public BukkitServerLayer(BukkitPlugin plugin) {
-        this.plugin = plugin;
+    public ConfigurationView(String prefix, Configuration parent) {
+        this.prefix = prefix;
+        this.parent = parent;
     }
 
     @Override
-    public File getDataFolder() {
-        return plugin.getDataFolder();
-    }
+    public boolean containsPath(String path) {
+        path = prefix + path;
 
-    @Override
-    public String getImplementationTitle() {
-        return "Bukkit";
-    }
-
-    @Override
-    public String getImplementationVersion() {
-        return Bukkit.getVersion();
-    }
-
-    @Override
-    protected Player internalGetPlayer(String playerName) {
-        org.bukkit.entity.Player handle = Bukkit.getPlayer(playerName);
-
-        if (handle == null) {
-            return null;
-        }
-
-        return new BukkitPlayer(plugin.getEngine(), plugin, handle);
-    }
-
-    @Override
-    protected World internalGetWorld(String worldName) {
-        org.bukkit.World handle = Bukkit.getWorld(worldName);
-
-        if (handle == null) {
-            return null;
-        }
-
-        return new BukkitWorld(handle);
-    }
-
-    @Override
-    public UUID getOfflinePlayer(String ident) {
-        Player player = getPlayer(ident);
-
-        if (player != null) {
-            return player.getUUID();
-        }
-
-        org.bukkit.OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(ident);
-
-        if (offlinePlayer != null) {
-            return offlinePlayer.getUniqueId();
+        if (parent.containsPath(path)) {
+            return true;
         } else {
-            return null;
+            return super.containsPath(path);
         }
     }
 
     @Override
-    public World getDefaultWorld() {
-        return getWorld(Bukkit.getWorlds().get(0).getName());
+    public void set(String path, Object value) {
+        path = prefix + path;
+        parent.set(path, value);
     }
+
+    @Override
+    public Object get(String path) {
+        path = prefix + path;
+
+        if (parent.containsPath(path)) {
+            return parent.get(path);
+        } else {
+            return super.get(path);
+        }
+    }
+
+    @Override
+    public void setDefault(String path, Object value) {
+        path = prefix + path;
+        super.setDefault(path, value);
+    }
+
+    @Override
+    public String getString(String path) {
+        Object value = get(path);
+
+        if (value == null) {
+            return null;
+        }
+
+        return value.toString();
+    }
+
+    @Override
+    public boolean getBoolean(String path) {
+        return castBoolean(get(path));
+    }
+
+    @Override
+    public int getInt(String path) {
+        return castInt(get(path));
+    }
+
+    @Override
+    public double getDouble(String path) {
+        return castDouble(get(path));
+    }
+
+    @Override
+    public void save() throws IOException {
+        parent.save();
+    }
+
+    @Override
+    public Configuration viewFor(String viewPrefix) {
+        if (!viewPrefix.endsWith(".")) {
+            viewPrefix += ".";
+        }
+
+        return new ConfigurationView(viewPrefix, this);
+    }
+
 }

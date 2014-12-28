@@ -26,19 +26,27 @@
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-package org.getlwc.granite;
+package org.getlwc.configuration;
 
-import org.getlwc.command.ConsoleCommandSender;
-import org.granitemc.granite.api.Granite;
+import java.io.File;
+import java.io.InputStream;
 
-import javax.inject.Singleton;
+public interface ConfigurationLoader {
 
-@Singleton
-public class GraniteConsoleCommandSender extends ConsoleCommandSender {
+    /**
+     * Loads a config from a file.
+     *
+     * @param file
+     * @return
+     */
+    public Configuration load(File file);
 
-    @Override
-    public void sendMessage(String message) {
-        Granite.getLogger().info("[LWC] " + message);
-    }
+    /**
+     * Loads a config from an input stream. It will be read-only and cannot be saved.
+     *
+     * @param stream
+     * @return
+     */
+    public Configuration load(InputStream stream);
 
 }

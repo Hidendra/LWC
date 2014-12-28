@@ -26,19 +26,70 @@
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-package org.getlwc.granite;
+package org.getlwc.util;
 
-import org.getlwc.command.ConsoleCommandSender;
-import org.granitemc.granite.api.Granite;
+import java.io.IOException;
+import java.io.Writer;
 
-import javax.inject.Singleton;
+/**
+ * Writes JSON prettily
+ */
+public class JSONPrettyWriter extends Writer {
 
-@Singleton
-public class GraniteConsoleCommandSender extends ConsoleCommandSender {
+    private Writer writer;
+    private int indent = 0;
+
+    public JSONPrettyWriter(Writer writer) {
+        this.writer = writer;
+    }
 
     @Override
-    public void sendMessage(String message) {
-        Granite.getLogger().info("[LWC] " + message);
+    public void write(int c) throws IOException {
+        char chr = (char) c;
+
+        if (chr == '[' || chr == '{') {
+            writer.write(c);
+            writer.write('\n');
+            indent++;
+            writeIndentation();
+        } else if (chr == ',') {
+            writer.write(c);
+            writer.write('\n');
+            writeIndentation();
+        } else if (chr == ']' || chr == '}') {
+            writer.write('\n');
+            indent--;
+            writeIndentation();
+            writer.write(c);
+        } else {
+            writer.write(c);
+        }
+    }
+
+    @Override
+    public void write(char[] buffer, int off, int len) throws IOException {
+        for (int i = off; i < off + len; i ++) {
+            write(buffer[i]);
+        }
+    }
+
+    @Override
+    public void flush() throws IOException {
+        writer.flush();
+    }
+
+    @Override
+    public void close() throws IOException {
+        writer.close();
+    }
+
+    /**
+     * Writes the indention level
+     */
+    private void writeIndentation() throws IOException {
+        for (int i = 0; i < indent; i++) {
+            writer.write("   ");
+        }
     }
 
 }

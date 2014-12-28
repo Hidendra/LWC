@@ -32,6 +32,9 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.getlwc.command.ConsoleCommandSender;
 
+import javax.inject.Singleton;
+
+@Singleton
 public class ForgeConsoleCommandSender extends ConsoleCommandSender {
 
     @Override

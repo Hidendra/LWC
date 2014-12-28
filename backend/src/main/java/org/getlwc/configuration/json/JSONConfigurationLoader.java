@@ -26,86 +26,67 @@
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-package org.getlwc.bukkit;
+package org.getlwc.configuration.json;
 
-import org.bukkit.Bukkit;
-import org.getlwc.ServerLayer;
-import org.getlwc.World;
-import org.getlwc.bukkit.entity.BukkitPlayer;
-import org.getlwc.bukkit.world.BukkitWorld;
-import org.getlwc.entity.Player;
+import org.getlwc.configuration.Configuration;
+import org.getlwc.configuration.ConfigurationLoader;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
-import java.util.UUID;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 @Singleton
-public class BukkitServerLayer extends ServerLayer {
-
-    private BukkitPlugin plugin;
-
-    @Inject
-    public BukkitServerLayer(BukkitPlugin plugin) {
-        this.plugin = plugin;
-    }
+public class JSONConfigurationLoader implements ConfigurationLoader {
 
     @Override
-    public File getDataFolder() {
-        return plugin.getDataFolder();
-    }
-
-    @Override
-    public String getImplementationTitle() {
-        return "Bukkit";
-    }
-
-    @Override
-    public String getImplementationVersion() {
-        return Bukkit.getVersion();
-    }
-
-    @Override
-    protected Player internalGetPlayer(String playerName) {
-        org.bukkit.entity.Player handle = Bukkit.getPlayer(playerName);
-
-        if (handle == null) {
-            return null;
-        }
-
-        return new BukkitPlayer(plugin.getEngine(), plugin, handle);
-    }
-
-    @Override
-    protected World internalGetWorld(String worldName) {
-        org.bukkit.World handle = Bukkit.getWorld(worldName);
-
-        if (handle == null) {
-            return null;
-        }
-
-        return new BukkitWorld(handle);
-    }
-
-    @Override
-    public UUID getOfflinePlayer(String ident) {
-        Player player = getPlayer(ident);
-
-        if (player != null) {
-            return player.getUUID();
-        }
-
-        org.bukkit.OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(ident);
-
-        if (offlinePlayer != null) {
-            return offlinePlayer.getUniqueId();
+    public Configuration load(File file) {
+        if (file.exists()) {
+            try (InputStream stream = new FileInputStream(file)) {
+                return new JSONConfiguration(loadFromStream(stream), file);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
         } else {
-            return null;
+            try {
+                file.createNewFile();
+                Configuration config = new JSONConfiguration(new JSONObject(), file);
+                config.save();
+                return config;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
     }
 
     @Override
-    public World getDefaultWorld() {
-        return getWorld(Bukkit.getWorlds().get(0).getName());
+    public Configuration load(InputStream stream) {
+        try {
+            return new JSONConfiguration(loadFromStream(stream));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
+
+    /**
+     * Loads a JSONObject from the given stream
+     *
+     * @param stream
+     * @return
+     * @throws IOException
+     */
+    private JSONObject loadFromStream(InputStream stream) throws IOException {
+        try (Reader reader = new InputStreamReader(stream)) {
+            return (JSONObject) JSONValue.parse(reader);
+        }
+    }
+
 }

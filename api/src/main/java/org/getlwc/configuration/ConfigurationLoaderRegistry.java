@@ -28,86 +28,53 @@
  */
 package org.getlwc.configuration;
 
-import java.io.IOException;
+import javax.inject.Provider;
+import java.io.File;
+import java.io.InputStream;
 
-public interface Configuration {
+/**
+ * A loader for configuration files. It permits multiple implementations
+ * of different configuration types to coexist. This is done by either
+ * being explicitly given the type or inferring the type from a file,
+ * e.g. the file extension.
+ *
+ * If a file's configuration type cannot be inferred, it should use the
+ * binding with type "default".
+ */
+public interface ConfigurationLoaderRegistry {
 
     /**
-     * Checks if the configuration contains the given key
-     *
-     * @param path
-     * @return true if the config contains the given key
+     * The key used for the default filetype bind
      */
-    public boolean containsPath(String path);
+    public static final String DEFAULT_KEY = "_default";
 
     /**
-     * Set a configuration value
+     * Loads a config from a file. The implementation it is mapped to is inferred
+     * from the file type or default-assigned impl.
      *
-     * @param path
-     * @param value
-     */
-    public void set(String path, Object value);
-
-    /**
-     * Gets an object from the configuration
-     *
-     * @param path
+     * @param file
      * @return
+     * @throws org.getlwc.configuration.UnknownConfigurationTypeException Thrown if the implementation type cannot be inferred from the file and there is no default loader.
      */
-    public Object get(String path);
+    public Configuration load(File file);
 
     /**
-     * Sets a default value for the configuration.
+     * Loads a config from an input stream. It will be read-only and cannot be saved.
+     * The type is given.
      *
-     * @param path
-     * @param value
+     * @param type
+     * @param stream
+     * @return
+     * @throws org.getlwc.configuration.UnknownConfigurationTypeException Thrown if the implementation type given is unknown and there is no default loader.
      */
-    public void setDefault(String path, Object value);
+    public Configuration load(String type, InputStream stream);
 
     /**
-     * Gets a string from the configuration
+     * Binds the provider to the given configuration type.
      *
-     * @param path
-     * @return
+     * @param type
+     * @param loader
      */
-    public String getString(String path);
-
-    /**
-     * Gets a boolean from the configuration
-     *
-     * @param path
-     * @return
-     */
-    public boolean getBoolean(String path);
-
-    /**
-     * Gets an int from the configuration
-     *
-     * @param path
-     * @return
-     */
-    public int getInt(String path);
-
-    /**
-     * Gets a double from the configuration
-     *
-     * @param path
-     * @return
-     */
-    public double getDouble(String path);
-
-    /**
-     * Save the configuration file
-     */
-    public void save() throws IOException;
-
-    /**
-     * Creates a view for the given prefix.
-     * The view will remain consistent with updates to this config,
-     * however defaults set on the view will NOT cascade to this config.
-     * @param prefix
-     * @return
-     */
-    public Configuration viewFor(String prefix);
+    public void bind(String type, ConfigurationLoader loader);
 
 }

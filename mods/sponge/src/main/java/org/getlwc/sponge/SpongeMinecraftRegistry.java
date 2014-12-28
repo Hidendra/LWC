@@ -34,7 +34,9 @@ import org.getlwc.util.registry.AbstractMinecraftRegistry;
 import org.spongepowered.api.Game;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class SpongeMinecraftRegistry extends AbstractMinecraftRegistry {
 
     private Game game;

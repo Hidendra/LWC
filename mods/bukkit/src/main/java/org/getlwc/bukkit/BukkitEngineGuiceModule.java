@@ -29,10 +29,17 @@
 package org.getlwc.bukkit;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
 import com.google.inject.Provides;
 import org.bukkit.Bukkit;
 import org.getlwc.ServerLayer;
 import org.getlwc.command.ConsoleCommandSender;
+import org.getlwc.configuration.Configuration;
+import org.getlwc.configuration.ConfigurationLoaderRegistry;
+import org.getlwc.configuration.files.EngineConfiguration;
+
+import javax.inject.Provider;
+import java.io.File;
 
 public class BukkitEngineGuiceModule extends AbstractModule {
 
@@ -46,6 +53,7 @@ public class BukkitEngineGuiceModule extends AbstractModule {
     protected void configure() {
         bind(ServerLayer.class).to(BukkitServerLayer.class);
         bind(ConsoleCommandSender.class).to(BukkitConsoleCommandSender.class);
+        bind(EngineConfiguration.class).toProvider(BukkitEngineConfigurationProvider.class);
     }
 
     @Provides
@@ -56,6 +64,28 @@ public class BukkitEngineGuiceModule extends AbstractModule {
     @Provides
     public org.bukkit.command.ConsoleCommandSender provideConsoleCommandSender() {
         return Bukkit.getServer().getConsoleSender();
+    }
+
+    /**
+     * Default config provider that defaults to yaml
+     */
+    private static class BukkitEngineConfigurationProvider implements Provider<EngineConfiguration> {
+
+        @Inject
+        private ConfigurationLoaderRegistry registry;
+
+        // TODO replace with @ConfigDir?
+        @Inject
+        @Deprecated
+        private ServerLayer serverLayer;
+
+        @Override
+        public EngineConfiguration get() {
+            File configDir = serverLayer.getDataFolder();
+            Configuration config = registry.load(new File(configDir, "config.yml"));
+            return new EngineConfiguration(config);
+        }
+
     }
 
 }

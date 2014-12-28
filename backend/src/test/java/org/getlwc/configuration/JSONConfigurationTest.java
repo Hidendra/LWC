@@ -26,19 +26,19 @@
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-package org.getlwc.granite;
+package org.getlwc.configuration;
 
-import org.getlwc.command.ConsoleCommandSender;
-import org.granitemc.granite.api.Granite;
+import org.getlwc.configuration.json.JSONConfiguration;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+import org.junit.Before;
 
-import javax.inject.Singleton;
+public class JSONConfigurationTest extends AbstractDefaultConfigurationTest {
 
-@Singleton
-public class GraniteConsoleCommandSender extends ConsoleCommandSender {
-
-    @Override
-    public void sendMessage(String message) {
-        Granite.getLogger().info("[LWC] " + message);
+    @Before
+    public void setup() {
+        emptyConfiguration = new JSONConfiguration();
+        preloadedConfiguration = new JSONConfiguration((JSONObject) JSONValue.parse("{ \"map\": { \"key\": \"value\", \"map\": { \"list\": [ 1, 2, 3 ] } }, \"primitives\": { \"int\": 1, \"bool\": true } }"));
     }
 
 }

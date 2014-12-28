@@ -59,51 +59,57 @@ public class YamlConfiguration implements Configuration {
     }
 
     @Override
-    public void set(String key, Object value) {
-        configuration.setProperty(key, value);
+    public boolean containsPath(String path) {
+        return configuration.hasProperty(path);
     }
 
     @Override
-    public Object get(String key) {
-        return configuration.getProperty(key);
+    public void set(String path, Object value) {
+        configuration.setProperty(path, value);
     }
 
     @Override
-    public String getString(String key) {
-        return configuration.getString(key);
+    public Object get(String path) {
+        return configuration.getProperty(path);
     }
 
     @Override
+    public void setDefault(String path, Object value) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getString(String path) {
+        return configuration.getString(path);
+    }
+
     public String getString(String key, String defaultValue) {
         return configuration.getString(key, defaultValue);
     }
 
     @Override
-    public boolean getBoolean(String key) {
-        return configuration.getBoolean(key, false);
+    public boolean getBoolean(String path) {
+        return configuration.getBoolean(path, false);
     }
 
-    @Override
     public boolean getBoolean(String key, boolean defaultValue) {
         return configuration.getBoolean(key, defaultValue);
     }
 
     @Override
-    public int getInt(String key) {
-        return configuration.getInt(key, 0);
+    public int getInt(String path) {
+        return configuration.getInt(path, 0);
     }
 
-    @Override
     public int getInt(String key, int defaultValue) {
         return configuration.getInt(key, defaultValue);
     }
 
     @Override
-    public double getDouble(String key) {
-        return configuration.getDouble(key, 0);
+    public double getDouble(String path) {
+        return configuration.getDouble(path, 0);
     }
 
-    @Override
     public double getDouble(String key, double defaultValue) {
         return configuration.getDouble(key, defaultValue);
     }
@@ -115,6 +121,11 @@ public class YamlConfiguration implements Configuration {
         }
 
         configuration.save();
+    }
+
+    @Override
+    public Configuration viewFor(String prefix) {
+        throw new UnsupportedOperationException();
     }
 
 }
