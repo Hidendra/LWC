@@ -36,9 +36,11 @@ import org.getlwc.sponge.world.SpongeExtent;
 import org.spongepowered.api.Game;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.File;
 import java.util.UUID;
 
+@Singleton
 public class SpongeServerLayer extends ServerLayer {
 
     private SpongePlugin plugin;
