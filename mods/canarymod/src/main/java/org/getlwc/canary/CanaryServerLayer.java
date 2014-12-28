@@ -36,9 +36,11 @@ import org.getlwc.canary.world.CanaryWorld;
 import org.getlwc.entity.Player;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.File;
 import java.util.UUID;
 
+@Singleton
 public class CanaryServerLayer extends ServerLayer {
 
     /**
