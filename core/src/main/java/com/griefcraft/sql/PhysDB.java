@@ -39,6 +39,7 @@ import com.griefcraft.modules.limits.LimitsModule;
 import com.griefcraft.scripting.Module;
 import com.griefcraft.util.UUIDRegistry;
 import com.griefcraft.util.config.Configuration;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
@@ -52,6 +53,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -404,7 +406,7 @@ public class PhysDB extends Database {
      * Perform any database updates
      */
     public void performDatabaseUpdates() {
-        LWC lwc = LWC.getInstance();
+        final LWC lwc = LWC.getInstance();
 
         // Indexes
         if (databaseVersion == 0) {
@@ -489,6 +491,59 @@ public class PhysDB extends Database {
             incrementDatabaseVersion();
         }
 
+        if (databaseVersion == 6) {
+            // no one likes 6
+            incrementDatabaseVersion();
+        }
+
+        if (databaseVersion == 7) {
+            // UUID madness
+            // defer until after the world is loaded because that is when precacheOfflinePlayers() works.
+            final Runnable conversionRunnable = new Runnable() {
+                public void run() {
+                    if (Bukkit.getWorlds().size() == 0) {
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(lwc.getPlugin(), this, 20);
+                        return;
+                    }
+
+                    int touched = 0;
+                    int total = getProtectionCount();
+
+                    lwc.log("Performing (relatively quick) UUID conversion for protections");
+                    lwc.log("This might take a bit. Please be patient.");
+
+                    lwc.log("Precaching offline players...");
+                    UUIDRegistry.precacheOfflinePlayers();
+
+                    Iterator<Protection> iter = protectionIterator();
+
+                    lwc.log("Looking at all protections in the database...");
+
+                    while (iter.hasNext()) {
+                        Protection protection = iter.next();
+
+                        protection.convertPlayerNamesToUUIDs();
+
+                        touched ++;
+
+                        if (touched % 1000 == 0) {
+                            lwc.log("\tLooked at " + touched + "/" + total + " protections.");
+                        }
+                    }
+
+                    lwc.log("Quick conversion has been completed!");
+                    lwc.log("Note: Only player names that __have logged into the server before__ will have been converted by this.");
+                    lwc.log("If a player did e.g. /cmodify Notch but Notch has never logged into your server, it will still be Notch inside the database.");
+                    lwc.log("If you run into this issue because a player has changed their name and can no longer access their commands, you can use: /lwc admin player2uuid <OldName> <NewName>");
+                    lwc.log("However, keep in mind that the above command might be slow as it has to look at EVERY protection.");
+
+                    incrementDatabaseVersion();
+                }
+            };
+
+            conversionRunnable.run();
+        }
+
     }
 
     /**
@@ -516,6 +571,15 @@ public class PhysDB extends Database {
             // ok
             statement.executeUpdate();
         } catch (SQLException e) { }
+    }
+
+    /**
+     * Returns an iterator for all protections.
+     *
+     * @return
+     */
+    public Iterator<Protection> protectionIterator() {
+        return new ProtectionDatabaseIterator(this);
     }
 
     /**

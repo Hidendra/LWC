@@ -262,7 +262,7 @@ public class Protection {
         boolean res = false;
 
         if (!UUIDRegistry.isValidUUID(owner)) {
-            UUID uuid = UUIDRegistry.getUUID(owner);
+            UUID uuid = UUIDRegistry.getUUID(owner, false);
 
             if (uuid != null) {
                 setOwner(uuid.toString());
@@ -272,7 +272,7 @@ public class Protection {
 
         for (Permission permission : permissions) {
             if (permission.getType() == Permission.Type.PLAYER && !UUIDRegistry.isValidUUID(permission.getName())) {
-                UUID uuid = UUIDRegistry.getUUID(permission.getName());
+                UUID uuid = UUIDRegistry.getUUID(permission.getName(), false);
 
                 if (uuid != null) {
                     permission.setName(uuid.toString());
