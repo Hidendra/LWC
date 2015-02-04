@@ -107,10 +107,10 @@ public class UUIDRegistry {
      * Get the UUID for the given name. If it is not already known, it will be retrieved from the account servers.
      *
      * @param name
+     * @param tryMojangRetrieval true if the Mojang profile service should be called if the player is not found online or offline on the server.
      * @return
-     * @throws Exception
      */
-    public static UUID getUUID(String name) {
+    public static UUID getUUID(String name, boolean tryMojangRetrieval) {
         String nameLower = name.toLowerCase();
 
         try {
@@ -140,7 +140,7 @@ public class UUIDRegistry {
                 return offlinePlayer.getUniqueId();
             }
 
-            if (Bukkit.getOnlineMode()) {
+            if (tryMojangRetrieval && Bukkit.getOnlineMode()) {
                 Map<String, UUID> results = new UUIDFetcher(Arrays.asList(nameLower)).call();
 
                 // The returned name is the exact casing; so we need to look for it
@@ -160,6 +160,16 @@ public class UUIDRegistry {
             nameToUUIDCache.put(nameLower, null);
             return null;
         }
+    }
+
+    /**
+     * Get the UUID for the given name. If it is not already known, it will be retrieved from the account servers.
+     *
+     * @param name
+     * @return
+     */
+    public static UUID getUUID(String name) {
+        return getUUID(name, true);
     }
 
     /**
