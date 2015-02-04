@@ -522,7 +522,9 @@ public class PhysDB extends Database {
                     while (iter.hasNext()) {
                         Protection protection = iter.next();
 
-                        protection.convertPlayerNamesToUUIDs();
+                        if (protection.convertPlayerNamesToUUIDs()) {
+                            protection.save();
+                        }
 
                         touched ++;
 
