@@ -954,6 +954,29 @@ public class PhysDB extends Database {
     }
 
     /**
+     * Load protections by limit.
+     *
+     * @param start
+     * @param count
+     * @return
+     */
+    public List<Protection> loadProtections(int start, int count) {
+        List<Protection> protections = new ArrayList<Protection>();
+
+        try {
+            PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections ORDER BY id DESC limit ?,?");
+            statement.setInt(1, start);
+            statement.setInt(2, count);
+
+            return resolveProtections(statement);
+        } catch (Exception e) {
+            printException(e);
+        }
+
+        return protections;
+    }
+
+    /**
      * Load the first protection within a block's radius
      *
      * @param world
