@@ -37,6 +37,18 @@ public class UUIDRegistry {
     }
 
     /**
+     * Precaches players that have joined the server at some point.
+     * N.B.: Bukkit.getOfflinePlayer() will call the Mojang Profile server if the
+     * player has not been on the server, so that method is not useful for just
+     * looking at players that have been on the server.
+     */
+    public static void precacheOfflinePlayers() {
+        for (OfflinePlayer player : Bukkit.getServer().getOfflinePlayers()) {
+            updateCache(player.getUniqueId(), player.getName());
+        }
+    }
+
+    /**
      * Update the cache with a new UUID/name pair
      *
      * @param uuid
@@ -87,18 +99,7 @@ public class UUIDRegistry {
         if (offlinePlayer != null && offlinePlayer.getName() != null) {
             updateCache(uuid, offlinePlayer.getName());
             return offlinePlayer.getName();
-        }
-
-        // Third way: use the web API
-        try {
-            Map<UUID, String> results = new NameFetcher(Arrays.asList(uuid)).call();
-
-            if (results.containsKey(uuid)) {
-                return results.get(uuid);
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
+        } else {
             return null;
         }
     }
@@ -129,32 +130,21 @@ public class UUIDRegistry {
                 return player.getUniqueId();
             }
 
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(name);
+            if (tryMojangRetrieval) {
+                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(name);
 
-            if (offlinePlayer != null && offlinePlayer.getUniqueId() != null) {
-                if (offlinePlayer.getName() != null) {
-                    name = offlinePlayer.getName();
-                }
-
-                updateCache(offlinePlayer.getUniqueId(), name);
-                return offlinePlayer.getUniqueId();
-            }
-
-            if (tryMojangRetrieval && Bukkit.getOnlineMode()) {
-                Map<String, UUID> results = new UUIDFetcher(Arrays.asList(nameLower)).call();
-
-                // The returned name is the exact casing; so we need to look for it
-                // in the case-insensitive version
-                for (String key : results.keySet()) {
-                    if (key.equalsIgnoreCase(name)) {
-                        UUID uuid = results.get(key);
-                        updateCache(uuid, key);
-                        return uuid;
+                if (offlinePlayer != null && offlinePlayer.getUniqueId() != null) {
+                    if (offlinePlayer.getName() != null) {
+                        name = offlinePlayer.getName();
                     }
+
+                    updateCache(offlinePlayer.getUniqueId(), name);
+                    return offlinePlayer.getUniqueId();
                 }
+
+                nameToUUIDCache.put(nameLower, null);
             }
 
-            nameToUUIDCache.put(nameLower, null);
             return null;
         } catch (Exception e) {
             nameToUUIDCache.put(nameLower, null);
