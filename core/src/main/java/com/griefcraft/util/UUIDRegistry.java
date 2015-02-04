@@ -122,6 +122,24 @@ public class UUIDRegistry {
                 return UUID.fromString(name);
             }
 
+            Player player = Bukkit.getPlayer(name);
+
+            if (player != null) {
+                updateCache(player.getUniqueId(), player.getName());
+                return player.getUniqueId();
+            }
+
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(name);
+
+            if (offlinePlayer != null && offlinePlayer.getUniqueId() != null) {
+                if (offlinePlayer.getName() != null) {
+                    name = offlinePlayer.getName();
+                }
+
+                updateCache(offlinePlayer.getUniqueId(), name);
+                return offlinePlayer.getUniqueId();
+            }
+
             if (Bukkit.getOnlineMode()) {
                 Map<String, UUID> results = new UUIDFetcher(Arrays.asList(nameLower)).call();
 
@@ -133,17 +151,6 @@ public class UUIDRegistry {
                         updateCache(uuid, key);
                         return uuid;
                     }
-                }
-            } else {
-                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(name);
-
-                if (offlinePlayer != null && offlinePlayer.getUniqueId() != null) {
-                    if (offlinePlayer.getName() != null) {
-                        name = offlinePlayer.getName();
-                    }
-
-                    updateCache(offlinePlayer.getUniqueId(), name);
-                    return offlinePlayer.getUniqueId();
                 }
             }
 
