@@ -946,7 +946,12 @@ public class Protection {
      * @return the Bukkit Player object of the owner
      */
     public Player getBukkitOwner() {
-        return Bukkit.getServer().getPlayer(owner);
+        if (UUIDRegistry.isValidUUID(owner)) {
+            UUID ownerUUID = UUID.fromString(owner);
+            return Bukkit.getServer().getPlayer(ownerUUID);
+        } else {
+            return Bukkit.getServer().getPlayer(owner);
+        }
     }
 
     /**
