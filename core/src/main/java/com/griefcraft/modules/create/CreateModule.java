@@ -124,12 +124,12 @@ public class CreateModule extends JavaModule {
         Protection protection = null;
 
         if (protectionType.equals("public")) {
-            protection = physDb.registerProtection(block.getTypeId(), Protection.Type.PUBLIC, worldName, player.getName(), "", blockX, blockY, blockZ);
+            protection = physDb.registerProtection(block.getTypeId(), Protection.Type.PUBLIC, worldName, player.getUniqueId().toString(), "", blockX, blockY, blockZ);
             lwc.sendLocale(player, "protection.interact.create.finalize");
         } else if (protectionType.equals("password")) {
             String password = lwc.encrypt(protectionData);
 
-            protection = physDb.registerProtection(block.getTypeId(), Protection.Type.PASSWORD, worldName, player.getName(), password, blockX, blockY, blockZ);
+            protection = physDb.registerProtection(block.getTypeId(), Protection.Type.PASSWORD, worldName, player.getUniqueId().toString(), password, blockX, blockY, blockZ);
             player.addAccessibleProtection(protection);
 
             lwc.sendLocale(player, "protection.interact.create.finalize");
@@ -137,7 +137,7 @@ public class CreateModule extends JavaModule {
         } else if (protectionType.equals("private") || protectionType.equals("donation")) {
             String[] rights = protectionData.split(" ");
 
-            protection = physDb.registerProtection(block.getTypeId(), Protection.Type.matchType(protectionType), worldName, player.getName(), "", blockX, blockY, blockZ);
+            protection = physDb.registerProtection(block.getTypeId(), Protection.Type.matchType(protectionType), worldName, player.getUniqueId().toString(), "", blockX, blockY, blockZ);
 
             lwc.sendLocale(player, "protection.interact.create.finalize");
             lwc.processRightsModifications(player, protection, rights);
