@@ -286,6 +286,33 @@ public class Protection {
     }
 
     /**
+     * Renames a player name contained within this protection to the given UUID.
+     * This includes sub-data e.g. rights.
+     *
+     * @param name
+     * @param uuid
+     * @return true if the protection was modified
+     */
+    public boolean renamePlayerName(String name, UUID uuid) {
+        boolean res = false;
+
+        if (owner.equalsIgnoreCase(name)) {
+            setOwner(uuid.toString());
+            res = true;
+        }
+
+        for (Permission permission : permissions) {
+            if (permission.getType() == Permission.Type.PLAYER && permission.getName().equalsIgnoreCase(name)) {
+                permission.setName(uuid.toString());
+                modified = true;
+                res = true;
+            }
+        }
+
+        return res;
+    }
+
+    /**
      * Check if this protection requires conversion from plain player names to UUIDs
      *
      * @return true if the protection requires conversion
