@@ -44,7 +44,9 @@ public class UUIDRegistry {
      */
     public static void precacheOfflinePlayers() {
         for (OfflinePlayer player : Bukkit.getServer().getOfflinePlayers()) {
-            updateCache(player.getUniqueId(), player.getName());
+            if (player.getName() != null && player.getUniqueId() != null) {
+                updateCache(player.getUniqueId(), player.getName());
+            }
         }
     }
 
