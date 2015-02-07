@@ -135,7 +135,7 @@ public class LimitsV2 extends JavaModule {
 
         @Override
         public int getProtectionCount(Player player, Material material) {
-            return LWC.getInstance().getPhysicalDatabase().getProtectionCount(player.getName());
+            return LWC.getInstance().getPhysicalDatabase().getProtectionCount(player.getUniqueId().toString());
         }
 
     }
@@ -154,7 +154,7 @@ public class LimitsV2 extends JavaModule {
 
         @Override
         public int getProtectionCount(Player player, Material material) {
-            return LWC.getInstance().getPhysicalDatabase().getProtectionCount(player.getName(), material.getId());
+            return LWC.getInstance().getPhysicalDatabase().getProtectionCount(player.getUniqueId().toString(), material.getId());
         }
 
         /**
@@ -175,8 +175,8 @@ public class LimitsV2 extends JavaModule {
         @Override
         public int getProtectionCount(Player player, Material material) {
             LWC lwc = LWC.getInstance();
-            return lwc.getPhysicalDatabase().getProtectionCount(player.getName(), Material.SIGN_POST.getId())
-                    + lwc.getPhysicalDatabase().getProtectionCount(player.getName(), Material.WALL_SIGN.getId());
+            return lwc.getPhysicalDatabase().getProtectionCount(player.getUniqueId().toString(), Material.SIGN_POST.getId())
+                    + lwc.getPhysicalDatabase().getProtectionCount(player.getUniqueId().toString(), Material.WALL_SIGN.getId());
         }
 
     }
