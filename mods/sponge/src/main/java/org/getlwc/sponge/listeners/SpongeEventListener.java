@@ -32,9 +32,9 @@ import org.getlwc.Block;
 import org.getlwc.EventHelper;
 import org.getlwc.entity.Player;
 import org.getlwc.sponge.SpongePlugin;
-import org.spongepowered.api.event.player.PlayerInteractBlockEvent;
-import org.spongepowered.api.event.player.PlayerJoinEvent;
-import org.spongepowered.api.event.player.PlayerQuitEvent;
+import org.spongepowered.api.event.entity.living.player.PlayerInteractBlockEvent;
+import org.spongepowered.api.event.entity.living.player.PlayerJoinEvent;
+import org.spongepowered.api.event.entity.living.player.PlayerQuitEvent;
 import org.spongepowered.api.util.event.Order;
 import org.spongepowered.api.util.event.Subscribe;
 
@@ -65,7 +65,7 @@ public class SpongeEventListener {
         Block block = plugin.wrapBlock(event.getBlock());
 
         if (EventHelper.onBlockInteract(player, block)) {
-            event.setCancelled(true);
+            event.getCallbacks().cancelAll();
         }
     }
 
