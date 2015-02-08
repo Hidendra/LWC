@@ -211,7 +211,7 @@ public class LWCBlockListener implements Listener {
                 protection.radiusRemoveCache();
 
                 if (protection.getProtectionFinder() != null) {
-                    protection.getProtectionFinder().removeBlock(block);
+                    protection.getProtectionFinder().removeBlock(block.getState());
                 }
 
                 lwc.getProtectionCache().addProtection(protection);

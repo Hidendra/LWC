@@ -32,6 +32,7 @@ import com.griefcraft.util.ProtectionFinder;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -52,10 +53,11 @@ public class DoubleChestMatcher implements ProtectionFinder.Matcher {
     public static final BlockFace[] POSSIBLE_FACES = new BlockFace[]{ BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST };
 
     public boolean matches(ProtectionFinder finder) {
-        Block block = finder.getBaseBlock();
+        BlockState baseBlockState = finder.getBaseBlock();
+        Block block = baseBlockState.getBlock();
 
         // is the base block not what we want?
-        if (!PROTECTABLES_CHESTS.contains(block.getType())) {
+        if (!PROTECTABLES_CHESTS.contains(baseBlockState.getType())) {
             return false;
         }
 
@@ -63,7 +65,7 @@ public class DoubleChestMatcher implements ProtectionFinder.Matcher {
             Block relative = block.getRelative(face);
 
             // we only want chests
-            if (block.getType() == relative.getType()) {
+            if (baseBlockState.getType() == relative.getType()) {
                 finder.addBlock(relative);
                 return true;
             }

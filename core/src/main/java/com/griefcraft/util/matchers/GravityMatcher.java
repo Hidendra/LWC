@@ -53,7 +53,7 @@ public class GravityMatcher implements ProtectionFinder.Matcher {
     }
 
     public boolean matches(ProtectionFinder finder) {
-        Block block = finder.getBaseBlock();
+        Block block = finder.getBaseBlock().getBlock();
 
         // Easy to match, just try to match the block above the base block :P
         Block up = block.getRelative(BlockFace.UP);

@@ -72,7 +72,7 @@ public class WallMatcher implements ProtectionFinder.Matcher {
 
     public boolean matches(ProtectionFinder finder) {
         // The block we are working on
-        Block block = finder.getBaseBlock();
+        Block block = finder.getBaseBlock().getBlock();
 
         // Match wall signs to the wall it's attached to
         for (BlockFace blockFace : POSSIBLE_FACES) {

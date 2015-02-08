@@ -37,6 +37,7 @@ import com.griefcraft.util.matchers.GravityMatcher;
 import com.griefcraft.util.matchers.WallMatcher;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -56,7 +57,7 @@ public class ProtectionFinder {
     /**
      * The base block to match off of
      */
-    private Block baseBlock = null;
+    private BlockState baseBlock = null;
 
     /**
      * The matched protection if found
@@ -71,12 +72,12 @@ public class ProtectionFinder {
     /**
      * All of the matched blocks
      */
-    private final List<Block> blocks = new LinkedList<Block>();
+    private final List<BlockState> blocks = new LinkedList<BlockState>();
 
     /**
      * All of the blocks that are protectables
      */
-    private final List<Block> protectables = new LinkedList<Block>();
+    private final List<BlockState> protectables = new LinkedList<BlockState>();
 
     public ProtectionFinder(LWC lwc) {
         this.lwc = lwc;
@@ -89,6 +90,16 @@ public class ProtectionFinder {
      * @return TRUE if a set of blocks was found
      */
     public boolean matchBlocks(Block baseBlock) {
+        return matchBlocks(baseBlock.getState());
+    }
+
+    /**
+     * Try and match blocks using the given base block
+     *
+     * @param baseBlock
+     * @return TRUE if a set of blocks was found
+     */
+    public boolean matchBlocks(BlockState baseBlock) {
         // Did we already find a protection?
         if (matchedProtection != null) {
             return true;
@@ -192,6 +203,15 @@ public class ProtectionFinder {
      * @param block
      */
     public void addBlock(Block block) {
+        addBlock(block.getState());
+    }
+
+    /**
+     * Add a block to the matched blocks
+     *
+     * @param block
+     */
+    public void addBlock(BlockState block) {
         if (!blocks.contains(block)) {
             blocks.add(block);
         }
@@ -224,7 +244,7 @@ public class ProtectionFinder {
         calculateProtectables();
         searched = true;
 
-        for (Block block : protectables) {
+        for (BlockState block : protectables) {
             if (tryLoadProtection(block, noAutoCache) == Result.E_FOUND) {
                 return matchedProtection;
             }
@@ -240,7 +260,7 @@ public class ProtectionFinder {
      * @param noAutoCache if a match is found, don't cache it to be the protection we use
      * @return
      */
-    protected Result tryLoadProtection(Block block, boolean noAutoCache) {
+    protected Result tryLoadProtection(BlockState block, boolean noAutoCache) {
         if (matchedProtection != null) {
             return Result.E_FOUND;
         }
@@ -310,7 +330,7 @@ public class ProtectionFinder {
      *
      * @return
      */
-    public Block getBaseBlock() {
+    public BlockState getBaseBlock() {
         return baseBlock;
     }
 
@@ -319,7 +339,7 @@ public class ProtectionFinder {
      *
      * @return
      */
-    public List<Block> getBlocks() {
+    public List<BlockState> getBlocks() {
         return Collections.unmodifiableList(blocks);
     }
 
@@ -328,23 +348,14 @@ public class ProtectionFinder {
      *
      * @param block
      */
-    public void removeBlock(Block block) {
-        Iterator<Block> iter = blocks.iterator();
+    public void removeBlock(BlockState block) {
+        Iterator<BlockState> iter = blocks.iterator();
 
         while (iter.hasNext()) {
             if (lwc.blockEquals(block, iter.next())) {
                 iter.remove();
             }
         }
-    }
-
-    /**
-     * Get an immutable set of the protectable blocks
-     *
-     * @return
-     */
-    public List<Block> getProtectables() {
-        return Collections.unmodifiableList(protectables);
     }
 
     /**
@@ -373,11 +384,10 @@ public class ProtectionFinder {
 
         // go through the blocks
         for (int index = 1; index < size; index++) {
-            Block block = blocks.get(index);
+            BlockState state = blocks.get(index);
 
-            // Is it protectable?
-            if (lwc.isProtectable(block)) {
-                protectables.add(block);
+            if (lwc.isProtectable(state)) {
+                protectables.add(state);
             }
         }
     }

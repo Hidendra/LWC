@@ -34,6 +34,7 @@ import com.griefcraft.util.SetUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -77,7 +78,8 @@ public class DoorMatcher implements ProtectionFinder.Matcher {
     };
 
     public boolean matches(ProtectionFinder finder) {
-        Block block = finder.getBaseBlock();
+        BlockState baseBlockState = finder.getBaseBlock();
+        Block block = baseBlockState.getBlock();
 
         // Get the block above the base block
         Block aboveBaseBlock = block.getRelative(BlockFace.UP);
@@ -86,8 +88,8 @@ public class DoorMatcher implements ProtectionFinder.Matcher {
         Block aboveAboveBaseBlock = aboveBaseBlock.getRelative(BlockFace.UP);
 
         // look for door if they're clicking a pressure plate
-        if (PRESSURE_PLATES.contains(block.getType()) || PRESSURE_PLATES.contains(aboveBaseBlock.getType())) {
-            Block pressurePlate = PRESSURE_PLATES.contains(block.getType()) ? block : aboveBaseBlock;
+        if (PRESSURE_PLATES.contains(baseBlockState.getType()) || PRESSURE_PLATES.contains(aboveBaseBlock.getType())) {
+            Block pressurePlate = PRESSURE_PLATES.contains(baseBlockState.getType()) ? block : aboveBaseBlock;
 
             for (BlockFace face : faces) {
                 Block relative = pressurePlate.getRelative(face);
@@ -103,7 +105,7 @@ public class DoorMatcher implements ProtectionFinder.Matcher {
                 // attempt to match the door
                 if (doorFinder.matchBlocks(relative)) {
                     // add the blocks it matched
-                    for (Block found : doorFinder.getBlocks()) {
+                    for (BlockState found : doorFinder.getBlocks()) {
                         finder.addBlock(found);
                     }
 
@@ -131,7 +133,7 @@ public class DoorMatcher implements ProtectionFinder.Matcher {
         }
 
         // Match the top half of the door
-        else if (PROTECTABLES_DOORS.contains(block.getType())) {
+        else if (PROTECTABLES_DOORS.contains(baseBlockState.getType())) {
             Block bottomHalf = block.getRelative(BlockFace.DOWN);
 
             finder.addBlock(bottomHalf);
