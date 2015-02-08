@@ -36,6 +36,7 @@ import com.griefcraft.scripting.event.LWCRedstoneEvent;
 import com.griefcraft.util.ProtectionFinder;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 
 public class RedstoneModule extends JavaModule {
@@ -53,7 +54,7 @@ public class RedstoneModule extends JavaModule {
         ProtectionFinder finder = protection.getProtectionFinder();
 
         if (finder != null) {
-            for (Block found : finder.getBlocks()) {
+            for (BlockState found : finder.getBlocks()) {
                 if (found.getType() == Material.STONE_PLATE || found.getType() == Material.WOOD_PLATE) {
                     // find a player that is using it
                     int x = found.getX();

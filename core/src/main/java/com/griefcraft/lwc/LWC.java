@@ -1155,6 +1155,18 @@ public class LWC {
     }
 
     /**
+     * Compares two blocks if they are equal
+     *
+     * @param block
+     * @param block2
+     * @return
+     */
+    public boolean blockEquals(BlockState block, BlockState block2) {
+        return block.getType() == block2.getType() && block.getX() == block2.getX() && block.getY() == block2.getY()
+                && block.getZ() == block2.getZ() && block.getRawData() == block2.getRawData();
+    }
+
+    /**
      * Find a protection linked to the location
      *
      * @param location
@@ -1179,21 +1191,31 @@ public class LWC {
      * @return
      */
     public Protection findProtection(Block block) {
+        return findProtection(block.getState());
+    }
+
+    /**
+     * Find a protection linked to the block
+     *
+     * @param state
+     * @return
+     */
+    public Protection findProtection(BlockState state) {
         // If the block type is AIR, then we have a problem .. but attempt to load a protection anyway
         // Note: this call stems from a very old bug in Bukkit that likely does not exist anymore at all
         //       but is kept just incase. At one point getBlock() in Bukkit would sometimes say a block
         //       is an eir block even though the client and server sees it differently (ie a chest).
         //       This was of course very problematic!
-        if (block.getType() == Material.AIR) {
+        if (state.getType() == Material.AIR) {
             // We won't be able to match any other blocks anyway, so the least we can do is attempt to load a protection
-            return physicalDatabase.loadProtection(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
+            return physicalDatabase.loadProtection(state.getWorld().getName(), state.getX(), state.getY(), state.getZ());
         }
 
         // Create a protection finder
         ProtectionFinder finder = new ProtectionFinder(this);
 
         // Search for a protection
-        boolean result = finder.matchBlocks(block);
+        boolean result = finder.matchBlocks(state);
 
         Protection found = null;
 
@@ -1203,7 +1225,7 @@ public class LWC {
         }
 
         if (found == null) {
-            protectionCache.addKnownNull(protectionCache.cacheKey(block.getLocation()));
+            protectionCache.addKnownNull(protectionCache.cacheKey(state.getLocation()));
         }
 
         return found;
@@ -1224,35 +1246,6 @@ public class LWC {
         }
 
         return findProtection(new Location(world, x, y, z));
-    }
-
-    /**
-     * Matches all possible blocks that can be considered a 'protection'
-     * e.g clicking a chest will match double chests, clicking a door or block below a door
-     * matches the whole door
-     *
-     * @param world
-     * @param x     the x coordinate
-     * @param y     the y coordinate
-     * @param z     the z coordinate
-     * @return the List of possible blocks
-     */
-    public List<Block> getProtectionSet(World world, int x, int y, int z) {
-        if (world == null) {
-            return new ArrayList<Block>();
-        }
-
-        // Get the base block
-        Block baseBlock = world.getBlockAt(x, y, z);
-
-        // Create a new protection finder
-        ProtectionFinder finder = new ProtectionFinder(this);
-
-        // Look for blocks
-        finder.matchBlocks(baseBlock);
-
-        // return the matched blocks
-        return new ArrayList<Block>(finder.getBlocks());
     }
 
     /**
@@ -1351,6 +1344,22 @@ public class LWC {
     }
 
     /**
+     * Check a block to see if it is protectable
+     *
+     * @param state
+     * @return
+     */
+    public boolean isProtectable(BlockState state) {
+        Material material = state.getType();
+
+        if (material == null) {
+            return false;
+        }
+
+        return Boolean.parseBoolean(resolveProtectionConfiguration(state, "enabled"));
+    }
+
+    /**
      * Get the appropriate config value for the block (protections.block.node)
      *
      * @param block
@@ -1373,6 +1382,52 @@ public class LWC {
         names.add(material.getId() + "");
         names.add(material.getId() + ":" + block.getData());
         names.add(materialName + ":" + block.getData());
+
+        if (!materialName.equals(material.toString().toLowerCase())) {
+            names.add(material.toString().toLowerCase());
+        }
+
+        // Add the wildcards last so it can be overriden
+        names.add("*");
+        names.add(material.getId() + ":*");
+
+        String value = configuration.getString("protections." + node);
+
+        for (String name : names) {
+            String temp = configuration.getString("protections.blocks." + name + "." + node);
+
+            if (temp != null && !temp.isEmpty()) {
+                value = temp;
+            }
+        }
+
+        protectionConfigurationCache.put(cacheKey, value);
+        return value;
+    }
+
+    /**
+     * Get the appropriate config value for the block (protections.block.node)
+     *
+     * @param state
+     * @param node
+     * @return
+     */
+    public String resolveProtectionConfiguration(BlockState state, String node) {
+        Material material = state.getType();
+        String cacheKey = state.getRawData() + "-" + material.toString() + "-" + node;
+        if (protectionConfigurationCache.containsKey(cacheKey)) {
+            return protectionConfigurationCache.get(cacheKey);
+        }
+
+        List<String> names = new ArrayList<String>();
+
+        String materialName = normalizeMaterialName(material);
+
+        // add the name & the block id
+        names.add(materialName);
+        names.add(material.getId() + "");
+        names.add(material.getId() + ":" + state.getRawData());
+        names.add(materialName + ":" + state.getRawData());
 
         if (!materialName.equals(material.toString().toLowerCase())) {
             names.add(material.toString().toLowerCase());

@@ -33,6 +33,7 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 
 public class ProtectionCache {
 
@@ -217,9 +218,10 @@ public class ProtectionCache {
         // get the protection's finder if it was found via that
         if (protection.getProtectionFinder() != null) {
             Block protectedBlock = protection.getBlock();
-            for (Block block : protection.getProtectionFinder().getBlocks()) {
-                if (block != protectedBlock) {
-                    String cacheKey = cacheKey(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
+
+            for (BlockState state : protection.getProtectionFinder().getBlocks()) {
+                if (!protectedBlock.equals(state.getBlock())) {
+                    String cacheKey = cacheKey(state.getLocation());
                     byKnownBlock.put(cacheKey, protection);
                 }
             }
@@ -238,8 +240,8 @@ public class ProtectionCache {
         byId.remove(protection.getId());
 
         if (protection.getProtectionFinder() != null) {
-            for (Block block : protection.getProtectionFinder().getBlocks()) {
-                remove(cacheKey(block.getLocation()));
+            for (BlockState state : protection.getProtectionFinder().getBlocks()) {
+                remove(cacheKey(state.getLocation()));
             }
         }
     }
@@ -303,6 +305,16 @@ public class ProtectionCache {
      * @return
      */
     public Protection getProtection(Block block) {
+        return getProtection(cacheKey(block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
+    }
+
+    /**
+     * Get a protection in the cache located on the given block
+     *
+     * @param block
+     * @return
+     */
+    public Protection getProtection(BlockState block) {
         return getProtection(cacheKey(block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
     }
 

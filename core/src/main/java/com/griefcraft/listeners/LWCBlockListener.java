@@ -47,6 +47,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -211,7 +212,7 @@ public class LWCBlockListener implements Listener {
                 protection.radiusRemoveCache();
 
                 if (protection.getProtectionFinder() != null) {
-                    protection.getProtectionFinder().removeBlock(block);
+                    protection.getProtectionFinder().removeBlock(block.getState());
                 }
 
                 lwc.getProtectionCache().addProtection(protection);
@@ -350,6 +351,23 @@ public class LWCBlockListener implements Listener {
                         event.setCancelled(true);
                         return;
                     }
+                }
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockMultiPlace(BlockMultiPlaceEvent event) {
+        LWC lwc = plugin.getLWC();
+        Block block = event.getBlock();
+
+        if (block.getType() == Material.BED_BLOCK) {
+            for (BlockState state : event.getReplacedBlockStates()) {
+                Protection protection = lwc.findProtection(state);
+
+                if (protection != null) {
+                    event.setCancelled(true);
+                    return;
                 }
             }
         }
