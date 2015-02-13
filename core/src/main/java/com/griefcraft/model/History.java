@@ -201,9 +201,14 @@ public class History {
             UUID uuid = UUIDRegistry.getUUID(creator);
 
             if (uuid != null) {
-                removeMetaData("creator=" + creator);
-                addMetaData("creator=" + uuid.toString());
-                res = true;
+                // TODO fix this junk
+                for (int i = 0; i < metadata.length; i ++) {
+                    if (metadata[i].startsWith("creator=")) {
+                        metadata[i] = "creator=" + uuid.toString();
+                        res = true;
+                        break;
+                    }
+                }
             }
         }
 
@@ -213,9 +218,14 @@ public class History {
             UUID uuid = UUIDRegistry.getUUID(destroyer);
 
             if (uuid != null) {
-                removeMetaData("destroyer=" + destroyer);
-                addMetaData("destroyer=" + uuid.toString());
-                res = true;
+                // TODO fix this junk
+                for (int i = 0; i < metadata.length; i ++) {
+                    if (metadata[i].startsWith("destroyer=")) {
+                        metadata[i] = "destroyer=" + uuid.toString();
+                        res = true;
+                        break;
+                    }
+                }
             }
         }
 
