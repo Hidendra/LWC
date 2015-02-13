@@ -496,7 +496,7 @@ public class PhysDB extends Database {
             incrementDatabaseVersion();
         }
 
-        if (databaseVersion == 7) {
+        if (databaseVersion == 7 || databaseVersion == 8) {
             // UUID madness
             // defer until after the world is loaded because that is when precacheOfflinePlayers() works.
             final Runnable conversionRunnable = new Runnable() {
@@ -506,30 +506,32 @@ public class PhysDB extends Database {
                         return;
                     }
 
-                    int touched = 0;
-                    int total = getProtectionCount();
-
-                    lwc.log("Performing (relatively quick) UUID conversion for protections");
+                    lwc.log("Performing (relatively quick) UUID conversion for protections & history");
                     lwc.log("This might take a bit. Please be patient.");
 
                     lwc.log("Precaching offline players...");
                     UUIDRegistry.precacheOfflinePlayers();
 
-                    Iterator<Protection> iter = protectionIterator();
+                    {
+                        int touched = 0;
+                        int total = getProtectionCount();
 
-                    lwc.log("Looking at all protections in the database...");
+                        Iterator<Protection> iter = protectionIterator();
 
-                    while (iter.hasNext()) {
-                        Protection protection = iter.next();
+                        lwc.log("Looking at all protections in the database...");
 
-                        if (protection.convertPlayerNamesToUUIDs()) {
-                            protection.save();
-                        }
+                        while (iter.hasNext()) {
+                            Protection protection = iter.next();
 
-                        touched ++;
+                            if (protection.convertPlayerNamesToUUIDs()) {
+                                protection.save();
+                            }
 
-                        if (touched % 1000 == 0) {
-                            lwc.log("\tLooked at " + touched + "/" + total + " protections.");
+                            touched ++;
+
+                            if (touched % 1000 == 0) {
+                                lwc.log("\tLooked at " + touched + "/" + total + " protections.");
+                            }
                         }
                     }
 
@@ -538,6 +540,12 @@ public class PhysDB extends Database {
                     lwc.log("If a player did e.g. /cmodify Notch but Notch has never logged into your server, it will still be Notch inside the database.");
                     lwc.log("If you run into this issue because a player has changed their name and can no longer access their commands, you can use: /lwc admin player2uuid <OldName> <NewName>");
                     lwc.log("However, keep in mind that the above command might be slow as it has to look at EVERY protection.");
+
+                    // both 7 & 8 should do the full conversion
+                    // so double increment when it's only 7
+                    if (databaseVersion == 7) {
+                        incrementDatabaseVersion();
+                    }
 
                     incrementDatabaseVersion();
                 }
