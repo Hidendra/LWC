@@ -187,7 +187,7 @@ public class History {
         boolean res = false;
 
         if (!UUIDRegistry.isValidUUID(player)) {
-            UUID uuid = UUIDRegistry.getUUID(player);
+            UUID uuid = UUIDRegistry.getUUID(player, false);
 
             if (uuid != null) {
                 setPlayer(uuid.toString());
@@ -198,7 +198,7 @@ public class History {
         String creator = getString("creator");
 
         if (creator.length() > 0 && !UUIDRegistry.isValidUUID(creator)) {
-            UUID uuid = UUIDRegistry.getUUID(creator);
+            UUID uuid = UUIDRegistry.getUUID(creator, false);
 
             if (uuid != null) {
                 // TODO fix this junk
@@ -215,7 +215,7 @@ public class History {
         String destroyer = getString("destroyer");
 
         if (destroyer.length() > 0 && !UUIDRegistry.isValidUUID(destroyer)) {
-            UUID uuid = UUIDRegistry.getUUID(destroyer);
+            UUID uuid = UUIDRegistry.getUUID(destroyer, false);
 
             if (uuid != null) {
                 // TODO fix this junk
