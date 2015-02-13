@@ -30,9 +30,11 @@ package com.griefcraft.model;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.util.StringUtil;
+import com.griefcraft.util.UUIDRegistry;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class History {
 
@@ -146,6 +148,78 @@ public class History {
         // set some defaults to account for stupidness
         status = Status.INACTIVE;
         metadata = new String[0];
+    }
+
+    /**
+     * Checks if the history object needs to be UUID converted
+     * @return
+     */
+    public boolean needsUUIDConversion() {
+        if (!UUIDRegistry.isValidUUID(player)) {
+            return true;
+        }
+
+        String creator = getString("creator");
+
+        if (creator.length() > 0 && !UUIDRegistry.isValidUUID(creator)) {
+            return true;
+        }
+
+        String destroyer = getString("destroyer");
+
+        if (destroyer.length() > 0 && !UUIDRegistry.isValidUUID(destroyer)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Converts any player names to UUIDs on the history object.
+     *
+     * @return true if any conversions were done.
+     */
+    public boolean convertPlayerNamesToUUIDs() {
+        if (!needsUUIDConversion()) {
+            return false;
+        }
+
+        boolean res = false;
+
+        if (!UUIDRegistry.isValidUUID(player)) {
+            UUID uuid = UUIDRegistry.getUUID(player);
+
+            if (uuid != null) {
+                setPlayer(uuid.toString());
+                res = true;
+            }
+        }
+
+        String creator = getString("creator");
+
+        if (creator.length() > 0 && !UUIDRegistry.isValidUUID(creator)) {
+            UUID uuid = UUIDRegistry.getUUID(creator);
+
+            if (uuid != null) {
+                removeMetaData("creator=" + creator);
+                addMetaData("creator=" + uuid.toString());
+                res = true;
+            }
+        }
+
+        String destroyer = getString("destroyer");
+
+        if (destroyer.length() > 0 && !UUIDRegistry.isValidUUID(destroyer)) {
+            UUID uuid = UUIDRegistry.getUUID(destroyer);
+
+            if (uuid != null) {
+                removeMetaData("destroyer=" + destroyer);
+                addMetaData("destroyer=" + uuid.toString());
+                res = true;
+            }
+        }
+
+        return res;
     }
 
     /**
