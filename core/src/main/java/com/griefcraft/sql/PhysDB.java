@@ -576,12 +576,21 @@ public class PhysDB extends Database {
     }
 
     /**
-     * Returns an iterator for all protections.
+     * Returns an iterator for all protections in the database.
      *
      * @return
      */
     public Iterator<Protection> protectionIterator() {
         return new ProtectionDatabaseIterator(this);
+    }
+
+    /**
+     * Returns an iterator for all history in the database.
+     *
+     * @return
+     */
+    public Iterator<History> historyIterator() {
+        return new HistoryDatabaseIterator(this);
     }
 
     /**
