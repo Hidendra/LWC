@@ -535,6 +535,29 @@ public class PhysDB extends Database {
                         }
                     }
 
+                    {
+                        int touched = 0;
+                        int total = getHistoryCount();
+
+                        Iterator<History> iter = historyIterator();
+
+                        lwc.log("Looking at all history in the database...");
+
+                        while (iter.hasNext()) {
+                            History history = iter.next();
+
+                            if (history.convertPlayerNamesToUUIDs()) {
+                                history.save();
+                            }
+
+                            touched ++;
+
+                            if (touched % 1000 == 0) {
+                                lwc.log("\tLooked at " + touched + "/" + total + " history.");
+                            }
+                        }
+                    }
+
                     lwc.log("Quick conversion has been completed!");
                     lwc.log("Note: Only player names that __have logged into the server before__ will have been converted by this.");
                     lwc.log("If a player did e.g. /cmodify Notch but Notch has never logged into your server, it will still be Notch inside the database.");
