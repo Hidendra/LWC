@@ -497,7 +497,7 @@ public class Protection {
             return;
         }
 
-        flags.remove(flag);
+        flags.remove(flag.getType());
         this.modified = true;
     }
 
