@@ -79,6 +79,9 @@ public class LWCBlockListener implements Listener {
         loadAndProcessConfig();
     }
 
+    public static final BlockFace[] POSSIBLE_FACES = {
+        BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN};
+
     @EventHandler
     public void onBlockRedstoneChange(BlockRedstoneEvent event) {
         if (!LWC.ENABLED) {
@@ -256,10 +259,17 @@ public class LWCBlockListener implements Listener {
             return;
         }
 
-        // the block that the piston moved
         Block moved = piston.getRelative(direction, 2);
-
-        // TODO remove this when spout fixes their shit
+		for (BlockFace bf : POSSIBLE_FACES) {
+			if (moved.getType() == Material.SLIME_BLOCK) {
+				Block slime = moved.getRelative(direction);
+				Block sign = slime.getRelative(bf);
+				if ((lwc.findProtection(sign) != null)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+		}
         if (moved.getType() == Material.WOODEN_DOOR || moved.getType() == Material.IRON_DOOR_BLOCK) {
             Block below = moved.getRelative(BlockFace.DOWN).getRelative(direction.getOppositeFace());
 
