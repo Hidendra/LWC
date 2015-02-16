@@ -261,7 +261,7 @@ public class LWCBlockListener implements Listener {
 
         Block moved = piston.getRelative(direction, 2);
 		for (BlockFace bf : POSSIBLE_FACES) {
-			if (moved.getType() == Material.SLIME_BLOCK) {
+			if (moved.getTypeId() == 165) {
 				Block slime = moved.getRelative(direction);
 				Block sign = slime.getRelative(bf);
 				if ((lwc.findProtection(sign) != null)) {
