@@ -938,7 +938,8 @@ public class LWC {
      */
     public int fastRemoveProtectionsByPlayer(CommandSender sender, String player, boolean shouldRemoveBlocks) {
         // remove their protections first
-        int ret = fastRemoveProtections(sender, "Lower(owner) = Lower('" + player + "')", shouldRemoveBlocks);
+        UUID uuid = UUIDRegistry.getUUID(player);
+        int ret = fastRemoveProtections(sender, "Lower(owner) = Lower('" + (uuid != null ? uuid.toString() : player) + "')", shouldRemoveBlocks);
 
         // invalid any history objects associated with the player
         physicalDatabase.invalidateHistory(player);
