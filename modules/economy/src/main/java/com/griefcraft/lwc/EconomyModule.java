@@ -265,7 +265,9 @@ public class EconomyModule extends JavaModule {
             history.addMetaData("discount=true");
 
             // Was the discount's id non-null?
-            String discountId = resolveValue(protection.getBukkitOwner(), "discount.id");
+            Player puuid = protection.getBukkitOwner();
+
+            String discountId = resolveValue(puuid, "discount.id");
 
             if (!discountId.isEmpty()) {
                 history.addMetaData("discountId=" + discountId);

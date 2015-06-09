@@ -164,6 +164,11 @@ public class PhysDB extends Database {
     public int getProtectionCount(String player) {
         int count = 0;
 
+        UUID uuid = UUIDRegistry.getUUID(player);
+        if(uuid != null) {
+            player = uuid.toString();
+        }
+        
         try {
             PreparedStatement statement = prepare("SELECT COUNT(*) as count FROM " + prefix + "protections WHERE owner = ?");
             statement.setString(1, player);
@@ -190,6 +195,11 @@ public class PhysDB extends Database {
      */
     public int getHistoryCount(String player) {
         int count = 0;
+        
+        UUID uuid = UUIDRegistry.getUUID(player);
+        if(uuid != null) {
+            player = uuid.toString();
+        }
 
         try {
             PreparedStatement statement = prepare("SELECT COUNT(*) AS count FROM " + prefix + "history WHERE LOWER(player) = LOWER(?)");
@@ -217,6 +227,11 @@ public class PhysDB extends Database {
      */
     public int getProtectionCount(String player, int blockId) {
         int count = 0;
+        
+        UUID uuid = UUIDRegistry.getUUID(player);
+        if(uuid != null) {
+            player = uuid.toString();
+        }
 
         try {
             PreparedStatement statement = prepare("SELECT COUNT(*) AS count FROM " + prefix + "protections WHERE owner = ? AND blockId = ?");
@@ -1071,6 +1086,11 @@ public class PhysDB extends Database {
      */
     public List<Protection> loadProtectionsByPlayer(String player) {
         List<Protection> protections = new ArrayList<Protection>();
+        
+        UUID uuid = UUIDRegistry.getUUID(player);
+        if(uuid != null) {
+            player = uuid.toString();
+        }
 
         try {
             PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE owner = ?");
@@ -1359,6 +1379,15 @@ public class PhysDB extends Database {
         if (!LWC.getInstance().isHistoryEnabled()) {
             return temp;
         }
+        
+        UUID uuid = UUIDRegistry.getUUID(player);
+        if(uuid == null) {
+        	uuid = UUID.fromString(player);
+        }
+        
+        if(uuid != null) {
+        	player = uuid.toString();
+        }
 
         try {
             PreparedStatement statement = prepare("SELECT * FROM " + prefix + "history WHERE LOWER(player) = LOWER(?) ORDER BY id DESC");
@@ -1440,6 +1469,11 @@ public class PhysDB extends Database {
 
         if (!LWC.getInstance().isHistoryEnabled()) {
             return temp;
+        }
+        
+        UUID uuid = UUIDRegistry.getUUID(player);
+        if(uuid != null) {
+            player = uuid.toString();
         }
 
         try {
@@ -1588,6 +1622,11 @@ public class PhysDB extends Database {
 
         if (!LWC.getInstance().isHistoryEnabled()) {
             return temp;
+        }
+        
+        UUID uuid = UUIDRegistry.getUUID(player);
+        if(uuid != null) {
+            player = uuid.toString();
         }
 
         try {
