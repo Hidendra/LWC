@@ -166,7 +166,8 @@ public class PhysDB extends Database {
 
         try {
             PreparedStatement statement = prepare("SELECT COUNT(*) as count FROM " + prefix + "protections WHERE owner = ?");
-            statement.setString(1, player);
+            UUID uuid = UUIDRegistry.getUUID(player);
+            statement.setString(1, uuid != null ? uuid.toString() : player);
 
             ResultSet set = statement.executeQuery();
 
@@ -193,7 +194,8 @@ public class PhysDB extends Database {
 
         try {
             PreparedStatement statement = prepare("SELECT COUNT(*) AS count FROM " + prefix + "history WHERE LOWER(player) = LOWER(?)");
-            statement.setString(1, player);
+            UUID uuid = UUIDRegistry.getUUID(player);
+            statement.setString(1, uuid != null ? uuid.toString() : player);
 
             ResultSet set = statement.executeQuery();
 
@@ -220,7 +222,8 @@ public class PhysDB extends Database {
 
         try {
             PreparedStatement statement = prepare("SELECT COUNT(*) AS count FROM " + prefix + "protections WHERE owner = ? AND blockId = ?");
-            statement.setString(1, player);
+            UUID uuid = UUIDRegistry.getUUID(player);
+            statement.setString(1, uuid != null ? uuid.toString() : player);
             statement.setInt(2, blockId);
 
             ResultSet set = statement.executeQuery();
@@ -1074,7 +1077,8 @@ public class PhysDB extends Database {
 
         try {
             PreparedStatement statement = prepare("SELECT id, owner, type, x, y, z, data, blockId, world, password, date, last_accessed FROM " + prefix + "protections WHERE owner = ?");
-            statement.setString(1, player);
+            UUID uuid = UUIDRegistry.getUUID(player);
+            statement.setString(1, uuid != null ? uuid.toString() : player);
 
             return resolveProtections(statement);
         } catch (Exception e) {
