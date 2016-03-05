@@ -216,6 +216,8 @@ public class LWCPlugin extends JavaPlugin {
 
         if (database.equalsIgnoreCase("mysql")) {
             Database.DefaultType = Database.Type.MySQL;
+        } else if (database.equalsIgnoreCase("h2")) {
+            Database.DefaultType = Database.Type.H2;
         } else {
             Database.DefaultType = Database.Type.SQLite;
         }
