@@ -125,7 +125,8 @@ public class DoorsModule extends JavaModule {
 
         // Are we looking at the top half?
         // If we are, we need to get the bottom half instead
-        if (!WallMatcher.PROTECTABLES_TRAP_DOORS.contains(block.getType()) && (block.getData() & 0x8) == 0x8) {
+        if (!WallMatcher.PROTECTABLES_TRAP_DOORS.contains(block.getType()) &&
+        		!DoorMatcher.FENCE_GATES.contains(block.getType()) && (block.getData() & 0x8) == 0x8) {
             // Inspect the bottom half instead, fool!
             block = block.getRelative(BlockFace.DOWN);
         }
