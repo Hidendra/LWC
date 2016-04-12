@@ -32,6 +32,7 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Flag;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
+import com.griefcraft.scripting.event.LWCMagnetPullEvent;
 import com.griefcraft.util.config.Configuration;
 import com.narrowtux.showcase.Showcase;
 import org.bukkit.Bukkit;
@@ -123,6 +124,14 @@ public class MagnetModule extends JavaModule {
                         if (item.getPickupDelay() > item.getTicksLived()) {
                             continue; // a player wouldn't have had a chance to pick it up yet
                         }
+						
+						LWCMagnetPullEvent event = new LWCMagnetPullEvent(item);
+						lwc.getModuleLoader().dispatchEvent(event);
+						
+						// has the event been cancelled?
+						if (event.isCancelled()) {
+							continue;
+						}
 
                         Location location = item.getLocation();
                         int x = location.getBlockX();

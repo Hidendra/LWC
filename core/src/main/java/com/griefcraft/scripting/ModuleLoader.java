@@ -36,6 +36,7 @@ import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCDropItemEvent;
 import com.griefcraft.scripting.event.LWCEvent;
+import com.griefcraft.scripting.event.LWCMagnetPullEvent;
 import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
@@ -134,7 +135,12 @@ public class ModuleLoader {
         /**
          * Called when LWC's config is reloaded
          */
-        RELOAD_EVENT;
+        RELOAD_EVENT,
+        
+        /**
+         * Called when the Magnet (flag) pulls an item
+         */
+        MAGNET_PULL(1);
 
         Event() {
         }
@@ -259,6 +265,8 @@ public class ModuleLoader {
                     event = Event.REDSTONE;
                 } else if (parameter == LWCReloadEvent.class) {
                     event = Event.RELOAD_EVENT;
+                } else if (parameter == LWCMagnetPullEvent.class) {
+                	event = Event.MAGNET_PULL;
                 }
 
                 // ok!
@@ -352,6 +360,8 @@ public class ModuleLoader {
                     module.onRedstone((LWCRedstoneEvent) event);
                 } else if (type == Event.RELOAD_EVENT) {
                     module.onReload((LWCReloadEvent) event);
+                } else if (type == Event.MAGNET_PULL) {
+                	module.onMagnetPull((LWCMagnetPullEvent) event);
                 }
             }
         } catch (Throwable throwable) {
