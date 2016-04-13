@@ -124,14 +124,14 @@ public class MagnetModule extends JavaModule {
                         if (item.getPickupDelay() > item.getTicksLived()) {
                             continue; // a player wouldn't have had a chance to pick it up yet
                         }
-						
-						LWCMagnetPullEvent event = new LWCMagnetPullEvent(item);
-						lwc.getModuleLoader().dispatchEvent(event);
-						
-						// has the event been cancelled?
-						if (event.isCancelled()) {
-							continue;
-						}
+			
+                        LWCMagnetPullEvent event = new LWCMagnetPullEvent(item);
+                        lwc.getModuleLoader().dispatchEvent(event);
+
+                        // has the event been cancelled?
+                        if (event.isCancelled()) {
+                            continue;
+                        }
 
                         Location location = item.getLocation();
                         int x = location.getBlockX();
