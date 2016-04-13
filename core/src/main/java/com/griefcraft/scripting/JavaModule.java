@@ -33,6 +33,7 @@ import com.griefcraft.scripting.event.LWCAccessEvent;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCDropItemEvent;
+import com.griefcraft.scripting.event.LWCMagnetPullEvent;
 import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
@@ -109,5 +110,9 @@ public class JavaModule implements Module {
     public void onSendLocale(LWCSendLocaleEvent event) {
 
     }
+
+	public void onMagnetPull(LWCMagnetPullEvent event) {
+		
+	}
 
 }
