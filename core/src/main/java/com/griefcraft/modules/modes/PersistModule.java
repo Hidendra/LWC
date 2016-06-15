@@ -67,6 +67,7 @@ public class PersistModule extends JavaModule {
             lwc.sendLocale(player, "protection.modes.persist.finalize");
         } else {
             player.disableMode(player.getMode(mode));
+            player.removeAllActions();
             lwc.sendLocale(player, "protection.modes.persist.off");
         }
 
