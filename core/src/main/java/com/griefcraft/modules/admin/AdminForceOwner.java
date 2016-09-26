@@ -31,12 +31,13 @@ package com.griefcraft.modules.admin;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Action;
 import com.griefcraft.model.LWCPlayer;
+import com.griefcraft.model.PlayerInfo;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCCommandEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
-import com.griefcraft.util.UUIDRegistry;
+import com.griefcraft.util.PlayerRegistry;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -61,7 +62,7 @@ public class AdminForceOwner extends JavaModule {
         Action action = player.getAction("forceowner");
         String newOwner = action.getData();
 
-        protection.setOwner(newOwner);
+        protection.setOwner(PlayerRegistry.getPlayerInfo(newOwner));
         protection.save();
 
         lwc.sendLocale(player, "protection.interact.forceowner.finalize", "player", protection.getFormattedOwnerPlayerName());
@@ -129,17 +130,11 @@ public class AdminForceOwner extends JavaModule {
                     return;
                 }
 
-                UUID uuid = UUIDRegistry.getUUID(newOwner);
-
-                if (uuid != null) {
-                    protection.setOwner(uuid.toString());
-                } else {
-                    protection.setOwner(newOwner);
-                }
+                protection.setOwner(PlayerRegistry.getPlayerInfo(newOwner));
 
                 protection.save();
 
-                lwc.sendLocale(sender, "protection.interact.forceowner.finalize", "player", UUIDRegistry.formatPlayerName(newOwner));
+                lwc.sendLocale(sender, "protection.interact.forceowner.finalize", "player", PlayerRegistry.formatPlayerName(newOwner));
                 return;
             } catch (NumberFormatException e) {
                 lwc.sendLocale(sender, "lwc.invalidprotectionid");
@@ -158,10 +153,10 @@ public class AdminForceOwner extends JavaModule {
         action.setName("forceowner");
         action.setPlayer(player);
 
-        UUID uuid = UUIDRegistry.getUUID(newOwner);
+        PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(newOwner);
 
-        if (uuid != null) {
-            action.setData(uuid.toString());
+        if (playerInfo != null) {
+            action.setData(Integer.toString(playerInfo.getId()));
         } else {
             action.setData(newOwner);
         }

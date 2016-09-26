@@ -79,7 +79,6 @@ public class MySQLPost200 implements MigrationUtility {
 
         try {
             sqlite.connect();
-            sqlite.load();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -90,6 +89,9 @@ public class MySQLPost200 implements MigrationUtility {
             if (!file.renameTo(new File(database + ".old"))) {
                 logger.info("NOTICE: FAILED TO RENAME lwc.db!! Please rename this manually!");
             }
+
+            logger.info("Reloading the database");
+            lwc.reloadDatabase();
 
             logger.info("SQLite to MySQL conversion is now complete!\n");
             logger.info("Thank you!");

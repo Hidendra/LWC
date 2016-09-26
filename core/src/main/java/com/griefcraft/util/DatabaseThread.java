@@ -29,6 +29,7 @@
 package com.griefcraft.util;
 
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.AbstractSavable;
 import com.griefcraft.model.Protection;
 import com.griefcraft.sql.Database;
 
@@ -46,7 +47,7 @@ public class DatabaseThread implements Runnable {
     /**
      * The protections waiting to be updated in the database
      */
-    private final Queue<Protection> updateQueue = new ConcurrentLinkedQueue<Protection>();
+    private final Queue<AbstractSavable> updateQueue = new ConcurrentLinkedQueue<AbstractSavable>();
 
     /**
      * The thread we are running in
@@ -79,6 +80,15 @@ public class DatabaseThread implements Runnable {
         this.lastFlush = System.currentTimeMillis();
         this.thread.start();
         pingInterval = lwc.getConfiguration().getInt("database.ping_interval", 300);
+    }
+
+    /**
+     * Add a savable to the update queue
+     *
+     * @param savable
+     */
+    public void add(AbstractSavable savable) {
+        updateQueue.offer(savable);
     }
 
     /**
@@ -135,20 +145,14 @@ public class DatabaseThread implements Runnable {
     private void flushDatabase() {
         if (!updateQueue.isEmpty()) {
             Database database = lwc.getPhysicalDatabase();
-            database.setAutoCommit(false);
-            database.setUseStatementCache(false);
 
             // Begin iterating through the queue
-            Iterator<Protection> iter = updateQueue.iterator();
+            Iterator<AbstractSavable> iter = updateQueue.iterator();
             while (iter.hasNext()) {
-                Protection protection = iter.next();
+                AbstractSavable savable = iter.next();
                 iter.remove();
-                protection.saveNow();
+                savable.saveNow();
             }
-
-            // Commit the changes to the database
-            database.setUseStatementCache(true);
-            database.setAutoCommit(true);
         }
 
         // update the time we last flushed at

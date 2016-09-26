@@ -337,9 +337,20 @@ public abstract class Database {
             return null;
         }
 
-        if (useStatementCache && statementCache.containsKey(sql)) {
+        if (statementCache.containsKey(sql)) {
             Statistics.addQuery();
-            return statementCache.get(sql);
+
+            PreparedStatement statement = statementCache.get(sql);
+
+            try {
+                if (getType() == Type.MySQL && statement.isClosed()) {
+                    statementCache.remove(sql);
+                } else {
+                    return statement;
+                }
+            } catch (SQLException e) {
+                statementCache.remove(sql);
+            }
         }
 
         try {
@@ -351,7 +362,10 @@ public abstract class Database {
                 preparedStatement = connection.prepareStatement(sql);
             }
 
-            statementCache.put(sql, preparedStatement);
+            if (useStatementCache) {
+                statementCache.put(sql, preparedStatement);
+            }
+
             Statistics.addQuery();
 
             return preparedStatement;
@@ -360,6 +374,58 @@ public abstract class Database {
         }
 
         return null;
+    }
+
+    /**
+     * Attempt to create an index on the table
+     *
+     * @param table
+     * @param indexName
+     * @param columns
+     */
+    public void createIndex(String table, String indexName, String columns) {
+        Statement statement = null;
+
+        try {
+            statement = connection.createStatement();
+            statement.executeUpdate("CREATE INDEX" + (currentType == Type.SQLite ? " IF NOT EXISTS" : "") + " " + indexName + " ON " + prefix + table + " (" + columns + ")");
+        } catch (Exception e) {
+            printException(e);
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
+    }
+
+    /**
+     * Attempt to create an index on the table
+     *
+     * @param indexName
+     */
+    public void dropIndex(String table, String indexName) {
+        Statement statement = null;
+
+        try {
+            statement = connection.createStatement();
+
+            if (currentType == Type.SQLite) {
+                statement.executeUpdate("DROP INDEX IF EXISTS " + indexName);
+            } else {
+                statement.executeUpdate("DROP INDEX " + indexName + " ON " + prefix + table);
+            }
+        } catch (Exception e) {
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
     }
 
     /**

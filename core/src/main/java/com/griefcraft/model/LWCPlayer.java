@@ -30,6 +30,7 @@ package com.griefcraft.model;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.modules.history.HistoryModule;
+import com.griefcraft.util.PlayerRegistry;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -299,7 +300,7 @@ public class LWCPlayer implements CommandSender {
     public History createHistoryObject() {
         History history = new History();
 
-        history.setPlayer(player.getName());
+        history.setPlayer(PlayerRegistry.getPlayerInfo(player));
         history.setStatus(History.Status.INACTIVE);
 
         return history;

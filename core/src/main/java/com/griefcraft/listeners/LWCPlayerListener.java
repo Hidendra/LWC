@@ -37,7 +37,7 @@ import com.griefcraft.scripting.Module;
 import com.griefcraft.scripting.event.LWCBlockInteractEvent;
 import com.griefcraft.scripting.event.LWCDropItemEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
-import com.griefcraft.util.UUIDRegistry;
+import com.griefcraft.util.PlayerRegistry;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -79,7 +79,7 @@ public class LWCPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        UUIDRegistry.updateCache(player.getUniqueId(), player.getName());
+        PlayerRegistry.updateCache(player.getUniqueId(), player.getName());
     }
 
     @EventHandler(ignoreCancelled = true)

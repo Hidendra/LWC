@@ -29,10 +29,12 @@
 package com.griefcraft.model;
 
 import com.griefcraft.lwc.LWC;
-import com.griefcraft.util.StringUtil;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class History {
 
@@ -88,7 +90,7 @@ public class History {
     /**
      * The player that caused the history action to be created
      */
-    private String player;
+    private PlayerInfo player;
 
     /**
      * The x coordinate of the history item
@@ -116,11 +118,9 @@ public class History {
     private Status status = Status.INACTIVE;
 
     /**
-     * Metadata about the transaction. An example of one entry would be
-     * for iConomy prices to be pushed in here. Any module can modify the
-     * meta data and add their own data about the transaction.
+     * Metadata for the history record
      */
-    private String[] metadata;
+    private final Map<String, String> metadata = new HashMap<String, String>();
 
     /**
      * The seconds (since linux epoch) this History object was created
@@ -142,10 +142,14 @@ public class History {
      */
     private boolean saving = false;
 
+    /**
+     * Parser used to parse JSON
+     */
+    private static final JSONParser jsonParser = new JSONParser();
+
     public History() {
         // set some defaults to account for stupidness
         status = Status.INACTIVE;
-        metadata = new String[0];
     }
 
     /**
@@ -170,19 +174,11 @@ public class History {
     /**
      * Add a string of data to the stored metadata
      *
-     * @param data
+     * @param key
+     * @param value
      */
-    public void addMetaData(String data) {
-        String[] temp = new String[metadata.length + 1];
-        System.arraycopy(metadata, 0, temp, 0, metadata.length);
-
-        // push the data to the end of the temporary array
-        // array.length doesn't start at 0, so we can be sure this is valid
-        temp[metadata.length] = data;
-
-        // we're okey
-        this.metadata = temp;
-        this.modified = true;
+    public void setMetaData(String key, String value) {
+        metadata.put(key, value);
     }
 
     /**
@@ -192,7 +188,7 @@ public class History {
      * @return
      */
     public boolean hasKey(String key) {
-        return getMetaDataStartsWith(key + "=") != null;
+        return metadata.containsKey(key);
     }
 
     /**
@@ -202,9 +198,7 @@ public class History {
      * @return
      */
     public boolean getBoolean(String key) {
-        String metadata = getMetaDataStartsWith(key + "=");
-
-        return metadata != null && Boolean.parseBoolean(metadata.substring((key + "=").length()));
+        return Boolean.parseBoolean(metadata.get(key));
 
     }
 
@@ -215,13 +209,7 @@ public class History {
      * @return
      */
     public String getString(String key) {
-        String metadata = getMetaDataStartsWith(key + "=");
-
-        if (metadata == null) {
-            return "";
-        }
-
-        return metadata.substring((key + "=").length());
+        return metadata.get(key);
     }
 
     /**
@@ -231,45 +219,17 @@ public class History {
      * @return
      */
     public int getInteger(String key) {
-        String metadata = getMetaDataStartsWith(key + "=");
-
-        if (metadata == null) {
-            return 0;
-        }
-
-        return Integer.parseInt(metadata.substring((key + "=").length()));
+        return Integer.parseInt(metadata.get(key));
     }
 
     /**
-     * Get a double value from the metadata using the key (key=value)
+     * Get a double value from the metadata using the key
      *
      * @param key
      * @return
      */
     public double getDouble(String key) {
-        String metadata = getMetaDataStartsWith(key + "=");
-
-        if (metadata == null) {
-            return 0;
-        }
-
-        return Double.parseDouble(metadata.substring((key + "=").length()));
-    }
-
-    /**
-     * Get a metadata that starts with a specific string
-     *
-     * @param startsWith
-     * @return the full metadata if a match is found, otherwise NULL
-     */
-    public String getMetaDataStartsWith(String startsWith) {
-        for (String temp : metadata) {
-            if (temp.startsWith(startsWith)) {
-                return temp;
-            }
-        }
-
-        return null;
+        return Double.parseDouble(metadata.get(key));
     }
 
     /**
@@ -279,17 +239,7 @@ public class History {
      * @return true if the given metadata was successfully removed
      */
     public boolean removeMetaData(String data) {
-        // sorry
-        List<String> temp = Arrays.asList(metadata);
-        int expected = metadata.length - 1;
-
-        temp.remove(data);
-
-        // that went better than expected
-        this.metadata = temp.toArray(new String[temp.size()]);
-        this.modified = true;
-
-        return metadata.length == expected;
+        return metadata.remove(data) != null;
     }
 
     /**
@@ -327,7 +277,45 @@ public class History {
      * @return a STRING representation of the metadata for use in the database
      */
     public String getSafeMetaData() {
-        return StringUtil.join(metadata, 0, ",");
+        return JSONObject.toJSONString(metadata);
+    }
+
+    /**
+     * Decode the metadata value
+     *
+     * @param safe
+     */
+    public void decodeMetaData(String safe) {
+        try {
+            Object json = jsonParser.parse(safe);
+
+            if (json != null) {
+                JSONObject object = (JSONObject) json;
+
+                for (Object o : object.entrySet()) {
+                    Map.Entry entry = (Map.Entry) o;
+
+                    String key = entry.getKey().toString();
+                    String value = entry.getValue().toString();
+                    setMetaData(key, value);
+                }
+            }
+        } catch (ParseException e) {
+
+        }
+
+        // Probably old format
+        String[] split = safe.split(",");
+
+        for (String str : split) {
+            String[] dataValue = str.split("=");
+
+            if (dataValue.length > 1) {
+                String key = dataValue[0];
+                String value = dataValue[1];
+                setMetaData(key, value);
+            }
+        }
     }
 
     /**
@@ -393,7 +381,7 @@ public class History {
         return protectionId;
     }
 
-    public String getPlayer() {
+    public PlayerInfo getPlayer() {
         return player;
     }
 
@@ -417,10 +405,6 @@ public class History {
         return status;
     }
 
-    public String[] getMetaData() {
-        return metadata;
-    }
-
     public long getTimestamp() {
         return timestamp;
     }
@@ -436,7 +420,7 @@ public class History {
         this.modified = true;
     }
 
-    public void setPlayer(String player) {
+    public void setPlayer(PlayerInfo player) {
         this.player = player;
         this.modified = true;
     }
@@ -463,11 +447,6 @@ public class History {
 
     public void setStatus(Status status) {
         this.status = status;
-        this.modified = true;
-    }
-
-    public void setMetaData(String[] metadata) {
-        this.metadata = metadata;
         this.modified = true;
     }
 

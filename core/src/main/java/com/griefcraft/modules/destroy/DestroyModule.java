@@ -33,6 +33,7 @@ import com.griefcraft.model.History;
 import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
+import com.griefcraft.util.PlayerRegistry;
 import org.bukkit.entity.Player;
 
 public class DestroyModule extends JavaModule {
@@ -67,8 +68,8 @@ public class DestroyModule extends JavaModule {
                     continue;
                 }
 
-                history.addMetaData("destroyer=" + player.getName());
-                history.addMetaData("destroyerTime=" + System.currentTimeMillis() / 1000L);
+                history.setMetaData("destroyer", Integer.toString(PlayerRegistry.getPlayerInfo(player).getId()));
+                history.setMetaData("destroyerTime", Long.toString(System.currentTimeMillis() / 1000L));
             }
 
             protection.remove();

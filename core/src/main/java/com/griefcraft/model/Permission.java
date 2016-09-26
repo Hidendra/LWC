@@ -29,8 +29,8 @@
 package com.griefcraft.model;
 
 import com.griefcraft.util.Colors;
+import com.griefcraft.util.PlayerRegistry;
 import com.griefcraft.util.StringUtil;
-import com.griefcraft.util.UUIDRegistry;
 import org.json.simple.JSONObject;
 
 public class Permission {
@@ -182,7 +182,8 @@ public class Permission {
         StringBuilder builder = new StringBuilder();
         builder.append(Colors.Yellow);
         if (type == Type.PLAYER) {
-            builder.append(UUIDRegistry.formatPlayerName(getName()));
+            PlayerInfo playerInfo = PlayerRegistry.getPlayerInfo(Integer.parseInt(getName()));
+            builder.append(playerInfo.prettyFormat());
         } else {
             builder.append(getName());
         }

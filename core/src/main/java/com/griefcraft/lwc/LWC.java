@@ -50,6 +50,7 @@ import com.griefcraft.model.Flag;
 import com.griefcraft.model.History;
 import com.griefcraft.model.LWCPlayer;
 import com.griefcraft.model.Permission;
+import com.griefcraft.model.PlayerInfo;
 import com.griefcraft.model.Protection;
 import com.griefcraft.modules.admin.AdminBackup;
 import com.griefcraft.modules.admin.AdminCache;
@@ -107,10 +108,10 @@ import com.griefcraft.sql.Database;
 import com.griefcraft.sql.PhysDB;
 import com.griefcraft.util.Colors;
 import com.griefcraft.util.DatabaseThread;
+import com.griefcraft.util.PlayerRegistry;
 import com.griefcraft.util.ProtectionFinder;
 import com.griefcraft.util.Statistics;
 import com.griefcraft.util.StringUtil;
-import com.griefcraft.util.UUIDRegistry;
 import com.griefcraft.util.config.Configuration;
 import com.griefcraft.util.locale.LocaleUtil;
 import com.griefcraft.util.matchers.DoubleChestMatcher;
@@ -1855,11 +1856,13 @@ public class LWC {
             String localeChild = type.toString().toLowerCase();
 
             // If it's a player, convert it to UUID
-            if (type == Permission.Type.PLAYER) {
-                UUID uuid = UUIDRegistry.getUUID(value);
+            PlayerInfo playerInfo = null;
 
-                if (uuid != null) {
-                    value = uuid.toString();
+            if (type == Permission.Type.PLAYER) {
+                playerInfo = PlayerRegistry.getPlayerInfo(value);
+
+                if (playerInfo != null) {
+                    value = Integer.toString(playerInfo.getId());
                 }
             }
 
@@ -1872,7 +1875,7 @@ public class LWC {
                 protection.save();
 
                 if (type == Permission.Type.PLAYER) {
-                    sendLocale(sender, "protection.interact.rights.register." + localeChild, "name", UUIDRegistry.formatPlayerName(value), "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
+                    sendLocale(sender, "protection.interact.rights.register." + localeChild, "name", playerInfo.prettyFormat(), "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
                 } else {
                     sendLocale(sender, "protection.interact.rights.register." + localeChild, "name", value, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
                 }
@@ -1881,7 +1884,7 @@ public class LWC {
                 protection.save();
 
                 if (type == Permission.Type.PLAYER) {
-                    sendLocale(sender, "protection.interact.rights.remove." + localeChild, "name", UUIDRegistry.formatPlayerName(value), "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
+                    sendLocale(sender, "protection.interact.rights.remove." + localeChild, "name", playerInfo.prettyFormat(), "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
                 } else {
                     sendLocale(sender, "protection.interact.rights.remove." + localeChild, "name", value, "isadmin", isAdmin ? "[" + Colors.Red + "ADMIN" + Colors.Gold + "]" : "");
                 }
