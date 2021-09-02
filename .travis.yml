@@ -16,3 +16,7 @@ addons:
     bucket: artifacts.getlwc.org
     paths:
     - $(git ls-files -x mcp -x original-*.jar -o *.jar *.zip | tr "\n" ":")
+
+cache:
+  directories:
+  - $HOME/.m2
